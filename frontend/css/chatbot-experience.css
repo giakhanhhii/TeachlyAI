@@ -1,0 +1,137 @@
+#experienceLayer {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+#experienceLayer.visible {
+  display: flex;
+}
+
+.experience-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #fafafa;
+}
+
+.back-chat-btn {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.back-chat-btn:hover {
+  background: #f5f9ff;
+}
+
+.experience-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px 24px;
+}
+
+.quiz-card {
+  max-width: 640px;
+  margin: 0 auto 20px;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #f9fdf9;
+}
+
+.quiz-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-opt {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.quiz-opt:hover {
+  border-color: var(--green);
+  background: #f1f8e9;
+}
+
+.quiz-opt.selected {
+  border-color: var(--green-dark);
+  background: #e8f5e9;
+}
+
+.flash-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+.flash-card {
+  height: 200px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.55s ease;
+}
+
+.flash-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.flash-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  border: 2px solid var(--green);
+  box-shadow: 0 8px 24px rgba(27, 94, 32, 0.12);
+}
+
+.flash-front {
+  background: linear-gradient(160deg, #e8f5e9, #fff);
+  color: var(--text);
+}
+
+.flash-back {
+  background: linear-gradient(160deg, #c8e6c9, #e8f5e9);
+  color: var(--green-dark);
+  transform: rotateY(180deg);
+}
+
+.flash-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}

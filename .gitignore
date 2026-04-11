@@ -34,3 +34,8 @@ Thumbs.db
 
 # AI logs — tracked structure, ignored content
 .ai-log/*.jsonl
+
+# Local templates, Cursor rules & plans (not committed)
+template/
+cursorrules.md
+.cursor/plans/

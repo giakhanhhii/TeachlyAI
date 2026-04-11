@@ -139,3 +139,69 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 **Code thay đổi:** `src/agent.ts` lines 45-67
 
 **Học được:** Luôn thiết kế stop condition trước khi implement retry logic.
+
+---
+
+### [ADR-3] Frontend tĩnh HTML/CSS/JS + ES modules — 08/04/2026
+
+**Bối cảnh:** Cần giao diện Teachly (hub + chat) nhanh, dễ mở trên môi trường lab, chưa bắt buộc SPA framework.
+
+**Các lựa chọn đã xem xét:**
+- **React/Vite**: Component hóa tốt, ecosystem lớn; tốn thời gian setup và build cho giai đoạn prototype.
+- **HTML/CSS/JS tĩnh + ESM**: Không bundler bắt buộc, file rõ ràng; cần static server cho `import` và chú ý CORS khi gọi API.
+
+**Quyết định:** Chọn HTML/CSS/JS tĩnh, tách `frontend/css/` và `frontend/js/chatbot/` (module), serve qua HTTP khi dev.
+
+**Hệ quả:** Không có state management framework sẵn; mọi tích hợp API/RAG sau này gắn qua fetch và module hiện có. Có thể nâng cấp lên bundler/React sau nếu phạm vi mở rộng.
+
+---
+
+### [ADR-4] Chuẩn bị dữ liệu RAG từ PDF — 06/04/2026
+
+**Bối cảnh:** Đề và bài tập Tiếng Anh THPT chủ yếu ở dạng PDF; cần quyết định bước tiền xử lý trước embedding.
+
+**Các lựa chọn đã xem xét:**
+- **Đưa PDF nguyên vào vector store**: Đơn giản nhưng chunk không ổn định, khó trích dẫn đoạn cụ thể.
+- **PDF → text sạch → chunk có metadata (năm, loại đề, số câu)**: Công sức OCR/làm sạch ban đầu nhưng truy vấn và citation đáng tin hơn.
+
+**Quyết định:** Hướng PDF → text (OCR nếu cần) → chunk + metadata; chỉ dùng nguồn được phép / nội bộ đã thống nhất.
+
+**Hệ quả:** Pipeline ingest phải được implement và kiểm thử trên mẫu thật; nhóm chấp nhận chi phí làm sạch dữ liệu thay vì RAG “bẩn”.
+
+---
+
+### Sprint 1 — 04/04 → 10/04/2026
+
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| Thu thập & phân loại PDF đề THPT QG Tiếng Anh + bài tập | Nguyễn Xuân Hải - 2A202600245 | 08/04 | ✅ Xong |
+| Research cấu trúc bài giảng / quiz ôn thi | Nguyễn Triệu Gia Khánh - 2A202600225 | 09/04 | ✅ Xong |
+| Học RAG (chunking, embedding, vector store, giới hạn) | Nguyễn Triệu Gia Khánh - 2A202600225 | 10/04 | ✅ Xong |
+| Ghi chép nguồn tài liệu (bảng nguồn nội bộ) | Nguyễn Xuân Hải - 2A202600245 | 10/04 | ✅ Xong |
+
+---
+
+### Sprint 2 — 11/04 → 17/04/2026
+
+| Task | Người làm | Deadline | Trạng thái |
+|---|---|---|---|
+| Layout landing / hub (`main_hub.html`) | Nguyễn Triệu Gia Khánh - 2A202600225 | 12/04 | ✅ Xong |
+| Giao diện chat (`chatbot_ui.html`) + trải nghiệm (quiz/flash…) | Nguyễn Triệu Gia Khánh - 2A202600225 | 14/04 | ✅ Xong |
+| Tách CSS (`frontend/css/`) và JS ESM (`frontend/js/chatbot/`) | Nguyễn Triệu Gia Khánh - 2A202600225 | 15/04 | ✅ Xong |
+| Smoke test qua static server (ESM, đường dẫn asset) | Nguyễn Triệu Gia Khánh - 2A202600225 | 16/04 | ✅ Xong |
+| Cập nhật tài liệu nội bộ nếu có (cách chạy frontend) | Nguyễn Triệu Gia Khánh - 2A202600225 | 17/04 | ⏳ Tùy nhóm |
+
+---
+
+### Brainstorm: Nguồn dữ liệu & RAG — 05/04/2026
+
+**Câu hỏi:** Làm sao vừa đủ tài liệu ôn thi vừa an toàn về bản quyền và chất lượng cho RAG?
+
+**Các ý tưởng:**
+- **Ý tưởng 1:** Ưu tiên đề minh họa Bộ GD&ĐT và tài liệu công khai; bổ sung bài tập tự soạn hoặc nguồn được phép.
+- **Ý tưởng 2:** Với PDF scan, chạy OCR + review thủ công một mẫu trước khi scale; lưu metadata năm/môn/loại đề.
+- **Ý tưởng 3:** Chunk theo câu hỏi / passage để citation trỏ được đoạn; giới hạn top-k và yêu cầu model trích dẫn nguồn khi trả lời.
+
+**Kết luận:** Kết hợp nguồn công khai đã kiểm tra + nội bộ; PDF → text sạch rồi mới embedding; thiết kế chunk và metadata ngay từ đầu để giảm hallucination.
+
+---

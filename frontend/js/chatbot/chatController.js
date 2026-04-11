@@ -1,0 +1,202 @@
+import { getChatApiUrl } from "./config.js";
+import { postChat } from "./chatApi.js";
+import {
+  ensureSessions,
+  saveSessions,
+  getCurrentSession,
+  getActiveSessionIndex,
+  setActiveSessionIndex,
+  getSessionsSnapshot,
+} from "./sessionStore.js";
+import { computePickAction, computeGuidedTextSubmit, computeStartFlow } from "./guidedFlow.js";
+import { createExperienceLayerView } from "./dom/experienceLayerView.js";
+import { mountQuizExperience } from "./dom/quizExperienceView.js";
+import { mountFlashExperience } from "./dom/flashExperienceView.js";
+import { createMessageView } from "./dom/messageView.js";
+import { renderChatList } from "./dom/chatListView.js";
+
+/** @type {any} */
+let guided = null;
+
+export function init() {
+  const messages = document.getElementById("messages");
+  const messagesInner = document.getElementById("messagesInner");
+  const form = document.getElementById("form");
+  const input = document.getElementById("input");
+  const sendBtn = document.getElementById("send");
+  const threadLabel = document.getElementById("threadLabel");
+  const chatList = document.getElementById("chatList");
+  const newChatBtn = document.getElementById("newChatBtn");
+  const chatPhase = document.getElementById("chatPhase");
+  const experienceLayer = document.getElementById("experienceLayer");
+  const experienceBody = document.getElementById("experienceBody");
+
+  const apiUrl = getChatApiUrl();
+
+  const layerView = createExperienceLayerView({
+    experienceLayer,
+    experienceBody,
+    chatPhase,
+  });
+
+  /** @type {ReturnType<typeof createMessageView>} */
+  let msgView;
+
+  function pushUser(text) {
+    const current = getCurrentSession();
+    msgView.addMessage("user", text);
+    current.messages.push({ role: "user", text });
+    saveSessions();
+  }
+
+  function pushBot(text, actions) {
+    const current = getCurrentSession();
+    msgView.addMessage("bot", text, actions);
+    const entry = { role: "bot", text };
+    if (actions && actions.length) entry.actions = actions;
+    current.messages.push(entry);
+    saveSessions();
+  }
+
+  function applyEffects(effects) {
+    for (const e of effects) {
+      if (e.type === "pushUser") pushUser(e.text);
+      else if (e.type === "pushBot") pushBot(e.text, e.actions);
+      else if (e.type === "showQuiz") mountQuizExperience(layerView, e.meta);
+      else if (e.type === "showFlash") mountFlashExperience(layerView, e.meta);
+    }
+  }
+
+  msgView = createMessageView({
+    messagesEl: /** @type {HTMLElement} */ (messages),
+    messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
+    onFlowAction(value, btnEl) {
+      const result = computePickAction(guided, value);
+      if (!result.handled) return;
+      msgView.disableActionButtons(btnEl);
+      guided = result.guided;
+      applyEffects(result.effects);
+    },
+  });
+
+  function renderChatListUI() {
+    renderChatList(
+      /** @type {HTMLElement} */ (chatList),
+      getSessionsSnapshot(),
+      getActiveSessionIndex(),
+      (idx) => {
+        setActiveSessionIndex(idx);
+        guided = null;
+        layerView.hide();
+        saveSessions();
+        renderChatListUI();
+        renderMessages();
+      },
+    );
+  }
+
+  function renderMessages() {
+    msgView.clear();
+    const current = getCurrentSession();
+    const params = new URLSearchParams(location.search);
+    const flow = params.get("flow");
+    if (flow) {
+      current.messages = [];
+      current.thread_id = "";
+      guided = null;
+      layerView.hide();
+      saveSessions();
+      history.replaceState({}, "", "chatbot_ui.html");
+      const start = computeStartFlow(flow);
+      guided = start.guided;
+      applyEffects(start.effects);
+      threadLabel.textContent = "";
+      return;
+    }
+    if (!current.messages.length) {
+      const welcome = "Xin chào! Mình là Teachly AI. Bạn muốn học gì hôm nay?";
+      msgView.addMessage("bot", welcome);
+      current.messages.push({ role: "bot", text: welcome });
+      saveSessions();
+    } else {
+      current.messages.forEach((m) => msgView.addMessage(m.role, m.text, m.actions));
+    }
+    threadLabel.textContent = current.thread_id ? `Thread: ${current.thread_id}` : "";
+  }
+
+  async function sendPrompt(prompt) {
+    const current = getCurrentSession();
+    msgView.addMessage("user", prompt);
+    current.messages.push({ role: "user", text: prompt });
+    input.value = "";
+    input.disabled = true;
+    sendBtn.disabled = true;
+    const thinking = msgView.addThinkingBubble();
+    try {
+      const data = await postChat(apiUrl, prompt, current.thread_id);
+      current.thread_id = data.thread_id;
+      threadLabel.textContent = `Thread: ${current.thread_id}`;
+      thinking.row.remove();
+      await msgView.streamBotReply(data.reply);
+      current.messages.push({ role: "bot", text: data.reply });
+      saveSessions();
+    } catch (err) {
+      thinking.row.remove();
+      const errMsg = `Lỗi: ${err.message}`;
+      msgView.addMessage("bot", errMsg);
+      current.messages.push({ role: "bot", text: errMsg });
+      saveSessions();
+    } finally {
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const prompt = input.value.trim();
+    if (!prompt) return;
+    if (guided && guided.kind === "pick") {
+      input.focus();
+      return;
+    }
+    if (guided) {
+      const result = computeGuidedTextSubmit(guided, prompt);
+      if (result.handled) {
+        guided = result.guided;
+        applyEffects(result.effects);
+        input.value = "";
+        input.focus();
+        return;
+      }
+    }
+    sendPrompt(prompt);
+  });
+
+  newChatBtn.addEventListener("click", () => {
+    const current = getCurrentSession();
+    current.thread_id = "";
+    current.messages = [];
+    guided = null;
+    layerView.hide();
+    renderMessages();
+    saveSessions();
+  });
+
+  document.getElementById("backToChatBtn").addEventListener("click", () => {
+    layerView.hide();
+  });
+
+  document.getElementById("toggleSidebar").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+  });
+
+  document.getElementById("topHomeBtn").addEventListener("click", () => {
+    location.href = "main_hub.html";
+  });
+
+  ensureSessions();
+  renderChatListUI();
+  renderMessages();
+}
