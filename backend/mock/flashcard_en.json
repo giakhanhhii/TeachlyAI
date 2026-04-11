@@ -1,0 +1,78 @@
+{
+  "_replace_note": "Từ vựng chủ điểm ôn THPT QG (học thuật, môi trường, công nghệ, xã hội). Shape: title + cards[].",
+  "title": "Flashcard — từ vựng ôn THPT QG Tiếng Anh (2026)",
+  "cards": [
+    {
+      "id": "c1",
+      "front": "curriculum",
+      "back": "chương trình giảng dạy / khung chương trình",
+      "hint": "Hay gặp trong đoạn về giáo dục."
+    },
+    {
+      "id": "c2",
+      "front": "literacy",
+      "back": "khả năng đọc viết; trình độ học vấn cơ bản",
+      "hint": "Collocation: digital literacy."
+    },
+    {
+      "id": "c3",
+      "front": "emission",
+      "back": "khí thải, sự phát ra (CO₂…)",
+      "hint": "Chủ đề môi trường / biến đổi khí hậu."
+    },
+    {
+      "id": "c4",
+      "front": "biodiversity",
+      "back": "đa dạng sinh học",
+      "hint": "Danh từ ghép: bio + diversity."
+    },
+    {
+      "id": "c5",
+      "front": "infrastructure",
+      "back": "hạ tầng (giao thông, điện, internet…)",
+      "hint": "Đọc hiểu về phát triển kinh tế / đô thị."
+    },
+    {
+      "id": "c6",
+      "front": "artificial intelligence (AI)",
+      "back": "trí tuệ nhân tạo",
+      "hint": "Chủ đề công nghệ — paraphrase: machine learning, algorithms."
+    },
+    {
+      "id": "c7",
+      "front": "prejudice",
+      "back": "định kiến, thành kiến",
+      "hint": "Khác discrimination (phân biệt đối xử) nhưng hay cùng ngữ cảnh xã hội."
+    },
+    {
+      "id": "c8",
+      "front": "allocate",
+      "back": "phân bổ, cấp (ngân sách, thời gian…)",
+      "hint": "Động từ trang trọng: allocate resources to…"
+    },
+    {
+      "id": "c9",
+      "front": "implement",
+      "back": "triển khai, thực hiện (chính sách, kế hoạch)",
+      "hint": "implement a policy / measure."
+    },
+    {
+      "id": "c10",
+      "front": "mitigate",
+      "back": "làm giảm nhẹ, giảm thiểu (rủi ro, tác hại)",
+      "hint": "mitigate the effects of climate change."
+    },
+    {
+      "id": "c11",
+      "front": "collaborate",
+      "back": "cộng tác, hợp tác",
+      "hint": "collaborate with / on."
+    },
+    {
+      "id": "c12",
+      "front": "ethical",
+      "back": "thuộc đạo đức, đạo lý",
+      "hint": "ethical issues in technology / medicine."
+    }
+  ]
+}

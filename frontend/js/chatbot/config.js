@@ -1,8 +1,14 @@
 /**
  * @param {Document} doc
  */
-export function getChatApiUrl(doc = document) {
+export function getApiOrigin(doc = document) {
   const raw = doc.querySelector('meta[name="teachly-api-base"]')?.getAttribute("content")?.trim();
-  const base = raw || window.location.origin;
-  return `${base.replace(/\/$/, "")}/api/chat`;
+  return (raw || window.location.origin).replace(/\/$/, "");
+}
+
+/**
+ * @param {Document} doc
+ */
+export function getChatApiUrl(doc = document) {
+  return `${getApiOrigin(doc)}/api/chat`;
 }

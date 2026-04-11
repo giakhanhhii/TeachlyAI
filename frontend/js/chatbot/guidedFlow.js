@@ -55,7 +55,7 @@ export function computeGuidedTextSubmit(guided, text) {
           { type: "pushUser", text },
           {
             type: "pushBot",
-            text: 'Số lượng:\nBạn muốn thử sức với bao nhiêu câu? (Tối đa 40 câu)\n\nGõ con số hoặc mô tả trong ô chat.',
+            text: 'Số lượng:\nBạn muốn thử sức với bao nhiêu câu? (Tối đa 50 câu)\n\nGõ con số hoặc mô tả trong ô chat.',
           },
         ],
       };
@@ -63,18 +63,18 @@ export function computeGuidedTextSubmit(guided, text) {
     if (g.step === "quiz_count") {
       return {
         handled: true,
-        guided: { ...g, step: "quiz_level", data: { ...g.data, count: text } },
+        guided: { ...g, step: "quiz_notes", data: { ...g.data, count: text } },
         effects: [
           { type: "pushUser", text },
           {
             type: "pushBot",
-            text: 'Mức độ:\nĐộ khó bạn mong muốn là gì? (Gợi ý: cơ bản, khá, giỏi, nâng cao)\n\nTrả lời trong ô chat.',
+            text: 'Ghi chú thêm:\nBạn có ghi chú nào cho đề quiz không? (Ví dụ: mức độ khó, dạng câu ưu tiên, hay gõ "không")\n\nTrả lời trong ô chat.',
           },
         ],
       };
     }
-    if (g.step === "quiz_level") {
-      const meta = { ...g.data, level: text };
+    if (g.step === "quiz_notes") {
+      const meta = { ...g.data, notes: text };
       return {
         handled: true,
         guided: null,
@@ -82,7 +82,7 @@ export function computeGuidedTextSubmit(guided, text) {
           { type: "pushUser", text },
           {
             type: "pushBot",
-            text: "Cảm ơn bạn! Mình đã ghi nhận chủ đề, số câu và mức độ.\n\nBên dưới là giao diện làm bài.",
+            text: "Cảm ơn bạn! Mình đã ghi nhận chủ đề, số lượng và ghi chú.\n\nBên dưới là giao diện làm bài.",
           },
           { type: "showQuiz", meta },
         ],
@@ -109,7 +109,7 @@ export function computeGuidedTextSubmit(guided, text) {
           { type: "pushUser", text },
           {
             type: "pushBot",
-            text: 'Tùy chọn:\nBạn có yêu cầu nào thêm không? (Có thể gõ "không")\n\nTrả lời trong ô chat.',
+            text: 'Ghi chú thêm:\nBạn có ghi chú nào cho bộ flashcard không? (Có thể gõ "không")\n\nTrả lời trong ô chat.',
           },
         ],
       };
@@ -126,6 +126,50 @@ export function computeGuidedTextSubmit(guided, text) {
             text: "Cảm ơn bạn!\n\nBên dưới là bộ flashcard — nhấn thẻ để lật mặt trước và mặt sau.",
           },
           { type: "showFlash", meta },
+        ],
+      };
+    }
+  }
+
+  if (g.kind === "slide") {
+    if (g.step === "slide_topic") {
+      return {
+        handled: true,
+        guided: { ...g, step: "slide_count", data: { ...g.data, topic: text } },
+        effects: [
+          { type: "pushUser", text },
+          {
+            type: "pushBot",
+            text: 'Số slide:\nBạn muốn khoảng bao nhiêu slide? (Gợi ý: 5–15)\n\nGõ con số trong ô chat.',
+          },
+        ],
+      };
+    }
+    if (g.step === "slide_count") {
+      return {
+        handled: true,
+        guided: { ...g, step: "slide_notes", data: { ...g.data, count: text } },
+        effects: [
+          { type: "pushUser", text },
+          {
+            type: "pushBot",
+            text: 'Ghi chú thêm:\nBạn có ghi chú nào cho bộ slide không? (Phong cách, độ sâu nội dung… hoặc gõ "không")\n\nTrả lời trong ô chat.',
+          },
+        ],
+      };
+    }
+    if (g.step === "slide_notes") {
+      const meta = { ...g.data, notes: text };
+      return {
+        handled: true,
+        guided: null,
+        effects: [
+          { type: "pushUser", text },
+          {
+            type: "pushBot",
+            text: "Cảm ơn bạn! Mình đã ghi nhận chủ đề, số slide và ghi chú.\n\nBên dưới là xem trước bộ slide.",
+          },
+          { type: "showSlide", meta },
         ],
       };
     }
@@ -160,16 +204,18 @@ export function computeStartFlow(flow) {
     return { guided, effects };
   }
   if (flow === "slide") {
+    guided = { kind: "slide", step: "slide_topic", data: {} };
     effects.push({
       type: "pushBot",
-      text: "Chào bạn! Bạn muốn tạo slide cho bài học / ôn thi THPTQG tiếng Anh.\n\nHãy mô tả chủ đề slide, số trang, phong cách… trong ô chat; mình sẽ gợi ý dàn ý và nội dung.",
+      text: 'Chào bạn! Bạn vào mục Tạo slide.\n\nChủ đề:\nBạn muốn slide về nội dung gì? (Ví dụ: Ngữ pháp tổng hợp, Đọc hiểu, Ôn tập trước thi)\n\nTrả lời trong ô chat.',
     });
     return { guided, effects };
   }
-  if (flow === "image") {
+  if (flow === "flashcard") {
+    guided = { kind: "flash", step: "flash_source", data: {} };
     effects.push({
       type: "pushBot",
-      text: "Chào bạn! Bạn muốn tạo hình ảnh minh hoạ cho ôn thi THPTQG tiếng Anh.\n\nBạn có thể mô tả cảnh, nhân vật hoặc infographic trong ô chat.",
+      text: 'Chào bạn! Bạn vào mục Tạo flashcard với âm thanh.\n\nNguồn từ vựng:\nBạn muốn mình lấy từ vựng từ đâu? (Dán danh sách vào đây hoặc up file PDF của bạn)\n\nTrả lời trong ô chat.',
     });
     return { guided, effects };
   }

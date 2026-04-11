@@ -1,0 +1,81 @@
+{
+  "_replace_note": "Giả lập mini-đề THPT QG Tiếng Anh (ôn 2026). Giữ shape: title + questions[]. correctIndex 0–3.",
+  "title": "Đề ôn giả lập — THPT QG Tiếng Anh (định hướng 2026)",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Choose the word whose underlined part differs from the others in pronunciation: A. ch**ea**p  B. r**ea**ch  C. br**ea**d  D. m**ea**t",
+      "options": ["cheap", "reach", "bread", "meat"],
+      "correctIndex": 2,
+      "hint": "ea trong \"bread\" đọc /e/; các từ còn lại thường /iː/ (cheap, reach, meat)."
+    },
+    {
+      "id": "q2",
+      "text": "Choose the word that differs from the others in the position of the main stress: A. **com**pete  B. **at**tract  C. **re**duce  D. **pro**gress (n.)",
+      "options": ["compete", "attract", "reduce", "progress"],
+      "correctIndex": 3,
+      "hint": "\"progress\" (danh từ) nhấn âm đầu PRO-; ba từ kia thường nhấn âm thứ hai."
+    },
+    {
+      "id": "q3",
+      "text": "She _______ working here since she graduated from university.",
+      "options": ["has been", "was", "had been", "is"],
+      "correctIndex": 0,
+      "hint": "Since + mốc quá khứ + hiện tại vẫn tiếp diễn → hiện tại hoàn thành tiếp diễn: has been + V-ing."
+    },
+    {
+      "id": "q4",
+      "text": "The government is trying to _______ the use of renewable energy in rural areas.",
+      "options": ["promote", "prevent", "reject", "ignore"],
+      "correctIndex": 0,
+      "hint": "Ngữ cảnh tích cực: khuyến khích năng lượng tái tạo → promote."
+    },
+    {
+      "id": "q5",
+      "text": "I wish I _______ how to code when I was still in high school.",
+      "options": ["learn", "have learned", "had learned", "would learn"],
+      "correctIndex": 2,
+      "hint": "Wish + điều ước trái với quá khứ (đã qua, không thể đổi) → wish + past perfect: had learned."
+    },
+    {
+      "id": "q6",
+      "text": "Find the mistake: **Hardly** had we **arrived** at the station **when** the train **has** left.",
+      "options": ["Hardly", "arrived", "when", "has"],
+      "correctIndex": 3,
+      "hint": "Hardly... when... (quá khứ): động từ sau \"when\" dùng quá khứ đơn → \"had left\" hoặc \"left\", không dùng \"has left\"."
+    },
+    {
+      "id": "q7",
+      "text": "Read: \"Many towns now run recycling schemes where residents sort waste at home. Surveys show these programmes cut landfill use and raise local awareness.\" The passage is mainly about _______.",
+      "options": [
+        "how to build a solar panel at home",
+        "benefits of community recycling programmes",
+        "the history of plastic invention",
+        "ways to learn a foreign language quickly"
+      ],
+      "correctIndex": 1,
+      "hint": "Câu chủ đề: chương trình tái chế ở cộng đồng → giảm rác thải, nâng cao ý thức → chọn ý về lợi ích recycling."
+    },
+    {
+      "id": "q8",
+      "text": "Complete: By June next year, she _______ her national voluntary service.",
+      "options": ["will finish", "will have finished", "finishes", "has finished"],
+      "correctIndex": 1,
+      "hint": "By + mốc tương lai → future perfect: will have + V3."
+    },
+    {
+      "id": "q9",
+      "text": "Choose the best synonym for \"**sustainable**\" in: \"We need a sustainable model for tourism.\"",
+      "options": ["short-term", "environmentally balanced / long-term viable", "expensive", "temporary"],
+      "correctIndex": 1,
+      "hint": "Sustainable ≈ bền vững, có thể duy trì lâu dài mà không cạn kiệt tài nguyên."
+    },
+    {
+      "id": "q10",
+      "text": "He suggested that she _______ a gap year before entering university.",
+      "options": ["take", "takes", "took", "taking"],
+      "correctIndex": 0,
+      "hint": "Suggest + that + S + (should) + V0 → \"take\" (subjunctive / bare infinitive trong VN hay dạy là dạng nguyên mẫu không \"to\")."
+    }
+  ]
+}

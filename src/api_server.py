@@ -9,6 +9,7 @@ Mở trình duyệt: http://127.0.0.1:8000/
 
 from __future__ import annotations
 
+import json
 import logging
 import uuid
 from pathlib import Path
@@ -32,6 +33,13 @@ if not FRONTEND_DIR.is_dir():
     _alt = REPO_ROOT / "Frontend"
     if _alt.is_dir():
         FRONTEND_DIR = _alt
+
+MOCK_DIR = REPO_ROOT / "backend" / "mock"
+MOCK_FILES = {
+    "quiz": "quiz_thpt_en.json",
+    "flashcard": "flashcard_en.json",
+    "slide": "slide_thpt_en.json",
+}
 
 TEACHLY_SYSTEM = """Bạn là Teachly AI, trợ lý hỗ trợ giáo viên và học sinh ôn Tiếng Anh THPT QG (Việt Nam).
 Trả lời rõ ràng, thân thiện; ưu tiên tiếng Việt khi người dùng dùng tiếng Việt.
@@ -101,6 +109,21 @@ def health():
         "anthropic_configured": bool(ANTHROPIC_API_KEY),
         "frontend_dir_exists": FRONTEND_DIR.is_dir(),
     }
+
+
+@app.get("/api/mock/{name}")
+def mock_bundle(name: str):
+    """JSON mẫu cho quiz / flashcard / slide — thay bằng API sinh nội dung khi có AI pipeline."""
+    if name not in MOCK_FILES:
+        raise HTTPException(status_code=404, detail="Unknown mock resource.")
+    path = MOCK_DIR / MOCK_FILES[name]
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="Mock file missing.")
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        logger.exception("Invalid mock JSON: %s", path)
+        raise HTTPException(status_code=500, detail=f"Invalid JSON: {e}") from e
 
 
 @app.post("/api/chat", response_model=ChatOut)

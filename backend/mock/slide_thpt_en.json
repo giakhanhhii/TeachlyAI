@@ -1,0 +1,60 @@
+{
+  "_replace_note": "Slide ôn: cấu trúc đề, cách làm bài, từ vựng — bản giả lập THPT QG Tiếng Anh (định hướng 2026). Shape: title + slides[].",
+  "title": "Ôn THPT QG Tiếng Anh — định hướng & cách làm bài (2026)",
+  "slides": [
+    {
+      "id": "s1",
+      "title": "Giới thiệu — dữ liệu giả lập",
+      "bullets": [
+        "Nội dung này là **mock** ôn luyện; cấu trúc chính thức năm thi do Bộ GD&ĐT công bố là chuẩn cuối cùng.",
+        "Mục tiêu: nắm **phân dạng**, **phân bổ thời gian**, và **chiến lược** làm đề trắc nghiệm.",
+        "Kết hợp với đề **quiz** và **flashcard** trong app để luyện song song."
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "Cấu trúc đề thi (khung tham khảo)",
+      "bullets": [
+        "Phần trắc nghiệm thường gồm: **Phát âm / trọng âm**, **Ngữ pháp & từ vựng**, **Đọc hiểu**, **Điền từ / ghép câu** (tùy đợt).",
+        "Mỗi câu 4 lựa chọn; không trừ điểm — ưu tiên **ổn định tốc độ** và **độ chính xác**.",
+        "Đọc kỹ **hướng dẫn** (instruction) từng khối câu trước khi làm."
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "Cách làm bài — phân bổ thời gian",
+      "bullets": [
+        "Lướt nhanh toàn bài 1–2 phút để **ước lượng độ khó** và chỗ cần đọc dài.",
+        "Làm các câu **ngắn, chắc chắn** trước; **đánh dấu** (trên giấy nháp) câu phân vân.",
+        "Cuối giờ: quay lại câu chưa chọn; **không để trống** nếu thi không trừ điểm sai."
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "Chiến lược từng nhóm dạng",
+      "bullets": [
+        "**Phát âm / stress:** so sánh nguyên âm/trọng âm từng vị trí; loại trừ từ quen thuộc.",
+        "**Ngữ pháp:** nhận diện dấu hiệu thời (since, by, before…), loại đại từ, đảo ngữ, cấu trúc gợi ý.",
+        "**Đọc hiểu:** đọc **câu hỏi** trước với dạng tìm ý chính; scan **từ khóa** với dạng chi tiết."
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "Từ vựng — ôn theo chủ đề (2026)",
+      "bullets": [
+        "Ưu tiên: **giáo dục**, **môi trường & năng lượng**, **công nghệ & AI**, **xã hội & sức khỏe**.",
+        "Học theo **cụm** (collocation): reduce emissions, promote literacy, allocate budget…",
+        "Ôn **đồng nghĩa/trái nghĩa** trong ngữ cảnh câu — hay ra dạng hoàn thành câu / đọc hiểu."
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "Trước ngày thi",
+      "bullets": [
+        "Làm **1 full đề** theo thời gian chuẩn; ghi nhận **loại lỗi** (ngữ pháp / từ vựng / đọc sót).",
+        "Ngủ đủ giấc; tránh học **vội từ mới** sát giờ thi — củng cố **lỗi đã sai**.",
+        "Trong phòng thi: bình tĩnh, đọc kỹ phiếu, kiểm tra **mã đề** và **tô mờ** đáp án."
+      ]
+    }
+  ]
+}

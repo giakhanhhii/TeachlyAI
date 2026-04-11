@@ -12,6 +12,7 @@ import { computePickAction, computeGuidedTextSubmit, computeStartFlow } from "./
 import { createExperienceLayerView } from "./dom/experienceLayerView.js";
 import { mountQuizExperience } from "./dom/quizExperienceView.js";
 import { mountFlashExperience } from "./dom/flashExperienceView.js";
+import { mountSlideExperience } from "./dom/slideExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
 
@@ -58,12 +59,21 @@ export function init() {
     saveSessions();
   }
 
-  function applyEffects(effects) {
+  function openChatWithAiDraft(text) {
+    layerView.hide();
+    input.value = text;
+    input.focus();
+  }
+
+  const experienceHooks = { onAiEdit: openChatWithAiDraft };
+
+  async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
       else if (e.type === "pushBot") pushBot(e.text, e.actions);
-      else if (e.type === "showQuiz") mountQuizExperience(layerView, e.meta);
-      else if (e.type === "showFlash") mountFlashExperience(layerView, e.meta);
+      else if (e.type === "showQuiz") await mountQuizExperience(layerView, e.meta, experienceHooks);
+      else if (e.type === "showFlash") await mountFlashExperience(layerView, e.meta, experienceHooks);
+      else if (e.type === "showSlide") await mountSlideExperience(layerView, e.meta, experienceHooks);
     }
   }
 
@@ -75,7 +85,7 @@ export function init() {
       if (!result.handled) return;
       msgView.disableActionButtons(btnEl);
       guided = result.guided;
-      applyEffects(result.effects);
+      void applyEffects(result.effects);
     },
   });
 
@@ -109,7 +119,7 @@ export function init() {
       history.replaceState({}, "", "chatbot_ui.html");
       const start = computeStartFlow(flow);
       guided = start.guided;
-      applyEffects(start.effects);
+      void applyEffects(start.effects);
       threadLabel.textContent = "";
       return;
     }
@@ -153,7 +163,7 @@ export function init() {
     }
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const prompt = input.value.trim();
     if (!prompt) return;
@@ -165,7 +175,7 @@ export function init() {
       const result = computeGuidedTextSubmit(guided, prompt);
       if (result.handled) {
         guided = result.guided;
-        applyEffects(result.effects);
+        await applyEffects(result.effects);
         input.value = "";
         input.focus();
         return;

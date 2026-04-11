@@ -1,58 +1,182 @@
+import { fetchMockResource } from "../services/mockContentApi.js";
+import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
+
+/**
+ * @param {Record<string, string>} meta
+ * @param {{ onAiEdit?: (draft: string) => void }} deps
+ */
+function buildAiDraftQuiz(meta, qIndex, question) {
+  const topic = meta.topic || "—";
+  const count = meta.count || "—";
+  const notes = meta.notes || "—";
+  const opts = (question.options || []).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("\n");
+  return (
+    `[Sửa đề quiz — nhờ AI]\n` +
+    `Ngữ cảnh người dùng — Chủ đề: ${topic}; Số câu mong muốn: ${count}; Ghi chú: ${notes}\n` +
+    `Câu hiện tại (${qIndex + 1}): ${question.text}\n` +
+    `${opts}\n\n` +
+    `Hãy đề xuất phiên bản câu hỏi và phương án tốt hơn (giữ định dạng trắc nghiệm 4 lựa chọn), kèm đáp án đúng và gợi ý ngắn.`
+  );
+}
+
 /**
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
+ * @param {{ onAiEdit?: (draft: string) => void }} [deps]
  */
-export function mountQuizExperience(layerView, meta) {
+export async function mountQuizExperience(layerView, meta, deps) {
   layerView.prepareShow();
-  const experienceBody = layerView.body;
+  const root = layerView.body;
+  const data = await fetchMockResource("quiz");
+  const titleText = data.title || "Ôn tập trắc nghiệm";
+  const questions = Array.isArray(data.questions) ? data.questions : [];
 
-  const title = document.createElement("h2");
-  title.style.marginTop = "0";
-  title.textContent = "Đề trắc nghiệm";
-  experienceBody.appendChild(title);
+  let index = 0;
+  let correct = 0;
+  let wrong = 0;
+  /** @type {number | null} */
+  let selected = null;
+  /** @type {boolean | null} */
+  let lastWasCorrect = null;
 
-  const metaEl = document.createElement("p");
-  metaEl.style.color = "var(--muted)";
-  metaEl.style.fontSize = "14px";
-  metaEl.textContent = `Đã ghi nhận — Chủ đề: ${meta.topic || "—"} | Số câu: ${meta.count || "—"} | Mức độ: ${meta.level || "—"}`;
-  experienceBody.appendChild(metaEl);
+  const shell = document.createElement("div");
+  shell.className = "exp-shell exp-shell-quiz";
 
-  const demoQs = [
-    {
-      q: "By this time next week, I ___ the project.",
-      opts: ["finish", "will have finished", "will finish", "am finishing"],
-    },
-    {
-      q: "The passage mainly discusses ___.",
-      opts: ["grammar rules", "reading strategy", "vocabulary in context", "listening tips"],
-    },
-  ];
+  const onAiForQuestion = () => {
+    const q = questions[index];
+    if (!q || !deps?.onAiEdit) return;
+    deps.onAiEdit(buildAiDraftQuiz(meta, index, q));
+  };
 
-  demoQs.forEach((item, i) => {
-    const card = document.createElement("div");
-    card.className = "quiz-card";
-    const h = document.createElement("h3");
-    h.textContent = `Câu ${i + 1}`;
-    card.appendChild(h);
-    const pq = document.createElement("p");
-    pq.style.margin = "0 0 12px";
-    pq.style.fontSize = "15px";
-    pq.textContent = item.q;
-    card.appendChild(pq);
-    const opts = document.createElement("div");
-    opts.className = "quiz-options";
-    item.opts.forEach((o, j) => {
+  shell.appendChild(
+    createExperienceTopBar({
+      title: titleText,
+      onAiEdit: deps?.onAiEdit ? onAiForQuestion : undefined,
+    }),
+  );
+
+  const summary = document.createElement("p");
+  summary.className = "exp-meta-line";
+  summary.textContent = `Đã ghi nhận — Chủ đề: ${meta.topic || "—"} | Số câu (yêu cầu): ${meta.count || "—"} | Ghi chú: ${meta.notes || "—"}`;
+  shell.appendChild(summary);
+
+  const total = Math.max(1, questions.length);
+  const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
+  shell.appendChild(progress.wrap);
+
+  const stage = document.createElement("div");
+  stage.className = "exp-stage";
+  shell.appendChild(stage);
+
+  const footer = document.createElement("div");
+  footer.className = "exp-footer-bar";
+  const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
+  footer.appendChild(nextBtn);
+  shell.appendChild(footer);
+
+  function renderQuestion() {
+    const q = questions[index];
+    stage.innerHTML = "";
+    selected = null;
+    lastWasCorrect = null;
+    nextBtn.disabled = true;
+
+    if (!q) {
+      const empty = document.createElement("p");
+      empty.className = "exp-empty";
+      empty.textContent = "Không có câu hỏi trong bộ dữ liệu mock.";
+      stage.appendChild(empty);
+      nextBtn.textContent = "—";
+      nextBtn.disabled = true;
+      return;
+    }
+
+    const num = document.createElement("div");
+    num.className = "exp-q-number";
+    num.textContent = `${index + 1}.`;
+
+    const text = document.createElement("p");
+    text.className = "exp-q-text";
+    text.textContent = q.text || "";
+
+    const optsWrap = document.createElement("div");
+    optsWrap.className = "exp-option-grid";
+
+    const letters = ["A", "B", "C", "D", "E", "F"];
+    (q.options || []).forEach((opt, j) => {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "quiz-opt";
-      b.textContent = `${String.fromCharCode(65 + j)}. ${o}`;
+      b.className = "exp-opt-btn";
+      b.textContent = `${letters[j] || j}. ${opt}`;
       b.addEventListener("click", () => {
-        opts.querySelectorAll(".quiz-opt").forEach((x) => x.classList.remove("selected"));
+        selected = j;
+        optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
         b.classList.add("selected");
+        nextBtn.disabled = false;
       });
-      opts.appendChild(b);
+      optsWrap.appendChild(b);
     });
-    card.appendChild(opts);
-    experienceBody.appendChild(card);
+
+    const hintToggle = document.createElement("button");
+    hintToggle.type = "button";
+    hintToggle.className = "exp-hint-toggle";
+    hintToggle.innerHTML = `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
+
+    const hintPanel = document.createElement("div");
+    hintPanel.className = "exp-hint-panel";
+    hintPanel.hidden = true;
+    hintPanel.textContent = q.hint || "(Chưa có gợi ý.)";
+
+    let hintOpen = false;
+    hintToggle.addEventListener("click", () => {
+      hintOpen = !hintOpen;
+      hintPanel.hidden = !hintOpen;
+      hintToggle.innerHTML = hintOpen
+        ? `Ẩn gợi ý <span class="exp-chevron exp-chevron-up" aria-hidden="true">▾</span>`
+        : `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
+    });
+
+    stage.appendChild(num);
+    stage.appendChild(text);
+    stage.appendChild(optsWrap);
+    stage.appendChild(hintToggle);
+    stage.appendChild(hintPanel);
+
+    progress.paint({ total, index, correct, wrong });
+    nextBtn.textContent = "Tiếp theo";
+  }
+
+  nextBtn.addEventListener("click", () => {
+    const q = questions[index];
+    if (!q) return;
+
+    if (lastWasCorrect === null) {
+      if (selected === null) return;
+      const ok = selected === q.correctIndex;
+      lastWasCorrect = ok;
+      if (ok) correct += 1;
+      else wrong += 1;
+      progress.paint({ total, index, correct, wrong });
+      const buttons = stage.querySelectorAll(".exp-opt-btn");
+      buttons.forEach((btn, j) => {
+        if (j === q.correctIndex) btn.classList.add("correct");
+        if (j === selected && j !== q.correctIndex) btn.classList.add("wrong");
+        /** @type {HTMLButtonElement} */ (btn).disabled = true;
+      });
+      const isLast = index >= questions.length - 1;
+      nextBtn.textContent = isLast ? "Kết thúc" : "Tiếp theo";
+      nextBtn.disabled = false;
+      return;
+    }
+
+    if (index >= questions.length - 1) {
+      nextBtn.disabled = true;
+      return;
+    }
+    index += 1;
+    renderQuestion();
   });
+
+  root.appendChild(shell);
+  renderQuestion();
 }

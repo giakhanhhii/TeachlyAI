@@ -37,5 +37,5 @@ Thumbs.db
 
 # Local templates, Cursor rules & plans (not committed)
 template/
-cursorrules.md
+.cursorrules.md
 .cursor/plans/
