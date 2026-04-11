@@ -81,7 +81,7 @@ uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
 Sau đó mở trình duyệt: **http://127.0.0.1:8000/** — sẽ vào trang landing **Teachly**; từ đó bấm các thẻ để mở chat. API dùng **cùng origin** nên không cần chỉnh CORS khi truy cập qua cổng 8000.
 
 - Kiểm tra nhanh: **http://127.0.0.1:8000/api/health** (xem `anthropic_configured`, `frontend_dir_exists`).
-- Nếu mở `index.html` bằng Live Server cổng khác nhưng API vẫn ở 8000: trong `frontend/index.html` đặt thuộc tính meta `teachly-api-base` thành `http://127.0.0.1:8000`.
+- Nếu mở `chatbot_ui.html` bằng Live Server cổng khác nhưng API vẫn ở 8000: trong `frontend/chatbot_ui.html` đặt thuộc tính meta `teachly-api-base` thành `http://127.0.0.1:8000`.
 
 ## Weekly Journal
 

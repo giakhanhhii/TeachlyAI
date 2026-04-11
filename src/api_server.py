@@ -143,7 +143,7 @@ def root():
             "error": "Không tìm thấy thư mục frontend/",
             "hint": "Chạy server từ thư mục gốc repo (cùng cấp với frontend/).",
         }
-    return RedirectResponse(url="/forest_theme_ai_creator.html", status_code=302)
+    return RedirectResponse(url="/main_hub.html", status_code=302)
 
 
 if FRONTEND_DIR.is_dir():

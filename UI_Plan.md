@@ -22,7 +22,7 @@
 
 ## 3. Giao diện đã triển khai (khớp code)
 
-### 3.1 Trang landing — `frontend/forest_theme_ai_creator.html`
+### 3.1 Trang landing — `frontend/main_hub.html`
 
 - **Chủ đề “rừng”:** nền gradient xanh lá / mint, font **Nunito** (Google Fonts), cảm giác ấm, thân thiện.
 - **Hero:** tiêu đề **Teachly**, câu dẫn *“Bạn muốn bắt đầu như thế nào?”*
@@ -30,16 +30,16 @@
 
   | Thẻ | Mô tả ngắn | Đích (query) |
   |-----|------------|----------------|
-  | Tạo Full Set | Bộ slide + quiz + hình (mô tả marketing) | `index.html?flow=fullset` |
-  | Tạo slide | Slide theo nội dung người dùng | `index.html?flow=slide` |
-  | Tạo quiz | Quiz phục vụ ôn THPT QG tiếng Anh | `index.html?flow=quiz` |
-  | Tạo hình ảnh | Ảnh minh họa phục vụ ôn thi | `index.html?flow=image` |
+  | Tạo Full Set | Bộ slide + quiz + hình (mô tả marketing) | `chatbot_ui.html?flow=fullset` |
+  | Tạo slide | Slide theo nội dung người dùng | `chatbot_ui.html?flow=slide` |
+  | Tạo quiz | Quiz phục vụ ôn THPT QG tiếng Anh | `chatbot_ui.html?flow=quiz` |
+  | Tạo hình ảnh | Ảnh minh họa phục vụ ôn thi | `chatbot_ui.html?flow=image` |
 
 - Trang chỉ là **một file HTML** (chưa bundler); điều hướng sang app chat bằng `location.href`.
 
-### 3.2 Ứng dụng chat — `frontend/index.html`
+### 3.2 Ứng dụng chat — `frontend/chatbot_ui.html`
 
-- **Layout:** sidebar (có **thu gọn**), vùng chat chính, thanh composer (ô nhập + Gửi), nút **Trang chủ** quay về `forest_theme_ai_creator.html`.
+- **Layout:** sidebar (có **thu gọn**), vùng chat chính, thanh composer (ô nhập + Gửi), nút **Trang chủ** quay về `main_hub.html`.
 - **Sidebar:** nhãn **Teachly AI**, nút **Đoạn chat mới**, danh sách phiên chat; trạng thái lưu **`localStorage`** (`teachly_sessions`, `teachly_active_session`).
 - **Vùng hội thoại:** bubble user (xanh lá), bubble bot (kính mờ / glass), avatar bot tùy chỉnh.
 - **Composer:** placeholder gợi ý giáo dục; footer có disclaimer (*có thể mắc sai sót…*).
@@ -61,7 +61,7 @@
 
 | Hạng mục | Trạng thái |
 |----------|------------|
-| Chat thật qua API (local) | **`src/api_server.py`** (FastAPI + uvicorn): phục vụ `frontend/` và **`POST /api/chat`**. Trong `index.html`, base API lấy từ meta `teachly-api-base` hoặc **cùng origin** khi mở qua `http://127.0.0.1:8000`. Cần **`ANTHROPIC_API_KEY`** trong `.env`. **Chưa** deploy API công khai / production. |
+| Chat thật qua API (local) | **`src/api_server.py`** (FastAPI + uvicorn): phục vụ `frontend/` và **`POST /api/chat`**. Trong `chatbot_ui.html`, base API lấy từ meta `teachly-api-base` hoặc **cùng origin** khi mở qua `http://127.0.0.1:8000`. Cần **`ANTHROPIC_API_KEY`** trong `.env`. **Chưa** deploy API công khai / production. |
 | Tạo slide / quiz / ảnh thật | **Chưa** — phần quiz & flashcard trên experience layer là **demo tĩnh**. |
 | Đăng nhập, tài khoản, thanh toán | **Chưa** có trên UI hiện tại. |
 | Tên miền & HTTPS | **Mục tiêu tương lai** — xem mục 6. |
@@ -105,9 +105,9 @@ Khi có backend, các flow từ landing nên map rõ:
 
 ## 8. Hướng dẫn ngắn cho agent / Cursor (khi chỉnh UI)
 
-- Giữ **Teachly** và **chủ đề rừng / xanh lá** đồng bộ giữa `forest_theme_ai_creator.html` và `index.html`.
-- Mọi thẻ landing mới nên tiếp tục trỏ `index.html?flow=<tên_flow>` và bổ sung nhánh `startFromFlow` tương ứng trong `index.html`.
-- Khi thêm tính năng: ưu tiên **tách chuỗi / màu** để dễ theme; base API qua meta **`teachly-api-base`** hoặc cùng origin (xem `index.html`).
+- Giữ **Teachly** và **chủ đề rừng / xanh lá** đồng bộ giữa `main_hub.html` và `chatbot_ui.html`.
+- Mọi thẻ landing mới nên tiếp tục trỏ `chatbot_ui.html?flow=<tên_flow>` và bổ sung nhánh `startFromFlow` tương ứng trong `chatbot_ui.html`.
+- Khi thêm tính năng: ưu tiên **tách chuỗi / màu** để dễ theme; base API qua meta **`teachly-api-base`** hoặc cùng origin (xem `chatbot_ui.html`).
 - UI vẫn **graceful** khi `fetch` thất bại (nhánh báo lỗi trong chat).
 
 ---

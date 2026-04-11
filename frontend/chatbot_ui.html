@@ -1253,7 +1253,7 @@
         guided = null;
         hideExperienceLayer();
         saveSessions();
-        history.replaceState({}, "", "index.html");
+        history.replaceState({}, "", "chatbot_ui.html");
         startFromFlow(flow);
         threadLabel.textContent = "";
         return;
@@ -1305,7 +1305,7 @@
     });
 
     document.getElementById("topHomeBtn").addEventListener("click", () => {
-      location.href = "forest_theme_ai_creator.html";
+      location.href = "main_hub.html";
     });
 
     ensureSessions();
