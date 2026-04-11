@@ -21,8 +21,11 @@ Logs are saved to `.ai-log/session.jsonl` and submitted automatically on `git pu
 ### 2. Setup (One-time)
 
 ```bash
-# Install git pre-push hook
+# For macOS/Linux/Git Bash:
 bash scripts/setup_hooks.sh
+
+# For Windows PowerShell:
+powershell -ExecutionPolicy Bypass -File scripts/setup_hooks.ps1
 ```
 
 `AI_LOG_SERVER` and `AI_LOG_API_KEY` are already set in `.env.example`.

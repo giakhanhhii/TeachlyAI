@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Để trống = dùng cùng origin (khuyến nghị khi chạy uvicorn). Ví dụ chỉ backend khác cổng: content="http://127.0.0.1:8000" -->
+  <meta name="teachly-api-base" content="" />
+  <title>Teachly AI</title>
+  <style>
+    :root {
+      --green: #4caf50;
+      --green-dark: #2e7d32;
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --panel-2: #ffffff;
+      --text: #10233a;
+      --muted: #6a819b;
+      --bot: #e9f4ff;
+      --line: rgba(76, 175, 80, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(160deg, #c8e6c9 0%, #a5d6a7 20%, #81c784 40%, #b2dfdb 70%, #e0f2f1 100%);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      /* Dùng màu xanh rất nhạt và trong suốt nhẹ để tạo cảm giác "mờ" thanh thoát */
+      background: linear-gradient(180deg, rgba(252, 253, 250, 0.95), rgba(241, 248, 233, 0.95));
+      backdrop-filter: blur(8px);
+      border-right: 1px solid rgba(76, 175, 80, 0.1);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: 68px;
+      padding: 12px 8px;
+    }
+
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+    }
+
+    .sidebar.collapsed .sidebar-top {
+      justify-content: center;
+    }
+
+    .brand-group {
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.2s;
+    }
+
+    .sidebar.collapsed .brand-group,
+    .sidebar.collapsed .chat-list-title,
+    .sidebar.collapsed .chat-list,
+    .sidebar.collapsed .muted,
+    .sidebar.collapsed .full-text {
+      display: none;
+    }
+
+    .toggle-btn {
+      background: transparent;
+      border: 0;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .toggle-btn svg {
+      transition: width 0.3s, height 0.3s;
+    }
+
+    .sidebar.collapsed .toggle-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .sidebar.collapsed .toggle-btn {
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .chat-list-title {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+    }
+
+    .chat-item {
+      width: 100%;
+      background: #f5f9ff;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 11px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-item.active {
+      background: #dff1ff;
+      border-color: rgba(1, 137, 232, 0.36);
+    }
+
+    .new-chat {
+      width: 100%;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      color: #fff;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+    }
+
+    .icon-only {
+      display: none;
+    }
+
+    .sidebar.collapsed .icon-only {
+      display: flex;
+    }
+
+    .sidebar.collapsed .new-chat {
+      background: transparent;
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      min-height: 40px;
+      padding: 0;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+
+    .sidebar.collapsed .new-chat svg {
+      width: 20px;
+      height: 20px;
+      transition: width 0.3s, height 0.3s;
+    }
+
+    .sidebar.collapsed .new-chat:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .main {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: linear-gradient(180deg, #f1f8e9, #e8f5e9);
+    }
+
+    .top {
+      position: relative;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      background: #ffffff;
+      color: rgba(16, 35, 58, 0.65);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .top-brand {
+      position: absolute;
+      left: 16px;
+      font-size: 12px;
+      color: rgba(16, 35, 58, 0.28);
+      font-weight: 600;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+    }
+
+    .top-title {
+      color: rgba(16, 35, 58, 0.65);
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+    }
+
+    .top-home-btn {
+      position: absolute;
+      right: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232, 245, 233, 0.95);
+      border: 1px solid rgba(76, 175, 80, 0.35);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--green-dark);
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .top-home-btn:hover {
+      background: #e8f5e9;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.12);
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 12px;
+      background: #ffffff;
+    }
+
+    .messages-inner {
+      width: min(980px, 95%);
+      margin: 0 auto;
+      background: transparent;
+    }
+
+    .msg-row {
+      display: flex;
+      margin-bottom: 12px;
+      align-items: flex-end;
+    }
+
+    .msg-row.bot {
+      align-items: center;
+    }
+
+    .msg-row.user {
+      justify-content: flex-end;
+    }
+
+    .msg-row.bot {
+      justify-content: flex-start;
+    }
+
+    .bot-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      margin-right: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 2px solid var(--green);
+      overflow: hidden;
+    }
+
+    .bubble {
+      max-width: 72%;
+      border-radius: 14px;
+      padding: 10px 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+
+    .bubble.user {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .bubble.bot {
+      background: linear-gradient(160deg,
+          rgba(255, 255, 255, 0.34) 0%,
+          rgba(255, 255, 255, 0.18) 45%,
+          rgba(220, 240, 255, 0.22) 100%);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow:
+        0 10px 30px rgba(15, 35, 65, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(14px) saturate(150%);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bubble.bot::after {
+      content: "";
+      position: absolute;
+      top: -55%;
+      left: -28%;
+      width: 62%;
+      height: 190%;
+      background: linear-gradient(90deg,
+          rgba(255, 255, 255, 0.34),
+          rgba(255, 255, 255, 0.02));
+      transform: rotate(17deg);
+      pointer-events: none;
+    }
+
+    .bubble.bot.thinking-bubble::after {
+      display: none;
+    }
+
+    .bubble.bot.thinking-bubble {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 88px;
+      min-height: 44px;
+      padding: 12px 18px;
+      box-sizing: border-box;
+    }
+
+    .bubble.bot:hover {
+      box-shadow:
+        0 12px 34px rgba(15, 35, 65, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.32);
+    }
+
+    .thinking {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      min-height: 18px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .thinking span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(16, 35, 58, 0.45);
+      animation: thinkingPulse 1s infinite ease-in-out;
+    }
+
+    .thinking span:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .thinking span:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes thinkingPulse {
+
+      0%,
+      80%,
+      100% {
+        opacity: 0.35;
+        transform: translateY(0);
+      }
+
+      40% {
+        opacity: 1;
+        transform: translateY(-3px);
+      }
+    }
+
+    .composer-wrap {
+      padding: 12px 14px 15px;
+      background: #ffffff;
+      border-top: none;
+    }
+
+    .composer {
+      display: flex;
+      flex-direction: column;
+      width: min(800px, 95%);
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.18);
+      border-radius: 24px;
+      padding: 12px 20px;
+      box-shadow: 0 10px 40px rgba(15, 35, 65, 0.1);
+    }
+
+    .composer-main {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    #input {
+      flex: 1;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 15px;
+      padding: 8px 0;
+    }
+
+    #send {
+      border: 0;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      color: #fff;
+      border-radius: 10px;
+      min-width: 60px;
+      height: 28px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s;
+      margin-left: 8px;
+    }
+
+    #send:hover {
+      opacity: 0.9;
+    }
+
+    .composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .add-btn {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .add-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .model-picker {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .model-picker:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .disclaimer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+
+    .chat-phase {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .msg-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .msg-action-btn {
+      border: 1px solid rgba(46, 125, 50, 0.45);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .msg-action-btn:hover {
+      background: #e8f5e9;
+      transform: translateY(-1px);
+    }
+
+    #experienceLayer {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      min-height: 0;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    #experienceLayer.visible {
+      display: flex;
+    }
+
+    .experience-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fafafa;
+    }
+
+    .back-chat-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .back-chat-btn:hover {
+      background: #f5f9ff;
+    }
+
+    .experience-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px 24px;
+    }
+
+    .quiz-card {
+      max-width: 640px;
+      margin: 0 auto 20px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #f9fdf9;
+    }
+
+    .quiz-card h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-opt {
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .quiz-opt:hover {
+      border-color: var(--green);
+      background: #f1f8e9;
+    }
+
+    .quiz-opt.selected {
+      border-color: var(--green-dark);
+      background: #e8f5e9;
+    }
+
+    .flash-wrap {
+      max-width: 420px;
+      margin: 0 auto;
+      perspective: 1000px;
+    }
+
+    .flash-card {
+      height: 200px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s ease;
+    }
+
+    .flash-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flash-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 600;
+      border: 2px solid var(--green);
+      box-shadow: 0 8px 24px rgba(27, 94, 32, 0.12);
+    }
+
+    .flash-front {
+      background: linear-gradient(160deg, #e8f5e9, #fff);
+      color: var(--text);
+    }
+
+    .flash-back {
+      background: linear-gradient(160deg, #c8e6c9, #e8f5e9);
+      color: var(--green-dark);
+      transform: rotateY(180deg);
+    }
+
+    .flash-hint {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-group">
+          <div class="brand">Teachly AI</div>
+          <div class="sub">Trợ lý AI Giáo dục</div>
+        </div>
+        <button class="toggle-btn" id="toggleSidebar" title="Thu gọn/Mở rộng">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <button class="new-chat" id="newChatBtn" title="Đoạn chat mới">
+        <span class="full-text">+ Đoạn chat mới</span>
+        <span class="icon-only">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </span>
+      </button>
+
+      <div class="chat-list-title">Đoạn chat</div>
+      <div class="chat-list" id="chatList"></div>
+      <div class="muted" id="threadLabel" style="margin-top: auto; padding-bottom: 8px;"></div>
+    </aside>
+    <main class="main">
+      <div class="top">
+        <span class="top-brand">Teachly AI</span>
+        <span class="top-title">Đoạn hội thoại</span>
+        <button type="button" class="top-home-btn" id="topHomeBtn" title="Về trang chọn Teachly">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 10.5L10 4l7 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M5 8.5V16h4v-4h2v4h4V8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Trang chủ
+        </button>
+      </div>
+      <div class="chat-phase" id="chatPhase">
+        <div id="messages">
+          <div class="messages-inner" id="messagesInner"></div>
+        </div>
+        <div class="composer-wrap">
+          <form class="composer" id="form">
+            <div class="composer-main">
+              <input id="input" placeholder="Hỏi tôi bất cứ điều gì về dạy học..." autocomplete="off" />
+            </div>
+            <div class="composer-footer">
+              <div class="footer-left">
+                <button type="button" class="add-btn" title="Thêm tệp">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="footer-right">
+                <div class="model-picker">
+                  <span>Sonnet 4.6</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+                <button id="send" type="submit">Gửi</button>
+              </div>
+            </div>
+          </form>
+          <div class="disclaimer">Teachly AI có thể mắc sai sót, vui lòng kiểm tra kỹ trước khi gửi</div>
+        </div>
+      </div>
+      <div id="experienceLayer" aria-hidden="true">
+        <!-- Dữ liệu demo: experience layer dùng nội dung mẫu cho tới khi tích hợp API -->
+        <div class="experience-toolbar">
+          <button type="button" class="back-chat-btn" id="backToChatBtn">Quay lại chat</button>
+        </div>
+        <div class="experience-body" id="experienceBody"></div>
+      </div>
+    </main>
+  </div>
+  <script>
+    const _apiBase =
+      document.querySelector('meta[name="teachly-api-base"]')?.getAttribute("content")?.trim() ||
+      window.location.origin;
+    const API_URL = `${_apiBase.replace(/\/$/, "")}/api/chat`;
+    const messages = document.getElementById("messages");
+    const messagesInner = document.getElementById("messagesInner");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+    const threadLabel = document.getElementById("threadLabel");
+    const chatList = document.getElementById("chatList");
+    const newChatBtn = document.getElementById("newChatBtn");
+    const chatPhase = document.getElementById("chatPhase");
+    const experienceLayer = document.getElementById("experienceLayer");
+    const experienceBody = document.getElementById("experienceBody");
+    let sessions = JSON.parse(localStorage.getItem("teachly_sessions") || "[]");
+    let activeSession = Number(localStorage.getItem("teachly_active_session") || "0");
+    /** @type {{ kind: string, step: string, data: Record<string, string> } | null} */
+    let guided = null;
+
+    const BOT_AVATAR_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="12" cy="14" rx="8" ry="6" fill="#ef6c00"/>
+            <ellipse cx="12" cy="16" rx="5" ry="4" fill="#fff3e0"/>
+            <ellipse cx="9" cy="12" rx="3" ry="2.5" fill="#ef6c00"/>
+            <ellipse cx="15" cy="12" rx="3" ry="2.5" fill="#ef6c00"/>
+            <ellipse cx="8" cy="11" rx="1.5" ry="2" fill="#1b5e20"/>
+            <ellipse cx="16" cy="11" rx="1.5" ry="2" fill="#1b5e20"/>
+            <ellipse cx="8.5" cy="10.5" rx="0.5" ry="0.8" fill="#fff"/>
+            <ellipse cx="15.5" cy="10.5" rx="0.5" ry="0.8" fill="#fff"/>
+            <ellipse cx="12" cy="13" rx="2" ry="1.5" fill="#bf360c"/>
+            <path d="M10 14 Q12 15 14 14" fill="none" stroke="#bf360c" stroke-width="1"/>
+            <ellipse cx="7" cy="9" rx="1" ry="1.5" fill="#ef6c00" transform="rotate(30 7 9)"/>
+            <ellipse cx="17" cy="9" rx="1" ry="1.5" fill="#ef6c00" transform="rotate(-30 17 9)"/>
+            <ellipse cx="6.5" cy="8" rx="0.5" ry="1" fill="#bf360c" transform="rotate(30 6.5 8)"/>
+            <ellipse cx="17.5" cy="8" rx="0.5" ry="1" fill="#bf360c" transform="rotate(-30 17.5 8)"/>
+            <ellipse cx="12" cy="8" rx="2" ry="1" fill="#43a047"/>
+          </svg>`;
+
+    function ensureSessions() {
+      if (!sessions.length) {
+        sessions = [
+          { title: "Đoạn chat 1", thread_id: "", messages: [] },
+          { title: "Đoạn chat 2", thread_id: "", messages: [] },
+          { title: "Đoạn chat 3", thread_id: "", messages: [] }
+        ];
+      }
+      if (activeSession > 2) activeSession = 0;
+    }
+
+    function saveSessions() {
+      localStorage.setItem("teachly_sessions", JSON.stringify(sessions));
+      localStorage.setItem("teachly_active_session", String(activeSession));
+    }
+
+    function hideExperienceLayer() {
+      experienceLayer.classList.remove("visible");
+      experienceLayer.setAttribute("aria-hidden", "true");
+      experienceBody.innerHTML = "";
+      chatPhase.style.display = "";
+    }
+
+    function renderChatList() {
+      chatList.innerHTML = "";
+      sessions.forEach((session, idx) => {
+        const btn = document.createElement("button");
+        btn.className = `chat-item ${idx === activeSession ? "active" : ""}`;
+        btn.textContent = session.title;
+        btn.onclick = () => {
+          activeSession = idx;
+          guided = null;
+          hideExperienceLayer();
+          saveSessions();
+          renderChatList();
+          renderMessages();
+        };
+        chatList.appendChild(btn);
+      });
+    }
+
+    function getCurrentSession() {
+      return sessions[activeSession];
+    }
+
+    function pushUser(text) {
+      const current = getCurrentSession();
+      addMessage("user", text);
+      current.messages.push({ role: "user", text });
+      saveSessions();
+    }
+
+    function pushBot(text, actions) {
+      const current = getCurrentSession();
+      addMessage("bot", text, actions);
+      const entry = { role: "bot", text };
+      if (actions && actions.length) entry.actions = actions;
+      current.messages.push(entry);
+      saveSessions();
+    }
+
+    function disableActionButtons(btnEl) {
+      const row = btnEl.closest(".msg-row");
+      if (!row) return;
+      row.querySelectorAll(".msg-action-btn").forEach((b) => {
+        b.disabled = true;
+        b.style.opacity = "0.65";
+        b.style.cursor = "default";
+      });
+    }
+
+    function handleFlowAction(value, btnEl) {
+      if (!guided || guided.kind !== "pick" || guided.step !== "main") return;
+      disableActionButtons(btnEl);
+      if (value === "mcq") {
+        pushUser("Tạo đề trắc nghiệm");
+        guided = { kind: "quiz", step: "quiz_topic", data: {} };
+        pushBot(
+          'Chủ đề:\nBạn muốn làm đề về phần nào? (Ví dụ: Ngữ pháp tổng hợp, Đọc hiểu, Full đề, hoặc up file của bạn)\n\nHãy gõ câu trả lời vào ô chat bên dưới.'
+        );
+      } else if (value === "flash") {
+        pushUser("Tạo flash card từ vựng");
+        guided = { kind: "flash", step: "flash_source", data: {} };
+        pushBot(
+          'Nguồn:\nBạn muốn mình lấy từ vựng từ đâu? (Dán danh sách vào đây hoặc up file PDF của bạn — có thể bỏ qua để mình tự động tạo từ vựng)\n\nTrả lời trong ô chat.'
+        );
+      }
+    }
+
+    function handleGuidedSubmit(text) {
+      if (!guided) return false;
+      if (guided.kind === "pick") return false;
+      const g = guided;
+      if (g.kind === "quiz") {
+        if (g.step === "quiz_topic") {
+          pushUser(text);
+          g.data.topic = text;
+          g.step = "quiz_count";
+          pushBot(
+            'Số lượng:\nBạn muốn thử sức với bao nhiêu câu? (Tối đa 40 câu)\n\nGõ con số hoặc mô tả trong ô chat.'
+          );
+          return true;
+        }
+        if (g.step === "quiz_count") {
+          pushUser(text);
+          g.data.count = text;
+          g.step = "quiz_level";
+          pushBot(
+            'Mức độ:\nĐộ khó bạn mong muốn là gì? (Gợi ý: cơ bản, khá, giỏi, nâng cao)\n\nTrả lời trong ô chat.'
+          );
+          return true;
+        }
+        if (g.step === "quiz_level") {
+          pushUser(text);
+          g.data.level = text;
+          guided = null;
+          pushBot(
+            "Cảm ơn bạn! Mình đã ghi nhận chủ đề, số câu và mức độ.\n\nBên dưới là giao diện làm bài."
+          );
+          showQuizExperience(g.data);
+          return true;
+        }
+      }
+      if (g.kind === "flash") {
+        if (g.step === "flash_source") {
+          pushUser(text);
+          g.data.source = text;
+          g.step = "flash_count";
+          pushBot('Số lượng:\nBạn muốn tạo bộ bao nhiêu thẻ? (tối đa 50)\n\nGõ trong ô chat.');
+          return true;
+        }
+        if (g.step === "flash_count") {
+          pushUser(text);
+          g.data.count = text;
+          g.step = "flash_extra";
+          pushBot(
+            'Tùy chọn:\nBạn có yêu cầu nào thêm không? (Có thể gõ "không")\n\nTrả lời trong ô chat.'
+          );
+          return true;
+        }
+        if (g.step === "flash_extra") {
+          pushUser(text);
+          g.data.extra = text;
+          guided = null;
+          pushBot(
+            "Cảm ơn bạn!\n\nBên dưới là bộ flashcard — nhấn thẻ để lật mặt trước và mặt sau."
+          );
+          showFlashExperience(g.data);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function startFromFlow(flow) {
+      guided = null;
+      hideExperienceLayer();
+      if (flow === "fullset") {
+        guided = { kind: "pick", step: "main", data: {} };
+        pushBot(
+          "Chào bạn! Hôm nay bạn muốn tạo Full Set THPTQG tiếng anh theo cách nào?",
+          [
+            { label: "Tạo đề trắc nghiệm", value: "mcq" },
+            { label: "Tạo flash card từ vựng", value: "flash" }
+          ]
+        );
+        return;
+      }
+      if (flow === "quiz") {
+        guided = { kind: "quiz", step: "quiz_topic", data: {} };
+        pushBot(
+          'Chào bạn! Bạn vào mục Tạo quiz.\n\nChủ đề:\nBạn muốn làm đề về phần nào? (Ví dụ: Ngữ pháp tổng hợp, Đọc hiểu, hoặc up file của bạn)\n\nTrả lời trong ô chat.'
+        );
+        return;
+      }
+      if (flow === "slide") {
+        pushBot(
+          "Chào bạn! Bạn muốn tạo slide cho bài học / ôn thi THPTQG tiếng Anh.\n\nHãy mô tả chủ đề slide, số trang, phong cách… trong ô chat; mình sẽ gợi ý dàn ý và nội dung."
+        );
+        return;
+      }
+      if (flow === "image") {
+        pushBot(
+          "Chào bạn! Bạn muốn tạo hình ảnh minh hoạ cho ôn thi THPTQG tiếng Anh.\n\nBạn có thể mô tả cảnh, nhân vật hoặc infographic trong ô chat."
+        );
+        return;
+      }
+    }
+
+    function showQuizExperience(meta) {
+      chatPhase.style.display = "none";
+      experienceLayer.classList.add("visible");
+      experienceLayer.setAttribute("aria-hidden", "false");
+      experienceBody.innerHTML = "";
+
+      const title = document.createElement("h2");
+      title.style.marginTop = "0";
+      title.textContent = "Đề trắc nghiệm";
+      experienceBody.appendChild(title);
+
+      const metaEl = document.createElement("p");
+      metaEl.style.color = "var(--muted)";
+      metaEl.style.fontSize = "14px";
+      metaEl.textContent = `Đã ghi nhận — Chủ đề: ${meta.topic || "—"} | Số câu: ${meta.count || "—"} | Mức độ: ${meta.level || "—"}`;
+      experienceBody.appendChild(metaEl);
+
+      // Dữ liệu demo — câu hỏi mẫu (thay bằng dữ liệu API khi tích hợp)
+      const demoQs = [
+        {
+          q: "By this time next week, I ___ the project.",
+          opts: ["finish", "will have finished", "will finish", "am finishing"]
+        },
+        {
+          q: "The passage mainly discusses ___.",
+          opts: ["grammar rules", "reading strategy", "vocabulary in context", "listening tips"]
+        }
+      ];
+
+      demoQs.forEach((item, i) => {
+        const card = document.createElement("div");
+        card.className = "quiz-card";
+        const h = document.createElement("h3");
+        h.textContent = `Câu ${i + 1}`;
+        card.appendChild(h);
+        const pq = document.createElement("p");
+        pq.style.margin = "0 0 12px";
+        pq.style.fontSize = "15px";
+        pq.textContent = item.q;
+        card.appendChild(pq);
+        const opts = document.createElement("div");
+        opts.className = "quiz-options";
+        item.opts.forEach((o, j) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "quiz-opt";
+          b.textContent = `${String.fromCharCode(65 + j)}. ${o}`;
+          b.addEventListener("click", () => {
+            opts.querySelectorAll(".quiz-opt").forEach((x) => x.classList.remove("selected"));
+            b.classList.add("selected");
+          });
+          opts.appendChild(b);
+        });
+        card.appendChild(opts);
+        experienceBody.appendChild(card);
+      });
+    }
+
+    function showFlashExperience(meta) {
+      chatPhase.style.display = "none";
+      experienceLayer.classList.add("visible");
+      experienceLayer.setAttribute("aria-hidden", "false");
+      experienceBody.innerHTML = "";
+
+      const title = document.createElement("h2");
+      title.style.marginTop = "0";
+      title.textContent = "Flashcard — lật thẻ";
+      experienceBody.appendChild(title);
+
+      const metaEl = document.createElement("p");
+      metaEl.style.color = "var(--muted)";
+      metaEl.style.fontSize = "14px";
+      metaEl.textContent = `Đã ghi nhận — Nguồn: ${meta.source || "—"} | Số thẻ: ${meta.count || "—"} | Ghi chú: ${meta.extra || "—"}`;
+      experienceBody.appendChild(metaEl);
+
+      const hint = document.createElement("p");
+      hint.className = "flash-hint";
+      hint.textContent = "Nhấn vào thẻ để lật mặt trước / mặt sau.";
+      experienceBody.appendChild(hint);
+
+      // Dữ liệu demo — thẻ mẫu (thay bằng dữ liệu API khi tích hợp)
+      const demoCards = [
+        { front: "abandon", back: "từ bỏ, ruồng bỏ" },
+        { front: "meticulous", back: "tỉ mỉ, cẩn thận" },
+        { front: "hypothesis", back: "giả thuyết" }
+      ];
+
+      demoCards.forEach((c) => {
+        const wrap = document.createElement("div");
+        wrap.className = "flash-wrap";
+        const inner = document.createElement("div");
+        inner.className = "flash-card";
+        inner.setAttribute("role", "button");
+        inner.tabIndex = 0;
+        inner.innerHTML = `<div class="flash-face flash-front">${c.front}</div><div class="flash-face flash-back">${c.back}</div>`;
+        inner.addEventListener("click", () => inner.classList.toggle("flipped"));
+        inner.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inner.classList.toggle("flipped");
+          }
+        });
+        wrap.appendChild(inner);
+        experienceBody.appendChild(wrap);
+      });
+    }
+
+    document.getElementById("backToChatBtn").addEventListener("click", () => {
+      hideExperienceLayer();
+    });
+
+    function addMessage(role, text, actions) {
+      const row = document.createElement("div");
+      row.className = `msg-row ${role === "user" ? "user" : "bot"}`;
+      const bubble = document.createElement("div");
+      bubble.className = `bubble ${role === "user" ? "user" : "bot"}`;
+      if (role === "user") {
+        bubble.textContent = text;
+      } else if (actions && actions.length) {
+        const t = document.createElement("div");
+        t.style.whiteSpace = "pre-wrap";
+        t.textContent = text;
+        bubble.appendChild(t);
+        const ar = document.createElement("div");
+        ar.className = "msg-actions";
+        actions.forEach((a) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "msg-action-btn";
+          b.textContent = a.label;
+          b.addEventListener("click", function () {
+            handleFlowAction(a.value, this);
+          });
+          ar.appendChild(b);
+        });
+        bubble.appendChild(ar);
+      } else {
+        bubble.textContent = text;
+      }
+      if (role !== "user") {
+        const avatar = document.createElement("div");
+        avatar.className = "bot-avatar";
+        avatar.innerHTML = BOT_AVATAR_SVG;
+        row.appendChild(avatar);
+      }
+      row.appendChild(bubble);
+      messagesInner.appendChild(row);
+      messages.scrollTop = messages.scrollHeight;
+      return bubble;
+    }
+
+    function addThinkingBubble() {
+      const row = document.createElement("div");
+      row.className = "msg-row bot";
+      const avatar = document.createElement("div");
+      avatar.className = "bot-avatar";
+      avatar.innerHTML = BOT_AVATAR_SVG;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble bot thinking-bubble";
+      bubble.innerHTML = `
+          <div class="thinking" aria-label="Teachly đang suy nghĩ">
+            <span></span><span></span><span></span>
+          </div>
+        `;
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+      messagesInner.appendChild(row);
+      messages.scrollTop = messages.scrollHeight;
+      return { row, bubble };
+    }
+
+    async function streamBotReply(text) {
+      const bubble = addMessage("bot", "");
+      let i = 0;
+      const speed = 8;
+      while (i <= text.length) {
+        bubble.textContent = text.slice(0, i);
+        i += Math.max(1, Math.floor(text.length / 120));
+        messages.scrollTop = messages.scrollHeight;
+        await new Promise((r) => setTimeout(r, speed));
+      }
+      bubble.textContent = text;
+    }
+
+    async function sendPrompt(prompt) {
+      const current = getCurrentSession();
+      addMessage("user", prompt);
+      current.messages.push({ role: "user", text: prompt });
+      input.value = "";
+      input.disabled = true;
+      document.getElementById("send").disabled = true;
+      const thinking = addThinkingBubble();
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: prompt, thread_id: current.thread_id || null })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Lỗi API");
+        current.thread_id = data.thread_id;
+        threadLabel.textContent = `Thread: ${current.thread_id}`;
+        thinking.row.remove();
+        await streamBotReply(data.reply);
+        current.messages.push({ role: "bot", text: data.reply });
+        saveSessions();
+      } catch (err) {
+        thinking.row.remove();
+        const errMsg = `Lỗi: ${err.message}`;
+        addMessage("bot", errMsg);
+        current.messages.push({ role: "bot", text: errMsg });
+        saveSessions();
+      } finally {
+        input.disabled = false;
+        document.getElementById("send").disabled = false;
+        input.focus();
+      }
+    }
+
+    function renderMessages() {
+      messagesInner.innerHTML = "";
+      const current = getCurrentSession();
+      const params = new URLSearchParams(location.search);
+      const flow = params.get("flow");
+      if (flow) {
+        current.messages = [];
+        current.thread_id = "";
+        guided = null;
+        hideExperienceLayer();
+        saveSessions();
+        history.replaceState({}, "", "index.html");
+        startFromFlow(flow);
+        threadLabel.textContent = "";
+        return;
+      }
+      if (!current.messages.length) {
+        addMessage("bot", "Xin chào! Mình là Teachly AI. Bạn muốn học gì hôm nay?");
+        current.messages.push({
+          role: "bot",
+          text: "Xin chào! Mình là Teachly AI. Bạn muốn học gì hôm nay?"
+        });
+        saveSessions();
+      } else {
+        current.messages.forEach((m) => addMessage(m.role, m.text, m.actions));
+      }
+      threadLabel.textContent = current.thread_id ? `Thread: ${current.thread_id}` : "";
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const prompt = input.value.trim();
+      if (!prompt) return;
+      if (guided && guided.kind === "pick") {
+        input.focus();
+        return;
+      }
+      if (guided && handleGuidedSubmit(prompt)) {
+        input.value = "";
+        input.focus();
+        return;
+      }
+      sendPrompt(prompt);
+    });
+
+    newChatBtn.addEventListener("click", () => {
+      const current = getCurrentSession();
+      current.thread_id = "";
+      current.messages = [];
+      guided = null;
+      hideExperienceLayer();
+      renderMessages();
+      saveSessions();
+    });
+
+    const sidebar = document.getElementById("sidebar");
+    const toggleSidebar = document.getElementById("toggleSidebar");
+
+    toggleSidebar.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+    });
+
+    document.getElementById("topHomeBtn").addEventListener("click", () => {
+      location.href = "forest_theme_ai_creator.html";
+    });
+
+    ensureSessions();
+    renderChatList();
+    renderMessages();
+  </script>
+</body>
+
+</html>
