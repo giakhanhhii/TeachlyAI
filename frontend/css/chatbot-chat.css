@@ -55,11 +55,12 @@
   font-size: 14px;
 }
 
-/* Bot: dùng phần còn lại sau avatar, không vượt cột chat */
+/* Bot: ôm nội dung (không kéo full hàng như flex:1), vẫn giới hạn theo cột + avatar */
 .msg-row.bot > .bubble.bot {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
-  max-width: calc(100% - 44px);
+  width: fit-content;
+  max-width: min(72%, calc(100% - 44px));
 }
 
 .bubble.user {
