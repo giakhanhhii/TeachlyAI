@@ -1,6 +1,21 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/** Viết hoa chữ cái đầu mặt trước thẻ (từ vựng). */
+function capitalizeFirst(s) {
+  const t = String(s || "").trim();
+  if (!t) return "";
+  return t.charAt(0).toLocaleUpperCase("vi") + t.slice(1);
+}
+
 /**
  * @param {Record<string, string>} meta
  * @param {number} cIndex
@@ -88,8 +103,11 @@ export async function mountFlashExperience(layerView, meta, deps) {
     inner.className = "flash-card";
     inner.setAttribute("role", "button");
     inner.tabIndex = 0;
-    const hintText = c.hint ? `<div class="flash-mini-hint">${c.hint}</div>` : "";
-    inner.innerHTML = `<div class="flash-face flash-front">${c.front}${hintText}</div><div class="flash-face flash-back">${c.back}</div>`;
+    const frontTerm = escapeHtml(capitalizeFirst(c.front));
+    const hintBlock = c.hint
+      ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>`
+      : "";
+    inner.innerHTML = `<div class="flash-face flash-front"><div class="flash-front-stack"><span class="flash-front-term">${frontTerm}</span>${hintBlock}</div></div><div class="flash-face flash-back"><span class="flash-back-text">${escapeHtml(c.back)}</span></div>`;
     inner.addEventListener("click", () => inner.classList.toggle("flipped"));
     inner.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {

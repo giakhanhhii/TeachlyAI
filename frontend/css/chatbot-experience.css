@@ -90,7 +90,7 @@
 }
 
 .flash-card {
-  height: 200px;
+  height: 228px;
   margin-bottom: 16px;
   cursor: pointer;
   position: relative;
@@ -108,12 +108,11 @@
   backface-visibility: hidden;
   border-radius: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 22px 20px;
   text-align: center;
-  font-size: 17px;
-  font-weight: 600;
   border: 2px solid var(--green);
   box-shadow: 0 8px 24px rgba(27, 94, 32, 0.12);
 }
@@ -123,10 +122,32 @@
   color: var(--text);
 }
 
+.flash-front-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.flash-front-term {
+  font-size: clamp(1.35rem, 4.2vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
 .flash-back {
   background: linear-gradient(160deg, #c8e6c9, #e8f5e9);
   color: var(--green-dark);
   transform: rotateY(180deg);
+}
+
+.flash-back-text {
+  font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .flash-hint {
@@ -425,8 +446,10 @@
 
 .flash-mini-hint {
   display: block;
-  margin-top: 12px;
-  font-size: 12px;
+  width: 100%;
+  margin-top: 0;
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
   font-weight: 500;
+  line-height: 1.4;
   color: var(--muted);
 }
