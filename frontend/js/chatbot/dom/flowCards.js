@@ -439,6 +439,81 @@ export function createFullsetPdfCard(deps) {
   return root;
 }
 
+/** Chỉ chọn PDF — bắt buộc trước khi hiện form meta (slide/quiz/flash). */
+/** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
+export function createPickPdfGateCard(deps) {
+  const root = el("div", "flow-card");
+  root.appendChild(el("div", "flow-card-title", "Chọn tệp PDF"));
+  root.appendChild(
+    el("p", "flow-hint", "Chọn một tệp .pdf, sau đó nhấn Tiếp tục. Teachly sẽ hiển thị biểu mẫu chi tiết ở bước sau."),
+  );
+
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".pdf,application/pdf";
+  input.style.display = "none";
+
+  const name = el("span", "flow-file-name", "Chưa chọn tệp");
+
+  const pick = el("button", "flow-secondary-btn", "Chọn file PDF");
+  pick.type = "button";
+
+  const row = el("div", "flow-file-row");
+  row.appendChild(pick);
+  row.appendChild(name);
+  root.appendChild(row);
+  root.appendChild(input);
+
+  pick.addEventListener("click", () => input.click());
+  input.addEventListener("change", () => {
+    const f = input.files && input.files[0];
+    name.textContent = f ? f.name : "Chưa chọn tệp";
+  });
+
+  const err = el("div", "flow-err");
+  err.style.display = "none";
+  root.appendChild(err);
+
+  const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
+  const submit = el("button", "flow-primary-btn", "Tiếp tục");
+  submit.type = "button";
+  actions.appendChild(submit);
+  actions.appendChild(skip);
+  root.appendChild(actions);
+
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    const f = input.files && input.files[0];
+    if (f) {
+      err.textContent = MSG_SKIP_PDF_HAS_FILE;
+      err.style.display = "block";
+      return;
+    }
+    submit.disabled = true;
+    skip.disabled = true;
+    pick.disabled = true;
+    deps.onSubmit({ __no_file: "1" });
+  });
+
+  submit.addEventListener("click", () => {
+    err.style.display = "none";
+    const f = input.files && input.files[0];
+    if (!f) {
+      err.textContent = "Vui lòng chọn một tệp PDF.";
+      err.style.display = "block";
+      return;
+    }
+    submit.disabled = true;
+    skip.disabled = true;
+    pick.disabled = true;
+    deps.onSubmit({ fileName: f.name });
+  });
+
+  return root;
+}
+
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createSlideFormCard(deps) {
   const root = el("div", "flow-card");
@@ -777,6 +852,8 @@ export function createFlowCard(cardType, deps) {
       return createFullsetTopicCard(deps);
     case "fullset_pdf":
       return createFullsetPdfCard(deps);
+    case "pick_pdf_gate":
+      return createPickPdfGateCard(deps);
     case "slide_pdf_meta":
       return createPdfMetaCard({
         title: "Form Slide (PDF)",
