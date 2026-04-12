@@ -247,7 +247,7 @@ function wrapMini(labelText, control) {
  */
 function createPdfMetaCard(opts) {
   const { title, countLabel, countMin, countMax, defaultCount, onSubmit } = opts;
-  const root = el("div", "flow-card");
+  const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", title));
 
   const name = flowTextarea("VD: Bài 8 — Động lực học", 2);
@@ -530,7 +530,7 @@ export function createPickPdfGateCard(deps) {
 
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createSlideFormCard(deps) {
-  const root = el("div", "flow-card");
+  const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
   const docText = flowTextarea("Nhập tên bài học / chủ đề…", 2);
@@ -649,7 +649,7 @@ export function createSlideFormCard(deps) {
 
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createQuizFormCard(deps) {
-  const root = el("div", "flow-card");
+  const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
   const srcText = flowTextarea("Nhập chủ đề / chuyên đề…", 2);
@@ -762,7 +762,7 @@ export function createQuizFormCard(deps) {
 
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createFlashcardFormCard(deps) {
-  const root = el("div", "flow-card");
+  const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
   const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);

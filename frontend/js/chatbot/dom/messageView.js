@@ -1,6 +1,18 @@
 import { BOT_AVATAR_SVG } from "../assets.js";
 import { createFlowCard } from "./flowCards.js";
 
+/** Form slide / quiz / flash (+ meta PDF): giãn ngang gần full cột chat, không áp dụng full set. */
+function isWideFlowFormCardType(cardType) {
+  return (
+    cardType === "slide_form" ||
+    cardType === "quiz_form" ||
+    cardType === "flash_form" ||
+    cardType === "slide_pdf_meta" ||
+    cardType === "quiz_pdf_meta" ||
+    cardType === "flash_pdf_meta"
+  );
+}
+
 /**
  * @param {{
  *   messagesEl: HTMLElement,
@@ -90,6 +102,7 @@ export function createMessageView(opts) {
 
       const shell = document.createElement("div");
       shell.className = "msg-flow-card-shell";
+      if (isWideFlowFormCardType(cardType)) shell.classList.add("msg-flow-card-shell-wide");
       const cardRoot = createFlowCard(cardType, {
         onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
       });
@@ -103,6 +116,7 @@ export function createMessageView(opts) {
     if (hasCard && !headerParts) {
       const shell = document.createElement("div");
       shell.className = "msg-flow-card-shell";
+      if (isWideFlowFormCardType(cardType)) shell.classList.add("msg-flow-card-shell-wide");
       const cardRoot = createFlowCard(cardType, {
         onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
       });
@@ -142,6 +156,7 @@ export function createMessageView(opts) {
       }
       if (cardType && onFlowCardSubmit) {
         bubble.classList.add("bubble-has-flow-card");
+        if (isWideFlowFormCardType(cardType)) bubble.classList.add("bubble-has-flow-card-wide");
         const cardRoot = createFlowCard(cardType, {
           onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
         });
