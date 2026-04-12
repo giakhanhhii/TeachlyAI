@@ -46,6 +46,7 @@ def speed_preset_from_env() -> str:
     """
     PDF_SPEED_PRESET=fast|aggressive — lower default raster when CHANDRA_IMAGE_DPI /
     CHANDRA_MIN_PDF_IMAGE_DIM are not set (much faster OCR, slightly rougher layout on small text).
+    Takes precedence over PDF_CONSERVE_VRAM when set to fast or aggressive.
     """
     p = os.environ.get("PDF_SPEED_PRESET", "").strip().lower()
     if p in ("fast", "aggressive"):
@@ -59,6 +60,42 @@ def _defaults_for_speed_preset(preset: str) -> tuple[str, str]:
     if preset == "fast":
         return "108", "768"
     return "144", "896"
+
+
+def conserve_vram_from_env() -> bool:
+    """
+    PDF_CONSERVE_VRAM=1: when CHANDRA_IMAGE_DPI / CHANDRA_MIN_PDF_IMAGE_DIM are not set,
+    use slightly lower raster settings (faster, less GPU RAM per page). Override anytime
+    by setting those CHANDRA_* variables explicitly. Ignored when PDF_SPEED_PRESET is fast|aggressive.
+    """
+    return truthy_env("PDF_CONSERVE_VRAM")
+
+
+def pdf_gc_every_from_env() -> int:
+    """Run gc.collect() every N OCR pages (not every page) to avoid UI freezes. 0 = never (except PDF end)."""
+    raw = os.environ.get("PDF_GC_EVERY", "8").strip()
+    try:
+        n = int(raw)
+    except ValueError:
+        return 8
+    return max(0, min(128, n))
+
+
+def pdf_tqdm_mininterval_from_env() -> float:
+    """Min seconds between tqdm redraws — lowers console overhead on Windows."""
+    raw = os.environ.get("PDF_TQDM_MININTERVAL", "0.35").strip()
+    try:
+        x = float(raw)
+    except ValueError:
+        return 0.35
+    return max(0.05, min(30.0, x))
+
+
+def _env_nonempty(name: str) -> str | None:
+    v = os.environ.get(name)
+    if v is None or str(v).strip() == "":
+        return None
+    return str(v).strip()
 
 
 @dataclass(frozen=True)
@@ -78,18 +115,28 @@ class PipelineConfig:
     strict_output: bool
     allow_cpu: bool
     chandra_speed_preset: str
+    conserve_vram: bool
     chandra_image_dpi: str
     chandra_min_pdf_image_dim: str
+    pdf_gc_every: int
+    pdf_tqdm_mininterval: float
 
     @classmethod
     def from_env(cls, root_dir: Path) -> PipelineConfig:
         root = root_dir.resolve()
         preset = speed_preset_from_env()
-        def_dpi, def_min = _defaults_for_speed_preset(preset)
-        dpi_raw = os.environ.get("CHANDRA_IMAGE_DPI")
-        min_raw = os.environ.get("CHANDRA_MIN_PDF_IMAGE_DIM")
-        image_dpi = (dpi_raw.strip() if dpi_raw and str(dpi_raw).strip() else "") or def_dpi
-        min_dim = (min_raw.strip() if min_raw and str(min_raw).strip() else "") or def_min
+        conserve = conserve_vram_from_env()
+
+        if preset in ("fast", "aggressive"):
+            def_dpi, def_min = _defaults_for_speed_preset(preset)
+        elif conserve:
+            def_dpi, def_min = "120", "768"
+        else:
+            def_dpi, def_min = _defaults_for_speed_preset("none")
+
+        image_dpi = _env_nonempty("CHANDRA_IMAGE_DPI") or def_dpi
+        min_dim = _env_nonempty("CHANDRA_MIN_PDF_IMAGE_DIM") or def_min
+
         return cls(
             root_dir=root,
             input_dir=root / "data_input",
@@ -108,6 +155,9 @@ class PipelineConfig:
             strict_output=truthy_env("STRICT_OUTPUT"),
             allow_cpu=allow_cpu_from_env(),
             chandra_speed_preset=preset,
+            conserve_vram=conserve,
             chandra_image_dpi=image_dpi,
             chandra_min_pdf_image_dim=min_dim,
+            pdf_gc_every=pdf_gc_every_from_env(),
+            pdf_tqdm_mininterval=pdf_tqdm_mininterval_from_env(),
         )
