@@ -6,7 +6,7 @@
 }
 
 .messages-inner {
-  width: min(980px, 95%);
+  width: var(--chat-content-width);
   margin: 0 auto;
   background: transparent;
 }
@@ -50,6 +50,13 @@
   line-height: 1.5;
   white-space: pre-wrap;
   font-size: 14px;
+}
+
+/* Bot bubble dùng hết chiều ngang còn lại (trừ avatar) để khớp composer */
+.msg-row.bot > .bubble.bot {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bubble.user {
@@ -158,7 +165,7 @@
 .composer {
   display: flex;
   flex-direction: column;
-  width: min(800px, 95%);
+  width: var(--chat-content-width);
   margin: 0 auto;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.18);
@@ -255,6 +262,10 @@
 }
 
 .disclaimer {
+  width: var(--chat-content-width);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
   font-size: 11px;
   color: var(--muted);

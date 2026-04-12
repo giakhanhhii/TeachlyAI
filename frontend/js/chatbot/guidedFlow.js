@@ -1,5 +1,65 @@
-const MSG_START_SOURCE =
+export const MSG_START_SOURCE =
   "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
+
+/** Các nút “Tải lên PDF” ở bước chọn nguồn — cần chọn file trước khi vào form. */
+export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "quiz_pdf", "flash_pdf"]);
+
+/**
+ * Lặp lại câu hỏi mở đầu + 2 nút khi người dùng hủy chọn PDF.
+ * @param {"fullset"|"slide"|"quiz"|"flash"} kind
+ * @returns {{ type: "pushBot", text: string, actions: { label: string, value: string }[] }[]}
+ */
+export function getRestartAwaitSourceEffects(kind) {
+  if (kind === "fullset") {
+    return [
+      {
+        type: "pushBot",
+        text: MSG_START_SOURCE,
+        actions: [
+          { label: "Tải lên PDF", value: "fullset_pdf" },
+          { label: "Nhập chủ đề trực tiếp", value: "fullset_topic" },
+        ],
+      },
+    ];
+  }
+  if (kind === "slide") {
+    return [
+      {
+        type: "pushBot",
+        text: MSG_START_SOURCE,
+        actions: [
+          { label: "Tải lên PDF", value: "slide_pdf" },
+          { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
+        ],
+      },
+    ];
+  }
+  if (kind === "quiz") {
+    return [
+      {
+        type: "pushBot",
+        text: MSG_START_SOURCE,
+        actions: [
+          { label: "Tải lên PDF", value: "quiz_pdf" },
+          { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
+        ],
+      },
+    ];
+  }
+  if (kind === "flash") {
+    return [
+      {
+        type: "pushBot",
+        text: MSG_START_SOURCE,
+        actions: [
+          { label: "Tải lên PDF", value: "flash_pdf" },
+          { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
+        ],
+      },
+    ];
+  }
+  return [];
+}
 
 /**
  * Pure guided-flow transitions (no DOM). Controller applies returned `effects`.
