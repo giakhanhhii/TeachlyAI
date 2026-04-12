@@ -22,9 +22,22 @@ Memory / VRAM
 --------------
 * Pages are rendered and OCR’d one at a time (no giant list of all page images in RAM).
 * Kept page Markdown is streamed to disk as each page finishes (no full-book `per_page` list
-  during OCR). After each PDF, the file is read once for highlights + MCQ post-process.
+  during OCR). The output `.md` is created only when the first kept page is ready — page 1
+  OCR on GPU can take many minutes; watch the log line “Raster + Chandra OCR starting page”.
+  After each PDF, the file is read once for highlights + MCQ post-process.
+* Throughput: on ~8 GiB GPUs, Chandra HF is often **~1–5+ minutes per page** (first page
+  slower). A “few lines” in the file usually means **only one short page** finished, not a bug.
+  Lower `CHANDRA_IMAGE_DPI` (e.g. 96) or keep `PDF_CONSERVE_VRAM=1` to bias toward speed.
 * Default raster caps (before any `chandra` import): MIN_PDF_IMAGE_DIM=896, IMAGE_DPI=144 —
   override with env for sharper scans if you have VRAM headroom.
+* PDF_CONSERVE_VRAM=1: if you did not set CHANDRA_* raster vars, defaults become 768 / 120
+  (less GPU memory per page, often faster — good on ~8 GiB cards).
+* PDF_GC_EVERY=8 (default): run Python gc.collect() every N OCR pages — avoids calling gc
+  after every page (which can freeze Windows). Set 0 to disable periodic gc (still runs
+  lightly at end of each PDF / file).
+* PDF_TQDM_MININTERVAL=0.35: minimum seconds between progress-bar redraws (less console I/O).
+* PDF_MAX_PRIORITY=1 (Windows): skip BELOW_NORMAL process priority and BLAS/torch CPU caps
+  (max throughput, may make the PC feel stuck).
 
 Output cleanup
 ---------------
@@ -48,17 +61,21 @@ Environment (common)
   PDF_EXPORT_MODE=full|exercises default full = complete book per PDF
   CHANDRA_IMAGE_DPI / CHANDRA_MIN_PDF_IMAGE_DIM  optional overrides (mapped to IMAGE_DPI /
                               MIN_PDF_IMAGE_DIM before Chandra loads)
+  PDF_CONSERVE_VRAM=1         optional lower default DPI/min dim when CHANDRA_* unset (speed / VRAM)
+  PDF_GC_EVERY / PDF_TQDM_MININTERVAL / PDF_MAX_PRIORITY  see “Memory / VRAM” above
   STRICT_OUTPUT=1             exit code 1 if any expected .md is missing or zero bytes
 """
 
 from __future__ import annotations
 
+import gc
 import logging
 import os
+import time
 from pathlib import Path
 from typing import Any, List
 
-from config import PipelineConfig
+from config import PipelineConfig, truthy_env
 from ocr_engine import (
     build_chandra_manager,
     chandra_ocr_images,
@@ -79,6 +96,21 @@ from text_cleaner import (
 )
 
 LOG = logging.getLogger("process_pdfs")
+
+
+def _set_windows_background_priority() -> None:
+    """Keep the desktop usable while OCR runs (Windows)."""
+    if os.name != "nt" or truthy_env("PDF_MAX_PRIORITY"):
+        return
+    try:
+        import ctypes
+
+        below = 0x00004000  # BELOW_NORMAL_PRIORITY_CLASS
+        k32 = ctypes.windll.kernel32
+        k32.SetPriorityClass(k32.GetCurrentProcess(), below)
+        LOG.info("Windows process priority: BELOW_NORMAL (use PDF_MAX_PRIORITY=1 to disable).")
+    except Exception as exc:  # noqa: BLE001
+        LOG.debug("SetPriorityClass skipped: %s", exc)
 
 
 def collect_pdfs(input_dir: Path) -> List[Path]:
@@ -161,45 +193,97 @@ def process_one_pdf(
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with open(out_path, "w", encoding="utf-8") as out_f:
-            page_iter = iter_pdf_pages_rgb(pdf_path)
-            with tqdm(
-                page_iter,
-                total=n_pages,
-                desc=f"pages:{stem[:28]}",
-                unit="pg",
-                leave=False,
-            ) as pbar:
-                for pno, pil in pbar:
-                    pbar.set_postfix_str(f"page {pno + 1}/{n_pages}")
-                    outs = chandra_ocr_images(
-                        manager,
-                        [pil],
-                        batch_size=config.chandra_batch_size,
-                        config=config,
-                    )
-                    raw_md = outs[0] if outs else ""
-                    ocr_page_count += 1
-                    keep, _ = streaming_should_keep_page(
-                        raw_md,
-                        export_mode=export_mode,
-                        state=filter_state,
-                    )
-                    if not keep:
-                        del pil
-                        clear_cuda_memory(sync=False, config=config)
-                        continue
+        if out_path.exists():
+            out_path.unlink()
+    except OSError:
+        pass
+    # Open out_path only when the first kept page is ready — avoids a 0-byte file sitting
+    # in Explorer for many minutes while Chandra runs on page 1 (often 5–15+ min on 8 GB).
+    out_f: Any = None
+    wrote_kept = False
+    kept_write_count = 0
+    try:
+        page_iter = iter_pdf_pages_rgb(pdf_path)
+        with tqdm(
+            page_iter,
+            total=n_pages,
+            desc=f"pages:{stem[:28]}",
+            unit="pg",
+            leave=False,
+            mininterval=config.pdf_tqdm_mininterval,
+        ) as pbar:
+            for pno, pil in pbar:
+                pbar.set_postfix_str(f"page {pno + 1}/{n_pages}")
+                LOG.info(
+                    "Raster + Chandra OCR starting page %d/%d — %s",
+                    pno + 1,
+                    n_pages,
+                    stem[:60] + ("…" if len(stem) > 60 else ""),
+                )
+                outs = chandra_ocr_images(
+                    manager,
+                    [pil],
+                    batch_size=config.chandra_batch_size,
+                    config=config,
+                )
+                raw_md = outs[0] if outs else ""
+                del outs
+                ocr_page_count += 1
+                ge = config.pdf_gc_every
+                if ge > 0 and ocr_page_count % ge == 0:
+                    gc.collect()
 
-                    page_src = raw_md.strip() if export_mode == "full" else raw_md
-                    chunk = strip_markdown_images(page_src)
-                    if out_f.tell() > 0:
-                        out_f.write("\n\n---\n\n")
-                    out_f.write(chunk)
-                    out_f.flush()
-                    del pil
+                keep, _ = streaming_should_keep_page(
+                    raw_md,
+                    export_mode=export_mode,
+                    state=filter_state,
+                )
+                if not keep:
+                    del raw_md, pil
                     clear_cuda_memory(sync=False, config=config)
+                    time.sleep(0)
+                    continue
+
+                page_src = raw_md.strip() if export_mode == "full" else raw_md
+                del raw_md
+                chunk = strip_markdown_images(page_src)
+                del page_src
+                if out_f is None:
+                    out_f = open(out_path, "w", encoding="utf-8")
+                else:
+                    out_f.write("\n\n---\n\n")
+                out_f.write(chunk)
+                out_f.flush()
+                wrote_kept = True
+                kept_write_count += 1
+                try:
+                    nbytes = out_path.stat().st_size
+                except OSError:
+                    nbytes = -1
+                nlines = len(chunk.splitlines())
+                LOG.info(
+                    "Kept page flush: OCR pass %d/%d, kept #%d — %s ~%d lines this slice, file %d bytes",
+                    ocr_page_count,
+                    n_pages,
+                    kept_write_count,
+                    out_path.name,
+                    nlines,
+                    nbytes,
+                )
+                del chunk, pil
+                clear_cuda_memory(sync=False, config=config)
+                time.sleep(0)
     finally:
+        if out_f is not None:
+            try:
+                out_f.close()
+            except Exception:  # noqa: BLE001
+                pass
         clear_cuda_memory(sync=True, config=config)
+        gc.collect()
+
+    if not wrote_kept:
+        out_path.write_text("", encoding="utf-8")
 
     md = nfc(out_path.read_text(encoding="utf-8"))
 
@@ -219,11 +303,14 @@ def process_one_pdf(
 
     md = post_process_markdown(md)
     out_path.write_text(md, encoding="utf-8")
+    del md
     clear_cuda_memory(sync=True, config=config)
+    gc.collect()
 
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+    _set_windows_background_priority()
     root = Path(__file__).resolve().parent
     config = PipelineConfig.from_env(root)
 
@@ -265,7 +352,9 @@ def main() -> int:
 
     LOG.info(
         "Chandra method=%s batch_size=%s TORCH_DEVICE=%s MODEL_CHECKPOINT=%s "
-        "PDF_EXPORT_MODE=%s APPLY_HIGHLIGHTS=%s GPU_CACHE_CLEAR=%s ALLOW_CPU=%s",
+        "PDF_EXPORT_MODE=%s APPLY_HIGHLIGHTS=%s GPU_CACHE_CLEAR=%s ALLOW_CPU=%s "
+        "PDF_CONSERVE_VRAM=%s CHANDRA_IMAGE_DPI=%s CHANDRA_MIN_PDF_IMAGE_DIM=%s "
+        "PDF_GC_EVERY=%s PDF_TQDM_MININTERVAL=%s",
         config.chandra_method,
         config.chandra_batch_size,
         torch_device,
@@ -274,9 +363,25 @@ def main() -> int:
         config.apply_highlights,
         config.gpu_cache_clear,
         config.allow_cpu,
+        config.conserve_vram,
+        config.chandra_image_dpi,
+        config.chandra_min_pdf_image_dim,
+        config.pdf_gc_every,
+        config.pdf_tqdm_mininterval,
     )
+    if config.conserve_vram and config.chandra_batch_size > 1:
+        LOG.warning(
+            "PDF_CONSERVE_VRAM=1 but CHANDRA_BATCH_SIZE=%s — batch>1 raises OOM risk on many GPUs.",
+            config.chandra_batch_size,
+        )
 
-    for pdf_path in tqdm(pdfs, desc="PDFs", unit="file"):
+    outer_min = max(1.0, float(config.pdf_tqdm_mininterval) * 2.0)
+    for pdf_path in tqdm(
+        pdfs,
+        desc="PDFs",
+        unit="file",
+        mininterval=outer_min,
+    ):
         try:
             process_one_pdf(
                 pdf_path,
@@ -287,6 +392,8 @@ def main() -> int:
             )
         except Exception as exc:  # noqa: BLE001
             LOG.exception("Failed on %s: %s", pdf_path.name, exc)
+        finally:
+            gc.collect()
 
     rc = log_export_summary(
         pdfs,

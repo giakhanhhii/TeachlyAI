@@ -2,24 +2,57 @@
 
 from __future__ import annotations
 
-import gc
 import logging
 import os
 from pathlib import Path
 from typing import Any, Iterable, Tuple
 
-from config import PipelineConfig, gpu_cache_clear_from_env
+from config import PipelineConfig, gpu_cache_clear_from_env, truthy_env
 
 LOG = logging.getLogger("process_pdfs")
+
+
+def _apply_blas_thread_env_caps() -> None:
+    """Cap BLAS/OpenMP threads before NumPy/torch heavy work (Windows desktop responsiveness)."""
+    if truthy_env("PDF_MAX_PRIORITY"):
+        return
+    if os.name != "nt":
+        return
+    for key, val in (
+        ("OMP_NUM_THREADS", "4"),
+        ("MKL_NUM_THREADS", "4"),
+        ("NUMEXPR_NUM_THREADS", "4"),
+        ("OPENBLAS_NUM_THREADS", "4"),
+    ):
+        if os.environ.get(key, "").strip() == "":
+            os.environ[key] = val
+
+
+def _cap_torch_cpu_threads_for_responsive_os() -> None:
+    """After torch is imported, cap intra-op threads so the UI does not freeze."""
+    if truthy_env("PDF_MAX_PRIORITY"):
+        return
+    if os.name != "nt":
+        return
+    try:
+        import torch
+
+        nthr = min(4, max(2, (os.cpu_count() or 8) // 2))
+        torch.set_num_threads(nthr)
+        torch.set_num_interop_threads(1)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def clear_cuda_memory(*, sync: bool = False, config: PipelineConfig | None = None) -> None:
     """
     Free fragmented VRAM between page batches / after a large PDF.
     `sync=True` waits for GPU work to finish (slightly slower; use after each file).
+
+    Does not call gc.collect() here — doing that every page freezes the OS; use periodic
+    gc in the orchestrator (PDF_GC_EVERY) instead.
     """
     use_clear = config.gpu_cache_clear if config else gpu_cache_clear_from_env()
-    gc.collect()
     if not use_clear:
         return
     try:
@@ -54,6 +87,7 @@ def configure_torch_env(config: PipelineConfig) -> str:
     Default GPU: cuda:0. If CUDA is unavailable, fails unless ALLOW_CPU=1 in config
     (set ALLOW_CPU=1 in the environment before loading config).
     """
+    _apply_blas_thread_env_caps()
     raw = (config.torch_device_raw or "cuda").strip()
     want = raw.lower()
     if want in ("cpu", "none", ""):
@@ -77,6 +111,8 @@ def configure_torch_env(config: PipelineConfig) -> str:
 
     try:
         import torch
+
+        _cap_torch_cpu_threads_for_responsive_os()
 
         if normalized.startswith("cuda") and not torch.cuda.is_available():
             if config.allow_cpu:
@@ -197,7 +233,18 @@ def iter_pdf_pages_rgb(pdf_path: Path) -> Iterable[Tuple[int, Any]]:
             scale_dpi = max(scale_dpi, float(image_dpi))
             flatten(page_obj)
             pil_image = page_obj.render(scale=scale_dpi / 72).to_pil().convert("RGB")
-            yield page, pil_image
+            try:
+                yield page, pil_image
+            finally:
+                try:
+                    pil_image.close()
+                except Exception:  # noqa: BLE001
+                    pass
+                del pil_image
+            try:
+                page_obj.close()
+            except Exception:  # noqa: BLE001
+                pass
     finally:
         doc.close()
 
@@ -233,5 +280,8 @@ def chandra_ocr_images(
                 page_mds.append("")
             else:
                 page_mds.append(getattr(out, "markdown", "") or "")
+        del outputs
+        del batch
+        del chunk
         clear_cuda_memory(sync=False, config=config)
     return page_mds
