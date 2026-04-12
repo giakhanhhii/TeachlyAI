@@ -58,12 +58,10 @@
 }
 
 .bubble.bot {
-  background: linear-gradient(
-    160deg,
-    rgba(255, 255, 255, 0.34) 0%,
-    rgba(255, 255, 255, 0.18) 45%,
-    rgba(220, 240, 255, 0.22) 100%
-  );
+  background: linear-gradient(160deg,
+      rgba(255, 255, 255, 0.34) 0%,
+      rgba(255, 255, 255, 0.18) 45%,
+      rgba(220, 240, 255, 0.22) 100%);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow:
@@ -137,6 +135,7 @@
 }
 
 @keyframes thinkingPulse {
+
   0%,
   80%,
   100% {
