@@ -14,6 +14,14 @@
   box-sizing: border-box;
 }
 
+/* Slide / Quiz / Flash (+ meta PDF): lấp phần còn lại sau avatar, không co như max-content */
+.flow-card.flow-card-flow-wide {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .flow-card-title {
   font-size: 13px;
   font-weight: 700;
@@ -213,6 +221,14 @@
   max-width: min(72%, calc(100% - 44px));
 }
 
+/* Form slide/quiz/flash trong bubble: giãn gần hết hàng (trừ full set) */
+.msg-row.bot > .bubble.bot.bubble-has-flow-card-wide {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: calc(100% - 44px);
+}
+
 /* Form card on its own row (not nested inside a glass bubble) */
 .msg-flow-card-shell {
   flex: 0 1 auto;
@@ -220,6 +236,14 @@
   min-width: 0;
   width: max-content;
   max-width: min(72%, calc(100% - 44px));
+}
+
+.msg-flow-card-shell.msg-flow-card-shell-wide {
+  flex: 1 1 auto;
+  align-self: flex-start;
+  min-width: 0;
+  width: auto;
+  max-width: calc(100% - 44px);
 }
 
 .msg-flow-card-shell .flow-card {
