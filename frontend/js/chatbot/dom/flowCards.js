@@ -226,6 +226,133 @@ function wrapMini(labelText, control) {
   return f;
 }
 
+/**
+ * Form sau khi chọn "Tải lên PDF" (chỉ nhập meta; tệp xử lý ở bước tích hợp sau).
+ * @param {{
+ *   title: string,
+ *   countLabel: string,
+ *   countMin: number,
+ *   countMax: number | null,
+ *   defaultCount: string,
+ *   onSubmit: (p: Record<string, string>) => void,
+ * }} opts
+ */
+function createPdfMetaCard(opts) {
+  const { title, countLabel, countMin, countMax, defaultCount, onSubmit } = opts;
+  const root = el("div", "flow-card");
+  root.appendChild(el("div", "flow-card-title", title));
+
+  const name = el("input", "flow-input");
+  name.type = "text";
+  name.placeholder = "VD: Bài 8 — Động lực học";
+  root.appendChild(wrapField("Tên", name, "Tên gọi bộ nội dung / phiên làm việc"));
+
+  const count = el("input", "flow-input");
+  count.type = "number";
+  count.min = String(countMin);
+  if (countMax != null) count.max = String(countMax);
+  count.placeholder = countMax != null ? `${countMin}–${countMax}` : `≥ ${countMin}`;
+  root.appendChild(wrapField(countLabel, count, ""));
+
+  const structure = el("input", "flow-input");
+  structure.placeholder = "VD: Mở đầu → Nội dung chính → Củng cố";
+  root.appendChild(wrapField("Cấu trúc", structure, ""));
+
+  const style = el("input", "flow-input");
+  style.placeholder = "VD: Trang trọng, gần gũi, hài hước…";
+  root.appendChild(wrapField("Phong cách", style, ""));
+
+  const notes = el("textarea", "flow-textarea");
+  notes.placeholder = "Yêu cầu bổ sung, ngữ cảnh lớp học…";
+  root.appendChild(wrapField("Ghi chú thêm", notes, ""));
+
+  const err = el("div", "flow-err");
+  err.style.display = "none";
+  root.appendChild(err);
+
+  const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
+  const submit = el("button", "flow-primary-btn", "Gửi thông tin");
+  submit.type = "button";
+  actions.appendChild(submit);
+  actions.appendChild(skip);
+  root.appendChild(actions);
+
+  function readState() {
+    const nm = name.value.trim();
+    const c = count.value.trim();
+    const n = Number(c);
+    const st = structure.value.trim();
+    const sy = style.value.trim();
+    const nt = notes.value.trim();
+    const hasAny = Boolean(nm || c || st || sy || nt);
+    const inRange =
+      Number.isFinite(n) &&
+      n >= countMin &&
+      (countMax == null || (n <= countMax && n >= countMin));
+    const complete = Boolean(nm) && Boolean(c) && inRange;
+    return { nm, c, n, st, sy, nt, hasAny, complete, inRange };
+  }
+
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    const st = readState();
+    if (st.hasAny && !st.complete) {
+      err.textContent = MSG_SKIP_PARTIAL;
+      err.style.display = "block";
+      return;
+    }
+    if (st.hasAny && st.complete) {
+      err.textContent = MSG_SKIP_USE_SUBMIT;
+      err.style.display = "block";
+      return;
+    }
+    showAutoConfirmPanel(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      onSubmit({
+        __auto: "1",
+        name: "(Teachly tự động)",
+        count: defaultCount,
+        structure: "",
+        style: "",
+        notes: "",
+      });
+    });
+  });
+
+  submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
+    err.style.display = "none";
+    const st = readState();
+    if (!st.nm) {
+      err.textContent = "Vui lòng nhập tên.";
+      err.style.display = "block";
+      return;
+    }
+    if (!st.c || !st.inRange) {
+      err.textContent =
+        countMax != null
+          ? `Số lượng phải từ ${countMin} đến ${countMax}.`
+          : `Số lượng phải là số ≥ ${countMin}.`;
+      err.style.display = "block";
+      return;
+    }
+    submit.disabled = true;
+    skip.disabled = true;
+    onSubmit({
+      name: st.nm,
+      count: String(st.n),
+      structure: st.st,
+      style: st.sy,
+      notes: st.nt,
+    });
+  });
+
+  return root;
+}
+
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createFullsetPdfCard(deps) {
   const root = el("div", "flow-card");
@@ -320,35 +447,11 @@ export function createSlideFormCard(deps) {
   const docText = el("input", "flow-input");
   docText.type = "text";
   docText.placeholder = "Nhập tên bài học / chủ đề…";
-  const docHint = el(
-    "p",
-    "flow-hint",
-    "Hoặc tải PDF/Văn bản — khi có PDF, hệ thống sẽ dùng Chandra OCR2 để chuyển Markdown (tích hợp sau).",
-  );
-  const file = document.createElement("input");
-  file.type = "file";
-  file.accept = ".pdf,.txt,.md,text/plain,application/pdf";
-  file.style.display = "none";
-  const fileBtn = el("button", "flow-secondary-btn", "Tải tệp (tuỳ chọn)");
-  fileBtn.type = "button";
-  const fileName = el("span", "flow-file-name", "");
-
   const docBlock = el("div", "flow-field");
-  docBlock.appendChild(el("label", "flow-label", "Tài liệu"));
+  docBlock.appendChild(el("label", "flow-label", "Chủ đề bài giảng"));
   docBlock.appendChild(docText);
-  docBlock.appendChild(docHint);
-  const fr = el("div", "flow-file-row");
-  fr.appendChild(fileBtn);
-  fr.appendChild(fileName);
-  docBlock.appendChild(fr);
-  docBlock.appendChild(file);
+  docBlock.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập chủ đề trực tiếp — mô tả rõ nội dung mong muốn."));
   root.appendChild(docBlock);
-
-  fileBtn.addEventListener("click", () => file.click());
-  file.addEventListener("change", () => {
-    const f = file.files && file.files[0];
-    fileName.textContent = f ? f.name : "";
-  });
 
   const count = el("input", "flow-input");
   count.type = "number";
@@ -389,15 +492,13 @@ export function createSlideFormCard(deps) {
 
   function readSlideState() {
     const topic = docText.value.trim();
-    const f = file.files && file.files[0];
     const n = Number(count.value);
     const st = structure.value.trim();
     const sty = style.value;
     const nt = notes.value.trim();
-    const hasAny = Boolean(topic || f || count.value.trim() || st || sty || nt);
-    const complete =
-      Boolean(topic || f) && Number.isFinite(n) && n >= 1 && n <= 30 && Boolean(sty);
-    return { topic, f, n, st, sty, nt, hasAny, complete };
+    const hasAny = Boolean(topic || count.value.trim() || st || sty || nt);
+    const complete = Boolean(topic) && Number.isFinite(n) && n >= 1 && n <= 30 && Boolean(sty);
+    return { topic, n, st, sty, nt, hasAny, complete };
   }
 
   skip.addEventListener("click", () => {
@@ -416,11 +517,9 @@ export function createSlideFormCard(deps) {
     showAutoConfirmPanel(root, err, () => {
       submit.disabled = true;
       skip.disabled = true;
-      fileBtn.disabled = true;
       deps.onSubmit({
         __auto: "1",
         topic: "(Teachly tự động)",
-        fileName: "",
         count: "10",
         structure: "",
         style: "Gần gũi",
@@ -433,9 +532,8 @@ export function createSlideFormCard(deps) {
     removeSkipConfirm(root);
     err.style.display = "none";
     const topic = docText.value.trim();
-    const f = file.files && file.files[0];
-    if (!topic && !f) {
-      err.textContent = "Nhập tên bài học hoặc chọn tệp tài liệu.";
+    if (!topic) {
+      err.textContent = "Vui lòng nhập chủ đề bài giảng.";
       err.style.display = "block";
       return;
     }
@@ -453,8 +551,7 @@ export function createSlideFormCard(deps) {
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
-      topic: topic || (f ? `[Tệp] ${f.name}` : ""),
-      fileName: f ? f.name : "",
+      topic,
       count: String(n),
       structure: structure.value.trim(),
       style: style.value,
@@ -472,29 +569,12 @@ export function createQuizFormCard(deps) {
 
   const srcText = el("input", "flow-input");
   srcText.placeholder = "Nhập chủ đề / chuyên đề…";
-  const file = document.createElement("input");
-  file.type = "file";
-  file.accept = ".pdf,.txt,.md,text/plain,application/pdf";
-  file.style.display = "none";
-  const fileBtn = el("button", "flow-secondary-btn", "Tải tài liệu (tuỳ chọn)");
-  fileBtn.type = "button";
-  const fileName = el("span", "flow-file-name", "");
 
   const src = el("div", "flow-field");
-  src.appendChild(el("label", "flow-label", "Nguồn dữ liệu"));
+  src.appendChild(el("label", "flow-label", "Chủ đề / chuyên đề"));
   src.appendChild(srcText);
-  const fr = el("div", "flow-file-row");
-  fr.appendChild(fileBtn);
-  fr.appendChild(fileName);
-  src.appendChild(fr);
-  src.appendChild(file);
+  src.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập chủ đề trực tiếp — không cần tải tệp ở bước này."));
   root.appendChild(src);
-
-  fileBtn.addEventListener("click", () => file.click());
-  file.addEventListener("change", () => {
-    const f = file.files && file.files[0];
-    fileName.textContent = f ? f.name : "";
-  });
 
   const kind = el("input", "flow-input");
   kind.placeholder = "VD: Phát âm, Ngữ pháp, Đọc hiểu, Từ vựng";
@@ -529,14 +609,13 @@ export function createQuizFormCard(deps) {
 
   function readQuizState() {
     const t = srcText.value.trim();
-    const f = file.files && file.files[0];
     const k = kind.value.trim();
     const n = Number(qn.value);
     const d = diff.value.trim();
     const nt = notes.value.trim();
-    const hasAny = Boolean(t || f || k || qn.value.trim() || d || nt);
-    const complete = Boolean(t || f) && Number.isFinite(n) && n >= 1 && Boolean(k);
-    return { t, f, k, n, d, nt, hasAny, complete };
+    const hasAny = Boolean(t || k || qn.value.trim() || d || nt);
+    const complete = Boolean(t) && Number.isFinite(n) && n >= 1 && Boolean(k);
+    return { t, k, n, d, nt, hasAny, complete };
   }
 
   skip.addEventListener("click", () => {
@@ -555,11 +634,9 @@ export function createQuizFormCard(deps) {
     showAutoConfirmPanel(root, err, () => {
       submit.disabled = true;
       skip.disabled = true;
-      fileBtn.disabled = true;
       deps.onSubmit({
         __auto: "1",
         source: "(Teachly tự động)",
-        fileName: "",
         kind: "Ôn tập THPTQG",
         count: "15",
         difficulty: "",
@@ -572,9 +649,8 @@ export function createQuizFormCard(deps) {
     removeSkipConfirm(root);
     err.style.display = "none";
     const t = srcText.value.trim();
-    const f = file.files && file.files[0];
-    if (!t && !f) {
-      err.textContent = "Nhập chủ đề hoặc tải tài liệu.";
+    if (!t) {
+      err.textContent = "Vui lòng nhập chủ đề hoặc chuyên đề.";
       err.style.display = "block";
       return;
     }
@@ -592,8 +668,7 @@ export function createQuizFormCard(deps) {
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
-      source: t || (f ? `[Tệp] ${f.name}` : ""),
-      fileName: f ? f.name : "",
+      source: t,
       kind: kind.value.trim(),
       count: String(n),
       difficulty: diff.value.trim(),
@@ -702,6 +777,33 @@ export function createFlowCard(cardType, deps) {
       return createFullsetTopicCard(deps);
     case "fullset_pdf":
       return createFullsetPdfCard(deps);
+    case "slide_pdf_meta":
+      return createPdfMetaCard({
+        title: "Form Slide (PDF)",
+        countLabel: "Số lượng slide",
+        countMin: 1,
+        countMax: 30,
+        defaultCount: "10",
+        onSubmit: deps.onSubmit,
+      });
+    case "quiz_pdf_meta":
+      return createPdfMetaCard({
+        title: "Form Quiz (PDF)",
+        countLabel: "Số lượng câu hỏi",
+        countMin: 1,
+        countMax: null,
+        defaultCount: "15",
+        onSubmit: deps.onSubmit,
+      });
+    case "flash_pdf_meta":
+      return createPdfMetaCard({
+        title: "Form Flashcard (PDF)",
+        countLabel: "Số lượng thẻ",
+        countMin: 1,
+        countMax: 500,
+        defaultCount: "20",
+        onSubmit: deps.onSubmit,
+      });
     case "slide_form":
       return createSlideFormCard(deps);
     case "quiz_form":

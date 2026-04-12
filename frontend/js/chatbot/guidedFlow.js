@@ -1,42 +1,149 @@
+const MSG_START_SOURCE =
+  "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
+
 /**
  * Pure guided-flow transitions (no DOM). Controller applies returned `effects`.
  * @param {any} guided
  * @param {string} value
  */
 export function computePickAction(guided, value) {
-  if (!guided || guided.kind !== "fullset" || guided.step !== "await_source") {
+  if (!guided || guided.step !== "await_source") {
     return { handled: false, guided, effects: [] };
   }
-  if (value === "fullset_pdf") {
-    return {
-      handled: true,
-      guided: { kind: "fullset", step: "await_pdf_confirm", data: {} },
-      effects: [
-        { type: "pushUser", text: "Tải lên PDF" },
-        {
-          type: "pushBot",
-          text:
-            "Bạn đã chọn tải lên PDF.\n\nKhi tích hợp xong, Teachly sẽ dùng Chandra OCR2 để chuyển nội dung sang Markdown. Hiện tại bạn chỉ cần chọn tệp bên dưới để hoàn tất bước chuẩn bị trên giao diện.",
-          cardType: "fullset_pdf",
-        },
-      ],
-    };
+
+  if (guided.kind === "fullset") {
+    if (value === "fullset_pdf") {
+      return {
+        handled: true,
+        guided: { kind: "fullset", step: "await_pdf_confirm", data: {} },
+        effects: [
+          { type: "pushUser", text: "Tải lên PDF" },
+          {
+            type: "pushBot",
+            text:
+              "Bạn đã chọn tải lên PDF.\n\nKhi tích hợp xong, Teachly sẽ dùng Chandra OCR2 để chuyển nội dung sang Markdown. Hiện tại bạn chỉ cần chọn tệp bên dưới để hoàn tất bước chuẩn bị trên giao diện.",
+            cardType: "fullset_pdf",
+          },
+        ],
+      };
+    }
+    if (value === "fullset_topic") {
+      return {
+        handled: true,
+        guided: { kind: "fullset", step: "await_topic_form", data: {} },
+        effects: [
+          { type: "pushUser", text: "Nhập chủ đề trực tiếp" },
+          {
+            type: "pushBot",
+            text:
+              "Tuyệt vời! Bạn hãy hoàn thiện nhanh các thông tin dưới đây để Teachly bắt đầu soạn Full Set nhé:",
+            cardType: "fullset_topic",
+          },
+        ],
+      };
+    }
+    return { handled: false, guided, effects: [] };
   }
-  if (value === "fullset_topic") {
-    return {
-      handled: true,
-      guided: { kind: "fullset", step: "await_topic_form", data: {} },
-      effects: [
-        { type: "pushUser", text: "Nhập chủ đề trực tiếp" },
-        {
-          type: "pushBot",
-          text:
-            "Tuyệt vời! Bạn hãy hoàn thiện nhanh các thông tin dưới đây để Teachly bắt đầu soạn Full Set nhé:",
-          cardType: "fullset_topic",
-        },
-      ],
-    };
+
+  if (guided.kind === "slide") {
+    if (value === "slide_pdf") {
+      return {
+        handled: true,
+        guided: { kind: "slide", step: "await_pdf_meta", data: {} },
+        effects: [
+          { type: "pushUser", text: "Tải lên PDF" },
+          {
+            type: "pushBot",
+            text:
+              "Bạn đã chọn tải lên PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:",
+            cardType: "slide_pdf_meta",
+          },
+        ],
+      };
+    }
+    if (value === "slide_topic") {
+      return {
+        handled: true,
+        guided: { kind: "slide", step: "await_topic_form", data: {} },
+        effects: [
+          { type: "pushUser", text: "Nhập chủ đề trực tiếp" },
+          {
+            type: "pushBot",
+            text: "Tuyệt vời! Điền thông tin dưới đây để Teachly thiết kế slide bài giảng cho bạn:",
+            cardType: "slide_form",
+          },
+        ],
+      };
+    }
+    return { handled: false, guided, effects: [] };
   }
+
+  if (guided.kind === "quiz") {
+    if (value === "quiz_pdf") {
+      return {
+        handled: true,
+        guided: { kind: "quiz", step: "await_pdf_meta", data: {} },
+        effects: [
+          { type: "pushUser", text: "Tải lên PDF" },
+          {
+            type: "pushBot",
+            text:
+              "Bạn đã chọn tải lên PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:",
+            cardType: "quiz_pdf_meta",
+          },
+        ],
+      };
+    }
+    if (value === "quiz_topic") {
+      return {
+        handled: true,
+        guided: { kind: "quiz", step: "await_topic_form", data: {} },
+        effects: [
+          { type: "pushUser", text: "Nhập chủ đề trực tiếp" },
+          {
+            type: "pushBot",
+            text: "Tuyệt vời! Thiết lập thông số cho bộ câu hỏi của bạn tại đây:",
+            cardType: "quiz_form",
+          },
+        ],
+      };
+    }
+    return { handled: false, guided, effects: [] };
+  }
+
+  if (guided.kind === "flash") {
+    if (value === "flash_pdf") {
+      return {
+        handled: true,
+        guided: { kind: "flash", step: "await_pdf_meta", data: {} },
+        effects: [
+          { type: "pushUser", text: "Tải lên PDF" },
+          {
+            type: "pushBot",
+            text:
+              "Bạn đã chọn tải lên PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:",
+            cardType: "flash_pdf_meta",
+          },
+        ],
+      };
+    }
+    if (value === "flash_topic") {
+      return {
+        handled: true,
+        guided: { kind: "flash", step: "await_topic_form", data: {} },
+        effects: [
+          { type: "pushUser", text: "Nhập chủ đề trực tiếp" },
+          {
+            type: "pushBot",
+            text: "Tuyệt vời! Cung cấp thông tin để Teachly tạo bộ Flashcard cho bạn:",
+            cardType: "flash_form",
+          },
+        ],
+      };
+    }
+    return { handled: false, guided, effects: [] };
+  }
+
   return { handled: false, guided, effects: [] };
 }
 
@@ -113,12 +220,45 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     };
   }
 
-  if (guided.kind === "slide" && guided.step === "await_form" && cardType === "slide_form") {
+  if (guided.kind === "slide" && guided.step === "await_pdf_meta" && cardType === "slide_pdf_meta") {
     const notes = [
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
       payload.style ? `Phong cách: ${payload.style}` : "",
       payload.notes ? `Ghi chú: ${payload.notes}` : "",
-      payload.fileName ? `Tệp đính kèm: ${payload.fileName}` : "",
+      "Nguồn: PDF",
+    ]
+      .filter(Boolean)
+      .join(" | ");
+    const meta = {
+      topic: payload.name || "—",
+      count: payload.count || "—",
+      notes: notes || "—",
+    };
+    return {
+      handled: true,
+      guided: null,
+      effects: [
+        {
+          type: "pushUser",
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide — PDF] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
+        },
+        {
+          type: "pushBot",
+          text:
+            payload.__auto === "1"
+              ? "Bạn đã xác nhận để Teachly tự động thiết kế slide từ PDF (mock).\n\nBên dưới là xem trước bộ slide."
+              : "Cảm ơn bạn! Thông tin PDF đã được ghi nhận.\n\nBên dưới là xem trước bộ slide (mock).",
+        },
+        { type: "showSlide", meta },
+      ],
+    };
+  }
+
+  if (guided.kind === "slide" && guided.step === "await_topic_form" && cardType === "slide_form") {
+    const notes = [
+      payload.structure ? `Cấu trúc: ${payload.structure}` : "",
+      payload.style ? `Phong cách: ${payload.style}` : "",
+      payload.notes ? `Ghi chú: ${payload.notes}` : "",
     ]
       .filter(Boolean)
       .join(" | ");
@@ -147,9 +287,43 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     };
   }
 
-  if (guided.kind === "quiz" && guided.step === "await_form" && cardType === "quiz_form") {
+  if (guided.kind === "quiz" && guided.step === "await_pdf_meta" && cardType === "quiz_pdf_meta") {
+    const topic = [payload.name, "Từ PDF"].filter(Boolean).join(" — ") || "—";
+    const notes = [
+      payload.structure ? `Cấu trúc: ${payload.structure}` : "",
+      payload.style ? `Phong cách: ${payload.style}` : "",
+      payload.notes ? `Ghi chú: ${payload.notes}` : "",
+    ]
+      .filter(Boolean)
+      .join(" | ");
+    const meta = {
+      topic,
+      count: payload.count || "—",
+      notes: notes || "—",
+    };
+    return {
+      handled: true,
+      guided: null,
+      effects: [
+        {
+          type: "pushUser",
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Quiz — PDF] ${payload.name || "—"} — ${meta.count} câu`,
+        },
+        {
+          type: "pushBot",
+          text:
+            payload.__auto === "1"
+              ? "Bạn đã xác nhận để Teachly tự động tạo bộ quiz từ PDF (mock).\n\nBên dưới là giao diện làm bài."
+              : "Thiết lập PDF đã xong trên giao diện.\n\nBên dưới là giao diện làm bài (mock).",
+        },
+        { type: "showQuiz", meta },
+      ],
+    };
+  }
+
+  if (guided.kind === "quiz" && guided.step === "await_topic_form" && cardType === "quiz_form") {
     const topic = [payload.source, payload.kind].filter(Boolean).join(" — ") || "—";
-    const notes = [payload.difficulty ? `Tỉ lệ độ khó: ${payload.difficulty}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : "", payload.fileName ? `Tệp: ${payload.fileName}` : ""]
+    const notes = [payload.difficulty ? `Tỉ lệ độ khó: ${payload.difficulty}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : ""]
       .filter(Boolean)
       .join(" | ");
     const meta = {
@@ -177,7 +351,38 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     };
   }
 
-  if (guided.kind === "flash" && guided.step === "await_form" && cardType === "flash_form") {
+  if (guided.kind === "flash" && guided.step === "await_pdf_meta" && cardType === "flash_pdf_meta") {
+    const extra = [
+      payload.structure ? `Cấu trúc: ${payload.structure}` : "",
+      payload.style ? `Phong cách: ${payload.style}` : "",
+      payload.notes ? `Ghi chú: ${payload.notes}` : "",
+      "Nguồn: PDF",
+    ]
+      .filter(Boolean)
+      .join(" | ");
+    const meta = {
+      source: payload.name || "—",
+      count: payload.count || "—",
+      extra: extra || "—",
+    };
+    return {
+      handled: true,
+      guided: null,
+      effects: [
+        { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard — PDF] ${meta.source} — ${meta.count} thẻ` },
+        {
+          type: "pushBot",
+          text:
+            payload.__auto === "1"
+              ? "Bạn đã xác nhận để Teachly tự động tạo flashcard từ PDF (mock).\n\nBên dưới là bộ thẻ — nhấn để lật."
+              : "Cảm ơn bạn!\n\nBên dưới là bộ flashcard xem trước từ PDF (mock) — nhấn thẻ để lật.",
+        },
+        { type: "showFlash", meta },
+      ],
+    };
+  }
+
+  if (guided.kind === "flash" && guided.step === "await_topic_form" && cardType === "flash_form") {
     const src = payload.list || "(Teachly gợi ý theo ghi chú)";
     const extra = [payload.back ? `Mặt sau: ${payload.back}` : "", payload.aiImage ? `Hình AI: ${payload.aiImage}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : ""]
       .filter(Boolean)
@@ -216,8 +421,7 @@ export function computeStartFlow(flow) {
     guided = { kind: "fullset", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
-      text:
-        "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?",
+      text: MSG_START_SOURCE,
       actions: [
         { label: "Tải lên PDF", value: "fullset_pdf" },
         { label: "Nhập chủ đề trực tiếp", value: "fullset_topic" },
@@ -227,31 +431,40 @@ export function computeStartFlow(flow) {
   }
 
   if (flow === "slide") {
-    guided = { kind: "slide", step: "await_form", data: {} };
+    guided = { kind: "slide", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
-      text: "Hãy điền thông tin để tôi thiết kế bài giảng cho bạn:",
-      cardType: "slide_form",
+      text: MSG_START_SOURCE,
+      actions: [
+        { label: "Tải lên PDF", value: "slide_pdf" },
+        { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
+      ],
     });
     return { guided, effects };
   }
 
   if (flow === "quiz") {
-    guided = { kind: "quiz", step: "await_form", data: {} };
+    guided = { kind: "quiz", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
-      text: "Thiết lập thông số cho bộ câu hỏi trắc nghiệm của bạn tại đây:",
-      cardType: "quiz_form",
+      text: MSG_START_SOURCE,
+      actions: [
+        { label: "Tải lên PDF", value: "quiz_pdf" },
+        { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
+      ],
     });
     return { guided, effects };
   }
 
   if (flow === "flashcard") {
-    guided = { kind: "flash", step: "await_form", data: {} };
+    guided = { kind: "flash", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
-      text: "Cung cấp danh sách từ vựng để Teachly tạo bộ Flashcard thông minh:",
-      cardType: "flash_form",
+      text: MSG_START_SOURCE,
+      actions: [
+        { label: "Tải lên PDF", value: "flash_pdf" },
+        { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
+      ],
     });
     return { guided, effects };
   }

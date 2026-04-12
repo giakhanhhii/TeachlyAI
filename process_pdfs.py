@@ -25,6 +25,9 @@ Memory / VRAM
   during OCR). The output `.md` is created only when the first kept page is ready — page 1
   OCR on GPU can take many minutes; watch the log line “Raster + Chandra OCR starting page”.
   After each PDF, the file is read once for highlights + MCQ post-process.
+* Throughput: on ~8 GiB GPUs, Chandra HF is often **~1–5+ minutes per page** (first page
+  slower). A “few lines” in the file usually means **only one short page** finished, not a bug.
+  Lower `CHANDRA_IMAGE_DPI` (e.g. 96) or keep `PDF_CONSERVE_VRAM=1` to bias toward speed.
 * Default raster caps (before any `chandra` import): MIN_PDF_IMAGE_DIM=896, IMAGE_DPI=144 —
   override with env for sharper scans if you have VRAM headroom.
 * PDF_CONSERVE_VRAM=1: if you did not set CHANDRA_* raster vars, defaults become 768 / 120
@@ -198,6 +201,7 @@ def process_one_pdf(
     # in Explorer for many minutes while Chandra runs on page 1 (often 5–15+ min on 8 GB).
     out_f: Any = None
     wrote_kept = False
+    kept_write_count = 0
     try:
         page_iter = iter_pdf_pages_rgb(pdf_path)
         with tqdm(
@@ -251,6 +255,21 @@ def process_one_pdf(
                 out_f.write(chunk)
                 out_f.flush()
                 wrote_kept = True
+                kept_write_count += 1
+                try:
+                    nbytes = out_path.stat().st_size
+                except OSError:
+                    nbytes = -1
+                nlines = len(chunk.splitlines())
+                LOG.info(
+                    "Kept page flush: OCR pass %d/%d, kept #%d — %s ~%d lines this slice, file %d bytes",
+                    ocr_page_count,
+                    n_pages,
+                    kept_write_count,
+                    out_path.name,
+                    nlines,
+                    nbytes,
+                )
                 del chunk, pil
                 clear_cuda_memory(sync=False, config=config)
                 time.sleep(0)
