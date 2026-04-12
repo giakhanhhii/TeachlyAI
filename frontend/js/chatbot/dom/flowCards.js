@@ -12,6 +12,15 @@ function el(tag, className, text) {
   return n;
 }
 
+/** Ô nhập đa dòng — Enter và Shift+Enter đều xuống dòng (hành vi mặc định của textarea). */
+function flowTextarea(placeholder, rows = 2) {
+  const n = el("textarea", "flow-textarea");
+  n.rows = rows;
+  if (placeholder) n.placeholder = placeholder;
+  n.title = "Enter hoặc Shift+Enter để xuống dòng";
+  return n;
+}
+
 const MSG_SKIP_PARTIAL =
   "Bạn chưa điền đủ các trường. Hãy hoàn thiện biểu mẫu, hoặc để trống toàn bộ nếu muốn Teachly tự động tạo.";
 const MSG_SKIP_USE_SUBMIT = "Bạn đã điền đủ thông tin. Hãy nhấn Gửi thông tin để tiếp tục.";
@@ -59,9 +68,7 @@ export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
-  const topic = el("input", "flow-input");
-  topic.type = "text";
-  topic.placeholder = "VD: Ôn tập đọc hiểu — chủ đề môi trường";
+  const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
   root.appendChild(wrapField("Chủ đề", topic, "Nhập tên bài học"));
 
   const level = el("select", "flow-select");
@@ -95,8 +102,7 @@ export function createFullsetTopicCard(deps) {
   qtyWrap.appendChild(row);
   root.appendChild(qtyWrap);
 
-  const extra = el("textarea", "flow-textarea");
-  extra.placeholder = "VD: Tông giọng hài hước, có minigame…";
+  const extra = flowTextarea("VD: Tông giọng hài hước, có minigame…", 3);
   root.appendChild(wrapField("Yêu cầu thêm", extra, ""));
 
   const err = el("div", "flow-err");
@@ -244,9 +250,7 @@ function createPdfMetaCard(opts) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", title));
 
-  const name = el("input", "flow-input");
-  name.type = "text";
-  name.placeholder = "VD: Bài 8 — Động lực học";
+  const name = flowTextarea("VD: Bài 8 — Động lực học", 2);
   root.appendChild(wrapField("Tên", name, "Tên gọi bộ nội dung / phiên làm việc"));
 
   const count = el("input", "flow-input");
@@ -256,16 +260,13 @@ function createPdfMetaCard(opts) {
   count.placeholder = countMax != null ? `${countMin}–${countMax}` : `≥ ${countMin}`;
   root.appendChild(wrapField(countLabel, count, ""));
 
-  const structure = el("input", "flow-input");
-  structure.placeholder = "VD: Mở đầu → Nội dung chính → Củng cố";
+  const structure = flowTextarea("VD: Mở đầu → Nội dung chính → Củng cố", 2);
   root.appendChild(wrapField("Cấu trúc", structure, ""));
 
-  const style = el("input", "flow-input");
-  style.placeholder = "VD: Trang trọng, gần gũi, hài hước…";
+  const style = flowTextarea("VD: Trang trọng, gần gũi, hài hước…", 2);
   root.appendChild(wrapField("Phong cách", style, ""));
 
-  const notes = el("textarea", "flow-textarea");
-  notes.placeholder = "Yêu cầu bổ sung, ngữ cảnh lớp học…";
+  const notes = flowTextarea("Yêu cầu bổ sung, ngữ cảnh lớp học…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes, ""));
 
   const err = el("div", "flow-err");
@@ -532,9 +533,7 @@ export function createSlideFormCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
-  const docText = el("input", "flow-input");
-  docText.type = "text";
-  docText.placeholder = "Nhập tên bài học / chủ đề…";
+  const docText = flowTextarea("Nhập tên bài học / chủ đề…", 2);
   const docBlock = el("div", "flow-field");
   docBlock.appendChild(el("label", "flow-label", "Chủ đề bài giảng"));
   docBlock.appendChild(docText);
@@ -548,8 +547,7 @@ export function createSlideFormCard(deps) {
   count.placeholder = "1–30";
   root.appendChild(wrapField("Số lượng slide", count, "Tối đa 30 slide để đảm bảo chất lượng nội dung."));
 
-  const structure = el("input", "flow-input");
-  structure.placeholder = "VD: Lý thuyết → Ví dụ → Tổng kết";
+  const structure = flowTextarea("VD: Lý thuyết → Ví dụ → Tổng kết", 2);
   root.appendChild(wrapField("Cấu trúc mong muốn", structure));
 
   const style = el("select", "flow-select");
@@ -561,8 +559,7 @@ export function createSlideFormCard(deps) {
   });
   root.appendChild(wrapField("Phong cách", style));
 
-  const notes = el("textarea", "flow-textarea");
-  notes.placeholder = "VD: Minigame, Thảo luận nhóm…";
+  const notes = flowTextarea("VD: Minigame, Thảo luận nhóm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
   const err = el("div", "flow-err");
@@ -655,8 +652,7 @@ export function createQuizFormCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
-  const srcText = el("input", "flow-input");
-  srcText.placeholder = "Nhập chủ đề / chuyên đề…";
+  const srcText = flowTextarea("Nhập chủ đề / chuyên đề…", 2);
 
   const src = el("div", "flow-field");
   src.appendChild(el("label", "flow-label", "Chủ đề / chuyên đề"));
@@ -664,8 +660,7 @@ export function createQuizFormCard(deps) {
   src.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập chủ đề trực tiếp — không cần tải tệp ở bước này."));
   root.appendChild(src);
 
-  const kind = el("input", "flow-input");
-  kind.placeholder = "VD: Phát âm, Ngữ pháp, Đọc hiểu, Từ vựng";
+  const kind = flowTextarea("VD: Phát âm, Ngữ pháp, Đọc hiểu, Từ vựng", 2);
   root.appendChild(wrapField("Dạng bài", kind));
 
   const qn = el("input", "flow-input");
@@ -674,12 +669,10 @@ export function createQuizFormCard(deps) {
   qn.placeholder = "VD: 20";
   root.appendChild(wrapField("Số lượng câu", qn));
 
-  const diff = el("input", "flow-input");
-  diff.placeholder = "VD: 40% NB - 30% TH - 20% VD - 10% VDC";
+  const diff = flowTextarea("VD: 40% NB - 30% TH - 20% VD - 10% VDC", 2);
   root.appendChild(wrapField("Tỉ lệ độ khó", diff));
 
-  const notes = el("textarea", "flow-textarea");
-  notes.placeholder = "Ghi chú thêm cho bộ đề…";
+  const notes = flowTextarea("Ghi chú thêm cho bộ đề…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
   const err = el("div", "flow-err");
@@ -772,12 +765,10 @@ export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
-  const list = el("textarea", "flow-textarea");
-  list.placeholder = "Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)";
+  const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);
   root.appendChild(wrapField("Danh sách từ / Chủ đề", list, "Có thể bỏ qua — Teachly sẽ gợi ý theo ghi chú của bạn."));
 
-  const back = el("input", "flow-input");
-  back.placeholder = "VD: Nghĩa tiếng Việt, Phiên âm, Ví dụ, Từ đồng nghĩa";
+  const back = flowTextarea("VD: Nghĩa tiếng Việt, Phiên âm, Ví dụ, Từ đồng nghĩa", 2);
   root.appendChild(wrapField("Thông tin mặt sau", back));
 
   const imgRow = el("div", "flow-field");
@@ -801,8 +792,7 @@ export function createFlashcardFormCard(deps) {
   imgRow.appendChild(radios);
   root.appendChild(imgRow);
 
-  const notes = el("textarea", "flow-textarea");
-  notes.placeholder = "Ghi chú thêm…";
+  const notes = flowTextarea("Ghi chú thêm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
   const err = el("div", "flow-err");
