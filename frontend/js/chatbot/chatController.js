@@ -8,7 +8,7 @@ import {
   setActiveSessionIndex,
   getSessionsSnapshot,
 } from "./sessionStore.js";
-import { computePickAction, computeGuidedTextSubmit, computeStartFlow } from "./guidedFlow.js";
+import { computePickAction, computeGuidedTextSubmit, computeStartFlow, computeFlowCardSubmit } from "./guidedFlow.js";
 import { createExperienceLayerView } from "./dom/experienceLayerView.js";
 import { mountQuizExperience } from "./dom/quizExperienceView.js";
 import { mountFlashExperience } from "./dom/flashExperienceView.js";
@@ -50,11 +50,25 @@ export function init() {
     saveSessions();
   }
 
-  function pushBot(text, actions) {
+  /**
+   * @param {string} text
+   * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType? }`
+   */
+  function pushBot(text, opts) {
     const current = getCurrentSession();
-    msgView.addMessage("bot", text, actions);
+    /** @type {{ label: string, value: string }[]} */
+    let actions = [];
+    /** @type {string | undefined} */
+    let cardType;
+    if (Array.isArray(opts)) actions = opts;
+    else if (opts && typeof opts === "object") {
+      if (Array.isArray(opts.actions)) actions = opts.actions;
+      if (typeof opts.cardType === "string") cardType = opts.cardType;
+    }
+    msgView.addMessage("bot", text, { actions, cardType });
     const entry = { role: "bot", text };
-    if (actions && actions.length) entry.actions = actions;
+    if (actions.length) entry.actions = actions;
+    if (cardType) entry.cardType = cardType;
     current.messages.push(entry);
     saveSessions();
   }
@@ -70,7 +84,7 @@ export function init() {
   async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
-      else if (e.type === "pushBot") pushBot(e.text, e.actions);
+      else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType });
       else if (e.type === "showQuiz") await mountQuizExperience(layerView, e.meta, experienceHooks);
       else if (e.type === "showFlash") await mountFlashExperience(layerView, e.meta, experienceHooks);
       else if (e.type === "showSlide") await mountSlideExperience(layerView, e.meta, experienceHooks);
@@ -84,6 +98,12 @@ export function init() {
       const result = computePickAction(guided, value);
       if (!result.handled) return;
       msgView.disableActionButtons(btnEl);
+      guided = result.guided;
+      void applyEffects(result.effects);
+    },
+    onFlowCardSubmit(cardType, payload) {
+      const result = computeFlowCardSubmit(guided, cardType, payload);
+      if (!result.handled) return;
       guided = result.guided;
       void applyEffects(result.effects);
     },
@@ -129,7 +149,13 @@ export function init() {
       current.messages.push({ role: "bot", text: welcome });
       saveSessions();
     } else {
-      current.messages.forEach((m) => msgView.addMessage(m.role, m.text, m.actions));
+      current.messages.forEach((m) => {
+        if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length))) {
+          msgView.addMessage("bot", m.text, { actions: m.actions || [], cardType: m.cardType });
+        } else {
+          msgView.addMessage(m.role, m.text, m.actions);
+        }
+      });
     }
     threadLabel.textContent = current.thread_id ? `Thread: ${current.thread_id}` : "";
   }
@@ -167,7 +193,7 @@ export function init() {
     e.preventDefault();
     const prompt = input.value.trim();
     if (!prompt) return;
-    if (guided && guided.kind === "pick") {
+    if (guided && (guided.kind === "fullset" && guided.step === "await_source")) {
       input.focus();
       return;
     }

@@ -42,6 +42,22 @@ def allow_cpu_from_env() -> bool:
     return truthy_env("ALLOW_CPU")
 
 
+def conserve_vram_from_env() -> bool:
+    """
+    PDF_CONSERVE_VRAM=1: when CHANDRA_IMAGE_DPI / CHANDRA_MIN_PDF_IMAGE_DIM are not set,
+    use slightly lower raster settings (faster, less GPU RAM per page). Override anytime
+    by setting those CHANDRA_* variables explicitly.
+    """
+    return truthy_env("PDF_CONSERVE_VRAM")
+
+
+def _env_nonempty(name: str) -> str | None:
+    v = os.environ.get(name)
+    if v is None or str(v).strip() == "":
+        return None
+    return str(v).strip()
+
+
 @dataclass(frozen=True)
 class PipelineConfig:
     """Snapshot of paths and tunables for one run (from environment at load time)."""
@@ -58,12 +74,18 @@ class PipelineConfig:
     export_mode: str
     strict_output: bool
     allow_cpu: bool
+    conserve_vram: bool
     chandra_image_dpi: str
     chandra_min_pdf_image_dim: str
 
     @classmethod
     def from_env(cls, root_dir: Path) -> PipelineConfig:
         root = root_dir.resolve()
+        conserve = conserve_vram_from_env()
+        default_dpi = "120" if conserve else "144"
+        default_min_dim = "768" if conserve else "896"
+        image_dpi = _env_nonempty("CHANDRA_IMAGE_DPI") or default_dpi
+        min_pdf_dim = _env_nonempty("CHANDRA_MIN_PDF_IMAGE_DIM") or default_min_dim
         return cls(
             root_dir=root,
             input_dir=root / "data_input",
@@ -81,8 +103,7 @@ class PipelineConfig:
             export_mode=export_mode_from_env(),
             strict_output=truthy_env("STRICT_OUTPUT"),
             allow_cpu=allow_cpu_from_env(),
-            chandra_image_dpi=os.environ.get("CHANDRA_IMAGE_DPI", "144").strip() or "144",
-            chandra_min_pdf_image_dim=(
-                os.environ.get("CHANDRA_MIN_PDF_IMAGE_DIM", "896").strip() or "896"
-            ),
+            conserve_vram=conserve,
+            chandra_image_dpi=image_dpi,
+            chandra_min_pdf_image_dim=min_pdf_dim,
         )

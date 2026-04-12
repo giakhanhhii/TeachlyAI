@@ -11,7 +11,8 @@
 #   .\.venv\Scripts\python.exe -m pip install -r requirements-pdf.txt
 #   .\.venv\Scripts\python.exe -m pip install "chandra-ocr[hf]==0.2.0"
 #
-# Run:
+# One-shot GPU venv (Windows): powershell -ExecutionPolicy Bypass -File scripts/setup_pdf_gpu.ps1
+# Run (GPU; add PDF_CONSERVE_VRAM=1 if you hit VRAM limits — see process_pdfs.py docstring):
 #   .\.venv\Scripts\python.exe process_pdfs.py
 
 --extra-index-url https://download.pytorch.org/whl/cu128
