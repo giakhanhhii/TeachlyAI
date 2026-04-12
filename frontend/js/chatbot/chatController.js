@@ -21,11 +21,56 @@ import { createExperienceLayerView } from "./dom/experienceLayerView.js";
 import { mountQuizExperience } from "./dom/quizExperienceView.js";
 import { mountFlashExperience } from "./dom/flashExperienceView.js";
 import { mountSlideExperience } from "./dom/slideExperienceView.js";
+import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
 
 /** @type {any} */
 let guided = null;
+
+/** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
+let lastOpenedExperience = null;
+
+/**
+ * @param {"quiz"|"slide"|"flash"} kind
+ * @param {Record<string, string>} meta
+ */
+function buildResumeTitle(kind, meta) {
+  if (kind === "quiz") return `Trắc nghiệm — ${meta.topic || "Bộ đề"}`;
+  if (kind === "slide") return `Slide — ${meta.topic || "Bài giảng"}`;
+  if (kind === "flash") return `Flashcard — ${meta.source || "Bộ thẻ"}`;
+  return "Học liệu";
+}
+
+/**
+ * @param {"quiz"|"slide"|"flash"} kind
+ * @param {Record<string, string>} meta
+ */
+function rememberOpenExperience(kind, meta) {
+  lastOpenedExperience = {
+    bundleBack: false,
+    kind,
+    meta: { ...meta },
+    title: buildResumeTitle(kind, meta),
+  };
+}
+
+/**
+ * @param {string} title
+ * @param {any[]} items
+ */
+function rememberOpenBundleForBack(title, items) {
+  lastOpenedExperience = {
+    bundleBack: true,
+    title: title || "Full set",
+    items: items.map((it) => ({
+      kind: it.kind,
+      meta: { ...(it.meta || {}) },
+      title: it.title,
+      openedAt: it.openedAt,
+    })),
+  };
+}
 
 /**
  * @returns {Promise<File | null>}
@@ -95,7 +140,7 @@ export function init() {
 
   /**
    * @param {string} text
-   * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType? }`
+   * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType?, resumeDock? }`
    */
   function pushBot(text, opts) {
     const current = getCurrentSession();
@@ -103,15 +148,19 @@ export function init() {
     let actions = [];
     /** @type {string | undefined} */
     let cardType;
+    /** @type {any} */
+    let resumeDock;
     if (Array.isArray(opts)) actions = opts;
     else if (opts && typeof opts === "object") {
       if (Array.isArray(opts.actions)) actions = opts.actions;
       if (typeof opts.cardType === "string") cardType = opts.cardType;
+      if (opts.resumeDock) resumeDock = opts.resumeDock;
     }
-    msgView.addMessage("bot", text, { actions, cardType });
+    msgView.addMessage("bot", text, { actions, cardType, resumeDock });
     const entry = { role: "bot", text };
     if (actions.length) entry.actions = actions;
     if (cardType) entry.cardType = cardType;
+    if (resumeDock) entry.resumeDock = resumeDock;
     current.messages.push(entry);
     saveSessions();
   }
@@ -127,16 +176,56 @@ export function init() {
   async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
-      else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType });
-      else if (e.type === "showQuiz") await mountQuizExperience(layerView, e.meta, experienceHooks);
-      else if (e.type === "showFlash") await mountFlashExperience(layerView, e.meta, experienceHooks);
-      else if (e.type === "showSlide") await mountSlideExperience(layerView, e.meta, experienceHooks);
+      else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
+      else if (e.type === "showQuiz") {
+        rememberOpenExperience("quiz", e.meta || {});
+        await mountQuizExperience(layerView, e.meta, experienceHooks);
+      } else if (e.type === "showFlash") {
+        rememberOpenExperience("flash", e.meta || {});
+        await mountFlashExperience(layerView, e.meta, experienceHooks);
+      } else if (e.type === "showSlide") {
+        rememberOpenExperience("slide", e.meta || {});
+        await mountSlideExperience(layerView, e.meta, experienceHooks);
+      }
     }
+  }
+
+  /**
+   * @param {{ kind: string, meta: Record<string, string> }} item
+   */
+  async function openResumeExperience(item) {
+    rememberOpenExperience(/** @type {"quiz"|"slide"|"flash"} */ (item.kind), item.meta || {});
+    layerView.prepareShow();
+    if (item.kind === "quiz") await mountQuizExperience(layerView, item.meta, experienceHooks);
+    else if (item.kind === "slide") await mountSlideExperience(layerView, item.meta, experienceHooks);
+    else if (item.kind === "flash") await mountFlashExperience(layerView, item.meta, experienceHooks);
+  }
+
+  /**
+   * @param {any[]} items
+   * @param {string} bundleTitle
+   */
+  async function openResumeOpenAll(items, bundleTitle) {
+    rememberOpenBundleForBack(bundleTitle || "Full set", items);
+    layerView.prepareShow();
+    await mountFullSetHubExperience(
+      layerView,
+      { title: bundleTitle || "Full set", items },
+      async (item) => {
+        await openResumeExperience(item);
+      },
+    );
   }
 
   msgView = createMessageView({
     messagesEl: /** @type {HTMLElement} */ (messages),
     messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
+    onResumeExperience: (item) => {
+      void openResumeExperience(item);
+    },
+    onResumeOpenAll: (items, bundleTitle) => {
+      void openResumeOpenAll(items, bundleTitle);
+    },
     onFlowAction(value, btnEl) {
       if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
         void (async () => {
@@ -181,6 +270,7 @@ export function init() {
       (idx) => {
         setActiveSessionIndex(idx);
         guided = null;
+        lastOpenedExperience = null;
         layerView.hide();
         saveSessions();
         renderChatListUI();
@@ -198,6 +288,7 @@ export function init() {
       current.messages = [];
       current.thread_id = "";
       guided = null;
+      lastOpenedExperience = null;
       layerView.hide();
       saveSessions();
       history.replaceState({}, "", "chatbot_ui.html");
@@ -214,8 +305,12 @@ export function init() {
       saveSessions();
     } else {
       current.messages.forEach((m) => {
-        if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length))) {
-          msgView.addMessage("bot", m.text, { actions: m.actions || [], cardType: m.cardType });
+        if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
+          msgView.addMessage("bot", m.text || "", {
+            actions: m.actions || [],
+            cardType: m.cardType,
+            resumeDock: m.resumeDock,
+          });
         } else {
           msgView.addMessage(m.role, m.text, m.actions);
         }
@@ -279,6 +374,7 @@ export function init() {
     current.thread_id = "";
     current.messages = [];
     guided = null;
+    lastOpenedExperience = null;
     layerView.hide();
     renderMessages();
     saveSessions();
@@ -286,6 +382,27 @@ export function init() {
 
   document.getElementById("backToChatBtn").addEventListener("click", () => {
     layerView.hide();
+    if (!lastOpenedExperience) return;
+    const now = new Date().toISOString();
+    if (lastOpenedExperience.bundleBack) {
+      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
+        resumeDock: {
+          title: lastOpenedExperience.title,
+          items: lastOpenedExperience.items,
+          openedAt: now,
+        },
+      });
+    } else {
+      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
+        resumeDock: {
+          kind: lastOpenedExperience.kind,
+          meta: { ...lastOpenedExperience.meta },
+          title: lastOpenedExperience.title,
+          openedAt: now,
+        },
+      });
+    }
+    lastOpenedExperience = null;
   });
 
   document.getElementById("toggleSidebar").addEventListener("click", () => {

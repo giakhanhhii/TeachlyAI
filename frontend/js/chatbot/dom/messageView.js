@@ -1,5 +1,6 @@
 import { BOT_AVATAR_SVG } from "../assets.js";
 import { createFlowCard } from "./flowCards.js";
+import { createResumeDockCard } from "./resumeDockCard.js";
 
 /** Form slide / quiz / flash (+ meta PDF): giãn ngang gần full cột chat, không áp dụng full set. */
 function isWideFlowFormCardType(cardType) {
@@ -19,10 +20,12 @@ function isWideFlowFormCardType(cardType) {
  *   messagesInnerEl: HTMLElement,
  *   onFlowAction: (value: string, btnEl: HTMLButtonElement) => void,
  *   onFlowCardSubmit?: (cardType: string, payload: Record<string, string>, cardRoot: HTMLElement) => void,
+ *   onResumeExperience?: (item: { kind: string, meta: Record<string, string> }) => void,
+ *   onResumeOpenAll?: (items: { kind: string, meta: Record<string, string>, title?: string }[], bundleTitle: string) => void,
  * }} opts
  */
 export function createMessageView(opts) {
-  const { messagesEl, messagesInnerEl, onFlowAction, onFlowCardSubmit } = opts;
+  const { messagesEl, messagesInnerEl, onFlowAction, onFlowCardSubmit, onResumeExperience, onResumeOpenAll } = opts;
 
   /**
    * @param {HTMLElement} contentNode
@@ -56,6 +59,11 @@ export function createMessageView(opts) {
       if (Array.isArray(third.actions)) actions = third.actions;
       if (typeof third.cardType === "string") cardType = third.cardType;
     }
+
+    /** @type {any} */
+    let resumeDock = null;
+    if (third && typeof third === "object" && third.resumeDock) resumeDock = third.resumeDock;
+    const showResume = !!(resumeDock && onResumeExperience);
 
     if (role === "user") {
       const row = document.createElement("div");
@@ -98,6 +106,12 @@ export function createMessageView(opts) {
         });
         bubble.appendChild(ar);
       }
+      if (showResume) {
+        bubble.classList.add("bubble-has-resume-dock");
+        bubble.appendChild(
+          createResumeDockCard(resumeDock, (item) => onResumeExperience(item), onResumeOpenAll),
+        );
+      }
       appendBotRow(bubble);
 
       const shell = document.createElement("div");
@@ -134,11 +148,13 @@ export function createMessageView(opts) {
     const bubble = document.createElement("div");
     bubble.className = "bubble bot";
 
-    if (hasActions || cardType) {
-      const t = document.createElement("div");
-      t.style.whiteSpace = "pre-wrap";
-      t.textContent = text;
-      bubble.appendChild(t);
+    if (hasActions || cardType || showResume) {
+      if (hasText) {
+        const t = document.createElement("div");
+        t.style.whiteSpace = "pre-wrap";
+        t.textContent = text;
+        bubble.appendChild(t);
+      }
       if (hasActions) {
         const ar = document.createElement("div");
         ar.className = "msg-actions";
@@ -161,6 +177,12 @@ export function createMessageView(opts) {
           onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
         });
         bubble.appendChild(cardRoot);
+      }
+      if (showResume) {
+        bubble.classList.add("bubble-has-resume-dock");
+        bubble.appendChild(
+          createResumeDockCard(resumeDock, (item) => onResumeExperience(item), onResumeOpenAll),
+        );
       }
     } else {
       bubble.textContent = text;

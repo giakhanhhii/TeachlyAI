@@ -1,6 +1,37 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 
+/** @param {string} s */
+function escapeHtml(s) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Nhiều đề gộp "A. … B. …" trên một dòng; tách dòng để khớp format đề in.
+ * @param {string} s
+ */
+function insertInlineMcLineBreaks(s) {
+  if (!s) return s;
+  let t = s.replace(/([:;?])\s+A\.\s/g, "$1\nA. ");
+  t = t.replace(/\s+(?=[B-F]\.\s)/g, "\n");
+  return t;
+}
+
+/**
+ * Escape HTML + markdown bold đơn giản (**…**) + xuống dòng.
+ * @param {string} s
+ */
+function quizStemToSafeHtml(s) {
+  const withBreaks = insertInlineMcLineBreaks(s);
+  const esc = escapeHtml(withBreaks);
+  const withBold = esc.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  return withBold.replace(/\n/g, "<br>");
+}
+
 /**
  * @param {Record<string, string>} meta
  * @param {{ onAiEdit?: (draft: string) => void }} deps
@@ -97,7 +128,7 @@ export async function mountQuizExperience(layerView, meta, deps) {
 
     const text = document.createElement("p");
     text.className = "exp-q-text";
-    text.textContent = q.text || "";
+    text.innerHTML = quizStemToSafeHtml(q.text || "");
 
     const optsWrap = document.createElement("div");
     optsWrap.className = "exp-option-grid";
