@@ -149,7 +149,9 @@ export function init() {
             return;
           }
           if (value === "fullset_pdf") setPendingPdfFile(file);
-          const result = computePickAction(guided, value);
+          const result = computePickAction(guided, value, {
+            pdfFile: value === "slide_pdf" || value === "quiz_pdf" || value === "flash_pdf" ? file : undefined,
+          });
           if (!result.handled) return;
           msgView.disableActionButtons(btnEl);
           guided = result.guided;

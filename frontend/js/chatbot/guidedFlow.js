@@ -4,6 +4,17 @@ export const MSG_START_SOURCE =
 /** Các nút “Tải lên PDF” ở bước chọn nguồn — cần chọn file trước khi vào form. */
 export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "quiz_pdf", "flash_pdf"]);
 
+/** Tin nhắn bot trước form meta PDF (slide / quiz / flash). */
+function pdfMetaFormIntro(/** @type {"slide"|"quiz"|"flash"} */ kind) {
+  if (kind === "slide") {
+    return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:";
+  }
+  if (kind === "quiz") {
+    return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:";
+  }
+  return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:";
+}
+
 /**
  * Lặp lại câu hỏi mở đầu + 2 nút khi người dùng hủy chọn PDF.
  * @param {"fullset"|"slide"|"quiz"|"flash"} kind
@@ -65,8 +76,11 @@ export function getRestartAwaitSourceEffects(kind) {
  * Pure guided-flow transitions (no DOM). Controller applies returned `effects`.
  * @param {any} guided
  * @param {string} value
+ * @param {{ pdfFile?: File | null }} [opts] Khi đã chọn PDF trong hộp thoại hệ thống (slide/quiz/flash), bỏ bước thẻ chọn lại.
  */
-export function computePickAction(guided, value) {
+export function computePickAction(guided, value, opts = {}) {
+  const pdfFile = opts.pdfFile instanceof File ? opts.pdfFile : null;
+
   if (!guided) {
     return { handled: false, guided, effects: [] };
   }
@@ -111,17 +125,23 @@ export function computePickAction(guided, value) {
 
   if (guided.kind === "slide") {
     if (value === "slide_pdf") {
+      if (pdfFile) {
+        const fn = pdfFile.name;
+        return {
+          handled: true,
+          guided: { kind: "slide", step: "await_pdf_meta", data: { pdfFileName: fn } },
+          effects: [
+            { type: "pushUser", text: `Tải lên PDF — ${fn}` },
+            { type: "pushBot", text: pdfMetaFormIntro("slide"), cardType: "slide_pdf_meta" },
+          ],
+        };
+      }
       return {
         handled: true,
         guided: { kind: "slide", step: "await_pdf_file", data: {} },
         effects: [
           { type: "pushUser", text: "Tải lên PDF" },
-          {
-            type: "pushBot",
-            text:
-              "Trước tiên hãy chọn tệp PDF. Sau khi đã chọn tệp và nhấn Tiếp tục, Teachly sẽ hiển thị biểu mẫu để bạn điền thêm thông tin.",
-            cardType: "pick_pdf_gate",
-          },
+          { type: "pushBot", text: "", cardType: "pick_pdf_gate" },
         ],
       };
     }
@@ -144,17 +164,23 @@ export function computePickAction(guided, value) {
 
   if (guided.kind === "quiz") {
     if (value === "quiz_pdf") {
+      if (pdfFile) {
+        const fn = pdfFile.name;
+        return {
+          handled: true,
+          guided: { kind: "quiz", step: "await_pdf_meta", data: { pdfFileName: fn } },
+          effects: [
+            { type: "pushUser", text: `Tải lên PDF — ${fn}` },
+            { type: "pushBot", text: pdfMetaFormIntro("quiz"), cardType: "quiz_pdf_meta" },
+          ],
+        };
+      }
       return {
         handled: true,
         guided: { kind: "quiz", step: "await_pdf_file", data: {} },
         effects: [
           { type: "pushUser", text: "Tải lên PDF" },
-          {
-            type: "pushBot",
-            text:
-              "Trước tiên hãy chọn tệp PDF. Sau khi đã chọn tệp và nhấn Tiếp tục, Teachly sẽ hiển thị biểu mẫu để bạn điền thêm thông tin.",
-            cardType: "pick_pdf_gate",
-          },
+          { type: "pushBot", text: "", cardType: "pick_pdf_gate" },
         ],
       };
     }
@@ -177,17 +203,23 @@ export function computePickAction(guided, value) {
 
   if (guided.kind === "flash") {
     if (value === "flash_pdf") {
+      if (pdfFile) {
+        const fn = pdfFile.name;
+        return {
+          handled: true,
+          guided: { kind: "flash", step: "await_pdf_meta", data: { pdfFileName: fn } },
+          effects: [
+            { type: "pushUser", text: `Tải lên PDF — ${fn}` },
+            { type: "pushBot", text: pdfMetaFormIntro("flash"), cardType: "flash_pdf_meta" },
+          ],
+        };
+      }
       return {
         handled: true,
         guided: { kind: "flash", step: "await_pdf_file", data: {} },
         effects: [
           { type: "pushUser", text: "Tải lên PDF" },
-          {
-            type: "pushBot",
-            text:
-              "Trước tiên hãy chọn tệp PDF. Sau khi đã chọn tệp và nhấn Tiếp tục, Teachly sẽ hiển thị biểu mẫu để bạn điền thêm thông tin.",
-            cardType: "pick_pdf_gate",
-          },
+          { type: "pushBot", text: "", cardType: "pick_pdf_gate" },
         ],
       };
     }
@@ -327,12 +359,7 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     const nextGuided = { ...guided, step: "await_pdf_meta", data };
     const metaCard =
       guided.kind === "slide" ? "slide_pdf_meta" : guided.kind === "quiz" ? "quiz_pdf_meta" : "flash_pdf_meta";
-    const intro =
-      guided.kind === "slide"
-        ? "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:"
-        : guided.kind === "quiz"
-          ? "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:"
-          : "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:";
+    const intro = pdfMetaFormIntro(guided.kind);
     return {
       handled: true,
       guided: nextGuided,
