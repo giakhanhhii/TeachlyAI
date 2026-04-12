@@ -4,7 +4,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: min(520px, 100%);
+  max-width: 100%;
   border-radius: 16px;
   border: 1px solid rgba(46, 125, 50, 0.22);
   background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(232, 245, 233, 0.55) 100%);

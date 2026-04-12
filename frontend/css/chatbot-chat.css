@@ -1,7 +1,4 @@
-/* Cùng độ rộng với .composer — cột nội dung chat thẳng hàng với thanh nhập */
-:root {
-  --chat-column-width: min(800px, 95%);
-}
+/* Cột nội dung: --chat-content-width trong chatbot-tokens.css */
 
 #messages {
   flex: 1;
@@ -11,7 +8,7 @@
 }
 
 .messages-inner {
-  width: var(--chat-column-width);
+  width: var(--chat-content-width);
   max-width: 100%;
   margin: 0 auto;
   background: transparent;
@@ -58,11 +55,12 @@
   font-size: 14px;
 }
 
-/* Bot: dùng phần còn lại sau avatar, không vượt cột chat */
+/* Bot: ôm nội dung (không kéo full hàng như flex:1), vẫn giới hạn theo cột + avatar */
 .msg-row.bot > .bubble.bot {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
-  max-width: calc(100% - 44px);
+  width: fit-content;
+  max-width: min(72%, calc(100% - 44px));
 }
 
 .bubble.user {
@@ -171,7 +169,7 @@
 .composer {
   display: flex;
   flex-direction: column;
-  width: var(--chat-column-width);
+  width: var(--chat-content-width);
   max-width: 100%;
   margin: 0 auto;
   background: #ffffff;
@@ -269,7 +267,7 @@
 }
 
 .disclaimer {
-  width: var(--chat-column-width);
+  width: var(--chat-content-width);
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;

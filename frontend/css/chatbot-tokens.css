@@ -1,4 +1,6 @@
 :root {
+  /* Cùng một cột nội dung cho tin nhắn và thanh nhập */
+  --chat-content-width: min(920px, 95%);
   --green: #4caf50;
   --green-dark: #2e7d32;
   --bg: #ffffff;

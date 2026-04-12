@@ -8,7 +8,15 @@ import {
   setActiveSessionIndex,
   getSessionsSnapshot,
 } from "./sessionStore.js";
-import { computePickAction, computeGuidedTextSubmit, computeStartFlow, computeFlowCardSubmit } from "./guidedFlow.js";
+import {
+  computePickAction,
+  computeGuidedTextSubmit,
+  computeStartFlow,
+  computeFlowCardSubmit,
+  PDF_SOURCE_ACTION_VALUES,
+  getRestartAwaitSourceEffects,
+} from "./guidedFlow.js";
+import { setPendingPdfFile } from "./pdfPrefillStore.js";
 import { createExperienceLayerView } from "./dom/experienceLayerView.js";
 import { mountQuizExperience } from "./dom/quizExperienceView.js";
 import { mountFlashExperience } from "./dom/flashExperienceView.js";
@@ -18,6 +26,41 @@ import { renderChatList } from "./dom/chatListView.js";
 
 /** @type {any} */
 let guided = null;
+
+/**
+ * @returns {Promise<File | null>}
+ */
+function pickPdfWithDialog() {
+  return new Promise((resolve) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,application/pdf";
+
+    let settled = false;
+    const done = (/** @type {File | null} */ f) => {
+      if (settled) return;
+      settled = true;
+      window.removeEventListener("focus", onFocus);
+      resolve(f);
+    };
+
+    const onFocus = () => {
+      setTimeout(() => {
+        if (settled) return;
+        const f = input.files?.[0] ?? null;
+        done(f);
+      }, 280);
+    };
+
+    input.addEventListener("change", () => {
+      const f = input.files?.[0];
+      if (f) done(f);
+    });
+
+    window.addEventListener("focus", onFocus, { once: true });
+    input.click();
+  });
+}
 
 export function init() {
   const messages = document.getElementById("messages");
@@ -95,6 +138,25 @@ export function init() {
     messagesEl: /** @type {HTMLElement} */ (messages),
     messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
     onFlowAction(value, btnEl) {
+      if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
+        void (async () => {
+          btnEl.disabled = true;
+          const file = await pickPdfWithDialog();
+          btnEl.disabled = false;
+          if (!file) {
+            const again = getRestartAwaitSourceEffects(guided.kind);
+            if (again.length) await applyEffects(again);
+            return;
+          }
+          if (value === "fullset_pdf") setPendingPdfFile(file);
+          const result = computePickAction(guided, value);
+          if (!result.handled) return;
+          msgView.disableActionButtons(btnEl);
+          guided = result.guided;
+          await applyEffects(result.effects);
+        })();
+        return;
+      }
       const result = computePickAction(guided, value);
       if (!result.handled) return;
       msgView.disableActionButtons(btnEl);

@@ -3,6 +3,8 @@
  * @param {(payload: Record<string, string>) => void} onSubmit
  */
 
+import { takePendingPdfFile } from "../pdfPrefillStore.js";
+
 function el(tag, className, text) {
   const n = document.createElement(tag);
   if (className) n.className = className;
@@ -353,7 +355,7 @@ function createPdfMetaCard(opts) {
   return root;
 }
 
-/** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
+/** @param {{ onSubmit: (p: Record<string, string>) => void, initialFile?: File }} deps */
 export function createFullsetPdfCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Tải lên PDF"));
@@ -386,6 +388,17 @@ export function createFullsetPdfCard(deps) {
     const f = input.files && input.files[0];
     name.textContent = f ? f.name : "Chưa chọn tệp";
   });
+
+  if (deps.initialFile) {
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(deps.initialFile);
+      input.files = dt.files;
+      name.textContent = deps.initialFile.name;
+    } catch {
+      name.textContent = "Chưa chọn tệp";
+    }
+  }
 
   const err = el("div", "flow-err");
   err.style.display = "none";
@@ -850,8 +863,12 @@ export function createFlowCard(cardType, deps) {
   switch (cardType) {
     case "fullset_topic":
       return createFullsetTopicCard(deps);
-    case "fullset_pdf":
-      return createFullsetPdfCard(deps);
+    case "fullset_pdf": {
+      const pendingPdf = takePendingPdfFile();
+      return createFullsetPdfCard(
+        pendingPdf ? { ...deps, initialFile: pendingPdf } : deps,
+      );
+    }
     case "pick_pdf_gate":
       return createPickPdfGateCard(deps);
     case "slide_pdf_meta":
