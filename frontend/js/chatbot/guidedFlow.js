@@ -11,52 +11,6 @@ export function computePickAction(guided, value) {
     return { handled: false, guided, effects: [] };
   }
 
-  if (guided.step === "await_pdf_file") {
-    if (guided.kind === "slide" && value === "slide_repick_pdf") {
-      return {
-        handled: true,
-        guided,
-        effects: [
-          { type: "pushUser", text: "Tải lên PDF" },
-          {
-            type: "pushBot",
-            text: "Vui lòng chọn tệp PDF (.pdf) bên dưới. Sau khi chọn xong, bạn sẽ điền thêm thông tin chi tiết.",
-            cardType: "pick_pdf_gate",
-          },
-        ],
-      };
-    }
-    if (guided.kind === "quiz" && value === "quiz_repick_pdf") {
-      return {
-        handled: true,
-        guided,
-        effects: [
-          { type: "pushUser", text: "Tải lên PDF" },
-          {
-            type: "pushBot",
-            text: "Vui lòng chọn tệp PDF (.pdf) bên dưới. Sau khi chọn xong, bạn sẽ điền thêm thông tin chi tiết.",
-            cardType: "pick_pdf_gate",
-          },
-        ],
-      };
-    }
-    if (guided.kind === "flash" && value === "flash_repick_pdf") {
-      return {
-        handled: true,
-        guided,
-        effects: [
-          { type: "pushUser", text: "Tải lên PDF" },
-          {
-            type: "pushBot",
-            text: "Vui lòng chọn tệp PDF (.pdf) bên dưới. Sau khi chọn xong, bạn sẽ điền thêm thông tin chi tiết.",
-            cardType: "pick_pdf_gate",
-          },
-        ],
-      };
-    }
-    return { handled: false, guided, effects: [] };
-  }
-
   if (guided.step !== "await_source") {
     return { handled: false, guided, effects: [] };
   }
@@ -276,16 +230,30 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     cardType === "pick_pdf_gate"
   ) {
     if (payload.__no_file === "1") {
-      const repick =
-        guided.kind === "slide" ? "slide_repick_pdf" : guided.kind === "quiz" ? "quiz_repick_pdf" : "flash_repick_pdf";
+      const actions =
+        guided.kind === "slide"
+          ? [
+              { label: "Tải lên PDF", value: "slide_pdf" },
+              { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
+            ]
+          : guided.kind === "quiz"
+            ? [
+                { label: "Tải lên PDF", value: "quiz_pdf" },
+                { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
+              ]
+            : [
+                { label: "Tải lên PDF", value: "flash_pdf" },
+                { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
+              ];
       return {
         handled: true,
-        guided,
+        guided: { kind: guided.kind, step: "await_source", data: {} },
         effects: [
+          { type: "pushUser", text: "Bỏ qua" },
           {
             type: "pushBot",
-            text: "Bạn chưa chọn tệp PDF. Vui lòng chọn tệp PDF để tiếp tục.",
-            actions: [{ label: "Tải lên PDF", value: repick }],
+            text: MSG_START_SOURCE,
+            actions,
           },
         ],
       };
