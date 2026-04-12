@@ -22,7 +22,9 @@ Memory / VRAM
 --------------
 * Pages are rendered and OCR’d one at a time (no giant list of all page images in RAM).
 * Kept page Markdown is streamed to disk as each page finishes (no full-book `per_page` list
-  during OCR). After each PDF, the file is read once for highlights + MCQ post-process.
+  during OCR). The output `.md` is created only when the first kept page is ready — page 1
+  OCR on GPU can take many minutes; watch the log line “Raster + Chandra OCR starting page”.
+  After each PDF, the file is read once for highlights + MCQ post-process.
 * Default raster caps (before any `chandra` import): MIN_PDF_IMAGE_DIM=896, IMAGE_DPI=144 —
   override with env for sharper scans if you have VRAM headroom.
 * PDF_CONSERVE_VRAM=1: if you did not set CHANDRA_* raster vars, defaults become 768 / 120
@@ -188,56 +190,81 @@ def process_one_pdf(
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with open(out_path, "w", encoding="utf-8") as out_f:
-            page_iter = iter_pdf_pages_rgb(pdf_path)
-            with tqdm(
-                page_iter,
-                total=n_pages,
-                desc=f"pages:{stem[:28]}",
-                unit="pg",
-                leave=False,
-                mininterval=config.pdf_tqdm_mininterval,
-            ) as pbar:
-                for pno, pil in pbar:
-                    pbar.set_postfix_str(f"page {pno + 1}/{n_pages}")
-                    outs = chandra_ocr_images(
-                        manager,
-                        [pil],
-                        batch_size=config.chandra_batch_size,
-                        config=config,
-                    )
-                    raw_md = outs[0] if outs else ""
-                    del outs
-                    ocr_page_count += 1
-                    ge = config.pdf_gc_every
-                    if ge > 0 and ocr_page_count % ge == 0:
-                        gc.collect()
+        if out_path.exists():
+            out_path.unlink()
+    except OSError:
+        pass
+    # Open out_path only when the first kept page is ready — avoids a 0-byte file sitting
+    # in Explorer for many minutes while Chandra runs on page 1 (often 5–15+ min on 8 GB).
+    out_f: Any = None
+    wrote_kept = False
+    try:
+        page_iter = iter_pdf_pages_rgb(pdf_path)
+        with tqdm(
+            page_iter,
+            total=n_pages,
+            desc=f"pages:{stem[:28]}",
+            unit="pg",
+            leave=False,
+            mininterval=config.pdf_tqdm_mininterval,
+        ) as pbar:
+            for pno, pil in pbar:
+                pbar.set_postfix_str(f"page {pno + 1}/{n_pages}")
+                LOG.info(
+                    "Raster + Chandra OCR starting page %d/%d — %s",
+                    pno + 1,
+                    n_pages,
+                    stem[:60] + ("…" if len(stem) > 60 else ""),
+                )
+                outs = chandra_ocr_images(
+                    manager,
+                    [pil],
+                    batch_size=config.chandra_batch_size,
+                    config=config,
+                )
+                raw_md = outs[0] if outs else ""
+                del outs
+                ocr_page_count += 1
+                ge = config.pdf_gc_every
+                if ge > 0 and ocr_page_count % ge == 0:
+                    gc.collect()
 
-                    keep, _ = streaming_should_keep_page(
-                        raw_md,
-                        export_mode=export_mode,
-                        state=filter_state,
-                    )
-                    if not keep:
-                        del raw_md, pil
-                        clear_cuda_memory(sync=False, config=config)
-                        time.sleep(0)
-                        continue
-
-                    page_src = raw_md.strip() if export_mode == "full" else raw_md
-                    del raw_md
-                    chunk = strip_markdown_images(page_src)
-                    del page_src
-                    if out_f.tell() > 0:
-                        out_f.write("\n\n---\n\n")
-                    out_f.write(chunk)
-                    out_f.flush()
-                    del chunk, pil
+                keep, _ = streaming_should_keep_page(
+                    raw_md,
+                    export_mode=export_mode,
+                    state=filter_state,
+                )
+                if not keep:
+                    del raw_md, pil
                     clear_cuda_memory(sync=False, config=config)
                     time.sleep(0)
+                    continue
+
+                page_src = raw_md.strip() if export_mode == "full" else raw_md
+                del raw_md
+                chunk = strip_markdown_images(page_src)
+                del page_src
+                if out_f is None:
+                    out_f = open(out_path, "w", encoding="utf-8")
+                else:
+                    out_f.write("\n\n---\n\n")
+                out_f.write(chunk)
+                out_f.flush()
+                wrote_kept = True
+                del chunk, pil
+                clear_cuda_memory(sync=False, config=config)
+                time.sleep(0)
     finally:
+        if out_f is not None:
+            try:
+                out_f.close()
+            except Exception:  # noqa: BLE001
+                pass
         clear_cuda_memory(sync=True, config=config)
         gc.collect()
+
+    if not wrote_kept:
+        out_path.write_text("", encoding="utf-8")
 
     md = nfc(out_path.read_text(encoding="utf-8"))
 
