@@ -106,8 +106,8 @@ export function createFullsetTopicCard(deps) {
   skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
-  actions.appendChild(skip);
   actions.appendChild(submit);
+  actions.appendChild(skip);
   root.appendChild(actions);
 
   function readFullsetState() {
@@ -269,8 +269,8 @@ export function createFullsetPdfCard(deps) {
   skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Xác nhận tệp");
   submit.type = "button";
-  actions.appendChild(skip);
   actions.appendChild(submit);
+  actions.appendChild(skip);
   root.appendChild(actions);
 
   skip.addEventListener("click", () => {
@@ -383,8 +383,8 @@ export function createSlideFormCard(deps) {
   skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
-  actions.appendChild(skip);
   actions.appendChild(submit);
+  actions.appendChild(skip);
   root.appendChild(actions);
 
   function readSlideState() {
@@ -523,8 +523,8 @@ export function createQuizFormCard(deps) {
   skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
-  actions.appendChild(skip);
   actions.appendChild(submit);
+  actions.appendChild(skip);
   root.appendChild(actions);
 
   function readQuizState() {
@@ -651,8 +651,8 @@ export function createFlashcardFormCard(deps) {
   skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
-  actions.appendChild(skip);
   actions.appendChild(submit);
+  actions.appendChild(skip);
   root.appendChild(actions);
 
   skip.addEventListener("click", () => {
