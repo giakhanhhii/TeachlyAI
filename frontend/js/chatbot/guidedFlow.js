@@ -59,6 +59,20 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
   if (!guided) return { handled: false, guided, effects: [] };
 
   if (guided.kind === "fullset" && guided.step === "await_pdf_confirm" && cardType === "fullset_pdf") {
+    if (payload.__auto === "1") {
+      return {
+        handled: true,
+        guided: null,
+        effects: [
+          { type: "pushUser", text: "Bỏ qua tải PDF — nhờ Teachly tự động soạn nội dung" },
+          {
+            type: "pushBot",
+            text:
+              "Đã ghi nhận: bạn không tải PDF.\n\nTeachly sẽ tự động đề xuất nội dung khi pipeline AI sẵn sàng. Bạn có thể tiếp tục chat hoặc quay về trang chủ.",
+          },
+        ],
+      };
+    }
     const name = payload.fileName || "—";
     return {
       handled: true,
@@ -75,11 +89,13 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
   }
 
   if (guided.kind === "fullset" && guided.step === "await_topic_form" && cardType === "fullset_topic") {
-    const lines = [
+    const lines = [];
+    if (payload.__auto === "1") lines.push("[Chế độ Teachly tự động]");
+    lines.push(
       `[Full Set — chủ đề] ${payload.topic}`,
       `Trình độ: ${payload.level}`,
       `Số lượng — Slide: ${payload.slides}, Quiz: ${payload.quiz}, Flashcard: ${payload.flash}`,
-    ];
+    );
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
     return {
       handled: true,
@@ -89,7 +105,9 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
         {
           type: "pushBot",
           text:
-            "Teachly đã nhận đủ thông tin để chuẩn bị Full Set theo chủ đề của bạn (giao diện demo).\n\nViệc sinh nội dung thực tế sẽ được nối với backend/AI ở bước sau.",
+            payload.__auto === "1"
+              ? "Bạn đã chọn để Teachly tự động soạn Full Set (giao diện demo). Khi backend sẵn sàng, hệ thống sẽ sinh nội dung phù hợp.\n\nBạn có thể tiếp tục chat hoặc quay về trang chủ."
+              : "Teachly đã nhận đủ thông tin để chuẩn bị Full Set theo chủ đề của bạn (giao diện demo).\n\nViệc sinh nội dung thực tế sẽ được nối với backend/AI ở bước sau.",
         },
       ],
     };
@@ -115,11 +133,14 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
       effects: [
         {
           type: "pushUser",
-          text: `[Slide] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
         },
         {
           type: "pushBot",
-          text: "Cảm ơn bạn! Thông tin đã được ghi nhận.\n\nBên dưới là xem trước bộ slide (mock).",
+          text:
+            payload.__auto === "1"
+              ? "Bạn đã xác nhận để Teachly tự động thiết kế slide (mock).\n\nBên dưới là xem trước bộ slide."
+              : "Cảm ơn bạn! Thông tin đã được ghi nhận.\n\nBên dưới là xem trước bộ slide (mock).",
         },
         { type: "showSlide", meta },
       ],
@@ -142,11 +163,14 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
       effects: [
         {
           type: "pushUser",
-          text: `[Quiz THPTQG] ${meta.topic} — ${meta.count} câu`,
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Quiz THPTQG] ${meta.topic} — ${meta.count} câu`,
         },
         {
           type: "pushBot",
-          text: "Thiết lập đã xong trên giao diện.\n\nBên dưới là giao diện làm bài (mock).",
+          text:
+            payload.__auto === "1"
+              ? "Bạn đã xác nhận để Teachly tự động tạo bộ quiz (mock).\n\nBên dưới là giao diện làm bài."
+              : "Thiết lập đã xong trên giao diện.\n\nBên dưới là giao diện làm bài (mock).",
         },
         { type: "showQuiz", meta },
       ],
@@ -167,10 +191,13 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
       handled: true,
       guided: null,
       effects: [
-        { type: "pushUser", text: `[Flashcard] ${src}` },
+        { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard] ${src}` },
         {
           type: "pushBot",
-          text: "Cảm ơn bạn!\n\nBên dưới là bộ flashcard xem trước (mock) — nhấn thẻ để lật.",
+          text:
+            payload.__auto === "1"
+              ? "Bạn đã xác nhận để Teachly tự động tạo flashcard (mock).\n\nBên dưới là bộ thẻ — nhấn để lật."
+              : "Cảm ơn bạn!\n\nBên dưới là bộ flashcard xem trước (mock) — nhấn thẻ để lật.",
         },
         { type: "showFlash", meta },
       ],
