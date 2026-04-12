@@ -1,36 +1,65 @@
 import { BOT_AVATAR_SVG } from "../assets.js";
+import { createFlowCard } from "./flowCards.js";
 
 /**
- * @param {{ messagesEl: HTMLElement, messagesInnerEl: HTMLElement, onFlowAction: (value: string, btnEl: HTMLButtonElement) => void }} opts
+ * @param {{
+ *   messagesEl: HTMLElement,
+ *   messagesInnerEl: HTMLElement,
+ *   onFlowAction: (value: string, btnEl: HTMLButtonElement) => void,
+ *   onFlowCardSubmit?: (cardType: string, payload: Record<string, string>, cardRoot: HTMLElement) => void,
+ * }} opts
  */
 export function createMessageView(opts) {
-  const { messagesEl, messagesInnerEl, onFlowAction } = opts;
+  const { messagesEl, messagesInnerEl, onFlowAction, onFlowCardSubmit } = opts;
 
-  function addMessage(role, text, actions) {
+  /**
+   * @param {"user"|"bot"} role
+   * @param {string} text
+   * @param {any} third legacy: actions array, or `{ actions?, cardType? }`
+   */
+  function addMessage(role, text, third) {
     const row = document.createElement("div");
     row.className = `msg-row ${role === "user" ? "user" : "bot"}`;
     const bubble = document.createElement("div");
     bubble.className = `bubble ${role === "user" ? "user" : "bot"}`;
+    /** @type {{ label: string, value: string }[]} */
+    let actions = [];
+    /** @type {string | null} */
+    let cardType = null;
+    if (Array.isArray(third)) actions = third;
+    else if (third && typeof third === "object") {
+      if (Array.isArray(third.actions)) actions = third.actions;
+      if (typeof third.cardType === "string") cardType = third.cardType;
+    }
     if (role === "user") {
       bubble.textContent = text;
-    } else if (actions && actions.length) {
+    } else if (actions.length || cardType) {
       const t = document.createElement("div");
       t.style.whiteSpace = "pre-wrap";
       t.textContent = text;
       bubble.appendChild(t);
-      const ar = document.createElement("div");
-      ar.className = "msg-actions";
-      actions.forEach((a) => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "msg-action-btn";
-        b.textContent = a.label;
-        b.addEventListener("click", function () {
-          onFlowAction(a.value, this);
+      if (actions.length) {
+        const ar = document.createElement("div");
+        ar.className = "msg-actions";
+        actions.forEach((a) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "msg-action-btn";
+          b.textContent = a.label;
+          b.addEventListener("click", function () {
+            onFlowAction(a.value, this);
+          });
+          ar.appendChild(b);
         });
-        ar.appendChild(b);
-      });
-      bubble.appendChild(ar);
+        bubble.appendChild(ar);
+      }
+      if (cardType && onFlowCardSubmit) {
+        bubble.classList.add("bubble-has-flow-card");
+        const cardRoot = createFlowCard(cardType, {
+          onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
+        });
+        bubble.appendChild(cardRoot);
+      }
     } else {
       bubble.textContent = text;
     }

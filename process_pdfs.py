@@ -25,6 +25,8 @@ Memory / VRAM
   during OCR). After each PDF, the file is read once for highlights + MCQ post-process.
 * Default raster caps (before any `chandra` import): MIN_PDF_IMAGE_DIM=896, IMAGE_DPI=144 —
   override with env for sharper scans if you have VRAM headroom.
+* PDF_CONSERVE_VRAM=1: if you did not set CHANDRA_* raster vars, defaults become 768 / 120
+  (less GPU memory per page, often faster — good on ~8 GiB cards).
 
 Output cleanup
 ---------------
@@ -48,11 +50,13 @@ Environment (common)
   PDF_EXPORT_MODE=full|exercises default full = complete book per PDF
   CHANDRA_IMAGE_DPI / CHANDRA_MIN_PDF_IMAGE_DIM  optional overrides (mapped to IMAGE_DPI /
                               MIN_PDF_IMAGE_DIM before Chandra loads)
+  PDF_CONSERVE_VRAM=1         optional lower default DPI/min dim when CHANDRA_* unset (speed / VRAM)
   STRICT_OUTPUT=1             exit code 1 if any expected .md is missing or zero bytes
 """
 
 from __future__ import annotations
 
+import gc
 import logging
 import os
 from pathlib import Path
@@ -265,7 +269,8 @@ def main() -> int:
 
     LOG.info(
         "Chandra method=%s batch_size=%s TORCH_DEVICE=%s MODEL_CHECKPOINT=%s "
-        "PDF_EXPORT_MODE=%s APPLY_HIGHLIGHTS=%s GPU_CACHE_CLEAR=%s ALLOW_CPU=%s",
+        "PDF_EXPORT_MODE=%s APPLY_HIGHLIGHTS=%s GPU_CACHE_CLEAR=%s ALLOW_CPU=%s "
+        "PDF_CONSERVE_VRAM=%s CHANDRA_IMAGE_DPI=%s CHANDRA_MIN_PDF_IMAGE_DIM=%s",
         config.chandra_method,
         config.chandra_batch_size,
         torch_device,
@@ -274,7 +279,15 @@ def main() -> int:
         config.apply_highlights,
         config.gpu_cache_clear,
         config.allow_cpu,
+        config.conserve_vram,
+        config.chandra_image_dpi,
+        config.chandra_min_pdf_image_dim,
     )
+    if config.conserve_vram and config.chandra_batch_size > 1:
+        LOG.warning(
+            "PDF_CONSERVE_VRAM=1 but CHANDRA_BATCH_SIZE=%s — batch>1 raises OOM risk on many GPUs.",
+            config.chandra_batch_size,
+        )
 
     for pdf_path in tqdm(pdfs, desc="PDFs", unit="file"):
         try:
@@ -287,6 +300,8 @@ def main() -> int:
             )
         except Exception as exc:  # noqa: BLE001
             LOG.exception("Failed on %s: %s", pdf_path.name, exc)
+        finally:
+            gc.collect()
 
     rc = log_export_summary(
         pdfs,
