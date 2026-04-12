@@ -88,9 +88,34 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px dashed rgba(46, 125, 50, 0.2);
+}
+
+.flow-skip-confirm {
+  margin-top: 10px;
+  padding: 10px 10px 8px;
+  border-radius: 12px;
+  background: rgba(255, 249, 196, 0.55);
+  border: 1px solid rgba(189, 147, 0, 0.35);
+}
+
+.flow-skip-text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.flow-skip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .flow-primary-btn {

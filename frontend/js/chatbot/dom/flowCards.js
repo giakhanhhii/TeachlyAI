@@ -10,6 +10,48 @@ function el(tag, className, text) {
   return n;
 }
 
+const MSG_SKIP_PARTIAL =
+  "Bạn chưa điền đủ các trường. Hãy hoàn thiện biểu mẫu, hoặc để trống toàn bộ nếu muốn Teachly tự động tạo.";
+const MSG_SKIP_USE_SUBMIT = "Bạn đã điền đủ thông tin. Hãy nhấn Gửi thông tin để tiếp tục.";
+const MSG_SKIP_PDF_HAS_FILE =
+  "Bạn đã chọn tệp PDF — nhấn Xác nhận tệp để tiếp tục, hoặc tải lại trang nếu muốn chọn lại.";
+const MSG_AUTO_CONFIRM =
+  "Bạn chưa điền gì. Teachly sẽ tự động soạn nội dung phù hợp. Bạn có chắc không?";
+const MSG_AUTO_CONFIRM_PDF =
+  "Bạn chưa chọn tệp PDF. Teachly sẽ tự động soạn nội dung phù hợp. Bạn có chắc không?";
+
+/** @param {HTMLElement} root */
+function removeSkipConfirm(root) {
+  root.querySelector(".flow-skip-confirm")?.remove();
+}
+
+/**
+ * @param {HTMLElement} root
+ * @param {HTMLElement} errEl
+ * @param {() => void} onYes
+ * @param {string} [message]
+ */
+function showAutoConfirmPanel(root, errEl, onYes, message) {
+  removeSkipConfirm(root);
+  errEl.style.display = "none";
+  const wrap = el("div", "flow-skip-confirm");
+  wrap.appendChild(el("p", "flow-skip-text", message || MSG_AUTO_CONFIRM));
+  const row = el("div", "flow-skip-actions");
+  const yes = el("button", "flow-primary-btn", "Có, để Teachly tự động");
+  const no = el("button", "flow-secondary-btn", "Không");
+  yes.type = "button";
+  no.type = "button";
+  yes.addEventListener("click", () => {
+    removeSkipConfirm(root);
+    onYes();
+  });
+  no.addEventListener("click", () => removeSkipConfirm(root));
+  row.appendChild(yes);
+  row.appendChild(no);
+  wrap.appendChild(row);
+  root.appendChild(wrap);
+}
+
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card");
@@ -60,12 +102,69 @@ export function createFullsetTopicCard(deps) {
   root.appendChild(err);
 
   const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
+  actions.appendChild(skip);
   actions.appendChild(submit);
   root.appendChild(actions);
 
+  function readFullsetState() {
+    const t = topic.value.trim();
+    const lv = level.value;
+    const s = slides.value.trim();
+    const q = quiz.value.trim();
+    const f = flash.value.trim();
+    const ex = extra.value.trim();
+    const hasAny = Boolean(t || lv || s || q || f || ex);
+    const sn = Number(s);
+    const qn = Number(q);
+    const fn = Number(f);
+    const complete =
+      Boolean(t) &&
+      Boolean(lv) &&
+      Number.isFinite(sn) &&
+      sn >= 1 &&
+      sn <= 30 &&
+      Number.isFinite(qn) &&
+      qn >= 1 &&
+      Number.isFinite(fn) &&
+      fn >= 1;
+    return { t, lv, s, q, f, ex, hasAny, complete };
+  }
+
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    err.textContent = "";
+    const st = readFullsetState();
+    if (st.hasAny && !st.complete) {
+      err.textContent = MSG_SKIP_PARTIAL;
+      err.style.display = "block";
+      return;
+    }
+    if (st.hasAny && st.complete) {
+      err.textContent = MSG_SKIP_USE_SUBMIT;
+      err.style.display = "block";
+      return;
+    }
+    showAutoConfirmPanel(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        __auto: "1",
+        topic: "(Teachly tự động)",
+        level: "Cơ bản",
+        slides: "10",
+        quiz: "10",
+        flash: "15",
+        extra: "",
+      });
+    });
+  });
+
   submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
     err.style.display = "none";
     err.textContent = "";
     const t = topic.value.trim();
@@ -98,6 +197,7 @@ export function createFullsetTopicCard(deps) {
       return;
     }
     submit.disabled = true;
+    skip.disabled = true;
     deps.onSubmit({
       topic: t,
       level: level.value,
@@ -165,12 +265,37 @@ export function createFullsetPdfCard(deps) {
   root.appendChild(err);
 
   const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Xác nhận tệp");
   submit.type = "button";
+  actions.appendChild(skip);
   actions.appendChild(submit);
   root.appendChild(actions);
 
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    const f = input.files && input.files[0];
+    if (f) {
+      err.textContent = MSG_SKIP_PDF_HAS_FILE;
+      err.style.display = "block";
+      return;
+    }
+    showAutoConfirmPanel(
+      root,
+      err,
+      () => {
+        submit.disabled = true;
+        skip.disabled = true;
+        pick.disabled = true;
+        deps.onSubmit({ __auto: "1", fileName: "" });
+      },
+      MSG_AUTO_CONFIRM_PDF,
+    );
+  });
+
   submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
     err.style.display = "none";
     const f = input.files && input.files[0];
     if (!f) {
@@ -179,6 +304,7 @@ export function createFullsetPdfCard(deps) {
       return;
     }
     submit.disabled = true;
+    skip.disabled = true;
     pick.disabled = true;
     deps.onSubmit({ fileName: f.name });
   });
@@ -253,12 +379,58 @@ export function createSlideFormCard(deps) {
   root.appendChild(err);
 
   const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
+  actions.appendChild(skip);
   actions.appendChild(submit);
   root.appendChild(actions);
 
+  function readSlideState() {
+    const topic = docText.value.trim();
+    const f = file.files && file.files[0];
+    const n = Number(count.value);
+    const st = structure.value.trim();
+    const sty = style.value;
+    const nt = notes.value.trim();
+    const hasAny = Boolean(topic || f || count.value.trim() || st || sty || nt);
+    const complete =
+      Boolean(topic || f) && Number.isFinite(n) && n >= 1 && n <= 30 && Boolean(sty);
+    return { topic, f, n, st, sty, nt, hasAny, complete };
+  }
+
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    const st = readSlideState();
+    if (st.hasAny && !st.complete) {
+      err.textContent = MSG_SKIP_PARTIAL;
+      err.style.display = "block";
+      return;
+    }
+    if (st.hasAny && st.complete) {
+      err.textContent = MSG_SKIP_USE_SUBMIT;
+      err.style.display = "block";
+      return;
+    }
+    showAutoConfirmPanel(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      fileBtn.disabled = true;
+      deps.onSubmit({
+        __auto: "1",
+        topic: "(Teachly tự động)",
+        fileName: "",
+        count: "10",
+        structure: "",
+        style: "Gần gũi",
+        notes: "",
+      });
+    });
+  });
+
   submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
     err.style.display = "none";
     const topic = docText.value.trim();
     const f = file.files && file.files[0];
@@ -279,6 +451,7 @@ export function createSlideFormCard(deps) {
       return;
     }
     submit.disabled = true;
+    skip.disabled = true;
     deps.onSubmit({
       topic: topic || (f ? `[Tệp] ${f.name}` : ""),
       fileName: f ? f.name : "",
@@ -346,12 +519,57 @@ export function createQuizFormCard(deps) {
   root.appendChild(err);
 
   const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
+  actions.appendChild(skip);
   actions.appendChild(submit);
   root.appendChild(actions);
 
+  function readQuizState() {
+    const t = srcText.value.trim();
+    const f = file.files && file.files[0];
+    const k = kind.value.trim();
+    const n = Number(qn.value);
+    const d = diff.value.trim();
+    const nt = notes.value.trim();
+    const hasAny = Boolean(t || f || k || qn.value.trim() || d || nt);
+    const complete = Boolean(t || f) && Number.isFinite(n) && n >= 1 && Boolean(k);
+    return { t, f, k, n, d, nt, hasAny, complete };
+  }
+
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    const st = readQuizState();
+    if (st.hasAny && !st.complete) {
+      err.textContent = MSG_SKIP_PARTIAL;
+      err.style.display = "block";
+      return;
+    }
+    if (st.hasAny && st.complete) {
+      err.textContent = MSG_SKIP_USE_SUBMIT;
+      err.style.display = "block";
+      return;
+    }
+    showAutoConfirmPanel(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      fileBtn.disabled = true;
+      deps.onSubmit({
+        __auto: "1",
+        source: "(Teachly tự động)",
+        fileName: "",
+        kind: "Ôn tập THPTQG",
+        count: "15",
+        difficulty: "",
+        notes: "",
+      });
+    });
+  });
+
   submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
     err.style.display = "none";
     const t = srcText.value.trim();
     const f = file.files && file.files[0];
@@ -372,6 +590,7 @@ export function createQuizFormCard(deps) {
       return;
     }
     submit.disabled = true;
+    skip.disabled = true;
     deps.onSubmit({
       source: t || (f ? `[Tệp] ${f.name}` : ""),
       fileName: f ? f.name : "",
@@ -428,14 +647,40 @@ export function createFlashcardFormCard(deps) {
   root.appendChild(err);
 
   const actions = el("div", "flow-card-actions");
+  const skip = el("button", "flow-secondary-btn", "Bỏ qua");
+  skip.type = "button";
   const submit = el("button", "flow-primary-btn", "Gửi thông tin");
   submit.type = "button";
+  actions.appendChild(skip);
   actions.appendChild(submit);
   root.appendChild(actions);
 
+  skip.addEventListener("click", () => {
+    err.style.display = "none";
+    const hasAny = Boolean(list.value.trim() || back.value.trim() || notes.value.trim() || rYes.checked);
+    if (hasAny) {
+      err.textContent = MSG_SKIP_PARTIAL;
+      err.style.display = "block";
+      return;
+    }
+    showAutoConfirmPanel(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        __auto: "1",
+        list: "",
+        back: "",
+        aiImage: "Không",
+        notes: "",
+      });
+    });
+  });
+
   submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
     err.style.display = "none";
     submit.disabled = true;
+    skip.disabled = true;
     deps.onSubmit({
       list: list.value.trim(),
       back: back.value.trim(),

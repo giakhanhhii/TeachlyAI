@@ -51,6 +51,26 @@ def conserve_vram_from_env() -> bool:
     return truthy_env("PDF_CONSERVE_VRAM")
 
 
+def pdf_gc_every_from_env() -> int:
+    """Run gc.collect() every N OCR pages (not every page) to avoid UI freezes. 0 = never (except PDF end)."""
+    raw = os.environ.get("PDF_GC_EVERY", "8").strip()
+    try:
+        n = int(raw)
+    except ValueError:
+        return 8
+    return max(0, min(128, n))
+
+
+def pdf_tqdm_mininterval_from_env() -> float:
+    """Min seconds between tqdm redraws — lowers console overhead on Windows."""
+    raw = os.environ.get("PDF_TQDM_MININTERVAL", "0.35").strip()
+    try:
+        x = float(raw)
+    except ValueError:
+        return 0.35
+    return max(0.05, min(30.0, x))
+
+
 def _env_nonempty(name: str) -> str | None:
     v = os.environ.get(name)
     if v is None or str(v).strip() == "":
@@ -77,6 +97,8 @@ class PipelineConfig:
     conserve_vram: bool
     chandra_image_dpi: str
     chandra_min_pdf_image_dim: str
+    pdf_gc_every: int
+    pdf_tqdm_mininterval: float
 
     @classmethod
     def from_env(cls, root_dir: Path) -> PipelineConfig:
@@ -106,4 +128,6 @@ class PipelineConfig:
             conserve_vram=conserve,
             chandra_image_dpi=image_dpi,
             chandra_min_pdf_image_dim=min_pdf_dim,
+            pdf_gc_every=pdf_gc_every_from_env(),
+            pdf_tqdm_mininterval=pdf_tqdm_mininterval_from_env(),
         )
