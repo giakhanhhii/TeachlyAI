@@ -193,7 +193,7 @@ export function init() {
     e.preventDefault();
     const prompt = input.value.trim();
     if (!prompt) return;
-    if (guided && (guided.kind === "fullset" && guided.step === "await_source")) {
+    if (guided && guided.step === "await_source") {
       input.focus();
       return;
     }
