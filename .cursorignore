@@ -1,0 +1,8 @@
+# Lờ đi toàn bộ file PDF
+*.pdf
+
+# Lờ đi folder chứa dữ liệu nặng
+data_input/
+data_output/
+
+# Nếu bạn để file PDF ở ổ đĩa khác thì không cần ghi đường dẫn vào đây

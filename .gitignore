@@ -39,3 +39,6 @@ Thumbs.db
 template/
 .cursorrules.md
 .cursor/plans/
+
+# Large local PDF sources (do not commit)
+data_input/

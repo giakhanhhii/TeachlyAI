@@ -1,0 +1,23 @@
+# PDF batch pipeline — Python 3.12, Windows, NVIDIA GPU.
+#
+# Install (two steps — pip can mis-resolve if `chandra-ocr[hf]` and CUDA torch share one file).
+# Keep torch + torchvision from this file paired; a stray PyPI torch upgrade breaks Chandra.
+#   .\.venv\Scripts\python.exe -m pip install -U pip
+#   .\.venv\Scripts\python.exe -m pip install -r requirements-pdf.txt
+#   .\.venv\Scripts\python.exe -m pip install "chandra-ocr[hf]==0.2.0"
+#
+# Reinstall GPU torch + matching torchvision:
+#   .\.venv\Scripts\python.exe -m pip uninstall -y torch torchvision torchaudio
+#   .\.venv\Scripts\python.exe -m pip install -r requirements-pdf.txt
+#   .\.venv\Scripts\python.exe -m pip install "chandra-ocr[hf]==0.2.0"
+#
+# Run:
+#   .\.venv\Scripts\python.exe process_pdfs.py
+
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.7.0+cu128
+# Match torch major; wrong torchvision breaks transformers/Chandra imports.
+torchvision==0.22.0+cu128
+
+pymupdf>=1.27.0
+tqdm>=4.67.0
