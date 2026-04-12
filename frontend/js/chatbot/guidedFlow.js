@@ -300,6 +300,35 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
       `Số lượng — Slide: ${payload.slides}, Quiz: ${payload.quiz}, Flashcard: ${payload.flash}`,
     );
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
+    const topic = payload.topic || "—";
+    const openedAt = new Date().toISOString();
+    const resumeDock = {
+      title: `Full set — ${topic}`,
+      items: [
+        {
+          kind: "slide",
+          meta: { topic, count: String(payload.slides || "—"), notes: "Full set (demo mock)" },
+          title: `Slide — ${topic}`,
+          openedAt,
+        },
+        {
+          kind: "quiz",
+          meta: { topic, count: String(payload.quiz || "—"), notes: "Full set (demo mock)" },
+          title: `Trắc nghiệm — ${topic}`,
+          openedAt,
+        },
+        {
+          kind: "flash",
+          meta: { source: topic, count: String(payload.flash || "—"), extra: "Full set (demo mock)" },
+          title: `Flashcard — ${topic}`,
+          openedAt,
+        },
+      ],
+    };
+    const baseBot =
+      payload.__auto === "1"
+        ? "Bạn đã chọn để Teachly tự động soạn Full Set (giao diện demo). Khi backend sẵn sàng, hệ thống sẽ sinh nội dung phù hợp.\n\nBạn có thể tiếp tục chat hoặc quay về trang chủ."
+        : "Teachly đã nhận đủ thông tin để chuẩn bị Full Set theo chủ đề của bạn (giao diện demo).\n\nViệc sinh nội dung thực tế sẽ được nối với backend/AI ở bước sau.";
     return {
       handled: true,
       guided: null,
@@ -307,10 +336,8 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: lines.join("\n") },
         {
           type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã chọn để Teachly tự động soạn Full Set (giao diện demo). Khi backend sẵn sàng, hệ thống sẽ sinh nội dung phù hợp.\n\nBạn có thể tiếp tục chat hoặc quay về trang chủ."
-              : "Teachly đã nhận đủ thông tin để chuẩn bị Full Set theo chủ đề của bạn (giao diện demo).\n\nViệc sinh nội dung thực tế sẽ được nối với backend/AI ở bước sau.",
+          text: `${baseBot}\n\nDưới đây là lối tắt mở xem trước Slide, Quiz và Flashcard (dữ liệu mock).`,
+          resumeDock,
         },
       ],
     };

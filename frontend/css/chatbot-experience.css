@@ -234,6 +234,35 @@
   max-width: min(820px, 96vw);
 }
 
+.exp-shell-fullset-hub {
+  max-width: min(560px, 96vw);
+}
+
+.exp-fullset-hub-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.exp-fullset-hub-tile {
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid #e0e0e0;
+  background: #fafafa;
+  font-size: 15px;
+  font-weight: 600;
+  color: #263238;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.exp-fullset-hub-tile:hover {
+  border-color: #1976d2;
+  background: #f5f9ff;
+  box-shadow: 0 4px 14px rgba(25, 118, 210, 0.12);
+}
+
 .exp-topbar {
   display: flex;
   align-items: center;
@@ -382,6 +411,10 @@
   line-height: 1.55;
   margin: 0 0 18px;
   color: #212121;
+}
+
+.exp-q-text strong {
+  font-weight: 700;
 }
 
 .exp-option-grid {
