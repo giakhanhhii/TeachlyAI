@@ -221,11 +221,11 @@
   max-width: min(72%, calc(100% - 44px));
 }
 
-/* Form slide/quiz/flash trong bubble: giãn gần hết hàng (trừ full set) */
+/* Form slide/quiz/flash trong bubble: 2/3 chiều ngang hàng chat (trừ full set) */
 .msg-row.bot > .bubble.bot.bubble-has-flow-card-wide {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
-  width: auto;
+  width: calc(100% * 2 / 3);
   max-width: calc(100% - 44px);
 }
 
@@ -239,10 +239,10 @@
 }
 
 .msg-flow-card-shell.msg-flow-card-shell-wide {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   align-self: flex-start;
   min-width: 0;
-  width: auto;
+  width: calc(100% * 2 / 3);
   max-width: calc(100% - 44px);
 }
 
