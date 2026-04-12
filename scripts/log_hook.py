@@ -25,8 +25,11 @@ def detect_tool(data: dict) -> str:
     tool_env = os.environ.get("AI_TOOL_NAME", "").lower()
     if tool_env:
         return tool_env
+    # Cursor includes cursor_version on all hook payloads (see Cursor hooks docs).
+    if data.get("cursor_version"):
+        return "cursor"
     # Heuristics
-    if "transcript_path" in data:
+    if data.get("transcript_path"):
         return "codex"
     if data.get("hook_event_name", "").startswith(("Before", "After", "Session", "Pre", "Notification")):
         return "gemini"
@@ -149,8 +152,17 @@ def main():
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
-    # Output valid JSON (required by some tools like Gemini)
-    print(json.dumps({"status": "logged"}))
+    # stdout JSON must match each host's hook contract
+    event_lc = (data.get("hook_event_name") or data.get("event") or "").lower()
+    if tool == "cursor":
+        if event_lc == "beforesubmitprompt":
+            print(json.dumps({"continue": True}))
+        elif event_lc == "stop":
+            print(json.dumps({}))
+        else:
+            print(json.dumps({}))
+    else:
+        print(json.dumps({"status": "logged"}))
 
 
 if __name__ == "__main__":

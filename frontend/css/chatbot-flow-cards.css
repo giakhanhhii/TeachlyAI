@@ -209,14 +209,14 @@
 }
 
 .bubble.bot.bubble-has-flow-card {
-  max-width: 100%;
+  max-width: calc(100% - 44px);
 }
 
 /* Form card on its own row (not nested inside a glass bubble) */
 .msg-flow-card-shell {
   flex: 1;
   min-width: 0;
-  max-width: 100%;
+  max-width: calc(100% - 44px);
 }
 
 .msg-flow-card-shell .flow-card {
