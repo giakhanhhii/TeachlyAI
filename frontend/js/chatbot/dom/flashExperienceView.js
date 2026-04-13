@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 
 function escapeHtml(s) {
@@ -179,7 +180,8 @@ export async function mountFlashExperience(layerView, meta, deps) {
   hookFlashSpeechVoicesOnce();
   const experienceBody = layerView.body;
 
-  const data = await fetchMockResource("flashcard");
+  const raw = await fetchMockResource("flashcard");
+  const data = prepareFlashSessionData(raw, meta);
   const titleText = data.title || "Flashcard";
   const cards = Array.isArray(data.cards) ? data.cards : [];
 
