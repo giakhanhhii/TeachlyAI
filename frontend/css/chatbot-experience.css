@@ -248,6 +248,13 @@
   align-items: stretch;
 }
 
+.exp-mixed-pick-hint {
+  font-size: 13px;
+  color: var(--muted, #607d8b);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
 .exp-mixed-kind-badge {
   display: inline-block;
   align-self: flex-start;

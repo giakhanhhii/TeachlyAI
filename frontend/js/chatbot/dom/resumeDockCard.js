@@ -92,6 +92,11 @@ export function createResumeDockCard(dock, onOpen, onOpenAll, onOpenFullSetMixed
     head.className = "resume-dock-bundle-head";
     head.textContent = bundleTitle;
     main.appendChild(head);
+    if (Array.isArray(dock.items) && dock.items.length && typeof onOpen === "function") {
+      dock.items.forEach((it) => {
+        main.appendChild(createLine(it, onOpen));
+      });
+    }
     root.appendChild(main);
     return root;
   }

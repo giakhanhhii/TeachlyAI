@@ -36,6 +36,20 @@ function quizStemToSafeHtml(s) {
   return withBold.replace(/\n/g, "<br>");
 }
 
+/** @param {any} q */
+function quizOptionList(q) {
+  return Array.isArray(q?.options) ? q.options : [];
+}
+
+/** Chỉ số đáp án đúng (0..n-1), luôn hợp lệ với số lượng phương án. */
+function quizCorrectOptionIndex(q) {
+  const opts = quizOptionList(q);
+  if (opts.length === 0) return -1;
+  const c = Number(q?.correctIndex);
+  if (!Number.isFinite(c)) return 0;
+  return Math.min(Math.max(0, Math.floor(c)), opts.length - 1);
+}
+
 /**
  * @param {Record<string, string>} meta
  * @param {number} qIndex
@@ -216,6 +230,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
       nextBtn.disabled = false;
     } else {
       const q = step.data;
+      const opts = quizOptionList(q);
       const num = document.createElement("div");
       num.className = "exp-q-number";
       num.textContent = `${index + 1}.`;
@@ -225,41 +240,55 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
       const optsWrap = document.createElement("div");
       optsWrap.className = "exp-option-grid";
       const letters = ["A", "B", "C", "D", "E", "F"];
-      (q.options || []).forEach((opt, j) => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "exp-opt-btn";
-        b.textContent = `${letters[j] || j}. ${opt}`;
-        b.addEventListener("click", () => {
-          quizSelected = j;
-          optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
-          b.classList.add("selected");
-          nextBtn.disabled = false;
+      if (opts.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "exp-empty";
+        empty.textContent = "Câu hỏi chưa có phương án — nhấn Tiếp theo để bỏ qua.";
+        stage.appendChild(num);
+        stage.appendChild(text);
+        stage.appendChild(empty);
+        nextBtn.disabled = false;
+      } else {
+        opts.forEach((opt, j) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "exp-opt-btn";
+          b.textContent = `${letters[j] || j}. ${opt}`;
+          b.addEventListener("click", () => {
+            quizSelected = j;
+            optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
+            b.classList.add("selected");
+            nextBtn.disabled = false;
+          });
+          optsWrap.appendChild(b);
         });
-        optsWrap.appendChild(b);
-      });
-      const hintToggle = document.createElement("button");
-      hintToggle.type = "button";
-      hintToggle.className = "exp-hint-toggle";
-      hintToggle.innerHTML = `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
-      const hintPanel = document.createElement("div");
-      hintPanel.className = "exp-hint-panel";
-      hintPanel.hidden = true;
-      hintPanel.textContent = q.hint || "(Chưa có gợi ý.)";
-      let hintOpen = false;
-      hintToggle.addEventListener("click", () => {
-        hintOpen = !hintOpen;
-        hintPanel.hidden = !hintOpen;
-        hintToggle.innerHTML = hintOpen
-          ? `Ẩn gợi ý <span class="exp-chevron exp-chevron-up" aria-hidden="true">▾</span>`
-          : `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
-      });
-      stage.appendChild(num);
-      stage.appendChild(text);
-      stage.appendChild(optsWrap);
-      stage.appendChild(hintToggle);
-      stage.appendChild(hintPanel);
-      nextBtn.disabled = true;
+        const hintToggle = document.createElement("button");
+        hintToggle.type = "button";
+        hintToggle.className = "exp-hint-toggle";
+        hintToggle.innerHTML = `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
+        const hintPanel = document.createElement("div");
+        hintPanel.className = "exp-hint-panel";
+        hintPanel.hidden = true;
+        hintPanel.textContent = q.hint || "(Chưa có gợi ý.)";
+        let hintOpen = false;
+        hintToggle.addEventListener("click", () => {
+          hintOpen = !hintOpen;
+          hintPanel.hidden = !hintOpen;
+          hintToggle.innerHTML = hintOpen
+            ? `Ẩn gợi ý <span class="exp-chevron exp-chevron-up" aria-hidden="true">▾</span>`
+            : `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
+        });
+        const pickHint = document.createElement("p");
+        pickHint.className = "exp-mixed-pick-hint";
+        pickHint.textContent = "Chọn một đáp án, nhấn Tiếp theo để xem đúng/sai, rồi Tiếp theo lần nữa để sang mục kế tiếp.";
+        stage.appendChild(num);
+        stage.appendChild(text);
+        stage.appendChild(optsWrap);
+        stage.appendChild(pickHint);
+        stage.appendChild(hintToggle);
+        stage.appendChild(hintPanel);
+        nextBtn.disabled = true;
+      }
     }
 
     progress.paint({ total, index, correct, wrong });
@@ -272,17 +301,31 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
 
     if (step.kind === "quiz") {
       const q = step.data;
+      const opts = quizOptionList(q);
+      const correctIdx = quizCorrectOptionIndex(q);
+
+      if (opts.length === 0) {
+        if (index >= total - 1) {
+          nextBtn.disabled = true;
+          return;
+        }
+        index += 1;
+        renderStep();
+        return;
+      }
+
       if (!quizRevealed) {
-        if (quizSelected === null) return;
-        const ok = quizSelected === q.correctIndex;
+        if (quizSelected == null || !Number.isFinite(Number(quizSelected))) return;
+        const picked = Number(quizSelected);
+        const ok = picked === correctIdx;
         if (ok) correct += 1;
         else wrong += 1;
         quizRevealed = true;
         progress.paint({ total, index, correct, wrong });
         const buttons = stage.querySelectorAll(".exp-opt-btn");
         buttons.forEach((btn, j) => {
-          if (j === q.correctIndex) btn.classList.add("correct");
-          if (j === quizSelected && j !== q.correctIndex) btn.classList.add("wrong");
+          if (j === correctIdx) btn.classList.add("correct");
+          if (j === picked && j !== correctIdx) btn.classList.add("wrong");
           /** @type {HTMLButtonElement} */ (btn).disabled = true;
         });
         nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
