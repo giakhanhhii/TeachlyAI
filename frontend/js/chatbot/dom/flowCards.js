@@ -771,26 +771,12 @@ export function createFlashcardFormCard(deps) {
   const back = flowTextarea("VD: Nghĩa tiếng Việt, Phiên âm, Ví dụ, Từ đồng nghĩa", 2);
   root.appendChild(wrapField("Thông tin mặt sau", back));
 
-  const imgRow = el("div", "flow-field");
-  imgRow.appendChild(el("span", "flow-label", "Hình ảnh minh họa AI"));
-  const radios = el("div", "flow-radio-row");
-  const rYes = document.createElement("input");
-  rYes.type = "radio";
-  rYes.name = "flash_ai_img";
-  rYes.value = "yes";
-  const rNo = document.createElement("input");
-  rNo.type = "radio";
-  rNo.name = "flash_ai_img";
-  rNo.value = "no";
-  rNo.checked = true;
-  const ly = el("label", "flow-radio", "Có");
-  ly.prepend(rYes);
-  const ln = el("label", "flow-radio", "Không");
-  ln.prepend(rNo);
-  radios.appendChild(ly);
-  radios.appendChild(ln);
-  imgRow.appendChild(radios);
-  root.appendChild(imgRow);
+  const count = el("input", "flow-input");
+  count.type = "number";
+  count.min = "1";
+  count.max = "40";
+  count.placeholder = "1–40 (mặc định 20)";
+  root.appendChild(wrapField("Số lượng thẻ", count, "Tối đa 40 thẻ mỗi lần tạo."));
 
   const notes = flowTextarea("Ghi chú thêm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -810,7 +796,7 @@ export function createFlashcardFormCard(deps) {
 
   skip.addEventListener("click", () => {
     err.style.display = "none";
-    const hasAny = Boolean(list.value.trim() || back.value.trim() || notes.value.trim() || rYes.checked);
+    const hasAny = Boolean(list.value.trim() || back.value.trim() || count.value.trim() || notes.value.trim());
     if (hasAny) {
       err.textContent = MSG_SKIP_PARTIAL;
       err.style.display = "block";
@@ -823,6 +809,7 @@ export function createFlashcardFormCard(deps) {
         __auto: "1",
         list: "",
         back: "",
+        count: "20",
         aiImage: "Không",
         notes: "",
       });
@@ -832,12 +819,22 @@ export function createFlashcardFormCard(deps) {
   submit.addEventListener("click", () => {
     removeSkipConfirm(root);
     err.style.display = "none";
+    const cv = count.value.trim();
+    if (cv) {
+      const n = Number(cv);
+      if (!Number.isFinite(n) || n < 1 || n > 40) {
+        err.textContent = "Số lượng thẻ phải từ 1 đến 40.";
+        err.style.display = "block";
+        return;
+      }
+    }
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
       list: list.value.trim(),
       back: back.value.trim(),
-      aiImage: rYes.checked ? "Có" : "Không",
+      count: cv || "20",
+      aiImage: "Không",
       notes: notes.value.trim(),
     });
   });
