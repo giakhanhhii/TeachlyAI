@@ -39,7 +39,6 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
       { action: "share", label: "Chia sẻ cuộc trò chuyện" },
       { action: "pin", label: session.pinned ? "Bỏ ghim" : "Ghim" },
       { action: "rename", label: "Đổi tên" },
-      { action: "add_note", label: "Thêm vào sổ ghi chú", disabled: true },
       { action: "delete", label: "Xóa" },
     ];
 
@@ -48,15 +47,10 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
       option.type = "button";
       option.className = "chat-item-menu-option";
       option.textContent = item.label;
-      if (item.disabled) {
-        option.disabled = true;
-        option.classList.add("disabled");
-      } else {
-        option.onclick = () => {
-          menu.hidden = true;
-          onAction(item.action, originalIdx);
-        };
-      }
+      option.onclick = () => {
+        menu.hidden = true;
+        onAction(item.action, originalIdx);
+      };
       menu.appendChild(option);
     });
 
@@ -66,6 +60,15 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
       chatListEl.querySelectorAll(".chat-item-menu").forEach((el) => {
         el.hidden = true;
       });
+      if (!isOpen) {
+        const rect = trigger.getBoundingClientRect();
+        const desiredLeft = rect.right + 8;
+        const desiredTop = rect.top - 6;
+        const maxLeft = Math.max(8, window.innerWidth - 230);
+        const maxTop = Math.max(8, window.innerHeight - 180);
+        menu.style.left = `${Math.min(desiredLeft, maxLeft)}px`;
+        menu.style.top = `${Math.min(Math.max(desiredTop, 8), maxTop)}px`;
+      }
       menu.hidden = isOpen;
     };
 
