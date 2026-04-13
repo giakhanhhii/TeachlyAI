@@ -29,11 +29,11 @@ def gpu_cache_clear_from_env() -> bool:
 
 
 def chandra_batch_size_from_env() -> int:
-    raw = os.environ.get("CHANDRA_BATCH_SIZE", "1").strip()
+    raw = os.environ.get("CHANDRA_BATCH_SIZE", "2").strip()  # RTX 4060 8GB: 2 is safe, up from 1
     try:
         n = int(raw)
     except ValueError:
-        return 1
+        return 2
     return max(1, n)
 
 
@@ -59,7 +59,7 @@ def _defaults_for_speed_preset(preset: str) -> tuple[str, str]:
         return "96", "640"
     if preset == "fast":
         return "108", "768"
-    return "144", "896"
+    return "120", "768"  # RTX 4060 8GB: reduced from 144/896 to lower GPU heat & VRAM usage
 
 
 def conserve_vram_from_env() -> bool:
@@ -73,11 +73,11 @@ def conserve_vram_from_env() -> bool:
 
 def pdf_gc_every_from_env() -> int:
     """Run gc.collect() every N OCR pages (not every page) to avoid UI freezes. 0 = never (except PDF end)."""
-    raw = os.environ.get("PDF_GC_EVERY", "8").strip()
+    raw = os.environ.get("PDF_GC_EVERY", "16").strip()  # RTX 4060 8GB: 16 reduces GC pauses vs default 8
     try:
         n = int(raw)
     except ValueError:
-        return 8
+        return 16
     return max(0, min(128, n))
 
 
@@ -89,6 +89,18 @@ def pdf_tqdm_mininterval_from_env() -> float:
     except ValueError:
         return 0.35
     return max(0.05, min(30.0, x))
+
+
+def pdf_checkpoint_from_env() -> bool:
+    """PDF_CHECKPOINT=0 disables per-batch .progress.json checkpoint files. Default: enabled.
+
+    With checkpoints enabled, a restart will resume from the last completed batch instead
+    of re-processing pages from the beginning.
+    """
+    raw = os.environ.get("PDF_CHECKPOINT")
+    if raw is None:
+        return True  # default: enabled
+    return truthy_env("PDF_CHECKPOINT")
 
 
 def _env_nonempty(name: str) -> str | None:
@@ -120,6 +132,7 @@ class PipelineConfig:
     chandra_min_pdf_image_dim: str
     pdf_gc_every: int
     pdf_tqdm_mininterval: float
+    checkpoint_enabled: bool
 
     @classmethod
     def from_env(cls, root_dir: Path) -> PipelineConfig:
@@ -160,4 +173,5 @@ class PipelineConfig:
             chandra_min_pdf_image_dim=min_dim,
             pdf_gc_every=pdf_gc_every_from_env(),
             pdf_tqdm_mininterval=pdf_tqdm_mininterval_from_env(),
+            checkpoint_enabled=pdf_checkpoint_from_env(),
         )

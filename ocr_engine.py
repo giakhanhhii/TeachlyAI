@@ -211,10 +211,14 @@ def pdf_page_count(pdf_path: Path) -> int:
         doc.close()
 
 
-def iter_pdf_pages_rgb(pdf_path: Path) -> Iterable[Tuple[int, Any]]:
+def iter_pdf_pages_rgb(pdf_path: Path, start_page: int = 0) -> Iterable[Tuple[int, Any]]:
     """
     Yield (page_index, RGB PIL) one page at a time — same raster policy as `chandra.input.load_pdf_images`
     but avoids holding every page in memory.
+
+    Args:
+        start_page: First page index to yield (0-based). Pages before this are skipped entirely
+                    (not rendered), enabling fast resume without re-processing completed pages.
     """
     from chandra.input import flatten
     from chandra.settings import settings
@@ -226,7 +230,7 @@ def iter_pdf_pages_rgb(pdf_path: Path) -> Iterable[Tuple[int, Any]]:
     image_dpi = settings.IMAGE_DPI
     min_pdf_image_dim = settings.MIN_PDF_IMAGE_DIM
     try:
-        for page in range(len(doc)):
+        for page in range(start_page, len(doc)):
             page_obj = doc[page]
             min_page_dim = min(page_obj.get_width(), page_obj.get_height())
             scale_dpi = (min_pdf_image_dim / min_page_dim) * 72
