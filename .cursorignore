@@ -5,4 +5,17 @@
 data_input/
 data_output/
 
-# Nếu bạn để file PDF ở ổ đĩa khác thì không cần ghi đường dẫn vào đây
+# Ẩn nội dung AI logs để Cursor không bị nhiễu (vẫn cho phép script ghi log bình thường)
+.claude/
+.gemini/
+.codex/
+plan/
+
+# Build và Cache
+__pycache__/
+venv/
+.next/
+node_modules/
+dist/
+build/
+JOURNAL.md

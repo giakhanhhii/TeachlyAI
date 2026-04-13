@@ -239,36 +239,21 @@ export async function mountFlashExperience(layerView, meta, deps) {
     const frame = document.createElement("div");
     frame.className = "flash-card-frame";
 
-    const soundBtn = document.createElement("button");
-    soundBtn.type = "button";
-    soundBtn.className = "flash-sound-btn";
-    soundBtn.setAttribute("aria-label", "Phát âm");
-    soundBtn.innerHTML = FLASH_SOUND_SVG;
-    soundBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      soundBtn.classList.remove("flash-sound-anim");
-      void soundBtn.offsetWidth;
-      soundBtn.classList.add("flash-sound-anim");
-      speakFlashcard(c);
-    });
-    soundBtn.addEventListener("animationend", () => {
-      soundBtn.classList.remove("flash-sound-anim");
-    });
-
     const inner = document.createElement("div");
     inner.className = "flash-card";
     inner.setAttribute("role", "button");
     inner.tabIndex = 0;
+
     const frontTerm = escapeHtml(capitalizeFirst(c.front));
     const backText = escapeHtml(capitalizeFirst(c.back));
-    const hintBlock = c.hint
-      ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>`
-      : "";
+    const phoneticBlock = c.phonetic ? `<div class="flash-phonetic">${escapeHtml(c.phonetic)}</div>` : "";
+    const hintBlock = c.hint ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>` : "";
 
     inner.innerHTML = `
       <div class="flash-face flash-front">
         <div class="flash-front-stack">
           <span class="flash-front-term">${frontTerm}</span>
+          ${phoneticBlock}
           ${hintBlock}
         </div>
       </div>
@@ -277,8 +262,28 @@ export async function mountFlashExperience(layerView, meta, deps) {
       </div>
     `;
 
-    // Gắn nút loa vào mặt trước để nó xoay theo thẻ
-    inner.querySelector(".flash-front").appendChild(soundBtn);
+    // Hàm tạo nút loa để gắn vào cả 2 mặt
+    const addSoundBtn = (faceEl) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "flash-sound-btn";
+      btn.setAttribute("aria-label", "Phát âm");
+      btn.innerHTML = FLASH_SOUND_SVG;
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        btn.classList.remove("flash-sound-anim");
+        void btn.offsetWidth;
+        btn.classList.add("flash-sound-anim");
+        speakFlashcard(c);
+      });
+      btn.addEventListener("animationend", () => {
+        btn.classList.remove("flash-sound-anim");
+      });
+      faceEl.appendChild(btn);
+    };
+
+    addSoundBtn(inner.querySelector(".flash-front"));
+    addSoundBtn(inner.querySelector(".flash-back"));
 
     inner.addEventListener("click", () => inner.classList.toggle("flipped"));
     inner.addEventListener("keydown", (e) => {

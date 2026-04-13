@@ -17,10 +17,12 @@ export const FALLBACK_QUIZ = {
 };
 
 export const FALLBACK_FLASHCARD = {
-  title: "Flashcard (offline)",
+  title: "Từ vựng quan trọng (Offline)",
   cards: [
-    { id: "fb1", front: "abandon", back: "từ bỏ", hint: "" },
-    { id: "fb2", front: "meticulous", back: "tỉ mỉ", hint: "" },
+    { id: "fb1", front: "allocate", phonetic: "/ˈæləkeɪt/", back: "phân bổ", hint: "Động từ trang trọng: allocate resources to..." },
+    { id: "fb2", front: "curriculum", phonetic: "/kəˈrɪkjələm/", back: "chương trình học", hint: "Hay gặp trong đoạn về giáo dục." },
+    { id: "fb3", front: "abandon", phonetic: "/əˈbændən/", back: "từ bỏ", hint: "" },
+    { id: "fb4", front: "meticulous", phonetic: "/məˈtɪkjələs/", back: "tỉ mỉ", hint: "" },
   ],
 };
 
