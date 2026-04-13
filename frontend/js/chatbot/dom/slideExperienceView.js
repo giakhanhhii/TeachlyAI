@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 
 /**
@@ -27,7 +28,8 @@ function buildAiDraftSlide(meta, sIndex, slide) {
 export async function mountSlideExperience(layerView, meta, deps) {
   layerView.prepareShow();
   const root = layerView.body;
-  const data = await fetchMockResource("slide");
+  const raw = await fetchMockResource("slide");
+  const data = prepareSlideSessionData(raw, meta);
   const deckTitle = data.title || "Bộ slide";
   const slides = Array.isArray(data.slides) ? data.slides : [];
 

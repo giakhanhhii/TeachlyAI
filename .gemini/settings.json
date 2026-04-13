@@ -1,39 +1,27 @@
-{
+﻿{
   "hooks": {
     "BeforeAgent": [
       {
+        "matcher": "*",
         "hooks": [
           {
-            "name": "log-prompt",
+            "name": "ai-log-prompt",
             "type": "command",
-            "command": "AI_TOOL_NAME=gemini python3 scripts/log_hook.py",
-            "timeout": 10000
+            "command": "bash \"$GEMINI_PROJECT_DIR/scripts/run_log_hook.sh\"",
+            "timeout": 15000
           }
         ]
       }
     ],
-    "AfterModel": [
+    "AfterAgent": [
       {
-        "matcher": ".*",
+        "matcher": "*",
         "hooks": [
           {
-            "name": "log-model",
+            "name": "ai-log-after-agent",
             "type": "command",
-            "command": "AI_TOOL_NAME=gemini python3 scripts/log_hook.py",
-            "timeout": 10000
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "name": "log-session-end",
-            "type": "command",
-            "command": "AI_TOOL_NAME=gemini python3 scripts/log_hook.py",
-            "timeout": 10000
+            "command": "bash \"$GEMINI_PROJECT_DIR/scripts/run_log_hook.sh\"",
+            "timeout": 15000
           }
         ]
       }

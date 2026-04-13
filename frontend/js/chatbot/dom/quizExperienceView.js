@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 
 /** @param {string} s */
@@ -58,7 +59,8 @@ function buildAiDraftQuiz(meta, qIndex, question) {
 export async function mountQuizExperience(layerView, meta, deps) {
   layerView.prepareShow();
   const root = layerView.body;
-  const data = await fetchMockResource("quiz");
+  const raw = await fetchMockResource("quiz");
+  const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
   const questions = Array.isArray(data.questions) ? data.questions : [];
 
