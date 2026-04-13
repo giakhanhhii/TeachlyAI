@@ -84,6 +84,7 @@
 }
 
 .flash-wrap {
+  width: 100%;
   max-width: min(640px, 94vw);
   margin: 0 auto;
   perspective: 1000px;

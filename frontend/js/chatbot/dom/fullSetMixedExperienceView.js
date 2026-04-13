@@ -6,6 +6,7 @@ import {
   shuffleInPlace,
 } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
+import { FLASH_SOUND_SVG, speakFlashcard } from "../services/speechService.js";
 
 /** @param {string} s */
 function escapeHtml(s) {
@@ -217,6 +218,30 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
           <span class="flash-back-text">${backText}</span>
         </div>
       `;
+
+      // Hàm tạo nút loa
+      const addSoundBtn = (faceEl) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "flash-sound-btn";
+        btn.setAttribute("aria-label", "Phát âm");
+        btn.innerHTML = FLASH_SOUND_SVG;
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          btn.classList.remove("flash-sound-anim");
+          void btn.offsetWidth;
+          btn.classList.add("flash-sound-anim");
+          speakFlashcard(c);
+        });
+        btn.addEventListener("animationend", () => {
+          btn.classList.remove("flash-sound-anim");
+        });
+        faceEl.appendChild(btn);
+      };
+
+      addSoundBtn(inner.querySelector(".flash-front"));
+      addSoundBtn(inner.querySelector(".flash-back"));
+
       inner.addEventListener("click", () => inner.classList.toggle("flipped"));
       inner.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
