@@ -14,7 +14,7 @@ function el(tag, className, text) {
 }
 
 /** Ô nhập đa dòng — Enter và Shift+Enter đều xuống dòng (hành vi mặc định của textarea). */
-const MAGIC_WAND_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m11.6 4.4 7.2 7.2"></path><path d="m15 2 6 6"></path><path d="M5 21l-2-2 12-12 2 2-12 12z"></path><path d="M2 21l1-1"></path><path d="m7 8 1 1"></path><path d="m10 11 1 1"></path><path d="m13 14 1 1"></path></svg>`;
+const MAGIC_WAND_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9 2L7.12 6.12L3 8L7.12 9.88L9 14L10.88 9.88L15 8L10.88 6.12L9 2ZM17 14L15.88 16.12L13.76 17L15.88 17.88L17 20L18.12 17.88L20.24 17L18.12 16.12L17 14ZM19 3L18.25 4.75L16.5 5.5L18.25 6.25L19 8L19.75 6.25L21.5 5.5L19.75 4.75L19 3Z"/></svg>`;
 
 function flowTextarea(placeholder, rows = 2) {
   const n = el("textarea", "flow-textarea");
@@ -131,12 +131,19 @@ export function createFullsetTopicCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
   addAutofillBtn(root, () => {
-    topic.value = "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia";
-    level.value = "Khá";
-    slides.value = "10";
-    quiz.value = "20";
-    flash.value = "10";
-    extra.value = "Tập trung vào phần Đọc hiểu và Từ vựng.";
+    const samples = [
+      { t: "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia", l: "Khá", s: "10", q: "20", f: "10", e: "Tập trung vào phần Đọc hiểu và Từ vựng." },
+      { t: "Chuyên đề Vật lý: Chuyển động cơ học", l: "Cơ bản", s: "8", q: "15", f: "12", e: "Kèm theo các ví dụ thực tế và bài tập mẫu." },
+      { t: "Sinh học: Cấu trúc và chức năng của DNA", l: "Nâng cao", s: "15", q: "25", f: "0", e: "Dùng thuật ngữ chuyên ngành chính xác." },
+      { t: "Lịch sử Việt Nam: Chiến dịch Điện Biên Phủ", l: "Khá", s: "12", q: "12", f: "16", e: "Trình bày theo dòng thời gian sự kiện." }
+    ];
+    const s = samples[Math.floor(Math.random() * samples.length)];
+    topic.value = s.t;
+    level.value = s.l;
+    slides.value = s.s;
+    quiz.value = s.q;
+    flash.value = s.f;
+    extra.value = s.e;
   });
 
   const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
@@ -641,11 +648,18 @@ export function createSlideFormCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
   addAutofillBtn(root, () => {
-    docText.value = "Câu bị động (Passive Voice) - Cơ bản & Nâng cao";
-    count.value = "12";
-    structure.value = "1. Khái niệm -> 2. Các thì cơ bản -> 3. Trường hợp đặc biệt -> 4. Bài tập";
-    style.value = "Trang trọng";
-    notes.value = "Dùng nhiều ví dụ thực tế, hình ảnh minh họa sống động.";
+    const samples = [
+      { t: "Câu bị động (Passive Voice) - Toàn tập", c: "12", s: "Lý thuyết -> Công thức -> Bài tập", y: "Trang trọng", n: "Dùng nhiều ví dụ so sánh chủ động/bị động." },
+      { t: "Ứng dụng AI trong giáo dục hiện đại", c: "15", s: "Tổng quan -> Công cụ -> Lợi ích -> Thách thức", y: "Gần gũi", n: "Đề cập đến ChatGPT và Claude." },
+      { t: "Hệ mặt trời và các hành tinh", c: "10", s: "Mặt trời -> 8 hành tinh -> Thiên thạch", y: "Hài hước", n: "Dành cho học sinh cấp 1, dùng từ ngữ dễ hiểu." },
+      { t: "Kỹ năng thuyết trình chuyên dụng", c: "20", s: "Chuẩn bị -> Cấu trúc -> Body language -> Q&A", y: "Trang trọng", n: "Nhấn mạnh vào kỹ thuật xử lý câu hỏi khó." }
+    ];
+    const s = samples[Math.floor(Math.random() * samples.length)];
+    docText.value = s.t;
+    count.value = s.c;
+    structure.value = s.s;
+    style.value = s.y;
+    notes.value = s.n;
   });
 
   const docText = flowTextarea("Nhập tên bài học / chủ đề…", 2);
@@ -766,11 +780,18 @@ export function createQuizFormCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
   addAutofillBtn(root, () => {
-    srcText.value = "Chuyên đề Thì của động từ (Tenses)";
-    kind.value = "Reading";
-    qn.value = "15";
-    diff.value = "Khó";
-    notes.value = "Bao gồm cả các thì hoàn thành tiếp diễn.";
+    const samples = [
+      { s: "Chuyên đề Thì của động từ (Tenses)", k: "Reading", q: "20", d: "Khá", n: "Trộn lẫn các thì quá khứ và hoàn thành." },
+      { s: "Từ vựng Unit 5: Illiteracy", k: "Vocabulary", q: "15", d: "Cơ bản", n: "Tập trung vào từ đồng nghĩa/trái nghĩa." },
+      { s: "Ngữ pháp: Câu điều kiện (Conditionals)", k: "Grammar", q: "25", d: "Nâng cao", n: "Bao gồm cả loại hỗn hợp (Mixed conditionals)." },
+      { s: "Đọc hiểu: Biến đổi khí hậu", k: "Reading", q: "10", d: "Khá", n: "Lấy nguồn từ các báo tiếng Anh uy tín." }
+    ];
+    const item = samples[Math.floor(Math.random() * samples.length)];
+    srcText.value = item.s;
+    kind.value = item.k;
+    qn.value = item.q;
+    diff.value = item.d;
+    notes.value = item.n;
   });
 
   const srcText = flowTextarea("Nhập chủ đề / chuyên đề…", 2);
@@ -885,10 +906,17 @@ export function createFlashcardFormCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
   addAutofillBtn(root, () => {
-    list.value = "Topic: Environment & Climate Change";
-    back.value = "Nghĩa tiếng Việt, Phiên âm, Ví dụ";
-    count.value = "20";
-    notes.value = "Kèm phiên âm IPA và ví dụ câu.";
+    const samples = [
+      { l: "Environment & Climate Change Terms", b: "Vietnamese Meaning + Example", c: "25", n: "Kèm phiên âm IPA." },
+      { l: "Common English Idioms (Frequency: High)", b: "Definition + Usage", c: "15", n: "Dùng các thành ngữ trong giao tiếp hàng ngày." },
+      { l: "IELTS Writing Task 2 Vocabulary", b: "Collocations + Synonyms", c: "20", n: "Tập trung vào các từ academic." },
+      { l: "Kitchenware & Cooking Verbs", b: "Image description/Translation", c: "12", n: "Phù hợp cho người mới bắt đầu." }
+    ];
+    const s = samples[Math.floor(Math.random() * samples.length)];
+    list.value = s.l;
+    back.value = s.b;
+    count.value = s.c;
+    notes.value = s.n;
   });
 
   const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);
