@@ -100,15 +100,6 @@ def configure_torch_env(config: PipelineConfig) -> str:
     if os.environ.get("PYTORCH_CUDA_ALLOC_CONF", "").strip() == "":
         os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
-    def _env_blank(name: str) -> bool:
-        v = os.environ.get(name)
-        return v is None or str(v).strip() == ""
-
-    if _env_blank("IMAGE_DPI"):
-        os.environ["IMAGE_DPI"] = config.chandra_image_dpi
-    if _env_blank("MIN_PDF_IMAGE_DIM"):
-        os.environ["MIN_PDF_IMAGE_DIM"] = config.chandra_min_pdf_image_dim
-
     try:
         import torch
 
@@ -129,6 +120,12 @@ def configure_torch_env(config: PipelineConfig) -> str:
             )
         if normalized.startswith("cuda") and torch.cuda.is_available():
             torch.backends.cudnn.benchmark = True
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
+            try:
+                torch.set_float32_matmul_precision("high")
+            except Exception:  # noqa: BLE001
+                pass
             try:
                 idx = torch.device(normalized).index or 0
                 name = torch.cuda.get_device_name(idx)

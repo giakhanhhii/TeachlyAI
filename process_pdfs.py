@@ -20,7 +20,7 @@ Export scope
 
 Memory / VRAM
 --------------
-* Pages are rendered and OCR’d one at a time (no giant list of all page images in RAM).
+* Pages are streamed through a small prefetch queue (no giant list of all page images in RAM).
 * Kept page Markdown is streamed to disk as each page finishes (no full-book `per_page` list
   during OCR). The output `.md` is created only when the first kept page is ready — page 1
   OCR on GPU can take many minutes; watch the log line “Raster + Chandra OCR starting page”.
@@ -28,10 +28,10 @@ Memory / VRAM
 * Throughput: on ~8 GiB GPUs, Chandra HF is often **~1–5+ minutes per page** (first page
   slower). A “few lines” in the file usually means **only one short page** finished, not a bug.
   Lower `CHANDRA_IMAGE_DPI` (e.g. 96) or keep `PDF_CONSERVE_VRAM=1` to bias toward speed.
-* Default raster caps (before any `chandra` import): MIN_PDF_IMAGE_DIM=896, IMAGE_DPI=144 —
-  override with env for sharper scans if you have VRAM headroom.
-* PDF_CONSERVE_VRAM=1: if you did not set CHANDRA_* raster vars, defaults become 768 / 120
-  (less GPU memory per page, often faster — good on ~8 GiB cards).
+* Default raster caps are auto-tuned when CHANDRA_* is unset: large CUDA cards use a
+  faster aggressive preset, while smaller GPUs stay on conservative values.
+* PDF_CONSERVE_VRAM=1: if you did not set CHANDRA_* raster vars, the runtime keeps the
+  lower-VRAM preset unless a larger-GPU auto-tune overrides it.
 * PDF_GC_EVERY=8 (default): run Python gc.collect() every N OCR pages — avoids calling gc
   after every page (which can freeze Windows). Set 0 to disable periodic gc (still runs
   lightly at end of each PDF / file).
@@ -55,7 +55,7 @@ Environment (common)
   ALLOW_CPU=1                    if CUDA is unavailable, allow CPU fallback instead of exiting
   MODEL_CHECKPOINT=…             default `datalab-to/chandra-ocr-2`
   CHANDRA_METHOD=hf|vllm         default hf
-  CHANDRA_BATCH_SIZE=1           pages per `generate()` call; use 1 on 8 GB VRAM
+  CHANDRA_BATCH_SIZE=1           pages per `generate()` call; auto-tuned upward on large GPUs when unset
   GPU_CACHE_CLEAR=1              default on: empty CUDA cache between batches / PDFs
   APPLY_HIGHLIGHTS=1             PyMuPDF <mark> pass (default on)
   PDF_EXPORT_MODE=full|exercises default full = complete book per PDF
@@ -72,8 +72,10 @@ import gc
 import json
 import logging
 import os
-import time
+from dataclasses import replace
+from queue import Queue
 from pathlib import Path
+from threading import Thread
 from typing import Any, List
 
 from config import PipelineConfig, truthy_env
@@ -166,6 +168,82 @@ def log_export_summary(
         LOG.error("STRICT_OUTPUT=1: failing because some outputs are missing or empty.")
         return 1
     return 0
+
+
+def _env_is_unset(name: str) -> bool:
+    v = os.environ.get(name)
+    return v is None or str(v).strip() == ""
+
+
+def _recommended_batch_size(total_gib: float) -> int:
+    """
+    Pick a batch size that favors throughput on large VRAM cards.
+
+    A100 40GB comfortably lands in the 8-page bucket; smaller GPUs fall back
+    to more conservative values.
+    """
+    if total_gib >= 36:
+        return 8
+    if total_gib >= 24:
+        return 6
+    if total_gib >= 16:
+        return 4
+    if total_gib >= 10:
+        return 2
+    return 1
+
+
+def _tune_runtime_config(config: PipelineConfig, torch_device: str) -> PipelineConfig:
+    """
+    Auto-tune only when the user did not explicitly set the relevant env vars.
+
+    The goal is to increase batch throughput on GPUs with ample VRAM while
+    keeping the old conservative defaults for smaller cards or CPU runs.
+    """
+    if not torch_device.startswith("cuda"):
+        return config
+
+    try:
+        import torch
+
+        idx = torch.device(torch_device).index or 0
+        props = torch.cuda.get_device_properties(idx)
+        total_gib = props.total_memory / (1024**3)
+    except Exception:  # noqa: BLE001
+        return config
+
+    updates: dict[str, Any] = {}
+
+    if _env_is_unset("CHANDRA_BATCH_SIZE"):
+        updates["chandra_batch_size"] = _recommended_batch_size(total_gib)
+
+    if _env_is_unset("GPU_CACHE_CLEAR") and total_gib >= 24:
+        updates["gpu_cache_clear"] = False
+
+    if _env_is_unset("PDF_GC_EVERY") and total_gib >= 24:
+        updates["pdf_gc_every"] = 0
+
+    if _env_is_unset("CHANDRA_IMAGE_DPI") and _env_is_unset("CHANDRA_MIN_PDF_IMAGE_DIM"):
+        if total_gib >= 36:
+            updates["chandra_image_dpi"] = "96"
+            updates["chandra_min_pdf_image_dim"] = "640"
+        elif total_gib >= 24:
+            updates["chandra_image_dpi"] = "108"
+            updates["chandra_min_pdf_image_dim"] = "768"
+
+    if not updates:
+        return config
+    return replace(config, **updates)
+
+
+def _apply_runtime_env(config: PipelineConfig) -> None:
+    """
+    Push the final raster settings into the environment before Chandra imports.
+    """
+    if _env_is_unset("IMAGE_DPI"):
+        os.environ["IMAGE_DPI"] = config.chandra_image_dpi
+    if _env_is_unset("MIN_PDF_IMAGE_DIM"):
+        os.environ["MIN_PDF_IMAGE_DIM"] = config.chandra_min_pdf_image_dim
 
 
 # ---------------------------------------------------------------------------
@@ -294,10 +372,26 @@ def process_one_pdf(
 
     # ----------------------------------------------------------------- batching
     # True batching: collect batch_size PIL images, call generate() once.
-    # IMPORTANT: the pdfium generator closes each PIL after next() is called,
-    # so we .copy() every image immediately to keep a valid reference in the buffer.
+    # A small renderer thread prefetches pages so CPU raster work overlaps GPU OCR.
     batch_imgs: list[Any] = []
     batch_pnos: list[int] = []
+    page_queue: Queue[Any] = Queue(maxsize=max(4, batch_size * 2))
+    queue_sentinel = object()
+    renderer_error: list[BaseException] = []
+
+    def _render_pages() -> None:
+        try:
+            for pno, pil in iter_pdf_pages_rgb(pdf_path, start_page=resume_from_page):
+                # Copy immediately so the pdfium generator can close the original
+                # page image while the main thread processes the buffered batch.
+                page_queue.put((pno, pil.copy()))
+        except BaseException as exc:  # noqa: BLE001
+            renderer_error.append(exc)
+        finally:
+            page_queue.put(queue_sentinel)
+
+    renderer = Thread(target=_render_pages, name=f"pdf-raster:{stem}", daemon=True)
+    renderer.start()
 
     def _flush_batch() -> None:
         """OCR the accumulated batch, filter, write kept pages, save checkpoint."""
@@ -320,6 +414,9 @@ def process_one_pdf(
             config=config,
         )
 
+        kept_chunks: list[str] = []
+        batch_start_pno = batch_pnos[0]
+        batch_end_pno = batch_pnos[-1]
         for raw_md in outs:
             ocr_page_count += 1
             ge = config.pdf_gc_every
@@ -339,33 +436,7 @@ def process_one_pdf(
             del raw_md
             chunk = strip_markdown_images(page_src)
             del page_src
-
-            if out_f is None:
-                out_f = open(out_path, file_mode, encoding="utf-8")  # noqa: WPS515
-
-            # Separator: between pages in file, plus before first chunk when appending
-            if wrote_in_session or add_separator_on_first:
-                out_f.write("\n\n---\n\n")
-            out_f.write(chunk)
-            out_f.flush()
-            wrote_kept = True
-            wrote_in_session = True
-            kept_write_count += 1
-
-            try:
-                nbytes = out_path.stat().st_size
-            except OSError:
-                nbytes = -1
-            nlines = len(chunk.splitlines())
-            LOG.info(
-                "Kept page flush: OCR pass %d/%d, kept #%d — %s ~%d lines this slice, file %d bytes",
-                ocr_page_count,
-                n_pages,
-                kept_write_count,
-                out_path.name,
-                nlines,
-                nbytes,
-            )
+            kept_chunks.append(chunk)
             del chunk
 
         del outs
@@ -380,7 +451,36 @@ def process_one_pdf(
         batch_pnos.clear()
 
         clear_cuda_memory(sync=False, config=config)
-        time.sleep(0)
+
+        if kept_chunks:
+            if out_f is None:
+                out_f = open(out_path, file_mode, encoding="utf-8", buffering=1024 * 1024)  # noqa: WPS515
+
+            separator = "\n\n---\n\n"
+            payload = separator.join(kept_chunks)
+            if wrote_in_session or add_separator_on_first:
+                out_f.write(separator)
+            out_f.write(payload)
+            out_f.flush()
+
+            kept_count = len(kept_chunks)
+            kept_write_count += kept_count
+            wrote_kept = True
+            wrote_in_session = True
+
+            try:
+                nbytes = out_path.stat().st_size
+            except OSError:
+                nbytes = -1
+            LOG.info(
+                "Kept %d pages from OCR batch %d-%d/%d — %s, file %d bytes",
+                kept_count,
+                batch_start_pno + 1,
+                batch_end_pno + 1,
+                n_pages,
+                out_path.name,
+                nbytes,
+            )
 
         # Persist checkpoint after every batch flush
         if checkpoint_enabled:
@@ -390,7 +490,6 @@ def process_one_pdf(
 
     # ----------------------------------------------------------------- main loop
     try:
-        page_iter = iter_pdf_pages_rgb(pdf_path, start_page=resume_from_page)
         remaining = n_pages - resume_from_page
         with tqdm(
             total=remaining,
@@ -401,12 +500,14 @@ def process_one_pdf(
         ) as pbar:
             if resume_from_page > 0:
                 pbar.set_description(f"resume:{stem[:24]}")
-            for pno, pil in page_iter:
+            while True:
+                item = page_queue.get()
+                if item is queue_sentinel:
+                    break
+                pno, pil = item
                 pbar.update(1)
-                pbar.set_postfix_str(f"page {pno + 1}/{n_pages}")
 
-                # Copy before the generator's finally block can close it on next()
-                batch_imgs.append(pil.copy())
+                batch_imgs.append(pil)
                 batch_pnos.append(pno)
 
                 if len(batch_imgs) < batch_size:
@@ -416,8 +517,14 @@ def process_one_pdf(
 
             # Flush any remaining pages (last partial batch)
             _flush_batch()
+            if renderer_error:
+                raise renderer_error[0]
 
     finally:
+        try:
+            renderer.join(timeout=1.0)
+        except Exception:  # noqa: BLE001
+            pass
         if out_f is not None:
             try:
                 out_f.close()
@@ -466,6 +573,9 @@ def main() -> int:
     except RuntimeError as e:
         LOG.error("%s", e)
         return 1
+
+    config = _tune_runtime_config(config, torch_device)
+    _apply_runtime_env(config)
 
     input_dir = config.input_dir
     output_dir = config.output_dir

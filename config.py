@@ -29,11 +29,13 @@ def gpu_cache_clear_from_env() -> bool:
 
 
 def chandra_batch_size_from_env() -> int:
-    raw = os.environ.get("CHANDRA_BATCH_SIZE", "2").strip()  # RTX 4060 8GB: 2 is safe, up from 1
+    # Default stays conservative here; process_pdfs.py auto-tunes upward on large GPUs
+    # when CHANDRA_BATCH_SIZE is not explicitly set.
+    raw = os.environ.get("CHANDRA_BATCH_SIZE", "1").strip()
     try:
         n = int(raw)
     except ValueError:
-        return 2
+        return 1
     return max(1, n)
 
 
