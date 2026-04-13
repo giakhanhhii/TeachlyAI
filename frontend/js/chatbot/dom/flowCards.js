@@ -6,6 +6,42 @@
 import { takePendingPdfFile } from "../pdfPrefillStore.js";
 import { randomIntInclusive } from "../services/sessionContentPrep.js";
 
+const autofillCounters = {
+  fullset: 0,
+  slide: 0,
+  quiz: 0,
+  flash: 0,
+  meta: 0
+};
+
+const SAMPLES_FULLSET = [
+  { t: "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia (Full Set)", l: "Khá", s: "10", q: "20", f: "10", e: "Tập trung vào phần Đọc hiểu và Điền từ." },
+  { t: "Chuyên đề Từ vựng Unit 1-5 (Tiếng Anh lớp 12)", l: "Cơ bản", s: "8", q: "15", f: "20", e: "Phù hợp cho học sinh ôn thi học kỳ." },
+  { t: "Ngữ pháp nâng cao: Câu điều kiện hỗn hợp & Đảo ngữ", l: "Nâng cao", s: "12", q: "25", f: "10", e: "Dành cho học sinh mục tiêu điểm 9+." },
+  { t: "Luyện đề minh họa THPT QG 2026 (Định hướng mới)", l: "Khá", s: "15", q: "30", f: "0", e: "Bám sát cấu trúc đề minh họa mới nhất." }
+];
+
+const SAMPLES_SLIDE = [
+  { t: "Thì của động từ & Sự hòa hợp chủ vị (Lớp 12)", c: "12", s: "Ôn tập 12 thì -> Quy tắc hòa hợp -> Bài tập", y: "Trang trọng", n: "Dùng bảng tổng hợp để dễ ghi nhớ." },
+  { t: "Câu bị động (Passive Voice) nâng cao", c: "10", s: "Cấu trúc cơ bản -> Trường hợp đặc biệt -> Chuyển đổi câu", y: "Gần gũi", n: "Nhấn mạnh vào dạng bị động với động từ tường thuật." },
+  { t: "Mệnh đề quan hệ & Rút gọn mệnh đề quan hệ", c: "15", s: "Who/Whom/Which -> That vs Which -> Quy tắc rút gọn", y: "Trang trọng", n: "Đề cập đến lỗi sai thường gặp trong bài thi." },
+  { t: "Từ vựng Unit 6: Endangered Species (Lớp 12)", c: "12", s: "Vocabulary list -> Reading context -> Word formation", y: "Hài hước", n: "Dùng hình ảnh minh họa sinh động về các loài động vật." }
+];
+
+const SAMPLES_QUIZ = [
+  { s: "Trắc nghiệm Tổng hợp Ngữ pháp Lớp 12", k: "Grammar", q: "20", d: "Khá", n: "Trộn lẫn các chuyên đề thường gặp." },
+  { s: "Bài tập Từ vựng: Collocations & Idioms", k: "Vocabulary", q: "15", d: "Khó", n: "Tập trung vào các cụm từ ăn điểm cao trong đề thi." },
+  { s: "Phát âm & Trọng âm (Pronunciation & Stress)", k: "Reading", q: "20", d: "Cơ bản", n: "Quy tắc đuôi -ed, -s và trọng âm từ 2-3 âm tiết." },
+  { s: "Đọc hiểu: Chủ đề Technology in Life", k: "Reading", q: "10", d: "Khá", n: "Rèn luyện kỹ năng Skimming và Scanning." }
+];
+
+const SAMPLES_FLASH = [
+  { l: "Unit 1: Generation Gap (Vocabulary)", b: "Nghĩa tiếng Việt, Phiên âm, Từ loại", c: "20", n: "Bám sát sách giáo khoa lớp 12 mới." },
+  { l: "Common Phrasal Verbs for Exam", b: "Meaning + Example sentence", c: "25", n: "Các cụm từ như: take up, bring about, get over..." },
+  { l: "Word Formation: Unit 2 Cultural Diversity", b: "Noun/Verb/Adj/Adv forms", c: "15", n: "Tập trung vào quy tắc thêm hậu tố." },
+  { l: "Idioms about Success & Failure", b: "Definition + Usage", c: "12", n: "Dành cho phần viết lại câu hoặc chọn từ." }
+];
+
 function el(tag, className, text) {
   const n = document.createElement(tag);
   if (className) n.className = className;
@@ -131,13 +167,7 @@ export function createFullsetTopicCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
   addAutofillBtn(root, () => {
-    const samples = [
-      { t: "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia", l: "Khá", s: "10", q: "20", f: "10", e: "Tập trung vào phần Đọc hiểu và Từ vựng." },
-      { t: "Chuyên đề Vật lý: Chuyển động cơ học", l: "Cơ bản", s: "8", q: "15", f: "12", e: "Kèm theo các ví dụ thực tế và bài tập mẫu." },
-      { t: "Sinh học: Cấu trúc và chức năng của DNA", l: "Nâng cao", s: "15", q: "25", f: "0", e: "Dùng thuật ngữ chuyên ngành chính xác." },
-      { t: "Lịch sử Việt Nam: Chiến dịch Điện Biên Phủ", l: "Khá", s: "12", q: "12", f: "16", e: "Trình bày theo dòng thời gian sự kiện." }
-    ];
-    const s = samples[Math.floor(Math.random() * samples.length)];
+    const s = SAMPLES_FULLSET[autofillCounters.fullset++ % SAMPLES_FULLSET.length];
     topic.value = s.t;
     level.value = s.l;
     slides.value = s.s;
@@ -648,13 +678,7 @@ export function createSlideFormCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
   addAutofillBtn(root, () => {
-    const samples = [
-      { t: "Câu bị động (Passive Voice) - Toàn tập", c: "12", s: "Lý thuyết -> Công thức -> Bài tập", y: "Trang trọng", n: "Dùng nhiều ví dụ so sánh chủ động/bị động." },
-      { t: "Ứng dụng AI trong giáo dục hiện đại", c: "15", s: "Tổng quan -> Công cụ -> Lợi ích -> Thách thức", y: "Gần gũi", n: "Đề cập đến ChatGPT và Claude." },
-      { t: "Hệ mặt trời và các hành tinh", c: "10", s: "Mặt trời -> 8 hành tinh -> Thiên thạch", y: "Hài hước", n: "Dành cho học sinh cấp 1, dùng từ ngữ dễ hiểu." },
-      { t: "Kỹ năng thuyết trình chuyên dụng", c: "20", s: "Chuẩn bị -> Cấu trúc -> Body language -> Q&A", y: "Trang trọng", n: "Nhấn mạnh vào kỹ thuật xử lý câu hỏi khó." }
-    ];
-    const s = samples[Math.floor(Math.random() * samples.length)];
+    const s = SAMPLES_SLIDE[autofillCounters.slide++ % SAMPLES_SLIDE.length];
     docText.value = s.t;
     count.value = s.c;
     structure.value = s.s;
@@ -780,13 +804,7 @@ export function createQuizFormCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
   addAutofillBtn(root, () => {
-    const samples = [
-      { s: "Chuyên đề Thì của động từ (Tenses)", k: "Reading", q: "20", d: "Khá", n: "Trộn lẫn các thì quá khứ và hoàn thành." },
-      { s: "Từ vựng Unit 5: Illiteracy", k: "Vocabulary", q: "15", d: "Cơ bản", n: "Tập trung vào từ đồng nghĩa/trái nghĩa." },
-      { s: "Ngữ pháp: Câu điều kiện (Conditionals)", k: "Grammar", q: "25", d: "Nâng cao", n: "Bao gồm cả loại hỗn hợp (Mixed conditionals)." },
-      { s: "Đọc hiểu: Biến đổi khí hậu", k: "Reading", q: "10", d: "Khá", n: "Lấy nguồn từ các báo tiếng Anh uy tín." }
-    ];
-    const item = samples[Math.floor(Math.random() * samples.length)];
+    const item = SAMPLES_QUIZ[autofillCounters.quiz++ % SAMPLES_QUIZ.length];
     srcText.value = item.s;
     kind.value = item.k;
     qn.value = item.q;
@@ -906,13 +924,7 @@ export function createFlashcardFormCard(deps) {
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
   addAutofillBtn(root, () => {
-    const samples = [
-      { l: "Environment & Climate Change Terms", b: "Vietnamese Meaning + Example", c: "25", n: "Kèm phiên âm IPA." },
-      { l: "Common English Idioms (Frequency: High)", b: "Definition + Usage", c: "15", n: "Dùng các thành ngữ trong giao tiếp hàng ngày." },
-      { l: "IELTS Writing Task 2 Vocabulary", b: "Collocations + Synonyms", c: "20", n: "Tập trung vào các từ academic." },
-      { l: "Kitchenware & Cooking Verbs", b: "Image description/Translation", c: "12", n: "Phù hợp cho người mới bắt đầu." }
-    ];
-    const s = samples[Math.floor(Math.random() * samples.length)];
+    const s = SAMPLES_FLASH[autofillCounters.flash++ % SAMPLES_FLASH.length];
     list.value = s.l;
     back.value = s.b;
     count.value = s.c;
