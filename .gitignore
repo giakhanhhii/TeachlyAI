@@ -42,3 +42,10 @@ template/
 
 # Large local PDF sources (do not commit)
 data_input/
+
+# Generated outputs (do not commit)
+output/
+data_output/
+
+# Local hook workspace created by setup scripts (do not commit)
+AI-Log-Hook/

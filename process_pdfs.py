@@ -69,6 +69,7 @@ Environment (common)
 from __future__ import annotations
 
 import gc
+import json
 import logging
 import os
 import time
@@ -167,6 +168,82 @@ def log_export_summary(
     return 0
 
 
+# ---------------------------------------------------------------------------
+# Checkpoint helpers — enable resume across Ctrl+C / crashes
+# ---------------------------------------------------------------------------
+
+def _checkpoint_path(out_path: Path) -> Path:
+    """Sidecar file stored next to the .md output."""
+    return out_path.with_suffix(".progress.json")
+
+
+def _load_checkpoint(out_path: Path) -> tuple[int, int]:
+    """
+    Return (resume_from_page, kept_count) from a .progress.json sidecar.
+    Returns (0, 0) if no valid checkpoint exists.
+
+    The file_bytes field is cross-checked against the actual .md size so a
+    truncated / corrupted output file is always detected and the run restarts
+    cleanly from page 0.
+    """
+    cp = _checkpoint_path(out_path)
+    if not cp.is_file():
+        return 0, 0
+    try:
+        data = json.loads(cp.read_text(encoding="utf-8"))
+        ocr_page = int(data.get("ocr_page", 0))
+        kept_count = int(data.get("kept_count", 0))
+        expected_bytes = int(data.get("file_bytes", -1))
+        if ocr_page <= 0:
+            return 0, 0
+        # Verify .md integrity
+        if out_path.is_file():
+            actual = out_path.stat().st_size
+            if expected_bytes >= 0 and actual != expected_bytes:
+                LOG.warning(
+                    "Checkpoint mismatch for %s: expected %d bytes, found %d — restarting.",
+                    out_path.name, expected_bytes, actual,
+                )
+                cp.unlink(missing_ok=True)
+                return 0, 0
+        elif kept_count > 0:
+            # Kept pages recorded but .md is missing — restart
+            LOG.warning(
+                "Checkpoint for %s references %d kept pages but .md is missing — restarting.",
+                out_path.name, kept_count,
+            )
+            cp.unlink(missing_ok=True)
+            return 0, 0
+        LOG.info(
+            "Resuming %s from OCR page %d (kept so far: %d, file: %d bytes).",
+            out_path.name, ocr_page, kept_count, expected_bytes,
+        )
+        return ocr_page, kept_count
+    except Exception as exc:  # noqa: BLE001
+        LOG.warning("Could not read checkpoint for %s: %s — restarting.", out_path.name, exc)
+        return 0, 0
+
+
+def _save_checkpoint(out_path: Path, ocr_page: int, kept_count: int) -> None:
+    """Atomically write progress sidecar so a crash cannot leave a half-written JSON."""
+    try:
+        file_bytes = out_path.stat().st_size if out_path.is_file() else 0
+        data = {"ocr_page": ocr_page, "kept_count": kept_count, "file_bytes": file_bytes}
+        tmp = _checkpoint_path(out_path).with_suffix(".progress.tmp")
+        tmp.write_text(json.dumps(data), encoding="utf-8")
+        tmp.replace(_checkpoint_path(out_path))
+    except Exception as exc:  # noqa: BLE001
+        LOG.debug("Could not save checkpoint for %s: %s", out_path.name, exc)
+
+
+def _clear_checkpoint(out_path: Path) -> None:
+    """Remove sidecar when a PDF finishes successfully."""
+    try:
+        _checkpoint_path(out_path).unlink(missing_ok=True)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def process_one_pdf(
     pdf_path: Path,
     output_dir: Path,
@@ -180,6 +257,8 @@ def process_one_pdf(
     stem = pdf_path.stem
     out_path = output_dir / f"{stem}.md"
     export_mode = config.export_mode
+    batch_size = max(1, config.chandra_batch_size)
+    checkpoint_enabled = config.checkpoint_enabled
 
     n_pages = pdf_page_count(pdf_path)
     if n_pages == 0:
@@ -188,91 +267,156 @@ def process_one_pdf(
         clear_cuda_memory(sync=True, config=config)
         return
 
-    filter_state = StreamingFilterState()
-    ocr_page_count = 0
+    # ------------------------------------------------------------------ resume
+    resume_from_page = 0
+    kept_write_count = 0
+    if checkpoint_enabled:
+        resume_from_page, kept_write_count = _load_checkpoint(out_path)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        if out_path.exists():
-            out_path.unlink()
-    except OSError:
-        pass
-    # Open out_path only when the first kept page is ready — avoids a 0-byte file sitting
-    # in Explorer for many minutes while Chandra runs on page 1 (often 5–15+ min on 8 GB).
+    if resume_from_page == 0:
+        try:
+            if out_path.exists():
+                out_path.unlink()
+        except OSError:
+            pass
+
+    # When resuming with existing kept pages → open in append mode and add a
+    # separator before the first new chunk so the output remains well-formed.
+    file_mode = "a" if (resume_from_page > 0 and kept_write_count > 0) else "w"
+    add_separator_on_first = resume_from_page > 0 and kept_write_count > 0
+
+    filter_state = StreamingFilterState()
+    ocr_page_count = resume_from_page  # absolute page counter (0-based pages processed)
     out_f: Any = None
-    wrote_kept = False
-    kept_write_count = 0
+    wrote_kept = kept_write_count > 0
+    wrote_in_session = False  # True after ≥1 chunk written in this run
+
+    # ----------------------------------------------------------------- batching
+    # True batching: collect batch_size PIL images, call generate() once.
+    # IMPORTANT: the pdfium generator closes each PIL after next() is called,
+    # so we .copy() every image immediately to keep a valid reference in the buffer.
+    batch_imgs: list[Any] = []
+    batch_pnos: list[int] = []
+
+    def _flush_batch() -> None:
+        """OCR the accumulated batch, filter, write kept pages, save checkpoint."""
+        nonlocal ocr_page_count, kept_write_count, wrote_kept, wrote_in_session, out_f
+        if not batch_imgs:
+            return
+
+        LOG.info(
+            "Raster + Chandra OCR batch pages %d-%d/%d — %s",
+            batch_pnos[0] + 1,
+            batch_pnos[-1] + 1,
+            n_pages,
+            stem[:60] + ("\u2026" if len(stem) > 60 else ""),
+        )
+
+        outs = chandra_ocr_images(
+            manager,
+            batch_imgs,
+            batch_size=len(batch_imgs),  # pass full batch to generate() in one call
+            config=config,
+        )
+
+        for raw_md in outs:
+            ocr_page_count += 1
+            ge = config.pdf_gc_every
+            if ge > 0 and ocr_page_count % ge == 0:
+                gc.collect()
+
+            keep, _ = streaming_should_keep_page(
+                raw_md,
+                export_mode=export_mode,
+                state=filter_state,
+            )
+            if not keep:
+                del raw_md
+                continue
+
+            page_src = raw_md.strip() if export_mode == "full" else raw_md
+            del raw_md
+            chunk = strip_markdown_images(page_src)
+            del page_src
+
+            if out_f is None:
+                out_f = open(out_path, file_mode, encoding="utf-8")  # noqa: WPS515
+
+            # Separator: between pages in file, plus before first chunk when appending
+            if wrote_in_session or add_separator_on_first:
+                out_f.write("\n\n---\n\n")
+            out_f.write(chunk)
+            out_f.flush()
+            wrote_kept = True
+            wrote_in_session = True
+            kept_write_count += 1
+
+            try:
+                nbytes = out_path.stat().st_size
+            except OSError:
+                nbytes = -1
+            nlines = len(chunk.splitlines())
+            LOG.info(
+                "Kept page flush: OCR pass %d/%d, kept #%d — %s ~%d lines this slice, file %d bytes",
+                ocr_page_count,
+                n_pages,
+                kept_write_count,
+                out_path.name,
+                nlines,
+                nbytes,
+            )
+            del chunk
+
+        del outs
+
+        # Free copied images
+        for img in batch_imgs:
+            try:
+                img.close()
+            except Exception:  # noqa: BLE001
+                pass
+        batch_imgs.clear()
+        batch_pnos.clear()
+
+        clear_cuda_memory(sync=False, config=config)
+        time.sleep(0)
+
+        # Persist checkpoint after every batch flush
+        if checkpoint_enabled:
+            if out_f is not None:
+                out_f.flush()
+            _save_checkpoint(out_path, ocr_page_count, kept_write_count)
+
+    # ----------------------------------------------------------------- main loop
     try:
-        page_iter = iter_pdf_pages_rgb(pdf_path)
+        page_iter = iter_pdf_pages_rgb(pdf_path, start_page=resume_from_page)
+        remaining = n_pages - resume_from_page
         with tqdm(
-            page_iter,
-            total=n_pages,
+            total=remaining,
             desc=f"pages:{stem[:28]}",
             unit="pg",
             leave=False,
             mininterval=config.pdf_tqdm_mininterval,
         ) as pbar:
-            for pno, pil in pbar:
+            if resume_from_page > 0:
+                pbar.set_description(f"resume:{stem[:24]}")
+            for pno, pil in page_iter:
+                pbar.update(1)
                 pbar.set_postfix_str(f"page {pno + 1}/{n_pages}")
-                LOG.info(
-                    "Raster + Chandra OCR starting page %d/%d — %s",
-                    pno + 1,
-                    n_pages,
-                    stem[:60] + ("…" if len(stem) > 60 else ""),
-                )
-                outs = chandra_ocr_images(
-                    manager,
-                    [pil],
-                    batch_size=config.chandra_batch_size,
-                    config=config,
-                )
-                raw_md = outs[0] if outs else ""
-                del outs
-                ocr_page_count += 1
-                ge = config.pdf_gc_every
-                if ge > 0 and ocr_page_count % ge == 0:
-                    gc.collect()
 
-                keep, _ = streaming_should_keep_page(
-                    raw_md,
-                    export_mode=export_mode,
-                    state=filter_state,
-                )
-                if not keep:
-                    del raw_md, pil
-                    clear_cuda_memory(sync=False, config=config)
-                    time.sleep(0)
-                    continue
+                # Copy before the generator's finally block can close it on next()
+                batch_imgs.append(pil.copy())
+                batch_pnos.append(pno)
 
-                page_src = raw_md.strip() if export_mode == "full" else raw_md
-                del raw_md
-                chunk = strip_markdown_images(page_src)
-                del page_src
-                if out_f is None:
-                    out_f = open(out_path, "w", encoding="utf-8")
-                else:
-                    out_f.write("\n\n---\n\n")
-                out_f.write(chunk)
-                out_f.flush()
-                wrote_kept = True
-                kept_write_count += 1
-                try:
-                    nbytes = out_path.stat().st_size
-                except OSError:
-                    nbytes = -1
-                nlines = len(chunk.splitlines())
-                LOG.info(
-                    "Kept page flush: OCR pass %d/%d, kept #%d — %s ~%d lines this slice, file %d bytes",
-                    ocr_page_count,
-                    n_pages,
-                    kept_write_count,
-                    out_path.name,
-                    nlines,
-                    nbytes,
-                )
-                del chunk, pil
-                clear_cuda_memory(sync=False, config=config)
-                time.sleep(0)
+                if len(batch_imgs) < batch_size:
+                    continue  # accumulate more pages
+
+                _flush_batch()
+
+            # Flush any remaining pages (last partial batch)
+            _flush_batch()
+
     finally:
         if out_f is not None:
             try:
@@ -304,6 +448,9 @@ def process_one_pdf(
     md = post_process_markdown(md)
     out_path.write_text(md, encoding="utf-8")
     del md
+
+    # PDF completed successfully — remove checkpoint sidecar
+    _clear_checkpoint(out_path)
     clear_cuda_memory(sync=True, config=config)
     gc.collect()
 
