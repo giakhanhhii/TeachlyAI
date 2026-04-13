@@ -144,12 +144,20 @@
   background: transparent;
   cursor: pointer;
   color: #5f6368;
-  font-size: 18px;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .chat-item-menu-trigger:hover {
   background: rgba(0, 0, 0, 0.05);
+}
+
+.chat-item-menu-trigger svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 .chat-item-menu {
@@ -162,7 +170,7 @@
   border: 1px solid #e2e8f0;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
   padding: 6px;
-  z-index: 999;
+  z-index: 4000;
 }
 
 .chat-item-menu-option {
