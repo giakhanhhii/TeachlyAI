@@ -360,18 +360,18 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
       const actions =
         guided.kind === "slide"
           ? [
-              { label: "Tải lên PDF", value: "slide_pdf" },
-              { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
-            ]
+            { label: "Tải lên PDF", value: "slide_pdf" },
+            { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
+          ]
           : guided.kind === "quiz"
             ? [
-                { label: "Tải lên PDF", value: "quiz_pdf" },
-                { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
-              ]
+              { label: "Tải lên PDF", value: "quiz_pdf" },
+              { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
+            ]
             : [
-                { label: "Tải lên PDF", value: "flash_pdf" },
-                { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
-              ];
+              { label: "Tải lên PDF", value: "flash_pdf" },
+              { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
+            ];
       return {
         handled: true,
         guided: { kind: guided.kind, step: "await_source", data: {} },
@@ -605,10 +605,11 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
 
 /** @param {string | null} flow */
 export function computeStartFlow(flow) {
+  const normalizedFlow = flow === "image" ? "flashcard" : flow;
   let guided = null;
   const effects = [];
 
-  if (flow === "fullset") {
+  if (normalizedFlow === "fullset") {
     guided = { kind: "fullset", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
@@ -621,7 +622,7 @@ export function computeStartFlow(flow) {
     return { guided, effects };
   }
 
-  if (flow === "slide") {
+  if (normalizedFlow === "slide") {
     guided = { kind: "slide", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
@@ -634,7 +635,7 @@ export function computeStartFlow(flow) {
     return { guided, effects };
   }
 
-  if (flow === "quiz") {
+  if (normalizedFlow === "quiz") {
     guided = { kind: "quiz", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
@@ -647,7 +648,7 @@ export function computeStartFlow(flow) {
     return { guided, effects };
   }
 
-  if (flow === "flashcard") {
+  if (normalizedFlow === "flashcard") {
     guided = { kind: "flash", step: "await_source", data: {} };
     effects.push({
       type: "pushBot",
@@ -661,4 +662,27 @@ export function computeStartFlow(flow) {
   }
 
   return { guided: null, effects: [] };
+}
+
+/**
+ * @param {any} guided
+ * @param {string} cardType
+ */
+export function computeFlowCardBack(guided, cardType) {
+  void cardType;
+  if (!guided) return { handled: false, guided, effects: [] };
+
+  const { kind, step } = guided;
+  if (step === "await_topic_form" || step === "await_pdf_confirm" || step === "await_pdf_meta" || step === "await_pdf_file") {
+    return {
+      handled: true,
+      guided: { kind, step: "await_source", data: {} },
+      effects: [
+        { type: "pushUser", text: "Quay lại" },
+        ...getRestartAwaitSourceEffects(kind),
+      ],
+    };
+  }
+
+  return { handled: false, guided, effects: [] };
 }

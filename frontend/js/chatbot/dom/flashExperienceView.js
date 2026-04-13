@@ -17,7 +17,7 @@ function capitalizeFirst(s) {
   return t.charAt(0).toLocaleUpperCase("vi") + t.slice(1);
 }
 
-import { speakFlashcard, FLASH_SOUND_SVG } from "../services/speechService.js";
+import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 
 /**
  * @param {Record<string, string>} meta
@@ -89,7 +89,10 @@ export async function mountFlashExperience(layerView, meta, deps) {
 
   const footer = document.createElement("div");
   footer.className = "exp-footer-bar";
+  const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
+  backBtn.classList.add("exp-back-btn");
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: cards.length === 0 });
+  footer.appendChild(backBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
@@ -98,6 +101,7 @@ export async function mountFlashExperience(layerView, meta, deps) {
     cardSlot.innerHTML = "";
     if (!c) {
       cardSlot.innerHTML = `<p class="exp-empty">Không có thẻ trong bộ mock.</p>`;
+      backBtn.disabled = true;
       nextBtn.disabled = true;
       return;
     }
@@ -166,9 +170,16 @@ export async function mountFlashExperience(layerView, meta, deps) {
     cardSlot.appendChild(wrap);
 
     progress.paint({ total, index, correct: 0, wrong: 0 });
+    backBtn.disabled = index <= 0;
     nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
     nextBtn.disabled = false;
   }
+
+  backBtn.addEventListener("click", () => {
+    if (index <= 0) return;
+    index -= 1;
+    renderCard();
+  });
 
   nextBtn.addEventListener("click", () => {
     if (total <= 1 || index >= total - 1) {

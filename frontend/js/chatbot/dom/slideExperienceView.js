@@ -66,7 +66,10 @@ export async function mountSlideExperience(layerView, meta, deps) {
 
   const footer = document.createElement("div");
   footer.className = "exp-footer-bar";
+  const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
+  backBtn.classList.add("exp-back-btn");
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: slides.length === 0 });
+  footer.appendChild(backBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
@@ -75,6 +78,7 @@ export async function mountSlideExperience(layerView, meta, deps) {
     stage.innerHTML = "";
     if (!s) {
       stage.innerHTML = `<p class="exp-empty">Không có slide trong bộ mock.</p>`;
+      backBtn.disabled = true;
       nextBtn.disabled = true;
       return;
     }
@@ -91,9 +95,16 @@ export async function mountSlideExperience(layerView, meta, deps) {
     stage.appendChild(h);
     stage.appendChild(ul);
     progress.paint({ total, index, correct: 0, wrong: 0 });
+    backBtn.disabled = index <= 0;
     nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
     nextBtn.disabled = false;
   }
+
+  backBtn.addEventListener("click", () => {
+    if (index <= 0) return;
+    index -= 1;
+    renderSlide();
+  });
 
   nextBtn.addEventListener("click", () => {
     if (total <= 1 || index >= total - 1) {

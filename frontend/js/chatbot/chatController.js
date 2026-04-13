@@ -236,11 +236,28 @@ export function init() {
    * @param {{ kind: string, meta: Record<string, string> }} item
    */
   async function openResumeExperience(item) {
-    rememberOpenExperience(/** @type {"quiz"|"slide"|"flash"} */ (item.kind), item.meta || {});
-    layerView.prepareShow();
-    if (item.kind === "quiz") await mountQuizExperience(layerView, item.meta, experienceHooks);
-    else if (item.kind === "slide") await mountSlideExperience(layerView, item.meta, experienceHooks);
-    else if (item.kind === "flash") await mountFlashExperience(layerView, item.meta, experienceHooks);
+    const rawKind = String(item?.kind || "").toLowerCase();
+    const kind =
+      rawKind === "flashcard" || rawKind === "flash"
+        ? "flash"
+        : rawKind.startsWith("quiz")
+          ? "quiz"
+          : rawKind.startsWith("slide")
+            ? "slide"
+            : rawKind;
+    if (kind !== "quiz" && kind !== "slide" && kind !== "flash") {
+      layerView.hide();
+      return;
+    }
+    try {
+      rememberOpenExperience(/** @type {"quiz"|"slide"|"flash"} */ (kind), item.meta || {});
+      layerView.prepareShow();
+      if (kind === "quiz") await mountQuizExperience(layerView, item.meta, experienceHooks);
+      else if (kind === "slide") await mountSlideExperience(layerView, item.meta, experienceHooks);
+      else await mountFlashExperience(layerView, item.meta, experienceHooks);
+    } catch {
+      layerView.hide();
+    }
   }
 
   /**
@@ -323,7 +340,7 @@ export function init() {
 
   function renderChatListUI() {
     renderChatList(
-      /** @type {HTMLElement} */ (chatList),
+      /** @type {HTMLElement} */(chatList),
       getSessionsSnapshot(),
       getActiveSessionIndex(),
       (idx) => {
@@ -341,6 +358,11 @@ export function init() {
   function renderMessages() {
     msgView.clear();
     const current = getCurrentSession();
+    if (!current || !Array.isArray(current.messages)) {
+      ensureSessions();
+      saveSessions();
+      return;
+    }
     const params = new URLSearchParams(location.search);
     const flow = params.get("flow");
     if (flow) {

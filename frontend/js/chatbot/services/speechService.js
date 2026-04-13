@@ -3,7 +3,7 @@ export const FLASH_SOUND_SVG = `<svg class="flash-sound-icon" width="22" height=
 let flashSpeechVoicesHooked = false;
 let flashSpeakGeneration = 0;
 
-function hookFlashSpeechVoicesOnce() {
+export function hookFlashSpeechVoicesOnce() {
   if (typeof window === "undefined" || !window.speechSynthesis || flashSpeechVoicesHooked) return;
   flashSpeechVoicesHooked = true;
   window.speechSynthesis.getVoices();

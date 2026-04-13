@@ -19,7 +19,7 @@
 - **No Duplicates:** Đảm bảo không có 2 mục (từ vựng/câu hỏi) nào bị trùng lặp trong cùng một phiên hiển thị (Session).
 
 ### C. Full Set Sync & Randomization
-- **Full Set Definition:** Một "Full Set" là một tổ hợp bao gồm cả 3 thành phần (Slide, Quiz, Flashcard) dựa trên một chủ đề/tài liệu.
+- **Full Set Definition:** Một "Full Set" là một tổ hợp bao gồm cả 3 thành phần trộn lẫn trong 1 (Slide, Quiz, Flashcard) dựa trên một chủ đề/tài liệu.
 - **Sync Individual Counts:** Form tạo Full Set phải cung cấp các ô nhập số lượng riêng biệt cho từng loại (Số slide, Số câu Quiz, Số thẻ Flashcard). Khi điền con số này, hệ thống phải tạo ra đúng số lượng tương ứng cho từng loại.
 - **Randomized & Mixed Components:** 
     - Mỗi thành phần (Slide, Quiz, Flashcard) phải được xáo trộn nội dung ngẫu nhiên và đảm bảo tính duy nhất (mục B).

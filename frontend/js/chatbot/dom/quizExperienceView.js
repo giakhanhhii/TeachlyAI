@@ -96,6 +96,23 @@ export async function mountQuizExperience(layerView, meta, deps) {
   const total = Math.max(1, questions.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   shell.appendChild(progress.wrap);
+  /** @type {(number|null)[]} */
+  const selectedByIndex = Array.from({ length: questions.length }, () => null);
+  /** @type {boolean[]} */
+  const gradedByIndex = Array.from({ length: questions.length }, () => false);
+
+  function recomputeScore() {
+    correct = 0;
+    wrong = 0;
+    for (let i = 0; i < questions.length; i += 1) {
+      if (!gradedByIndex[i]) continue;
+      const q = questions[i];
+      const picked = selectedByIndex[i];
+      if (!q || picked === null) continue;
+      if (picked === q.correctIndex) correct += 1;
+      else wrong += 1;
+    }
+  }
 
   const stage = document.createElement("div");
   stage.className = "exp-stage";
@@ -103,22 +120,27 @@ export async function mountQuizExperience(layerView, meta, deps) {
 
   const footer = document.createElement("div");
   footer.className = "exp-footer-bar";
+  const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
+  backBtn.classList.add("exp-back-btn");
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
+  footer.appendChild(backBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
   function renderQuestion() {
     const q = questions[index];
     stage.innerHTML = "";
-    selected = null;
-    lastWasCorrect = null;
-    nextBtn.disabled = true;
+    selected = index < selectedByIndex.length ? selectedByIndex[index] : null;
+    lastWasCorrect = gradedByIndex[index] && selected !== null && q ? selected === q.correctIndex : null;
+    backBtn.disabled = index <= 0;
+    nextBtn.disabled = !gradedByIndex[index] && selected === null;
 
     if (!q) {
       const empty = document.createElement("p");
       empty.className = "exp-empty";
       empty.textContent = "Không có câu hỏi trong bộ dữ liệu mock.";
       stage.appendChild(empty);
+      backBtn.disabled = true;
       nextBtn.textContent = "—";
       nextBtn.disabled = true;
       return;
@@ -142,11 +164,14 @@ export async function mountQuizExperience(layerView, meta, deps) {
       b.className = "exp-opt-btn";
       b.textContent = `${letters[j] || j}. ${opt}`;
       b.addEventListener("click", () => {
+        if (gradedByIndex[index]) return;
         selected = j;
+        selectedByIndex[index] = j;
         optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
         b.classList.add("selected");
         nextBtn.disabled = false;
       });
+      if (selected === j) b.classList.add("selected");
       optsWrap.appendChild(b);
     });
 
@@ -175,20 +200,40 @@ export async function mountQuizExperience(layerView, meta, deps) {
     stage.appendChild(hintToggle);
     stage.appendChild(hintPanel);
 
+    if (gradedByIndex[index]) {
+      optsWrap.querySelectorAll(".exp-opt-btn").forEach((btn, j) => {
+        if (j === q.correctIndex) btn.classList.add("correct");
+        if (j === selected && j !== q.correctIndex) btn.classList.add("wrong");
+        /** @type {HTMLButtonElement} */ (btn).disabled = true;
+      });
+    }
+
+    recomputeScore();
     progress.paint({ total, index, correct, wrong });
-    nextBtn.textContent = "Tiếp theo";
+    if (!gradedByIndex[index]) nextBtn.textContent = "Tiếp theo";
+    else {
+      const isLast = index >= questions.length - 1;
+      nextBtn.textContent = isLast ? "Kết thúc" : "Tiếp theo";
+    }
   }
+
+  backBtn.addEventListener("click", () => {
+    if (index <= 0) return;
+    index -= 1;
+    renderQuestion();
+  });
 
   nextBtn.addEventListener("click", () => {
     const q = questions[index];
     if (!q) return;
 
-    if (lastWasCorrect === null) {
+    if (!gradedByIndex[index]) {
       if (selected === null) return;
       const ok = selected === q.correctIndex;
       lastWasCorrect = ok;
-      if (ok) correct += 1;
-      else wrong += 1;
+      gradedByIndex[index] = true;
+      selectedByIndex[index] = selected;
+      recomputeScore();
       progress.paint({ total, index, correct, wrong });
       const buttons = stage.querySelectorAll(".exp-opt-btn");
       buttons.forEach((btn, j) => {
