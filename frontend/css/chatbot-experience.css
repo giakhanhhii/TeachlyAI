@@ -525,6 +525,7 @@
 .exp-footer-bar {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
   padding-top: 8px;
   border-top: 1px solid var(--line);
 }
@@ -548,6 +549,15 @@
 .exp-next-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.exp-back-btn {
+  background: #eceff1;
+  color: #37474f;
+}
+
+.exp-back-btn:hover:not(:disabled) {
+  background: #dfe5e9;
 }
 
 .exp-empty {

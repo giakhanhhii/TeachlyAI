@@ -92,6 +92,9 @@
     overflow: hidden;
     transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
+    display: block;
+    text-decoration: none;
+    color: inherit;
   }
 
   .card:hover {
@@ -192,7 +195,7 @@
   <!-- Cards -->
   <div class="cards-row">
     <!-- Card 1: Tạo -->
-    <div class="card" role="link" tabindex="0" onclick="location.href='chatbot_ui.html?flow=fullset'" onkeydown="if(event.key==='Enter'||event.key===' ')location.href='chatbot_ui.html?flow=fullset'">
+    <a class="card" href="chatbot_ui.html?flow=fullset">
       <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg">
         <rect width="200" height="116" fill="#1b5e20" />
         <!-- Forest night scene -->
@@ -230,10 +233,10 @@
           KHUYẾN KHÍCH
         </div>
       </div>
-    </div>
+    </a>
 
     <!-- Card 2: Tạo slide — bộ slide trong khung rừng -->
-    <div class="card" role="link" tabindex="0" onclick="location.href='chatbot_ui.html?flow=slide'" onkeydown="if(event.key==='Enter'||event.key===' ')location.href='chatbot_ui.html?flow=slide'">
+    <a class="card" href="chatbot_ui.html?flow=slide">
       <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="forestGrad2" x1="0" y1="0" x2="0" y2="1">
@@ -260,13 +263,13 @@
         <ellipse cx="175" cy="22" rx="14" ry="9" fill="#66bb6a" transform="rotate(25 175 22)" opacity="0.7" />
       </svg>
       <div class="card-body">
-        <div class="card-title">Tạo slide bài giảng</div>
-        <div class="card-desc">Tạo slide bài giảng theo nội dung bạn chọn</div>
+        <div class="card-title">Tạo slide</div>
+        <div class="card-desc">Tạo slide theo nội dung của bạn</div>
       </div>
-    </div>
+    </a>
 
     <!-- Card 3: Tạo quiz — phiếu trắc nghiệm trong rừng -->
-    <div class="card" role="link" tabindex="0" onclick="location.href='chatbot_ui.html?flow=quiz'" onkeydown="if(event.key==='Enter'||event.key===' ')location.href='chatbot_ui.html?flow=quiz'">
+    <a class="card" href="chatbot_ui.html?flow=quiz">
       <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="forestGrad3" x1="0" y1="0" x2="1" y2="1">
@@ -300,10 +303,10 @@
         <div class="card-desc">Tạo quiz cho nội dung thi THPTQG tiếng anh</div>
         <div class="badge badge-new">MỚI</div>
       </div>
-    </div>
+    </a>
 
     <!-- Card 4: Tạo hình ảnh — khung ảnh minh họa rừng + AI -->
-    <div class="card" role="link" tabindex="0" onclick="location.href='chatbot_ui.html?flow=flashcard'" onkeydown="if(event.key==='Enter'||event.key===' ')location.href='chatbot_ui.html?flow=flashcard'">
+    <a class="card" href="chatbot_ui.html?flow=flashcard">
       <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="forestGrad4" x1="0" y1="0" x2="1" y2="1">
@@ -311,25 +314,32 @@
             <stop offset="35%" stop-color="#aed581" />
             <stop offset="100%" stop-color="#2e7d32" />
           </linearGradient>
+          <linearGradient id="frameSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#b3e5fc" />
+            <stop offset="100%" stop-color="#81c784" />
+          </linearGradient>
         </defs>
         <rect width="200" height="116" fill="url(#forestGrad4)" />
         <polygon points="0,116 35,72 68,116" fill="#1b5e20" opacity="0.25" />
         <polygon points="140,116 170,68 200,116" fill="#1b5e20" opacity="0.28" />
-        <!-- Flashcard with Speaker Icon -->
-        <rect x="52" y="24" width="96" height="68" rx="12" fill="#fff" stroke="#33691e" stroke-width="2" />
-        <rect x="64" y="44" width="48" height="5" rx="2" fill="#a5d6a7" />
-        <rect x="64" y="56" width="36" height="4" rx="2" fill="#c8e6c9" />
-        <!-- Small Sound Waves / Speaker symbol -->
-        <path d="M124 44 L130 38 L130 62 L124 56 L118 56 L118 44 Z" fill="#2e7d32" />
-        <path d="M134 44 Q138 50 134 56" fill="none" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round" />
-        <path d="M138 40 Q144 50 138 60" fill="none" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round" opacity="0.6" />
-        <!-- Decoration light -->
-        <circle cx="35" cy="25" r="12" fill="#fff9c4" opacity="0.6" />
+        <!-- Khung ảnh / canvas -->
+        <rect x="54" y="18" width="92" height="82" rx="10" fill="#5d4037" />
+        <rect x="58" y="22" width="84" height="70" rx="6" fill="url(#frameSky)" stroke="#33691e" stroke-width="1" />
+        <!-- Cảnh trong khung: núi + cây -->
+        <polygon points="58,88 78,58 98,88" fill="#388e3c" />
+        <polygon points="88,92 110,52 132,92" fill="#2e7d32" />
+        <polygon points="118,90 138,62 158,90" fill="#43a047" />
+        <circle cx="128" cy="38" r="10" fill="#fff9c4" opacity="0.95" />
+        <!-- Sparkle AI -->
+        <path d="M44 34 L46 28 L48 34 L54 36 L48 38 L46 44 L44 38 L38 36 Z" fill="#fffde7" opacity="0.95" />
+        <path d="M158 26 L159.5 22 L161 26 L165 27 L161 28 L159.5 32 L158 28 L154 27 Z" fill="#fff9c4" opacity="0.9" />
+        <circle cx="168" cy="78" r="2" fill="#fff" opacity="0.85" />
+        <circle cx="32" cy="88" r="1.5" fill="#fff" opacity="0.7" />
       </svg>
       <div class="card-body">
         <div class="card-title">Tạo flashcard</div>
-        <div class="card-desc">Tạo flashcard từ vựng với âm thanh</div>
+        <div class="card-desc">Tạo flashcard từ vựng và phát âm chuẩn cho bài giảng của bạn</div>
       </div>
-    </div>
+    </a>
   </div>
 </div>

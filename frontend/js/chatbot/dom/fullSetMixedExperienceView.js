@@ -120,6 +120,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
   /** @type {number | null} */
   let quizSelected = null;
   let quizRevealed = false;
+  /** @type {(number | null)[]} */
+  const quizSelectedByStep = Array.from({ length: steps.length }, () => null);
+  /** @type {boolean[]} */
+  const quizRevealedByStep = Array.from({ length: steps.length }, () => false);
+  /** @type {boolean[]} */
+  const quizCountedByStep = Array.from({ length: steps.length }, () => false);
+  /** @type {boolean[]} */
+  const quizCorrectByStep = Array.from({ length: steps.length }, () => false);
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
@@ -154,17 +162,33 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
 
   const footer = document.createElement("div");
   footer.className = "exp-footer-bar";
+  const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
+  backBtn.classList.add("exp-back-btn");
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
+  footer.appendChild(backBtn);
   footer.appendChild(nextBtn);
+
+  function recomputeScore() {
+    correct = 0;
+    wrong = 0;
+    for (let i = 0; i < steps.length; i += 1) {
+      if (!quizCountedByStep[i]) continue;
+      if (quizCorrectByStep[i]) correct += 1;
+      else wrong += 1;
+    }
+  }
 
   function renderStep() {
     const step = steps[index];
     stage.innerHTML = "";
-    quizSelected = null;
-    quizRevealed = false;
+    backBtn.disabled = index <= 0;
+    quizSelected = quizSelectedByStep[index] ?? null;
+    quizRevealed = !!quizRevealedByStep[index];
+    recomputeScore();
 
     if (!step) {
       stage.innerHTML = `<p class="exp-empty">Không có học liệu trong bộ Full set.</p>`;
+      backBtn.disabled = true;
       nextBtn.textContent = "—";
       nextBtn.disabled = true;
       progress.paint({ total, index: Math.max(0, index), correct, wrong });
@@ -280,11 +304,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
           b.className = "exp-opt-btn";
           b.textContent = `${letters[j] || j}. ${opt}`;
           b.addEventListener("click", () => {
+            if (quizRevealedByStep[index]) return;
             quizSelected = j;
+            quizSelectedByStep[index] = j;
             optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
             b.classList.add("selected");
             nextBtn.disabled = false;
           });
+          if (quizSelected === j) b.classList.add("selected");
           optsWrap.appendChild(b);
         });
         const hintToggle = document.createElement("button");
@@ -312,7 +339,18 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
         stage.appendChild(pickHint);
         stage.appendChild(hintToggle);
         stage.appendChild(hintPanel);
-        nextBtn.disabled = true;
+        if (quizRevealedByStep[index]) {
+          const correctIdx = quizCorrectOptionIndex(q);
+          const picked = quizSelectedByStep[index];
+          optsWrap.querySelectorAll(".exp-opt-btn").forEach((btn, j) => {
+            if (j === correctIdx) btn.classList.add("correct");
+            if (picked !== null && j === picked && j !== correctIdx) btn.classList.add("wrong");
+            /** @type {HTMLButtonElement} */ (btn).disabled = true;
+          });
+          nextBtn.disabled = false;
+        } else {
+          nextBtn.disabled = quizSelectedByStep[index] == null;
+        }
       }
     }
 
@@ -343,9 +381,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
         if (quizSelected == null || !Number.isFinite(Number(quizSelected))) return;
         const picked = Number(quizSelected);
         const ok = picked === correctIdx;
-        if (ok) correct += 1;
-        else wrong += 1;
         quizRevealed = true;
+        quizSelectedByStep[index] = picked;
+        quizRevealedByStep[index] = true;
+        if (!quizCountedByStep[index]) {
+          quizCountedByStep[index] = true;
+          quizCorrectByStep[index] = ok;
+        }
+        recomputeScore();
         progress.paint({ total, index, correct, wrong });
         const buttons = stage.querySelectorAll(".exp-opt-btn");
         buttons.forEach((btn, j) => {
@@ -371,6 +414,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
       return;
     }
     index += 1;
+    renderStep();
+  });
+
+  backBtn.addEventListener("click", () => {
+    if (index <= 0) return;
+    index -= 1;
     renderStep();
   });
 
