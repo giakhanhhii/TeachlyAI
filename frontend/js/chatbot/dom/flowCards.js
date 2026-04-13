@@ -14,14 +14,6 @@ const autofillCounters = {
   meta: 0
 };
 
-const autofillCounters = {
-  fullset: 0,
-  slide: 0,
-  quiz: 0,
-  flash: 0,
-  meta: 0
-};
-
 /** Tiện ích xáo trộn danh sách */
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
