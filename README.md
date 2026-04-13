@@ -1,4 +1,3 @@
- @@
 # Starter Code App
 
 A template for building AI Agents in Python.
