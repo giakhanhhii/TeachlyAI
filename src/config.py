@@ -11,10 +11,11 @@ class Config:
     Centralized configuration loaded from environment variables.
 
     Security:
-    - `OPENAI_API_KEY` is read from env (optionally via `.env` using python-dotenv).
+    - API keys are read from env (optionally via `.env` using python-dotenv).
     - Do not hardcode keys in code.
     """
 
+    anthropic_api_key: str
     openai_api_key: str
     default_model: str
     log_level: str
@@ -37,8 +38,9 @@ class Config:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         return cls(
+            anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", "").strip(),
             openai_api_key=os.getenv("OPENAI_API_KEY", "").strip(),
-            default_model=os.getenv("DEFAULT_MODEL", "gpt-4o-mini").strip(),
+            default_model=os.getenv("DEFAULT_MODEL", "claude-sonnet-4-20250514").strip(),
             log_level=os.getenv("LOG_LEVEL", "INFO").strip(),
             output_dir=output_dir,
             enable_image_api=cls._to_bool(os.getenv("ENABLE_IMAGE_API"), default=False),
@@ -48,6 +50,7 @@ class Config:
 
 # Backwards-compatible module-level constants (older code imports these).
 _CONFIG = Config.load()
+ANTHROPIC_API_KEY = _CONFIG.anthropic_api_key
 OPENAI_API_KEY = _CONFIG.openai_api_key
 DEFAULT_MODEL = _CONFIG.default_model
 LOG_LEVEL = _CONFIG.log_level
