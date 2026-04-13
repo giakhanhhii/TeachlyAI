@@ -8,6 +8,9 @@ import {
   setActiveSessionIndex,
   getSessionsSnapshot,
   createSession,
+  renameSession,
+  togglePinSession,
+  deleteSession,
 } from "./sessionStore.js";
 import {
   computePickAction,
@@ -442,6 +445,52 @@ export function init() {
         saveSessions();
         renderChatListUI();
         renderMessages();
+      },
+      (action, idx) => {
+        if (action === "pin") {
+          if (togglePinSession(idx)) {
+            saveSessions();
+            renderChatListUI();
+          }
+          return;
+        }
+        if (action === "rename") {
+          const currentSession = getSessionsSnapshot()[idx];
+          const nextTitle = window.prompt("Nhập tên mới cho đoạn chat", currentSession?.title || "");
+          if (nextTitle && renameSession(idx, nextTitle)) {
+            saveSessions();
+            renderChatListUI();
+          }
+          return;
+        }
+        if (action === "delete") {
+          const ok = window.confirm("Bạn có chắc muốn xóa đoạn chat này?");
+          if (!ok) return;
+          if (deleteSession(idx)) {
+            guided = null;
+            lastOpenedExperience = null;
+            layerView.hide();
+            saveSessions();
+            renderChatListUI();
+            renderMessages();
+          }
+          return;
+        }
+        if (action === "share") {
+          const s = getSessionsSnapshot()[idx];
+          const transcript = (s?.messages || [])
+            .map((m) => `${m.role === "user" ? "Bạn" : "Teachly"}: ${m.text || ""}`)
+            .join("\n");
+          const payload = `${s?.title || "Đoạn chat"}\n\n${transcript}`;
+          if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(payload).then(
+              () => window.alert("Đã sao chép nội dung cuộc trò chuyện."),
+              () => window.alert("Không thể sao chép tự động. Vui lòng thử lại."),
+            );
+          } else {
+            window.alert("Trình duyệt không hỗ trợ clipboard.");
+          }
+        }
       },
     );
   }

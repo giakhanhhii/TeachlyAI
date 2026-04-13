@@ -103,6 +103,13 @@
   overflow-y: auto;
 }
 
+.chat-item-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .chat-item {
   width: 100%;
   background: #f5f9ff;
@@ -118,9 +125,64 @@
   text-overflow: ellipsis;
 }
 
-.chat-item.active {
+.chat-item-row.active .chat-item {
   background: #dff1ff;
   border-color: rgba(1, 137, 232, 0.36);
+}
+
+.chat-item-menu-wrap {
+  position: relative;
+}
+
+.chat-item-menu-trigger {
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  color: #5f6368;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.chat-item-menu-trigger:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.chat-item-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 210px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  z-index: 9;
+}
+
+.chat-item-menu-option {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+}
+
+.chat-item-menu-option:hover {
+  background: #f1f5f9;
+}
+
+.chat-item-menu-option.disabled,
+.chat-item-menu-option:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
 }
 
 .new-chat {
