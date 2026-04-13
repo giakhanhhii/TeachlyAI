@@ -7,6 +7,7 @@
  */
 export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAction) {
   chatListEl.innerHTML = "";
+  document.querySelectorAll(".chat-item-menu-floating").forEach((el) => el.remove());
 
   const ordered = sessions
     .map((session, originalIdx) => ({ session, originalIdx }))
@@ -29,11 +30,20 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
     trigger.type = "button";
     trigger.className = "chat-item-menu-trigger";
     trigger.setAttribute("aria-label", `Tùy chọn cho ${session.title}`);
-    trigger.innerHTML = "&#8942;";
+    trigger.innerHTML = `
+      <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+        <circle cx="8" cy="3" r="1.4"></circle>
+        <circle cx="8" cy="8" r="1.4"></circle>
+        <circle cx="8" cy="13" r="1.4"></circle>
+      </svg>
+    `;
 
     const menu = document.createElement("div");
-    menu.className = "chat-item-menu";
+    menu.className = "chat-item-menu chat-item-menu-floating";
     menu.hidden = true;
+    menu.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
 
     const items = [
       { action: "share", label: "Chia sẻ cuộc trò chuyện" },
@@ -57,30 +67,36 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
     trigger.onclick = (event) => {
       event.stopPropagation();
       const isOpen = !menu.hidden;
-      chatListEl.querySelectorAll(".chat-item-menu").forEach((el) => {
+      document.querySelectorAll(".chat-item-menu-floating").forEach((el) => {
         el.hidden = true;
       });
       if (!isOpen) {
+        // Show to the right of trigger, but clamp into viewport to avoid clipping.
         const rect = trigger.getBoundingClientRect();
+        menu.hidden = false;
+        menu.style.visibility = "hidden";
+        const menuWidth = menu.offsetWidth || 220;
+        const menuHeight = menu.offsetHeight || 180;
         const desiredLeft = rect.right + 8;
         const desiredTop = rect.top - 6;
-        const maxLeft = Math.max(8, window.innerWidth - 230);
-        const maxTop = Math.max(8, window.innerHeight - 180);
+        const maxLeft = Math.max(8, window.innerWidth - menuWidth - 8);
+        const maxTop = Math.max(8, window.innerHeight - menuHeight - 8);
         menu.style.left = `${Math.min(desiredLeft, maxLeft)}px`;
         menu.style.top = `${Math.min(Math.max(desiredTop, 8), maxTop)}px`;
+        menu.style.visibility = "";
       }
-      menu.hidden = isOpen;
+      if (isOpen) menu.hidden = true;
     };
 
     menuWrap.appendChild(trigger);
-    menuWrap.appendChild(menu);
     row.appendChild(btn);
     row.appendChild(menuWrap);
     chatListEl.appendChild(row);
+    document.body.appendChild(menu);
   });
 
   const closeMenus = () => {
-    chatListEl.querySelectorAll(".chat-item-menu").forEach((el) => {
+    document.querySelectorAll(".chat-item-menu-floating").forEach((el) => {
       el.hidden = true;
     });
   };
