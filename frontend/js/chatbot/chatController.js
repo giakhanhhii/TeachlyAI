@@ -7,6 +7,7 @@ import {
   getActiveSessionIndex,
   setActiveSessionIndex,
   getSessionsSnapshot,
+  createSession,
 } from "./sessionStore.js";
 import {
   computePickAction,
@@ -541,12 +542,12 @@ export function init() {
   });
 
   newChatBtn.addEventListener("click", () => {
-    const current = getCurrentSession();
-    current.thread_id = "";
-    current.messages = [];
+    createSession();
     guided = null;
     lastOpenedExperience = null;
+    persistActiveExperience();
     layerView.hide();
+    renderChatListUI();
     renderMessages();
     saveSessions();
   });
