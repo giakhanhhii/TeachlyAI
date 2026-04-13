@@ -98,6 +98,19 @@ function randomCountSkipPdf(countMax) {
   return randomIntInclusive(lo, hi);
 }
 
+/** Slide + Quiz + Flash = 40, mỗi loại ≥ 1, slide ≤ 30. */
+function randomFullsetTripleSum40() {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const cut1 = randomIntInclusive(1, 38);
+    const cut2 = randomIntInclusive(cut1 + 1, 39);
+    const sn = cut1;
+    const qn = cut2 - cut1;
+    const fn = 40 - cut2;
+    if (sn <= 30 && qn >= 1 && fn >= 1) return { sn, qn, fn };
+  }
+  return { sn: 10, qn: 20, fn: 10 };
+}
+
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card");
@@ -135,6 +148,9 @@ export function createFullsetTopicCard(deps) {
   row.appendChild(wrapMini("Số câu Quiz", quiz));
   row.appendChild(wrapMini("Số Flashcard", flash));
   qtyWrap.appendChild(row);
+  qtyWrap.appendChild(
+    el("p", "flow-hint", "Ba ô cộng lại tối đa 40 mục (ví dụ 10 slide + 20 quiz + 10 flashcard). Mỗi ô tối thiểu 1."),
+  );
   root.appendChild(qtyWrap);
 
   const extra = flowTextarea("VD: Tông giọng hài hước, có minigame…", 3);
@@ -164,6 +180,7 @@ export function createFullsetTopicCard(deps) {
     const sn = Number(s);
     const qn = Number(q);
     const fn = Number(f);
+    const sumOk = Number.isFinite(sn) && Number.isFinite(qn) && Number.isFinite(fn) && sn + qn + fn <= 40;
     const complete =
       Boolean(t) &&
       Boolean(lv) &&
@@ -173,7 +190,8 @@ export function createFullsetTopicCard(deps) {
       Number.isFinite(qn) &&
       qn >= 1 &&
       Number.isFinite(fn) &&
-      fn >= 1;
+      fn >= 1 &&
+      sumOk;
     return { t, lv, s, q, f, ex, hasAny, complete };
   }
 
@@ -186,15 +204,16 @@ export function createFullsetTopicCard(deps) {
       err.style.display = "block";
       return;
     }
+    const { sn, qn, fn } = randomFullsetTripleSum40();
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
       __auto: "1",
       topic: "(Teachly tự động)",
       level: "Cơ bản",
-      slides: String(randomIntInclusive(20, 30)),
-      quiz: String(randomIntInclusive(20, 40)),
-      flash: String(randomIntInclusive(20, 40)),
+      slides: String(sn),
+      quiz: String(qn),
+      flash: String(fn),
       extra: "",
     });
   });
@@ -218,6 +237,12 @@ export function createFullsetTopicCard(deps) {
     }
     if (!Number.isFinite(fn) || fn < 1) {
       err.textContent = "Số Flashcard phải là số dương.";
+      err.style.display = "block";
+      return;
+    }
+    const sum = sn + qn + fn;
+    if (sum > 40) {
+      err.textContent = `Tổng Slide + Quiz + Flashcard không được vượt quá 40 (hiện tại: ${sum}).`;
       err.style.display = "block";
       return;
     }

@@ -22,6 +22,7 @@ import { mountQuizExperience } from "./dom/quizExperienceView.js";
 import { mountFlashExperience } from "./dom/flashExperienceView.js";
 import { mountSlideExperience } from "./dom/slideExperienceView.js";
 import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
+import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
 
@@ -69,6 +70,18 @@ function rememberOpenBundleForBack(title, items) {
       title: it.title,
       openedAt: it.openedAt,
     })),
+  };
+}
+
+/**
+ * @param {string} title
+ * @param {Record<string, string>} spec
+ */
+function rememberOpenFullSetMixedForBack(title, spec) {
+  lastOpenedExperience = {
+    fullsetMixedBack: true,
+    title: title || "Full set",
+    fullsetMixed: { ...spec },
   };
 }
 
@@ -217,6 +230,20 @@ export function init() {
     );
   }
 
+  /**
+   * @param {Record<string, string>} spec
+   * @param {string} bundleTitle
+   */
+  async function openResumeFullSetMixed(spec, bundleTitle) {
+    rememberOpenFullSetMixedForBack(bundleTitle || "Full set", spec);
+    layerView.prepareShow();
+    await mountFullSetMixedExperience(
+      layerView,
+      { title: bundleTitle || "Full set", spec },
+      experienceHooks,
+    );
+  }
+
   msgView = createMessageView({
     messagesEl: /** @type {HTMLElement} */ (messages),
     messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
@@ -225,6 +252,9 @@ export function init() {
     },
     onResumeOpenAll: (items, bundleTitle) => {
       void openResumeOpenAll(items, bundleTitle);
+    },
+    onResumeOpenFullSetMixed: (spec, bundleTitle) => {
+      void openResumeFullSetMixed(spec, bundleTitle);
     },
     onFlowAction(value, btnEl) {
       if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
@@ -389,6 +419,14 @@ export function init() {
         resumeDock: {
           title: lastOpenedExperience.title,
           items: lastOpenedExperience.items,
+          openedAt: now,
+        },
+      });
+    } else if (lastOpenedExperience.fullsetMixedBack) {
+      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
+        resumeDock: {
+          title: lastOpenedExperience.title,
+          fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
           openedAt: now,
         },
       });

@@ -55,12 +55,17 @@ function createLine(item, onOpen) {
 }
 
 /**
- * @param {ResumeDockItem | { items: ResumeDockItem[], title?: string }} dock
+ * @typedef {Record<string, string>} FullSetMixedSpec
+ */
+
+/**
+ * @param {ResumeDockItem | { items?: ResumeDockItem[], title?: string, fullsetMixed?: FullSetMixedSpec }} dock
  * @param {(item: ResumeDockItem) => void} onOpen
  * @param {(items: ResumeDockItem[], bundleTitle: string) => void} [onOpenAll]
+ * @param {(spec: FullSetMixedSpec, bundleTitle: string) => void} [onOpenFullSetMixed]
  * @returns {HTMLElement}
  */
-export function createResumeDockCard(dock, onOpen, onOpenAll) {
+export function createResumeDockCard(dock, onOpen, onOpenAll, onOpenFullSetMixed) {
   const root = document.createElement("div");
   root.className = "resume-dock-card";
 
@@ -71,6 +76,25 @@ export function createResumeDockCard(dock, onOpen, onOpenAll) {
 
   const main = document.createElement("div");
   main.className = "resume-dock-main";
+
+  if (dock && dock.fullsetMixed && typeof onOpenFullSetMixed === "function") {
+    const bundleTitle = dock.title || "Full set";
+    const allWrap = document.createElement("div");
+    allWrap.className = "resume-dock-open-all-wrap";
+    const allBtn = document.createElement("button");
+    allBtn.type = "button";
+    allBtn.className = "resume-dock-open-all-btn";
+    allBtn.textContent = "Mở tất cả";
+    allBtn.addEventListener("click", () => onOpenFullSetMixed(dock.fullsetMixed, bundleTitle));
+    allWrap.appendChild(allBtn);
+    main.appendChild(allWrap);
+    const head = document.createElement("div");
+    head.className = "resume-dock-bundle-head";
+    head.textContent = bundleTitle;
+    main.appendChild(head);
+    root.appendChild(main);
+    return root;
+  }
 
   if (dock && Array.isArray(dock.items) && dock.items.length) {
     const bundleTitle = dock.title || "Bộ học liệu";
