@@ -31,6 +31,9 @@ let guided = null;
 
 /** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
 let lastOpenedExperience = null;
+const SS_ACTIVE_EXPERIENCE = "teachly.chat.activeExperience";
+const HISTORY_CHAT_PHASE = "chat";
+const HISTORY_EXPERIENCE_PHASE = "experience";
 
 /**
  * @param {"quiz"|"slide"|"flash"} kind
@@ -54,6 +57,18 @@ function rememberOpenExperience(kind, meta) {
     meta: { ...meta },
     title: buildResumeTitle(kind, meta),
   };
+}
+
+function persistActiveExperience() {
+  try {
+    if (!lastOpenedExperience) {
+      sessionStorage.removeItem(SS_ACTIVE_EXPERIENCE);
+      return;
+    }
+    sessionStorage.setItem(SS_ACTIVE_EXPERIENCE, JSON.stringify(lastOpenedExperience));
+  } catch {
+    // Ignore storage errors to avoid breaking UI flow.
+  }
 }
 
 /**
@@ -83,6 +98,17 @@ function rememberOpenFullSetMixedForBack(title, spec) {
     title: title || "Full set",
     fullsetMixed: { ...spec },
   };
+}
+
+function readPersistedActiveExperience() {
+  try {
+    const raw = sessionStorage.getItem(SS_ACTIVE_EXPERIENCE);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -173,6 +199,58 @@ export function init() {
   /** @type {ReturnType<typeof createMessageView>} */
   let msgView;
 
+  function ensureHistoryBaseState() {
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    if (state.phase === HISTORY_CHAT_PHASE || state.phase === HISTORY_EXPERIENCE_PHASE) return;
+    history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
+  }
+
+  function ensureExperienceHistoryEntry() {
+    ensureHistoryBaseState();
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
+    history.pushState({ ...state, phase: HISTORY_EXPERIENCE_PHASE }, "", location.href);
+  }
+
+  function inExperienceHistoryState() {
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    return state.phase === HISTORY_EXPERIENCE_PHASE;
+  }
+
+  function pushResumeDockFromLastOpened() {
+    if (!lastOpenedExperience) return;
+    const now = new Date().toISOString();
+    if (lastOpenedExperience.bundleBack) {
+      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
+        resumeDock: {
+          title: lastOpenedExperience.title,
+          items: lastOpenedExperience.items,
+          openedAt: now,
+        },
+      });
+    } else if (lastOpenedExperience.fullsetMixedBack) {
+      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
+        resumeDock: {
+          title: lastOpenedExperience.title,
+          fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
+          items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
+          openedAt: now,
+        },
+      });
+    } else {
+      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
+        resumeDock: {
+          kind: lastOpenedExperience.kind,
+          meta: { ...lastOpenedExperience.meta },
+          title: lastOpenedExperience.title,
+          openedAt: now,
+        },
+      });
+    }
+    lastOpenedExperience = null;
+    persistActiveExperience();
+  }
+
   function pushUser(text) {
     const current = getCurrentSession();
     msgView.addMessage("user", text);
@@ -221,12 +299,18 @@ export function init() {
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
         rememberOpenExperience("quiz", e.meta || {});
+        persistActiveExperience();
+        ensureExperienceHistoryEntry();
         await mountQuizExperience(layerView, e.meta, experienceHooks);
       } else if (e.type === "showFlash") {
         rememberOpenExperience("flash", e.meta || {});
+        persistActiveExperience();
+        ensureExperienceHistoryEntry();
         await mountFlashExperience(layerView, e.meta, experienceHooks);
       } else if (e.type === "showSlide") {
         rememberOpenExperience("slide", e.meta || {});
+        persistActiveExperience();
+        ensureExperienceHistoryEntry();
         await mountSlideExperience(layerView, e.meta, experienceHooks);
       }
     }
@@ -251,6 +335,8 @@ export function init() {
     }
     try {
       rememberOpenExperience(/** @type {"quiz"|"slide"|"flash"} */ (kind), item.meta || {});
+      persistActiveExperience();
+      ensureExperienceHistoryEntry();
       layerView.prepareShow();
       if (kind === "quiz") await mountQuizExperience(layerView, item.meta, experienceHooks);
       else if (kind === "slide") await mountSlideExperience(layerView, item.meta, experienceHooks);
@@ -266,6 +352,8 @@ export function init() {
    */
   async function openResumeOpenAll(items, bundleTitle) {
     rememberOpenBundleForBack(bundleTitle || "Full set", items);
+    persistActiveExperience();
+    ensureExperienceHistoryEntry();
     layerView.prepareShow();
     await mountFullSetHubExperience(
       layerView,
@@ -282,6 +370,8 @@ export function init() {
    */
   async function openResumeFullSetMixed(spec, bundleTitle) {
     rememberOpenFullSetMixedForBack(bundleTitle || "Full set", spec);
+    persistActiveExperience();
+    ensureExperienceHistoryEntry();
     layerView.prepareShow();
     await mountFullSetMixedExperience(
       layerView,
@@ -462,37 +552,12 @@ export function init() {
   });
 
   document.getElementById("backToChatBtn").addEventListener("click", () => {
-    layerView.hide();
-    if (!lastOpenedExperience) return;
-    const now = new Date().toISOString();
-    if (lastOpenedExperience.bundleBack) {
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          title: lastOpenedExperience.title,
-          items: lastOpenedExperience.items,
-          openedAt: now,
-        },
-      });
-    } else if (lastOpenedExperience.fullsetMixedBack) {
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          title: lastOpenedExperience.title,
-          fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
-          items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
-          openedAt: now,
-        },
-      });
-    } else {
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          kind: lastOpenedExperience.kind,
-          meta: { ...lastOpenedExperience.meta },
-          title: lastOpenedExperience.title,
-          openedAt: now,
-        },
-      });
+    if (inExperienceHistoryState()) {
+      history.back();
+      return;
     }
-    lastOpenedExperience = null;
+    layerView.hide();
+    pushResumeDockFromLastOpened();
   });
 
   document.getElementById("toggleSidebar").addEventListener("click", () => {
@@ -503,7 +568,33 @@ export function init() {
     location.href = "main_hub.html";
   });
 
+  window.addEventListener("popstate", () => {
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
+    if (!lastOpenedExperience) {
+      layerView.hide();
+      persistActiveExperience();
+      return;
+    }
+    layerView.hide();
+    pushResumeDockFromLastOpened();
+  });
+
   ensureSessions();
+  ensureHistoryBaseState();
   renderChatListUI();
   renderMessages();
+  const restored = readPersistedActiveExperience();
+  if (restored) {
+    lastOpenedExperience = restored;
+    persistActiveExperience();
+    ensureExperienceHistoryEntry();
+    if (restored.bundleBack && Array.isArray(restored.items)) {
+      void openResumeOpenAll(restored.items, restored.title || "Full set");
+    } else if (restored.fullsetMixedBack && restored.fullsetMixed) {
+      void openResumeFullSetMixed(restored.fullsetMixed, restored.title || "Full set");
+    } else if (restored.kind) {
+      void openResumeExperience({ kind: restored.kind, meta: restored.meta || {} });
+    }
+  }
 }
