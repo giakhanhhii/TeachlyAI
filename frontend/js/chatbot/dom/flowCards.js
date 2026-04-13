@@ -132,7 +132,7 @@ export function createFullsetTopicCard(deps) {
   slides.type = "number";
   slides.min = "1";
   slides.max = "30";
-  slides.placeholder = "Slide (tối đa 30)";
+  slides.placeholder = "Slide";
   const quiz = el("input", "flow-input");
   quiz.type = "number";
   quiz.min = "1";
@@ -142,9 +142,9 @@ export function createFullsetTopicCard(deps) {
   flash.min = "1";
   flash.placeholder = "Flashcard";
   const qtyWrap = el("div", "flow-field");
-  qtyWrap.appendChild(el("span", "flow-label", "Số lượng"));
+  qtyWrap.appendChild(el("span", "flow-label", "Số lượng (tổng max 40)"));
   const row = el("div", "flow-row-3");
-  row.appendChild(wrapMini("Số slide (max 30)", slides));
+  row.appendChild(wrapMini("Số slide", slides));
   row.appendChild(wrapMini("Số câu Quiz", quiz));
   row.appendChild(wrapMini("Số Flashcard", flash));
   qtyWrap.appendChild(row);
