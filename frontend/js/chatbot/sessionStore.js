@@ -13,13 +13,13 @@ function safeReadSessions() {
 let sessions = safeReadSessions();
 let activeSession = Number(localStorage.getItem(LS_ACTIVE_SESSION) || "0");
 
+function makeDefaultSession(index) {
+  return { title: `Đoạn chat ${index + 1}`, thread_id: "", messages: [] };
+}
+
 export function ensureSessions() {
   if (!sessions.length) {
-    sessions = [
-      { title: "Đoạn chat 1", thread_id: "", messages: [] },
-      { title: "Đoạn chat 2", thread_id: "", messages: [] },
-      { title: "Đoạn chat 3", thread_id: "", messages: [] },
-    ];
+    sessions = [makeDefaultSession(0)];
   }
   if (!Number.isFinite(activeSession) || activeSession < 0 || activeSession >= sessions.length) {
     activeSession = 0;
@@ -50,4 +50,12 @@ export function setActiveSessionIndex(idx) {
 
 export function getSessionsSnapshot() {
   return sessions;
+}
+
+export function createSession() {
+  const nextIndex = sessions.length;
+  const next = makeDefaultSession(nextIndex);
+  sessions.push(next);
+  activeSession = nextIndex;
+  return nextIndex;
 }
