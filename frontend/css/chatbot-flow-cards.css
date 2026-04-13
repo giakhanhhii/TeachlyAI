@@ -254,3 +254,35 @@
   margin-top: 6px;
   margin-bottom: 12px;
 }
+
+.flow-autofill-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid rgba(46, 125, 50, 0.3);
+  background: #fff;
+  color: var(--green-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+}
+
+.flow-autofill-btn:hover {
+  background: #e8f5e9;
+  border-color: var(--green);
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+}
+
+.flow-autofill-btn svg {
+  width: 16px;
+  height: 16px;
+}
