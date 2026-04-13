@@ -1,5 +1,3 @@
-import { shuffleInPlace } from "./services/sessionContentPrep.js";
-
 export const MSG_START_SOURCE =
   "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
 
@@ -303,31 +301,16 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     );
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
     const topic = payload.topic || "—";
-    const openedAt = new Date().toISOString();
-    const items = [
-      {
-        kind: "slide",
-        meta: { topic, count: String(payload.slides || "—"), notes: "Full set (demo mock)" },
-        title: `Slide — ${topic}`,
-        openedAt,
-      },
-      {
-        kind: "quiz",
-        meta: { topic, count: String(payload.quiz || "—"), notes: "Full set (demo mock)" },
-        title: `Trắc nghiệm — ${topic}`,
-        openedAt,
-      },
-      {
-        kind: "flash",
-        meta: { source: topic, count: String(payload.flash || "—"), extra: "Full set (demo mock)" },
-        title: `Flashcard — ${topic}`,
-        openedAt,
-      },
-    ];
-    shuffleInPlace(items);
     const resumeDock = {
       title: `Full set — ${topic}`,
-      items,
+      fullsetMixed: {
+        topic,
+        level: String(payload.level || "—"),
+        slides: String(payload.slides || "0"),
+        quiz: String(payload.quiz || "0"),
+        flash: String(payload.flash || "0"),
+        extra: String(payload.extra || ""),
+      },
     };
     const baseBot =
       payload.__auto === "1"
@@ -340,7 +323,7 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: lines.join("\n") },
         {
           type: "pushBot",
-          text: `${baseBot}\n\nDưới đây là lối tắt mở xem trước Slide, Quiz và Flashcard (dữ liệu mock).`,
+          text: `${baseBot}\n\nNhấn "Mở tất cả" để làm một phiên trộn Slide, Quiz và Flashcard trong một luồng (tổng số mục = tổng ba ô bạn đã chọn, tối đa 40).`,
           resumeDock,
         },
       ],

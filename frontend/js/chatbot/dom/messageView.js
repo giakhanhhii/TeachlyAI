@@ -22,10 +22,19 @@ function isWideFlowFormCardType(cardType) {
  *   onFlowCardSubmit?: (cardType: string, payload: Record<string, string>, cardRoot: HTMLElement) => void,
  *   onResumeExperience?: (item: { kind: string, meta: Record<string, string> }) => void,
  *   onResumeOpenAll?: (items: { kind: string, meta: Record<string, string>, title?: string }[], bundleTitle: string) => void,
+ *   onResumeOpenFullSetMixed?: (spec: Record<string, string>, bundleTitle: string) => void,
  * }} opts
  */
 export function createMessageView(opts) {
-  const { messagesEl, messagesInnerEl, onFlowAction, onFlowCardSubmit, onResumeExperience, onResumeOpenAll } = opts;
+  const {
+    messagesEl,
+    messagesInnerEl,
+    onFlowAction,
+    onFlowCardSubmit,
+    onResumeExperience,
+    onResumeOpenAll,
+    onResumeOpenFullSetMixed,
+  } = opts;
 
   /**
    * @param {HTMLElement} contentNode
@@ -109,7 +118,12 @@ export function createMessageView(opts) {
       if (showResume) {
         bubble.classList.add("bubble-has-resume-dock");
         bubble.appendChild(
-          createResumeDockCard(resumeDock, (item) => onResumeExperience(item), onResumeOpenAll),
+          createResumeDockCard(
+            resumeDock,
+            (item) => onResumeExperience(item),
+            onResumeOpenAll,
+            onResumeOpenFullSetMixed,
+          ),
         );
       }
       appendBotRow(bubble);
@@ -181,7 +195,12 @@ export function createMessageView(opts) {
       if (showResume) {
         bubble.classList.add("bubble-has-resume-dock");
         bubble.appendChild(
-          createResumeDockCard(resumeDock, (item) => onResumeExperience(item), onResumeOpenAll),
+          createResumeDockCard(
+            resumeDock,
+            (item) => onResumeExperience(item),
+            onResumeOpenAll,
+            onResumeOpenFullSetMixed,
+          ),
         );
       }
     } else {
