@@ -86,6 +86,35 @@ function rememberOpenFullSetMixedForBack(title, spec) {
 }
 
 /**
+ * @param {Record<string, string>} spec
+ * @param {string} openedAtIso
+ */
+function fullsetResumeItemsFromSpec(spec, openedAtIso) {
+  const topic = spec.topic || "—";
+  const t = openedAtIso || new Date().toISOString();
+  return [
+    {
+      kind: "slide",
+      meta: { topic, count: String(spec.slides || "—"), notes: "Full set (demo mock)" },
+      title: `Slide — ${topic}`,
+      openedAt: t,
+    },
+    {
+      kind: "quiz",
+      meta: { topic, count: String(spec.quiz || "—"), notes: "Full set (demo mock)" },
+      title: `Trắc nghiệm — ${topic}`,
+      openedAt: t,
+    },
+    {
+      kind: "flash",
+      meta: { source: topic, count: String(spec.flash || "—"), extra: "Full set (demo mock)" },
+      title: `Flashcard — ${topic}`,
+      openedAt: t,
+    },
+  ];
+}
+
+/**
  * @returns {Promise<File | null>}
  */
 function pickPdfWithDialog() {
@@ -427,6 +456,7 @@ export function init() {
         resumeDock: {
           title: lastOpenedExperience.title,
           fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
+          items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
           openedAt: now,
         },
       });

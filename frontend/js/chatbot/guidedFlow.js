@@ -301,6 +301,7 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     );
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
     const topic = payload.topic || "—";
+    const openedAt = new Date().toISOString();
     const resumeDock = {
       title: `Full set — ${topic}`,
       fullsetMixed: {
@@ -311,6 +312,26 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
         flash: String(payload.flash || "0"),
         extra: String(payload.extra || ""),
       },
+      items: [
+        {
+          kind: "slide",
+          meta: { topic, count: String(payload.slides || "—"), notes: "Full set (demo mock)" },
+          title: `Slide — ${topic}`,
+          openedAt,
+        },
+        {
+          kind: "quiz",
+          meta: { topic, count: String(payload.quiz || "—"), notes: "Full set (demo mock)" },
+          title: `Trắc nghiệm — ${topic}`,
+          openedAt,
+        },
+        {
+          kind: "flash",
+          meta: { source: topic, count: String(payload.flash || "—"), extra: "Full set (demo mock)" },
+          title: `Flashcard — ${topic}`,
+          openedAt,
+        },
+      ],
     };
     const baseBot =
       payload.__auto === "1"
@@ -323,7 +344,7 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: lines.join("\n") },
         {
           type: "pushBot",
-          text: `${baseBot}\n\nNhấn "Mở tất cả" để làm một phiên trộn Slide, Quiz và Flashcard trong một luồng (tổng số mục = tổng ba ô bạn đã chọn, tối đa 40).`,
+          text: `${baseBot}\n\nNhấn "Mở tất cả" để làm một phiên trộn cả ba dạng trong một luồng (tổng mục = tổng ba ô, tối đa 40). Hoặc mở riêng Slide / Quiz / Flashcard bên dưới — mỗi nút "Mở" dùng đúng số lượng bạn đã nhập cho loại đó.`,
           resumeDock,
         },
       ],
