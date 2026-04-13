@@ -556,3 +556,13 @@
   line-height: 1.4;
   color: var(--muted);
 }
+
+.flash-phonetic {
+  display: block;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(1rem, 3.2vw, 1.25rem);
+  color: var(--green-dark);
+  font-weight: 500;
+  margin: -2px 0 6px;
+  opacity: 0.8;
+}
