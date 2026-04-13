@@ -4,6 +4,7 @@
  */
 
 import { takePendingPdfFile } from "../pdfPrefillStore.js";
+import { randomIntInclusive } from "../services/sessionContentPrep.js";
 
 function el(tag, className, text) {
   const n = document.createElement(tag);
@@ -21,8 +22,6 @@ function flowTextarea(placeholder, rows = 2) {
   return n;
 }
 
-const MSG_SKIP_PARTIAL =
-  "Bạn chưa điền đủ các trường. Hãy hoàn thiện biểu mẫu, hoặc để trống toàn bộ nếu muốn Teachly tự động tạo.";
 const MSG_SKIP_USE_SUBMIT = "Bạn đã điền đủ thông tin. Hãy nhấn Gửi thông tin để tiếp tục.";
 const MSG_SKIP_PDF_HAS_FILE =
   "Bạn đã chọn tệp PDF — nhấn Xác nhận tệp để tiếp tục, hoặc tải lại trang nếu muốn chọn lại.";
@@ -30,6 +29,8 @@ const MSG_AUTO_CONFIRM =
   "Bạn chưa điền gì. Teachly sẽ tự động soạn nội dung phù hợp. Bạn có chắc không?";
 const MSG_AUTO_CONFIRM_PDF =
   "Bạn chưa chọn tệp PDF. Teachly sẽ tự động soạn nội dung phù hợp. Bạn có chắc không?";
+const MSG_PARTIAL_FILL =
+  "Bạn mới điền số lượng (hoặc thông tin một phần), Teachly sẽ tự điền những thông tin còn lại cho bạn. Bạn có muốn tiếp tục không?";
 
 /** @param {HTMLElement} root */
 function removeSkipConfirm(root) {
@@ -63,6 +64,53 @@ function showAutoConfirmPanel(root, errEl, onYes, message) {
   root.appendChild(wrap);
 }
 
+/**
+ * Xác nhận khi đã có số lượng / thông tin một phần nhưng thiếu mô tả chính.
+ * @param {HTMLElement} root
+ * @param {HTMLElement} errEl
+ * @param {() => void} onYes
+ */
+function showPartialFillConfirm(root, errEl, onYes) {
+  removeSkipConfirm(root);
+  errEl.style.display = "none";
+  const wrap = el("div", "flow-skip-confirm");
+  wrap.appendChild(el("p", "flow-skip-text", MSG_PARTIAL_FILL));
+  const row = el("div", "flow-skip-actions");
+  const yes = el("button", "flow-primary-btn", "Có");
+  const no = el("button", "flow-secondary-btn", "Không");
+  yes.type = "button";
+  no.type = "button";
+  yes.addEventListener("click", () => {
+    removeSkipConfirm(root);
+    onYes();
+  });
+  no.addEventListener("click", () => removeSkipConfirm(root));
+  row.appendChild(yes);
+  row.appendChild(no);
+  wrap.appendChild(row);
+  root.appendChild(wrap);
+}
+
+/** @param {number | null} countMax */
+function randomCountSkipPdf(countMax) {
+  const hi = countMax == null ? 40 : Math.min(40, countMax);
+  const lo = Math.min(20, hi);
+  return randomIntInclusive(lo, hi);
+}
+
+/** Slide + Quiz + Flash = 40, mỗi loại ≥ 1, slide ≤ 30. */
+function randomFullsetTripleSum40() {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const cut1 = randomIntInclusive(1, 38);
+    const cut2 = randomIntInclusive(cut1 + 1, 39);
+    const sn = cut1;
+    const qn = cut2 - cut1;
+    const fn = 40 - cut2;
+    if (sn <= 30 && qn >= 1 && fn >= 1) return { sn, qn, fn };
+  }
+  return { sn: 10, qn: 20, fn: 10 };
+}
+
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card");
@@ -84,7 +132,7 @@ export function createFullsetTopicCard(deps) {
   slides.type = "number";
   slides.min = "1";
   slides.max = "30";
-  slides.placeholder = "Slide (tối đa 30)";
+  slides.placeholder = "Slide";
   const quiz = el("input", "flow-input");
   quiz.type = "number";
   quiz.min = "1";
@@ -94,12 +142,15 @@ export function createFullsetTopicCard(deps) {
   flash.min = "1";
   flash.placeholder = "Flashcard";
   const qtyWrap = el("div", "flow-field");
-  qtyWrap.appendChild(el("span", "flow-label", "Số lượng"));
+  qtyWrap.appendChild(el("span", "flow-label", "Số lượng (tổng max 40)"));
   const row = el("div", "flow-row-3");
-  row.appendChild(wrapMini("Số slide (max 30)", slides));
+  row.appendChild(wrapMini("Số slide", slides));
   row.appendChild(wrapMini("Số câu Quiz", quiz));
   row.appendChild(wrapMini("Số Flashcard", flash));
   qtyWrap.appendChild(row);
+  qtyWrap.appendChild(
+    el("p", "flow-hint", "Ba ô cộng lại tối đa 40 mục (ví dụ 10 slide + 20 quiz + 10 flashcard). Mỗi ô tối thiểu 1."),
+  );
   root.appendChild(qtyWrap);
 
   const extra = flowTextarea("VD: Tông giọng hài hước, có minigame…", 3);
@@ -129,6 +180,7 @@ export function createFullsetTopicCard(deps) {
     const sn = Number(s);
     const qn = Number(q);
     const fn = Number(f);
+    const sumOk = Number.isFinite(sn) && Number.isFinite(qn) && Number.isFinite(fn) && sn + qn + fn <= 40;
     const complete =
       Boolean(t) &&
       Boolean(lv) &&
@@ -138,7 +190,8 @@ export function createFullsetTopicCard(deps) {
       Number.isFinite(qn) &&
       qn >= 1 &&
       Number.isFinite(fn) &&
-      fn >= 1;
+      fn >= 1 &&
+      sumOk;
     return { t, lv, s, q, f, ex, hasAny, complete };
   }
 
@@ -146,28 +199,22 @@ export function createFullsetTopicCard(deps) {
     err.style.display = "none";
     err.textContent = "";
     const st = readFullsetState();
-    if (st.hasAny && !st.complete) {
-      err.textContent = MSG_SKIP_PARTIAL;
-      err.style.display = "block";
-      return;
-    }
-    if (st.hasAny && st.complete) {
+    if (st.complete) {
       err.textContent = MSG_SKIP_USE_SUBMIT;
       err.style.display = "block";
       return;
     }
-    showAutoConfirmPanel(root, err, () => {
-      submit.disabled = true;
-      skip.disabled = true;
-      deps.onSubmit({
-        __auto: "1",
-        topic: "(Teachly tự động)",
-        level: "Cơ bản",
-        slides: "10",
-        quiz: "10",
-        flash: "15",
-        extra: "",
-      });
+    const { sn, qn, fn } = randomFullsetTripleSum40();
+    submit.disabled = true;
+    skip.disabled = true;
+    deps.onSubmit({
+      __auto: "1",
+      topic: "(Teachly tự động)",
+      level: "Cơ bản",
+      slides: String(sn),
+      quiz: String(qn),
+      flash: String(fn),
+      extra: "",
     });
   });
 
@@ -175,17 +222,6 @@ export function createFullsetTopicCard(deps) {
     removeSkipConfirm(root);
     err.style.display = "none";
     err.textContent = "";
-    const t = topic.value.trim();
-    if (!t) {
-      err.textContent = "Vui lòng nhập chủ đề.";
-      err.style.display = "block";
-      return;
-    }
-    if (!level.value) {
-      err.textContent = "Vui lòng chọn trình độ.";
-      err.style.display = "block";
-      return;
-    }
     const sn = Number(slides.value);
     const qn = Number(quiz.value);
     const fn = Number(flash.value);
@@ -204,15 +240,38 @@ export function createFullsetTopicCard(deps) {
       err.style.display = "block";
       return;
     }
-    submit.disabled = true;
-    skip.disabled = true;
-    deps.onSubmit({
-      topic: t,
-      level: level.value,
-      slides: String(sn),
-      quiz: String(qn),
-      flash: String(fn),
-      extra: extra.value.trim(),
+    const sum = sn + qn + fn;
+    if (sum > 40) {
+      err.textContent = `Tổng Slide + Quiz + Flashcard không được vượt quá 40 (hiện tại: ${sum}).`;
+      err.style.display = "block";
+      return;
+    }
+    const t = topic.value.trim();
+    const lv = level.value;
+    if (t && lv) {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        topic: t,
+        level: lv,
+        slides: String(sn),
+        quiz: String(qn),
+        flash: String(fn),
+        extra: extra.value.trim(),
+      });
+      return;
+    }
+    showPartialFillConfirm(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        topic: t || "(Teachly tự động)",
+        level: lv || "Cơ bản",
+        slides: String(sn),
+        quiz: String(qn),
+        flash: String(fn),
+        extra: extra.value.trim(),
+      });
     });
   });
 
@@ -301,27 +360,20 @@ function createPdfMetaCard(opts) {
   skip.addEventListener("click", () => {
     err.style.display = "none";
     const st = readState();
-    if (st.hasAny && !st.complete) {
-      err.textContent = MSG_SKIP_PARTIAL;
-      err.style.display = "block";
-      return;
-    }
-    if (st.hasAny && st.complete) {
+    if (st.complete) {
       err.textContent = MSG_SKIP_USE_SUBMIT;
       err.style.display = "block";
       return;
     }
-    showAutoConfirmPanel(root, err, () => {
-      submit.disabled = true;
-      skip.disabled = true;
-      onSubmit({
-        __auto: "1",
-        name: "(Teachly tự động)",
-        count: defaultCount,
-        structure: "",
-        style: "",
-        notes: "",
-      });
+    submit.disabled = true;
+    skip.disabled = true;
+    onSubmit({
+      __auto: "1",
+      name: "(Teachly tự động)",
+      count: String(randomCountSkipPdf(countMax)),
+      structure: "",
+      style: "",
+      notes: "",
     });
   });
 
@@ -329,9 +381,30 @@ function createPdfMetaCard(opts) {
     removeSkipConfirm(root);
     err.style.display = "none";
     const st = readState();
-    if (!st.nm) {
-      err.textContent = "Vui lòng nhập tên.";
-      err.style.display = "block";
+    if (st.nm && st.c && st.inRange) {
+      submit.disabled = true;
+      skip.disabled = true;
+      onSubmit({
+        name: st.nm,
+        count: String(st.n),
+        structure: st.st,
+        style: st.sy,
+        notes: st.nt,
+      });
+      return;
+    }
+    if (st.c && st.inRange && !st.nm) {
+      showPartialFillConfirm(root, err, () => {
+        submit.disabled = true;
+        skip.disabled = true;
+        onSubmit({
+          name: "(Teachly tự động)",
+          count: String(st.n),
+          structure: st.st,
+          style: st.sy,
+          notes: st.nt,
+        });
+      });
       return;
     }
     if (!st.c || !st.inRange) {
@@ -342,15 +415,8 @@ function createPdfMetaCard(opts) {
       err.style.display = "block";
       return;
     }
-    submit.disabled = true;
-    skip.disabled = true;
-    onSubmit({
-      name: st.nm,
-      count: String(st.n),
-      structure: st.st,
-      style: st.sy,
-      notes: st.nt,
-    });
+    err.textContent = "Vui lòng nhập tên.";
+    err.style.display = "block";
   });
 
   return root;
@@ -589,58 +655,56 @@ export function createSlideFormCard(deps) {
   skip.addEventListener("click", () => {
     err.style.display = "none";
     const st = readSlideState();
-    if (st.hasAny && !st.complete) {
-      err.textContent = MSG_SKIP_PARTIAL;
-      err.style.display = "block";
-      return;
-    }
-    if (st.hasAny && st.complete) {
+    if (st.complete) {
       err.textContent = MSG_SKIP_USE_SUBMIT;
-      err.style.display = "block";
-      return;
-    }
-    showAutoConfirmPanel(root, err, () => {
-      submit.disabled = true;
-      skip.disabled = true;
-      deps.onSubmit({
-        __auto: "1",
-        topic: "(Teachly tự động)",
-        count: "10",
-        structure: "",
-        style: "Gần gũi",
-        notes: "",
-      });
-    });
-  });
-
-  submit.addEventListener("click", () => {
-    removeSkipConfirm(root);
-    err.style.display = "none";
-    const topic = docText.value.trim();
-    if (!topic) {
-      err.textContent = "Vui lòng nhập chủ đề bài giảng.";
-      err.style.display = "block";
-      return;
-    }
-    const n = Number(count.value);
-    if (!Number.isFinite(n) || n < 1 || n > 30) {
-      err.textContent = "Số slide phải từ 1 đến 30.";
-      err.style.display = "block";
-      return;
-    }
-    if (!style.value) {
-      err.textContent = "Vui lòng chọn phong cách.";
       err.style.display = "block";
       return;
     }
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
-      topic,
-      count: String(n),
-      structure: structure.value.trim(),
-      style: style.value,
-      notes: notes.value.trim(),
+      __auto: "1",
+      topic: "(Teachly tự động)",
+      count: String(randomIntInclusive(20, 30)),
+      structure: "",
+      style: "Gần gũi",
+      notes: "",
+    });
+  });
+
+  submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
+    err.style.display = "none";
+    const n = Number(count.value);
+    if (!Number.isFinite(n) || n < 1 || n > 30) {
+      err.textContent = "Số slide phải từ 1 đến 30.";
+      err.style.display = "block";
+      return;
+    }
+    const topic = docText.value.trim();
+    const sty = style.value;
+    if (topic && sty) {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        topic,
+        count: String(n),
+        structure: structure.value.trim(),
+        style: sty,
+        notes: notes.value.trim(),
+      });
+      return;
+    }
+    showPartialFillConfirm(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        topic: topic || "(Teachly tự động)",
+        count: String(n),
+        structure: structure.value.trim(),
+        style: sty || "Gần gũi",
+        notes: notes.value.trim(),
+      });
     });
   });
 
@@ -702,58 +766,56 @@ export function createQuizFormCard(deps) {
   skip.addEventListener("click", () => {
     err.style.display = "none";
     const st = readQuizState();
-    if (st.hasAny && !st.complete) {
-      err.textContent = MSG_SKIP_PARTIAL;
-      err.style.display = "block";
-      return;
-    }
-    if (st.hasAny && st.complete) {
+    if (st.complete) {
       err.textContent = MSG_SKIP_USE_SUBMIT;
-      err.style.display = "block";
-      return;
-    }
-    showAutoConfirmPanel(root, err, () => {
-      submit.disabled = true;
-      skip.disabled = true;
-      deps.onSubmit({
-        __auto: "1",
-        source: "(Teachly tự động)",
-        kind: "Ôn tập THPTQG",
-        count: "15",
-        difficulty: "",
-        notes: "",
-      });
-    });
-  });
-
-  submit.addEventListener("click", () => {
-    removeSkipConfirm(root);
-    err.style.display = "none";
-    const t = srcText.value.trim();
-    if (!t) {
-      err.textContent = "Vui lòng nhập chủ đề hoặc chuyên đề.";
-      err.style.display = "block";
-      return;
-    }
-    const n = Number(qn.value);
-    if (!Number.isFinite(n) || n < 1) {
-      err.textContent = "Số lượng câu phải là số dương.";
-      err.style.display = "block";
-      return;
-    }
-    if (!kind.value.trim()) {
-      err.textContent = "Vui lòng nhập dạng bài.";
       err.style.display = "block";
       return;
     }
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
-      source: t,
-      kind: kind.value.trim(),
-      count: String(n),
-      difficulty: diff.value.trim(),
-      notes: notes.value.trim(),
+      __auto: "1",
+      source: "(Teachly tự động)",
+      kind: "Ôn tập THPTQG",
+      count: String(randomIntInclusive(20, 40)),
+      difficulty: "",
+      notes: "",
+    });
+  });
+
+  submit.addEventListener("click", () => {
+    removeSkipConfirm(root);
+    err.style.display = "none";
+    const n = Number(qn.value);
+    if (!Number.isFinite(n) || n < 1) {
+      err.textContent = "Số lượng câu phải là số dương.";
+      err.style.display = "block";
+      return;
+    }
+    const t = srcText.value.trim();
+    const k = kind.value.trim();
+    if (t && k) {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        source: t,
+        kind: k,
+        count: String(n),
+        difficulty: diff.value.trim(),
+        notes: notes.value.trim(),
+      });
+      return;
+    }
+    showPartialFillConfirm(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      deps.onSubmit({
+        source: t || "(Teachly tự động)",
+        kind: k || "Ôn tập THPTQG",
+        count: String(n),
+        difficulty: diff.value.trim(),
+        notes: notes.value.trim(),
+      });
     });
   });
 
@@ -771,26 +833,12 @@ export function createFlashcardFormCard(deps) {
   const back = flowTextarea("VD: Nghĩa tiếng Việt, Phiên âm, Ví dụ, Từ đồng nghĩa", 2);
   root.appendChild(wrapField("Thông tin mặt sau", back));
 
-  const imgRow = el("div", "flow-field");
-  imgRow.appendChild(el("span", "flow-label", "Hình ảnh minh họa AI"));
-  const radios = el("div", "flow-radio-row");
-  const rYes = document.createElement("input");
-  rYes.type = "radio";
-  rYes.name = "flash_ai_img";
-  rYes.value = "yes";
-  const rNo = document.createElement("input");
-  rNo.type = "radio";
-  rNo.name = "flash_ai_img";
-  rNo.value = "no";
-  rNo.checked = true;
-  const ly = el("label", "flow-radio", "Có");
-  ly.prepend(rYes);
-  const ln = el("label", "flow-radio", "Không");
-  ln.prepend(rNo);
-  radios.appendChild(ly);
-  radios.appendChild(ln);
-  imgRow.appendChild(radios);
-  root.appendChild(imgRow);
+  const count = el("input", "flow-input");
+  count.type = "number";
+  count.min = "1";
+  count.max = "40";
+  count.placeholder = "1–40 (mặc định 20)";
+  root.appendChild(wrapField("Số lượng thẻ", count, "Tối đa 40 thẻ mỗi lần tạo."));
 
   const notes = flowTextarea("Ghi chú thêm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -808,37 +856,77 @@ export function createFlashcardFormCard(deps) {
   actions.appendChild(skip);
   root.appendChild(actions);
 
+  function readFlashState() {
+    const lst = list.value.trim();
+    const bk = back.value.trim();
+    const nt = notes.value.trim();
+    const cv = count.value.trim();
+    const n = Number(cv || "20");
+    const mainDesc = lst || bk || nt;
+    const hasAny = Boolean(mainDesc || cv);
+    const complete = Boolean(mainDesc) && Number.isFinite(n) && n >= 1 && n <= 40;
+    return { hasAny, complete };
+  }
+
   skip.addEventListener("click", () => {
     err.style.display = "none";
-    const hasAny = Boolean(list.value.trim() || back.value.trim() || notes.value.trim() || rYes.checked);
-    if (hasAny) {
-      err.textContent = MSG_SKIP_PARTIAL;
+    const st = readFlashState();
+    if (st.complete) {
+      err.textContent = MSG_SKIP_USE_SUBMIT;
       err.style.display = "block";
       return;
     }
-    showAutoConfirmPanel(root, err, () => {
-      submit.disabled = true;
-      skip.disabled = true;
-      deps.onSubmit({
-        __auto: "1",
-        list: "",
-        back: "",
-        aiImage: "Không",
-        notes: "",
-      });
+    submit.disabled = true;
+    skip.disabled = true;
+    deps.onSubmit({
+      __auto: "1",
+      list: "",
+      back: "",
+      count: String(randomIntInclusive(20, 40)),
+      aiImage: "Không",
+      notes: "",
     });
   });
 
   submit.addEventListener("click", () => {
     removeSkipConfirm(root);
     err.style.display = "none";
+    const cv = count.value.trim();
+    if (cv) {
+      const n = Number(cv);
+      if (!Number.isFinite(n) || n < 1 || n > 40) {
+        err.textContent = "Số lượng thẻ phải từ 1 đến 40.";
+        err.style.display = "block";
+        return;
+      }
+    }
+    const lst = list.value.trim();
+    const bk = back.value.trim();
+    const nt = notes.value.trim();
+    const mainDesc = lst || bk || nt;
+    const useCount = cv || "20";
+    if (cv && !mainDesc) {
+      showPartialFillConfirm(root, err, () => {
+        submit.disabled = true;
+        skip.disabled = true;
+        deps.onSubmit({
+          list: "",
+          back: "",
+          count: useCount,
+          aiImage: "Không",
+          notes: "",
+        });
+      });
+      return;
+    }
     submit.disabled = true;
     skip.disabled = true;
     deps.onSubmit({
-      list: list.value.trim(),
-      back: back.value.trim(),
-      aiImage: rYes.checked ? "Có" : "Không",
-      notes: notes.value.trim(),
+      list: lst,
+      back: bk,
+      count: useCount,
+      aiImage: "Không",
+      notes: nt,
     });
   });
 

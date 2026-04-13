@@ -304,6 +304,14 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
     const openedAt = new Date().toISOString();
     const resumeDock = {
       title: `Full set — ${topic}`,
+      fullsetMixed: {
+        topic,
+        level: String(payload.level || "—"),
+        slides: String(payload.slides || "0"),
+        quiz: String(payload.quiz || "0"),
+        flash: String(payload.flash || "0"),
+        extra: String(payload.extra || ""),
+      },
       items: [
         {
           kind: "slide",
@@ -336,7 +344,7 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: lines.join("\n") },
         {
           type: "pushBot",
-          text: `${baseBot}\n\nDưới đây là lối tắt mở xem trước Slide, Quiz và Flashcard (dữ liệu mock).`,
+          text: `${baseBot}\n\nNhấn "Mở tất cả" để làm một phiên trộn cả ba dạng trong một luồng (tổng mục = tổng ba ô, tối đa 40). Hoặc mở riêng Slide / Quiz / Flashcard bên dưới — mỗi nút "Mở" dùng đúng số lượng bạn đã nhập cho loại đó.`,
           resumeDock,
         },
       ],
@@ -572,7 +580,7 @@ export function computeFlowCardSubmit(guided, cardType, payload) {
       .join(" | ");
     const meta = {
       source: src,
-      count: "—",
+      count: String(payload.count || "20").trim() || "20",
       extra: extra || "—",
     };
     return {

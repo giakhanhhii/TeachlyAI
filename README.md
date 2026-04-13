@@ -5,15 +5,12 @@ A template for building AI Agents in Python.
 ## Structure
 
 ```
-├── frontend/           # Teachly UI (HTML tĩnh — landing + chat)
 ├── src/
-│   ├── api_server.py   # FastAPI: phục vụ UI + POST /api/chat (chạy local)
-│   ├── agent.py        # Main agent loop (CLI)
+│   ├── agent.py        # Main agent loop
 │   ├── tools.py        # Tool definitions
 │   └── config.py       # Configuration
 ├── scripts/
-│   ├── setup_hooks.sh  # Hook installer (macOS/Linux)
-│   ├── setup_hooks.ps1 # Hook installer (Windows)
+│   ├── setup_hooks.sh  # One-time hook installer
 │   ├── log_hook.py     # AI tool hook handler
 │   └── submit_log.py   # Submits logs on git push
 ├── requirements.txt
@@ -32,9 +29,7 @@ git clone <repo-url>
 cd <repo>
 
 # Install git pre-push hook (required, run once)
-bash scripts/setup_hooks.sh  # macOS/Linux/Git Bash
-# OR
-powershell -ExecutionPolicy Bypass -File scripts/setup_hooks.ps1  # Windows PowerShell
+bash scripts/setup_hooks.sh
 ```
 
 ### 2. Configure environment
@@ -55,33 +50,6 @@ source venv/bin/activate       # Linux/Mac
 pip install -r requirements.txt
 python -m src.agent
 ```
-
-### 4. Teachly — xem giao diện & chat AI trên máy (một lệnh)
-
-Dùng **một server** phục vụ cả trang web (`frontend/`) và API chat (`/api/chat`). Cần **`ANTHROPIC_API_KEY`** trong `.env` (xem bước 2).
-
-**Windows (PowerShell)** — từ thư mục gốc repo (cùng cấp với `frontend/`):
-
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-# Đã có .env với ANTHROPIC_API_KEY
-uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
-```
-
-**macOS / Linux:**
-
-```bash
-source venv/bin/activate   # hoặc tạo venv như bước 3
-pip install -r requirements.txt
-uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
-```
-
-Sau đó mở trình duyệt: **http://127.0.0.1:8000/** — sẽ vào trang landing **Teachly**; từ đó bấm các thẻ để mở chat. API dùng **cùng origin** nên không cần chỉnh CORS khi truy cập qua cổng 8000.
-
-- Kiểm tra nhanh: **http://127.0.0.1:8000/api/health** (xem `anthropic_configured`, `frontend_dir_exists`).
-- Nếu mở `chatbot_ui.html` bằng Live Server cổng khác nhưng API vẫn ở 8000: trong `frontend/chatbot_ui.html` đặt thuộc tính meta `teachly-api-base` thành `http://127.0.0.1:8000`.
 
 ## Weekly Journal
 

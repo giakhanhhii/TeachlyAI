@@ -140,6 +140,18 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 
 **Học được:** Luôn thiết kế stop condition trước khi implement retry logic.
 
+# Worklog
+
+Ghi lại các quyết định kỹ thuật, phân công, và brainstorming của nhóm.
+
+> Cập nhật **bất cứ khi nào** nhóm ra quyết định kỹ thuật quan trọng hoặc thay đổi hướng đi.
+
+---
+
+## Template
+
+### Quyết định kỹ thuật
+
 ---
 
 ### [ADR-3] Frontend tĩnh HTML/CSS/JS + ES modules — 08/04/2026

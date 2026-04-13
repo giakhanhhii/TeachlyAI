@@ -1,35 +1,12 @@
 import { getApiOrigin } from "../config.js";
+import { EMBEDDED_QUIZ, EMBEDDED_FLASHCARD, EMBEDDED_SLIDE } from "./embeddedMockBundles.js";
 
 /** @typedef {'quiz' | 'flashcard' | 'slide'} MockResource */
 
-/** Dùng khi không gọi được API (file:// hoặc server chưa bật). */
-export const FALLBACK_QUIZ = {
-  title: "Ôn tập Tiếng Anh Nâng cao",
-  questions: [
-    {
-      id: "fb1",
-      text: "Had I known about the severe weather warning, I _______ my flight to London.",
-      options: ["cancelled", "would have cancelled", "would cancel", "will cancel"],
-      correctIndex: 1,
-      hint: "Had I known → If I had known (điều kiện III).",
-    },
-  ],
-};
-
-export const FALLBACK_FLASHCARD = {
-  title: "Flashcard (offline)",
-  cards: [
-    { id: "fb1", front: "abandon", back: "từ bỏ", hint: "" },
-    { id: "fb2", front: "meticulous", back: "tỉ mỉ", hint: "" },
-  ],
-};
-
-export const FALLBACK_SLIDE = {
-  title: "Slide (offline)",
-  slides: [
-    { id: "fb1", title: "Giới thiệu", bullets: ["Nội dung mẫu khi chưa có API."] },
-  ],
-};
+/** Dùng khi không gọi được API (file:// hoặc server chưa bật) — đồng bộ pool với backend/mock. */
+export const FALLBACK_QUIZ = EMBEDDED_QUIZ;
+export const FALLBACK_FLASHCARD = EMBEDDED_FLASHCARD;
+export const FALLBACK_SLIDE = EMBEDDED_SLIDE;
 
 /**
  * @param {MockResource} name
