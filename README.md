@@ -39,17 +39,26 @@ bash scripts/setup_hooks.sh
 cp .env.example .env
 ```
 
-Open `.env` and fill in your `ANTHROPIC_API_KEY`. The `AI_LOG_*` variables are pre-filled.
+Open `.env` and fill in at least one key:
+- `ANTHROPIC_API_KEY` (for `src/api_server.py`)
+- `OPENAI_API_KEY` (for `src/agent.py`)
+
+The `AI_LOG_*` variables are pre-filled.
 
 ### 3. Run
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate       # Linux/Mac
 # or: venv\Scripts\activate    # Windows
 
 pip install -r requirements.txt
-python -m src.agent
+
+# Option A: Run local API + static frontend (one port)
+uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
+
+# Option B: Run CLI agent loop
+python3 -m src.agent
 ```
 
 ## Weekly Journal
