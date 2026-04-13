@@ -256,30 +256,34 @@
 }
 
 .flow-autofill-btn {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  display: flex;
+  position: absolute !important;
+  top: 10px !important;
+  right: 12px !important;
+  left: auto !important;
+  width: 32px;
+  height: 32px;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  border: 1px solid rgba(46, 125, 50, 0.3);
-  background: #fff;
-  color: var(--green-dark);
+  border-radius: 50%;
+  border: none !important;
+  background: var(--green) !important;
+  color: #ffffff !important;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   padding: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  z-index: 5;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  z-index: 100 !important;
 }
 
 .flow-autofill-btn:hover {
-  background: #e8f5e9;
-  border-color: var(--green);
-  transform: scale(1.08);
-  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+  background: var(--green-dark) !important;
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.flow-autofill-btn:active {
+  transform: translateY(0) scale(1);
 }
 
 .flow-autofill-btn svg {
