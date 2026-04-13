@@ -14,6 +14,8 @@ function el(tag, className, text) {
 }
 
 /** Ô nhập đa dòng — Enter và Shift+Enter đều xuống dòng (hành vi mặc định của textarea). */
+const MAGIC_WAND_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m11.6 4.4 7.2 7.2"></path><path d="m15 2 6 6"></path><path d="M5 21l-2-2 12-12 2 2-12 12z"></path><path d="M2 21l1-1"></path><path d="m7 8 1 1"></path><path d="m10 11 1 1"></path><path d="m13 14 1 1"></path></svg>`;
+
 function flowTextarea(placeholder, rows = 2) {
   const n = el("textarea", "flow-textarea");
   n.rows = rows;
@@ -91,6 +93,18 @@ function showPartialFillConfirm(root, errEl, onYes) {
   root.appendChild(wrap);
 }
 
+function addAutofillBtn(root, callback) {
+  const btn = el("button", "flow-autofill-btn");
+  btn.type = "button";
+  btn.title = "Tự động điền dữ liệu mẫu (AI)";
+  btn.innerHTML = MAGIC_WAND_SVG;
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    callback();
+  });
+  root.appendChild(btn);
+}
+
 /** @param {number | null} countMax */
 function randomCountSkipPdf(countMax) {
   const hi = countMax == null ? 40 : Math.min(40, countMax);
@@ -115,6 +129,15 @@ function randomFullsetTripleSum40() {
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
+
+  addAutofillBtn(root, () => {
+    topic.value = "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia";
+    level.value = "Khá";
+    slides.value = "10";
+    quiz.value = "20";
+    flash.value = "10";
+    extra.value = "Tập trung vào phần Đọc hiểu và Từ vựng.";
+  });
 
   const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
   root.appendChild(wrapField("Chủ đề", topic, "Nhập tên bài học"));
@@ -309,6 +332,14 @@ function createPdfMetaCard(opts) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", title));
 
+  addAutofillBtn(root, () => {
+    name.value = "Bài tập từ PDF";
+    count.value = String(countMax || 20);
+    structure.value = "Tự động phân tích từ tài liệu";
+    style.value = "Gần gũi";
+    notes.value = "Bám sát nội dung tệp PDF đã tải lên.";
+  });
+
   const name = flowTextarea("VD: Bài 8 — Động lực học", 2);
   root.appendChild(wrapField("Tên", name, "Tên gọi bộ nội dung / phiên làm việc"));
 
@@ -426,6 +457,16 @@ function createPdfMetaCard(opts) {
 export function createFullsetPdfCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Tải lên PDF"));
+
+  addAutofillBtn(root, () => {
+    const mockFile = new File(["dummy content"], "de_on_tap_anh_van.pdf", { type: "application/pdf" });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(mockFile);
+    input.files = dataTransfer.files;
+    name.textContent = mockFile.name;
+    // Kích hoạt sự kiện change
+    input.dispatchEvent(new Event("change"));
+  });
 
   const hint = el(
     "p",
@@ -599,6 +640,14 @@ export function createSlideFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
+  addAutofillBtn(root, () => {
+    docText.value = "Câu bị động (Passive Voice) - Cơ bản & Nâng cao";
+    count.value = "12";
+    structure.value = "1. Khái niệm -> 2. Các thì cơ bản -> 3. Trường hợp đặc biệt -> 4. Bài tập";
+    style.value = "Trang trọng";
+    notes.value = "Dùng nhiều ví dụ thực tế, hình ảnh minh họa sống động.";
+  });
+
   const docText = flowTextarea("Nhập tên bài học / chủ đề…", 2);
   const docBlock = el("div", "flow-field");
   docBlock.appendChild(el("label", "flow-label", "Chủ đề bài giảng"));
@@ -716,6 +765,14 @@ export function createQuizFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
+  addAutofillBtn(root, () => {
+    srcText.value = "Chuyên đề Thì của động từ (Tenses)";
+    kind.value = "Reading";
+    qn.value = "15";
+    diff.value = "Khó";
+    notes.value = "Bao gồm cả các thì hoàn thành tiếp diễn.";
+  });
+
   const srcText = flowTextarea("Nhập chủ đề / chuyên đề…", 2);
 
   const src = el("div", "flow-field");
@@ -826,6 +883,13 @@ export function createQuizFormCard(deps) {
 export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
+
+  addAutofillBtn(root, () => {
+    list.value = "Topic: Environment & Climate Change";
+    back.value = "Nghĩa tiếng Việt, Phiên âm, Ví dụ";
+    count.value = "20";
+    notes.value = "Kèm phiên âm IPA và ví dụ câu.";
+  });
 
   const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);
   root.appendChild(wrapField("Danh sách từ / Chủ đề", list, "Có thể bỏ qua — Teachly sẽ gợi ý theo ghi chú của bạn."));
