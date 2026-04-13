@@ -264,7 +264,22 @@ export async function mountFlashExperience(layerView, meta, deps) {
     const hintBlock = c.hint
       ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>`
       : "";
-    inner.innerHTML = `<div class="flash-face flash-front"><div class="flash-front-stack"><span class="flash-front-term">${frontTerm}</span>${hintBlock}</div></div><div class="flash-face flash-back"><span class="flash-back-text">${backText}</span></div>`;
+
+    inner.innerHTML = `
+      <div class="flash-face flash-front">
+        <div class="flash-front-stack">
+          <span class="flash-front-term">${frontTerm}</span>
+          ${hintBlock}
+        </div>
+      </div>
+      <div class="flash-face flash-back">
+        <span class="flash-back-text">${backText}</span>
+      </div>
+    `;
+
+    // Gắn nút loa vào mặt trước để nó xoay theo thẻ
+    inner.querySelector(".flash-front").appendChild(soundBtn);
+
     inner.addEventListener("click", () => inner.classList.toggle("flipped"));
     inner.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -274,7 +289,6 @@ export async function mountFlashExperience(layerView, meta, deps) {
     });
 
     frame.appendChild(inner);
-    frame.appendChild(soundBtn);
     wrap.appendChild(frame);
     cardSlot.appendChild(wrap);
 
