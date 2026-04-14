@@ -6,13 +6,13 @@
 }
 
 .chat-startup-hub .forest-page--embedded {
-  min-height: 200px;
+  min-height: calc(100vh - 56px);
   width: 100%;
   background: linear-gradient(160deg, #c8e6c9 0%, #a5d6a7 20%, #81c784 40%, #b2dfdb 70%, #e0f2f1 100%);
-  padding: 0 0 28px 0;
+  padding: 0 0 64px 0;
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 0;
   transition: box-shadow 0.25s ease;
 }
 
@@ -160,7 +160,7 @@
   display: block;
   width: 100%;
   max-width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .msg-row-startup-hub .chat-startup-hub {

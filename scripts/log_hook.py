@@ -7,7 +7,6 @@ import json
 import os
 import sys
 import subprocess
-import unicodedata
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -21,71 +20,17 @@ def git(cmd):
         return ""
 
 
-def get_event_name(data: dict) -> str:
-    return data.get("hook_event_name") or data.get("hookEventName") or data.get("event", "")
-
-
-def read_json_payload() -> dict | None:
-    """
-    Hook stdin on Windows can contain BOM/UTF-16 text.
-    Decode defensively so valid payloads are not dropped.
-    """
-    raw_bytes = sys.stdin.buffer.read()
-    if not raw_bytes or not raw_bytes.strip():
-        return None
-
-    for encoding in ("utf-8-sig", "utf-8", "utf-16", "utf-16-le", "utf-16-be"):
-        try:
-            decoded = raw_bytes.decode(encoding).strip()
-            if not decoded:
-                return None
-            payload = json.loads(decoded)
-            return payload if isinstance(payload, dict) else None
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            continue
-
-    return None
-
-
-def normalize_text(value: object, max_len: int = 1000) -> str:
-    """
-    Keep Unicode text stable in logs and repair common mojibake forms.
-    """
-    if value is None:
-        return ""
-
-    text = str(value)
-
-    # Common Windows mojibake pattern (UTF-8 interpreted as Latin-1/CP1252).
-    if any(token in text for token in ("Ã", "Â", "Ä", "Å", "Æ", "Ç", "Ð", "Ñ")):
-        for src in ("latin-1", "cp1252"):
-            try:
-                fixed = text.encode(src).decode("utf-8")
-                if fixed:
-                    text = fixed
-                    break
-            except UnicodeError:
-                continue
-
-    text = unicodedata.normalize("NFC", text)
-    return text[:max_len]
-
-
 def detect_tool(data: dict) -> str:
     """Detect which AI tool sent this hook event."""
     tool_env = os.environ.get("AI_TOOL_NAME", "").lower()
     if tool_env:
         return tool_env
-    # Cursor includes cursor_version on all hook payloads (see Cursor hooks docs).
-    if data.get("cursor_version"):
-        return "cursor"
     # Heuristics
-    if data.get("transcript_path"):
+    if "transcript_path" in data:
         return "codex"
-    event = get_event_name(data)
-    if event.startswith(("Before", "After", "Session", "Pre", "Notification")):
+    if data.get("hook_event_name", "").startswith(("Before", "After", "Session", "Pre", "Notification")):
         return "gemini"
-    if event[0:1].islower():
+    if data.get("hook_event_name", "")[0:1].islower():
         # camelCase event names → Cursor or Copilot
         if "workspace_roots" in data:
             return "cursor"
@@ -98,7 +43,7 @@ def detect_tool(data: dict) -> str:
 
 def normalize(data: dict, tool: str) -> dict | None:
     """Normalize tool-specific payload to common log entry."""
-    event = get_event_name(data)
+    event = data.get("hook_event_name") or data.get("event", "")
     ts = datetime.now(VN_TZ).isoformat()
 
     base = {
@@ -121,20 +66,20 @@ def normalize(data: dict, tool: str) -> dict | None:
         prompt = ""
         # UserPromptSubmit: prompt is at top level
         if event == "UserPromptSubmit":
-            prompt = normalize_text(data.get("prompt", ""), 1000)
+            prompt = data.get("prompt", "")[:1000]
         # PostToolUse: extract from tool_input
         elif isinstance(data.get("tool_input"), dict):
-            prompt = normalize_text(data["tool_input"].get("prompt") or data["tool_input"].get("content") or "", 1000)
+            prompt = data["tool_input"].get("prompt") or data["tool_input"].get("content") or ""
         base.update({
             "prompt": prompt,
             "tool_name": data.get("tool_name", ""),
             "tool_input": data.get("tool_input") if event != "UserPromptSubmit" else None,
-            "tool_response": normalize_text(data.get("tool_response", ""), 500),
+            "tool_response": str(data.get("tool_response", ""))[:500],
         })
 
     elif tool == "gemini":
         if event == "BeforeAgent":
-            prompt = normalize_text(data.get("prompt", ""), 1000)
+            prompt = data.get("prompt", "")[:1000]
             base.update({"prompt": prompt})
         else:
             req = data.get("request", {})
@@ -143,40 +88,34 @@ def normalize(data: dict, tool: str) -> dict | None:
             for c in reversed(contents):
                 for part in c.get("parts", []):
                     if part.get("text"):
-                        prompt = normalize_text(part["text"], 1000)
+                        prompt = part["text"][:1000]
                         break
                 if prompt:
                     break
             resp = data.get("response", {})
             answer = ""
             try:
-                answer = normalize_text(resp["candidates"][0]["content"]["parts"][0]["text"], 500)
+                answer = resp["candidates"][0]["content"]["parts"][0]["text"][:500]
             except Exception:
                 pass
             base.update({"prompt": prompt, "response_summary": answer})
 
     elif tool == "codex":
         base.update({
-            "prompt": normalize_text(data.get("prompt", ""), 1000),
+            "prompt": data.get("prompt", "")[:1000],
             "turn_id": data.get("turn_id", ""),
             "transcript_path": data.get("transcript_path", ""),
         })
 
     elif tool == "cursor":
-        prompt = (
-            data.get("prompt")
-            or data.get("user_prompt")
-            or (data.get("arguments") or {}).get("prompt")
-            or ""
-        )
         base.update({
-            "prompt": normalize_text(prompt, 1000),
+            "prompt": data.get("prompt", "")[:1000],
             "files_context": data.get("attachments", []),
         })
 
     elif tool == "copilot":
         base.update({
-            "prompt": normalize_text(data.get("prompt", ""), 1000),
+            "prompt": data.get("prompt", "")[:1000],
             "tool_name": data.get("toolName", ""),
             "tool_args": data.get("toolArgs"),
         })
@@ -189,8 +128,13 @@ def normalize(data: dict, tool: str) -> dict | None:
 
 
 def main():
-    data = read_json_payload()
-    if not data:
+    raw = sys.stdin.read().strip()
+    if not raw:
+        sys.exit(0)
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
         sys.exit(0)
 
     tool = detect_tool(data)
@@ -205,17 +149,8 @@ def main():
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
-    # stdout JSON must match each host's hook contract
-    event_lc = get_event_name(data).lower()
-    if tool == "cursor":
-        if event_lc == "beforesubmitprompt":
-            print(json.dumps({"continue": True}))
-        elif event_lc == "stop":
-            print(json.dumps({}))
-        else:
-            print(json.dumps({}))
-    else:
-        print(json.dumps({"status": "logged"}))
+    # Output valid JSON (required by some tools like Gemini)
+    print(json.dumps({"status": "logged"}))
 
 
 if __name__ == "__main__":
