@@ -100,15 +100,6 @@ def configure_torch_env(config: PipelineConfig) -> str:
     if os.environ.get("PYTORCH_CUDA_ALLOC_CONF", "").strip() == "":
         os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
-    def _env_blank(name: str) -> bool:
-        v = os.environ.get(name)
-        return v is None or str(v).strip() == ""
-
-    if _env_blank("IMAGE_DPI"):
-        os.environ["IMAGE_DPI"] = config.chandra_image_dpi
-    if _env_blank("MIN_PDF_IMAGE_DIM"):
-        os.environ["MIN_PDF_IMAGE_DIM"] = config.chandra_min_pdf_image_dim
-
     try:
         import torch
 
@@ -129,6 +120,12 @@ def configure_torch_env(config: PipelineConfig) -> str:
             )
         if normalized.startswith("cuda") and torch.cuda.is_available():
             torch.backends.cudnn.benchmark = True
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
+            try:
+                torch.set_float32_matmul_precision("high")
+            except Exception:  # noqa: BLE001
+                pass
             try:
                 idx = torch.device(normalized).index or 0
                 name = torch.cuda.get_device_name(idx)
@@ -211,10 +208,14 @@ def pdf_page_count(pdf_path: Path) -> int:
         doc.close()
 
 
-def iter_pdf_pages_rgb(pdf_path: Path) -> Iterable[Tuple[int, Any]]:
+def iter_pdf_pages_rgb(pdf_path: Path, start_page: int = 0) -> Iterable[Tuple[int, Any]]:
     """
     Yield (page_index, RGB PIL) one page at a time — same raster policy as `chandra.input.load_pdf_images`
     but avoids holding every page in memory.
+
+    Args:
+        start_page: First page index to yield (0-based). Pages before this are skipped entirely
+                    (not rendered), enabling fast resume without re-processing completed pages.
     """
     from chandra.input import flatten
     from chandra.settings import settings
@@ -226,7 +227,7 @@ def iter_pdf_pages_rgb(pdf_path: Path) -> Iterable[Tuple[int, Any]]:
     image_dpi = settings.IMAGE_DPI
     min_pdf_image_dim = settings.MIN_PDF_IMAGE_DIM
     try:
-        for page in range(len(doc)):
+        for page in range(start_page, len(doc)):
             page_obj = doc[page]
             min_page_dim = min(page_obj.get_width(), page_obj.get_height())
             scale_dpi = (min_pdf_image_dim / min_page_dim) * 72

@@ -47,3 +47,8 @@ data_output/
 # Local plans & prompts
 fix_plan.md
 plan/
+=======
+output/
+
+# Local hook workspace created by setup scripts (do not commit)
+AI-Log-Hook/
