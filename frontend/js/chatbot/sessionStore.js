@@ -18,6 +18,9 @@ function makeDefaultSession(index) {
     title: `Đoạn chat ${index + 1}`,
     thread_id: "",
     messages: [],
+    messagesLoaded: true,
+    hasMoreRemote: false,
+    remoteOffset: 0,
     pinned: false,
     experienceState: null,
   };
@@ -30,10 +33,23 @@ function normalizeSession(session, index = 0) {
     : `Đoạn chat ${index + 1}`;
   const safeThread = typeof session.thread_id === "string" ? session.thread_id : "";
   const safeMessages = Array.isArray(session.messages) ? session.messages : [];
+  const safeLoaded =
+    typeof session.messagesLoaded === "boolean"
+      ? session.messagesLoaded
+      : !safeThread || safeMessages.length > 0;
+  const safeHasMoreRemote = Boolean(session.hasMoreRemote);
+  const safeRemoteOffsetRaw =
+    typeof session.remoteOffset === "number" ? session.remoteOffset : safeMessages.length;
+  const safeRemoteOffset = Number.isFinite(safeRemoteOffsetRaw) && safeRemoteOffsetRaw >= 0
+    ? Math.floor(safeRemoteOffsetRaw)
+    : safeMessages.length;
   return {
     title: safeTitle,
     thread_id: safeThread,
     messages: safeMessages,
+    messagesLoaded: safeLoaded,
+    hasMoreRemote: safeHasMoreRemote,
+    remoteOffset: safeRemoteOffset,
     pinned: Boolean(session.pinned),
     experienceState:
       session.experienceState && typeof session.experienceState === "object"
@@ -92,6 +108,67 @@ export function createSession(opts = {}) {
   sessions.push(next);
   activeSession = nextIndex;
   return nextIndex;
+}
+
+/**
+ * @param {number} idx
+ * @param {any[]} messages
+ * @param {{ hasMoreRemote?: boolean, remoteOffset?: number }} [opts]
+ */
+export function setSessionMessages(idx, messages, opts = {}) {
+  const n = Number(idx);
+  if (!Number.isFinite(n) || n < 0 || n >= sessions.length) return false;
+  sessions[n].messages = Array.isArray(messages) ? messages : [];
+  sessions[n].messagesLoaded = true;
+  sessions[n].hasMoreRemote = Boolean(opts.hasMoreRemote);
+  const nextOffset = Number.isFinite(Number(opts.remoteOffset))
+    ? Number(opts.remoteOffset)
+    : sessions[n].messages.length;
+  sessions[n].remoteOffset = Math.max(0, Math.floor(nextOffset));
+  return true;
+}
+
+/**
+ * @param {number} idx
+ * @param {any[]} messages
+ * @param {{ hasMoreRemote?: boolean, remoteOffset?: number }} [opts]
+ */
+export function prependSessionMessages(idx, messages, opts = {}) {
+  const n = Number(idx);
+  if (!Number.isFinite(n) || n < 0 || n >= sessions.length) return false;
+  const incoming = Array.isArray(messages) ? messages : [];
+  sessions[n].messages = [...incoming, ...(sessions[n].messages || [])];
+  sessions[n].messagesLoaded = true;
+  sessions[n].hasMoreRemote = Boolean(opts.hasMoreRemote);
+  const nextOffset = Number.isFinite(Number(opts.remoteOffset))
+    ? Number(opts.remoteOffset)
+    : sessions[n].remoteOffset + incoming.length;
+  sessions[n].remoteOffset = Math.max(0, Math.floor(nextOffset));
+  return true;
+}
+
+/**
+ * @param {number} idx
+ */
+export function resetSessionRemoteState(idx) {
+  const n = Number(idx);
+  if (!Number.isFinite(n) || n < 0 || n >= sessions.length) return false;
+  sessions[n].messagesLoaded = !sessions[n].thread_id;
+  sessions[n].hasMoreRemote = false;
+  sessions[n].remoteOffset = sessions[n].messagesLoaded ? sessions[n].messages.length : 0;
+  return true;
+}
+
+/**
+ * @param {any} message
+ */
+export function appendMessageToCurrentSession(message) {
+  const current = getCurrentSession();
+  if (!current || typeof current !== "object") return;
+  if (!Array.isArray(current.messages)) current.messages = [];
+  current.messages.push(message);
+  current.messagesLoaded = true;
+  current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
 }
 
 export function renameSession(idx, nextTitle) {

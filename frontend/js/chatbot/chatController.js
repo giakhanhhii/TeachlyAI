@@ -1,5 +1,5 @@
 import { getChatApiUrl } from "./config.js";
-import { postChat } from "./chatApi.js";
+import { getSessionMessages, postChat } from "./chatApi.js";
 import {
   ensureSessions,
   saveSessions,
@@ -14,6 +14,9 @@ import {
   togglePinSession,
   deleteSession,
   setCurrentExperienceState,
+  getSessionByIndex,
+  setSessionMessages,
+  prependSessionMessages,
 } from "./sessionStore.js";
 import {
   computePickAction,
@@ -41,6 +44,7 @@ let lastOpenedExperience = null;
 let resumeDockAlreadyPosted = false;
 const HISTORY_CHAT_PHASE = "chat";
 const HISTORY_EXPERIENCE_PHASE = "experience";
+const REMOTE_MESSAGE_PAGE_SIZE = 20;
 
 /**
  * @param {"quiz"|"slide"|"flash"} kind
@@ -209,6 +213,54 @@ export function init() {
 
   /** @type {ReturnType<typeof createMessageView>} */
   let msgView;
+  let isSending = false;
+  let isLoadingMore = false;
+  /** @type {HTMLButtonElement | null} */
+  let loadMoreBtn = null;
+
+  /**
+   * @param {{ role: string, text?: string, content?: string }} message
+   */
+  function normalizeRemoteMessage(message) {
+    const role = message?.role === "assistant" || message?.role === "bot" ? "bot" : "user";
+    const text = String(message?.text ?? message?.content ?? "");
+    return { role, text };
+  }
+
+  function setSendingState(next) {
+    isSending = Boolean(next);
+    sendBtn.disabled = isSending;
+    input.disabled = isSending;
+    if (isSending) {
+      sendBtn.dataset.pendingText = sendBtn.textContent || "";
+      sendBtn.textContent = "Sending...";
+    } else if (sendBtn.dataset.pendingText) {
+      sendBtn.textContent = sendBtn.dataset.pendingText;
+      delete sendBtn.dataset.pendingText;
+    }
+  }
+
+  function removeLoadMoreButton() {
+    if (loadMoreBtn?.parentElement) loadMoreBtn.parentElement.remove();
+    loadMoreBtn = null;
+  }
+
+  /**
+   * Avoid replacing local rich messages (actions/cards/resume dock) with
+   * plain DB history because that would break interactive card behavior.
+   * @param {any[]} messages
+   */
+  function hasInteractiveMessages(messages) {
+    if (!Array.isArray(messages)) return false;
+    return messages.some(
+      (m) =>
+        m &&
+        typeof m === "object" &&
+        (Boolean(m.cardType) ||
+          Boolean(m.resumeDock) ||
+          (Array.isArray(m.actions) && m.actions.length > 0)),
+    );
+  }
 
   function ensureHistoryBaseState() {
     const state = history.state && typeof history.state === "object" ? history.state : {};
@@ -601,15 +653,22 @@ export function init() {
       getSessionsSnapshot(),
       getActiveSessionIndex(),
       (idx) => {
-        persistActiveExperience();
-        setActiveSessionIndex(idx);
-        guided = null;
-        lastOpenedExperience = null;
-        layerView.hide();
-        saveSessions();
-        renderChatListUI();
-        renderMessages();
-        void restoreCurrentSessionExperience();
+        void (async () => {
+          persistActiveExperience();
+          setActiveSessionIndex(idx);
+          guided = null;
+          lastOpenedExperience = null;
+          layerView.hide();
+          saveSessions();
+          try {
+            await ensureSessionMessagesLoaded();
+          } catch {
+            // Keep local cache if remote loading fails.
+          }
+          renderChatListUI();
+          renderMessages();
+          await restoreCurrentSessionExperience();
+        })();
       },
       (action, idx) => {
         if (action === "pin") {
@@ -753,6 +812,79 @@ export function init() {
     history.replaceState({}, "", "chatbot_ui.html");
   }
 
+  function renderLoadMoreControl() {
+    removeLoadMoreButton();
+    const current = getCurrentSession();
+    if (!current?.thread_id || !current.hasMoreRemote) return;
+    const row = document.createElement("div");
+    row.className = "msg-row";
+    row.style.justifyContent = "center";
+    row.style.marginBottom = "8px";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "msg-action-btn";
+    btn.textContent = isLoadingMore ? "Loading..." : "Load more";
+    btn.disabled = isLoadingMore;
+    btn.addEventListener("click", () => {
+      void loadMoreHistory();
+    });
+    row.appendChild(btn);
+    messagesInner.prepend(row);
+    loadMoreBtn = btn;
+  }
+
+  async function ensureSessionMessagesLoaded(force = false) {
+    const idx = getActiveSessionIndex();
+    const session = getSessionByIndex(idx);
+    if (!session) return;
+    if (!session.thread_id) {
+      session.messagesLoaded = true;
+      session.hasMoreRemote = false;
+      session.remoteOffset = Array.isArray(session.messages) ? session.messages.length : 0;
+      return;
+    }
+    if (!force && hasInteractiveMessages(session.messages)) {
+      session.messagesLoaded = true;
+      return;
+    }
+    if (session.messagesLoaded && !force) return;
+    const data = await getSessionMessages(session.thread_id, { limit: REMOTE_MESSAGE_PAGE_SIZE, offset: 0 });
+    const mapped = Array.isArray(data.messages) ? data.messages.map(normalizeRemoteMessage) : [];
+    const total = Number(data.total || 0);
+    setSessionMessages(idx, mapped, {
+      hasMoreRemote: Boolean(data.has_more),
+      remoteOffset: mapped.length || Math.min(REMOTE_MESSAGE_PAGE_SIZE, total),
+    });
+    saveSessions();
+  }
+
+  async function loadMoreHistory() {
+    const idx = getActiveSessionIndex();
+    const session = getSessionByIndex(idx);
+    if (!session?.thread_id || !session.hasMoreRemote || isLoadingMore) return;
+    isLoadingMore = true;
+    renderLoadMoreControl();
+    try {
+      const data = await getSessionMessages(session.thread_id, {
+        limit: REMOTE_MESSAGE_PAGE_SIZE,
+        offset: Number(session.remoteOffset || 0),
+      });
+      const mapped = Array.isArray(data.messages) ? data.messages.map(normalizeRemoteMessage) : [];
+      prependSessionMessages(idx, mapped, {
+        hasMoreRemote: Boolean(data.has_more),
+        remoteOffset: Number(session.remoteOffset || 0) + mapped.length,
+      });
+      saveSessions();
+      renderMessages();
+    } catch {
+      // Keep existing messages; just restore button state.
+      renderLoadMoreControl();
+    } finally {
+      isLoadingMore = false;
+      renderLoadMoreControl();
+    }
+  }
+
   function renderMessages() {
     msgView.clear();
     const current = getCurrentSession();
@@ -764,8 +896,6 @@ export function init() {
     if (!current.messages.length) {
       const welcome = "Xin chào! Mình là Teachly AI. Bạn muốn học gì hôm nay?";
       msgView.addMessage("bot", welcome);
-      current.messages.push({ role: "bot", text: welcome });
-      saveSessions();
     } else {
       current.messages.forEach((m) => {
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
@@ -779,16 +909,15 @@ export function init() {
         }
       });
     }
+    renderLoadMoreControl();
     threadLabel.textContent = current.thread_id ? `Thread: ${current.thread_id}` : "";
   }
 
   async function sendPrompt(prompt) {
     const current = getCurrentSession();
     msgView.addMessage("user", prompt);
-    current.messages.push({ role: "user", text: prompt });
     input.value = "";
-    input.disabled = true;
-    sendBtn.disabled = true;
+    setSendingState(true);
     const thinking = msgView.addThinkingBubble();
     try {
       const data = await postChat(apiUrl, prompt, current.thread_id);
@@ -796,23 +925,24 @@ export function init() {
       threadLabel.textContent = `Thread: ${current.thread_id}`;
       thinking.row.remove();
       await msgView.streamBotReply(data.reply);
+      current.messages.push({ role: "user", text: prompt });
       current.messages.push({ role: "bot", text: data.reply });
+      current.messagesLoaded = true;
+      current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 2;
       saveSessions();
     } catch (err) {
       thinking.row.remove();
       const errMsg = `Lỗi: ${err.message}`;
       msgView.addMessage("bot", errMsg);
-      current.messages.push({ role: "bot", text: errMsg });
-      saveSessions();
     } finally {
-      input.disabled = false;
-      sendBtn.disabled = false;
+      setSendingState(false);
       input.focus();
     }
   }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (isSending) return;
     const prompt = input.value.trim();
     if (!prompt) return;
     if (guided && (guided.step === "await_source" || guided.step === "await_pdf_file")) {
@@ -875,12 +1005,19 @@ export function init() {
   ensureSessions();
   ensureHistoryBaseState();
   renderChatListUI();
-  renderMessages();
-  const params = new URLSearchParams(location.search);
-  const flowKind = normalizeFlowParam(params.get("flow"));
-  if (flowKind) {
-    void handleFlowEntry(flowKind);
-    return;
-  }
-  void restoreCurrentSessionExperience();
+  void (async () => {
+    try {
+      await ensureSessionMessagesLoaded();
+    } catch {
+      // Keep local cache if server is unavailable.
+    }
+    renderMessages();
+    const params = new URLSearchParams(location.search);
+    const flowKind = normalizeFlowParam(params.get("flow"));
+    if (flowKind) {
+      await handleFlowEntry(flowKind);
+      return;
+    }
+    await restoreCurrentSessionExperience();
+  })();
 }

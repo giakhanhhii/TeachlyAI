@@ -40,10 +40,11 @@ template/
 .cursorrules.md
 .cursor/plans/
 
+# Local uvicorn logs (scripts/run_stack.ps1)
+.teachly_logs/
+
 # Large local PDF sources & outputs (do not commit)
 data_input/
 data_output/
-
-# Local plans & prompts
 fix_plan.md
-plan/
+plan

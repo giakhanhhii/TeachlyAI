@@ -11,18 +11,17 @@ from __future__ import annotations
 
 import json
 import logging
-import uuid
 from pathlib import Path
-from threading import Lock
 
 from anthropic import Anthropic
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .config import ANTHROPIC_API_KEY, DEFAULT_MODEL, LOG_LEVEL
+from .database import DatabaseManager
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -45,10 +44,6 @@ TEACHLY_SYSTEM = """Bạn là Teachly AI, trợ lý hỗ trợ giáo viên và h
 Trả lời rõ ràng, thân thiện; ưu tiên tiếng Việt khi người dùng dùng tiếng Việt.
 Nếu được hỏi về slide, quiz, flashcard hoặc hình ảnh minh họa, gợi ý cấu trúc nội dung hữu ích (không cần tạo file thật trừ khi được mô tả rõ công cụ ngoài chat)."""
 
-_threads: dict[str, list[dict]] = {}
-_threads_lock = Lock()
-
-
 class ChatIn(BaseModel):
     message: str = Field(..., min_length=1, max_length=32000)
     thread_id: str | None = None
@@ -57,6 +52,32 @@ class ChatIn(BaseModel):
 class ChatOut(BaseModel):
     thread_id: str
     reply: str
+
+
+class SessionSummary(BaseModel):
+    thread_id: str
+    created_at: str
+    updated_at: str
+
+
+class SessionListOut(BaseModel):
+    sessions: list[SessionSummary]
+
+
+class SessionMessage(BaseModel):
+    id: int
+    role: str
+    text: str
+    created_at: str
+
+
+class SessionMessagesOut(BaseModel):
+    thread_id: str
+    limit: int
+    offset: int
+    total: int
+    has_more: bool
+    messages: list[SessionMessage]
 
 
 def _get_client() -> Anthropic:
@@ -83,6 +104,7 @@ def _run_reply(client: Anthropic, history: list[dict]) -> str:
 
 
 app = FastAPI(title="Teachly Local", version="0.1.0")
+db = DatabaseManager(REPO_ROOT / "data" / "teachly.sqlite3")
 
 app.add_middleware(
     CORSMiddleware,
@@ -134,29 +156,55 @@ def chat(body: ChatIn):
 
     client = _get_client()
 
-    with _threads_lock:
-        tid = body.thread_id
-        if not tid or tid not in _threads:
-            tid = str(uuid.uuid4())
-            _threads[tid] = []
-
-        history = _threads[tid]
-        history.append({"role": "user", "content": text})
+    tid, user_message_id = db.append_message(body.thread_id, "user", text)
+    history = db.get_recent_history(tid, limit=20)
 
     try:
         reply = _run_reply(client, history)
     except Exception as e:
         logger.exception("Chat error")
-        with _threads_lock:
-            if tid in _threads and _threads[tid] and _threads[tid][-1].get("role") == "user":
-                _threads[tid].pop()
+        db.delete_message_by_id(user_message_id)
         raise HTTPException(status_code=502, detail=str(e) or "Lỗi gọi mô hình.") from e
 
-    with _threads_lock:
-        if tid in _threads:
-            _threads[tid].append({"role": "assistant", "content": reply})
+    db.append_message(tid, "assistant", reply)
 
     return ChatOut(thread_id=tid, reply=reply)
+
+
+@app.get("/api/sessions", response_model=SessionListOut)
+def list_sessions(
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+):
+    sessions = [SessionSummary(**s) for s in db.list_sessions(limit=limit, offset=offset)]
+    return SessionListOut(sessions=sessions)
+
+
+@app.get("/api/sessions/{thread_id}/messages", response_model=SessionMessagesOut)
+def get_session_messages(
+    thread_id: str,
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+):
+    rows, total = db.get_messages_page(thread_id, limit=limit, offset=offset)
+    messages = [
+        SessionMessage(
+            id=item["id"],
+            role="bot" if item["role"] == "assistant" else item["role"],
+            text=item["content"],
+            created_at=item["created_at"],
+        )
+        for item in rows
+    ]
+    has_more = offset + len(messages) < total
+    return SessionMessagesOut(
+        thread_id=thread_id,
+        limit=limit,
+        offset=offset,
+        total=total,
+        has_more=has_more,
+        messages=messages,
+    )
 
 
 @app.get("/")
