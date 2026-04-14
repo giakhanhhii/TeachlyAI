@@ -38,6 +38,7 @@ let guided = null;
 
 /** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
 let lastOpenedExperience = null;
+let resumeDockAlreadyPosted = false;
 const HISTORY_CHAT_PHASE = "chat";
 const HISTORY_EXPERIENCE_PHASE = "experience";
 
@@ -63,6 +64,7 @@ function rememberOpenExperience(kind, meta) {
     meta: { ...meta },
     title: buildResumeTitle(kind, meta),
   };
+  resumeDockAlreadyPosted = false;
 }
 
 function persistActiveExperience() {
@@ -98,6 +100,7 @@ function rememberOpenBundleForBack(title, items) {
       openedAt: it.openedAt,
     })),
   };
+  resumeDockAlreadyPosted = false;
 }
 
 /**
@@ -110,6 +113,7 @@ function rememberOpenFullSetMixedForBack(title, spec) {
     title: title || "Full set",
     fullsetMixed: { ...spec },
   };
+  resumeDockAlreadyPosted = false;
 }
 
 function readPersistedActiveExperience() {
@@ -226,6 +230,12 @@ export function init() {
 
   function pushResumeDockFromLastOpened() {
     if (!lastOpenedExperience) return;
+    if (resumeDockAlreadyPosted) {
+      lastOpenedExperience = null;
+      resumeDockAlreadyPosted = false;
+      persistActiveExperience();
+      return;
+    }
     const now = new Date().toISOString();
     if (lastOpenedExperience.bundleBack) {
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
@@ -255,6 +265,7 @@ export function init() {
       });
     }
     lastOpenedExperience = null;
+    resumeDockAlreadyPosted = false;
     persistActiveExperience();
   }
 
@@ -279,6 +290,7 @@ export function init() {
         openedAt: now,
       },
     });
+    resumeDockAlreadyPosted = true;
   }
 
   /**
@@ -408,14 +420,14 @@ export function init() {
       if (e.type === "pushUser") pushUser(e.text);
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
-        pushQuickResumeDock("quiz", e.meta || {});
         await openSingleExperience("quiz", e.meta || {}, "fresh");
+        pushQuickResumeDock("quiz", e.meta || {});
       } else if (e.type === "showFlash") {
-        pushQuickResumeDock("flash", e.meta || {});
         await openSingleExperience("flash", e.meta || {}, "fresh");
+        pushQuickResumeDock("flash", e.meta || {});
       } else if (e.type === "showSlide") {
-        pushQuickResumeDock("slide", e.meta || {});
         await openSingleExperience("slide", e.meta || {}, "fresh");
+        pushQuickResumeDock("slide", e.meta || {});
       }
     }
   }
