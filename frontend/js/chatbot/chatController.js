@@ -7,7 +7,7 @@ import {
   getCurrentExperienceState,
   getActiveSessionIndex,
   setActiveSessionIndex,
-  findSessionIndexByExperienceKind,
+  findLatestSessionIndexByExperienceKind,
   getSessionsSnapshot,
   createSession,
   renameSession,
@@ -34,6 +34,7 @@ import { mountSlideExperience } from "./dom/slideExperienceView.js";
 import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
+import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { renderChatList } from "./dom/chatListView.js";
 
 /** @type {any} */
@@ -680,7 +681,8 @@ export function init() {
         }
         if (action === "rename") {
           const currentSession = getSessionsSnapshot()[idx];
-          const nextTitle = window.prompt("Nhập tên mới cho đoạn chat", currentSession?.title || "");
+          const raw = window.prompt("Nhập tên mới cho đoạn chat", currentSession?.title || "");
+          const nextTitle = typeof raw === "string" ? raw.trim() : "";
           if (nextTitle && renameSession(idx, nextTitle)) {
             saveSessions();
             renderChatListUI();
@@ -750,6 +752,17 @@ export function init() {
   }
 
   /**
+   * @param {ReturnType<typeof getCurrentSession>} session
+   */
+  function canReuseEmptySession(session) {
+    if (!session || typeof session !== "object") return false;
+    if (session.thread_id) return false;
+    const msgs = session.messages;
+    if (!Array.isArray(msgs) || msgs.length > 0) return false;
+    return true;
+  }
+
+  /**
    * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
    */
   function buildNextFlowSessionTitle(flowKind) {
@@ -767,48 +780,100 @@ export function init() {
   }
 
   /**
+   * Fresh-start flow inside the current chat (e.g. startup cards). No URL navigation.
    * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
    */
-  async function handleFlowEntry(flowKind) {
+  async function startFlowInCurrentSession(flowKind) {
     const expKind = flowToExperienceKind(flowKind);
-    const existingIdx = findSessionIndexByExperienceKind(expKind, { excludeIndex: -1 });
-    if (existingIdx >= 0) {
-      const msg = `Bạn đang có 1 ${expKind} chưa xong. Chắc chắn muốn tạo mới?`;
-      const createNew = window.confirm(msg);
-      if (!createNew) {
-        persistActiveExperience();
-        setActiveSessionIndex(existingIdx);
-        guided = null;
-        lastOpenedExperience = null;
-        layerView.hide();
-        saveSessions();
-        renderChatListUI();
-        renderMessages();
-        await restoreCurrentSessionExperience();
-        history.replaceState({}, "", "chatbot_ui.html");
-        return;
-      }
-    }
-
     persistActiveExperience();
-    createSession({
-      title: buildNextFlowSessionTitle(flowKind),
-      experienceState: {
-        kind: expKind,
-        meta: { flow: flowKind },
-        progress: null,
-        completed: false,
-      },
+    const current = getCurrentSession();
+    current.title = buildNextFlowSessionTitle(flowKind);
+    setCurrentExperienceState({
+      kind: expKind,
+      meta: { flow: flowKind },
+      progress: null,
+      completed: false,
     });
     guided = null;
     lastOpenedExperience = null;
     layerView.hide();
     saveSessions();
     renderChatListUI();
-    renderMessages();
+    msgView.clear();
     const start = computeStartFlow(flowKind);
     guided = start.guided;
     await applyEffects(start.effects);
+    saveSessions();
+    renderLoadMoreControl();
+    const cur = getCurrentSession();
+    threadLabel.textContent = cur?.thread_id ? `Thread: ${cur.thread_id}` : "";
+  }
+
+  /**
+   * Entry from Main Hub (`?flow=`): resume latest session for that experience, or start new flow.
+   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
+   */
+  async function handleFlowEntry(flowKind) {
+    const expKind = flowToExperienceKind(flowKind);
+    const latestIdx = findLatestSessionIndexByExperienceKind(expKind);
+    if (latestIdx >= 0) {
+      persistActiveExperience();
+      setActiveSessionIndex(latestIdx);
+      guided = null;
+      lastOpenedExperience = null;
+      layerView.hide();
+      saveSessions();
+      renderChatListUI();
+      try {
+        await ensureSessionMessagesLoaded();
+      } catch {
+        // Keep local cache if remote loading fails.
+      }
+      renderMessages();
+      await restoreCurrentSessionExperience();
+      history.replaceState({}, "", "chatbot_ui.html");
+      return;
+    }
+
+    persistActiveExperience();
+    const cur = getCurrentSession();
+    if (canReuseEmptySession(cur)) {
+      cur.title = buildNextFlowSessionTitle(flowKind);
+      setCurrentExperienceState({
+        kind: expKind,
+        meta: { flow: flowKind },
+        progress: null,
+        completed: false,
+      });
+    } else {
+      createSession({
+        title: buildNextFlowSessionTitle(flowKind),
+        experienceState: {
+          kind: expKind,
+          meta: { flow: flowKind },
+          progress: null,
+          completed: false,
+        },
+      });
+    }
+    guided = null;
+    lastOpenedExperience = null;
+    layerView.hide();
+    saveSessions();
+    renderChatListUI();
+    try {
+      await ensureSessionMessagesLoaded();
+    } catch {
+      // Keep local cache if remote loading fails.
+    }
+    msgView.clear();
+    const start = computeStartFlow(flowKind);
+    guided = start.guided;
+    await applyEffects(start.effects);
+    saveSessions();
+    renderLoadMoreControl();
+    const after = getCurrentSession();
+    threadLabel.textContent = after?.thread_id ? `Thread: ${after.thread_id}` : "";
     history.replaceState({}, "", "chatbot_ui.html");
   }
 
@@ -887,15 +952,21 @@ export function init() {
 
   function renderMessages() {
     msgView.clear();
+    ensureSessions();
     const current = getCurrentSession();
-    if (!current || !Array.isArray(current.messages)) {
-      ensureSessions();
+    if (!current) {
       saveSessions();
       return;
     }
+    if (!Array.isArray(current.messages)) {
+      current.messages = [];
+      saveSessions();
+    }
     if (!current.messages.length) {
-      const welcome = "Xin chào! Mình là Teachly AI. Bạn muốn học gì hôm nay?";
-      msgView.addMessage("bot", welcome);
+      const hub = createStartupHubElement((fk) => {
+        void startFlowInCurrentSession(fk);
+      });
+      msgView.appendStartupHub(hub);
     } else {
       current.messages.forEach((m) => {
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {

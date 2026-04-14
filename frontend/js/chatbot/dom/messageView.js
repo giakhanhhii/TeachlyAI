@@ -261,5 +261,16 @@ export function createMessageView(opts) {
     messagesInnerEl.innerHTML = "";
   }
 
-  return { addMessage, disableActionButtons, addThinkingBubble, streamBotReply, clear };
+  /**
+   * @param {HTMLElement} hubRoot
+   */
+  function appendStartupHub(hubRoot) {
+    const row = document.createElement("div");
+    row.className = "msg-row msg-row-startup-hub";
+    row.appendChild(hubRoot);
+    messagesInnerEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  return { addMessage, disableActionButtons, addThinkingBubble, streamBotReply, clear, appendStartupHub };
 }

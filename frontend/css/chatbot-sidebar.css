@@ -119,9 +119,31 @@
   text-align: left;
   cursor: pointer;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.chat-item-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.chat-item-pin {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: #2e7d32;
+  opacity: 0.9;
+}
+
+.chat-item-title-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .chat-item-row.active .chat-item {

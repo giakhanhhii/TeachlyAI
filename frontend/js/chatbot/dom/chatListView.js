@@ -20,7 +20,24 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "chat-item";
-    btn.textContent = session.title;
+    const inner = document.createElement("span");
+    inner.className = "chat-item-inner";
+    if (session.pinned) {
+      const pin = document.createElement("span");
+      pin.className = "chat-item-pin";
+      pin.setAttribute("aria-hidden", "true");
+      pin.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/>
+        </svg>
+      `;
+      inner.appendChild(pin);
+    }
+    const titleEl = document.createElement("span");
+    titleEl.className = "chat-item-title-text";
+    titleEl.textContent = session.title;
+    inner.appendChild(titleEl);
+    btn.appendChild(inner);
     btn.onclick = () => onSelect(originalIdx);
 
     const menuWrap = document.createElement("div");

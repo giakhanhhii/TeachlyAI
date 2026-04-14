@@ -245,3 +245,18 @@ export function findSessionIndexByExperienceKind(kind, opts = {}) {
   }
   return -1;
 }
+
+/**
+ * Latest session index for an experience kind (including completed), scanning from the end of the list.
+ * @param {string} kind
+ */
+export function findLatestSessionIndexByExperienceKind(kind) {
+  const target = String(kind || "").trim().toLowerCase();
+  if (!target) return -1;
+  for (let i = sessions.length - 1; i >= 0; i -= 1) {
+    const st = sessions[i]?.experienceState;
+    const stKind = String(st?.kind || "").trim().toLowerCase();
+    if (stKind === target) return i;
+  }
+  return -1;
+}
