@@ -967,6 +967,10 @@ export function init() {
         void startFlowInCurrentSession(fk);
       });
       msgView.appendStartupHub(hub);
+      // Empty-session startup UI should open at the top, not anchored to bottom.
+      requestAnimationFrame(() => {
+        messages.scrollTop = 0;
+      });
     } else {
       current.messages.forEach((m) => {
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
