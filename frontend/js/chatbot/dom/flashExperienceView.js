@@ -40,8 +40,9 @@ function buildAiDraftFlash(meta, cIndex, card) {
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
  * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
-export async function mountFlashExperience(layerView, meta, deps) {
+export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   hookFlashSpeechVoicesOnce();
   const experienceBody = layerView.body;
@@ -51,8 +52,15 @@ export async function mountFlashExperience(layerView, meta, deps) {
   const titleText = data.title || "Flashcard";
   const cards = Array.isArray(data.cards) ? data.cards : [];
 
-  let index = 0;
+  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   const total = Math.max(1, cards.length);
+  index = Math.min(Math.max(0, index), Math.max(0, cards.length - 1));
+  /** @type {boolean[]} */
+  const flippedByIndex = Array.from({ length: cards.length }, (_, i) => {
+    const arr = Array.isArray(initial?.flippedByIndex) ? initial.flippedByIndex : [];
+    return Boolean(arr[i]);
+  });
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-flash";
@@ -95,6 +103,18 @@ export async function mountFlashExperience(layerView, meta, deps) {
   footer.appendChild(backBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
+
+  function emitState() {
+    if (typeof opts.onStateChange !== "function") return;
+    opts.onStateChange({
+      kind: "flash",
+      meta: { ...meta },
+      title: titleText,
+      total: cards.length,
+      index,
+      flippedByIndex: [...flippedByIndex],
+    });
+  }
 
   function renderCard() {
     const c = cards[index];
@@ -157,11 +177,20 @@ export async function mountFlashExperience(layerView, meta, deps) {
     addSoundBtn(inner.querySelector(".flash-front"));
     addSoundBtn(inner.querySelector(".flash-back"));
 
-    inner.addEventListener("click", () => inner.classList.toggle("flipped"));
+    const syncFlipped = () => {
+      flippedByIndex[index] = inner.classList.contains("flipped");
+      emitState();
+    };
+    if (flippedByIndex[index]) inner.classList.add("flipped");
+    inner.addEventListener("click", () => {
+      inner.classList.toggle("flipped");
+      syncFlipped();
+    });
     inner.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         inner.classList.toggle("flipped");
+        syncFlipped();
       }
     });
 
@@ -173,6 +202,7 @@ export async function mountFlashExperience(layerView, meta, deps) {
     backBtn.disabled = index <= 0;
     nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
     nextBtn.disabled = false;
+    emitState();
   }
 
   backBtn.addEventListener("click", () => {

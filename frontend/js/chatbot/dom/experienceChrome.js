@@ -27,7 +27,7 @@ export function createExperienceTopBar(p) {
     aiBtn.className = "exp-ai-btn";
     aiBtn.title = "Nhờ AI chỉnh sửa nội dung";
     aiBtn.setAttribute("aria-label", "Nhờ AI chỉnh sửa nội dung");
-    aiBtn.innerHTML = `${AI_SVG}<span>AI sửa</span>`;
+    aiBtn.innerHTML = `${AI_SVG}<span> AI sửa</span>`;
     aiBtn.addEventListener("click", () => p.onAiEdit?.());
     right.appendChild(aiBtn);
   }

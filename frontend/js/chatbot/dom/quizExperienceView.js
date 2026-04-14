@@ -55,8 +55,9 @@ function buildAiDraftQuiz(meta, qIndex, question) {
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
  * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
-export async function mountQuizExperience(layerView, meta, deps) {
+export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
   const raw = await fetchMockResource("quiz");
@@ -64,7 +65,8 @@ export async function mountQuizExperience(layerView, meta, deps) {
   const titleText = data.title || "Ôn tập trắc nghiệm";
   const questions = Array.isArray(data.questions) ? data.questions : [];
 
-  let index = 0;
+  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   let correct = 0;
   let wrong = 0;
   /** @type {number | null} */
@@ -97,9 +99,16 @@ export async function mountQuizExperience(layerView, meta, deps) {
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   shell.appendChild(progress.wrap);
   /** @type {(number|null)[]} */
-  const selectedByIndex = Array.from({ length: questions.length }, () => null);
+  const selectedByIndex = Array.from({ length: questions.length }, (_, i) => {
+    const arr = Array.isArray(initial?.selectedByIndex) ? initial.selectedByIndex : [];
+    const v = arr[i];
+    return Number.isFinite(Number(v)) ? Math.floor(Number(v)) : null;
+  });
   /** @type {boolean[]} */
-  const gradedByIndex = Array.from({ length: questions.length }, () => false);
+  const gradedByIndex = Array.from({ length: questions.length }, (_, i) => {
+    const arr = Array.isArray(initial?.gradedByIndex) ? initial.gradedByIndex : [];
+    return Boolean(arr[i]);
+  });
 
   function recomputeScore() {
     correct = 0;
@@ -112,6 +121,22 @@ export async function mountQuizExperience(layerView, meta, deps) {
       if (picked === q.correctIndex) correct += 1;
       else wrong += 1;
     }
+  }
+  index = Math.min(Math.max(0, index), Math.max(0, questions.length - 1));
+
+  function emitState() {
+    if (typeof opts.onStateChange !== "function") return;
+    opts.onStateChange({
+      kind: "quiz",
+      meta: { ...meta },
+      title: titleText,
+      total: questions.length,
+      index,
+      selectedByIndex: [...selectedByIndex],
+      gradedByIndex: [...gradedByIndex],
+      correct,
+      wrong,
+    });
   }
 
   const stage = document.createElement("div");
@@ -170,6 +195,7 @@ export async function mountQuizExperience(layerView, meta, deps) {
         optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
         b.classList.add("selected");
         nextBtn.disabled = false;
+        emitState();
       });
       if (selected === j) b.classList.add("selected");
       optsWrap.appendChild(b);
@@ -215,6 +241,7 @@ export async function mountQuizExperience(layerView, meta, deps) {
       const isLast = index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Kết thúc" : "Tiếp theo";
     }
+    emitState();
   }
 
   backBtn.addEventListener("click", () => {
@@ -244,6 +271,7 @@ export async function mountQuizExperience(layerView, meta, deps) {
       const isLast = index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Kết thúc" : "Tiếp theo";
       nextBtn.disabled = false;
+      emitState();
       return;
     }
 

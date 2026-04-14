@@ -29,13 +29,19 @@ import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
+import {
+  clearExperienceState,
+  readActiveExperience,
+  readExperienceState,
+  writeActiveExperience,
+  writeExperienceState,
+} from "./experienceStateStore.js";
 
 /** @type {any} */
 let guided = null;
 
 /** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
 let lastOpenedExperience = null;
-const SS_ACTIVE_EXPERIENCE = "teachly.chat.activeExperience";
 const HISTORY_CHAT_PHASE = "chat";
 const HISTORY_EXPERIENCE_PHASE = "experience";
 
@@ -64,15 +70,33 @@ function rememberOpenExperience(kind, meta) {
 }
 
 function persistActiveExperience() {
-  try {
-    if (!lastOpenedExperience) {
-      sessionStorage.removeItem(SS_ACTIVE_EXPERIENCE);
-      return;
-    }
-    sessionStorage.setItem(SS_ACTIVE_EXPERIENCE, JSON.stringify(lastOpenedExperience));
-  } catch {
-    // Ignore storage errors to avoid breaking UI flow.
+  if (!lastOpenedExperience) {
+    writeActiveExperience(null);
+    return;
   }
+  if (lastOpenedExperience.bundleBack) {
+    writeActiveExperience({
+      kind: "fullset",
+      payload: { mode: "hub", resume: lastOpenedExperience },
+    });
+    return;
+  }
+  if (lastOpenedExperience.fullsetMixedBack) {
+    writeActiveExperience({
+      kind: "fullset",
+      payload: { mode: "mixed", resume: lastOpenedExperience },
+    });
+    return;
+  }
+  const k = String(lastOpenedExperience.kind || "");
+  if (k === "quiz" || k === "slide" || k === "flash") {
+    writeActiveExperience({
+      kind: k,
+      payload: { mode: "single", resume: lastOpenedExperience },
+    });
+    return;
+  }
+  writeActiveExperience(null);
 }
 
 /**
@@ -105,14 +129,10 @@ function rememberOpenFullSetMixedForBack(title, spec) {
 }
 
 function readPersistedActiveExperience() {
-  try {
-    const raw = sessionStorage.getItem(SS_ACTIVE_EXPERIENCE);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
+  const active = readActiveExperience();
+  const payload = active?.payload && typeof active.payload === "object" ? active.payload : null;
+  const resume = payload?.resume;
+  return resume && typeof resume === "object" ? resume : null;
 }
 
 /**
@@ -297,25 +317,56 @@ export function init() {
 
   const experienceHooks = { onAiEdit: openChatWithAiDraft };
 
+  /**
+   * @param {Record<string, string>} a
+   * @param {Record<string, string>} b
+   */
+  function sameMeta(a, b) {
+    const ak = Object.keys(a || {}).sort();
+    const bk = Object.keys(b || {}).sort();
+    if (ak.length !== bk.length) return false;
+    for (let i = 0; i < ak.length; i += 1) {
+      const key = ak[i];
+      if (key !== bk[i]) return false;
+      if (String(a[key] || "") !== String(b[key] || "")) return false;
+    }
+    return true;
+  }
+
+  /**
+   * @param {"quiz"|"slide"|"flash"} kind
+   * @param {Record<string, string>} meta
+   * @param {"fresh"|"resume"} mode
+   */
+  async function openSingleExperience(kind, meta, mode) {
+    rememberOpenExperience(kind, meta || {});
+    persistActiveExperience();
+    ensureExperienceHistoryEntry();
+    if (mode === "fresh") {
+      clearExperienceState(kind);
+    }
+    const persisted = mode === "resume" ? readExperienceState(kind) : null;
+    const initialState =
+      persisted && persisted.meta && sameMeta(persisted.meta, meta || {}) ? persisted : null;
+    const mountOpts = {
+      initialState,
+      onStateChange: (state) => writeExperienceState(kind, state),
+    };
+    if (kind === "quiz") await mountQuizExperience(layerView, meta, experienceHooks, mountOpts);
+    else if (kind === "slide") await mountSlideExperience(layerView, meta, experienceHooks, mountOpts);
+    else await mountFlashExperience(layerView, meta, experienceHooks, mountOpts);
+  }
+
   async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
-        rememberOpenExperience("quiz", e.meta || {});
-        persistActiveExperience();
-        ensureExperienceHistoryEntry();
-        await mountQuizExperience(layerView, e.meta, experienceHooks);
+        await openSingleExperience("quiz", e.meta || {}, "fresh");
       } else if (e.type === "showFlash") {
-        rememberOpenExperience("flash", e.meta || {});
-        persistActiveExperience();
-        ensureExperienceHistoryEntry();
-        await mountFlashExperience(layerView, e.meta, experienceHooks);
+        await openSingleExperience("flash", e.meta || {}, "fresh");
       } else if (e.type === "showSlide") {
-        rememberOpenExperience("slide", e.meta || {});
-        persistActiveExperience();
-        ensureExperienceHistoryEntry();
-        await mountSlideExperience(layerView, e.meta, experienceHooks);
+        await openSingleExperience("slide", e.meta || {}, "fresh");
       }
     }
   }
@@ -338,13 +389,11 @@ export function init() {
       return;
     }
     try {
-      rememberOpenExperience(/** @type {"quiz"|"slide"|"flash"} */ (kind), item.meta || {});
-      persistActiveExperience();
-      ensureExperienceHistoryEntry();
-      layerView.prepareShow();
-      if (kind === "quiz") await mountQuizExperience(layerView, item.meta, experienceHooks);
-      else if (kind === "slide") await mountSlideExperience(layerView, item.meta, experienceHooks);
-      else await mountFlashExperience(layerView, item.meta, experienceHooks);
+      await openSingleExperience(
+        /** @type {"quiz"|"slide"|"flash"} */ (kind),
+        item.meta || {},
+        "resume",
+      );
     } catch {
       layerView.hide();
     }
@@ -377,10 +426,17 @@ export function init() {
     persistActiveExperience();
     ensureExperienceHistoryEntry();
     layerView.prepareShow();
+    const persisted = readExperienceState("fullset");
+    const initialState =
+      persisted && persisted.spec && sameMeta(persisted.spec, spec || {}) ? persisted : null;
     await mountFullSetMixedExperience(
       layerView,
       { title: bundleTitle || "Full set", spec },
       experienceHooks,
+      {
+        initialState,
+        onStateChange: (state) => writeExperienceState("fullset", state),
+      },
     );
   }
 
@@ -441,6 +497,7 @@ export function init() {
         setActiveSessionIndex(idx);
         guided = null;
         lastOpenedExperience = null;
+        persistActiveExperience();
         layerView.hide();
         saveSessions();
         renderChatListUI();
@@ -469,6 +526,7 @@ export function init() {
           if (deleteSession(idx)) {
             guided = null;
             lastOpenedExperience = null;
+            persistActiveExperience();
             layerView.hide();
             saveSessions();
             renderChatListUI();
@@ -510,6 +568,12 @@ export function init() {
       current.thread_id = "";
       guided = null;
       lastOpenedExperience = null;
+      persistActiveExperience();
+      const normalizedFlow = flow === "image" ? "flashcard" : flow;
+      if (normalizedFlow === "quiz") clearExperienceState("quiz");
+      else if (normalizedFlow === "slide") clearExperienceState("slide");
+      else if (normalizedFlow === "flashcard") clearExperienceState("flash");
+      else if (normalizedFlow === "fullset") clearExperienceState("fullset");
       layerView.hide();
       saveSessions();
       history.replaceState({}, "", "chatbot_ui.html");

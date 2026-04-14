@@ -78,8 +78,9 @@ function buildAiDraftQuiz(meta, qIndex, question) {
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {{ title?: string, spec: FullSetMixedSpec }} bundle
  * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
-export async function mountFullSetMixedExperience(layerView, bundle, deps) {
+export async function mountFullSetMixedExperience(layerView, bundle, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
   root.innerHTML = "";
@@ -114,20 +115,35 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
   ];
   shuffleInPlace(steps);
 
-  let index = 0;
+  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   let correct = 0;
   let wrong = 0;
   /** @type {number | null} */
   let quizSelected = null;
   let quizRevealed = false;
   /** @type {(number | null)[]} */
-  const quizSelectedByStep = Array.from({ length: steps.length }, () => null);
+  const quizSelectedByStep = Array.from({ length: steps.length }, (_, i) => {
+    const arr = Array.isArray(initial?.quizSelectedByStep) ? initial.quizSelectedByStep : [];
+    const v = arr[i];
+    return Number.isFinite(Number(v)) ? Math.floor(Number(v)) : null;
+  });
   /** @type {boolean[]} */
-  const quizRevealedByStep = Array.from({ length: steps.length }, () => false);
+  const quizRevealedByStep = Array.from({ length: steps.length }, (_, i) => {
+    const arr = Array.isArray(initial?.quizRevealedByStep) ? initial.quizRevealedByStep : [];
+    return Boolean(arr[i]);
+  });
   /** @type {boolean[]} */
-  const quizCountedByStep = Array.from({ length: steps.length }, () => false);
+  const quizCountedByStep = Array.from({ length: steps.length }, (_, i) => {
+    const arr = Array.isArray(initial?.quizCountedByStep) ? initial.quizCountedByStep : [];
+    return Boolean(arr[i]);
+  });
   /** @type {boolean[]} */
-  const quizCorrectByStep = Array.from({ length: steps.length }, () => false);
+  const quizCorrectByStep = Array.from({ length: steps.length }, (_, i) => {
+    const arr = Array.isArray(initial?.quizCorrectByStep) ? initial.quizCorrectByStep : [];
+    return Boolean(arr[i]);
+  });
+  index = Math.min(Math.max(0, index), Math.max(0, steps.length - 1));
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
@@ -176,6 +192,23 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
       if (quizCorrectByStep[i]) correct += 1;
       else wrong += 1;
     }
+  }
+
+  function emitState() {
+    if (typeof opts.onStateChange !== "function") return;
+    opts.onStateChange({
+      kind: "fullset",
+      title: titleText,
+      spec: { ...spec },
+      total: steps.length,
+      index,
+      quizSelectedByStep: [...quizSelectedByStep],
+      quizRevealedByStep: [...quizRevealedByStep],
+      quizCountedByStep: [...quizCountedByStep],
+      quizCorrectByStep: [...quizCorrectByStep],
+      correct,
+      wrong,
+    });
   }
 
   function renderStep() {
@@ -310,6 +343,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
             optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
             b.classList.add("selected");
             nextBtn.disabled = false;
+            emitState();
           });
           if (quizSelected === j) b.classList.add("selected");
           optsWrap.appendChild(b);
@@ -356,6 +390,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps) {
 
     progress.paint({ total, index, correct, wrong });
     nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
+    emitState();
   }
 
   nextBtn.addEventListener("click", () => {
