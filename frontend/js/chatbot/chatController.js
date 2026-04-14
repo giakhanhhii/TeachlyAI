@@ -266,6 +266,32 @@ export function init() {
   }
 
   /**
+   * @param {"quiz"|"slide"|"flash"} kind
+   * @param {Record<string, string>} meta
+   */
+  function pushQuickResumeDock(kind, meta) {
+    const now = new Date().toISOString();
+    pushBot("Đã tạo xong. Bạn có thể bấm Mở để quay lại học liệu này.", {
+      resumeDock: {
+        kind,
+        meta: { ...meta },
+        title: buildResumeTitle(kind, meta || {}),
+        openedAt: now,
+      },
+    });
+  }
+
+  /**
+   * @param {HTMLElement | undefined} cardRoot
+   */
+  function reenableFlowCard(cardRoot) {
+    if (!cardRoot) return;
+    cardRoot.querySelectorAll("button").forEach((btn) => {
+      /** @type {HTMLButtonElement} */ (btn).disabled = false;
+    });
+  }
+
+  /**
    * @param {string} text
    * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType?, resumeDock? }`
    */
@@ -382,10 +408,13 @@ export function init() {
       if (e.type === "pushUser") pushUser(e.text);
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
+        pushQuickResumeDock("quiz", e.meta || {});
         await openSingleExperience("quiz", e.meta || {}, "fresh");
       } else if (e.type === "showFlash") {
+        pushQuickResumeDock("flash", e.meta || {});
         await openSingleExperience("flash", e.meta || {}, "fresh");
       } else if (e.type === "showSlide") {
+        pushQuickResumeDock("slide", e.meta || {});
         await openSingleExperience("slide", e.meta || {}, "fresh");
       }
     }
@@ -536,11 +565,21 @@ export function init() {
       guided = result.guided;
       void applyEffects(result.effects);
     },
-    onFlowCardSubmit(cardType, payload) {
+    onFlowCardSubmit(cardType, payload, cardRoot) {
       const result = computeFlowCardSubmit(guided, cardType, payload);
-      if (!result.handled) return;
+      if (!result.handled) {
+        reenableFlowCard(cardRoot);
+        return;
+      }
       guided = result.guided;
-      void applyEffects(result.effects);
+      void (async () => {
+        try {
+          await applyEffects(result.effects);
+        } catch {
+          reenableFlowCard(cardRoot);
+          pushBot("Không thể xử lý biểu mẫu vừa gửi. Bạn thử lại một lần nữa nhé.");
+        }
+      })();
     },
   });
 
