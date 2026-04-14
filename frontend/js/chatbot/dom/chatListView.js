@@ -5,15 +5,44 @@
  * @param {(idx: number) => void} onSelect
  * @param {(action: string, idx: number) => void} onAction
  */
+const INITIAL_VISIBLE_SESSIONS = 120;
+const LOAD_MORE_STEP = 120;
+let visibleCount = INITIAL_VISIBLE_SESSIONS;
+
 export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAction) {
   chatListEl.innerHTML = "";
-  document.querySelectorAll(".chat-item-menu-floating").forEach((el) => el.remove());
+  const oldMenu = document.getElementById("chatItemSharedMenu");
+  if (oldMenu) oldMenu.remove();
 
   const ordered = sessions
     .map((session, originalIdx) => ({ session, originalIdx }))
     .sort((a, b) => Number(Boolean(b.session.pinned)) - Number(Boolean(a.session.pinned)));
 
-  ordered.forEach(({ session, originalIdx }) => {
+  if (activeIndex >= visibleCount) {
+    visibleCount = Math.ceil((activeIndex + 1) / LOAD_MORE_STEP) * LOAD_MORE_STEP;
+  }
+  if (ordered.length <= INITIAL_VISIBLE_SESSIONS) {
+    visibleCount = INITIAL_VISIBLE_SESSIONS;
+  }
+
+  const sharedMenu = document.createElement("div");
+  sharedMenu.id = "chatItemSharedMenu";
+  sharedMenu.className = "chat-item-menu chat-item-menu-floating";
+  sharedMenu.hidden = true;
+  sharedMenu.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+  document.body.appendChild(sharedMenu);
+
+  /** @type {number | null} */
+  let menuTargetIdx = null;
+  const closeMenu = () => {
+    sharedMenu.hidden = true;
+    menuTargetIdx = null;
+  };
+
+  const visibleOrdered = ordered.slice(0, visibleCount);
+  visibleOrdered.forEach(({ session, originalIdx }) => {
     const row = document.createElement("div");
     row.className = `chat-item-row ${originalIdx === activeIndex ? "active" : ""}`;
 
@@ -55,67 +84,73 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
       </svg>
     `;
 
-    const menu = document.createElement("div");
-    menu.className = "chat-item-menu chat-item-menu-floating";
-    menu.hidden = true;
-    menu.addEventListener("click", (event) => {
-      event.stopPropagation();
-    });
-
-    const items = [
-      { action: "share", label: "Chia sẻ cuộc trò chuyện" },
-      { action: "pin", label: session.pinned ? "Bỏ ghim" : "Ghim" },
-      { action: "rename", label: "Đổi tên" },
-      { action: "delete", label: "Xóa" },
-    ];
-
-    items.forEach((item) => {
-      const option = document.createElement("button");
-      option.type = "button";
-      option.className = "chat-item-menu-option";
-      option.textContent = item.label;
-      option.onclick = () => {
-        menu.hidden = true;
-        onAction(item.action, originalIdx);
-      };
-      menu.appendChild(option);
-    });
-
     trigger.onclick = (event) => {
       event.stopPropagation();
-      const isOpen = !menu.hidden;
-      document.querySelectorAll(".chat-item-menu-floating").forEach((el) => {
-        el.hidden = true;
-      });
+      const isOpen = !sharedMenu.hidden && menuTargetIdx === originalIdx;
+      closeMenu();
       if (!isOpen) {
+        menuTargetIdx = originalIdx;
+        sharedMenu.innerHTML = "";
+        const items = [
+          { action: "share", label: "Chia sẻ cuộc trò chuyện" },
+          { action: "pin", label: session.pinned ? "Bỏ ghim" : "Ghim" },
+          { action: "rename", label: "Đổi tên" },
+          { action: "delete", label: "Xóa" },
+        ];
+        items.forEach((item) => {
+          const option = document.createElement("button");
+          option.type = "button";
+          option.className = "chat-item-menu-option";
+          option.textContent = item.label;
+          option.onclick = () => {
+            closeMenu();
+            onAction(item.action, originalIdx);
+          };
+          sharedMenu.appendChild(option);
+        });
+
         // Show to the right of trigger, but clamp into viewport to avoid clipping.
         const rect = trigger.getBoundingClientRect();
-        menu.hidden = false;
-        menu.style.visibility = "hidden";
-        const menuWidth = menu.offsetWidth || 220;
-        const menuHeight = menu.offsetHeight || 180;
+        sharedMenu.hidden = false;
+        sharedMenu.style.visibility = "hidden";
+        const menuWidth = sharedMenu.offsetWidth || 220;
+        const menuHeight = sharedMenu.offsetHeight || 180;
         const desiredLeft = rect.right + 8;
         const desiredTop = rect.top - 6;
         const maxLeft = Math.max(8, window.innerWidth - menuWidth - 8);
         const maxTop = Math.max(8, window.innerHeight - menuHeight - 8);
-        menu.style.left = `${Math.min(desiredLeft, maxLeft)}px`;
-        menu.style.top = `${Math.min(Math.max(desiredTop, 8), maxTop)}px`;
-        menu.style.visibility = "";
+        sharedMenu.style.left = `${Math.min(desiredLeft, maxLeft)}px`;
+        sharedMenu.style.top = `${Math.min(Math.max(desiredTop, 8), maxTop)}px`;
+        sharedMenu.style.visibility = "";
       }
-      if (isOpen) menu.hidden = true;
     };
 
     menuWrap.appendChild(trigger);
     row.appendChild(btn);
     row.appendChild(menuWrap);
     chatListEl.appendChild(row);
-    document.body.appendChild(menu);
   });
 
+  if (ordered.length > visibleOrdered.length) {
+    const remain = ordered.length - visibleOrdered.length;
+    const loadMoreBtn = document.createElement("button");
+    loadMoreBtn.type = "button";
+    loadMoreBtn.className = "chat-list-load-more";
+    loadMoreBtn.textContent = `Xem thêm (${remain})`;
+    loadMoreBtn.onclick = () => {
+      visibleCount += LOAD_MORE_STEP;
+      renderChatList(chatListEl, sessions, activeIndex, onSelect, onAction);
+    };
+    chatListEl.appendChild(loadMoreBtn);
+  }
+
+  const prevClickHandler = chatListEl.__closeMenuHandler;
+  if (typeof prevClickHandler === "function") {
+    document.removeEventListener("click", prevClickHandler);
+  }
   const closeMenus = () => {
-    document.querySelectorAll(".chat-item-menu-floating").forEach((el) => {
-      el.hidden = true;
-    });
+    closeMenu();
   };
-  document.addEventListener("click", closeMenus, { once: true });
+  chatListEl.__closeMenuHandler = closeMenus;
+  document.addEventListener("click", closeMenus);
 }

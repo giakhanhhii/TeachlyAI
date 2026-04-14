@@ -1,5 +1,18 @@
 import { LS_ACTIVE_SESSION, LS_SESSIONS } from "./constants.js";
 
+const MAX_PERSISTED_MESSAGES_ACTIVE = 200;
+const MAX_PERSISTED_MESSAGES_INACTIVE = 20;
+const SAVE_SESSIONS_TIMEOUT_MS = 180;
+
+function buildPersistSnapshot(activeCap, inactiveCap) {
+  return sessions.map((session, idx) => {
+    const srcMessages = Array.isArray(session?.messages) ? session.messages : [];
+    const cap = idx === activeSession ? activeCap : inactiveCap;
+    const messages = srcMessages.length > cap ? srcMessages.slice(-cap) : srcMessages;
+    return { ...session, messages };
+  });
+}
+
 function safeReadSessions() {
   try {
     const raw = localStorage.getItem(LS_SESSIONS);
@@ -12,6 +25,7 @@ function safeReadSessions() {
 
 let sessions = safeReadSessions();
 let activeSession = Number(localStorage.getItem(LS_ACTIVE_SESSION) || "0");
+let saveQueued = false;
 
 function makeDefaultSession(index) {
   return {
@@ -68,8 +82,34 @@ export function ensureSessions() {
 }
 
 export function saveSessions() {
-  localStorage.setItem(LS_SESSIONS, JSON.stringify(sessions));
-  localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
+  if (saveQueued) return;
+  saveQueued = true;
+  const schedule = typeof globalThis.requestIdleCallback === "function"
+    ? (cb) => globalThis.requestIdleCallback(cb, { timeout: SAVE_SESSIONS_TIMEOUT_MS })
+    : (cb) => setTimeout(cb, 0);
+  schedule(() => {
+    saveQueued = false;
+    try {
+      const compactSessions = buildPersistSnapshot(
+        MAX_PERSISTED_MESSAGES_ACTIVE,
+        MAX_PERSISTED_MESSAGES_INACTIVE,
+      );
+      localStorage.setItem(LS_SESSIONS, JSON.stringify(compactSessions));
+      localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
+    } catch {
+      try {
+        // Fallback when storage is near quota: keep only the most recent messages.
+        const emergencySessions = buildPersistSnapshot(60, 0);
+        localStorage.setItem(LS_SESSIONS, JSON.stringify(emergencySessions));
+        localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
+      } catch {
+        // Last resort: keep metadata only so UI remains responsive.
+        const metaOnly = sessions.map((s) => ({ ...s, messages: [] }));
+        localStorage.setItem(LS_SESSIONS, JSON.stringify(metaOnly));
+        localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
+      }
+    }
+  });
 }
 
 export function getCurrentSession() {
