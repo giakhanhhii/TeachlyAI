@@ -3,12 +3,22 @@
   "hooks": {
     "beforeSubmitPrompt": [
       {
-        "command": "python scripts/log_hook.py"
+        "command": ".cursor/hooks/log_hook_runner.cmd"
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "command": ".cursor/hooks/log_hook_runner.cmd"
+      }
+    ],
+    "userPromptSubmit": [
+      {
+        "command": ".cursor/hooks/log_hook_runner.cmd"
       }
     ],
     "stop": [
       {
-        "command": "python scripts/log_hook.py"
+        "command": ".cursor/hooks/log_hook_runner.cmd"
       }
     ]
   }

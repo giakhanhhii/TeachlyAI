@@ -285,6 +285,15 @@
   min-height: 0;
 }
 
+/* Fresh chat/startup hub mode: widen content and hide input composer. */
+.chat-phase.startup-mode .composer-wrap {
+  display: none;
+}
+
+#messages.startup-mode .messages-inner {
+  width: min(1320px, 98%);
+}
+
 .msg-actions {
   display: flex;
   flex-wrap: wrap;

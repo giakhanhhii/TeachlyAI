@@ -220,6 +220,16 @@ export function init() {
   let loadMoreBtn = null;
 
   /**
+   * Toggle startup layout: wide hub + hide composer.
+   * @param {boolean} active
+   */
+  function setStartupUiState(active) {
+    const isActive = Boolean(active);
+    chatPhase.classList.toggle("startup-mode", isActive);
+    messages.classList.toggle("startup-mode", isActive);
+  }
+
+  /**
    * @param {{ role: string, text?: string, content?: string }} message
    */
   function normalizeRemoteMessage(message) {
@@ -955,6 +965,7 @@ export function init() {
     ensureSessions();
     const current = getCurrentSession();
     if (!current) {
+      setStartupUiState(false);
       saveSessions();
       return;
     }
@@ -963,6 +974,7 @@ export function init() {
       saveSessions();
     }
     if (!current.messages.length) {
+      setStartupUiState(true);
       const hub = createStartupHubElement((fk) => {
         void startFlowInCurrentSession(fk);
       });
@@ -972,6 +984,7 @@ export function init() {
         messages.scrollTop = 0;
       });
     } else {
+      setStartupUiState(false);
       current.messages.forEach((m) => {
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
           msgView.addMessage("bot", m.text || "", {

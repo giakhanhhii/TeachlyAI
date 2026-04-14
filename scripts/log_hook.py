@@ -7,6 +7,7 @@ import json
 import os
 import sys
 import subprocess
+import unicodedata
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -44,6 +45,30 @@ def read_json_payload() -> dict | None:
             continue
 
     return None
+
+
+def normalize_text(value: object, max_len: int = 1000) -> str:
+    """
+    Keep Unicode text stable in logs and repair common mojibake forms.
+    """
+    if value is None:
+        return ""
+
+    text = str(value)
+
+    # Common Windows mojibake pattern (UTF-8 interpreted as Latin-1/CP1252).
+    if any(token in text for token in ("Ã", "Â", "Ä", "Å", "Æ", "Ç", "Ð", "Ñ")):
+        for src in ("latin-1", "cp1252"):
+            try:
+                fixed = text.encode(src).decode("utf-8")
+                if fixed:
+                    text = fixed
+                    break
+            except UnicodeError:
+                continue
+
+    text = unicodedata.normalize("NFC", text)
+    return text[:max_len]
 
 
 def detect_tool(data: dict) -> str:
@@ -96,20 +121,20 @@ def normalize(data: dict, tool: str) -> dict | None:
         prompt = ""
         # UserPromptSubmit: prompt is at top level
         if event == "UserPromptSubmit":
-            prompt = data.get("prompt", "")[:1000]
+            prompt = normalize_text(data.get("prompt", ""), 1000)
         # PostToolUse: extract from tool_input
         elif isinstance(data.get("tool_input"), dict):
-            prompt = data["tool_input"].get("prompt") or data["tool_input"].get("content") or ""
+            prompt = normalize_text(data["tool_input"].get("prompt") or data["tool_input"].get("content") or "", 1000)
         base.update({
             "prompt": prompt,
             "tool_name": data.get("tool_name", ""),
             "tool_input": data.get("tool_input") if event != "UserPromptSubmit" else None,
-            "tool_response": str(data.get("tool_response", ""))[:500],
+            "tool_response": normalize_text(data.get("tool_response", ""), 500),
         })
 
     elif tool == "gemini":
         if event == "BeforeAgent":
-            prompt = data.get("prompt", "")[:1000]
+            prompt = normalize_text(data.get("prompt", ""), 1000)
             base.update({"prompt": prompt})
         else:
             req = data.get("request", {})
@@ -118,21 +143,21 @@ def normalize(data: dict, tool: str) -> dict | None:
             for c in reversed(contents):
                 for part in c.get("parts", []):
                     if part.get("text"):
-                        prompt = part["text"][:1000]
+                        prompt = normalize_text(part["text"], 1000)
                         break
                 if prompt:
                     break
             resp = data.get("response", {})
             answer = ""
             try:
-                answer = resp["candidates"][0]["content"]["parts"][0]["text"][:500]
+                answer = normalize_text(resp["candidates"][0]["content"]["parts"][0]["text"], 500)
             except Exception:
                 pass
             base.update({"prompt": prompt, "response_summary": answer})
 
     elif tool == "codex":
         base.update({
-            "prompt": data.get("prompt", "")[:1000],
+            "prompt": normalize_text(data.get("prompt", ""), 1000),
             "turn_id": data.get("turn_id", ""),
             "transcript_path": data.get("transcript_path", ""),
         })
@@ -145,13 +170,13 @@ def normalize(data: dict, tool: str) -> dict | None:
             or ""
         )
         base.update({
-            "prompt": str(prompt)[:1000],
+            "prompt": normalize_text(prompt, 1000),
             "files_context": data.get("attachments", []),
         })
 
     elif tool == "copilot":
         base.update({
-            "prompt": data.get("prompt", "")[:1000],
+            "prompt": normalize_text(data.get("prompt", ""), 1000),
             "tool_name": data.get("toolName", ""),
             "tool_args": data.get("toolArgs"),
         })
@@ -181,7 +206,7 @@ def main():
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     # stdout JSON must match each host's hook contract
-    event_lc = (data.get("hook_event_name") or data.get("event") or "").lower()
+    event_lc = get_event_name(data).lower()
     if tool == "cursor":
         if event_lc == "beforesubmitprompt":
             print(json.dumps({"continue": True}))
