@@ -44,7 +44,10 @@ template/
 data_input/
 data_output/
 
-# Generated outputs (do not commit)
+# Local plans & prompts
+fix_plan.md
+plan/
+=======
 output/
 
 # Local hook workspace created by setup scripts (do not commit)

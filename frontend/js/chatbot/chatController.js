@@ -4,13 +4,16 @@ import {
   ensureSessions,
   saveSessions,
   getCurrentSession,
+  getCurrentExperienceState,
   getActiveSessionIndex,
   setActiveSessionIndex,
+  findSessionIndexByExperienceKind,
   getSessionsSnapshot,
   createSession,
   renameSession,
   togglePinSession,
   deleteSession,
+  setCurrentExperienceState,
 } from "./sessionStore.js";
 import {
   computePickAction,
@@ -35,7 +38,6 @@ let guided = null;
 
 /** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
 let lastOpenedExperience = null;
-const SS_ACTIVE_EXPERIENCE = "teachly.chat.activeExperience";
 const HISTORY_CHAT_PHASE = "chat";
 const HISTORY_EXPERIENCE_PHASE = "experience";
 
@@ -64,15 +66,21 @@ function rememberOpenExperience(kind, meta) {
 }
 
 function persistActiveExperience() {
-  try {
-    if (!lastOpenedExperience) {
-      sessionStorage.removeItem(SS_ACTIVE_EXPERIENCE);
-      return;
+  const currentState = getCurrentExperienceState() || {};
+  if (!lastOpenedExperience) {
+    if (currentState && typeof currentState === "object" && currentState.resume) {
+      const next = { ...currentState };
+      delete next.resume;
+      setCurrentExperienceState(next);
+      saveSessions();
     }
-    sessionStorage.setItem(SS_ACTIVE_EXPERIENCE, JSON.stringify(lastOpenedExperience));
-  } catch {
-    // Ignore storage errors to avoid breaking UI flow.
+    return;
   }
+  setCurrentExperienceState({
+    ...currentState,
+    resume: lastOpenedExperience,
+  });
+  saveSessions();
 }
 
 /**
@@ -105,14 +113,9 @@ function rememberOpenFullSetMixedForBack(title, spec) {
 }
 
 function readPersistedActiveExperience() {
-  try {
-    const raw = sessionStorage.getItem(SS_ACTIVE_EXPERIENCE);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
+  const state = getCurrentExperienceState();
+  const resume = state?.resume;
+  return resume && typeof resume === "object" ? resume : null;
 }
 
 /**
@@ -297,25 +300,93 @@ export function init() {
 
   const experienceHooks = { onAiEdit: openChatWithAiDraft };
 
+  /**
+   * @param {Record<string, string>} a
+   * @param {Record<string, string>} b
+   */
+  function sameMeta(a, b) {
+    const ak = Object.keys(a || {}).sort();
+    const bk = Object.keys(b || {}).sort();
+    if (ak.length !== bk.length) return false;
+    for (let i = 0; i < ak.length; i += 1) {
+      const key = ak[i];
+      if (key !== bk[i]) return false;
+      if (String(a[key] || "") !== String(b[key] || "")) return false;
+    }
+    return true;
+  }
+
+  /**
+   * @param {"quiz"|"slide"|"flash"|"fullset"} kind
+   * @param {any} progress
+   */
+  function computeCompleted(kind, progress) {
+    const total = Number(progress?.total || 0);
+    const index = Number(progress?.index || 0);
+    if (!Number.isFinite(total) || total <= 0) return false;
+    if (!Number.isFinite(index) || index < total - 1) return false;
+    if (kind === "quiz") {
+      const graded = Array.isArray(progress?.gradedByIndex) ? progress.gradedByIndex : [];
+      return Boolean(graded[total - 1]);
+    }
+    if (kind === "fullset") {
+      return Boolean(progress?.completed) || index >= total - 1;
+    }
+    return true;
+  }
+
+  /**
+   * @param {"quiz"|"slide"|"flash"} kind
+   * @param {Record<string, string>} meta
+   * @param {"fresh"|"resume"} mode
+   */
+  async function openSingleExperience(kind, meta, mode) {
+    rememberOpenExperience(kind, meta || {});
+    persistActiveExperience();
+    ensureExperienceHistoryEntry();
+    const currentExpState = getCurrentExperienceState() || {};
+    const persisted = mode === "resume" && currentExpState.kind === kind ? currentExpState.progress : null;
+    const initialState =
+      persisted && persisted.meta && sameMeta(persisted.meta, meta || {}) ? persisted : null;
+    const mountOpts = {
+      initialState,
+      onStateChange: (state) => {
+        setCurrentExperienceState({
+          ...getCurrentExperienceState(),
+          kind,
+          meta: { ...meta },
+          progress: state,
+          completed: computeCompleted(kind, state),
+          resume: lastOpenedExperience,
+        });
+        saveSessions();
+      },
+    };
+    if (mode === "fresh") {
+      setCurrentExperienceState({
+        kind,
+        meta: { ...meta },
+        progress: null,
+        completed: false,
+        resume: lastOpenedExperience,
+      });
+      saveSessions();
+    }
+    if (kind === "quiz") await mountQuizExperience(layerView, meta, experienceHooks, mountOpts);
+    else if (kind === "slide") await mountSlideExperience(layerView, meta, experienceHooks, mountOpts);
+    else await mountFlashExperience(layerView, meta, experienceHooks, mountOpts);
+  }
+
   async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
-        rememberOpenExperience("quiz", e.meta || {});
-        persistActiveExperience();
-        ensureExperienceHistoryEntry();
-        await mountQuizExperience(layerView, e.meta, experienceHooks);
+        await openSingleExperience("quiz", e.meta || {}, "fresh");
       } else if (e.type === "showFlash") {
-        rememberOpenExperience("flash", e.meta || {});
-        persistActiveExperience();
-        ensureExperienceHistoryEntry();
-        await mountFlashExperience(layerView, e.meta, experienceHooks);
+        await openSingleExperience("flash", e.meta || {}, "fresh");
       } else if (e.type === "showSlide") {
-        rememberOpenExperience("slide", e.meta || {});
-        persistActiveExperience();
-        ensureExperienceHistoryEntry();
-        await mountSlideExperience(layerView, e.meta, experienceHooks);
+        await openSingleExperience("slide", e.meta || {}, "fresh");
       }
     }
   }
@@ -338,13 +409,11 @@ export function init() {
       return;
     }
     try {
-      rememberOpenExperience(/** @type {"quiz"|"slide"|"flash"} */ (kind), item.meta || {});
-      persistActiveExperience();
-      ensureExperienceHistoryEntry();
-      layerView.prepareShow();
-      if (kind === "quiz") await mountQuizExperience(layerView, item.meta, experienceHooks);
-      else if (kind === "slide") await mountSlideExperience(layerView, item.meta, experienceHooks);
-      else await mountFlashExperience(layerView, item.meta, experienceHooks);
+      await openSingleExperience(
+        /** @type {"quiz"|"slide"|"flash"} */ (kind),
+        item.meta || {},
+        "resume",
+      );
     } catch {
       layerView.hide();
     }
@@ -359,6 +428,14 @@ export function init() {
     persistActiveExperience();
     ensureExperienceHistoryEntry();
     layerView.prepareShow();
+    setCurrentExperienceState({
+      kind: "fullset",
+      meta: { mode: "hub", title: bundleTitle || "Full set" },
+      progress: null,
+      completed: false,
+      resume: lastOpenedExperience,
+    });
+    saveSessions();
     await mountFullSetHubExperience(
       layerView,
       { title: bundleTitle || "Full set", items },
@@ -377,11 +454,46 @@ export function init() {
     persistActiveExperience();
     ensureExperienceHistoryEntry();
     layerView.prepareShow();
+    const fullsetState = getCurrentExperienceState();
+    const persisted = fullsetState?.kind === "fullset" ? fullsetState.progress : null;
+    const initialState =
+      persisted && persisted.spec && sameMeta(persisted.spec, spec || {}) ? persisted : null;
     await mountFullSetMixedExperience(
       layerView,
       { title: bundleTitle || "Full set", spec },
       experienceHooks,
+      {
+        initialState,
+        onStateChange: (state) => {
+          setCurrentExperienceState({
+            ...getCurrentExperienceState(),
+            kind: "fullset",
+            meta: { ...spec },
+            progress: state,
+            completed: computeCompleted("fullset", state),
+            resume: lastOpenedExperience,
+          });
+          saveSessions();
+        },
+      },
     );
+  }
+
+  async function restoreCurrentSessionExperience() {
+    const restored = readPersistedActiveExperience();
+    if (!restored) {
+      layerView.hide();
+      return;
+    }
+    lastOpenedExperience = restored;
+    ensureExperienceHistoryEntry();
+    if (restored.bundleBack && Array.isArray(restored.items)) {
+      await openResumeOpenAll(restored.items, restored.title || "Full set");
+    } else if (restored.fullsetMixedBack && restored.fullsetMixed) {
+      await openResumeFullSetMixed(restored.fullsetMixed, restored.title || "Full set");
+    } else if (restored.kind) {
+      await openResumeExperience({ kind: restored.kind, meta: restored.meta || {} });
+    }
   }
 
   msgView = createMessageView({
@@ -438,6 +550,7 @@ export function init() {
       getSessionsSnapshot(),
       getActiveSessionIndex(),
       (idx) => {
+        persistActiveExperience();
         setActiveSessionIndex(idx);
         guided = null;
         lastOpenedExperience = null;
@@ -445,6 +558,7 @@ export function init() {
         saveSessions();
         renderChatListUI();
         renderMessages();
+        void restoreCurrentSessionExperience();
       },
       (action, idx) => {
         if (action === "pin") {
@@ -469,6 +583,7 @@ export function init() {
           if (deleteSession(idx)) {
             guided = null;
             lastOpenedExperience = null;
+            persistActiveExperience();
             layerView.hide();
             saveSessions();
             renderChatListUI();
@@ -495,28 +610,104 @@ export function init() {
     );
   }
 
+  /**
+   * @param {string | null} flow
+   * @returns {"fullset"|"quiz"|"slide"|"flashcard"|null}
+   */
+  function normalizeFlowParam(flow) {
+    const raw = String(flow || "").trim().toLowerCase();
+    if (!raw) return null;
+    if (raw === "image" || raw === "flash" || raw === "flashcard") return "flashcard";
+    if (raw === "quiz" || raw === "slide" || raw === "fullset") return raw;
+    return null;
+  }
+
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
+   */
+  function flowToExperienceKind(flowKind) {
+    return flowKind === "flashcard" ? "flash" : flowKind;
+  }
+
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
+   */
+  function flowSessionBaseTitle(flowKind) {
+    if (flowKind === "fullset") return "Tạo full set";
+    if (flowKind === "quiz") return "Tạo quiz";
+    if (flowKind === "slide") return "Tạo slide";
+    return "Tạo flashcard";
+  }
+
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
+   */
+  function buildNextFlowSessionTitle(flowKind) {
+    const base = flowSessionBaseTitle(flowKind);
+    const escaped = base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const rx = new RegExp(`^${escaped}\\s+(\\d+)$`, "i");
+    let max = 0;
+    getSessionsSnapshot().forEach((s) => {
+      const m = String(s?.title || "").match(rx);
+      if (!m) return;
+      const n = Number(m[1]);
+      if (Number.isFinite(n)) max = Math.max(max, n);
+    });
+    return `${base} ${max + 1}`;
+  }
+
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
+   */
+  async function handleFlowEntry(flowKind) {
+    const expKind = flowToExperienceKind(flowKind);
+    const existingIdx = findSessionIndexByExperienceKind(expKind, { excludeIndex: -1 });
+    if (existingIdx >= 0) {
+      const msg = `Bạn đang có 1 ${expKind} chưa xong. Chắc chắn muốn tạo mới?`;
+      const createNew = window.confirm(msg);
+      if (!createNew) {
+        persistActiveExperience();
+        setActiveSessionIndex(existingIdx);
+        guided = null;
+        lastOpenedExperience = null;
+        layerView.hide();
+        saveSessions();
+        renderChatListUI();
+        renderMessages();
+        await restoreCurrentSessionExperience();
+        history.replaceState({}, "", "chatbot_ui.html");
+        return;
+      }
+    }
+
+    persistActiveExperience();
+    createSession({
+      title: buildNextFlowSessionTitle(flowKind),
+      experienceState: {
+        kind: expKind,
+        meta: { flow: flowKind },
+        progress: null,
+        completed: false,
+      },
+    });
+    guided = null;
+    lastOpenedExperience = null;
+    layerView.hide();
+    saveSessions();
+    renderChatListUI();
+    renderMessages();
+    const start = computeStartFlow(flowKind);
+    guided = start.guided;
+    await applyEffects(start.effects);
+    history.replaceState({}, "", "chatbot_ui.html");
+  }
+
   function renderMessages() {
     msgView.clear();
     const current = getCurrentSession();
     if (!current || !Array.isArray(current.messages)) {
       ensureSessions();
       saveSessions();
-      return;
-    }
-    const params = new URLSearchParams(location.search);
-    const flow = params.get("flow");
-    if (flow) {
-      current.messages = [];
-      current.thread_id = "";
-      guided = null;
-      lastOpenedExperience = null;
-      layerView.hide();
-      saveSessions();
-      history.replaceState({}, "", "chatbot_ui.html");
-      const start = computeStartFlow(flow);
-      guided = start.guided;
-      void applyEffects(start.effects);
-      threadLabel.textContent = "";
       return;
     }
     if (!current.messages.length) {
@@ -634,17 +825,11 @@ export function init() {
   ensureHistoryBaseState();
   renderChatListUI();
   renderMessages();
-  const restored = readPersistedActiveExperience();
-  if (restored) {
-    lastOpenedExperience = restored;
-    persistActiveExperience();
-    ensureExperienceHistoryEntry();
-    if (restored.bundleBack && Array.isArray(restored.items)) {
-      void openResumeOpenAll(restored.items, restored.title || "Full set");
-    } else if (restored.fullsetMixedBack && restored.fullsetMixed) {
-      void openResumeFullSetMixed(restored.fullsetMixed, restored.title || "Full set");
-    } else if (restored.kind) {
-      void openResumeExperience({ kind: restored.kind, meta: restored.meta || {} });
-    }
+  const params = new URLSearchParams(location.search);
+  const flowKind = normalizeFlowParam(params.get("flow"));
+  if (flowKind) {
+    void handleFlowEntry(flowKind);
+    return;
   }
+  void restoreCurrentSessionExperience();
 }

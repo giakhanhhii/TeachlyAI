@@ -14,7 +14,13 @@ let sessions = safeReadSessions();
 let activeSession = Number(localStorage.getItem(LS_ACTIVE_SESSION) || "0");
 
 function makeDefaultSession(index) {
-  return { title: `Đoạn chat ${index + 1}`, thread_id: "", messages: [], pinned: false };
+  return {
+    title: `Đoạn chat ${index + 1}`,
+    thread_id: "",
+    messages: [],
+    pinned: false,
+    experienceState: null,
+  };
 }
 
 function normalizeSession(session, index = 0) {
@@ -29,6 +35,10 @@ function normalizeSession(session, index = 0) {
     thread_id: safeThread,
     messages: safeMessages,
     pinned: Boolean(session.pinned),
+    experienceState:
+      session.experienceState && typeof session.experienceState === "object"
+        ? session.experienceState
+        : null,
   };
 }
 
@@ -67,9 +77,18 @@ export function getSessionsSnapshot() {
   return sessions;
 }
 
-export function createSession() {
+/**
+ * @param {{ title?: string, experienceState?: any }} [opts]
+ */
+export function createSession(opts = {}) {
   const nextIndex = sessions.length;
   const next = makeDefaultSession(nextIndex);
+  if (typeof opts.title === "string" && opts.title.trim()) {
+    next.title = opts.title.trim();
+  }
+  if (opts.experienceState && typeof opts.experienceState === "object") {
+    next.experienceState = opts.experienceState;
+  }
   sessions.push(next);
   activeSession = nextIndex;
   return nextIndex;
@@ -102,4 +121,50 @@ export function deleteSession(idx) {
   if (activeSession === n) activeSession = Math.min(n, sessions.length - 1);
   else if (activeSession > n) activeSession -= 1;
   return true;
+}
+
+export function getCurrentExperienceState() {
+  const s = getCurrentSession();
+  if (!s || typeof s !== "object") return null;
+  return s.experienceState && typeof s.experienceState === "object" ? s.experienceState : null;
+}
+
+/**
+ * @param {any} next
+ */
+export function setCurrentExperienceState(next) {
+  const s = getCurrentSession();
+  if (!s || typeof s !== "object") return;
+  if (!next || typeof next !== "object") {
+    s.experienceState = null;
+    return;
+  }
+  s.experienceState = next;
+}
+
+/**
+ * @param {number} idx
+ */
+export function getSessionByIndex(idx) {
+  const n = Number(idx);
+  if (!Number.isFinite(n) || n < 0 || n >= sessions.length) return null;
+  return sessions[n];
+}
+
+/**
+ * @param {string} kind
+ * @param {{ excludeIndex?: number }} [opts]
+ */
+export function findSessionIndexByExperienceKind(kind, opts = {}) {
+  const target = String(kind || "").trim().toLowerCase();
+  if (!target) return -1;
+  const excludeIndex = Number.isFinite(Number(opts.excludeIndex)) ? Math.floor(Number(opts.excludeIndex)) : -1;
+  for (let i = sessions.length - 1; i >= 0; i -= 1) {
+    if (i === excludeIndex) continue;
+    const st = sessions[i]?.experienceState;
+    const stKind = String(st?.kind || "").trim().toLowerCase();
+    const completed = Boolean(st?.completed);
+    if (stKind === target && !completed) return i;
+  }
+  return -1;
 }

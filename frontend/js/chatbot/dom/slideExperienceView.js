@@ -24,8 +24,9 @@ function buildAiDraftSlide(meta, sIndex, slide) {
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
  * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
-export async function mountSlideExperience(layerView, meta, deps) {
+export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
   const raw = await fetchMockResource("slide");
@@ -33,8 +34,10 @@ export async function mountSlideExperience(layerView, meta, deps) {
   const deckTitle = data.title || "Bộ slide";
   const slides = Array.isArray(data.slides) ? data.slides : [];
 
-  let index = 0;
+  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   const total = Math.max(1, slides.length);
+  index = Math.min(Math.max(0, index), Math.max(0, slides.length - 1));
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-slide";
@@ -73,6 +76,17 @@ export async function mountSlideExperience(layerView, meta, deps) {
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
+  function emitState() {
+    if (typeof opts.onStateChange !== "function") return;
+    opts.onStateChange({
+      kind: "slide",
+      meta: { ...meta },
+      title: deckTitle,
+      total: slides.length,
+      index,
+    });
+  }
+
   function renderSlide() {
     const s = slides[index];
     stage.innerHTML = "";
@@ -98,6 +112,7 @@ export async function mountSlideExperience(layerView, meta, deps) {
     backBtn.disabled = index <= 0;
     nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
     nextBtn.disabled = false;
+    emitState();
   }
 
   backBtn.addEventListener("click", () => {
