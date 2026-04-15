@@ -5,10 +5,12 @@
   min-height: 0;
   background: #ffffff;
   overflow: hidden;
+  pointer-events: none;
 }
 
 #experienceLayer.visible {
   display: flex;
+  pointer-events: auto;
 }
 
 .message-bubble.startup,

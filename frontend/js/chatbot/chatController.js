@@ -37,132 +37,20 @@ import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { createMessageController } from "./controllers/messageController.js";
-import { renderSessionListUI } from "./controllers/sessionController.js";
+import { bindNewChatButton, renderSessionListUI } from "./controllers/sessionController.js";
+import { createExperienceController } from "./controllers/experienceController.js";
 import {
-  HISTORY_CHAT_PHASE,
-  HISTORY_EXPERIENCE_PHASE,
+  createPopStateHandler,
   ensureHistoryBaseState,
   ensureExperienceHistoryEntry,
   inExperienceHistoryState,
 } from "./services/historyService.js";
-import { restoreCurrentSessionExperience as restoreCurrentSessionExperienceService } from "./services/experienceService.js";
+import { createFlowActionHandler } from "./services/flowIntegration.js";
 
 /** @type {any} */
 let guided = null;
 
-/** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
-let lastOpenedExperience = null;
-let resumeDockAlreadyPosted = false;
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
-
-/**
- * @param {"quiz"|"slide"|"flash"} kind
- * @param {Record<string, string>} meta
- */
-function buildResumeTitle(kind, meta) {
-  if (kind === "quiz") return `Trắc nghiệm — ${meta.topic || "Bộ đề"}`;
-  if (kind === "slide") return `Slide — ${meta.topic || "Bài giảng"}`;
-  if (kind === "flash") return `Flashcard — ${meta.source || "Bộ thẻ"}`;
-  return "Học liệu";
-}
-
-/**
- * @param {"quiz"|"slide"|"flash"} kind
- * @param {Record<string, string>} meta
- */
-function rememberOpenExperience(kind, meta) {
-  lastOpenedExperience = {
-    bundleBack: false,
-    kind,
-    meta: { ...meta },
-    title: buildResumeTitle(kind, meta),
-  };
-  resumeDockAlreadyPosted = false;
-}
-
-function persistActiveExperience() {
-  const currentState = getCurrentExperienceState() || {};
-  if (!lastOpenedExperience) {
-    if (currentState && typeof currentState === "object" && currentState.resume) {
-      const next = { ...currentState };
-      delete next.resume;
-      setCurrentExperienceState(next);
-      saveSessions();
-    }
-    return;
-  }
-  setCurrentExperienceState({
-    ...currentState,
-    resume: lastOpenedExperience,
-  });
-  saveSessions();
-}
-
-/**
- * @param {string} title
- * @param {any[]} items
- */
-function rememberOpenBundleForBack(title, items) {
-  lastOpenedExperience = {
-    bundleBack: true,
-    title: title || "Full set",
-    items: items.map((it) => ({
-      kind: it.kind,
-      meta: { ...(it.meta || {}) },
-      title: it.title,
-      openedAt: it.openedAt,
-    })),
-  };
-  resumeDockAlreadyPosted = false;
-}
-
-/**
- * @param {string} title
- * @param {Record<string, string>} spec
- */
-function rememberOpenFullSetMixedForBack(title, spec) {
-  lastOpenedExperience = {
-    fullsetMixedBack: true,
-    title: title || "Full set",
-    fullsetMixed: { ...spec },
-  };
-  resumeDockAlreadyPosted = false;
-}
-
-function readPersistedActiveExperience() {
-  const state = getCurrentExperienceState();
-  const resume = state?.resume;
-  return resume && typeof resume === "object" ? resume : null;
-}
-
-/**
- * @param {Record<string, string>} spec
- * @param {string} openedAtIso
- */
-function fullsetResumeItemsFromSpec(spec, openedAtIso) {
-  const topic = spec.topic || "—";
-  const t = openedAtIso || new Date().toISOString();
-  return [
-    {
-      kind: "slide",
-      meta: { topic, count: String(spec.slides || "—"), notes: "Full set (demo mock)" },
-      title: `Slide — ${topic}`,
-      openedAt: t,
-    },
-    {
-      kind: "quiz",
-      meta: { topic, count: String(spec.quiz || "—"), notes: "Full set (demo mock)" },
-      title: `Trắc nghiệm — ${topic}`,
-      openedAt: t,
-    },
-    {
-      kind: "flash",
-      meta: { source: topic, count: String(spec.flash || "—"), extra: "Full set (demo mock)" },
-      title: `Flashcard — ${topic}`,
-      openedAt: t,
-    },
-  ];
-}
 
 /**
  * @returns {Promise<File | null>}
@@ -200,6 +88,7 @@ function pickPdfWithDialog() {
 }
 
 export function init() {
+  console.log("[chatController] init started");
   const messages = document.getElementById("messages");
   const messagesInner = document.getElementById("messagesInner");
   const form = document.getElementById("form");
@@ -211,17 +100,48 @@ export function init() {
   const chatPhase = document.getElementById("chatPhase");
   const experienceLayer = document.getElementById("experienceLayer");
   const experienceBody = document.getElementById("experienceBody");
+  const backToChatBtn = document.getElementById("backToChatBtn");
+  const toggleSidebarBtn = document.getElementById("toggleSidebar");
+  const topHomeBtn = document.getElementById("topHomeBtn");
+
+  const requiredEls = {
+    messages,
+    messagesInner,
+    form,
+    input,
+    sendBtn,
+    threadLabel,
+    chatList,
+    newChatBtn,
+    chatPhase,
+    experienceLayer,
+    experienceBody,
+    backToChatBtn,
+    toggleSidebarBtn,
+    topHomeBtn,
+  };
+  const missingIds = Object.entries(requiredEls)
+    .filter(([, el]) => !el)
+    .map(([name]) => name);
+  if (missingIds.length) {
+    console.error("[chatController] init aborted. Missing required elements:", missingIds);
+    return;
+  }
 
   const apiUrl = getChatApiUrl();
+  console.log("[chatController] DOM references resolved");
 
   const layerView = createExperienceLayerView({
     experienceLayer,
     experienceBody,
     chatPhase,
   });
+  console.log("[chatController] experience layer view created");
 
   /** @type {ReturnType<typeof createMessageView>} */
   let msgView;
+  /** @type {ReturnType<typeof createExperienceController>} */
+  let experienceController;
   let isSending = false;
   let isLoadingMore = false;
   /** @type {HTMLButtonElement | null} */
@@ -230,6 +150,8 @@ export function init() {
     getCurrentSession,
     saveSessions,
     getMessageView: () => msgView,
+    postChat,
+    apiUrl,
     sendBtn,
     inputEl: input,
   });
@@ -244,118 +166,8 @@ export function init() {
     messages.classList.toggle("startup-mode", isActive);
   }
 
-  /**
-   * @param {string} value
-   */
-  function splitFlowActionValue(value) {
-    const raw = String(value || "").trim();
-    if (!raw) return { action: "", meta: {} };
-    const [actionPart, metaPart = ""] = raw.split("|", 2);
-    const action = String(actionPart || "").trim().toLowerCase();
-    const meta = {};
-    if (metaPart) {
-      const params = new URLSearchParams(metaPart);
-      params.forEach((v, k) => {
-        const key = String(k || "").trim();
-        if (!key) return;
-        meta[key] = String(v || "").trim();
-      });
-    }
-    return { action, meta };
-  }
-
-  /**
-   * Recover guided state for persisted action buttons.
-   * This prevents old "Tải lên PDF / Nhập chủ đề trực tiếp" buttons
-   * from becoming inert after reload/session switches.
-   * @param {string} value
-   * @param {any} [prevGuided]
-   */
-  function buildGuidedFromActionValue(value, prevGuided) {
-    const { action, meta } = splitFlowActionValue(value);
-    if (!action) return null;
-    let kind = "";
-    if (action.startsWith("fullset_")) kind = "fullset";
-    else if (action.startsWith("slide_")) kind = "slide";
-    else if (action.startsWith("quiz_")) kind = "quiz";
-    else if (action.startsWith("flash_")) kind = "flash";
-    if (!kind) return null;
-    const prevData =
-      prevGuided && prevGuided.kind === kind && prevGuided.data && typeof prevGuided.data === "object"
-        ? prevGuided.data
-        : {};
-    return { kind, step: "await_source", data: { ...prevData, ...meta } };
-  }
-
-  /**
-   * @param {string} value
-   */
-  function normalizeFlowActionValue(value) {
-    return splitFlowActionValue(value).action;
-  }
-
   function reattachStartupActionHandlers() {
     msgView.reattachFlowActionHandlers?.();
-  }
-
-  /**
-   * @param {any} state
-   */
-  function hasGuidedKind(state) {
-    const kind = String(state?.kind || "");
-    return kind === "fullset" || kind === "slide" || kind === "quiz" || kind === "flash";
-  }
-
-  /**
-   * @param {string} value
-   * @param {HTMLButtonElement} btnEl
-   */
-  async function handlePdfSourceAction(value, btnEl) {
-    btnEl.disabled = true;
-    const file = await pickPdfWithDialog();
-    btnEl.disabled = false;
-    if (!file) {
-      const again = getRestartAwaitSourceEffects(guided.kind);
-      if (again.length) await applyEffects(again);
-      return;
-    }
-    if (value === "fullset_pdf") setPendingPdfFile(file);
-    const result = computePickAction(guided, value, {
-      pdfFile: value === "slide_pdf" || value === "quiz_pdf" || value === "flash_pdf" ? file : undefined,
-    });
-    if (!result.handled) return;
-    msgView.disableActionButtons(btnEl);
-    guided = result.guided;
-    await applyEffects(result.effects);
-  }
-
-  /**
-   * @param {string} rawValue
-   * @param {HTMLButtonElement} btnEl
-   */
-  function onFlowAction(rawValue, btnEl) {
-    const value = normalizeFlowActionValue(rawValue);
-    if (!value) return;
-
-    if (!hasGuidedKind(guided)) {
-      const recovered = buildGuidedFromActionValue(rawValue, guided);
-      if (!hasGuidedKind(recovered)) {
-        pushBot("Không thể khôi phục trạng thái phiên hiện tại. Bạn bắt đầu lại giúp mình nhé.");
-        return;
-      }
-      guided = recovered;
-    }
-
-    if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
-      void handlePdfSourceAction(value, btnEl);
-      return;
-    }
-
-    const result = computePickAction(guided, value);
-    if (!result.handled) return;
-    msgView.disableActionButtons(btnEl);
-    guided = result.guided;
-    void applyEffects(result.effects);
   }
 
   /**
@@ -395,44 +207,7 @@ export function init() {
   }
 
   function pushResumeDockFromLastOpened() {
-    if (!lastOpenedExperience) return;
-    if (resumeDockAlreadyPosted) {
-      lastOpenedExperience = null;
-      resumeDockAlreadyPosted = false;
-      persistActiveExperience();
-      return;
-    }
-    const now = new Date().toISOString();
-    if (lastOpenedExperience.bundleBack) {
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          title: lastOpenedExperience.title,
-          items: lastOpenedExperience.items,
-          openedAt: now,
-        },
-      });
-    } else if (lastOpenedExperience.fullsetMixedBack) {
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          title: lastOpenedExperience.title,
-          fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
-          items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
-          openedAt: now,
-        },
-      });
-    } else {
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          kind: lastOpenedExperience.kind,
-          meta: { ...lastOpenedExperience.meta },
-          title: lastOpenedExperience.title,
-          openedAt: now,
-        },
-      });
-    }
-    lastOpenedExperience = null;
-    resumeDockAlreadyPosted = false;
-    persistActiveExperience();
+    experienceController.pushResumeDockFromLastOpened();
   }
 
   function pushUser(text) {
@@ -444,16 +219,7 @@ export function init() {
    * @param {Record<string, string>} meta
    */
   function pushQuickResumeDock(kind, meta) {
-    const now = new Date().toISOString();
-    pushBot("Đã tạo xong. Bạn có thể bấm Mở để quay lại học liệu này.", {
-      resumeDock: {
-        kind,
-        meta: { ...meta },
-        title: buildResumeTitle(kind, meta || {}),
-        openedAt: now,
-      },
-    });
-    resumeDockAlreadyPosted = true;
+    experienceController.pushQuickResumeDock(kind, meta);
   }
 
   /**
@@ -481,40 +247,24 @@ export function init() {
   }
 
   const experienceHooks = { onAiEdit: openChatWithAiDraft };
+  experienceController = createExperienceController({
+    getCurrentExperienceState,
+    setCurrentExperienceState,
+    saveSessions,
+    ensureExperienceHistoryEntry,
+    layerView,
+    mountQuizExperience,
+    mountSlideExperience,
+    mountFlashExperience,
+    mountFullSetHubExperience,
+    mountFullSetMixedExperience,
+    experienceHooks,
+    pushBot,
+  });
+  console.log("[chatController] controllers initialized");
 
-  /**
-   * @param {Record<string, string>} a
-   * @param {Record<string, string>} b
-   */
-  function sameMeta(a, b) {
-    const ak = Object.keys(a || {}).sort();
-    const bk = Object.keys(b || {}).sort();
-    if (ak.length !== bk.length) return false;
-    for (let i = 0; i < ak.length; i += 1) {
-      const key = ak[i];
-      if (key !== bk[i]) return false;
-      if (String(a[key] || "") !== String(b[key] || "")) return false;
-    }
-    return true;
-  }
-
-  /**
-   * @param {"quiz"|"slide"|"flash"|"fullset"} kind
-   * @param {any} progress
-   */
-  function computeCompleted(kind, progress) {
-    const total = Number(progress?.total || 0);
-    const index = Number(progress?.index || 0);
-    if (!Number.isFinite(total) || total <= 0) return false;
-    if (!Number.isFinite(index) || index < total - 1) return false;
-    if (kind === "quiz") {
-      const graded = Array.isArray(progress?.gradedByIndex) ? progress.gradedByIndex : [];
-      return Boolean(graded[total - 1]);
-    }
-    if (kind === "fullset") {
-      return Boolean(progress?.completed) || index >= total - 1;
-    }
-    return true;
+  function persistActiveExperience() {
+    experienceController.persistActiveExperience();
   }
 
   /**
@@ -523,40 +273,7 @@ export function init() {
    * @param {"fresh"|"resume"} mode
    */
   async function openSingleExperience(kind, meta, mode) {
-    rememberOpenExperience(kind, meta || {});
-    persistActiveExperience();
-    ensureExperienceHistoryEntry();
-    const currentExpState = getCurrentExperienceState() || {};
-    const persisted = mode === "resume" && currentExpState.kind === kind ? currentExpState.progress : null;
-    const initialState =
-      persisted && persisted.meta && sameMeta(persisted.meta, meta || {}) ? persisted : null;
-    const mountOpts = {
-      initialState,
-      onStateChange: (state) => {
-        setCurrentExperienceState({
-          ...getCurrentExperienceState(),
-          kind,
-          meta: { ...meta },
-          progress: state,
-          completed: computeCompleted(kind, state),
-          resume: lastOpenedExperience,
-        });
-        saveSessions();
-      },
-    };
-    if (mode === "fresh") {
-      setCurrentExperienceState({
-        kind,
-        meta: { ...meta },
-        progress: null,
-        completed: false,
-        resume: lastOpenedExperience,
-      });
-      saveSessions();
-    }
-    if (kind === "quiz") await mountQuizExperience(layerView, meta, experienceHooks, mountOpts);
-    else if (kind === "slide") await mountSlideExperience(layerView, meta, experienceHooks, mountOpts);
-    else await mountFlashExperience(layerView, meta, experienceHooks, mountOpts);
+    await experienceController.openSingleExperience(kind, meta, mode);
   }
 
   async function applyEffects(effects) {
@@ -576,32 +293,26 @@ export function init() {
     }
   }
 
+  const onFlowAction = createFlowActionHandler({
+    getGuided: () => guided,
+    setGuided: (next) => {
+      guided = next;
+    },
+    computePickAction,
+    getRestartAwaitSourceEffects,
+    pdfSourceActionValues: PDF_SOURCE_ACTION_VALUES,
+    pickPdfWithDialog,
+    setPendingPdfFile: (file) => setPendingPdfFile(file),
+    pushBot,
+    applyEffects,
+    disableActionButtons: (btnEl) => msgView.disableActionButtons(btnEl),
+  });
+
   /**
    * @param {{ kind: string, meta: Record<string, string> }} item
    */
   async function openResumeExperience(item) {
-    const rawKind = String(item?.kind || "").toLowerCase();
-    const kind =
-      rawKind === "flashcard" || rawKind === "flash"
-        ? "flash"
-        : rawKind.startsWith("quiz")
-          ? "quiz"
-          : rawKind.startsWith("slide")
-            ? "slide"
-            : rawKind;
-    if (kind !== "quiz" && kind !== "slide" && kind !== "flash") {
-      layerView.hide();
-      return;
-    }
-    try {
-      await openSingleExperience(
-        /** @type {"quiz"|"slide"|"flash"} */ (kind),
-        item.meta || {},
-        "resume",
-      );
-    } catch {
-      layerView.hide();
-    }
+    await experienceController.openResumeExperience(item);
   }
 
   /**
@@ -609,25 +320,7 @@ export function init() {
    * @param {string} bundleTitle
    */
   async function openResumeOpenAll(items, bundleTitle) {
-    rememberOpenBundleForBack(bundleTitle || "Full set", items);
-    persistActiveExperience();
-    ensureExperienceHistoryEntry();
-    layerView.prepareShow();
-    setCurrentExperienceState({
-      kind: "fullset",
-      meta: { mode: "hub", title: bundleTitle || "Full set" },
-      progress: null,
-      completed: false,
-      resume: lastOpenedExperience,
-    });
-    saveSessions();
-    await mountFullSetHubExperience(
-      layerView,
-      { title: bundleTitle || "Full set", items },
-      async (item) => {
-        await openResumeExperience(item);
-      },
-    );
+    await experienceController.openResumeOpenAll(items, bundleTitle);
   }
 
   /**
@@ -635,47 +328,11 @@ export function init() {
    * @param {string} bundleTitle
    */
   async function openResumeFullSetMixed(spec, bundleTitle) {
-    rememberOpenFullSetMixedForBack(bundleTitle || "Full set", spec);
-    persistActiveExperience();
-    ensureExperienceHistoryEntry();
-    layerView.prepareShow();
-    const fullsetState = getCurrentExperienceState();
-    const persisted = fullsetState?.kind === "fullset" ? fullsetState.progress : null;
-    const initialState =
-      persisted && persisted.spec && sameMeta(persisted.spec, spec || {}) ? persisted : null;
-    await mountFullSetMixedExperience(
-      layerView,
-      { title: bundleTitle || "Full set", spec },
-      experienceHooks,
-      {
-        initialState,
-        onStateChange: (state) => {
-          setCurrentExperienceState({
-            ...getCurrentExperienceState(),
-            kind: "fullset",
-            meta: { ...spec },
-            progress: state,
-            completed: computeCompleted("fullset", state),
-            resume: lastOpenedExperience,
-          });
-          saveSessions();
-        },
-      },
-    );
+    await experienceController.openResumeFullSetMixed(spec, bundleTitle);
   }
 
   async function restoreCurrentSessionExperience() {
-    await restoreCurrentSessionExperienceService({
-      readPersistedActiveExperience,
-      setLastOpenedExperience: (resume) => {
-        lastOpenedExperience = resume;
-      },
-      ensureExperienceHistoryEntry,
-      hideLayer: () => layerView.hide(),
-      openResumeOpenAll,
-      openResumeFullSetMixed,
-      openResumeExperience,
-    });
+    await experienceController.restoreCurrentSessionExperience();
   }
 
   msgView = createMessageView({
@@ -723,7 +380,7 @@ export function init() {
         persistActiveExperience();
         setActiveSessionIndex(idx);
         guided = null;
-        lastOpenedExperience = null;
+        experienceController.resetResumeState();
         layerView.hide();
         saveSessions();
         try {
@@ -737,7 +394,7 @@ export function init() {
       },
       onSessionDeleted: async () => {
         guided = null;
-        lastOpenedExperience = null;
+        experienceController.resetResumeState();
         persistActiveExperience();
         layerView.hide();
         renderMessages();
@@ -818,7 +475,7 @@ export function init() {
       completed: false,
     });
     guided = null;
-    lastOpenedExperience = null;
+    experienceController.resetResumeState();
     layerView.hide();
     // Leaving startup hub: restore normal chat layout and composer.
     setStartupUiState(false);
@@ -845,7 +502,7 @@ export function init() {
       persistActiveExperience();
       setActiveSessionIndex(latestIdx);
       guided = null;
-      lastOpenedExperience = null;
+      experienceController.resetResumeState();
       layerView.hide();
       saveSessions();
       renderChatListUI();
@@ -882,7 +539,7 @@ export function init() {
       });
     }
     guided = null;
-    lastOpenedExperience = null;
+    experienceController.resetResumeState();
     layerView.hide();
     // Entering an actual guided flow should not keep startup hub layout.
     setStartupUiState(false);
@@ -1020,30 +677,18 @@ export function init() {
   }
 
   async function sendPrompt(prompt) {
-    const current = getCurrentSession();
-    msgView.addMessage("user", prompt);
-    input.value = "";
-    setSendingState(true);
-    const thinking = msgView.addThinkingBubble();
-    try {
-      const data = await postChat(apiUrl, prompt, current.thread_id);
-      current.thread_id = data.thread_id;
-      threadLabel.textContent = `Thread: ${current.thread_id}`;
-      thinking.row.remove();
-      await msgView.streamBotReply(data.reply);
-      current.messages.push({ role: "user", text: prompt });
-      current.messages.push({ role: "bot", text: data.reply });
-      current.messagesLoaded = true;
-      current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 2;
-      saveSessions();
-    } catch (err) {
-      thinking.row.remove();
-      const errMsg = `Lỗi: ${err.message}`;
-      msgView.addMessage("bot", errMsg);
-    } finally {
-      setSendingState(false);
-      input.focus();
-    }
+    await messageController.sendPrompt(prompt, {
+      onSendingState: setSendingState,
+      onThreadUpdated: (threadId) => {
+        threadLabel.textContent = `Thread: ${threadId}`;
+      },
+      onError: (errMsg) => {
+        msgView.addMessage("bot", errMsg);
+      },
+      onDone: () => {
+        input.focus();
+      },
+    });
   }
 
   form.addEventListener("submit", async (e) => {
@@ -1068,19 +713,22 @@ export function init() {
     sendPrompt(prompt);
   });
 
-  newChatBtn.addEventListener("click", () => {
-    createSession();
-    guided = null;
-    lastOpenedExperience = null;
-    persistActiveExperience();
-    layerView.hide();
-    renderChatListUI();
-    renderMessages();
-    saveSessions();
-    input.focus();
+  bindNewChatButton({
+    newChatBtn,
+    onCreateNewChat: () => {
+      persistActiveExperience();
+      createSession();
+      guided = null;
+      experienceController.resetResumeState();
+      layerView.hide();
+      renderChatListUI();
+      renderMessages();
+      saveSessions();
+      input.focus();
+    },
   });
 
-  document.getElementById("backToChatBtn").addEventListener("click", () => {
+  backToChatBtn.addEventListener("click", () => {
     if (inExperienceHistoryState()) {
       history.back();
       return;
@@ -1089,29 +737,28 @@ export function init() {
     pushResumeDockFromLastOpened();
   });
 
-  document.getElementById("toggleSidebar").addEventListener("click", () => {
+  toggleSidebarBtn.addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("collapsed");
   });
 
-  document.getElementById("topHomeBtn").addEventListener("click", () => {
+  topHomeBtn.addEventListener("click", () => {
     location.href = "main_hub.html";
   });
 
-  window.addEventListener("popstate", () => {
-    const state = history.state && typeof history.state === "object" ? history.state : {};
-    if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
-    if (!lastOpenedExperience) {
-      layerView.hide();
-      persistActiveExperience();
-      return;
-    }
-    layerView.hide();
-    pushResumeDockFromLastOpened();
-  });
+  window.addEventListener(
+    "popstate",
+    createPopStateHandler({
+      hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
+      hideLayer: () => layerView.hide(),
+      persistActiveExperience,
+      pushResumeDockFromLastOpened,
+    }),
+  );
 
   ensureSessions();
   ensureHistoryBaseState();
   renderChatListUI();
+  console.log("[chatController] base state rendered");
   void (async () => {
     try {
       await ensureSessionMessagesLoaded();
@@ -1126,5 +773,6 @@ export function init() {
       return;
     }
     await restoreCurrentSessionExperience();
+    console.log("[chatController] init completed");
   })();
 }

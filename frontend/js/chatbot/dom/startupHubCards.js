@@ -3,6 +3,7 @@
  * @param {(flow: "fullset"|"quiz"|"slide"|"flashcard") => void} onPick
  */
 export function createStartupHubElement(onPick) {
+  const handlePick = typeof onPick === "function" ? onPick : null;
   const wrap = document.createElement("div");
   wrap.className = "chat-startup-hub";
   wrap.innerHTML = `
@@ -151,8 +152,9 @@ export function createStartupHubElement(onPick) {
   wrap.querySelectorAll(".card[data-flow]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const flow = /** @type {string} */ (btn.getAttribute("data-flow") || "");
+      if (!handlePick) return;
       if (flow === "fullset" || flow === "quiz" || flow === "slide" || flow === "flashcard") {
-        onPick(flow);
+        handlePick(flow);
       }
     });
   });

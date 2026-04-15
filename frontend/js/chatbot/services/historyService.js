@@ -18,3 +18,26 @@ export function inExperienceHistoryState() {
   const state = history.state && typeof history.state === "object" ? history.state : {};
   return state.phase === HISTORY_EXPERIENCE_PHASE;
 }
+
+/**
+ * @param {{
+ *   hasLastOpenedExperience: () => boolean,
+ *   hideLayer: () => void,
+ *   persistActiveExperience: () => void,
+ *   pushResumeDockFromLastOpened: () => void,
+ * }} deps
+ */
+export function createPopStateHandler(deps) {
+  const { hasLastOpenedExperience, hideLayer, persistActiveExperience, pushResumeDockFromLastOpened } = deps;
+  return function onPopState() {
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
+    if (!hasLastOpenedExperience()) {
+      hideLayer();
+      persistActiveExperience();
+      return;
+    }
+    hideLayer();
+    pushResumeDockFromLastOpened();
+  };
+}

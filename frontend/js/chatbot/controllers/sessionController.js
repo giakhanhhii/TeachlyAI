@@ -32,22 +32,32 @@ export function renderSessionListUI(deps) {
     onSessionDeleted,
   } = deps;
 
+  let actionInFlight = false;
+
   renderChatList(
     chatListEl,
     getSessionsSnapshot(),
     getActiveSessionIndex(),
     (idx) => {
-      void onSessionSelected(idx);
+      if (actionInFlight) return;
+      actionInFlight = true;
+      void Promise.resolve(onSessionSelected(idx)).finally(() => {
+        actionInFlight = false;
+      });
     },
     (action, idx) => {
+      if (actionInFlight) return;
       if (action === "pin") {
+        actionInFlight = true;
         if (togglePinSession(idx)) {
           saveSessions();
           renderSessionListUI(deps);
         }
+        actionInFlight = false;
         return;
       }
       if (action === "rename") {
+        actionInFlight = true;
         const currentSession = getSessionsSnapshot()[idx];
         const raw = window.prompt("Nhập tên mới cho đoạn chat", currentSession?.title || "");
         const nextTitle = typeof raw === "string" ? raw.trim() : "";
@@ -55,19 +65,30 @@ export function renderSessionListUI(deps) {
           saveSessions();
           renderSessionListUI(deps);
         }
+        actionInFlight = false;
         return;
       }
       if (action === "delete") {
+        actionInFlight = true;
         const ok = window.confirm("Bạn có chắc muốn xóa đoạn chat này?");
-        if (!ok) return;
-        if (deleteSession(idx)) {
-          void onSessionDeleted();
-          saveSessions();
-          renderSessionListUI(deps);
+        if (!ok) {
+          actionInFlight = false;
+          return;
         }
+        if (!deleteSession(idx)) {
+          actionInFlight = false;
+          return;
+        }
+        void Promise.resolve(onSessionDeleted())
+          .finally(() => {
+            saveSessions();
+            renderSessionListUI(deps);
+            actionInFlight = false;
+          });
         return;
       }
       if (action === "share") {
+        actionInFlight = true;
         const s = getSessionsSnapshot()[idx];
         const transcript = (s?.messages || [])
           .map((m) => `${m.role === "user" ? "Bạn" : "Teachly"}: ${m.text || ""}`)
@@ -81,7 +102,28 @@ export function renderSessionListUI(deps) {
         } else {
           window.alert("Trình duyệt không hỗ trợ clipboard.");
         }
+        actionInFlight = false;
       }
     },
   );
+}
+
+/**
+ * @param {{
+ *   newChatBtn: HTMLButtonElement,
+ *   onCreateNewChat: () => void | Promise<void>,
+ * }} deps
+ */
+export function bindNewChatButton(deps) {
+  const { newChatBtn, onCreateNewChat } = deps;
+  let creating = false;
+  newChatBtn.addEventListener("click", () => {
+    if (creating) return;
+    creating = true;
+    newChatBtn.disabled = true;
+    void Promise.resolve(onCreateNewChat()).finally(() => {
+      creating = false;
+      newChatBtn.disabled = false;
+    });
+  });
 }

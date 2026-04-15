@@ -3,12 +3,14 @@
  *   getCurrentSession: () => any,
  *   saveSessions: () => void,
  *   getMessageView: () => any,
+ *   postChat: (apiUrl: string, prompt: string, threadId?: string) => Promise<any>,
+ *   apiUrl: string,
  *   sendBtn: HTMLButtonElement,
  *   inputEl: HTMLInputElement | HTMLTextAreaElement,
  * }} deps
  */
 export function createMessageController(deps) {
-  const { getCurrentSession, saveSessions, getMessageView, sendBtn, inputEl } = deps;
+  const { getCurrentSession, saveSessions, getMessageView, postChat, apiUrl, sendBtn, inputEl } = deps;
 
   /**
    * @param {boolean} next
@@ -63,5 +65,41 @@ export function createMessageController(deps) {
     saveSessions();
   }
 
-  return { setSendingState, pushUser, pushBot };
+  /**
+   * @param {string} prompt
+   * @param {{
+   *   onSendingState: (next: boolean) => void,
+   *   onThreadUpdated: (threadId: string) => void,
+   *   onError: (message: string) => void,
+   *   onDone: () => void,
+   * }} hooks
+   */
+  async function sendPrompt(prompt, hooks) {
+    const current = getCurrentSession();
+    const msgView = getMessageView();
+    msgView.addMessage("user", prompt);
+    inputEl.value = "";
+    hooks.onSendingState(true);
+    const thinking = msgView.addThinkingBubble();
+    try {
+      const data = await postChat(apiUrl, prompt, current.thread_id);
+      current.thread_id = data.thread_id;
+      hooks.onThreadUpdated(current.thread_id);
+      thinking.row.remove();
+      await msgView.streamBotReply(data.reply);
+      current.messages.push({ role: "user", text: prompt });
+      current.messages.push({ role: "bot", text: data.reply });
+      current.messagesLoaded = true;
+      current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 2;
+      saveSessions();
+    } catch (err) {
+      thinking.row.remove();
+      hooks.onError(`Lỗi: ${err.message}`);
+    } finally {
+      hooks.onSendingState(false);
+      hooks.onDone();
+    }
+  }
+
+  return { setSendingState, pushUser, pushBot, sendPrompt };
 }
