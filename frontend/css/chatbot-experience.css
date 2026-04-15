@@ -11,6 +11,13 @@
   display: flex;
 }
 
+.message-bubble.startup,
+.bubble.bot.startup {
+  display: flex;
+  flex-direction: column;
+  min-height: fit-content;
+}
+
 .experience-toolbar {
   display: flex;
   align-items: center;

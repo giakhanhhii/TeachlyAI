@@ -37,6 +37,36 @@ export function createMessageView(opts) {
   } = opts;
 
   /**
+   * @param {{ label: string, value: string }} action
+   */
+  function createFlowActionButton(action) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "msg-action-btn";
+    b.textContent = action.label;
+    b.dataset.flowValue = action.value;
+    b.onclick = function () {
+      const flowValue = String(this.dataset.flowValue || "");
+      if (!flowValue) return;
+      onFlowAction(flowValue, this);
+    };
+    return b;
+  }
+
+  function reattachFlowActionHandlers() {
+    messagesInnerEl.querySelectorAll(".msg-action-btn").forEach((node) => {
+      const btn = /** @type {HTMLButtonElement} */ (node);
+      const flowValue = String(btn.dataset.flowValue || "");
+      if (!flowValue) return;
+      btn.onclick = function () {
+        const value = String(this.dataset.flowValue || "");
+        if (!value) return;
+        onFlowAction(value, this);
+      };
+    });
+  }
+
+  /**
    * @param {HTMLElement} contentNode
    * @param {string} [extraRowClass]
    */
@@ -104,14 +134,7 @@ export function createMessageView(opts) {
         const ar = document.createElement("div");
         ar.className = "msg-actions";
         actions.forEach((a) => {
-          const b = document.createElement("button");
-          b.type = "button";
-          b.className = "msg-action-btn";
-          b.textContent = a.label;
-          b.addEventListener("click", function () {
-            onFlowAction(a.value, this);
-          });
-          ar.appendChild(b);
+          ar.appendChild(createFlowActionButton(a));
         });
         bubble.appendChild(ar);
       }
@@ -173,14 +196,7 @@ export function createMessageView(opts) {
         const ar = document.createElement("div");
         ar.className = "msg-actions";
         actions.forEach((a) => {
-          const b = document.createElement("button");
-          b.type = "button";
-          b.className = "msg-action-btn";
-          b.textContent = a.label;
-          b.addEventListener("click", function () {
-            onFlowAction(a.value, this);
-          });
-          ar.appendChild(b);
+          ar.appendChild(createFlowActionButton(a));
         });
         bubble.appendChild(ar);
       }
@@ -205,6 +221,9 @@ export function createMessageView(opts) {
       }
     } else {
       bubble.textContent = text;
+    }
+    if (hasActions && !hasCard) {
+      bubble.classList.add("startup");
     }
 
     row.appendChild(avatar);
@@ -272,5 +291,13 @@ export function createMessageView(opts) {
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  return { addMessage, disableActionButtons, addThinkingBubble, streamBotReply, clear, appendStartupHub };
+  return {
+    addMessage,
+    disableActionButtons,
+    addThinkingBubble,
+    streamBotReply,
+    clear,
+    appendStartupHub,
+    reattachFlowActionHandlers,
+  };
 }

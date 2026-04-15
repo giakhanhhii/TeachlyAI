@@ -4,12 +4,17 @@ services:
       context: .
       target: dev
     container_name: teachly-app-dev
+    command: uvicorn src.api_server:app --host 0.0.0.0 --port 8000
     env_file:
       - .env
     ports:
       - "8000:8000"
+    cpus: 1.5
+    mem_limit: 1g
     volumes:
-      - ./:/app
+      - ./src:/app/src
+      - ./frontend:/app/frontend
+      - ./backend:/app/backend
       - teachly_data:/app/data
       - teachly_output:/app/output
     restart: unless-stopped

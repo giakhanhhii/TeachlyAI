@@ -35,6 +35,17 @@ import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
+import { createStartupHubElement } from "./dom/startupHubCards.js";
+import { createMessageController } from "./controllers/messageController.js";
+import { renderSessionListUI } from "./controllers/sessionController.js";
+import {
+  HISTORY_CHAT_PHASE,
+  HISTORY_EXPERIENCE_PHASE,
+  ensureHistoryBaseState,
+  ensureExperienceHistoryEntry,
+  inExperienceHistoryState,
+} from "./services/historyService.js";
+import { restoreCurrentSessionExperience as restoreCurrentSessionExperienceService } from "./services/experienceService.js";
 
 /** @type {any} */
 let guided = null;
@@ -42,8 +53,6 @@ let guided = null;
 /** Snapshot học liệu tương tác vừa mở (để quay lại chat thì gắn thẻ "Mở"). */
 let lastOpenedExperience = null;
 let resumeDockAlreadyPosted = false;
-const HISTORY_CHAT_PHASE = "chat";
-const HISTORY_EXPERIENCE_PHASE = "experience";
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 
 /**
@@ -217,6 +226,13 @@ export function init() {
   let isLoadingMore = false;
   /** @type {HTMLButtonElement | null} */
   let loadMoreBtn = null;
+  const messageController = createMessageController({
+    getCurrentSession,
+    saveSessions,
+    getMessageView: () => msgView,
+    sendBtn,
+    inputEl: input,
+  });
 
   /**
    * Toggle startup layout: wide hub + hide composer.
@@ -229,19 +245,117 @@ export function init() {
   }
 
   /**
+   * @param {string} value
+   */
+  function splitFlowActionValue(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return { action: "", meta: {} };
+    const [actionPart, metaPart = ""] = raw.split("|", 2);
+    const action = String(actionPart || "").trim().toLowerCase();
+    const meta = {};
+    if (metaPart) {
+      const params = new URLSearchParams(metaPart);
+      params.forEach((v, k) => {
+        const key = String(k || "").trim();
+        if (!key) return;
+        meta[key] = String(v || "").trim();
+      });
+    }
+    return { action, meta };
+  }
+
+  /**
    * Recover guided state for persisted action buttons.
    * This prevents old "Tải lên PDF / Nhập chủ đề trực tiếp" buttons
    * from becoming inert after reload/session switches.
    * @param {string} value
+   * @param {any} [prevGuided]
    */
-  function buildGuidedFromActionValue(value) {
-    const raw = String(value || "").trim().toLowerCase();
-    if (!raw) return null;
-    if (raw.startsWith("fullset_")) return { kind: "fullset", step: "await_source", data: {} };
-    if (raw.startsWith("slide_")) return { kind: "slide", step: "await_source", data: {} };
-    if (raw.startsWith("quiz_")) return { kind: "quiz", step: "await_source", data: {} };
-    if (raw.startsWith("flash_")) return { kind: "flash", step: "await_source", data: {} };
-    return null;
+  function buildGuidedFromActionValue(value, prevGuided) {
+    const { action, meta } = splitFlowActionValue(value);
+    if (!action) return null;
+    let kind = "";
+    if (action.startsWith("fullset_")) kind = "fullset";
+    else if (action.startsWith("slide_")) kind = "slide";
+    else if (action.startsWith("quiz_")) kind = "quiz";
+    else if (action.startsWith("flash_")) kind = "flash";
+    if (!kind) return null;
+    const prevData =
+      prevGuided && prevGuided.kind === kind && prevGuided.data && typeof prevGuided.data === "object"
+        ? prevGuided.data
+        : {};
+    return { kind, step: "await_source", data: { ...prevData, ...meta } };
+  }
+
+  /**
+   * @param {string} value
+   */
+  function normalizeFlowActionValue(value) {
+    return splitFlowActionValue(value).action;
+  }
+
+  function reattachStartupActionHandlers() {
+    msgView.reattachFlowActionHandlers?.();
+  }
+
+  /**
+   * @param {any} state
+   */
+  function hasGuidedKind(state) {
+    const kind = String(state?.kind || "");
+    return kind === "fullset" || kind === "slide" || kind === "quiz" || kind === "flash";
+  }
+
+  /**
+   * @param {string} value
+   * @param {HTMLButtonElement} btnEl
+   */
+  async function handlePdfSourceAction(value, btnEl) {
+    btnEl.disabled = true;
+    const file = await pickPdfWithDialog();
+    btnEl.disabled = false;
+    if (!file) {
+      const again = getRestartAwaitSourceEffects(guided.kind);
+      if (again.length) await applyEffects(again);
+      return;
+    }
+    if (value === "fullset_pdf") setPendingPdfFile(file);
+    const result = computePickAction(guided, value, {
+      pdfFile: value === "slide_pdf" || value === "quiz_pdf" || value === "flash_pdf" ? file : undefined,
+    });
+    if (!result.handled) return;
+    msgView.disableActionButtons(btnEl);
+    guided = result.guided;
+    await applyEffects(result.effects);
+  }
+
+  /**
+   * @param {string} rawValue
+   * @param {HTMLButtonElement} btnEl
+   */
+  function onFlowAction(rawValue, btnEl) {
+    const value = normalizeFlowActionValue(rawValue);
+    if (!value) return;
+
+    if (!hasGuidedKind(guided)) {
+      const recovered = buildGuidedFromActionValue(rawValue, guided);
+      if (!hasGuidedKind(recovered)) {
+        pushBot("Không thể khôi phục trạng thái phiên hiện tại. Bạn bắt đầu lại giúp mình nhé.");
+        return;
+      }
+      guided = recovered;
+    }
+
+    if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
+      void handlePdfSourceAction(value, btnEl);
+      return;
+    }
+
+    const result = computePickAction(guided, value);
+    if (!result.handled) return;
+    msgView.disableActionButtons(btnEl);
+    guided = result.guided;
+    void applyEffects(result.effects);
   }
 
   /**
@@ -255,15 +369,7 @@ export function init() {
 
   function setSendingState(next) {
     isSending = Boolean(next);
-    sendBtn.disabled = isSending;
-    input.disabled = isSending;
-    if (isSending) {
-      sendBtn.dataset.pendingText = sendBtn.textContent || "";
-      sendBtn.textContent = "Sending...";
-    } else if (sendBtn.dataset.pendingText) {
-      sendBtn.textContent = sendBtn.dataset.pendingText;
-      delete sendBtn.dataset.pendingText;
-    }
+    messageController.setSendingState(isSending);
   }
 
   function removeLoadMoreButton() {
@@ -286,24 +392,6 @@ export function init() {
           Boolean(m.resumeDock) ||
           (Array.isArray(m.actions) && m.actions.length > 0)),
     );
-  }
-
-  function ensureHistoryBaseState() {
-    const state = history.state && typeof history.state === "object" ? history.state : {};
-    if (state.phase === HISTORY_CHAT_PHASE || state.phase === HISTORY_EXPERIENCE_PHASE) return;
-    history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
-  }
-
-  function ensureExperienceHistoryEntry() {
-    ensureHistoryBaseState();
-    const state = history.state && typeof history.state === "object" ? history.state : {};
-    if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
-    history.pushState({ ...state, phase: HISTORY_EXPERIENCE_PHASE }, "", location.href);
-  }
-
-  function inExperienceHistoryState() {
-    const state = history.state && typeof history.state === "object" ? history.state : {};
-    return state.phase === HISTORY_EXPERIENCE_PHASE;
   }
 
   function pushResumeDockFromLastOpened() {
@@ -348,10 +436,7 @@ export function init() {
   }
 
   function pushUser(text) {
-    const current = getCurrentSession();
-    msgView.addMessage("user", text);
-    current.messages.push({ role: "user", text });
-    saveSessions();
+    messageController.pushUser(text);
   }
 
   /**
@@ -386,26 +471,7 @@ export function init() {
    * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType?, resumeDock? }`
    */
   function pushBot(text, opts) {
-    const current = getCurrentSession();
-    /** @type {{ label: string, value: string }[]} */
-    let actions = [];
-    /** @type {string | undefined} */
-    let cardType;
-    /** @type {any} */
-    let resumeDock;
-    if (Array.isArray(opts)) actions = opts;
-    else if (opts && typeof opts === "object") {
-      if (Array.isArray(opts.actions)) actions = opts.actions;
-      if (typeof opts.cardType === "string") cardType = opts.cardType;
-      if (opts.resumeDock) resumeDock = opts.resumeDock;
-    }
-    msgView.addMessage("bot", text, { actions, cardType, resumeDock });
-    const entry = { role: "bot", text };
-    if (actions.length) entry.actions = actions;
-    if (cardType) entry.cardType = cardType;
-    if (resumeDock) entry.resumeDock = resumeDock;
-    current.messages.push(entry);
-    saveSessions();
+    messageController.pushBot(text, opts);
   }
 
   function openChatWithAiDraft(text) {
@@ -599,20 +665,17 @@ export function init() {
   }
 
   async function restoreCurrentSessionExperience() {
-    const restored = readPersistedActiveExperience();
-    if (!restored) {
-      layerView.hide();
-      return;
-    }
-    lastOpenedExperience = restored;
-    ensureExperienceHistoryEntry();
-    if (restored.bundleBack && Array.isArray(restored.items)) {
-      await openResumeOpenAll(restored.items, restored.title || "Full set");
-    } else if (restored.fullsetMixedBack && restored.fullsetMixed) {
-      await openResumeFullSetMixed(restored.fullsetMixed, restored.title || "Full set");
-    } else if (restored.kind) {
-      await openResumeExperience({ kind: restored.kind, meta: restored.meta || {} });
-    }
+    await restoreCurrentSessionExperienceService({
+      readPersistedActiveExperience,
+      setLastOpenedExperience: (resume) => {
+        lastOpenedExperience = resume;
+      },
+      ensureExperienceHistoryEntry,
+      hideLayer: () => layerView.hide(),
+      openResumeOpenAll,
+      openResumeFullSetMixed,
+      openResumeExperience,
+    });
   }
 
   msgView = createMessageView({
@@ -627,38 +690,7 @@ export function init() {
     onResumeOpenFullSetMixed: (spec, bundleTitle) => {
       void openResumeFullSetMixed(spec, bundleTitle);
     },
-    onFlowAction(value, btnEl) {
-      if (!guided) {
-        const recovered = buildGuidedFromActionValue(value);
-        if (recovered) guided = recovered;
-      }
-      if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
-        void (async () => {
-          btnEl.disabled = true;
-          const file = await pickPdfWithDialog();
-          btnEl.disabled = false;
-          if (!file) {
-            const again = getRestartAwaitSourceEffects(guided.kind);
-            if (again.length) await applyEffects(again);
-            return;
-          }
-          if (value === "fullset_pdf") setPendingPdfFile(file);
-          const result = computePickAction(guided, value, {
-            pdfFile: value === "slide_pdf" || value === "quiz_pdf" || value === "flash_pdf" ? file : undefined,
-          });
-          if (!result.handled) return;
-          msgView.disableActionButtons(btnEl);
-          guided = result.guided;
-          await applyEffects(result.effects);
-        })();
-        return;
-      }
-      const result = computePickAction(guided, value);
-      if (!result.handled) return;
-      msgView.disableActionButtons(btnEl);
-      guided = result.guided;
-      void applyEffects(result.effects);
-    },
+    onFlowAction,
     onFlowCardSubmit(cardType, payload, cardRoot) {
       const result = computeFlowCardSubmit(guided, cardType, payload);
       if (!result.handled) {
@@ -678,77 +710,39 @@ export function init() {
   });
 
   function renderChatListUI() {
-    renderChatList(
-      /** @type {HTMLElement} */(chatList),
-      getSessionsSnapshot(),
-      getActiveSessionIndex(),
-      (idx) => {
-        void (async () => {
-          persistActiveExperience();
-          setActiveSessionIndex(idx);
-          guided = null;
-          lastOpenedExperience = null;
-          layerView.hide();
-          saveSessions();
-          try {
-            await ensureSessionMessagesLoaded();
-          } catch {
-            // Keep local cache if remote loading fails.
-          }
-          renderChatListUI();
-          renderMessages();
-          await restoreCurrentSessionExperience();
-        })();
+    renderSessionListUI({
+      chatListEl: /** @type {HTMLElement} */ (chatList),
+      renderChatList,
+      getSessionsSnapshot,
+      getActiveSessionIndex,
+      togglePinSession,
+      renameSession,
+      deleteSession,
+      saveSessions,
+      onSessionSelected: async (idx) => {
+        persistActiveExperience();
+        setActiveSessionIndex(idx);
+        guided = null;
+        lastOpenedExperience = null;
+        layerView.hide();
+        saveSessions();
+        try {
+          await ensureSessionMessagesLoaded();
+        } catch {
+          // Keep local cache if remote loading fails.
+        }
+        renderChatListUI();
+        renderMessages();
+        await restoreCurrentSessionExperience();
       },
-      (action, idx) => {
-        if (action === "pin") {
-          if (togglePinSession(idx)) {
-            saveSessions();
-            renderChatListUI();
-          }
-          return;
-        }
-        if (action === "rename") {
-          const currentSession = getSessionsSnapshot()[idx];
-          const raw = window.prompt("Nhập tên mới cho đoạn chat", currentSession?.title || "");
-          const nextTitle = typeof raw === "string" ? raw.trim() : "";
-          if (nextTitle && renameSession(idx, nextTitle)) {
-            saveSessions();
-            renderChatListUI();
-          }
-          return;
-        }
-        if (action === "delete") {
-          const ok = window.confirm("Bạn có chắc muốn xóa đoạn chat này?");
-          if (!ok) return;
-          if (deleteSession(idx)) {
-            guided = null;
-            lastOpenedExperience = null;
-            persistActiveExperience();
-            layerView.hide();
-            saveSessions();
-            renderChatListUI();
-            renderMessages();
-          }
-          return;
-        }
-        if (action === "share") {
-          const s = getSessionsSnapshot()[idx];
-          const transcript = (s?.messages || [])
-            .map((m) => `${m.role === "user" ? "Bạn" : "Teachly"}: ${m.text || ""}`)
-            .join("\n");
-          const payload = `${s?.title || "Đoạn chat"}\n\n${transcript}`;
-          if (navigator.clipboard?.writeText) {
-            navigator.clipboard.writeText(payload).then(
-              () => window.alert("Đã sao chép nội dung cuộc trò chuyện."),
-              () => window.alert("Không thể sao chép tự động. Vui lòng thử lại."),
-            );
-          } else {
-            window.alert("Trình duyệt không hỗ trợ clipboard.");
-          }
-        }
+      onSessionDeleted: async () => {
+        guided = null;
+        lastOpenedExperience = null;
+        persistActiveExperience();
+        layerView.hide();
+        renderMessages();
       },
-    );
+    });
   }
 
   /**
@@ -826,6 +820,8 @@ export function init() {
     guided = null;
     lastOpenedExperience = null;
     layerView.hide();
+    // Leaving startup hub: restore normal chat layout and composer.
+    setStartupUiState(false);
     saveSessions();
     renderChatListUI();
     msgView.clear();
@@ -888,6 +884,8 @@ export function init() {
     guided = null;
     lastOpenedExperience = null;
     layerView.hide();
+    // Entering an actual guided flow should not keep startup hub layout.
+    setStartupUiState(false);
     saveSessions();
     renderChatListUI();
     try {
@@ -993,8 +991,12 @@ export function init() {
       saveSessions();
     }
     if (!current.messages.length) {
-      // Keep normal chat layout for new/empty sessions (do not hide composer).
-      setStartupUiState(false);
+      // Empty sessions should show startup hub instead of blank white area.
+      setStartupUiState(true);
+      const startupHub = createStartupHubElement((flowKind) => {
+        void startFlowInCurrentSession(flowKind);
+      });
+      msgView.appendStartupHub(startupHub);
       requestAnimationFrame(() => {
         messages.scrollTop = 0;
       });
@@ -1013,6 +1015,7 @@ export function init() {
       });
     }
     renderLoadMoreControl();
+    reattachStartupActionHandlers();
     threadLabel.textContent = current.thread_id ? `Thread: ${current.thread_id}` : "";
   }
 

@@ -17,7 +17,8 @@ COPY .env.example ./.env.example
 
 RUN mkdir -p /app/data /app/output && \
     useradd --create-home --shell /bin/bash appuser && \
-    chown -R appuser:appuser /app
+    chown -R appuser:appuser /app && \
+    chown -R appuser:appuser /app/data /app/output
 
 EXPOSE 8000
 
