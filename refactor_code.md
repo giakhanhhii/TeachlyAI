@@ -32,4 +32,4 @@
 5. **UI Polish**: Add the "pending" state handling in `chatController.js`.
 
 ---
-**Rule**: DO NOT modify the CSS files or the HTML structure of the messages. Keep the `messages` array format identical to ensure `renderMessages()` remains functional
+**Rule**: DO NOT modify the CSS files or the HTML structure of the messages. Keep the `messages` array format identical to ensure `renderMessages()` remains functional.
