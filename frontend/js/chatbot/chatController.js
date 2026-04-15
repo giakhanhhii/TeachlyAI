@@ -34,7 +34,6 @@ import { mountSlideExperience } from "./dom/slideExperienceView.js";
 import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
-import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { renderChatList } from "./dom/chatListView.js";
 
 /** @type {any} */
@@ -227,6 +226,22 @@ export function init() {
     const isActive = Boolean(active);
     chatPhase.classList.toggle("startup-mode", isActive);
     messages.classList.toggle("startup-mode", isActive);
+  }
+
+  /**
+   * Recover guided state for persisted action buttons.
+   * This prevents old "Tải lên PDF / Nhập chủ đề trực tiếp" buttons
+   * from becoming inert after reload/session switches.
+   * @param {string} value
+   */
+  function buildGuidedFromActionValue(value) {
+    const raw = String(value || "").trim().toLowerCase();
+    if (!raw) return null;
+    if (raw.startsWith("fullset_")) return { kind: "fullset", step: "await_source", data: {} };
+    if (raw.startsWith("slide_")) return { kind: "slide", step: "await_source", data: {} };
+    if (raw.startsWith("quiz_")) return { kind: "quiz", step: "await_source", data: {} };
+    if (raw.startsWith("flash_")) return { kind: "flash", step: "await_source", data: {} };
+    return null;
   }
 
   /**
@@ -613,6 +628,10 @@ export function init() {
       void openResumeFullSetMixed(spec, bundleTitle);
     },
     onFlowAction(value, btnEl) {
+      if (!guided) {
+        const recovered = buildGuidedFromActionValue(value);
+        if (recovered) guided = recovered;
+      }
       if (guided?.step === "await_source" && PDF_SOURCE_ACTION_VALUES.has(value)) {
         void (async () => {
           btnEl.disabled = true;
@@ -974,12 +993,8 @@ export function init() {
       saveSessions();
     }
     if (!current.messages.length) {
-      setStartupUiState(true);
-      const hub = createStartupHubElement((fk) => {
-        void startFlowInCurrentSession(fk);
-      });
-      msgView.appendStartupHub(hub);
-      // Empty-session startup UI should open at the top, not anchored to bottom.
+      // Keep normal chat layout for new/empty sessions (do not hide composer).
+      setStartupUiState(false);
       requestAnimationFrame(() => {
         messages.scrollTop = 0;
       });
@@ -1059,6 +1074,7 @@ export function init() {
     renderChatListUI();
     renderMessages();
     saveSessions();
+    input.focus();
   });
 
   document.getElementById("backToChatBtn").addEventListener("click", () => {

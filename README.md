@@ -61,6 +61,25 @@ uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
 python3 -m src.agent
 ```
 
+### 4. Run with Docker (Dev)
+
+```bash
+# Build and start FastAPI + static frontend (hot reload enabled)
+docker compose up --build
+
+# Stop containers
+docker compose down
+```
+
+App URL: `http://127.0.0.1:8000`
+
+### 5. Run with Docker (Prod profile)
+
+```bash
+# Build and start production-like container on port 8001
+docker compose --profile prod up --build app-prod
+```
+
 ## Weekly Journal
 
 Update **[JOURNAL.md](./JOURNAL.md)** at the end of every week to document your product-building journey:

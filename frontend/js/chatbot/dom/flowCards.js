@@ -207,6 +207,56 @@ function randomFullsetTripleSum40() {
   return { sn: 10, qn: 20, fn: 10 };
 }
 
+/**
+ * @param {string | number} value
+ * @param {number} fallback
+ */
+function toPositiveInt(value, fallback) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  const int = Math.floor(n);
+  return int > 0 ? int : fallback;
+}
+
+/**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ */
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+/**
+ * Normalize fullset counts so constraints are always valid:
+ * - slide in [1, 30]
+ * - quiz >= 1
+ * - flash >= 1
+ * - total <= 40
+ * @param {string | number} slideRaw
+ * @param {string | number} quizRaw
+ * @param {string | number} flashRaw
+ */
+function normalizeFullsetCounts(slideRaw, quizRaw, flashRaw) {
+  let sn = clamp(toPositiveInt(slideRaw, 10), 1, 30);
+  let qn = toPositiveInt(quizRaw, 20);
+  let fn = toPositiveInt(flashRaw, 10);
+
+  if (qn < 1) qn = 1;
+  if (fn < 1) fn = 1;
+
+  let sum = sn + qn + fn;
+  if (sum <= 40) return { sn, qn, fn };
+
+  // Reserve at least 1 slot for quiz and flash.
+  sn = Math.min(sn, 38);
+  let remaining = 40 - sn;
+  qn = Math.min(qn, Math.max(1, remaining - 1));
+  remaining = 40 - sn - qn;
+  fn = Math.max(1, remaining);
+  return { sn, qn, fn };
+}
+
 /** @param {{ onSubmit: (p: Record<string, string>) => void }} deps */
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card");
@@ -214,11 +264,12 @@ export function createFullsetTopicCard(deps) {
 
   addAutofillBtn(root, () => {
     const s = SAMPLES_FULLSET[autofillCounters.fullset++ % SAMPLES_FULLSET.length];
+    const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
     topic.value = s.t;
     level.value = s.l;
-    slides.value = s.s;
-    quiz.value = s.q;
-    flash.value = s.f;
+    slides.value = String(sn);
+    quiz.value = String(qn);
+    flash.value = String(fn);
     extra.value = s.e;
   });
 
@@ -417,7 +468,9 @@ function createPdfMetaCard(opts) {
 
   addAutofillBtn(root, () => {
     name.value = "Bài tập từ PDF";
-    count.value = String(countMax || 20);
+    const max = countMax == null ? Number.MAX_SAFE_INTEGER : countMax;
+    const defaultNum = clamp(toPositiveInt(defaultCount, 20), countMin, max);
+    count.value = String(defaultNum);
     structure.value = "Tự động phân tích từ tài liệu";
     style.value = "Gần gũi";
     notes.value = "Bám sát nội dung tệp PDF đã tải lên.";
@@ -726,7 +779,7 @@ export function createSlideFormCard(deps) {
   addAutofillBtn(root, () => {
     const s = SAMPLES_SLIDE[autofillCounters.slide++ % SAMPLES_SLIDE.length];
     docText.value = s.t;
-    count.value = s.c;
+    count.value = String(clamp(toPositiveInt(s.c, 10), 1, 30));
     structure.value = s.s;
     style.value = s.y;
     notes.value = s.n;
@@ -853,7 +906,7 @@ export function createQuizFormCard(deps) {
     const item = SAMPLES_QUIZ[autofillCounters.quiz++ % SAMPLES_QUIZ.length];
     srcText.value = item.s;
     kind.value = item.k;
-    qn.value = item.q;
+    qn.value = String(toPositiveInt(item.q, 20));
     diff.value = item.d;
     notes.value = item.n;
   });
@@ -973,7 +1026,7 @@ export function createFlashcardFormCard(deps) {
     const s = SAMPLES_FLASH[autofillCounters.flash++ % SAMPLES_FLASH.length];
     list.value = s.l;
     back.value = s.b;
-    count.value = s.c;
+    count.value = String(clamp(toPositiveInt(s.c, 20), 1, 40));
     notes.value = s.n;
   });
 
