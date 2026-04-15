@@ -1,4 +1,3 @@
- @@
 # Starter Code App
 
 A template for building AI Agents in Python.
@@ -39,45 +38,17 @@ bash scripts/setup_hooks.sh
 cp .env.example .env
 ```
 
-Open `.env` and fill in at least one key:
-- `ANTHROPIC_API_KEY` (for `src/api_server.py`)
-- `OPENAI_API_KEY` (for `src/agent.py`)
-
-The `AI_LOG_*` variables are pre-filled.
+Open `.env` and fill in your `ANTHROPIC_API_KEY`. The `AI_LOG_*` variables are pre-filled.
 
 ### 3. Run
 
 ```bash
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate       # Linux/Mac
 # or: venv\Scripts\activate    # Windows
 
 pip install -r requirements.txt
-
-# Option A: Run local API + static frontend (one port)
-uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
-
-# Option B: Run CLI agent loop
-python3 -m src.agent
-```
-
-### 4. Run with Docker (Dev)
-
-```bash
-# Build and start FastAPI + static frontend (hot reload enabled)
-docker compose up --build
-
-# Stop containers
-docker compose down
-```
-
-App URL: `http://127.0.0.1:8000`
-
-### 5. Run with Docker (Prod profile)
-
-```bash
-# Build and start production-like container on port 8001
-docker compose --profile prod up --build app-prod
+python -m src.agent
 ```
 
 ## Weekly Journal
@@ -106,6 +77,3 @@ See each file for the format and examples.
 ## AI Logging
 
 Prompts and tool calls are **automatically logged** when you use any supported AI tool (Claude Code, Cursor, Codex, Gemini, Copilot). No manual steps needed after running `setup_hooks.sh`.
-
-See [AGENTS.md](./AGENTS.md) for details.
-See [AGENTS.md](./AGENTS.md) for details.......
