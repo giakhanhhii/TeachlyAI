@@ -70,21 +70,20 @@ export function renderSessionListUI(deps) {
       }
       if (action === "delete") {
         actionInFlight = true;
-        const ok = window.confirm("Bạn có chắc muốn xóa đoạn chat này?");
-        if (!ok) {
-          actionInFlight = false;
-          return;
-        }
-        if (!deleteSession(idx)) {
-          actionInFlight = false;
-          return;
-        }
-        void Promise.resolve(onSessionDeleted())
-          .finally(() => {
+        void (async () => {
+          try {
+            const ok = window.confirm("Bạn có chắc muốn xóa đoạn chat này?");
+            if (!ok) return;
+            if (!deleteSession(idx)) return;
+            await Promise.resolve(onSessionDeleted());
             saveSessions();
             renderSessionListUI(deps);
+          } catch (err) {
+            console.error("Delete session action failed:", err);
+          } finally {
             actionInFlight = false;
-          });
+          }
+        })();
         return;
       }
       if (action === "share") {

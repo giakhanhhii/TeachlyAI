@@ -5,7 +5,10 @@ Resolve the issue where all UI elements (Sidebar, New Chat button, Hub Cards, Ho
 
 ## 2. Debugging & Fix Steps (For Cursor)
 
-### Step 1: Check for Initialization Crash
+### Step 0: Critical Bug Fixes (High Priority)
+- **Fix Initialization Crash:** Ensure the `init()` function in `chatController.js` does NOT abort entirely if a DOM element (like `topHomeBtn` or `toggleSidebar`) is missing. Use optional chaining or simple null checks to prevent crashing the whole app.
+- **Fix UI Lock-out:** In the session `delete` action handler, ensure the `actionInFlight` flag is reset to `false` even if the user cancels the `window.confirm` dialog.
+- **Fix Deletion Race Condition:** Ensure all asynchronous operations in `onSessionDeleted` and the deletion logic are correctly sequenced to prevent UI inconsistency.
 A "paralyzed" system usually means the `init()` function in `chatController.js` crashed midway, stopping further execution.
 - **Verify Imports:** Ensure all imported files in `chatController.js` (e.g., `messageController.js`, `sessionController.js`, `historyService.js`) exist at the correct paths.
 - **Add Debug Logs:** Insert `console.log("Init started")` at the beginning of `init()` and at key milestones to identify exactly where the script stops.

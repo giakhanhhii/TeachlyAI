@@ -116,9 +116,6 @@ export function init() {
     chatPhase,
     experienceLayer,
     experienceBody,
-    backToChatBtn,
-    toggleSidebarBtn,
-    topHomeBtn,
   };
   const missingIds = Object.entries(requiredEls)
     .filter(([, el]) => !el)
@@ -126,6 +123,13 @@ export function init() {
   if (missingIds.length) {
     console.error("[chatController] init aborted. Missing required elements:", missingIds);
     return;
+  }
+  const optionalEls = { backToChatBtn, toggleSidebarBtn, topHomeBtn };
+  const missingOptionalIds = Object.entries(optionalEls)
+    .filter(([, el]) => !el)
+    .map(([name]) => name);
+  if (missingOptionalIds.length) {
+    console.warn("[chatController] optional controls missing, continue init:", missingOptionalIds);
   }
 
   const apiUrl = getChatApiUrl();
@@ -728,7 +732,7 @@ export function init() {
     },
   });
 
-  backToChatBtn.addEventListener("click", () => {
+  backToChatBtn?.addEventListener("click", () => {
     if (inExperienceHistoryState()) {
       history.back();
       return;
@@ -737,11 +741,11 @@ export function init() {
     pushResumeDockFromLastOpened();
   });
 
-  toggleSidebarBtn.addEventListener("click", () => {
-    document.getElementById("sidebar").classList.toggle("collapsed");
+  toggleSidebarBtn?.addEventListener("click", () => {
+    document.getElementById("sidebar")?.classList.toggle("collapsed");
   });
 
-  topHomeBtn.addEventListener("click", () => {
+  topHomeBtn?.addEventListener("click", () => {
     location.href = "main_hub.html";
   });
 
