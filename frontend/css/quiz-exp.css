@@ -1,0 +1,132 @@
+.quiz-card {
+  max-width: 640px;
+  margin: 0 auto 20px;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #f9fdf9;
+}
+
+.quiz-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-opt {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.quiz-opt:hover {
+  border-color: var(--green);
+  background: #f1f8e9;
+}
+
+.quiz-opt.selected {
+  border-color: var(--green-dark);
+  background: #e8f5e9;
+}
+
+.exp-q-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.exp-q-text {
+  font-size: 1rem;
+  line-height: 1.55;
+  margin: 0 0 18px;
+  color: #212121;
+}
+
+.exp-q-text strong {
+  font-weight: 700;
+}
+
+.exp-option-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exp-opt-btn {
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  background: #f5f5f5;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.exp-opt-btn:hover:not(:disabled) {
+  border-color: #bdbdbd;
+  background: #eeeeee;
+}
+
+.exp-opt-btn.selected {
+  border-color: #1976d2;
+  background: #e3f2fd;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+}
+
+.exp-opt-btn.correct {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+}
+
+.exp-opt-btn.wrong {
+  border-color: #c62828;
+  background: #ffebee;
+}
+
+.exp-hint-toggle {
+  margin-top: 14px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1565c0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.exp-chevron {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.exp-chevron-up {
+  transform: rotate(180deg);
+}
+
+.exp-hint-panel {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f5f5f5;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #424242;
+}
+
