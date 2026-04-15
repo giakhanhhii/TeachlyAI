@@ -120,5 +120,9 @@ See [AGENTS.md](./AGENTS.md) for details.
 
 =======
 See [AGENTS.md](./AGENTS.md) for details..
+<<<<<<< HEAD
 >>>>>>> more-ui-features
+=======
+>>>>>>> more-ui-features
+
 
