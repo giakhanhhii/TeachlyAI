@@ -35,7 +35,6 @@ import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { renderChatList } from "./dom/chatListView.js";
-import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { createMessageController } from "./controllers/messageController.js";
 import { bindNewChatButton, renderSessionListUI } from "./controllers/sessionController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
@@ -46,6 +45,9 @@ import {
   inExperienceHistoryState,
 } from "./services/historyService.js";
 import { createFlowActionHandler } from "./services/flowIntegration.js";
+import { createFlowService, normalizeFlowParam } from "./services/flowService.js";
+import { createMessageHistoryService } from "./services/messageHistoryService.js";
+import { createStartupHubElement } from "./dom/startupHubCards.js";
 
 /** @type {any} */
 let guided = null;
@@ -147,9 +149,6 @@ export function init() {
   /** @type {ReturnType<typeof createExperienceController>} */
   let experienceController;
   let isSending = false;
-  let isLoadingMore = false;
-  /** @type {HTMLButtonElement | null} */
-  let loadMoreBtn = null;
   const messageController = createMessageController({
     getCurrentSession,
     saveSessions,
@@ -174,40 +173,9 @@ export function init() {
     msgView.reattachFlowActionHandlers?.();
   }
 
-  /**
-   * @param {{ role: string, text?: string, content?: string }} message
-   */
-  function normalizeRemoteMessage(message) {
-    const role = message?.role === "assistant" || message?.role === "bot" ? "bot" : "user";
-    const text = String(message?.text ?? message?.content ?? "");
-    return { role, text };
-  }
-
   function setSendingState(next) {
     isSending = Boolean(next);
     messageController.setSendingState(isSending);
-  }
-
-  function removeLoadMoreButton() {
-    if (loadMoreBtn?.parentElement) loadMoreBtn.parentElement.remove();
-    loadMoreBtn = null;
-  }
-
-  /**
-   * Avoid replacing local rich messages (actions/cards/resume dock) with
-   * plain DB history because that would break interactive card behavior.
-   * @param {any[]} messages
-   */
-  function hasInteractiveMessages(messages) {
-    if (!Array.isArray(messages)) return false;
-    return messages.some(
-      (m) =>
-        m &&
-        typeof m === "object" &&
-        (Boolean(m.cardType) ||
-          Boolean(m.resumeDock) ||
-          (Array.isArray(m.actions) && m.actions.length > 0)),
-    );
   }
 
   function pushResumeDockFromLastOpened() {
@@ -370,6 +338,28 @@ export function init() {
     },
   });
 
+  /** @type {ReturnType<typeof createMessageHistoryService>} */
+  let messageHistoryService;
+  /** @type {ReturnType<typeof createFlowService>} */
+  let flowService;
+
+  function updateThreadLabel() {
+    const current = getCurrentSession();
+    threadLabel.textContent = current?.thread_id ? `Thread: ${current.thread_id}` : "";
+  }
+
+  function ensureSessionMessagesLoaded(force = false) {
+    return messageHistoryService.ensureSessionMessagesLoaded(force);
+  }
+
+  function renderMessages() {
+    messageHistoryService.renderMessages();
+  }
+
+  function renderLoadMoreControl() {
+    messageHistoryService.renderLoadMoreControl();
+  }
+
   function renderChatListUI() {
     renderSessionListUI({
       chatListEl: /** @type {HTMLElement} */ (chatList),
@@ -406,279 +396,51 @@ export function init() {
     });
   }
 
-  /**
-   * @param {string | null} flow
-   * @returns {"fullset"|"quiz"|"slide"|"flashcard"|null}
-   */
-  function normalizeFlowParam(flow) {
-    const raw = String(flow || "").trim().toLowerCase();
-    if (!raw) return null;
-    if (raw === "image" || raw === "flash" || raw === "flashcard") return "flashcard";
-    if (raw === "quiz" || raw === "slide" || raw === "fullset") return raw;
-    return null;
-  }
+  flowService = createFlowService({
+    getSessionsSnapshot,
+    findLatestSessionIndexByExperienceKind,
+    persistActiveExperience,
+    getCurrentSession,
+    setCurrentExperienceState,
+    createSession,
+    setActiveSessionIndex,
+    saveSessions,
+    renderChatListUI,
+    ensureSessionMessagesLoaded: (force) => ensureSessionMessagesLoaded(force),
+    renderMessages,
+    restoreCurrentSessionExperience,
+    computeStartFlow,
+    applyEffects,
+    setStartupUiState,
+    clearMessages: () => msgView.clear(),
+    renderLoadMoreControl,
+    updateThreadLabel,
+    setGuided: (next) => {
+      guided = next;
+    },
+    resetResumeState: () => experienceController.resetResumeState(),
+    hideLayer: () => layerView.hide(),
+  });
 
-  /**
-   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
-   */
-  function flowToExperienceKind(flowKind) {
-    return flowKind === "flashcard" ? "flash" : flowKind;
-  }
-
-  /**
-   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
-   */
-  function flowSessionBaseTitle(flowKind) {
-    if (flowKind === "fullset") return "Tạo full set";
-    if (flowKind === "quiz") return "Tạo quiz";
-    if (flowKind === "slide") return "Tạo slide";
-    return "Tạo flashcard";
-  }
-
-  /**
-   * @param {ReturnType<typeof getCurrentSession>} session
-   */
-  function canReuseEmptySession(session) {
-    if (!session || typeof session !== "object") return false;
-    if (session.thread_id) return false;
-    const msgs = session.messages;
-    if (!Array.isArray(msgs) || msgs.length > 0) return false;
-    return true;
-  }
-
-  /**
-   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
-   */
-  function buildNextFlowSessionTitle(flowKind) {
-    const base = flowSessionBaseTitle(flowKind);
-    const escaped = base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const rx = new RegExp(`^${escaped}\\s+(\\d+)$`, "i");
-    let max = 0;
-    getSessionsSnapshot().forEach((s) => {
-      const m = String(s?.title || "").match(rx);
-      if (!m) return;
-      const n = Number(m[1]);
-      if (Number.isFinite(n)) max = Math.max(max, n);
-    });
-    return `${base} ${max + 1}`;
-  }
-
-  /**
-   * Fresh-start flow inside the current chat (e.g. startup cards). No URL navigation.
-   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
-   */
-  async function startFlowInCurrentSession(flowKind) {
-    const expKind = flowToExperienceKind(flowKind);
-    persistActiveExperience();
-    const current = getCurrentSession();
-    current.title = buildNextFlowSessionTitle(flowKind);
-    setCurrentExperienceState({
-      kind: expKind,
-      meta: { flow: flowKind },
-      progress: null,
-      completed: false,
-    });
-    guided = null;
-    experienceController.resetResumeState();
-    layerView.hide();
-    // Leaving startup hub: restore normal chat layout and composer.
-    setStartupUiState(false);
-    saveSessions();
-    renderChatListUI();
-    msgView.clear();
-    const start = computeStartFlow(flowKind);
-    guided = start.guided;
-    await applyEffects(start.effects);
-    saveSessions();
-    renderLoadMoreControl();
-    const cur = getCurrentSession();
-    threadLabel.textContent = cur?.thread_id ? `Thread: ${cur.thread_id}` : "";
-  }
-
-  /**
-   * Entry from Main Hub (`?flow=`): resume latest session for that experience, or start new flow.
-   * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
-   */
-  async function handleFlowEntry(flowKind) {
-    const expKind = flowToExperienceKind(flowKind);
-    const latestIdx = findLatestSessionIndexByExperienceKind(expKind);
-    if (latestIdx >= 0) {
-      persistActiveExperience();
-      setActiveSessionIndex(latestIdx);
-      guided = null;
-      experienceController.resetResumeState();
-      layerView.hide();
-      saveSessions();
-      renderChatListUI();
-      try {
-        await ensureSessionMessagesLoaded();
-      } catch {
-        // Keep local cache if remote loading fails.
-      }
-      renderMessages();
-      await restoreCurrentSessionExperience();
-      history.replaceState({}, "", "chatbot_ui.html");
-      return;
-    }
-
-    persistActiveExperience();
-    const cur = getCurrentSession();
-    if (canReuseEmptySession(cur)) {
-      cur.title = buildNextFlowSessionTitle(flowKind);
-      setCurrentExperienceState({
-        kind: expKind,
-        meta: { flow: flowKind },
-        progress: null,
-        completed: false,
-      });
-    } else {
-      createSession({
-        title: buildNextFlowSessionTitle(flowKind),
-        experienceState: {
-          kind: expKind,
-          meta: { flow: flowKind },
-          progress: null,
-          completed: false,
-        },
-      });
-    }
-    guided = null;
-    experienceController.resetResumeState();
-    layerView.hide();
-    // Entering an actual guided flow should not keep startup hub layout.
-    setStartupUiState(false);
-    saveSessions();
-    renderChatListUI();
-    try {
-      await ensureSessionMessagesLoaded();
-    } catch {
-      // Keep local cache if remote loading fails.
-    }
-    msgView.clear();
-    const start = computeStartFlow(flowKind);
-    guided = start.guided;
-    await applyEffects(start.effects);
-    saveSessions();
-    renderLoadMoreControl();
-    const after = getCurrentSession();
-    threadLabel.textContent = after?.thread_id ? `Thread: ${after.thread_id}` : "";
-    history.replaceState({}, "", "chatbot_ui.html");
-  }
-
-  function renderLoadMoreControl() {
-    removeLoadMoreButton();
-    const current = getCurrentSession();
-    if (!current?.thread_id || !current.hasMoreRemote) return;
-    const row = document.createElement("div");
-    row.className = "msg-row";
-    row.style.justifyContent = "center";
-    row.style.marginBottom = "8px";
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "msg-action-btn";
-    btn.textContent = isLoadingMore ? "Loading..." : "Load more";
-    btn.disabled = isLoadingMore;
-    btn.addEventListener("click", () => {
-      void loadMoreHistory();
-    });
-    row.appendChild(btn);
-    messagesInner.prepend(row);
-    loadMoreBtn = btn;
-  }
-
-  async function ensureSessionMessagesLoaded(force = false) {
-    const idx = getActiveSessionIndex();
-    const session = getSessionByIndex(idx);
-    if (!session) return;
-    if (!session.thread_id) {
-      session.messagesLoaded = true;
-      session.hasMoreRemote = false;
-      session.remoteOffset = Array.isArray(session.messages) ? session.messages.length : 0;
-      return;
-    }
-    if (!force && hasInteractiveMessages(session.messages)) {
-      session.messagesLoaded = true;
-      return;
-    }
-    if (session.messagesLoaded && !force) return;
-    const data = await getSessionMessages(session.thread_id, { limit: REMOTE_MESSAGE_PAGE_SIZE, offset: 0 });
-    const mapped = Array.isArray(data.messages) ? data.messages.map(normalizeRemoteMessage) : [];
-    const total = Number(data.total || 0);
-    setSessionMessages(idx, mapped, {
-      hasMoreRemote: Boolean(data.has_more),
-      remoteOffset: mapped.length || Math.min(REMOTE_MESSAGE_PAGE_SIZE, total),
-    });
-    saveSessions();
-  }
-
-  async function loadMoreHistory() {
-    const idx = getActiveSessionIndex();
-    const session = getSessionByIndex(idx);
-    if (!session?.thread_id || !session.hasMoreRemote || isLoadingMore) return;
-    isLoadingMore = true;
-    renderLoadMoreControl();
-    try {
-      const data = await getSessionMessages(session.thread_id, {
-        limit: REMOTE_MESSAGE_PAGE_SIZE,
-        offset: Number(session.remoteOffset || 0),
-      });
-      const mapped = Array.isArray(data.messages) ? data.messages.map(normalizeRemoteMessage) : [];
-      prependSessionMessages(idx, mapped, {
-        hasMoreRemote: Boolean(data.has_more),
-        remoteOffset: Number(session.remoteOffset || 0) + mapped.length,
-      });
-      saveSessions();
-      renderMessages();
-    } catch {
-      // Keep existing messages; just restore button state.
-      renderLoadMoreControl();
-    } finally {
-      isLoadingMore = false;
-      renderLoadMoreControl();
-    }
-  }
-
-  function renderMessages() {
-    msgView.clear();
-    ensureSessions();
-    const current = getCurrentSession();
-    if (!current) {
-      setStartupUiState(false);
-      saveSessions();
-      return;
-    }
-    if (!Array.isArray(current.messages)) {
-      current.messages = [];
-      saveSessions();
-    }
-    if (!current.messages.length) {
-      // Empty sessions should show startup hub instead of blank white area.
-      setStartupUiState(true);
-      const startupHub = createStartupHubElement((flowKind) => {
-        void startFlowInCurrentSession(flowKind);
-      });
-      msgView.appendStartupHub(startupHub);
-      requestAnimationFrame(() => {
-        messages.scrollTop = 0;
-      });
-    } else {
-      setStartupUiState(false);
-      current.messages.forEach((m) => {
-        if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
-          msgView.addMessage("bot", m.text || "", {
-            actions: m.actions || [],
-            cardType: m.cardType,
-            resumeDock: m.resumeDock,
-          });
-        } else {
-          msgView.addMessage(m.role, m.text, m.actions);
-        }
-      });
-    }
-    renderLoadMoreControl();
-    reattachStartupActionHandlers();
-    threadLabel.textContent = current.thread_id ? `Thread: ${current.thread_id}` : "";
-  }
+  messageHistoryService = createMessageHistoryService({
+    pageSize: REMOTE_MESSAGE_PAGE_SIZE,
+    messagesInner: /** @type {HTMLElement} */ (messagesInner),
+    messages: /** @type {HTMLElement} */ (messages),
+    threadLabel: /** @type {HTMLElement} */ (threadLabel),
+    msgView,
+    getCurrentSession,
+    getActiveSessionIndex,
+    getSessionByIndex,
+    setSessionMessages,
+    prependSessionMessages,
+    saveSessions,
+    ensureSessions,
+    getSessionMessages,
+    createStartupHubElement,
+    startFlowInCurrentSession: (flowKind) => flowService.startFlowInCurrentSession(flowKind),
+    setStartupUiState,
+    reattachStartupActionHandlers,
+  });
 
   async function sendPrompt(prompt) {
     await messageController.sendPrompt(prompt, {
@@ -773,7 +535,7 @@ export function init() {
     const params = new URLSearchParams(location.search);
     const flowKind = normalizeFlowParam(params.get("flow"));
     if (flowKind) {
-      await handleFlowEntry(flowKind);
+      await flowService.handleFlowEntry(flowKind);
       return;
     }
     await restoreCurrentSessionExperience();
