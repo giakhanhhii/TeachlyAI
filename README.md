@@ -109,6 +109,7 @@ Prompts and tool calls are **automatically logged** when you use any supported A
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 See [AGENTS.md](./AGENTS.md) for details.......
 =======
 See [AGENTS.md](./AGENTS.md) for details.
@@ -125,4 +126,8 @@ See [AGENTS.md](./AGENTS.md) for details..
 =======
 >>>>>>> more-ui-features
 
+
+=======
+See [AGENTS.md](./AGENTS.md) for details...
+>>>>>>> more-ui-features
 
