@@ -111,5 +111,9 @@ Prompts and tool calls are **automatically logged** when you use any supported A
 See [AGENTS.md](./AGENTS.md) for details.......
 =======
 See [AGENTS.md](./AGENTS.md) for details.
+<<<<<<< HEAD
 >>>>>>> more-ui-features
+=======
+>>>>>>> more-ui-features
+
 
