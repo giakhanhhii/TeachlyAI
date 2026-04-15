@@ -108,6 +108,7 @@ See each file for the format and examples.
 Prompts and tool calls are **automatically logged** when you use any supported AI tool (Claude Code, Cursor, Codex, Gemini, Copilot). No manual steps needed after running `setup_hooks.sh`.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 See [AGENTS.md](./AGENTS.md) for details.......
 =======
 See [AGENTS.md](./AGENTS.md) for details.
@@ -116,4 +117,8 @@ See [AGENTS.md](./AGENTS.md) for details.
 =======
 >>>>>>> more-ui-features
 
+
+=======
+See [AGENTS.md](./AGENTS.md) for details..
+>>>>>>> more-ui-features
 
