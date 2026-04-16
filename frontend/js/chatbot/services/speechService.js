@@ -25,10 +25,9 @@ function primeSpeechSynthesisOnce() {
 
   try {
     syn.speak(u);
-    // Ensure warmup utterance does not stay queued.
-    setTimeout(() => {
-      if (syn.pending && !syn.speaking) syn.cancel();
-    }, 0);
+    // Do not force-cancel with a 0ms timeout: some engines start async,
+    // and an eager cancel can race or cancel a user-triggered utterance.
+    // Any stale queued warmup is already cleared by speakText().
   } catch (_) {
     // Ignore warmup errors; normal speak flow still works.
   }
