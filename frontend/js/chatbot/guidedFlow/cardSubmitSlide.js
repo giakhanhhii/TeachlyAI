@@ -28,13 +28,6 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
           type: "pushUser",
           text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide — PDF] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
         },
-        {
-          type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã xác nhận để Teachly tự động thiết kế slide từ PDF (mock).\n\nBên dưới là xem trước bộ slide."
-              : "Cảm ơn bạn! Thông tin PDF đã được ghi nhận.\n\nBên dưới là xem trước bộ slide (mock).",
-        },
         { type: "showSlide", meta },
       ],
     };
@@ -60,13 +53,6 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
         {
           type: "pushUser",
           text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
-        },
-        {
-          type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã xác nhận để Teachly tự động thiết kế slide (mock).\n\nBên dưới là xem trước bộ slide."
-              : "Cảm ơn bạn! Thông tin đã được ghi nhận.\n\nBên dưới là xem trước bộ slide (mock).",
         },
         { type: "showSlide", meta },
       ],

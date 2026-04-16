@@ -25,13 +25,6 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       guided: null,
       effects: [
         { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard — PDF] ${meta.source} — ${meta.count} thẻ` },
-        {
-          type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã xác nhận để Teachly tự động tạo flashcard từ PDF (mock).\n\nBên dưới là bộ thẻ — nhấn để lật."
-              : "Cảm ơn bạn!\n\nBên dưới là bộ flashcard xem trước từ PDF (mock) — nhấn thẻ để lật.",
-        },
         { type: "showFlash", meta },
       ],
     };
@@ -52,13 +45,6 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       guided: null,
       effects: [
         { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard] ${src}` },
-        {
-          type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã xác nhận để Teachly tự động tạo flashcard (mock).\n\nBên dưới là bộ thẻ — nhấn để lật."
-              : "Cảm ơn bạn!\n\nBên dưới là bộ flashcard xem trước (mock) — nhấn thẻ để lật.",
-        },
         { type: "showFlash", meta },
       ],
     };
