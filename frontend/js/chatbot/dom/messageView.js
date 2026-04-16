@@ -36,6 +36,12 @@ export function createMessageView(opts) {
     onResumeOpenFullSetMixed,
   } = opts;
 
+  function handleFlowActionButtonClick() {
+    const flowValue = String(this.dataset.flowValue || "");
+    if (!flowValue) return;
+    onFlowAction(flowValue, this);
+  }
+
   /**
    * @param {{ label: string, value: string }} action
    */
@@ -45,11 +51,7 @@ export function createMessageView(opts) {
     b.className = "msg-action-btn";
     b.textContent = action.label;
     b.dataset.flowValue = action.value;
-    b.onclick = function () {
-      const flowValue = String(this.dataset.flowValue || "");
-      if (!flowValue) return;
-      onFlowAction(flowValue, this);
-    };
+    b.onclick = handleFlowActionButtonClick;
     return b;
   }
 
@@ -58,11 +60,9 @@ export function createMessageView(opts) {
       const btn = /** @type {HTMLButtonElement} */ (node);
       const flowValue = String(btn.dataset.flowValue || "");
       if (!flowValue) return;
-      btn.onclick = function () {
-        const value = String(this.dataset.flowValue || "");
-        if (!value) return;
-        onFlowAction(value, this);
-      };
+      if (btn.onclick !== handleFlowActionButtonClick) {
+        btn.onclick = handleFlowActionButtonClick;
+      }
     });
   }
 
