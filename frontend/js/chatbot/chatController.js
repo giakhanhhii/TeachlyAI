@@ -146,18 +146,11 @@ export function init() {
 
   /** @type {ReturnType<typeof createMessageView>} */
   let msgView;
+  /** @type {ReturnType<typeof createMessageController>} */
+  let messageController;
   /** @type {ReturnType<typeof createExperienceController>} */
   let experienceController;
   let isSending = false;
-  const messageController = createMessageController({
-    getCurrentSession,
-    saveSessions,
-    getMessageView: () => msgView,
-    postChat,
-    apiUrl,
-    sendBtn,
-    inputEl: input,
-  });
 
   /**
    * Toggle startup layout: wide hub + hide composer.
@@ -183,6 +176,7 @@ export function init() {
   }
 
   function pushUser(text) {
+    if (!messageController) return;
     messageController.pushUser(text);
   }
 
@@ -191,6 +185,7 @@ export function init() {
    * @param {Record<string, string>} meta
    */
   function pushQuickResumeDock(kind, meta) {
+    if (!experienceController) return;
     experienceController.pushQuickResumeDock(kind, meta);
   }
 
@@ -209,6 +204,7 @@ export function init() {
    * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType?, resumeDock? }`
    */
   function pushBot(text, opts) {
+    if (!messageController) return;
     messageController.pushBot(text, opts);
   }
 
@@ -218,24 +214,8 @@ export function init() {
     input.focus();
   }
 
-  const experienceHooks = { onAiEdit: openChatWithAiDraft };
-  experienceController = createExperienceController({
-    getCurrentExperienceState,
-    setCurrentExperienceState,
-    saveSessions,
-    ensureExperienceHistoryEntry,
-    layerView,
-    mountQuizExperience,
-    mountSlideExperience,
-    mountFlashExperience,
-    mountFullSetHubExperience,
-    mountFullSetMixedExperience,
-    experienceHooks,
-    pushBot,
-  });
-  console.log("[chatController] controllers initialized");
-
   function persistActiveExperience() {
+    if (!experienceController) return;
     experienceController.persistActiveExperience();
   }
 
@@ -245,6 +225,7 @@ export function init() {
    * @param {"fresh"|"resume"} mode
    */
   async function openSingleExperience(kind, meta, mode) {
+    if (!experienceController) return;
     await experienceController.openSingleExperience(kind, meta, mode);
   }
 
@@ -284,6 +265,7 @@ export function init() {
    * @param {{ kind: string, meta: Record<string, string> }} item
    */
   async function openResumeExperience(item) {
+    if (!experienceController) return;
     await experienceController.openResumeExperience(item);
   }
 
@@ -292,6 +274,7 @@ export function init() {
    * @param {string} bundleTitle
    */
   async function openResumeOpenAll(items, bundleTitle) {
+    if (!experienceController) return;
     await experienceController.openResumeOpenAll(items, bundleTitle);
   }
 
@@ -300,10 +283,12 @@ export function init() {
    * @param {string} bundleTitle
    */
   async function openResumeFullSetMixed(spec, bundleTitle) {
+    if (!experienceController) return;
     await experienceController.openResumeFullSetMixed(spec, bundleTitle);
   }
 
   async function restoreCurrentSessionExperience() {
+    if (!experienceController) return;
     await experienceController.restoreCurrentSessionExperience();
   }
 
@@ -337,6 +322,33 @@ export function init() {
       })();
     },
   });
+
+  messageController = createMessageController({
+    getCurrentSession,
+    saveSessions,
+    getMessageView: () => msgView,
+    postChat,
+    apiUrl,
+    sendBtn,
+    inputEl: input,
+  });
+
+  const experienceHooks = { onAiEdit: openChatWithAiDraft };
+  experienceController = createExperienceController({
+    getCurrentExperienceState,
+    setCurrentExperienceState,
+    saveSessions,
+    ensureExperienceHistoryEntry,
+    layerView,
+    mountQuizExperience,
+    mountSlideExperience,
+    mountFlashExperience,
+    mountFullSetHubExperience,
+    mountFullSetMixedExperience,
+    experienceHooks,
+    pushBot,
+  });
+  console.log("[chatController] controllers initialized");
 
   /** @type {ReturnType<typeof createMessageHistoryService>} */
   let messageHistoryService;
