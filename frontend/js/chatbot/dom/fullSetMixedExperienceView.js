@@ -23,7 +23,7 @@ import {
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {{ title?: string, spec: FullSetMixedSpec }} bundle
- * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "fullset"|"slide"|"quiz"|"flash") => void }} [deps]
  * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
 export async function mountFullSetMixedExperience(layerView, bundle, deps, opts = {}) {
@@ -200,7 +200,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     }
 
     progress.paint({ total, index, correct, wrong });
-    nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
+    nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     emitState();
   }
 
@@ -237,13 +237,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         recomputeScore();
         progress.paint({ total, index, correct, wrong });
         applyQuizRevealStyles(stage, q, picked);
-        nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
+        nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
         nextBtn.disabled = false;
         emitState();
         return;
       }
       if (index >= total - 1) {
-        nextBtn.disabled = true;
+        deps?.onContinueCreate?.("fullset");
         return;
       }
       index += 1;
@@ -252,7 +252,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     }
 
     if (index >= total - 1) {
-      nextBtn.disabled = true;
+      deps?.onContinueCreate?.("fullset");
       return;
     }
     index += 1;
