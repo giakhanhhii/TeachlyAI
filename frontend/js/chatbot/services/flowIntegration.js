@@ -34,6 +34,51 @@ export function normalizeFlowActionValue(value) {
 }
 
 /**
+ * @param {any} value
+ */
+function isRecord(value) {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * @param {Record<string, any>} rawMeta
+ */
+function sanitizeFlowActionMeta(rawMeta) {
+  const safeMeta = {};
+  Object.entries(rawMeta).forEach(([rawKey, rawValue]) => {
+    const key = String(rawKey || "").trim();
+    if (!key) return;
+    const value = String(rawValue ?? "").trim();
+    if (!value) return;
+    safeMeta[key] = value;
+  });
+  return safeMeta;
+}
+
+/**
+ * Only carry forward keys that are explicitly present in the new action meta
+ * and still equal in the previous guided state.
+ * @param {any} prevGuided
+ * @param {"fullset"|"slide"|"quiz"|"flash"} kind
+ * @param {Record<string, string>} nextMeta
+ */
+function getValidatedCompatiblePrevData(prevGuided, kind, nextMeta) {
+  if (!isRecord(prevGuided)) return {};
+  if (prevGuided.kind !== kind || prevGuided.step !== "await_source") return {};
+  if (!isRecord(prevGuided.data)) return {};
+  const keys = Object.keys(nextMeta);
+  if (!keys.length) return {};
+  const compatible = {};
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(prevGuided.data, key)) continue;
+    const prevValue = String(prevGuided.data[key] ?? "").trim();
+    if (!prevValue || prevValue !== nextMeta[key]) return {};
+    compatible[key] = prevValue;
+  }
+  return compatible;
+}
+
+/**
  * @param {string} value
  * @param {any} prevGuided
  */
@@ -46,11 +91,9 @@ export function buildGuidedFromActionValue(value, prevGuided) {
   else if (action.startsWith("quiz_")) kind = "quiz";
   else if (action.startsWith("flash_")) kind = "flash";
   if (!kind) return null;
-  const prevData =
-    prevGuided && prevGuided.kind === kind && prevGuided.data && typeof prevGuided.data === "object"
-      ? prevGuided.data
-      : {};
-  return { kind, step: "await_source", data: { ...prevData, ...meta } };
+  const safeMeta = sanitizeFlowActionMeta(meta);
+  const compatiblePrevData = getValidatedCompatiblePrevData(prevGuided, kind, safeMeta);
+  return { kind, step: "await_source", data: { ...compatiblePrevData, ...safeMeta } };
 }
 
 /**

@@ -33,6 +33,21 @@ export function renderSessionListUI(deps) {
   } = deps;
 
   let actionInFlight = false;
+  let rerenderQueued = false;
+
+  function scheduleRerender() {
+    if (rerenderQueued) return;
+    rerenderQueued = true;
+    const run = () => {
+      rerenderQueued = false;
+      renderSessionListUI(deps);
+    };
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(run);
+      return;
+    }
+    window.setTimeout(run, 0);
+  }
 
   renderChatList(
     chatListEl,
@@ -51,7 +66,7 @@ export function renderSessionListUI(deps) {
         actionInFlight = true;
         if (togglePinSession(idx)) {
           saveSessions();
-          renderSessionListUI(deps);
+          scheduleRerender();
         }
         actionInFlight = false;
         return;
@@ -63,7 +78,7 @@ export function renderSessionListUI(deps) {
         const nextTitle = typeof raw === "string" ? raw.trim() : "";
         if (nextTitle && renameSession(idx, nextTitle)) {
           saveSessions();
-          renderSessionListUI(deps);
+          scheduleRerender();
         }
         actionInFlight = false;
         return;
@@ -77,7 +92,7 @@ export function renderSessionListUI(deps) {
             if (!deleteSession(idx)) return;
             await Promise.resolve(onSessionDeleted());
             saveSessions();
-            renderSessionListUI(deps);
+            scheduleRerender();
           } catch (err) {
             console.error("Delete session action failed:", err);
           } finally {
