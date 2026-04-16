@@ -68,6 +68,7 @@ export function speakText(text, lang) {
   syn.cancel();
   syn.resume();
   const gen = ++flashSpeakGeneration;
+  let didFallbackToEnglish = false;
 
   const start = (langToUse) => {
     if (gen !== flashSpeakGeneration) return;
@@ -78,7 +79,8 @@ export function speakText(text, lang) {
     u.onerror = () => {
       // Fallback nhanh nếu ngôn ngữ hiện tại không phát được.
       if (gen !== flashSpeakGeneration) return;
-      if (langToUse !== "en-US") {
+      if (!didFallbackToEnglish) {
+        didFallbackToEnglish = true;
         start("en-US");
       }
     };
