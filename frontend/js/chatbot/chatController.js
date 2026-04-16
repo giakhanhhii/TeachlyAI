@@ -312,11 +312,13 @@ export function init() {
         reenableFlowCard(cardRoot);
         return;
       }
+      const prevGuided = guided;
       guided = result.guided;
       void (async () => {
         try {
           await applyEffects(result.effects);
         } catch {
+          guided = prevGuided;
           reenableFlowCard(cardRoot);
           pushBot("Không thể xử lý biểu mẫu vừa gửi. Bạn thử lại một lần nữa nhé.");
         }
@@ -483,10 +485,16 @@ export function init() {
     if (guided) {
       const result = computeGuidedTextSubmit(guided, prompt);
       if (result.handled) {
+        const prevGuided = guided;
         guided = result.guided;
-        await applyEffects(result.effects);
-        input.value = "";
-        input.focus();
+        try {
+          await applyEffects(result.effects);
+          input.value = "";
+          input.focus();
+        } catch {
+          guided = prevGuided;
+          pushBot("Không thể xử lý yêu cầu này ngay bây giờ. Bạn thử lại một lần nữa nhé.");
+        }
         return;
       }
     }
