@@ -66,34 +66,27 @@ export function speakText(text, lang) {
   hookFlashSpeechVoicesOnce();
   const syn = window.speechSynthesis;
   syn.cancel();
+  syn.resume();
   const gen = ++flashSpeakGeneration;
 
-  const start = () => {
+  const start = (langToUse) => {
     if (gen !== flashSpeakGeneration) return;
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    const voice = pickBestSpeechVoice(lang);
+    u.lang = langToUse;
+    const voice = pickBestSpeechVoice(langToUse);
     if (voice) u.voice = voice;
+    u.onerror = () => {
+      // Fallback nhanh nếu ngôn ngữ hiện tại không phát được.
+      if (gen !== flashSpeakGeneration) return;
+      if (langToUse !== "en-US") {
+        start("en-US");
+      }
+    };
     syn.speak(u);
   };
 
-  const voices = syn.getVoices();
-  if (voices.length > 0) {
-    start();
-  } else {
-    const onVoices = () => {
-      if (gen !== flashSpeakGeneration) return;
-      if (syn.getVoices().length > 0) {
-        syn.removeEventListener("voiceschanged", onVoices);
-        start();
-      }
-    };
-    syn.addEventListener("voiceschanged", onVoices);
-    setTimeout(() => {
-      syn.removeEventListener("voiceschanged", onVoices);
-      if (gen === flashSpeakGeneration) start();
-    }, 900);
-  }
+  // Luôn phát ngay trong user-gesture để tránh bị browser chặn.
+  start(lang || "en-US");
 }
 
 /**

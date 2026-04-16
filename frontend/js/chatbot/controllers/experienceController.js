@@ -1,3 +1,13 @@
+import { restoreCurrentSessionExperience as restoreExperienceFromSession } from "../services/experienceService.js";
+import {
+  buildResumeTitle,
+  computeCompleted,
+  fullsetResumeItemsFromSpec,
+  normalizeExperienceKind,
+  resolveFullsetInitialState,
+  resolveSingleInitialState,
+} from "../services/experienceStateService.js";
+
 /**
  * @param {{
  *   getCurrentExperienceState: () => any,
@@ -33,17 +43,6 @@ export function createExperienceController(deps) {
   /** @type {any} */
   let lastOpenedExperience = null;
   let resumeDockAlreadyPosted = false;
-
-  /**
-   * @param {"quiz"|"slide"|"flash"} kind
-   * @param {Record<string, string>} meta
-   */
-  function buildResumeTitle(kind, meta) {
-    if (kind === "quiz") return `Trắc nghiệm — ${meta.topic || "Bộ đề"}`;
-    if (kind === "slide") return `Slide — ${meta.topic || "Bài giảng"}`;
-    if (kind === "flash") return `Flashcard — ${meta.source || "Bộ thẻ"}`;
-    return "Học liệu";
-  }
 
   /**
    * @param {"quiz"|"slide"|"flash"} kind
@@ -115,70 +114,6 @@ export function createExperienceController(deps) {
   }
 
   /**
-   * @param {Record<string, string>} spec
-   * @param {string} openedAtIso
-   */
-  function fullsetResumeItemsFromSpec(spec, openedAtIso) {
-    const topic = spec.topic || "—";
-    const t = openedAtIso || new Date().toISOString();
-    return [
-      {
-        kind: "slide",
-        meta: { topic, count: String(spec.slides || "—"), notes: "Full set (demo mock)" },
-        title: `Slide — ${topic}`,
-        openedAt: t,
-      },
-      {
-        kind: "quiz",
-        meta: { topic, count: String(spec.quiz || "—"), notes: "Full set (demo mock)" },
-        title: `Trắc nghiệm — ${topic}`,
-        openedAt: t,
-      },
-      {
-        kind: "flash",
-        meta: { source: topic, count: String(spec.flash || "—"), extra: "Full set (demo mock)" },
-        title: `Flashcard — ${topic}`,
-        openedAt: t,
-      },
-    ];
-  }
-
-  /**
-   * @param {Record<string, string>} a
-   * @param {Record<string, string>} b
-   */
-  function sameMeta(a, b) {
-    const ak = Object.keys(a || {}).sort();
-    const bk = Object.keys(b || {}).sort();
-    if (ak.length !== bk.length) return false;
-    for (let i = 0; i < ak.length; i += 1) {
-      const key = ak[i];
-      if (key !== bk[i]) return false;
-      if (String(a[key] || "") !== String(b[key] || "")) return false;
-    }
-    return true;
-  }
-
-  /**
-   * @param {"quiz"|"slide"|"flash"|"fullset"} kind
-   * @param {any} progress
-   */
-  function computeCompleted(kind, progress) {
-    const total = Number(progress?.total || 0);
-    const index = Number(progress?.index || 0);
-    if (!Number.isFinite(total) || total <= 0) return false;
-    if (!Number.isFinite(index) || index < total - 1) return false;
-    if (kind === "quiz") {
-      const graded = Array.isArray(progress?.gradedByIndex) ? progress.gradedByIndex : [];
-      return Boolean(graded[total - 1]);
-    }
-    if (kind === "fullset") {
-      return Boolean(progress?.completed) || index >= total - 1;
-    }
-    return true;
-  }
-
-  /**
    * @param {"quiz"|"slide"|"flash"} kind
    * @param {Record<string, string>} meta
    * @param {"fresh"|"resume"} mode
@@ -187,10 +122,7 @@ export function createExperienceController(deps) {
     rememberOpenExperience(kind, meta || {});
     persistActiveExperience();
     ensureExperienceHistoryEntry();
-    const currentExpState = getCurrentExperienceState() || {};
-    const persisted = mode === "resume" && currentExpState.kind === kind ? currentExpState.progress : null;
-    const initialState =
-      persisted && persisted.meta && sameMeta(persisted.meta, meta || {}) ? persisted : null;
+    const initialState = resolveSingleInitialState(getCurrentExperienceState() || {}, kind, meta || {}, mode);
     const mountOpts = {
       initialState,
       onStateChange: (state) => {
@@ -224,15 +156,7 @@ export function createExperienceController(deps) {
    * @param {{ kind: string, meta: Record<string, string> }} item
    */
   async function openResumeExperience(item) {
-    const rawKind = String(item?.kind || "").toLowerCase();
-    const kind =
-      rawKind === "flashcard" || rawKind === "flash"
-        ? "flash"
-        : rawKind.startsWith("quiz")
-          ? "quiz"
-          : rawKind.startsWith("slide")
-            ? "slide"
-            : rawKind;
+    const kind = normalizeExperienceKind(item?.kind || "");
     if (kind !== "quiz" && kind !== "slide" && kind !== "flash") {
       layerView.hide();
       return;
@@ -283,10 +207,7 @@ export function createExperienceController(deps) {
     persistActiveExperience();
     ensureExperienceHistoryEntry();
     layerView.prepareShow();
-    const fullsetState = getCurrentExperienceState();
-    const persisted = fullsetState?.kind === "fullset" ? fullsetState.progress : null;
-    const initialState =
-      persisted && persisted.spec && sameMeta(persisted.spec, spec || {}) ? persisted : null;
+    const initialState = resolveFullsetInitialState(getCurrentExperienceState(), spec || {});
     await mountFullSetMixedExperience(
       layerView,
       { title: bundleTitle || "Full set", spec },
@@ -309,24 +230,17 @@ export function createExperienceController(deps) {
   }
 
   async function restoreCurrentSessionExperience() {
-    const restored = readPersistedActiveExperience();
-    if (!restored) {
-      layerView.hide();
-      return;
-    }
-    lastOpenedExperience = restored;
-    ensureExperienceHistoryEntry();
-    if (restored.bundleBack && Array.isArray(restored.items)) {
-      await openResumeOpenAll(restored.items, restored.title || "Full set");
-      return;
-    }
-    if (restored.fullsetMixedBack && restored.fullsetMixed) {
-      await openResumeFullSetMixed(restored.fullsetMixed, restored.title || "Full set");
-      return;
-    }
-    if (restored.kind) {
-      await openResumeExperience({ kind: restored.kind, meta: restored.meta || {} });
-    }
+    await restoreExperienceFromSession({
+      readPersistedActiveExperience,
+      setLastOpenedExperience: (resume) => {
+        lastOpenedExperience = resume;
+      },
+      ensureExperienceHistoryEntry,
+      hideLayer: () => layerView.hide(),
+      openResumeOpenAll,
+      openResumeFullSetMixed,
+      openResumeExperience,
+    });
   }
 
   /**
