@@ -25,17 +25,25 @@ def detect_tool(data: dict) -> str:
     tool_env = os.environ.get("AI_TOOL_NAME", "").lower()
     if tool_env:
         return tool_env
+    event_name = str(data.get("hook_event_name") or "").strip()
+    first_char = event_name[:1]
+
     # Heuristics
     if "transcript_path" in data:
         return "codex"
-    if data.get("hook_event_name", "").startswith(("Before", "After", "Session", "Pre", "Notification")):
+    if event_name.startswith(("Before", "After", "Session", "Pre", "Notification")):
         return "gemini"
-    if data.get("hook_event_name", "")[0:1].islower():
-        # camelCase event names → Cursor or Copilot
-        if "workspace_roots" in data:
-            return "cursor"
+    # camelCase event names are typically Cursor/Copilot.
+    if first_char and first_char.isalpha() and first_char.islower():
         if "toolName" in data:
             return "copilot"
+        if "workspace_roots" in data or "attachments" in data:
+            return "cursor"
+    # If tool-specific keys exist but event naming is missing/non-alpha, still classify explicitly.
+    if "toolName" in data:
+        return "copilot"
+    if "workspace_roots" in data or "attachments" in data:
+        return "cursor"
     if "hook_event_name" in data:
         return "claude"
     return "unknown"
@@ -128,7 +136,17 @@ def normalize(data: dict, tool: str) -> dict | None:
 
 
 def main():
-    raw = sys.stdin.read().strip()
+    raw_bytes = sys.stdin.buffer.read()
+    if not raw_bytes:
+        sys.exit(0)
+    raw = raw_bytes.decode("utf-8-sig", errors="replace")
+    # Some tools may still emit UTF-16 payloads; recover if decoded text is mostly NUL-separated.
+    if "\x00" in raw:
+        try:
+            raw = raw_bytes.decode("utf-16", errors="replace")
+        except Exception:
+            pass
+    raw = raw.strip()
     if not raw:
         sys.exit(0)
 

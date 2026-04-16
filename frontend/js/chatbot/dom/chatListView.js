@@ -8,11 +8,47 @@
 const INITIAL_VISIBLE_SESSIONS = 120;
 const LOAD_MORE_STEP = 120;
 let visibleCount = INITIAL_VISIBLE_SESSIONS;
+/** @type {HTMLDivElement | null} */
+let sharedMenuEl = null;
+/** @type {number | null} */
+let menuTargetIdx = null;
+let sharedMenuListenersAttached = false;
+
+function ensureSharedMenu() {
+  if (sharedMenuEl && document.body.contains(sharedMenuEl)) return sharedMenuEl;
+  const existing = document.getElementById("chatItemSharedMenu");
+  if (existing instanceof HTMLDivElement) {
+    sharedMenuEl = existing;
+  } else {
+    const menu = document.createElement("div");
+    menu.id = "chatItemSharedMenu";
+    menu.className = "chat-item-menu chat-item-menu-floating";
+    menu.hidden = true;
+    document.body.appendChild(menu);
+    sharedMenuEl = menu;
+  }
+  if (!sharedMenuListenersAttached && sharedMenuEl) {
+    sharedMenuEl.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+    document.addEventListener("click", () => {
+      closeSharedMenu();
+    });
+    sharedMenuListenersAttached = true;
+  }
+  return sharedMenuEl;
+}
+
+function closeSharedMenu() {
+  if (!sharedMenuEl) return;
+  sharedMenuEl.hidden = true;
+  menuTargetIdx = null;
+}
 
 export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAction) {
   chatListEl.innerHTML = "";
-  const oldMenu = document.getElementById("chatItemSharedMenu");
-  if (oldMenu) oldMenu.remove();
+  const sharedMenu = ensureSharedMenu();
+  closeSharedMenu();
 
   const ordered = sessions
     .map((session, originalIdx) => ({ session, originalIdx }))
@@ -24,22 +60,6 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
   if (ordered.length <= INITIAL_VISIBLE_SESSIONS) {
     visibleCount = INITIAL_VISIBLE_SESSIONS;
   }
-
-  const sharedMenu = document.createElement("div");
-  sharedMenu.id = "chatItemSharedMenu";
-  sharedMenu.className = "chat-item-menu chat-item-menu-floating";
-  sharedMenu.hidden = true;
-  sharedMenu.addEventListener("click", (event) => {
-    event.stopPropagation();
-  });
-  document.body.appendChild(sharedMenu);
-
-  /** @type {number | null} */
-  let menuTargetIdx = null;
-  const closeMenu = () => {
-    sharedMenu.hidden = true;
-    menuTargetIdx = null;
-  };
 
   const visibleOrdered = ordered.slice(0, visibleCount);
   visibleOrdered.forEach(({ session, originalIdx }) => {
@@ -87,7 +107,7 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
     trigger.onclick = (event) => {
       event.stopPropagation();
       const isOpen = !sharedMenu.hidden && menuTargetIdx === originalIdx;
-      closeMenu();
+      closeSharedMenu();
       if (!isOpen) {
         menuTargetIdx = originalIdx;
         sharedMenu.innerHTML = "";
@@ -103,7 +123,7 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
           option.className = "chat-item-menu-option";
           option.textContent = item.label;
           option.onclick = () => {
-            closeMenu();
+            closeSharedMenu();
             onAction(item.action, originalIdx);
           };
           sharedMenu.appendChild(option);
@@ -143,14 +163,4 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
     };
     chatListEl.appendChild(loadMoreBtn);
   }
-
-  const prevClickHandler = chatListEl.__closeMenuHandler;
-  if (typeof prevClickHandler === "function") {
-    document.removeEventListener("click", prevClickHandler);
-  }
-  const closeMenus = () => {
-    closeMenu();
-  };
-  chatListEl.__closeMenuHandler = closeMenus;
-  document.addEventListener("click", closeMenus);
 }
