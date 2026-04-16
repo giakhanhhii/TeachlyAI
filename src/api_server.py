@@ -157,7 +157,7 @@ def chat(body: ChatIn):
     client = _get_client()
 
     tid, user_message_id = db.append_message(body.thread_id, "user", text)
-    history = db.get_recent_history(tid, limit=20)
+    history = db.get_recent_history(tid, limit=20, through_message_id=user_message_id)
 
     try:
         reply = _run_reply(client, history)

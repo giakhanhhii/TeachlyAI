@@ -80,18 +80,35 @@ class DatabaseManager:
             self._conn.execute("DELETE FROM messages WHERE id = ?;", (message_id,))
             self._conn.commit()
 
-    def get_recent_history(self, thread_id: str, limit: int = 20) -> list[dict[str, str]]:
+    def get_recent_history(
+        self,
+        thread_id: str,
+        limit: int = 20,
+        through_message_id: int | None = None,
+    ) -> list[dict[str, str]]:
         with self._lock:
-            rows = self._conn.execute(
-                """
-                SELECT role, content
-                FROM messages
-                WHERE thread_id = ?
-                ORDER BY id DESC
-                LIMIT ?;
-                """,
-                (thread_id, max(1, limit)),
-            ).fetchall()
+            if through_message_id is None:
+                rows = self._conn.execute(
+                    """
+                    SELECT role, content
+                    FROM messages
+                    WHERE thread_id = ?
+                    ORDER BY id DESC
+                    LIMIT ?;
+                    """,
+                    (thread_id, max(1, limit)),
+                ).fetchall()
+            else:
+                rows = self._conn.execute(
+                    """
+                    SELECT role, content
+                    FROM messages
+                    WHERE thread_id = ? AND id <= ?
+                    ORDER BY id DESC
+                    LIMIT ?;
+                    """,
+                    (thread_id, int(through_message_id), max(1, limit)),
+                ).fetchall()
         # API expects oldest -> newest order.
         rows.reverse()
         return [{"role": str(r["role"]), "content": str(r["content"])} for r in rows]

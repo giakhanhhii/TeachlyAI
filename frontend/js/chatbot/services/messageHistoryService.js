@@ -73,6 +73,18 @@ export function createMessageHistoryService(deps) {
   /** @type {HTMLButtonElement | null} */
   let loadMoreBtn = null;
 
+  function initializeCurrentSessionState() {
+    ensureSessions();
+    const current = getCurrentSession();
+    if (!current || typeof current !== "object") return { current: null, changed: false };
+    let changed = false;
+    if (!Array.isArray(current.messages)) {
+      current.messages = [];
+      changed = true;
+    }
+    return { current, changed };
+  }
+
   /**
    * @param {(flowKind: "fullset"|"quiz"|"slide"|"flashcard") => Promise<void> | void} handler
    */
@@ -107,6 +119,8 @@ export function createMessageHistoryService(deps) {
   }
 
   async function ensureSessionMessagesLoaded(force = false) {
+    const init = initializeCurrentSessionState();
+    if (init.changed) saveSessions();
     const idx = getActiveSessionIndex();
     const session = getSessionByIndex(idx);
     if (!session) return;
@@ -164,14 +178,10 @@ export function createMessageHistoryService(deps) {
     const current = getCurrentSession();
     if (!current) {
       setStartupUiState(false);
-      saveSessions();
       return;
     }
-    if (!Array.isArray(current.messages)) {
-      current.messages = [];
-      saveSessions();
-    }
-    if (!current.messages.length) {
+    const messagesToRender = Array.isArray(current.messages) ? current.messages : [];
+    if (!messagesToRender.length) {
       setStartupUiState(true);
       const startupHub = createStartupHubElement((flowKind) => {
         if (typeof onStartupFlowSelected === "function") {
@@ -184,7 +194,7 @@ export function createMessageHistoryService(deps) {
       });
     } else {
       setStartupUiState(false);
-      current.messages.forEach((m) => {
+      messagesToRender.forEach((m) => {
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
           msgView.addMessage("bot", m.text || "", {
             actions: m.actions || [],
