@@ -396,6 +396,25 @@ export function init() {
     });
   }
 
+  messageHistoryService = createMessageHistoryService({
+    pageSize: REMOTE_MESSAGE_PAGE_SIZE,
+    messagesInner: /** @type {HTMLElement} */ (messagesInner),
+    messages: /** @type {HTMLElement} */ (messages),
+    threadLabel: /** @type {HTMLElement} */ (threadLabel),
+    msgView,
+    getCurrentSession,
+    getActiveSessionIndex,
+    getSessionByIndex,
+    setSessionMessages,
+    prependSessionMessages,
+    saveSessions,
+    ensureSessions,
+    getSessionMessages,
+    createStartupHubElement,
+    setStartupUiState,
+    reattachStartupActionHandlers,
+  });
+
   flowService = createFlowService({
     getSessionsSnapshot,
     findLatestSessionIndexByExperienceKind,
@@ -422,25 +441,7 @@ export function init() {
     hideLayer: () => layerView.hide(),
   });
 
-  messageHistoryService = createMessageHistoryService({
-    pageSize: REMOTE_MESSAGE_PAGE_SIZE,
-    messagesInner: /** @type {HTMLElement} */ (messagesInner),
-    messages: /** @type {HTMLElement} */ (messages),
-    threadLabel: /** @type {HTMLElement} */ (threadLabel),
-    msgView,
-    getCurrentSession,
-    getActiveSessionIndex,
-    getSessionByIndex,
-    setSessionMessages,
-    prependSessionMessages,
-    saveSessions,
-    ensureSessions,
-    getSessionMessages,
-    createStartupHubElement,
-    startFlowInCurrentSession: (flowKind) => flowService.startFlowInCurrentSession(flowKind),
-    setStartupUiState,
-    reattachStartupActionHandlers,
-  });
+  messageHistoryService.setStartupFlowHandler((flowKind) => flowService.startFlowInCurrentSession(flowKind));
 
   async function sendPrompt(prompt) {
     await messageController.sendPrompt(prompt, {

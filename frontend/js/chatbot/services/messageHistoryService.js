@@ -42,7 +42,7 @@ function hasInteractiveMessages(messages) {
  *   ensureSessions: () => void,
  *   getSessionMessages: (threadId: string, opts: { limit: number, offset: number }) => Promise<any>,
  *   createStartupHubElement: (onFlowSelected: (flowKind: "fullset"|"quiz"|"slide"|"flashcard") => void) => HTMLElement,
- *   startFlowInCurrentSession: (flowKind: "fullset"|"quiz"|"slide"|"flashcard") => Promise<void>,
+ *   onStartupFlowSelected?: (flowKind: "fullset"|"quiz"|"slide"|"flashcard") => Promise<void> | void,
  *   setStartupUiState: (active: boolean) => void,
  *   reattachStartupActionHandlers: () => void,
  * }} deps
@@ -63,14 +63,22 @@ export function createMessageHistoryService(deps) {
     ensureSessions,
     getSessionMessages,
     createStartupHubElement,
-    startFlowInCurrentSession,
+    onStartupFlowSelected: initialStartupFlowHandler,
     setStartupUiState,
     reattachStartupActionHandlers,
   } = deps;
 
   let isLoadingMore = false;
+  let onStartupFlowSelected = initialStartupFlowHandler;
   /** @type {HTMLButtonElement | null} */
   let loadMoreBtn = null;
+
+  /**
+   * @param {(flowKind: "fullset"|"quiz"|"slide"|"flashcard") => Promise<void> | void} handler
+   */
+  function setStartupFlowHandler(handler) {
+    onStartupFlowSelected = handler;
+  }
 
   function removeLoadMoreButton() {
     if (loadMoreBtn?.parentElement) loadMoreBtn.parentElement.remove();
@@ -166,7 +174,9 @@ export function createMessageHistoryService(deps) {
     if (!current.messages.length) {
       setStartupUiState(true);
       const startupHub = createStartupHubElement((flowKind) => {
-        void startFlowInCurrentSession(flowKind);
+        if (typeof onStartupFlowSelected === "function") {
+          void onStartupFlowSelected(flowKind);
+        }
       });
       msgView.appendStartupHub(startupHub);
       requestAnimationFrame(() => {
@@ -196,5 +206,6 @@ export function createMessageHistoryService(deps) {
     loadMoreHistory,
     renderLoadMoreControl,
     renderMessages,
+    setStartupFlowHandler,
   };
 }
