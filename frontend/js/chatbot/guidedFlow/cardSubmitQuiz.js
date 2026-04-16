@@ -28,13 +28,6 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
           type: "pushUser",
           text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Quiz — PDF] ${payload.name || "—"} — ${meta.count} câu`,
         },
-        {
-          type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã xác nhận để Teachly tự động tạo bộ quiz từ PDF (mock).\n\nBên dưới là giao diện làm bài."
-              : "Thiết lập PDF đã xong trên giao diện.\n\nBên dưới là giao diện làm bài (mock).",
-        },
         { type: "showQuiz", meta },
       ],
     };
@@ -57,13 +50,6 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
         {
           type: "pushUser",
           text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Quiz THPTQG] ${meta.topic} — ${meta.count} câu`,
-        },
-        {
-          type: "pushBot",
-          text:
-            payload.__auto === "1"
-              ? "Bạn đã xác nhận để Teachly tự động tạo bộ quiz (mock).\n\nBên dưới là giao diện làm bài."
-              : "Thiết lập đã xong trên giao diện.\n\nBên dưới là giao diện làm bài (mock).",
         },
         { type: "showQuiz", meta },
       ],
