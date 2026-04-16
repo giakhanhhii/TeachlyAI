@@ -18,15 +18,7 @@ import {
   setSessionMessages,
   prependSessionMessages,
 } from "./sessionStore.js";
-import {
-  computePickAction,
-  computeGuidedTextSubmit,
-  computeStartFlow,
-  computeFlowCardSubmit,
-  PDF_SOURCE_ACTION_VALUES,
-  getRestartAwaitSourceEffects,
-} from "./guidedFlow.js";
-import { setPendingPdfFile } from "./pdfPrefillStore.js";
+import { computeStartFlow } from "./guidedFlow.js";
 import { createExperienceLayerView } from "./dom/experienceLayerView.js";
 import { mountQuizExperience } from "./dom/quizExperienceView.js";
 import { mountFlashExperience } from "./dom/flashExperienceView.js";
@@ -34,106 +26,26 @@ import { mountSlideExperience } from "./dom/slideExperienceView.js";
 import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
-import { renderChatList } from "./dom/chatListView.js";
 import { createMessageController } from "./controllers/messageController.js";
-import { bindNewChatButton, renderSessionListUI } from "./controllers/sessionController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
-import {
-  HISTORY_CHAT_PHASE,
-  createPopStateHandler,
-  ensureHistoryBaseState,
-  ensureExperienceHistoryEntry,
-  inExperienceHistoryState,
-} from "./services/historyService.js";
-import { createFlowActionHandler } from "./services/flowIntegration.js";
-import { createFlowService, normalizeFlowParam } from "./services/flowService.js";
+import { createGuidedInteractionController } from "./controllers/guidedInteractionController.js";
+import { createChatSessionListRenderer } from "./controllers/chatSessionListController.js";
+import { ensureHistoryBaseState, ensureExperienceHistoryEntry } from "./services/historyService.js";
+import { createFlowService } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
+import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 
 /** @type {any} */
 let guided = null;
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 
-/**
- * @returns {Promise<File | null>}
- */
-function pickPdfWithDialog() {
-  return new Promise((resolve) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".pdf,application/pdf";
-
-    let settled = false;
-    const done = (/** @type {File | null} */ f) => {
-      if (settled) return;
-      settled = true;
-      window.removeEventListener("focus", onFocus);
-      resolve(f);
-    };
-
-    const onFocus = () => {
-      setTimeout(() => {
-        if (settled) return;
-        const f = input.files?.[0] ?? null;
-        done(f);
-      }, 280);
-    };
-
-    input.addEventListener("change", () => {
-      const f = input.files?.[0];
-      if (f) done(f);
-    });
-
-    window.addEventListener("focus", onFocus, { once: true });
-    input.click();
-  });
-}
-
 export function init() {
   console.log("[chatController] init started");
-  const messages = document.getElementById("messages");
-  const messagesInner = document.getElementById("messagesInner");
-  const form = document.getElementById("form");
-  const input = document.getElementById("input");
-  const sendBtn = document.getElementById("send");
-  const threadLabel = document.getElementById("threadLabel");
-  const chatList = document.getElementById("chatList");
-  const newChatBtn = document.getElementById("newChatBtn");
-  const chatPhase = document.getElementById("chatPhase");
-  const experienceLayer = document.getElementById("experienceLayer");
-  const experienceBody = document.getElementById("experienceBody");
-  const backToChatBtn = document.getElementById("backToChatBtn");
-  const toggleSidebarBtn = document.getElementById("toggleSidebar");
-  const topHomeBtn = document.getElementById("topHomeBtn");
-
-  const requiredEls = {
-    messages,
-    messagesInner,
-    form,
-    input,
-    sendBtn,
-    threadLabel,
-    chatList,
-    newChatBtn,
-    chatPhase,
-    experienceLayer,
-    experienceBody,
-  };
-  const missingIds = Object.entries(requiredEls)
-    .filter(([, el]) => !el)
-    .map(([name]) => name);
-  if (missingIds.length) {
-    console.error("[chatController] init aborted. Missing required elements:", missingIds);
-    return;
-  }
-  const optionalEls = { backToChatBtn, toggleSidebarBtn, topHomeBtn };
-  const missingOptionalIds = Object.entries(optionalEls)
-    .filter(([, el]) => !el)
-    .map(([name]) => name);
-  if (missingOptionalIds.length) {
-    console.warn("[chatController] optional controls missing, continue init:", missingOptionalIds);
-  }
+  const domEls = resolveChatDomElements();
+  if (!domEls) return;
+  const { messages, messagesInner, form, input, sendBtn, threadLabel, chatList, newChatBtn, chatPhase, experienceLayer, experienceBody, backToChatBtn, toggleSidebarBtn, topHomeBtn } = domEls;
 
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
@@ -151,12 +63,10 @@ export function init() {
   let messageController;
   /** @type {ReturnType<typeof createExperienceController>} */
   let experienceController;
+  /** @type {ReturnType<typeof createGuidedInteractionController>} */
+  let guidedController;
   let isSending = false;
 
-  /**
-   * Toggle startup layout: wide hub + hide composer.
-   * @param {boolean} active
-   */
   function setStartupUiState(active) {
     const isActive = Boolean(active);
     chatPhase.classList.toggle("startup-mode", isActive);
@@ -181,18 +91,11 @@ export function init() {
     messageController.pushUser(text);
   }
 
-  /**
-   * @param {"quiz"|"slide"|"flash"} kind
-   * @param {Record<string, string>} meta
-   */
   function pushQuickResumeDock(kind, meta) {
     if (!experienceController) return;
     experienceController.pushQuickResumeDock(kind, meta);
   }
 
-  /**
-   * @param {HTMLElement | undefined} cardRoot
-   */
   function reenableFlowCard(cardRoot) {
     if (!cardRoot) return;
     cardRoot.querySelectorAll("button").forEach((btn) => {
@@ -200,10 +103,6 @@ export function init() {
     });
   }
 
-  /**
-   * @param {string} text
-   * @param {any} opts legacy: actions array, hoặc `{ actions?, cardType?, resumeDock? }`
-   */
   function pushBot(text, opts) {
     if (!messageController) return;
     messageController.pushBot(text, opts);
@@ -220,69 +119,34 @@ export function init() {
     experienceController.persistActiveExperience();
   }
 
-  /**
-   * @param {"quiz"|"slide"|"flash"} kind
-   * @param {Record<string, string>} meta
-   * @param {"fresh"|"resume"} mode
-   */
   async function openSingleExperience(kind, meta, mode) {
     if (!experienceController) return;
     await experienceController.openSingleExperience(kind, meta, mode);
   }
 
-  async function applyEffects(effects) {
-    for (const e of effects) {
-      if (e.type === "pushUser") pushUser(e.text);
-      else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
-      else if (e.type === "showQuiz") {
-        await openSingleExperience("quiz", e.meta || {}, "fresh");
-        pushQuickResumeDock("quiz", e.meta || {});
-      } else if (e.type === "showFlash") {
-        await openSingleExperience("flash", e.meta || {}, "fresh");
-        pushQuickResumeDock("flash", e.meta || {});
-      } else if (e.type === "showSlide") {
-        await openSingleExperience("slide", e.meta || {}, "fresh");
-        pushQuickResumeDock("slide", e.meta || {});
-      }
-    }
-  }
-
-  const onFlowAction = createFlowActionHandler({
+  guidedController = createGuidedInteractionController({
     getGuided: () => guided,
     setGuided: (next) => {
       guided = next;
     },
-    computePickAction,
-    getRestartAwaitSourceEffects,
-    pdfSourceActionValues: PDF_SOURCE_ACTION_VALUES,
-    pickPdfWithDialog,
-    setPendingPdfFile: (file) => setPendingPdfFile(file),
+    pushUser,
     pushBot,
-    applyEffects,
+    openSingleExperience,
+    pushQuickResumeDock,
+    reenableFlowCard,
     disableActionButtons: (btnEl) => msgView.disableActionButtons(btnEl),
   });
 
-  /**
-   * @param {{ kind: string, meta: Record<string, string> }} item
-   */
   async function openResumeExperience(item) {
     if (!experienceController) return;
     await experienceController.openResumeExperience(item);
   }
 
-  /**
-   * @param {any[]} items
-   * @param {string} bundleTitle
-   */
   async function openResumeOpenAll(items, bundleTitle) {
     if (!experienceController) return;
     await experienceController.openResumeOpenAll(items, bundleTitle);
   }
 
-  /**
-   * @param {Record<string, string>} spec
-   * @param {string} bundleTitle
-   */
   async function openResumeFullSetMixed(spec, bundleTitle) {
     if (!experienceController) return;
     await experienceController.openResumeFullSetMixed(spec, bundleTitle);
@@ -296,34 +160,11 @@ export function init() {
   msgView = createMessageView({
     messagesEl: /** @type {HTMLElement} */ (messages),
     messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
-    onResumeExperience: (item) => {
-      void openResumeExperience(item);
-    },
-    onResumeOpenAll: (items, bundleTitle) => {
-      void openResumeOpenAll(items, bundleTitle);
-    },
-    onResumeOpenFullSetMixed: (spec, bundleTitle) => {
-      void openResumeFullSetMixed(spec, bundleTitle);
-    },
-    onFlowAction,
-    onFlowCardSubmit(cardType, payload, cardRoot) {
-      const result = computeFlowCardSubmit(guided, cardType, payload);
-      if (!result.handled) {
-        reenableFlowCard(cardRoot);
-        return;
-      }
-      const prevGuided = guided;
-      guided = result.guided;
-      void (async () => {
-        try {
-          await applyEffects(result.effects);
-        } catch {
-          guided = prevGuided;
-          reenableFlowCard(cardRoot);
-          pushBot("Không thể xử lý biểu mẫu vừa gửi. Bạn thử lại một lần nữa nhé.");
-        }
-      })();
-    },
+    onResumeExperience: (item) => void openResumeExperience(item),
+    onResumeOpenAll: (items, bundleTitle) => void openResumeOpenAll(items, bundleTitle),
+    onResumeOpenFullSetMixed: (spec, bundleTitle) => void openResumeFullSetMixed(spec, bundleTitle),
+    onFlowAction: (...args) => guidedController.onFlowAction(...args),
+    onFlowCardSubmit: (cardType, payload, cardRoot) => guidedController.handleFlowCardSubmit(cardType, payload, cardRoot),
   });
 
   messageController = createMessageController({
@@ -375,41 +216,28 @@ export function init() {
     messageHistoryService.renderLoadMoreControl();
   }
 
-  function renderChatListUI() {
-    renderSessionListUI({
-      chatListEl: /** @type {HTMLElement} */ (chatList),
-      renderChatList,
-      getSessionsSnapshot,
-      getActiveSessionIndex,
-      togglePinSession,
-      renameSession,
-      deleteSession,
-      saveSessions,
-      onSessionSelected: async (idx) => {
-        persistActiveExperience();
-        setActiveSessionIndex(idx);
-        guided = null;
-        experienceController.resetResumeState();
-        layerView.hide();
-        saveSessions();
-        try {
-          await ensureSessionMessagesLoaded();
-        } catch {
-          // Keep local cache if remote loading fails.
-        }
-        renderChatListUI();
-        renderMessages();
-        await restoreCurrentSessionExperience();
-      },
-      onSessionDeleted: async () => {
-        guided = null;
-        experienceController.resetResumeState();
-        persistActiveExperience();
-        layerView.hide();
-        renderMessages();
-      },
-    });
-  }
+  const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
+    persistActiveExperience();
+    setActiveSessionIndex(idx);
+    guided = null;
+    experienceController.resetResumeState();
+    layerView.hide();
+    saveSessions();
+    try {
+      await ensureSessionMessagesLoaded();
+    } catch {
+      // Keep local cache if remote loading fails.
+    }
+    renderChatListUI();
+    renderMessages();
+    await restoreCurrentSessionExperience();
+  }, onSessionDeleted: async () => {
+    guided = null;
+    experienceController.resetResumeState();
+    persistActiveExperience();
+    layerView.hide();
+    renderMessages();
+  } });
 
   messageHistoryService = createMessageHistoryService({
     pageSize: REMOTE_MESSAGE_PAGE_SIZE,
@@ -444,7 +272,7 @@ export function init() {
     renderMessages,
     restoreCurrentSessionExperience,
     computeStartFlow,
-    applyEffects,
+    applyEffects: (effects) => guidedController.applyEffects(effects),
     setStartupUiState,
     clearMessages: () => msgView.clear(),
     renderLoadMoreControl,
@@ -461,48 +289,23 @@ export function init() {
   async function sendPrompt(prompt) {
     await messageController.sendPrompt(prompt, {
       onSendingState: setSendingState,
-      onThreadUpdated: (threadId) => {
-        threadLabel.textContent = `Thread: ${threadId}`;
-      },
-      onError: (errMsg) => {
-        msgView.addMessage("bot", errMsg);
-      },
-      onDone: () => {
-        input.focus();
-      },
+      onThreadUpdated: (threadId) => { threadLabel.textContent = `Thread: ${threadId}`; },
+      onError: (errMsg) => { msgView.addMessage("bot", errMsg); },
+      onDone: () => { input.focus(); },
     });
   }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (isSending) return;
-    const prompt = input.value.trim();
-    if (!prompt) return;
-    if (guided && (guided.step === "await_source" || guided.step === "await_pdf_file")) {
-      input.focus();
-      return;
-    }
-    if (guided) {
-      const result = computeGuidedTextSubmit(guided, prompt);
-      if (result.handled) {
-        const prevGuided = guided;
-        guided = result.guided;
-        try {
-          await applyEffects(result.effects);
-          input.value = "";
-          input.focus();
-        } catch {
-          guided = prevGuided;
-          pushBot("Không thể xử lý yêu cầu này ngay bây giờ. Bạn thử lại một lần nữa nhé.");
-        }
-        return;
-      }
-    }
-    sendPrompt(prompt);
-  });
-
-  bindNewChatButton({
-    newChatBtn,
+  setupChatEventManager({
+    form: /** @type {HTMLFormElement} */ (form),
+    input: /** @type {HTMLInputElement} */ (input),
+    newChatBtn: /** @type {HTMLButtonElement} */ (newChatBtn),
+    backToChatBtn: /** @type {HTMLButtonElement | null} */ (backToChatBtn),
+    toggleSidebarBtn: /** @type {HTMLButtonElement | null} */ (toggleSidebarBtn),
+    topHomeBtn: /** @type {HTMLButtonElement | null} */ (topHomeBtn),
+    getIsSending: () => isSending,
+    getGuided: () => guided,
+    onGuidedPrompt: (prompt, guidedState) => guidedController.handleGuidedPrompt(prompt, guidedState, /** @type {HTMLInputElement} */ (input)),
+    onSendPrompt: (prompt) => { sendPrompt(prompt); },
     onCreateNewChat: () => {
       persistActiveExperience();
       createSession();
@@ -514,53 +317,18 @@ export function init() {
       saveSessions();
       input.focus();
     },
+    hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
+    hideLayer: () => layerView.hide(),
+    persistActiveExperience,
+    pushResumeDockFromLastOpened,
+    ensureSessions,
+    ensureHistoryBaseState,
+    renderChatListUI,
+    ensureSessionMessagesLoaded: () => ensureSessionMessagesLoaded(),
+    renderMessages,
+    handleFlowEntry: (flowKind) => flowService.handleFlowEntry(flowKind),
+    restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
+    onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
+    onInitCompleted: () => { console.log("[chatController] init completed"); },
   });
-
-  backToChatBtn?.addEventListener("click", () => {
-    if (inExperienceHistoryState()) {
-      const state = history.state && typeof history.state === "object" ? history.state : {};
-      history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
-    }
-    layerView.hide();
-    pushResumeDockFromLastOpened();
-  });
-
-  toggleSidebarBtn?.addEventListener("click", () => {
-    document.getElementById("sidebar")?.classList.toggle("collapsed");
-  });
-
-  topHomeBtn?.addEventListener("click", () => {
-    location.href = "main_hub.html";
-  });
-
-  window.addEventListener(
-    "popstate",
-    createPopStateHandler({
-      hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
-      hideLayer: () => layerView.hide(),
-      persistActiveExperience,
-      pushResumeDockFromLastOpened,
-    }),
-  );
-
-  ensureSessions();
-  ensureHistoryBaseState();
-  renderChatListUI();
-  console.log("[chatController] base state rendered");
-  void (async () => {
-    try {
-      await ensureSessionMessagesLoaded();
-    } catch {
-      // Keep local cache if server is unavailable.
-    }
-    renderMessages();
-    const params = new URLSearchParams(location.search);
-    const flowKind = normalizeFlowParam(params.get("flow"));
-    if (flowKind) {
-      await flowService.handleFlowEntry(flowKind);
-      return;
-    }
-    await restoreCurrentSessionExperience();
-    console.log("[chatController] init completed");
-  })();
 }
