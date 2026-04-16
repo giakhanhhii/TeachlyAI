@@ -86,6 +86,7 @@ export function resolveChatDomElements() {
  *   hideLayer: () => void,
  *   persistActiveExperience: () => void,
  *   pushResumeDockFromLastOpened: () => void,
+ *   scrollToResumeDock: () => void,
  *   ensureSessions: () => void,
  *   ensureHistoryBaseState: () => void,
  *   renderChatListUI: () => void,
@@ -114,6 +115,7 @@ export function setupChatEventManager(deps) {
     hideLayer,
     persistActiveExperience,
     pushResumeDockFromLastOpened,
+    scrollToResumeDock,
     ensureSessions,
     ensureHistoryBaseState,
     renderChatListUI,
@@ -156,6 +158,7 @@ export function setupChatEventManager(deps) {
     }
     hideLayer();
     pushResumeDockFromLastOpened();
+    scrollToResumeDock();
   });
 
   toggleSidebarBtn?.addEventListener("click", () => {
@@ -173,6 +176,7 @@ export function setupChatEventManager(deps) {
       hideLayer,
       persistActiveExperience,
       pushResumeDockFromLastOpened,
+      onReturnedToChat: scrollToResumeDock,
     }),
   );
 

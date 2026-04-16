@@ -25,19 +25,28 @@ export function inExperienceHistoryState() {
  *   hideLayer: () => void,
  *   persistActiveExperience: () => void,
  *   pushResumeDockFromLastOpened: () => void,
+ *   onReturnedToChat?: () => void,
  * }} deps
  */
 export function createPopStateHandler(deps) {
-  const { hasLastOpenedExperience, hideLayer, persistActiveExperience, pushResumeDockFromLastOpened } = deps;
+  const {
+    hasLastOpenedExperience,
+    hideLayer,
+    persistActiveExperience,
+    pushResumeDockFromLastOpened,
+    onReturnedToChat,
+  } = deps;
   return function onPopState() {
     const state = history.state && typeof history.state === "object" ? history.state : {};
     if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
     if (!hasLastOpenedExperience()) {
       hideLayer();
       persistActiveExperience();
+      onReturnedToChat?.();
       return;
     }
     hideLayer();
     pushResumeDockFromLastOpened();
+    onReturnedToChat?.();
   };
 }

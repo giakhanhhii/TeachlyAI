@@ -217,6 +217,22 @@ export function init() {
     messageHistoryService.renderLoadMoreControl();
   }
 
+  function scrollToResumeDock() {
+    const run = () => {
+      const resumeCards = messagesInner.querySelectorAll(".resume-dock-card");
+      const lastResumeCard = resumeCards.length ? resumeCards[resumeCards.length - 1] : null;
+      if (lastResumeCard && typeof lastResumeCard.scrollIntoView === "function") {
+        lastResumeCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else {
+        messages.scrollTop = messages.scrollHeight;
+      }
+    };
+    requestAnimationFrame(() => {
+      run();
+      requestAnimationFrame(run);
+    });
+  }
+
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
     persistActiveExperience();
     setActiveSessionIndex(idx);
@@ -322,6 +338,7 @@ export function init() {
     hideLayer: () => layerView.hide(),
     persistActiveExperience,
     pushResumeDockFromLastOpened,
+    scrollToResumeDock,
     ensureSessions,
     ensureHistoryBaseState,
     renderChatListUI,
