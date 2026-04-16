@@ -75,7 +75,6 @@ export function renderFlashStep(stage, card) {
     btn.innerHTML = FLASH_SOUND_SVG;
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      hookFlashSpeechVoicesOnce();
       btn.classList.remove("flash-sound-anim");
       void btn.offsetWidth;
       btn.classList.add("flash-sound-anim");

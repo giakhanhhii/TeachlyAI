@@ -2,14 +2,67 @@ export const FLASH_SOUND_SVG = `<svg class="flash-sound-icon" width="22" height=
 
 let flashSpeechVoicesHooked = false;
 let flashSpeakGeneration = 0;
+let flashVoicesCache = null; // SpeechSynthesisVoice[] | null
+const flashVoiceByLangCache = new Map(); // normalizedLang -> SpeechSynthesisVoice | null
+let flashSpeechWarmupHooked = false;
+let flashSpeechPrimed = false;
+
+function primeSpeechSynthesisOnce() {
+  if (flashSpeechPrimed || typeof window === "undefined" || !window.speechSynthesis) return;
+  const syn = window.speechSynthesis;
+  const u = new SpeechSynthesisUtterance("\u00A0");
+  u.volume = 0;
+  u.rate = 1;
+  u.pitch = 1;
+  u.lang = "en-US";
+
+  const markPrimed = () => {
+    flashSpeechPrimed = true;
+  };
+  u.onstart = markPrimed;
+  u.onend = markPrimed;
+  u.onerror = markPrimed;
+
+  try {
+    syn.speak(u);
+    // Do not force-cancel with a 0ms timeout: some engines start async,
+    // and an eager cancel can race or cancel a user-triggered utterance.
+    // Any stale queued warmup is already cleared by speakText().
+  } catch (_) {
+    // Ignore warmup errors; normal speak flow still works.
+  }
+}
+
+function hookFlashSpeechWarmupGestureOnce() {
+  if (flashSpeechWarmupHooked || typeof window === "undefined") return;
+  flashSpeechWarmupHooked = true;
+
+  const trigger = () => {
+    primeSpeechSynthesisOnce();
+    window.removeEventListener("pointerdown", trigger, true);
+    window.removeEventListener("keydown", trigger, true);
+    window.removeEventListener("touchstart", trigger, true);
+  };
+
+  window.addEventListener("pointerdown", trigger, true);
+  window.addEventListener("keydown", trigger, true);
+  window.addEventListener("touchstart", trigger, true);
+}
 
 export function hookFlashSpeechVoicesOnce() {
   if (typeof window === "undefined" || !window.speechSynthesis || flashSpeechVoicesHooked) return;
   flashSpeechVoicesHooked = true;
-  window.speechSynthesis.getVoices();
-  window.speechSynthesis.addEventListener("voiceschanged", () => {
-    window.speechSynthesis.getVoices();
-  });
+  const syn = window.speechSynthesis;
+
+  const refreshVoices = () => {
+    flashVoicesCache = syn.getVoices();
+    flashVoiceByLangCache.clear();
+  };
+
+  // Prime cache immediately; voices may still fill in asynchronously.
+  refreshVoices();
+  syn.addEventListener("voiceschanged", refreshVoices);
+  hookFlashSpeechWarmupGestureOnce();
 }
 
 /**
@@ -18,10 +71,21 @@ export function hookFlashSpeechVoicesOnce() {
  */
 function pickBestSpeechVoice(targetLang) {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;
-  const voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return null;
-
   const tl = String(targetLang || "en-US").toLowerCase().replace("_", "-");
+  const cacheKey = tl;
+  if (flashVoiceByLangCache.has(cacheKey)) return flashVoiceByLangCache.get(cacheKey) || null;
+
+  // Use cached voices to avoid re-running voice selection on every click.
+  let voices = flashVoicesCache;
+  if (!voices || !voices.length) {
+    voices = window.speechSynthesis.getVoices();
+    if (voices.length) flashVoicesCache = voices;
+  }
+  if (!voices || !voices.length) {
+    flashVoiceByLangCache.set(cacheKey, null);
+    return null;
+  }
+
   const primary = tl.split("-")[0] || "en";
 
   const candidates = voices.filter((v) => {
@@ -54,7 +118,9 @@ function pickBestSpeechVoice(targetLang) {
       bestScore = sc;
     }
   }
-  return bestScore > 0 ? best : null;
+  const bestVoice = bestScore > 0 ? best : null;
+  flashVoiceByLangCache.set(cacheKey, bestVoice);
+  return bestVoice;
 }
 
 /**
@@ -65,8 +131,8 @@ export function speakText(text, lang) {
   if (typeof window === "undefined" || !window.speechSynthesis || !text) return;
   hookFlashSpeechVoicesOnce();
   const syn = window.speechSynthesis;
-  syn.cancel();
-  syn.resume();
+  // Avoid cancel overhead when nothing is currently queued.
+  if (syn.speaking || syn.pending) syn.cancel();
   const gen = ++flashSpeakGeneration;
   let didFallbackToEnglish = false;
 
