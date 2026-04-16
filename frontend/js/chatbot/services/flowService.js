@@ -135,21 +135,37 @@ export function createFlowService(deps) {
     const expKind = flowToExperienceKind(flowKind);
     persistActiveExperience();
     const current = getCurrentSession();
-    current.title = buildNextFlowSessionTitle(flowKind);
-    setCurrentExperienceState({
+    const prevTitle = current?.title;
+    const prevExperienceState = current?.experienceState ?? null;
+    const stagedTitle = buildNextFlowSessionTitle(flowKind);
+    const stagedExperienceState = {
       kind: expKind,
       meta: { flow: flowKind },
       progress: null,
       completed: false,
-    });
+    };
     setGuided(null);
     resetResumeState();
     hideLayer();
     setStartupUiState(false);
-    saveSessions();
     renderChatListUI();
     clearMessages();
-    await startWithGuidedEffects(flowKind);
+    try {
+      await startWithGuidedEffects(flowKind);
+      current.title = stagedTitle;
+      setCurrentExperienceState(stagedExperienceState);
+      saveSessions();
+      renderChatListUI();
+    } catch (err) {
+      if (current && typeof current === "object") {
+        current.title = prevTitle;
+      }
+      setCurrentExperienceState(prevExperienceState);
+      saveSessions();
+      renderChatListUI();
+      renderMessages();
+      console.error("Failed to start flow in current session:", err);
+    }
   }
 
   /**
@@ -158,6 +174,8 @@ export function createFlowService(deps) {
    */
   async function handleFlowEntry(flowKind) {
     const expKind = flowToExperienceKind(flowKind);
+    const sessions = getSessionsSnapshot();
+    const previousActiveIndex = sessions.findIndex((s) => s === getCurrentSession());
     const latestIdx = findLatestSessionIndexByExperienceKind(expKind);
     if (latestIdx >= 0) {
       persistActiveExperience();
@@ -179,40 +197,66 @@ export function createFlowService(deps) {
     }
 
     persistActiveExperience();
+    const stagedTitle = buildNextFlowSessionTitle(flowKind);
+    const stagedExperienceState = {
+      kind: expKind,
+      meta: { flow: flowKind },
+      progress: null,
+      completed: false,
+    };
     const cur = getCurrentSession();
-    if (canReuseEmptySession(cur)) {
-      cur.title = buildNextFlowSessionTitle(flowKind);
-      setCurrentExperienceState({
-        kind: expKind,
-        meta: { flow: flowKind },
-        progress: null,
-        completed: false,
-      });
+    const canReuseCurrent = canReuseEmptySession(cur);
+    /** @type {number | null} */
+    let createdSessionIndex = null;
+    let targetSession = cur;
+    const prevReusedTitle = canReuseCurrent ? cur?.title : null;
+    const prevReusedExperienceState = canReuseCurrent ? cur?.experienceState ?? null : null;
+    if (canReuseCurrent) {
+      targetSession = cur;
     } else {
-      createSession({
-        title: buildNextFlowSessionTitle(flowKind),
-        experienceState: {
-          kind: expKind,
-          meta: { flow: flowKind },
-          progress: null,
-          completed: false,
-        },
-      });
+      createdSessionIndex = createSession();
+      targetSession = getCurrentSession();
     }
     setGuided(null);
     resetResumeState();
     hideLayer();
     setStartupUiState(false);
-    saveSessions();
     renderChatListUI();
-    try {
-      await ensureSessionMessagesLoaded();
-    } catch {
-      // Keep local cache if remote loading fails.
-    }
     clearMessages();
-    await startWithGuidedEffects(flowKind);
-    history.replaceState({}, "", "chatbot_ui.html");
+    try {
+      try {
+        await ensureSessionMessagesLoaded();
+      } catch {
+        // Keep local cache if remote loading fails.
+      }
+      await startWithGuidedEffects(flowKind);
+      if (targetSession && typeof targetSession === "object") {
+        targetSession.title = stagedTitle;
+      }
+      setCurrentExperienceState(stagedExperienceState);
+      saveSessions();
+      renderChatListUI();
+      history.replaceState({}, "", "chatbot_ui.html");
+    } catch (err) {
+      if (createdSessionIndex !== null) {
+        const list = getSessionsSnapshot();
+        if (createdSessionIndex >= 0 && createdSessionIndex < list.length) {
+          list.splice(createdSessionIndex, 1);
+        }
+        if (previousActiveIndex >= 0 && previousActiveIndex < list.length) {
+          setActiveSessionIndex(previousActiveIndex);
+        } else {
+          setActiveSessionIndex(0);
+        }
+      } else if (targetSession && typeof targetSession === "object") {
+        targetSession.title = prevReusedTitle;
+        setCurrentExperienceState(prevReusedExperienceState);
+      }
+      saveSessions();
+      renderChatListUI();
+      renderMessages();
+      console.error("Failed to handle flow entry:", err);
+    }
   }
 
   return {

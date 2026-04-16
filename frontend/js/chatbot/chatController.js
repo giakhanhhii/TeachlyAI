@@ -39,6 +39,7 @@ import { createMessageController } from "./controllers/messageController.js";
 import { bindNewChatButton, renderSessionListUI } from "./controllers/sessionController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
 import {
+  HISTORY_CHAT_PHASE,
   createPopStateHandler,
   ensureHistoryBaseState,
   ensureExperienceHistoryEntry,
@@ -509,8 +510,8 @@ export function init() {
 
   backToChatBtn?.addEventListener("click", () => {
     if (inExperienceHistoryState()) {
-      history.back();
-      return;
+      const state = history.state && typeof history.state === "object" ? history.state : {};
+      history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
     }
     layerView.hide();
     pushResumeDockFromLastOpened();
