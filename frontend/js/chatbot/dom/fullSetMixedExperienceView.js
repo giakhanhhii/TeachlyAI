@@ -6,69 +6,15 @@ import {
   shuffleInPlace,
 } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
-import { FLASH_SOUND_SVG, speakFlashcard } from "../services/speechService.js";
-
-/** @param {string} s */
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function capitalizeFirst(s) {
-  const t = String(s || "").trim();
-  if (!t) return "";
-  return t.charAt(0).toLocaleUpperCase("vi") + t.slice(1);
-}
-
-function insertInlineMcLineBreaks(s) {
-  if (!s) return s;
-  let t = s.replace(/([:;?])\s+A\.\s/g, "$1\nA. ");
-  t = t.replace(/\s+(?=[B-F]\.\s)/g, "\n");
-  return t;
-}
-
-function quizStemToSafeHtml(s) {
-  const withBreaks = insertInlineMcLineBreaks(s);
-  const esc = escapeHtml(withBreaks);
-  const withBold = esc.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  return withBold.replace(/\n/g, "<br>");
-}
-
-/** @param {any} q */
-function quizOptionList(q) {
-  return Array.isArray(q?.options) ? q.options : [];
-}
-
-/** Chỉ số đáp án đúng (0..n-1), luôn hợp lệ với số lượng phương án. */
-function quizCorrectOptionIndex(q) {
-  const opts = quizOptionList(q);
-  if (opts.length === 0) return -1;
-  const c = Number(q?.correctIndex);
-  if (!Number.isFinite(c)) return 0;
-  return Math.min(Math.max(0, Math.floor(c)), opts.length - 1);
-}
-
-/**
- * @param {Record<string, string>} meta
- * @param {number} qIndex
- * @param {any} question
- */
-function buildAiDraftQuiz(meta, qIndex, question) {
-  const topic = meta.topic || "—";
-  const count = meta.count || "—";
-  const notes = meta.notes || "—";
-  const opts = (question.options || []).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("\n");
-  return (
-    `[Sửa đề quiz — nhờ AI]\n` +
-    `Ngữ cảnh — Full set trộn | Chủ đề: ${topic}; Số câu quiz trong bộ: ${count}; Ghi chú: ${notes}\n` +
-    `Câu hiện tại (mục ${qIndex + 1} trong phiên): ${question.text}\n` +
-    `${opts}\n\n` +
-    `Hãy đề xuất phiên bản câu hỏi và phương án tốt hơn (giữ định dạng trắc nghiệm 4 lựa chọn), kèm đáp án đúng và gợi ý ngắn.`
-  );
-}
+import { buildAiDraftQuiz, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
+import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
+import {
+  applyQuizRevealStyles,
+  createStepBadge,
+  renderFlashStep,
+  renderQuizStep,
+  renderSlideStep,
+} from "./fullSetMixedStepView.js";
 
 /**
  * @typedef {{ topic: string, level: string, slides: string, quiz: string, flash: string, extra?: string }} FullSetMixedSpec
@@ -82,6 +28,7 @@ function buildAiDraftQuiz(meta, qIndex, question) {
  */
 export async function mountFullSetMixedExperience(layerView, bundle, deps, opts = {}) {
   layerView.prepareShow();
+  hookFlashSpeechVoicesOnce();
   const root = layerView.body;
   root.innerHTML = "";
 
@@ -228,164 +175,28 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       return;
     }
 
-    const badge = document.createElement("div");
-    badge.className = "exp-mixed-kind-badge";
-    badge.textContent =
-      step.kind === "quiz" ? "Trắc nghiệm" : step.kind === "slide" ? "Slide bài giảng" : "Flashcard";
-    stage.appendChild(badge);
+    stage.appendChild(createStepBadge(step.kind));
 
     if (step.kind === "slide") {
-      const s = step.data;
-      const h = document.createElement("h2");
-      h.className = "exp-slide-title";
-      h.textContent = s.title || "";
-      const ul = document.createElement("ul");
-      ul.className = "exp-slide-bullets";
-      (s.bullets || []).forEach((line) => {
-        const li = document.createElement("li");
-        li.textContent = line;
-        ul.appendChild(li);
-      });
-      stage.appendChild(h);
-      stage.appendChild(ul);
+      renderSlideStep(stage, step.data);
       nextBtn.disabled = false;
     } else if (step.kind === "flash") {
-      const c = step.data;
-      const wrap = document.createElement("div");
-      wrap.className = "flash-wrap";
-      const frame = document.createElement("div");
-      frame.className = "flash-card-frame";
-      const inner = document.createElement("div");
-      inner.className = "flash-card";
-      inner.setAttribute("role", "button");
-      inner.tabIndex = 0;
-      const frontTerm = escapeHtml(capitalizeFirst(c.front));
-      const backText = escapeHtml(capitalizeFirst(c.back));
-      const phoneticBlock = c.phonetic ? `<div class="flash-phonetic">${escapeHtml(c.phonetic)}</div>` : "";
-      const hintBlock = c.hint ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>` : "";
-      inner.innerHTML = `
-        <div class="flash-face flash-front">
-          <div class="flash-front-stack">
-            <span class="flash-front-term">${frontTerm}</span>
-            ${phoneticBlock}
-            ${hintBlock}
-          </div>
-        </div>
-        <div class="flash-face flash-back">
-          <span class="flash-back-text">${backText}</span>
-        </div>
-      `;
-
-      // Hàm tạo nút loa
-      const addSoundBtn = (faceEl) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "flash-sound-btn";
-        btn.setAttribute("aria-label", "Phát âm");
-        btn.innerHTML = FLASH_SOUND_SVG;
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          btn.classList.remove("flash-sound-anim");
-          void btn.offsetWidth;
-          btn.classList.add("flash-sound-anim");
-          speakFlashcard(c);
-        });
-        btn.addEventListener("animationend", () => {
-          btn.classList.remove("flash-sound-anim");
-        });
-        faceEl.appendChild(btn);
-      };
-
-      addSoundBtn(inner.querySelector(".flash-front"));
-      addSoundBtn(inner.querySelector(".flash-back"));
-
-      inner.addEventListener("click", () => inner.classList.toggle("flipped"));
-      inner.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          inner.classList.toggle("flipped");
-        }
-      });
-      frame.appendChild(inner);
-      wrap.appendChild(frame);
-      stage.appendChild(wrap);
+      renderFlashStep(stage, step.data);
       nextBtn.disabled = false;
     } else {
-      const q = step.data;
-      const opts = quizOptionList(q);
-      const num = document.createElement("div");
-      num.className = "exp-q-number";
-      num.textContent = `${index + 1}.`;
-      const text = document.createElement("p");
-      text.className = "exp-q-text";
-      text.innerHTML = quizStemToSafeHtml(q.text || "");
-      const optsWrap = document.createElement("div");
-      optsWrap.className = "exp-option-grid";
-      const letters = ["A", "B", "C", "D", "E", "F"];
-      if (opts.length === 0) {
-        const empty = document.createElement("p");
-        empty.className = "exp-empty";
-        empty.textContent = "Câu hỏi chưa có phương án — nhấn Tiếp theo để bỏ qua.";
-        stage.appendChild(num);
-        stage.appendChild(text);
-        stage.appendChild(empty);
-        nextBtn.disabled = false;
-      } else {
-        opts.forEach((opt, j) => {
-          const b = document.createElement("button");
-          b.type = "button";
-          b.className = "exp-opt-btn";
-          b.textContent = `${letters[j] || j}. ${opt}`;
-          b.addEventListener("click", () => {
-            if (quizRevealedByStep[index]) return;
-            quizSelected = j;
-            quizSelectedByStep[index] = j;
-            optsWrap.querySelectorAll(".exp-opt-btn").forEach((x) => x.classList.remove("selected"));
-            b.classList.add("selected");
-            nextBtn.disabled = false;
-            emitState();
-          });
-          if (quizSelected === j) b.classList.add("selected");
-          optsWrap.appendChild(b);
-        });
-        const hintToggle = document.createElement("button");
-        hintToggle.type = "button";
-        hintToggle.className = "exp-hint-toggle";
-        hintToggle.innerHTML = `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
-        const hintPanel = document.createElement("div");
-        hintPanel.className = "exp-hint-panel";
-        hintPanel.hidden = true;
-        hintPanel.textContent = q.hint || "(Chưa có gợi ý.)";
-        let hintOpen = false;
-        hintToggle.addEventListener("click", () => {
-          hintOpen = !hintOpen;
-          hintPanel.hidden = !hintOpen;
-          hintToggle.innerHTML = hintOpen
-            ? `Ẩn gợi ý <span class="exp-chevron exp-chevron-up" aria-hidden="true">▾</span>`
-            : `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
-        });
-        const pickHint = document.createElement("p");
-        pickHint.className = "exp-mixed-pick-hint";
-        pickHint.textContent = "Chọn một đáp án, nhấn Tiếp theo để xem đúng/sai, rồi Tiếp theo lần nữa để sang mục kế tiếp.";
-        stage.appendChild(num);
-        stage.appendChild(text);
-        stage.appendChild(optsWrap);
-        stage.appendChild(pickHint);
-        stage.appendChild(hintToggle);
-        stage.appendChild(hintPanel);
-        if (quizRevealedByStep[index]) {
-          const correctIdx = quizCorrectOptionIndex(q);
-          const picked = quizSelectedByStep[index];
-          optsWrap.querySelectorAll(".exp-opt-btn").forEach((btn, j) => {
-            if (j === correctIdx) btn.classList.add("correct");
-            if (picked !== null && j === picked && j !== correctIdx) btn.classList.add("wrong");
-            /** @type {HTMLButtonElement} */ (btn).disabled = true;
-          });
+      const quizUi = renderQuizStep(stage, {
+        index,
+        question: step.data,
+        selected: quizSelected,
+        revealed: !!quizRevealedByStep[index],
+        onPick: (pickedIndex) => {
+          quizSelected = pickedIndex;
+          quizSelectedByStep[index] = pickedIndex;
           nextBtn.disabled = false;
-        } else {
-          nextBtn.disabled = quizSelectedByStep[index] == null;
-        }
-      }
+          emitState();
+        },
+      });
+      nextBtn.disabled = !quizUi.canProceed;
     }
 
     progress.paint({ total, index, correct, wrong });
@@ -425,14 +236,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         }
         recomputeScore();
         progress.paint({ total, index, correct, wrong });
-        const buttons = stage.querySelectorAll(".exp-opt-btn");
-        buttons.forEach((btn, j) => {
-          if (j === correctIdx) btn.classList.add("correct");
-          if (j === picked && j !== correctIdx) btn.classList.add("wrong");
-          /** @type {HTMLButtonElement} */ (btn).disabled = true;
-        });
+        applyQuizRevealStyles(stage, q, picked);
         nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
         nextBtn.disabled = false;
+        emitState();
         return;
       }
       if (index >= total - 1) {
