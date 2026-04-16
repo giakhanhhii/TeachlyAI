@@ -10,6 +10,7 @@ import {
 
 /**
  * @param {{
+ *   getCurrentSession: () => any,
  *   getCurrentExperienceState: () => any,
  *   setCurrentExperienceState: (next: any) => void,
  *   saveSessions: () => void,
@@ -26,6 +27,7 @@ import {
  */
 export function createExperienceController(deps) {
   const {
+    getCurrentSession,
     getCurrentExperienceState,
     setCurrentExperienceState,
     saveSessions,
@@ -43,6 +45,66 @@ export function createExperienceController(deps) {
   /** @type {any} */
   let lastOpenedExperience = null;
   let resumeDockAlreadyPosted = false;
+
+  function sortObjectDeep(value) {
+    if (Array.isArray(value)) return value.map(sortObjectDeep);
+    if (!value || typeof value !== "object") return value;
+    return Object.keys(value)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = sortObjectDeep(value[key]);
+        return acc;
+      }, {});
+  }
+
+  function stableSerialize(value) {
+    try {
+      return JSON.stringify(sortObjectDeep(value));
+    } catch {
+      return String(value ?? "");
+    }
+  }
+
+  function itemSignature(item) {
+    return stableSerialize({
+      kind: item?.kind || "",
+      title: item?.title || "",
+      meta: item?.meta || {},
+    });
+  }
+
+  function resumeDockSignature(dock) {
+    if (!dock || typeof dock !== "object") return "";
+    if (dock.fullsetMixed) {
+      return `mixed:${stableSerialize({
+        title: dock.title || "",
+        fullsetMixed: dock.fullsetMixed || {},
+        items: Array.isArray(dock.items) ? dock.items.map(itemSignature) : [],
+      })}`;
+    }
+    if (Array.isArray(dock.items)) {
+      return `bundle:${stableSerialize({
+        title: dock.title || "",
+        items: dock.items.map(itemSignature),
+      })}`;
+    }
+    return `single:${stableSerialize({
+      kind: dock.kind || "",
+      title: dock.title || "",
+      meta: dock.meta || {},
+    })}`;
+  }
+
+  function hasResumeDockInCurrentSession(targetDock) {
+    const targetSignature = resumeDockSignature(targetDock);
+    if (!targetSignature) return false;
+    const current = getCurrentSession?.();
+    const messages = Array.isArray(current?.messages) ? current.messages : [];
+    return messages.some((message) => {
+      if (!message || typeof message !== "object" || !message.resumeDock) return false;
+      return resumeDockSignature(message.resumeDock) === targetSignature;
+    });
+  }
 
   /**
    * @param {"quiz"|"slide"|"flash"} kind
@@ -249,13 +311,18 @@ export function createExperienceController(deps) {
    */
   function pushQuickResumeDock(kind, meta) {
     const now = new Date().toISOString();
+    const resumeDock = {
+      kind,
+      meta: { ...meta },
+      title: buildResumeTitle(kind, meta || {}),
+      openedAt: now,
+    };
+    if (hasResumeDockInCurrentSession(resumeDock)) {
+      resumeDockAlreadyPosted = true;
+      return;
+    }
     pushBot("Đã tạo xong. Bạn có thể bấm Mở để quay lại học liệu này.", {
-      resumeDock: {
-        kind,
-        meta: { ...meta },
-        title: buildResumeTitle(kind, meta || {}),
-        openedAt: now,
-      },
+      resumeDock,
     });
     resumeDockAlreadyPosted = true;
   }
@@ -270,30 +337,51 @@ export function createExperienceController(deps) {
     }
     const now = new Date().toISOString();
     if (lastOpenedExperience.bundleBack) {
+      const resumeDock = {
+        title: lastOpenedExperience.title,
+        items: lastOpenedExperience.items,
+        openedAt: now,
+      };
+      if (hasResumeDockInCurrentSession(resumeDock)) {
+        lastOpenedExperience = null;
+        resumeDockAlreadyPosted = false;
+        persistActiveExperience();
+        return;
+      }
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          title: lastOpenedExperience.title,
-          items: lastOpenedExperience.items,
-          openedAt: now,
-        },
+        resumeDock,
       });
     } else if (lastOpenedExperience.fullsetMixedBack) {
+      const resumeDock = {
+        title: lastOpenedExperience.title,
+        fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
+        items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
+        openedAt: now,
+      };
+      if (hasResumeDockInCurrentSession(resumeDock)) {
+        lastOpenedExperience = null;
+        resumeDockAlreadyPosted = false;
+        persistActiveExperience();
+        return;
+      }
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          title: lastOpenedExperience.title,
-          fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
-          items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
-          openedAt: now,
-        },
+        resumeDock,
       });
     } else {
+      const resumeDock = {
+        kind: lastOpenedExperience.kind,
+        meta: { ...lastOpenedExperience.meta },
+        title: lastOpenedExperience.title,
+        openedAt: now,
+      };
+      if (hasResumeDockInCurrentSession(resumeDock)) {
+        lastOpenedExperience = null;
+        resumeDockAlreadyPosted = false;
+        persistActiveExperience();
+        return;
+      }
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", {
-        resumeDock: {
-          kind: lastOpenedExperience.kind,
-          meta: { ...lastOpenedExperience.meta },
-          title: lastOpenedExperience.title,
-          openedAt: now,
-        },
+        resumeDock,
       });
     }
     lastOpenedExperience = null;
