@@ -179,6 +179,7 @@ export function init() {
 
   const experienceHooks = { onAiEdit: openChatWithAiDraft };
   experienceController = createExperienceController({
+    getCurrentSession,
     getCurrentExperienceState,
     setCurrentExperienceState,
     saveSessions,
