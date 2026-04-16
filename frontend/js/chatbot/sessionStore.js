@@ -1,14 +1,13 @@
 import { LS_ACTIVE_SESSION, LS_SESSIONS } from "./constants.js";
 
-const MAX_PERSISTED_MESSAGES_ACTIVE = 200;
-const MAX_PERSISTED_MESSAGES_INACTIVE = 20;
 const SAVE_SESSIONS_TIMEOUT_MS = 180;
 
 function buildPersistSnapshot(activeCap, inactiveCap) {
   return sessions.map((session, idx) => {
     const srcMessages = Array.isArray(session?.messages) ? session.messages : [];
     const cap = idx === activeSession ? activeCap : inactiveCap;
-    const messages = srcMessages.length > cap ? srcMessages.slice(-cap) : srcMessages;
+    const shouldCap = Number.isFinite(cap) && cap >= 0;
+    const messages = shouldCap && srcMessages.length > cap ? srcMessages.slice(-cap) : srcMessages;
     return { ...session, messages };
   });
 }
@@ -90,23 +89,15 @@ export function saveSessions() {
   schedule(() => {
     saveQueued = false;
     try {
-      const compactSessions = buildPersistSnapshot(
-        MAX_PERSISTED_MESSAGES_ACTIVE,
-        MAX_PERSISTED_MESSAGES_INACTIVE,
-      );
+      const compactSessions = buildPersistSnapshot(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
       localStorage.setItem(LS_SESSIONS, JSON.stringify(compactSessions));
       localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
     } catch {
       try {
-        // Fallback when storage is near quota: keep only the most recent messages.
-        const emergencySessions = buildPersistSnapshot(60, 0);
-        localStorage.setItem(LS_SESSIONS, JSON.stringify(emergencySessions));
+        // Avoid destructive fallback writes that can permanently truncate history.
         localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
       } catch {
-        // Last resort: keep metadata only so UI remains responsive.
-        const metaOnly = sessions.map((s) => ({ ...s, messages: [] }));
-        localStorage.setItem(LS_SESSIONS, JSON.stringify(metaOnly));
-        localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
+        // Ignore storage write failures and keep in-memory state intact.
       }
     }
   });
