@@ -114,21 +114,105 @@ export function init() {
     input.focus();
   }
 
-  function continueCreateFromExperience(kind) {
-    const validKind = kind === "quiz" || kind === "slide" || kind === "flash" ? kind : null;
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flash"} kind
+   * @returns {Promise<"same"|"other"|null>}
+   */
+  function openContinueCreateDialog(kind) {
+    return new Promise((resolve) => {
+      const overlay = document.createElement("div");
+      overlay.className = "continue-create-overlay";
+      const dialog = document.createElement("div");
+      dialog.className = "continue-create-dialog";
+      dialog.setAttribute("role", "dialog");
+      dialog.setAttribute("aria-modal", "true");
+
+      const kindLabel =
+        kind === "fullset"
+          ? "full set"
+          : kind === "quiz"
+            ? "quiz"
+            : kind === "slide"
+              ? "slide"
+              : "flashcard";
+      const title = document.createElement("h3");
+      title.className = "continue-create-title";
+      title.textContent = `Bạn có chắc chắn muốn tiếp tục tạo ${kindLabel}?`;
+
+      const actions = document.createElement("div");
+      actions.className = "continue-create-actions";
+      const otherBtn = document.createElement("button");
+      otherBtn.type = "button";
+      otherBtn.className = "continue-create-btn continue-create-btn-secondary";
+      otherBtn.textContent = "Tạo thẻ khác";
+      const sameBtn = document.createElement("button");
+      sameBtn.type = "button";
+      sameBtn.className = "continue-create-btn continue-create-btn-primary";
+      sameBtn.textContent = `Tiếp tục tạo ${kindLabel}`;
+      actions.appendChild(otherBtn);
+      actions.appendChild(sameBtn);
+
+      dialog.appendChild(title);
+      dialog.appendChild(actions);
+      overlay.appendChild(dialog);
+      document.body.appendChild(overlay);
+
+      const close = (result) => {
+        document.removeEventListener("keydown", onKeyDown);
+        overlay.remove();
+        resolve(result);
+      };
+
+      const onKeyDown = (e) => {
+        if (e.key === "Escape") close(null);
+      };
+      document.addEventListener("keydown", onKeyDown);
+      otherBtn.addEventListener("click", () => close("other"));
+      sameBtn.addEventListener("click", () => close("same"));
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close(null);
+      });
+    });
+  }
+
+  async function continueCreateFromExperience(kind) {
+    const validKind =
+      kind === "fullset" || kind === "quiz" || kind === "slide" || kind === "flash" ? kind : null;
     if (!validKind) return;
+    const selected = await openContinueCreateDialog(validKind);
+    if (!selected) return;
     const state = history.state && typeof history.state === "object" ? history.state : {};
     history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
     layerView.hide();
-    guided = { kind: validKind, step: "await_topic_form", data: {} };
-    const cardType = validKind === "quiz" ? "quiz_form" : validKind === "slide" ? "slide_form" : "flash_form";
-    const intro =
-      validKind === "quiz"
-        ? "Tuyệt vời! Thiết lập thông số cho bộ câu hỏi mới tại đây:"
-        : validKind === "slide"
-          ? "Tuyệt vời! Điền thông tin để Teachly thiết kế bộ slide mới:"
-          : "Tuyệt vời! Cung cấp thông tin để Teachly tạo bộ Flashcard mới:";
-    pushBot(intro, { cardType });
+    if (selected === "same") {
+      guided = { kind: validKind, step: "await_topic_form", data: {} };
+      const cardType =
+        validKind === "fullset"
+          ? "fullset_topic"
+          : validKind === "quiz"
+            ? "quiz_form"
+            : validKind === "slide"
+              ? "slide_form"
+              : "flash_form";
+      const intro =
+        validKind === "fullset"
+          ? "Tuyệt vời! Điền nhanh thông tin để Teachly tạo Full Set mới:"
+          : validKind === "quiz"
+          ? "Tuyệt vời! Thiết lập thông số cho bộ câu hỏi mới tại đây:"
+          : validKind === "slide"
+            ? "Tuyệt vời! Điền thông tin để Teachly thiết kế bộ slide mới:"
+            : "Tuyệt vời! Cung cấp thông tin để Teachly tạo bộ Flashcard mới:";
+      pushBot(intro, { cardType });
+    } else {
+      persistActiveExperience();
+      createSession();
+      guided = null;
+      experienceController.resetResumeState();
+      layerView.hide();
+      renderChatListUI();
+      renderMessages();
+      saveSessions();
+    }
     input.focus();
   }
 
