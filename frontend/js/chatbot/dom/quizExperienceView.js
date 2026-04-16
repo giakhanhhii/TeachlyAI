@@ -361,7 +361,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     wrap.appendChild(list);
     stage.appendChild(wrap);
 
-    backBtn.textContent = "Xem lại câu cuối";
+    backBtn.textContent = "Quay lại thẻ";
     backBtn.disabled = false;
     nextBtn.textContent = "Tiếp tục tạo";
     nextBtn.disabled = false;
