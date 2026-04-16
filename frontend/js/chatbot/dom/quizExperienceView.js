@@ -54,7 +54,7 @@ function buildAiDraftQuiz(meta, qIndex, question) {
 /**
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
- * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "slide"|"quiz"|"flash") => void }} [deps]
  * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
 export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
@@ -239,7 +239,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     if (!gradedByIndex[index]) nextBtn.textContent = "Tiếp theo";
     else {
       const isLast = index >= questions.length - 1;
-      nextBtn.textContent = isLast ? "Kết thúc" : "Tiếp theo";
+      nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
     }
     emitState();
   }
@@ -269,14 +269,14 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
         /** @type {HTMLButtonElement} */ (btn).disabled = true;
       });
       const isLast = index >= questions.length - 1;
-      nextBtn.textContent = isLast ? "Kết thúc" : "Tiếp theo";
+      nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
       nextBtn.disabled = false;
       emitState();
       return;
     }
 
     if (index >= questions.length - 1) {
-      nextBtn.disabled = true;
+      deps?.onContinueCreate?.("quiz");
       return;
     }
     index += 1;

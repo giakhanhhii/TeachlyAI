@@ -39,7 +39,7 @@ function buildAiDraftFlash(meta, cIndex, card) {
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
- * @param {{ onAiEdit?: (draft: string) => void }} [deps]
+ * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "slide"|"quiz"|"flash") => void }} [deps]
  * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
 export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
@@ -200,7 +200,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
     progress.paint({ total, index, correct: 0, wrong: 0 });
     backBtn.disabled = index <= 0;
-    nextBtn.textContent = index >= total - 1 ? "Kết thúc" : "Tiếp theo";
+    nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     nextBtn.disabled = false;
     emitState();
   }
@@ -213,7 +213,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   nextBtn.addEventListener("click", () => {
     if (total <= 1 || index >= total - 1) {
-      nextBtn.disabled = true;
+      deps?.onContinueCreate?.("flash");
       return;
     }
     index += 1;

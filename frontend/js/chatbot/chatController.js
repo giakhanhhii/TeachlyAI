@@ -30,7 +30,7 @@ import { createMessageController } from "./controllers/messageController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
 import { createGuidedInteractionController } from "./controllers/guidedInteractionController.js";
 import { createChatSessionListRenderer } from "./controllers/chatSessionListController.js";
-import { ensureHistoryBaseState, ensureExperienceHistoryEntry } from "./services/historyService.js";
+import { HISTORY_CHAT_PHASE, ensureHistoryBaseState, ensureExperienceHistoryEntry } from "./services/historyService.js";
 import { createFlowService } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
@@ -114,6 +114,24 @@ export function init() {
     input.focus();
   }
 
+  function continueCreateFromExperience(kind) {
+    const validKind = kind === "quiz" || kind === "slide" || kind === "flash" ? kind : null;
+    if (!validKind) return;
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
+    layerView.hide();
+    guided = { kind: validKind, step: "await_topic_form", data: {} };
+    const cardType = validKind === "quiz" ? "quiz_form" : validKind === "slide" ? "slide_form" : "flash_form";
+    const intro =
+      validKind === "quiz"
+        ? "Tuyệt vời! Thiết lập thông số cho bộ câu hỏi mới tại đây:"
+        : validKind === "slide"
+          ? "Tuyệt vời! Điền thông tin để Teachly thiết kế bộ slide mới:"
+          : "Tuyệt vời! Cung cấp thông tin để Teachly tạo bộ Flashcard mới:";
+    pushBot(intro, { cardType });
+    input.focus();
+  }
+
   function persistActiveExperience() {
     if (!experienceController) return;
     experienceController.persistActiveExperience();
@@ -177,7 +195,7 @@ export function init() {
     inputEl: input,
   });
 
-  const experienceHooks = { onAiEdit: openChatWithAiDraft };
+  const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };
   experienceController = createExperienceController({
     getCurrentSession,
     getCurrentExperienceState,
