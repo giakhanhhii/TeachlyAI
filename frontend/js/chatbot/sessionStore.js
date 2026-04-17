@@ -1,17 +1,11 @@
 import { LS_ACTIVE_SESSION, LS_SESSIONS } from "./constants.js";
 
 const SAVE_SESSIONS_TIMEOUT_MS = 180;
-const ACTIVE_PERSIST_MESSAGE_CAP = 100;
-const INACTIVE_PERSIST_MESSAGE_CAP = 50;
-const FALLBACK_ACTIVE_PERSIST_MESSAGE_CAP = 30;
-const FALLBACK_INACTIVE_PERSIST_MESSAGE_CAP = 10;
 
-function buildPersistSnapshot(activeCap, inactiveCap) {
-  return sessions.map((session, idx) => {
+function buildPersistSnapshot() {
+  return sessions.map((session) => {
     const srcMessages = Array.isArray(session?.messages) ? session.messages : [];
-    const cap = idx === activeSession ? activeCap : inactiveCap;
-    const shouldCap = Number.isFinite(cap) && cap >= 0;
-    const messages = shouldCap && srcMessages.length > cap ? srcMessages.slice(-cap) : srcMessages;
+    const messages = srcMessages;
     return { ...session, messages };
   });
 }
@@ -93,15 +87,12 @@ export function saveSessions() {
   schedule(() => {
     saveQueued = false;
     try {
-      const compactSessions = buildPersistSnapshot(ACTIVE_PERSIST_MESSAGE_CAP, INACTIVE_PERSIST_MESSAGE_CAP);
+      const compactSessions = buildPersistSnapshot();
       localStorage.setItem(LS_SESSIONS, JSON.stringify(compactSessions));
       localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
     } catch {
       try {
-        const fallbackSessions = buildPersistSnapshot(
-          FALLBACK_ACTIVE_PERSIST_MESSAGE_CAP,
-          FALLBACK_INACTIVE_PERSIST_MESSAGE_CAP,
-        );
+        const fallbackSessions = buildPersistSnapshot();
         localStorage.setItem(LS_SESSIONS, JSON.stringify(fallbackSessions));
         localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
       } catch {

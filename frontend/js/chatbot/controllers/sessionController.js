@@ -19,14 +19,24 @@
  * }} deps
  */
 let rerenderQueued = false;
-let scheduledRerenderFn = null;
+/** @type {WeakMap<HTMLElement, any>} */
+const rerenderDepsByElement = new WeakMap();
+/** @type {WeakRef<HTMLElement> | null} */
+let scheduledRerenderTargetRef = null;
+/** @type {HTMLElement | null} */
+let scheduledRerenderTargetEl = null;
 
 function scheduleRerender() {
-  if (rerenderQueued || typeof scheduledRerenderFn !== "function") return;
+  const targetEl = scheduledRerenderTargetRef?.deref?.() || scheduledRerenderTargetEl;
+  if (rerenderQueued || !targetEl) return;
   rerenderQueued = true;
   const run = () => {
     rerenderQueued = false;
-    scheduledRerenderFn();
+    const currentTargetEl = scheduledRerenderTargetRef?.deref?.() || scheduledRerenderTargetEl;
+    if (!currentTargetEl) return;
+    const nextDeps = rerenderDepsByElement.get(currentTargetEl);
+    if (!nextDeps) return;
+    renderSessionListUI(nextDeps);
   };
   if (typeof window.requestAnimationFrame === "function") {
     window.requestAnimationFrame(run);
@@ -50,9 +60,9 @@ export function renderSessionListUI(deps) {
   } = deps;
 
   let actionInFlight = false;
-  scheduledRerenderFn = () => {
-    renderSessionListUI(deps);
-  };
+  rerenderDepsByElement.set(chatListEl, deps);
+  scheduledRerenderTargetRef = typeof WeakRef === "function" ? new WeakRef(chatListEl) : null;
+  scheduledRerenderTargetEl = chatListEl;
 
   renderChatList(
     chatListEl,

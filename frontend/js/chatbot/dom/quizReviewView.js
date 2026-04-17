@@ -14,7 +14,7 @@ const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
  *  onFilterChange: (filter: "all" | "wrong") => void,
  *  onBackToCard: () => void,
  *  onCreateOther: () => void,
- *  onContinueCreate: () => void,
+ *  onContinueCreate: (kind: "quiz", opts: { preset: "same" }) => void,
  * }} params
  */
 export function renderQuizReviewView(params) {
@@ -42,10 +42,24 @@ export function renderQuizReviewView(params) {
   scoreMain.className = "quiz-review-score-main";
   const scoreCard = document.createElement("div");
   scoreCard.className = "quiz-review-score";
-  scoreCard.innerHTML = `
-      <h3>Kết quả bài quiz</h3>
-      <p>Bạn làm đúng <strong>${correct}</strong>/<strong>${questions.length}</strong> câu, sai <strong>${wrong}</strong> câu.</p>
-    `;
+  const scoreTitle = document.createElement("h3");
+  scoreTitle.textContent = "Kết quả bài quiz";
+  const scoreText = document.createElement("p");
+  scoreText.append("Bạn làm đúng ");
+  const correctStrong = document.createElement("strong");
+  correctStrong.textContent = String(correct);
+  scoreText.appendChild(correctStrong);
+  scoreText.append("/");
+  const totalStrong = document.createElement("strong");
+  totalStrong.textContent = String(questions.length);
+  scoreText.appendChild(totalStrong);
+  scoreText.append(" câu, sai ");
+  const wrongStrong = document.createElement("strong");
+  wrongStrong.textContent = String(wrong);
+  scoreText.appendChild(wrongStrong);
+  scoreText.append(" câu.");
+  scoreCard.appendChild(scoreTitle);
+  scoreCard.appendChild(scoreText);
   scoreMain.appendChild(scoreCard);
 
   const actions = document.createElement("div");
@@ -66,7 +80,7 @@ export function renderQuizReviewView(params) {
   nextBtnInline.type = "button";
   nextBtnInline.className = "continue-create-btn continue-create-btn-primary";
   nextBtnInline.textContent = "Tiếp tục tạo";
-  nextBtnInline.addEventListener("click", onContinueCreate);
+  nextBtnInline.addEventListener("click", () => onContinueCreate("quiz", { preset: "same" }));
 
   actions.appendChild(backBtnInline);
   actions.appendChild(otherBtnInline);
@@ -80,14 +94,22 @@ export function renderQuizReviewView(params) {
   const allBtn = document.createElement("button");
   allBtn.type = "button";
   allBtn.className = `quiz-review-filter-btn${reviewFilter === "all" ? " active" : ""}`;
+  allBtn.dataset.filter = "all";
   allBtn.textContent = "Xem toàn bộ câu";
-  allBtn.addEventListener("click", () => onFilterChange("all"));
 
   const wrongBtn = document.createElement("button");
   wrongBtn.type = "button";
   wrongBtn.className = `quiz-review-filter-btn${reviewFilter === "wrong" ? " active" : ""}`;
+  wrongBtn.dataset.filter = "wrong";
   wrongBtn.textContent = "Xem các câu sai";
-  wrongBtn.addEventListener("click", () => onFilterChange("wrong"));
+  filterRow.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const btn = target.closest("button.quiz-review-filter-btn");
+    if (!(btn instanceof HTMLButtonElement)) return;
+    const nextFilter = btn.dataset.filter === "wrong" ? "wrong" : "all";
+    if (nextFilter !== reviewFilter) onFilterChange(nextFilter);
+  });
 
   filterRow.appendChild(allBtn);
   filterRow.appendChild(wrongBtn);

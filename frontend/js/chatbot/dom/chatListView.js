@@ -15,6 +15,8 @@ let menuTargetIdx = null;
 let sharedMenuListenersAttached = false;
 /** @type {((event: MouseEvent) => void) | null} */
 let sharedMenuDocumentClickHandler = null;
+/** @type {((event: MouseEvent) => void) | null} */
+let sharedMenuClickHandler = null;
 
 function attachSharedMenuDocumentListener() {
   if (sharedMenuDocumentClickHandler) return;
@@ -30,9 +32,16 @@ function detachSharedMenuDocumentListener() {
   sharedMenuDocumentClickHandler = null;
 }
 
+function detachSharedMenuClickListener() {
+  if (!sharedMenuEl || !sharedMenuClickHandler) return;
+  sharedMenuEl.removeEventListener("click", sharedMenuClickHandler);
+  sharedMenuClickHandler = null;
+}
+
 function ensureSharedMenu() {
   if (sharedMenuEl && document.body.contains(sharedMenuEl)) return sharedMenuEl;
   if (sharedMenuEl && !document.body.contains(sharedMenuEl)) {
+    detachSharedMenuClickListener();
     detachSharedMenuDocumentListener();
     sharedMenuListenersAttached = false;
   }
@@ -48,9 +57,10 @@ function ensureSharedMenu() {
     sharedMenuEl = menu;
   }
   if (!sharedMenuListenersAttached && sharedMenuEl) {
-    sharedMenuEl.addEventListener("click", (event) => {
+    sharedMenuClickHandler = (event) => {
       event.stopPropagation();
-    });
+    };
+    sharedMenuEl.addEventListener("click", sharedMenuClickHandler);
     sharedMenuListenersAttached = true;
   }
   return sharedMenuEl;
