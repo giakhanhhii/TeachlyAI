@@ -185,6 +185,8 @@ export function init() {
     history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
     layerView.hide();
     if (selected === "same") {
+      experienceController.resetResumeState();
+      experienceController.persistActiveExperience();
       guided = { kind: validKind, step: "await_topic_form", data: {} };
       const cardType =
         validKind === "fullset"
