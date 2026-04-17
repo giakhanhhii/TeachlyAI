@@ -83,6 +83,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     correct = score.correct;
     wrong = score.wrong;
   }
+  function syncScoreAndEmit() {
+    refreshScore();
+    emitState();
+  }
   function emitState() {
     if (typeof opts.onStateChange !== "function") return;
     opts.onStateChange({
@@ -170,7 +174,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           quizSelected = pickedIndex;
           quizSelectedByStep[index] = pickedIndex;
           nextBtn.disabled = false;
-          emitState();
+          syncScoreAndEmit();
         },
       });
       nextBtn.disabled = !quizUi.canProceed;

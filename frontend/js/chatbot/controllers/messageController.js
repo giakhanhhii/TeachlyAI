@@ -83,6 +83,8 @@ export function createMessageController(deps) {
       if (!Array.isArray(current.messages)) current.messages = [];
       current.messages.push({ role: "user", text: prompt });
       current.messagesLoaded = true;
+      current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
+      saveSessions();
       inputEl.value = "";
       const thinking = msgView.addThinkingBubble();
       try {
@@ -93,7 +95,7 @@ export function createMessageController(deps) {
         await msgView.streamBotReply(data.reply);
         current.messages.push({ role: "bot", text: data.reply });
         current.messagesLoaded = true;
-        current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 2;
+        current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
         saveSessions();
       } catch (err) {
         thinking.row.remove();

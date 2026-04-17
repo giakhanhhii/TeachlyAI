@@ -349,7 +349,7 @@ export function init() {
         messages.scrollTop = messages.scrollHeight;
       }
     };
-    requestAnimationFrame(run);
+    requestAnimationFrame(() => requestAnimationFrame(run));
   }
 
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {

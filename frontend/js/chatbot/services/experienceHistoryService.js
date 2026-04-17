@@ -36,19 +36,16 @@ export function createExperienceHistoryService(deps) {
     };
     const ids = Object.keys(nextHistory);
     if (ids.length <= EXPERIENCE_HISTORY_LIMIT) return nextHistory;
-    ids
+    const sortedLimitedEntries = Object.entries(nextHistory)
       .sort((a, b) => {
-        const aTime = Date.parse(nextHistory[a]?.updatedAt || "");
-        const bTime = Date.parse(nextHistory[b]?.updatedAt || "");
+        const aTime = Date.parse(a[1]?.updatedAt || "");
+        const bTime = Date.parse(b[1]?.updatedAt || "");
         const safeA = Number.isFinite(aTime) ? aTime : 0;
         const safeB = Number.isFinite(bTime) ? bTime : 0;
         return safeB - safeA;
       })
-      .slice(EXPERIENCE_HISTORY_LIMIT)
-      .forEach((id) => {
-        delete nextHistory[id];
-      });
-    return nextHistory;
+      .slice(0, EXPERIENCE_HISTORY_LIMIT);
+    return Object.fromEntries(sortedLimitedEntries);
   }
 
   function readPersistedActiveExperience() {

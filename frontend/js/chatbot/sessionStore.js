@@ -1,11 +1,22 @@
 import { LS_ACTIVE_SESSION, LS_SESSIONS } from "./constants.js";
 
 const SAVE_SESSIONS_TIMEOUT_MS = 180;
+const FALLBACK_ACTIVE_MESSAGE_CAP = 100;
+const FALLBACK_INACTIVE_MESSAGE_CAP = 50;
 
-function buildPersistSnapshot() {
-  return sessions.map((session) => {
+/**
+ * @param {{ activeMessageCap?: number, inactiveMessageCap?: number }} [opts]
+ */
+function buildPersistSnapshot(opts = {}) {
+  const activeMessageCap = Number(opts.activeMessageCap);
+  const inactiveMessageCap = Number(opts.inactiveMessageCap);
+  return sessions.map((session, index) => {
     const srcMessages = Array.isArray(session?.messages) ? session.messages : [];
-    const messages = srcMessages;
+    const isActiveSession = index === activeSession;
+    const limitRaw = isActiveSession ? activeMessageCap : inactiveMessageCap;
+    const hasLimit = Number.isFinite(limitRaw) && limitRaw >= 0;
+    const limit = hasLimit ? Math.floor(limitRaw) : Number.POSITIVE_INFINITY;
+    const messages = hasLimit && srcMessages.length > limit ? srcMessages.slice(-limit) : srcMessages;
     return { ...session, messages };
   });
 }
@@ -92,7 +103,10 @@ export function saveSessions() {
       localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
     } catch {
       try {
-        const fallbackSessions = buildPersistSnapshot();
+        const fallbackSessions = buildPersistSnapshot({
+          activeMessageCap: FALLBACK_ACTIVE_MESSAGE_CAP,
+          inactiveMessageCap: FALLBACK_INACTIVE_MESSAGE_CAP,
+        });
         localStorage.setItem(LS_SESSIONS, JSON.stringify(fallbackSessions));
         localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
       } catch {
