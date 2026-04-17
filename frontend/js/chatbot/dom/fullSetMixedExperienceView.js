@@ -28,7 +28,7 @@ import {
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {{ title?: string, spec: FullSetMixedSpec }} bundle
- * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "fullset"|"slide"|"quiz"|"flash") => void }} [deps]
+ * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "fullset"|"slide"|"quiz"|"flash", opts?: { preset?: "same"|"other" }) => void | Promise<void> }} [deps]
  * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
 export async function mountFullSetMixedExperience(layerView, bundle, deps, opts = {}) {
@@ -187,21 +187,63 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     return `Bạn chọn "${pickedText || "không chọn"}" nên chưa đúng. Đáp án đúng là "${correctText}". ${base}`;
   }
 
+  function exitReviewToLastStep() {
+    reviewMode = false;
+    index = Math.max(0, steps.length - 1);
+    footer.hidden = false;
+    renderStep();
+  }
+
   function renderReview() {
     stage.innerHTML = "";
+    footer.hidden = true;
     recomputeScore();
     progress.paint({ total, index: Math.max(0, steps.length - 1), correct, wrong });
 
     const wrap = document.createElement("div");
     wrap.className = "quiz-review-wrap";
 
+    const scoreRow = document.createElement("div");
+    scoreRow.className = "quiz-review-score-row";
+
+    const scoreMain = document.createElement("div");
+    scoreMain.className = "quiz-review-score-main";
     const scoreCard = document.createElement("div");
     scoreCard.className = "quiz-review-score";
     scoreCard.innerHTML = `
       <h3>Kết quả bài quiz</h3>
       <p>Bạn làm đúng <strong>${correct}</strong>/<strong>${quizStepIndexes.length}</strong> câu, sai <strong>${wrong}</strong> câu.</p>
     `;
-    wrap.appendChild(scoreCard);
+    scoreMain.appendChild(scoreCard);
+
+    const actions = document.createElement("div");
+    actions.className = "quiz-review-actions";
+    const backInline = document.createElement("button");
+    backInline.type = "button";
+    backInline.className = "continue-create-btn quiz-review-action-back";
+    backInline.textContent = "Quay lại thẻ";
+    const otherInline = document.createElement("button");
+    otherInline.type = "button";
+    otherInline.className = "continue-create-btn continue-create-btn-secondary";
+    otherInline.textContent = "Tạo thẻ khác";
+    const sameInline = document.createElement("button");
+    sameInline.type = "button";
+    sameInline.className = "continue-create-btn continue-create-btn-primary";
+    sameInline.textContent = "Tiếp tục tạo";
+    backInline.addEventListener("click", () => exitReviewToLastStep());
+    otherInline.addEventListener("click", () => {
+      void Promise.resolve(deps?.onContinueCreate?.("fullset", { preset: "other" }));
+    });
+    sameInline.addEventListener("click", () => {
+      void Promise.resolve(deps?.onContinueCreate?.("fullset", { preset: "same" }));
+    });
+    actions.appendChild(backInline);
+    actions.appendChild(otherInline);
+    actions.appendChild(sameInline);
+
+    scoreRow.appendChild(scoreMain);
+    scoreRow.appendChild(actions);
+    wrap.appendChild(scoreRow);
 
     const filterRow = document.createElement("div");
     filterRow.className = "quiz-review-filters";
@@ -292,10 +334,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     wrap.appendChild(list);
     stage.appendChild(wrap);
 
-    backBtn.textContent = "Quay lại thẻ";
-    backBtn.disabled = false;
-    nextBtn.textContent = "Tiếp tục tạo";
-    nextBtn.disabled = false;
     emitState();
   }
 
@@ -305,6 +343,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       return;
     }
 
+    footer.hidden = false;
     const step = steps[index];
     stage.innerHTML = "";
     backBtn.textContent = "Quay lại";
@@ -352,6 +391,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
 
   nextBtn.addEventListener("click", () => {
+    if (reviewMode) {
+      void Promise.resolve(deps?.onContinueCreate?.("fullset"));
+      return;
+    }
     const step = steps[index];
     if (!step) return;
 
@@ -420,9 +463,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
 
   backBtn.addEventListener("click", () => {
     if (reviewMode) {
-      reviewMode = false;
-      index = Math.max(0, steps.length - 1);
-      renderStep();
+      exitReviewToLastStep();
       return;
     }
     if (index <= 0) return;

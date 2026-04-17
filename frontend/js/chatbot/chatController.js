@@ -202,11 +202,18 @@ export function init() {
     });
   }
 
-  async function continueCreateFromExperience(kind) {
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flash"} kind
+   * @param {{ preset?: "same"|"other" }} [opts]
+   *   Khi có `preset`, bỏ qua hộp thoại và áp dụng luôn (dùng cho nút inline trên màn hình kết quả).
+   */
+  async function continueCreateFromExperience(kind, opts) {
     const validKind =
       kind === "fullset" || kind === "quiz" || kind === "slide" || kind === "flash" ? kind : null;
     if (!validKind) return;
-    const selected = await openContinueCreateDialog(validKind);
+    const preset = opts && typeof opts === "object" ? opts.preset : undefined;
+    const selected =
+      preset === "same" || preset === "other" ? preset : await openContinueCreateDialog(validKind);
     if (!selected) return;
     const state = history.state && typeof history.state === "object" ? history.state : {};
     history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
