@@ -26,6 +26,15 @@ export function sameMeta(a, b) {
 }
 
 /**
+ * @param {any} state
+ */
+function readHistoryById(state) {
+  return state && typeof state === "object" && state.historyById && typeof state.historyById === "object"
+    ? state.historyById
+    : null;
+}
+
+/**
  * @param {"quiz"|"slide"|"flash"|"fullset"} kind
  * @param {any} progress
  */
@@ -50,7 +59,12 @@ export function computeCompleted(kind, progress) {
  * @param {Record<string, string>} meta
  * @param {"fresh"|"resume"} mode
  */
-export function resolveSingleInitialState(currentExperienceState, kind, meta, mode) {
+export function resolveSingleInitialState(currentExperienceState, kind, meta, mode, experienceId = "") {
+  const history = readHistoryById(currentExperienceState);
+  const historyEntry = experienceId && history ? history[experienceId] : null;
+  if (historyEntry && historyEntry.kind === kind && historyEntry.progress) {
+    return historyEntry.progress;
+  }
   const persisted =
     mode === "resume" && currentExperienceState?.kind === kind
       ? currentExperienceState.progress
@@ -62,7 +76,12 @@ export function resolveSingleInitialState(currentExperienceState, kind, meta, mo
  * @param {any} currentExperienceState
  * @param {Record<string, string>} spec
  */
-export function resolveFullsetInitialState(currentExperienceState, spec) {
+export function resolveFullsetInitialState(currentExperienceState, spec, experienceId = "") {
+  const history = readHistoryById(currentExperienceState);
+  const historyEntry = experienceId && history ? history[experienceId] : null;
+  if (historyEntry && historyEntry.kind === "fullset" && historyEntry.progress) {
+    return historyEntry.progress;
+  }
   const persisted = currentExperienceState?.kind === "fullset" ? currentExperienceState.progress : null;
   return persisted && persisted.spec && sameMeta(persisted.spec, spec || {}) ? persisted : null;
 }
@@ -85,22 +104,44 @@ export function normalizeExperienceKind(rawKind) {
 export function fullsetResumeItemsFromSpec(spec, openedAtIso) {
   const topic = spec.topic || "—";
   const t = openedAtIso || new Date().toISOString();
+  const baseExperienceId = typeof spec?.__experienceId === "string" ? spec.__experienceId : "";
+  const slideExperienceId = baseExperienceId ? `${baseExperienceId}:slide` : "";
+  const quizExperienceId = baseExperienceId ? `${baseExperienceId}:quiz` : "";
+  const flashExperienceId = baseExperienceId ? `${baseExperienceId}:flash` : "";
   return [
     {
       kind: "slide",
-      meta: { topic, count: String(spec.slides || "—"), notes: "Full set (demo mock)" },
+      meta: {
+        topic,
+        count: String(spec.slides || "—"),
+        notes: "Full set (demo mock)",
+        ...(slideExperienceId ? { __experienceId: slideExperienceId } : {}),
+      },
+      ...(slideExperienceId ? { experienceId: slideExperienceId } : {}),
       title: `Slide — ${topic}`,
       openedAt: t,
     },
     {
       kind: "quiz",
-      meta: { topic, count: String(spec.quiz || "—"), notes: "Full set (demo mock)" },
+      meta: {
+        topic,
+        count: String(spec.quiz || "—"),
+        notes: "Full set (demo mock)",
+        ...(quizExperienceId ? { __experienceId: quizExperienceId } : {}),
+      },
+      ...(quizExperienceId ? { experienceId: quizExperienceId } : {}),
       title: `Trắc nghiệm — ${topic}`,
       openedAt: t,
     },
     {
       kind: "flash",
-      meta: { source: topic, count: String(spec.flash || "—"), extra: "Full set (demo mock)" },
+      meta: {
+        source: topic,
+        count: String(spec.flash || "—"),
+        extra: "Full set (demo mock)",
+        ...(flashExperienceId ? { __experienceId: flashExperienceId } : {}),
+      },
+      ...(flashExperienceId ? { experienceId: flashExperienceId } : {}),
       title: `Flashcard — ${topic}`,
       openedAt: t,
     },

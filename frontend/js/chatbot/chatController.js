@@ -125,9 +125,9 @@ export function init() {
     messageController.pushUser(text);
   }
 
-  function pushQuickResumeDock(kind, meta) {
+  function pushQuickResumeDock(kind, meta, experienceId) {
     if (!experienceController) return;
-    experienceController.pushQuickResumeDock(kind, meta);
+    experienceController.pushQuickResumeDock(kind, meta, experienceId);
   }
 
   function reenableFlowCard(cardRoot) {
@@ -266,9 +266,9 @@ export function init() {
     experienceController.persistActiveExperience();
   }
 
-  async function openSingleExperience(kind, meta, mode) {
+  async function openSingleExperience(kind, meta, mode, experienceId) {
     if (!experienceController) return;
-    await experienceController.openSingleExperience(kind, meta, mode);
+    await experienceController.openSingleExperience(kind, meta, mode, experienceId);
   }
 
   guidedController = createGuidedInteractionController({

@@ -46,6 +46,79 @@ export function createExperienceController(deps) {
   /** @type {any} */
   let lastOpenedExperience = null;
   let resumeDockAlreadyPosted = false;
+  const EXPERIENCE_HISTORY_LIMIT = 24;
+
+  function generateExperienceId() {
+    if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
+      return globalThis.crypto.randomUUID();
+    }
+    return `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  /**
+   * @param {Record<string, any>} meta
+   */
+  function readExperienceIdFromMeta(meta) {
+    if (!meta || typeof meta !== "object") return "";
+    const byUnderscore = typeof meta.__experienceId === "string" ? meta.__experienceId.trim() : "";
+    if (byUnderscore) return byUnderscore;
+    const byDirect = typeof meta.experienceId === "string" ? meta.experienceId.trim() : "";
+    return byDirect;
+  }
+
+  /**
+   * @param {Record<string, any>} meta
+   * @param {string} experienceId
+   */
+  function withExperienceIdMeta(meta, experienceId) {
+    const safeMeta = meta && typeof meta === "object" ? { ...meta } : {};
+    if (!experienceId) return safeMeta;
+    return {
+      ...safeMeta,
+      __experienceId: experienceId,
+    };
+  }
+
+  /**
+   * @param {any} currentState
+   * @param {{ experienceId: string, kind: "quiz"|"slide"|"flash"|"fullset", meta: Record<string, any>, progress: any, completed: boolean }} params
+   */
+  function upsertHistoryByExperienceId(currentState, params) {
+    const { experienceId, kind, meta, progress, completed } = params;
+    const existingHistory =
+      currentState && typeof currentState === "object" && currentState.historyById && typeof currentState.historyById === "object"
+        ? currentState.historyById
+        : {};
+    if (!experienceId) return existingHistory;
+    const nowIso = new Date().toISOString();
+    /** @type {Record<string, any>} */
+    const nextHistory = {
+      ...existingHistory,
+      [experienceId]: {
+        experienceId,
+        kind,
+        meta: { ...meta },
+        progress,
+        completed: Boolean(completed),
+        updatedAt: nowIso,
+      },
+    };
+    const ids = Object.keys(nextHistory);
+    if (ids.length <= EXPERIENCE_HISTORY_LIMIT) return nextHistory;
+    ids
+      .sort((a, b) => {
+        const aTime = Date.parse(nextHistory[a]?.updatedAt || "");
+        const bTime = Date.parse(nextHistory[b]?.updatedAt || "");
+        const safeA = Number.isFinite(aTime) ? aTime : 0;
+        const safeB = Number.isFinite(bTime) ? bTime : 0;
+        return safeB - safeA;
+      })
+      .slice(EXPERIENCE_HISTORY_LIMIT)
+      .forEach((id) => {
+        delete nextHistory[id];
+      });
+    return nextHistory;
+  }
 
   function hasResumeDockInCurrentSession(targetDock) {
     const targetSignature = resumeDockSignature(targetDock);
@@ -63,12 +136,14 @@ export function createExperienceController(deps) {
   /**
    * @param {"quiz"|"slide"|"flash"} kind
    * @param {Record<string, string>} meta
+   * @param {string} [experienceId]
    */
-  function rememberOpenExperience(kind, meta) {
+  function rememberOpenExperience(kind, meta, experienceId) {
     lastOpenedExperience = {
       bundleBack: false,
       kind,
       meta: { ...meta },
+      experienceId: experienceId || "",
       title: buildResumeTitle(kind, meta),
     };
     resumeDockAlreadyPosted = false;
@@ -103,6 +178,7 @@ export function createExperienceController(deps) {
       items: items.map((it) => ({
         kind: it.kind,
         meta: { ...(it.meta || {}) },
+        experienceId: it.experienceId || "",
         title: it.title,
         openedAt: it.openedAt,
       })),
@@ -114,11 +190,12 @@ export function createExperienceController(deps) {
    * @param {string} title
    * @param {Record<string, string>} spec
    */
-  function rememberOpenFullSetMixedForBack(title, spec) {
+  function rememberOpenFullSetMixedForBack(title, spec, experienceId) {
     lastOpenedExperience = {
       fullsetMixedBack: true,
       title: title || "Full set",
       fullsetMixed: { ...spec },
+      experienceId: experienceId || "",
     };
     resumeDockAlreadyPosted = false;
   }
@@ -133,43 +210,68 @@ export function createExperienceController(deps) {
    * @param {"quiz"|"slide"|"flash"} kind
    * @param {Record<string, string>} meta
    * @param {"fresh"|"resume"} mode
+   * @param {string} [forcedExperienceId]
    */
-  async function openSingleExperience(kind, meta, mode) {
-    rememberOpenExperience(kind, meta || {});
+  async function openSingleExperience(kind, meta, mode, forcedExperienceId = "") {
+    const seedMeta = meta && typeof meta === "object" ? meta : {};
+    const experienceId = forcedExperienceId || readExperienceIdFromMeta(seedMeta) || generateExperienceId();
+    const scopedMeta = withExperienceIdMeta(seedMeta, experienceId);
+    rememberOpenExperience(kind, scopedMeta, experienceId);
     persistActiveExperience();
     ensureExperienceHistoryEntry();
-    const initialState = resolveSingleInitialState(getCurrentExperienceState() || {}, kind, meta || {}, mode);
+    const initialState = resolveSingleInitialState(getCurrentExperienceState() || {}, kind, scopedMeta, mode, experienceId);
     const mountOpts = {
       initialState,
       onStateChange: (state) => {
-        setCurrentExperienceState({
-          ...getCurrentExperienceState(),
+        const completed = computeCompleted(kind, state);
+        const currentState = getCurrentExperienceState() || {};
+        const historyById = upsertHistoryByExperienceId(currentState, {
+          experienceId,
           kind,
-          meta: { ...meta },
+          meta: scopedMeta,
           progress: state,
-          completed: computeCompleted(kind, state),
+          completed,
+        });
+        setCurrentExperienceState({
+          ...currentState,
+          kind,
+          meta: { ...scopedMeta },
+          progress: state,
+          completed,
+          activeExperienceId: experienceId,
+          historyById,
           resume: lastOpenedExperience,
         });
         saveSessions();
       },
     };
     if (mode === "fresh") {
+      const currentState = getCurrentExperienceState() || {};
       setCurrentExperienceState({
+        ...currentState,
         kind,
-        meta: { ...meta },
+        meta: { ...scopedMeta },
         progress: null,
         completed: false,
+        activeExperienceId: experienceId,
         resume: lastOpenedExperience,
+        historyById: upsertHistoryByExperienceId(currentState, {
+          experienceId,
+          kind,
+          meta: scopedMeta,
+          progress: null,
+          completed: false,
+        }),
       });
       saveSessions();
     }
-    if (kind === "quiz") await mountQuizExperience(layerView, meta, experienceHooks, mountOpts);
-    else if (kind === "slide") await mountSlideExperience(layerView, meta, experienceHooks, mountOpts);
-    else await mountFlashExperience(layerView, meta, experienceHooks, mountOpts);
+    if (kind === "quiz") await mountQuizExperience(layerView, scopedMeta, experienceHooks, mountOpts);
+    else if (kind === "slide") await mountSlideExperience(layerView, scopedMeta, experienceHooks, mountOpts);
+    else await mountFlashExperience(layerView, scopedMeta, experienceHooks, mountOpts);
   }
 
   /**
-   * @param {{ kind: string, meta: Record<string, string> }} item
+   * @param {{ kind: string, meta: Record<string, string>, experienceId?: string }} item
    */
   async function openResumeExperience(item) {
     const kind = normalizeExperienceKind(item?.kind || "");
@@ -178,10 +280,14 @@ export function createExperienceController(deps) {
       return;
     }
     try {
+      const resumeMeta = item && typeof item === "object" && item.meta && typeof item.meta === "object" ? item.meta : {};
+      const experienceId =
+        (item && typeof item.experienceId === "string" ? item.experienceId : "") || readExperienceIdFromMeta(resumeMeta);
       await openSingleExperience(
         /** @type {"quiz"|"slide"|"flash"} */ (kind),
-        item.meta || {},
+        resumeMeta,
         "resume",
+        experienceId,
       );
     } catch {
       layerView.hide();
@@ -197,7 +303,9 @@ export function createExperienceController(deps) {
     persistActiveExperience();
     ensureExperienceHistoryEntry();
     layerView.prepareShow();
+    const currentState = getCurrentExperienceState() || {};
     setCurrentExperienceState({
+      ...currentState,
       kind: "fullset",
       meta: { mode: "hub", title: bundleTitle || "Full set" },
       progress: null,
@@ -218,25 +326,39 @@ export function createExperienceController(deps) {
    * @param {Record<string, string>} spec
    * @param {string} bundleTitle
    */
-  async function openResumeFullSetMixed(spec, bundleTitle) {
-    rememberOpenFullSetMixedForBack(bundleTitle || "Full set", spec);
+  async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "") {
+    const safeSpec = spec && typeof spec === "object" ? { ...spec } : {};
+    const experienceId = forcedExperienceId || readExperienceIdFromMeta(safeSpec) || generateExperienceId();
+    const scopedSpec = withExperienceIdMeta(safeSpec, experienceId);
+    rememberOpenFullSetMixedForBack(bundleTitle || "Full set", scopedSpec, experienceId);
     persistActiveExperience();
     ensureExperienceHistoryEntry();
     layerView.prepareShow();
-    const initialState = resolveFullsetInitialState(getCurrentExperienceState(), spec || {});
+    const initialState = resolveFullsetInitialState(getCurrentExperienceState(), scopedSpec, experienceId);
     await mountFullSetMixedExperience(
       layerView,
-      { title: bundleTitle || "Full set", spec },
+      { title: bundleTitle || "Full set", spec: scopedSpec },
       experienceHooks,
       {
         initialState,
         onStateChange: (state) => {
-          setCurrentExperienceState({
-            ...getCurrentExperienceState(),
+          const completed = computeCompleted("fullset", state);
+          const currentState = getCurrentExperienceState() || {};
+          const historyById = upsertHistoryByExperienceId(currentState, {
+            experienceId,
             kind: "fullset",
-            meta: { ...spec },
+            meta: scopedSpec,
             progress: state,
-            completed: computeCompleted("fullset", state),
+            completed,
+          });
+          setCurrentExperienceState({
+            ...currentState,
+            kind: "fullset",
+            meta: { ...scopedSpec },
+            progress: state,
+            completed,
+            activeExperienceId: experienceId,
+            historyById,
             resume: lastOpenedExperience,
           });
           saveSessions();
@@ -262,13 +384,18 @@ export function createExperienceController(deps) {
   /**
    * @param {"quiz"|"slide"|"flash"} kind
    * @param {Record<string, string>} meta
+   * @param {string} [forcedExperienceId]
    */
-  function pushQuickResumeDock(kind, meta) {
+  function pushQuickResumeDock(kind, meta, forcedExperienceId = "") {
+    const seedMeta = meta && typeof meta === "object" ? meta : {};
+    const experienceId = forcedExperienceId || readExperienceIdFromMeta(seedMeta) || generateExperienceId();
+    const scopedMeta = withExperienceIdMeta(seedMeta, experienceId);
     const now = new Date().toISOString();
     const resumeDock = {
       kind,
-      meta: { ...meta },
-      title: buildResumeTitle(kind, meta || {}),
+      meta: { ...scopedMeta },
+      experienceId,
+      title: buildResumeTitle(kind, scopedMeta || {}),
       openedAt: now,
     };
     if (hasResumeDockInCurrentSession(resumeDock)) {
@@ -308,6 +435,7 @@ export function createExperienceController(deps) {
     } else if (lastOpenedExperience.fullsetMixedBack) {
       const resumeDock = {
         title: lastOpenedExperience.title,
+        experienceId: lastOpenedExperience.experienceId || "",
         fullsetMixed: { ...lastOpenedExperience.fullsetMixed },
         items: fullsetResumeItemsFromSpec(lastOpenedExperience.fullsetMixed, now),
         openedAt: now,
@@ -325,6 +453,7 @@ export function createExperienceController(deps) {
       const resumeDock = {
         kind: lastOpenedExperience.kind,
         meta: { ...lastOpenedExperience.meta },
+        experienceId: lastOpenedExperience.experienceId || "",
         title: lastOpenedExperience.title,
         openedAt: now,
       };
