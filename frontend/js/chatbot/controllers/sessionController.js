@@ -18,6 +18,23 @@
  *   onSessionDeleted: () => void | Promise<void>,
  * }} deps
  */
+let rerenderQueued = false;
+let scheduledRerenderFn = null;
+
+function scheduleRerender() {
+  if (rerenderQueued || typeof scheduledRerenderFn !== "function") return;
+  rerenderQueued = true;
+  const run = () => {
+    rerenderQueued = false;
+    scheduledRerenderFn();
+  };
+  if (typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(run);
+    return;
+  }
+  window.setTimeout(run, 0);
+}
+
 export function renderSessionListUI(deps) {
   const {
     chatListEl,
@@ -33,21 +50,9 @@ export function renderSessionListUI(deps) {
   } = deps;
 
   let actionInFlight = false;
-  let rerenderQueued = false;
-
-  function scheduleRerender() {
-    if (rerenderQueued) return;
-    rerenderQueued = true;
-    const run = () => {
-      rerenderQueued = false;
-      renderSessionListUI(deps);
-    };
-    if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(run);
-      return;
-    }
-    window.setTimeout(run, 0);
-  }
+  scheduledRerenderFn = () => {
+    renderSessionListUI(deps);
+  };
 
   renderChatList(
     chatListEl,

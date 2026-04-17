@@ -34,13 +34,6 @@ export function normalizeFlowActionValue(value) {
 }
 
 /**
- * @param {any} value
- */
-function isRecord(value) {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
-
-/**
  * @param {Record<string, any>} rawMeta
  */
 function sanitizeFlowActionMeta(rawMeta) {
@@ -56,33 +49,11 @@ function sanitizeFlowActionMeta(rawMeta) {
 }
 
 /**
- * Only carry forward keys that are explicitly present in the new action meta
- * and still equal in the previous guided state.
- * @param {any} prevGuided
- * @param {"fullset"|"slide"|"quiz"|"flash"} kind
- * @param {Record<string, string>} nextMeta
- */
-function getValidatedCompatiblePrevData(prevGuided, kind, nextMeta) {
-  if (!isRecord(prevGuided)) return {};
-  if (prevGuided.kind !== kind || prevGuided.step !== "await_source") return {};
-  if (!isRecord(prevGuided.data)) return {};
-  const keys = Object.keys(nextMeta);
-  if (!keys.length) return {};
-  const compatible = {};
-  for (const key of keys) {
-    if (!Object.prototype.hasOwnProperty.call(prevGuided.data, key)) continue;
-    const prevValue = String(prevGuided.data[key] ?? "").trim();
-    if (!prevValue || prevValue !== nextMeta[key]) return {};
-    compatible[key] = prevValue;
-  }
-  return compatible;
-}
-
-/**
  * @param {string} value
  * @param {any} prevGuided
  */
 export function buildGuidedFromActionValue(value, prevGuided) {
+  void prevGuided;
   const { action, meta } = splitFlowActionValue(value);
   if (!action) return null;
   let kind = "";
@@ -92,8 +63,7 @@ export function buildGuidedFromActionValue(value, prevGuided) {
   else if (action.startsWith("flash_")) kind = "flash";
   if (!kind) return null;
   const safeMeta = sanitizeFlowActionMeta(meta);
-  const compatiblePrevData = getValidatedCompatiblePrevData(prevGuided, kind, safeMeta);
-  return { kind, step: "await_source", data: { ...compatiblePrevData, ...safeMeta } };
+  return { kind, step: "await_source", data: safeMeta };
 }
 
 /**

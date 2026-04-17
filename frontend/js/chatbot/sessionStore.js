@@ -1,6 +1,10 @@
 import { LS_ACTIVE_SESSION, LS_SESSIONS } from "./constants.js";
 
 const SAVE_SESSIONS_TIMEOUT_MS = 180;
+const ACTIVE_PERSIST_MESSAGE_CAP = 100;
+const INACTIVE_PERSIST_MESSAGE_CAP = 50;
+const FALLBACK_ACTIVE_PERSIST_MESSAGE_CAP = 30;
+const FALLBACK_INACTIVE_PERSIST_MESSAGE_CAP = 10;
 
 function buildPersistSnapshot(activeCap, inactiveCap) {
   return sessions.map((session, idx) => {
@@ -89,12 +93,16 @@ export function saveSessions() {
   schedule(() => {
     saveQueued = false;
     try {
-      const compactSessions = buildPersistSnapshot(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+      const compactSessions = buildPersistSnapshot(ACTIVE_PERSIST_MESSAGE_CAP, INACTIVE_PERSIST_MESSAGE_CAP);
       localStorage.setItem(LS_SESSIONS, JSON.stringify(compactSessions));
       localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
     } catch {
       try {
-        // Avoid destructive fallback writes that can permanently truncate history.
+        const fallbackSessions = buildPersistSnapshot(
+          FALLBACK_ACTIVE_PERSIST_MESSAGE_CAP,
+          FALLBACK_INACTIVE_PERSIST_MESSAGE_CAP,
+        );
+        localStorage.setItem(LS_SESSIONS, JSON.stringify(fallbackSessions));
         localStorage.setItem(LS_ACTIVE_SESSION, String(activeSession));
       } catch {
         // Ignore storage write failures and keep in-memory state intact.

@@ -67,6 +67,33 @@ export function init() {
   let guidedController;
   let isSending = false;
 
+  messageController = createMessageController({
+    getCurrentSession,
+    saveSessions,
+    getMessageView: () => msgView,
+    postChat,
+    apiUrl,
+    sendBtn,
+    inputEl: input,
+  });
+
+  const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };
+  experienceController = createExperienceController({
+    getCurrentSession,
+    getCurrentExperienceState,
+    setCurrentExperienceState,
+    saveSessions,
+    ensureExperienceHistoryEntry,
+    layerView,
+    mountQuizExperience,
+    mountSlideExperience,
+    mountFlashExperience,
+    mountFullSetHubExperience,
+    mountFullSetMixedExperience,
+    experienceHooks,
+    pushBot,
+  });
+
   function setStartupUiState(active) {
     const isActive = Boolean(active);
     chatPhase.classList.toggle("startup-mode", isActive);
@@ -271,32 +298,6 @@ export function init() {
     onFlowCardSubmit: (cardType, payload, cardRoot) => guidedController.handleFlowCardSubmit(cardType, payload, cardRoot),
   });
 
-  messageController = createMessageController({
-    getCurrentSession,
-    saveSessions,
-    getMessageView: () => msgView,
-    postChat,
-    apiUrl,
-    sendBtn,
-    inputEl: input,
-  });
-
-  const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };
-  experienceController = createExperienceController({
-    getCurrentSession,
-    getCurrentExperienceState,
-    setCurrentExperienceState,
-    saveSessions,
-    ensureExperienceHistoryEntry,
-    layerView,
-    mountQuizExperience,
-    mountSlideExperience,
-    mountFlashExperience,
-    mountFullSetHubExperience,
-    mountFullSetMixedExperience,
-    experienceHooks,
-    pushBot,
-  });
   console.log("[chatController] controllers initialized");
 
   /** @type {ReturnType<typeof createMessageHistoryService>} */
