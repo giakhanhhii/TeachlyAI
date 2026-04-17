@@ -250,10 +250,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     const allBtn = document.createElement("button");
     allBtn.type = "button";
     allBtn.className = `quiz-review-filter-btn${reviewFilter === "all" ? " active" : ""}`;
+    allBtn.setAttribute("data-review-filter", "all");
     allBtn.textContent = "Xem toàn bộ câu";
     const wrongBtn = document.createElement("button");
     wrongBtn.type = "button";
     wrongBtn.className = `quiz-review-filter-btn${reviewFilter === "wrong" ? " active" : ""}`;
+    wrongBtn.setAttribute("data-review-filter", "wrong");
     wrongBtn.textContent = "Xem các câu sai";
     filterRow.appendChild(allBtn);
     filterRow.appendChild(wrongBtn);
@@ -321,15 +323,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         list.appendChild(card);
       });
     }
-
-    allBtn.addEventListener("click", () => {
-      reviewFilter = "all";
-      renderReview();
-    });
-    wrongBtn.addEventListener("click", () => {
-      reviewFilter = "wrong";
-      renderReview();
-    });
 
     wrap.appendChild(list);
     stage.appendChild(wrap);
@@ -474,6 +467,22 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   shell.appendChild(summary);
   shell.appendChild(progress.wrap);
   shell.appendChild(stage);
+
+  stage.addEventListener("click", (e) => {
+    const t = e.target;
+    if (!(t instanceof Element)) return;
+    const btn = t.closest("button.quiz-review-filter-btn");
+    if (!btn || !stage.contains(btn)) return;
+    const f = btn.getAttribute("data-review-filter");
+    if (f === "all") {
+      reviewFilter = "all";
+      renderReview();
+    } else if (f === "wrong") {
+      reviewFilter = "wrong";
+      renderReview();
+    }
+  });
+
   shell.appendChild(footer);
   root.appendChild(shell);
   renderStep();

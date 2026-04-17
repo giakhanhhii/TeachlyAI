@@ -119,7 +119,10 @@ export function createGuidedInteractionController(deps) {
     let guidedForSubmit = getGuided();
     if (!guidedForSubmit) {
       const recovered = recoverGuidedForOrphanTopicForm(cardType);
-      if (recovered) guidedForSubmit = recovered;
+      if (recovered) {
+        setGuided(recovered);
+        guidedForSubmit = recovered;
+      }
     }
     const result = computeFlowCardSubmit(guidedForSubmit, cardType, payload);
     if (!result.handled) {
