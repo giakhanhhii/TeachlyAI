@@ -1,0 +1,33 @@
+---
+description: Core project coding and AI workflow directives
+alwaysApply: true
+---
+
+# Cursor Rules - Quick Directives
+
+## 1. Naming & Logic
+- **Clarity over Brevity:** Use descriptive, domain-aligned names (e.g., `invoiceTotal` > `x`). Avoid type encoding.
+- **SRP:** One primary reason to change per unit. Split only for cohesion, not just line count.
+- **DRY & KISS:** Eliminate duplication of *meaning*. Choose the simplest design that works. No speculative generality.
+
+## 2. Implementation & Safety
+- **Fail Visibly:** Validate early at boundaries. Preserve error context (IDs, keys). No silent failures.
+- **Comments:** Explain *WHY* (tradeoffs, quirks), not *WHAT* (narrating code).
+- **Frontend:** Strict separation of UI (presentation) and Logic (hooks, services). Prefer colocating related files.
+
+## 3. ANTI-GOD COMPONENT RULES (STRICT)
+- **Hard Line Limit:** NO file over **300 lines**. Period. Split it. (Views < 200 lines, Services/Controllers < 250 lines).
+- **Zero DOM in Services:** `*Service.js` must NEVER contain HTML strings or DOM API calls (`document.`, `element.`).
+- **Zero Business Logic in Views:** If a function calculates scores, formats data, or fetches API, it belongs in a `*Service.js`.
+- **No Monolithic Renders:** Do NOT lump multiple screens into one component. Split large UI flows into smaller components (e.g., separate `StepView`, `ReviewView`, `DialogView`).
+- **Check Before Coding:** Always review `godcomponent.md` before adding new features to large components.
+
+## 4. Mandatory AI Workflow (AGENTS.md)
+- **Hooks:** Always ensure `scripts/setup_hooks.ps1` (Windows) or `.sh` (Linux) has been run.
+- **Logging:** Automatic via hooks; do not log manually or ask the user. Do NOT commit `.ai-log/*.jsonl`.
+- **PRs:** MUST include clear Title + Description (Summary + List of changed files).
+
+## 5. Execution Judgement
+- Prioritize: Correctness -> Clarity -> Maintainability -> Consistency.
+- Match project maturity: Fast iterations for prototypes, strict boundaries for core modules.
+- Follow framework idioms (Next.js, FastAPI, etc.) over generic patterns.
