@@ -86,6 +86,7 @@ class DatabaseManager:
         limit: int = 20,
         through_message_id: int | None = None,
     ) -> list[dict[str, str]]:
+        rows = []
         with self._lock:
             if through_message_id is None:
                 rows = self._conn.execute(
@@ -109,8 +110,8 @@ class DatabaseManager:
                     """,
                     (thread_id, int(through_message_id), max(1, limit)),
                 ).fetchall()
-        # API expects oldest -> newest order.
-        rows.reverse()
+            # API expects oldest -> newest order.
+            rows.reverse()
         return [{"role": str(r["role"]), "content": str(r["content"])} for r in rows]
 
     def get_messages_page(self, thread_id: str, limit: int = 20, offset: int = 0) -> tuple[list[dict], int]:

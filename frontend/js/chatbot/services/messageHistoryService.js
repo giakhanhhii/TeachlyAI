@@ -1,3 +1,5 @@
+import { resumeDockSignature } from "../utils/serialization.js";
+
 /**
  * @param {{
  *   role: string,
@@ -24,55 +26,6 @@ function hasInteractiveMessages(messages) {
       typeof m === "object" &&
       (Boolean(m.cardType) || Boolean(m.resumeDock) || (Array.isArray(m.actions) && m.actions.length > 0)),
   );
-}
-
-function sortObjectDeep(value) {
-  if (Array.isArray(value)) return value.map(sortObjectDeep);
-  if (!value || typeof value !== "object") return value;
-  return Object.keys(value)
-    .sort()
-    .reduce((acc, key) => {
-      acc[key] = sortObjectDeep(value[key]);
-      return acc;
-    }, {});
-}
-
-function stableSerialize(value) {
-  try {
-    return JSON.stringify(sortObjectDeep(value));
-  } catch {
-    return String(value ?? "");
-  }
-}
-
-function itemSignature(item) {
-  return stableSerialize({
-    kind: item?.kind || "",
-    title: item?.title || "",
-    meta: item?.meta || {},
-  });
-}
-
-function resumeDockSignature(dock) {
-  if (!dock || typeof dock !== "object") return "";
-  if (dock.fullsetMixed) {
-    return `mixed:${stableSerialize({
-      title: dock.title || "",
-      fullsetMixed: dock.fullsetMixed || {},
-      items: Array.isArray(dock.items) ? dock.items.map(itemSignature) : [],
-    })}`;
-  }
-  if (Array.isArray(dock.items)) {
-    return `bundle:${stableSerialize({
-      title: dock.title || "",
-      items: dock.items.map(itemSignature),
-    })}`;
-  }
-  return `single:${stableSerialize({
-    kind: dock.kind || "",
-    title: dock.title || "",
-    meta: dock.meta || {},
-  })}`;
 }
 
 /**

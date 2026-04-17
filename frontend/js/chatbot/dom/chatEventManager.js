@@ -78,6 +78,7 @@ export function resolveChatDomElements() {
  *   toggleSidebarBtn?: HTMLButtonElement | null,
  *   topHomeBtn?: HTMLButtonElement | null,
  *   getIsSending: () => boolean,
+ *   setSendingState: (next: boolean) => void,
  *   getGuided: () => any,
  *   onGuidedPrompt: (prompt: string, guidedState: any) => Promise<boolean>,
  *   onSendPrompt: (prompt: string) => void,
@@ -107,6 +108,7 @@ export function setupChatEventManager(deps) {
     toggleSidebarBtn,
     topHomeBtn,
     getIsSending,
+    setSendingState,
     getGuided,
     onGuidedPrompt,
     onSendPrompt,
@@ -133,17 +135,22 @@ export function setupChatEventManager(deps) {
     const prompt = input.value.trim();
     if (!prompt) return;
 
-    const guided = getGuided();
-    if (guided && (guided.step === "await_source" || guided.step === "await_pdf_file")) {
-      input.focus();
-      return;
-    }
-    if (guided) {
-      const handled = await onGuidedPrompt(prompt, guided);
-      if (handled) return;
-    }
+    try {
+      const guided = getGuided();
+      if (guided && (guided.step === "await_source" || guided.step === "await_pdf_file")) {
+        input.focus();
+        return;
+      }
+      if (guided) {
+        const handled = await onGuidedPrompt(prompt, guided);
+        if (handled) return;
+      }
 
-    onSendPrompt(prompt);
+      onSendPrompt(prompt);
+    } catch (err) {
+      console.error("[chat] form submit failed:", err);
+      setSendingState(false);
+    }
   });
 
   bindNewChatButton({

@@ -39,6 +39,9 @@ import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventMa
 /** @type {any} */
 let guided = null;
 
+/** Tránh chồng chéo khi chuyển session quá nhanh. */
+let isSwitchingSession = false;
+
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 
 export function init() {
@@ -346,20 +349,26 @@ export function init() {
   }
 
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
-    persistActiveExperience();
-    setActiveSessionIndex(idx);
-    guided = null;
-    experienceController.resetResumeState();
-    layerView.hide();
-    saveSessions();
+    if (isSwitchingSession) return;
+    isSwitchingSession = true;
     try {
-      await ensureSessionMessagesLoaded();
-    } catch {
-      // Keep local cache if remote loading fails.
+      persistActiveExperience();
+      setActiveSessionIndex(idx);
+      guided = null;
+      experienceController.resetResumeState();
+      layerView.hide();
+      saveSessions();
+      try {
+        await ensureSessionMessagesLoaded();
+      } catch {
+        // Keep local cache if remote loading fails.
+      }
+      renderChatListUI();
+      renderMessages();
+      await restoreCurrentSessionExperience();
+    } finally {
+      isSwitchingSession = false;
     }
-    renderChatListUI();
-    renderMessages();
-    await restoreCurrentSessionExperience();
   }, onSessionDeleted: async () => {
     guided = null;
     experienceController.resetResumeState();
@@ -432,6 +441,7 @@ export function init() {
     toggleSidebarBtn: /** @type {HTMLButtonElement | null} */ (toggleSidebarBtn),
     topHomeBtn: /** @type {HTMLButtonElement | null} */ (topHomeBtn),
     getIsSending: () => isSending,
+    setSendingState,
     getGuided: () => guided,
     onGuidedPrompt: (prompt, guidedState) => guidedController.handleGuidedPrompt(prompt, guidedState, /** @type {HTMLInputElement} */ (input)),
     onSendPrompt: (prompt) => { sendPrompt(prompt); },

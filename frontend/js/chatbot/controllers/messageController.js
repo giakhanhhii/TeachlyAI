@@ -75,30 +75,32 @@ export function createMessageController(deps) {
    * }} hooks
    */
   async function sendPrompt(prompt, hooks) {
-    const current = getCurrentSession();
-    const msgView = getMessageView();
-    msgView.addMessage("user", prompt);
-    if (!Array.isArray(current.messages)) current.messages = [];
-    current.messages.push({ role: "user", text: prompt });
-    current.messagesLoaded = true;
-    current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
-    saveSessions();
-    inputEl.value = "";
     hooks.onSendingState(true);
-    const thinking = msgView.addThinkingBubble();
     try {
-      const data = await postChat(apiUrl, prompt, current.thread_id);
-      current.thread_id = data.thread_id;
-      hooks.onThreadUpdated(current.thread_id);
-      thinking.row.remove();
-      await msgView.streamBotReply(data.reply);
-      current.messages.push({ role: "bot", text: data.reply });
+      const current = getCurrentSession();
+      const msgView = getMessageView();
+      msgView.addMessage("user", prompt);
+      if (!Array.isArray(current.messages)) current.messages = [];
+      current.messages.push({ role: "user", text: prompt });
       current.messagesLoaded = true;
       current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
       saveSessions();
-    } catch (err) {
-      thinking.row.remove();
-      hooks.onError(`Lỗi: ${err.message}`);
+      inputEl.value = "";
+      const thinking = msgView.addThinkingBubble();
+      try {
+        const data = await postChat(apiUrl, prompt, current.thread_id);
+        current.thread_id = data.thread_id;
+        hooks.onThreadUpdated(current.thread_id);
+        thinking.row.remove();
+        await msgView.streamBotReply(data.reply);
+        current.messages.push({ role: "bot", text: data.reply });
+        current.messagesLoaded = true;
+        current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
+        saveSessions();
+      } catch (err) {
+        thinking.row.remove();
+        hooks.onError(`Lỗi: ${err.message}`);
+      }
     } finally {
       hooks.onSendingState(false);
       hooks.onDone();

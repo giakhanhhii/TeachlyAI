@@ -126,13 +126,11 @@ export function createGuidedInteractionController(deps) {
       reenableFlowCard(cardRoot);
       return;
     }
-    const prevGuided = getGuided();
-    setGuided(result.guided);
     void (async () => {
       try {
         await applyEffects(result.effects);
+        setGuided(result.guided);
       } catch {
-        setGuided(prevGuided);
         reenableFlowCard(cardRoot);
         pushBot("Không thể xử lý biểu mẫu vừa gửi. Bạn thử lại một lần nữa nhé.");
       }
