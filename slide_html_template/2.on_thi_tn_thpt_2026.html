@@ -1,0 +1,231 @@
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; }
+  .slide { width: 100%; padding: 60px 80px; }
+  .slide-blue { background: #1a3bbf; color: white; }
+  .slide-white { background: #fff; color: #111; }
+  .slide-light { background: #f5f7ff; color: #111; }
+  h1.main-title { font-size: 52px; font-weight: 900; color: white; line-height: 1.1; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
+  .subtitle-bar { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #cdd5ff; font-size: 15px; }
+  .subtitle-bar span.tag { background: #111; color: #fff; padding: 4px 12px; font-weight: 600; font-size: 13px; letter-spacing: 0.5px; }
+  .section-title { font-size: 28px; font-weight: 900; color: #d62c2c; text-transform: uppercase; margin-bottom: 28px; letter-spacing: 0.5px; }
+  .blue-box { background: #1a3bbf; border-radius: 14px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 40px; }
+  .blue-box .big-num { font-size: 80px; font-weight: 900; color: #f5c518; line-height: 1; }
+  .blue-box .box-label { font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
+  .time-rows { display: flex; flex-direction: column; gap: 18px; flex: 1; }
+  .time-item { display: flex; flex-direction: column; gap: 2px; }
+  .time-item .t-label { font-weight: 800; font-size: 16px; text-transform: uppercase; }
+  .time-item .t-label.red { color: #d62c2c; }
+  .time-item .t-label.gold { color: #c89000; }
+  .time-item .t-label.blue { color: #1a3bbf; }
+  .time-item .t-desc { font-size: 14px; color: #444; }
+  .time-strat-label { font-size: 14px; color: #555; margin-bottom: 14px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .grammar-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .g-card { border: 1.5px solid #dde; border-radius: 12px; padding: 22px 20px; background: #fff; }
+  .g-icon { font-size: 22px; margin-bottom: 12px; color: #d62c2c; }
+  .g-card h3 { font-size: 15px; font-weight: 800; text-transform: uppercase; color: #111; margin-bottom: 8px; }
+  .g-card p { font-size: 13px; color: #444; line-height: 1.6; }
+  .error-list { display: flex; flex-direction: column; gap: 0; }
+  .error-item { border-left: 4px solid #1a3bbf; padding: 16px 20px; background: #fff; border-bottom: 1px solid #eee; }
+  .error-item h3 { font-size: 14px; font-weight: 800; color: #d62c2c; text-transform: uppercase; margin-bottom: 5px; }
+  .error-item p { font-size: 13px; color: #444; }
+  .vocab-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .v-card { border: 1.5px solid #dde; border-radius: 10px; padding: 22px 20px; background: #fff; }
+  .v-card h3 { font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #111; }
+  .v-card p { font-size: 13px; color: #555; margin-bottom: 10px; }
+  .v-card ul { padding-left: 16px; }
+  .v-card ul li { font-size: 13px; color: #444; margin-bottom: 4px; }
+  .timeline-wrap { display: flex; flex-direction: row; align-items: center; gap: 0; position: relative; margin-top: 30px; }
+  .tl-step { flex: 1; text-align: center; position: relative; }
+  .tl-dot { width: 18px; height: 18px; border-radius: 50%; border: 3px solid; margin: 0 auto 8px; background: white; }
+  .tl-dot.top { border-color: #1a3bbf; }
+  .tl-dot.bottom { border-color: #d62c2c; }
+  .tl-line { position: absolute; top: 8px; left: 50%; width: 100%; height: 2px; background: #bbb; z-index: 0; }
+  .tl-card { border-radius: 8px; padding: 12px 14px; font-size: 13px; background: #fff; border: 1px solid #dde; text-align: left; }
+  .tl-card.top { margin-bottom: 12px; }
+  .tl-card.bottom { margin-top: 12px; }
+  .tl-card strong { display: block; font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; color: #1a3bbf; }
+  .tl-card span { color: #d62c2c; font-weight: 700; font-size: 12px; }
+  .tl-card p { color: #444; font-size: 12px; margin-top: 4px; }
+  .tl-connector { flex: 0 0 40px; height: 2px; background: #bbb; margin-top: 9px; align-self: flex-start; }
+  .cta-title { font-size: 52px; font-weight: 900; color: #fff; text-align: center; margin-bottom: 18px; }
+  .cta-sub { color: #cdd5ff; text-align: center; font-size: 17px; margin-bottom: 30px; }
+  .cta-email { background: #111; color: #fff; display: inline-flex; align-items: center; gap: 10px; padding: 12px 28px; font-size: 15px; border-radius: 4px; }
+  .cta-center { display: flex; flex-direction: column; align-items: center; }
+  .divider { border: none; border-top: 1px solid #eee; margin: 0; }
+</style>
+
+<h2 class="sr-only">Ôn thi TN THPT Môn Tiếng Anh 2026 - Presentation Slides</h2>
+
+<!-- Slide 1: Title -->
+<div class="slide slide-blue" style="min-height:200px; display:flex; flex-direction:column; justify-content:center;">
+  <h1 class="main-title">Ôn thi TN THPT<br>Môn Tiếng Anh 2026</h1>
+  <div class="subtitle-bar">
+    <span>Chiến lược tối ưu</span>
+    <span class="tag">Kiến thức trọng tâm</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Slide 2: Time Management -->
+<div class="slide slide-white">
+  <div class="section-title">Quản lý thời gian phòng thi</div>
+  <div class="two-col" style="align-items:center;">
+    <div class="blue-box" style="max-width:280px;">
+      <div class="big-num">60</div>
+      <div class="box-label">Phút thực hành</div>
+    </div>
+    <div>
+      <div class="time-strat-label">Chiến thuật 50 câu / 60 phút:</div>
+      <div class="time-rows">
+        <div class="time-item">
+          <span class="t-label red">⏱ 15 phút đầu:</span>
+          <span class="t-desc">Ngữ âm, Trọng âm, Ngữ pháp.</span>
+        </div>
+        <div class="time-item">
+          <span class="t-label gold">⏱ 10 phút tiếp:</span>
+          <span class="t-desc">Cloze test và Từ vựng.</span>
+        </div>
+        <div class="time-item">
+          <span class="t-label blue">⏱ 30 phút:</span>
+          <span class="t-desc">Tập trung giải quyết 2 bài Đọc hiểu.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Slide 3: Grammar -->
+<div class="slide slide-light">
+  <div class="section-title">3 Trụ cột ngữ pháp cốt lõi</div>
+  <div class="grammar-cards">
+    <div class="g-card">
+      <div class="g-icon">↺</div>
+      <h3>Thì & Sự hòa hợp</h3>
+      <p>Nắm vững cách sử dụng 12 thì cơ bản, sự phối hợp thì trong câu phức và nguyên tắc hòa hợp giữa Chủ ngữ - Động từ (Subject-Verb Agreement).</p>
+    </div>
+    <div class="g-card">
+      <div class="g-icon">⑂</div>
+      <h3>Câu điều kiện</h3>
+      <p>Thành thạo câu điều kiện loại 1, 2, 3, hỗn hợp. Kỹ năng rút gọn mệnh đề quan hệ và mệnh đề trạng ngữ chỉ thời gian, nguyên nhân.</p>
+    </div>
+    <div class="g-card">
+      <div class="g-icon">⇄</div>
+      <h3>Bị động & Gián tiếp</h3>
+      <p>Chuyển đổi linh hoạt câu chủ động sang bị động (bao gồm bị động đặc biệt). Quy tắc lùi thì và đổi ngôi trong câu tường thuật.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Slide 4: Common Errors -->
+<div class="slide slide-white">
+  <div class="section-title">Các lỗi sai điển hình</div>
+  <div class="error-list">
+    <div class="error-item">
+      <h3>Mắc bẫy câu hỏi đồng nghĩa / trái nghĩa</h3>
+      <p>Đề bài yêu cầu tìm "OPPOSITE" nhưng khoanh "CLOSEST". Luôn gạch chân yêu cầu đề.</p>
+    </div>
+    <div class="error-item">
+      <h3>Bỏ qua sự hòa hợp chủ - vị (S-V Agreement)</h3>
+      <p>Chủ ngữ chứa "Along with" hoặc đại từ bất định khiến học sinh chia sai động từ.</p>
+    </div>
+    <div class="error-item">
+      <h3>Mất quá nhiều thời gian cho một câu khó</h3>
+      <p>Dành quá 3 phút cho một câu Idioms lạ sẽ làm mất cơ hội kiếm điểm phần sau.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Slide 5: Vocabulary -->
+<div class="slide slide-light">
+  <div class="section-title">Chiến lược mở rộng từ vựng</div>
+  <div class="vocab-cards">
+    <div class="v-card">
+      <h3>Collocations & Idioms</h3>
+      <p>Đây là phần phân loại học sinh khá giỏi. Việc học từ vựng đơn lẻ không còn hiệu quả.</p>
+      <ul>
+        <li>Học từ theo cụm cố định.</li>
+        <li>Thu thập thành ngữ từ để minh họa.</li>
+        <li>Áp dụng vào ngữ cảnh thực tế.</li>
+      </ul>
+    </div>
+    <div class="v-card">
+      <h3>Phrasal Verbs</h3>
+      <p>Thường xuất hiện trong phần tìm từ đồng nghĩa và điền từ, rất dễ nhầm lẫn.</p>
+      <ul>
+        <li>Phân nhóm theo động từ gốc (look, take).</li>
+        <li>Phân nhóm theo giới từ (up, out, off).</li>
+        <li>Sử dụng flashcard để ghi nhớ.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Slide 6: Timeline -->
+<div class="slide slide-white">
+  <div class="section-title">Lộ trình ôn tập 2025 - 2026</div>
+  <div style="position:relative; padding: 20px 0 10px;">
+    <!-- Connecting line -->
+    <div style="position:absolute; top:50%; left:8%; width:84%; height:2px; background:#bbb; z-index:0; transform:translateY(-50%);"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; position:relative; z-index:1;">
+      <!-- GD1 bottom -->
+      <div style="display:flex; flex-direction:column; align-items:center; padding-top:100px;">
+        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #1a3bbf;background:#fff;margin-bottom:10px;"></div>
+        <div class="tl-card" style="width:100%;">
+          <strong>GĐ 1: Khởi động</strong>
+          <span>T7 - T10/2025</span>
+          <p>Lấy lại gốc, tập trung Ngữ pháp nền tảng và phát âm.</p>
+        </div>
+      </div>
+      <!-- GD2 top -->
+      <div style="display:flex; flex-direction:column; align-items:center;">
+        <div class="tl-card" style="width:100%; margin-bottom:10px;">
+          <strong style="color:#d62c2c;">GĐ 2: Tăng tốc</strong>
+          <span>T11 - T2/2026</span>
+          <p>Xây dựng Từ vựng, làm quen kỹ năng Đọc hiểu.</p>
+        </div>
+        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #d62c2c;background:#fff;margin-top:0;"></div>
+      </div>
+      <!-- GD3 bottom -->
+      <div style="display:flex; flex-direction:column; align-items:center; padding-top:100px;">
+        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #1a3bbf;background:#fff;margin-bottom:10px;"></div>
+        <div class="tl-card" style="width:100%;">
+          <strong>GĐ 3: Bứt phá</strong>
+          <span>T3 - T5/2026</span>
+          <p>Tổng ôn kiến thức. Luyện giải đề thi theo chuyên đề.</p>
+        </div>
+      </div>
+      <!-- GD4 top -->
+      <div style="display:flex; flex-direction:column; align-items:center;">
+        <div class="tl-card" style="width:100%; margin-bottom:10px;">
+          <strong style="color:#d62c2c;">GĐ 4: Về đích</strong>
+          <span>Tháng 6/2026</span>
+          <p>Thực chiến đề thi thử, rèn luyện tâm lý phòng thi.</p>
+        </div>
+        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #d62c2c;background:#fff;margin-top:0;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Slide 7: CTA -->
+<div class="slide slide-blue" style="min-height:200px; display:flex; flex-direction:column; justify-content:center;">
+  <div class="cta-center">
+    <div class="cta-title">Sẵn sàng bứt phá?</div>
+    <div class="cta-sub">Chúc các sĩ tử 2K8 ôn tập hiệu quả và chinh phục thành công kỳ thi!</div>
+    <div class="cta-email">✉ onthi2026@thptqg.vn</div>
+  </div>
+</div>
