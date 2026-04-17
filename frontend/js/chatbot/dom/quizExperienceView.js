@@ -168,6 +168,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   shell.appendChild(footer);
 
   function renderQuestion() {
+    footer.hidden = false;
     const q = questions[index];
     stage.innerHTML = "";
     selected = index < selectedByIndex.length ? selectedByIndex[index] : null;
@@ -261,19 +262,61 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   function renderReview() {
     stage.innerHTML = "";
+    footer.hidden = true;
     recomputeScore();
     progress.paint({ total, index: Math.max(0, questions.length - 1), correct, wrong });
 
     const wrap = document.createElement("div");
     wrap.className = "quiz-review-wrap";
 
+    const scoreRow = document.createElement("div");
+    scoreRow.className = "quiz-review-score-row";
+
+    const scoreMain = document.createElement("div");
+    scoreMain.className = "quiz-review-score-main";
     const scoreCard = document.createElement("div");
     scoreCard.className = "quiz-review-score";
     scoreCard.innerHTML = `
       <h3>Kết quả bài quiz</h3>
       <p>Bạn làm đúng <strong>${correct}</strong>/<strong>${questions.length}</strong> câu, sai <strong>${wrong}</strong> câu.</p>
     `;
-    wrap.appendChild(scoreCard);
+    scoreMain.appendChild(scoreCard);
+
+    const actions = document.createElement("div");
+    actions.className = "quiz-review-actions";
+    const backBtnInline = document.createElement("button");
+    backBtnInline.type = "button";
+    backBtnInline.className = "continue-create-btn quiz-review-action-back";
+    backBtnInline.textContent = "Quay lại thẻ";
+    const otherBtnInline = document.createElement("button");
+    otherBtnInline.type = "button";
+    otherBtnInline.className = "continue-create-btn continue-create-btn-secondary";
+    otherBtnInline.textContent = "Tạo thẻ khác";
+    const nextBtnInline = document.createElement("button");
+    nextBtnInline.type = "button";
+    nextBtnInline.className = "continue-create-btn continue-create-btn-primary";
+    nextBtnInline.textContent = "Tiếp tục tạo";
+
+    backBtnInline.addEventListener("click", () => {
+      reviewMode = false;
+      index = Math.max(0, questions.length - 1);
+      backBtn.textContent = "Quay lại";
+      renderQuestion();
+    });
+    otherBtnInline.addEventListener("click", () => {
+      deps?.onContinueCreate?.("quiz", { preset: "other" });
+    });
+    nextBtnInline.addEventListener("click", () => {
+      deps?.onContinueCreate?.("quiz");
+    });
+
+    actions.appendChild(backBtnInline);
+    actions.appendChild(otherBtnInline);
+    actions.appendChild(nextBtnInline);
+
+    scoreRow.appendChild(scoreMain);
+    scoreRow.appendChild(actions);
+    wrap.appendChild(scoreRow);
 
     const filterRow = document.createElement("div");
     filterRow.className = "quiz-review-filters";
