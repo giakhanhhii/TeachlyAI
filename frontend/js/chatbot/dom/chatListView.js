@@ -13,9 +13,29 @@ let sharedMenuEl = null;
 /** @type {number | null} */
 let menuTargetIdx = null;
 let sharedMenuListenersAttached = false;
+/** @type {((event: MouseEvent) => void) | null} */
+let sharedMenuDocumentClickHandler = null;
+
+function attachSharedMenuDocumentListener() {
+  if (sharedMenuDocumentClickHandler) return;
+  sharedMenuDocumentClickHandler = () => {
+    closeSharedMenu();
+  };
+  document.addEventListener("click", sharedMenuDocumentClickHandler);
+}
+
+function detachSharedMenuDocumentListener() {
+  if (!sharedMenuDocumentClickHandler) return;
+  document.removeEventListener("click", sharedMenuDocumentClickHandler);
+  sharedMenuDocumentClickHandler = null;
+}
 
 function ensureSharedMenu() {
   if (sharedMenuEl && document.body.contains(sharedMenuEl)) return sharedMenuEl;
+  if (sharedMenuEl && !document.body.contains(sharedMenuEl)) {
+    detachSharedMenuDocumentListener();
+    sharedMenuListenersAttached = false;
+  }
   const existing = document.getElementById("chatItemSharedMenu");
   if (existing instanceof HTMLDivElement) {
     sharedMenuEl = existing;
@@ -31,9 +51,6 @@ function ensureSharedMenu() {
     sharedMenuEl.addEventListener("click", (event) => {
       event.stopPropagation();
     });
-    document.addEventListener("click", () => {
-      closeSharedMenu();
-    });
     sharedMenuListenersAttached = true;
   }
   return sharedMenuEl;
@@ -41,6 +58,7 @@ function ensureSharedMenu() {
 
 function closeSharedMenu() {
   if (!sharedMenuEl) return;
+  detachSharedMenuDocumentListener();
   sharedMenuEl.hidden = true;
   menuTargetIdx = null;
 }
@@ -132,6 +150,7 @@ export function renderChatList(chatListEl, sessions, activeIndex, onSelect, onAc
         // Show to the right of trigger, but clamp into viewport to avoid clipping.
         const rect = trigger.getBoundingClientRect();
         sharedMenu.hidden = false;
+        attachSharedMenuDocumentListener();
         sharedMenu.style.visibility = "hidden";
         const menuWidth = sharedMenu.offsetWidth || 220;
         const menuHeight = sharedMenu.offsetHeight || 180;
