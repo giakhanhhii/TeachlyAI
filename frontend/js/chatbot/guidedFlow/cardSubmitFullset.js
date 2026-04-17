@@ -46,8 +46,13 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
 
     const topic = payload.topic || "—";
     const openedAt = new Date().toISOString();
+    const experienceId =
+      globalThis.crypto && typeof globalThis.crypto.randomUUID === "function"
+        ? globalThis.crypto.randomUUID()
+        : `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const resumeDock = {
       title: `Full set — ${topic}`,
+      experienceId,
       fullsetMixed: {
         topic,
         level: String(payload.level || "—"),
@@ -55,23 +60,42 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         quiz: String(payload.quiz || "0"),
         flash: String(payload.flash || "0"),
         extra: String(payload.extra || ""),
+        __experienceId: experienceId,
       },
       items: [
         {
           kind: "slide",
-          meta: { topic, count: String(payload.slides || "—"), notes: "Full set (demo mock)" },
+          meta: {
+            topic,
+            count: String(payload.slides || "—"),
+            notes: "Full set (demo mock)",
+            __experienceId: `${experienceId}:slide`,
+          },
+          experienceId: `${experienceId}:slide`,
           title: `Slide — ${topic}`,
           openedAt,
         },
         {
           kind: "quiz",
-          meta: { topic, count: String(payload.quiz || "—"), notes: "Full set (demo mock)" },
+          meta: {
+            topic,
+            count: String(payload.quiz || "—"),
+            notes: "Full set (demo mock)",
+            __experienceId: `${experienceId}:quiz`,
+          },
+          experienceId: `${experienceId}:quiz`,
           title: `Trắc nghiệm — ${topic}`,
           openedAt,
         },
         {
           kind: "flash",
-          meta: { source: topic, count: String(payload.flash || "—"), extra: "Full set (demo mock)" },
+          meta: {
+            source: topic,
+            count: String(payload.flash || "—"),
+            extra: "Full set (demo mock)",
+            __experienceId: `${experienceId}:flash`,
+          },
+          experienceId: `${experienceId}:flash`,
           title: `Flashcard — ${topic}`,
           openedAt,
         },

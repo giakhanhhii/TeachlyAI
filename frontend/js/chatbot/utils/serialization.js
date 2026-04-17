@@ -19,6 +19,7 @@ export function stableSerialize(value) {
 
 function itemSignature(item) {
   return stableSerialize({
+    experienceId: item?.experienceId || item?.meta?.__experienceId || "",
     kind: item?.kind || "",
     title: item?.title || "",
     meta: item?.meta || {},
@@ -33,6 +34,7 @@ export function resumeDockSignature(dock) {
   if (!dock || typeof dock !== "object") return "";
   if (dock.fullsetMixed) {
     return `mixed:${stableSerialize({
+      experienceId: dock.experienceId || dock.fullsetMixed?.__experienceId || "",
       title: dock.title || "",
       fullsetMixed: dock.fullsetMixed || {},
       items: Array.isArray(dock.items) ? dock.items.map(itemSignature) : [],
@@ -45,6 +47,7 @@ export function resumeDockSignature(dock) {
     })}`;
   }
   return `single:${stableSerialize({
+    experienceId: dock.experienceId || dock.meta?.__experienceId || "",
     kind: dock.kind || "",
     title: dock.title || "",
     meta: dock.meta || {},

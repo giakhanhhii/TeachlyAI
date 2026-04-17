@@ -62,8 +62,8 @@ function pickPdfWithDialog() {
  *   setGuided: (next: any) => void,
  *   pushUser: (text: string) => void,
  *   pushBot: (text: string, opts?: any) => void,
- *   openSingleExperience: (kind: "quiz" | "slide" | "flash", meta: Record<string, string>, mode: "fresh" | "resume") => Promise<void>,
- *   pushQuickResumeDock: (kind: "quiz" | "slide" | "flash", meta: Record<string, string>) => void,
+ *   openSingleExperience: (kind: "quiz" | "slide" | "flash", meta: Record<string, string>, mode: "fresh" | "resume", experienceId?: string) => Promise<void>,
+ *   pushQuickResumeDock: (kind: "quiz" | "slide" | "flash", meta: Record<string, string>, experienceId?: string) => void,
  *   reenableFlowCard: (cardRoot: HTMLElement | undefined) => void,
  *   disableActionButtons: (btnEl: HTMLElement) => void,
  * }} deps
@@ -80,19 +80,46 @@ export function createGuidedInteractionController(deps) {
     disableActionButtons,
   } = deps;
 
+  function generateExperienceId() {
+    if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
+      return globalThis.crypto.randomUUID();
+    }
+    return `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  /**
+   * @param {Record<string, any>} meta
+   */
+  function ensureMetaExperienceId(meta) {
+    const safeMeta = meta && typeof meta === "object" ? { ...meta } : {};
+    const existing = typeof safeMeta.__experienceId === "string" ? safeMeta.__experienceId.trim() : "";
+    if (existing) return { meta: safeMeta, experienceId: existing };
+    const generated = generateExperienceId();
+    return {
+      meta: {
+        ...safeMeta,
+        __experienceId: generated,
+      },
+      experienceId: generated,
+    };
+  }
+
   async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
-        await openSingleExperience("quiz", e.meta || {}, "fresh");
-        pushQuickResumeDock("quiz", e.meta || {});
+        const scoped = ensureMetaExperienceId(e.meta || {});
+        await openSingleExperience("quiz", scoped.meta, "fresh", scoped.experienceId);
+        pushQuickResumeDock("quiz", scoped.meta, scoped.experienceId);
       } else if (e.type === "showFlash") {
-        await openSingleExperience("flash", e.meta || {}, "fresh");
-        pushQuickResumeDock("flash", e.meta || {});
+        const scoped = ensureMetaExperienceId(e.meta || {});
+        await openSingleExperience("flash", scoped.meta, "fresh", scoped.experienceId);
+        pushQuickResumeDock("flash", scoped.meta, scoped.experienceId);
       } else if (e.type === "showSlide") {
-        await openSingleExperience("slide", e.meta || {}, "fresh");
-        pushQuickResumeDock("slide", e.meta || {});
+        const scoped = ensureMetaExperienceId(e.meta || {});
+        await openSingleExperience("slide", scoped.meta, "fresh", scoped.experienceId);
+        pushQuickResumeDock("slide", scoped.meta, scoped.experienceId);
       }
     }
   }

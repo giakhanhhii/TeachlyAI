@@ -6,7 +6,7 @@
  *   hideLayer: () => void,
  *   openResumeOpenAll: (items: any[], title: string) => Promise<void>,
  *   openResumeFullSetMixed: (spec: Record<string, string>, title: string) => Promise<void>,
- *   openResumeExperience: (item: { kind: string, meta: Record<string, string> }) => Promise<void>,
+ *   openResumeExperience: (item: { kind: string, meta: Record<string, string>, experienceId?: string }) => Promise<void>,
  * }} deps
  */
 export async function restoreCurrentSessionExperience(deps) {
