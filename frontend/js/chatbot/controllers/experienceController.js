@@ -7,6 +7,7 @@ import {
   resolveFullsetInitialState,
   resolveSingleInitialState,
 } from "../services/experienceStateService.js";
+import { resumeDockSignature } from "../utils/serialization.js";
 
 /**
  * @param {{
@@ -46,64 +47,17 @@ export function createExperienceController(deps) {
   let lastOpenedExperience = null;
   let resumeDockAlreadyPosted = false;
 
-  function sortObjectDeep(value) {
-    if (Array.isArray(value)) return value.map(sortObjectDeep);
-    if (!value || typeof value !== "object") return value;
-    return Object.keys(value)
-      .sort()
-      .reduce((acc, key) => {
-        acc[key] = sortObjectDeep(value[key]);
-        return acc;
-      }, {});
-  }
-
-  function stableSerialize(value) {
-    try {
-      return JSON.stringify(sortObjectDeep(value));
-    } catch {
-      return String(value ?? "");
-    }
-  }
-
-  function itemSignature(item) {
-    return stableSerialize({
-      kind: item?.kind || "",
-      title: item?.title || "",
-      meta: item?.meta || {},
-    });
-  }
-
-  function resumeDockSignature(dock) {
-    if (!dock || typeof dock !== "object") return "";
-    if (dock.fullsetMixed) {
-      return `mixed:${stableSerialize({
-        title: dock.title || "",
-        fullsetMixed: dock.fullsetMixed || {},
-        items: Array.isArray(dock.items) ? dock.items.map(itemSignature) : [],
-      })}`;
-    }
-    if (Array.isArray(dock.items)) {
-      return `bundle:${stableSerialize({
-        title: dock.title || "",
-        items: dock.items.map(itemSignature),
-      })}`;
-    }
-    return `single:${stableSerialize({
-      kind: dock.kind || "",
-      title: dock.title || "",
-      meta: dock.meta || {},
-    })}`;
-  }
-
   function hasResumeDockInCurrentSession(targetDock) {
     const targetSignature = resumeDockSignature(targetDock);
     if (!targetSignature) return false;
     const current = getCurrentSession?.();
     const messages = Array.isArray(current?.messages) ? current.messages : [];
-    return messages.some((message) => {
-      if (!message || typeof message !== "object" || !message.resumeDock) return false;
-      return resumeDockSignature(message.resumeDock) === targetSignature;
-    });
+    for (let i = 0; i < messages.length; i += 1) {
+      const message = messages[i];
+      if (!message || typeof message !== "object" || message.role !== "bot" || !message.resumeDock) continue;
+      if (resumeDockSignature(message.resumeDock) === targetSignature) return true;
+    }
+    return false;
   }
 
   /**
