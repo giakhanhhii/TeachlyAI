@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn thi THPTQG 2026 Tiếng Anh - Đa Phong Cách</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- CORE SETUP --- */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: grid;
+            gap: 40px;
+            grid-template-columns: 1fr;
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 0;
+            place-items: center;
+        }
+
+        /* --- THEMES (BỘ MÀU SẮC) --- */
+        /* Theme 1: Đỏ - Xanh Dương (Classic) */
+        .theme-1 { --c-main: #1636d1; --c-alt: #d11222; --c-accent: #eab308; }
+        /* Theme 2: Vàng Cyber - Than Chì */
+        .theme-2 { --c-main: #1e293b; --c-alt: #eab308; --c-accent: #38bdf8; }
+        /* Theme 3: Xanh Ngọc Lục Bảo - Xanh Rêu */
+        .theme-3 { --c-main: #064e3b; --c-alt: #10b981; --c-accent: #fcd34d; }
+        /* Theme 4: Tím Đậm - Hồng Neon */
+        .theme-4 { --c-main: #2e1065; --c-alt: #db2777; --c-accent: #06b6d4; }
+        /* Theme 5: Đen - Cam Cháy (Monochrome Contrast) */
+        .theme-5 { --c-main: #111111; --c-alt: #f97316; --c-accent: #ffffff; }
+
+        /* --- SLIDE CONTAINER BASE --- */
+        .slide-container {
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            height: 720px;
+            justify-content: center;
+            overflow: hidden;
+            padding: 50px;
+            position: relative;
+            width: 1280px;
+        }
+
+        /* Lớp Texture chấm bi dùng chung cho mọi slide */
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px);
+            background-size: 20px 20px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Đảm bảo nội dung luôn nổi lên trên background & texture */
+        .slide-container > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- LAYOUTS (DẠNG BỐ CỤC) --- */
+        /* Dạng 1: Cắt chéo */
+        .layout-diagonal {
+            background: linear-gradient(115deg, var(--c-main) 50%, var(--c-alt) 50%);
+        }
+        
+        /* Dạng 2: Chia dọc */
+        .layout-split {
+            background: linear-gradient(90deg, var(--c-main) 35%, var(--c-alt) 35%);
+        }
+
+        /* Dạng 3: Tam giác góc */
+        .layout-triangle {
+            background: var(--c-main);
+        }
+        .layout-triangle::before {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 100%; height: 100%;
+            background: var(--c-alt); clip-path: polygon(100% 0, 0 100%, 100% 100%); z-index: 0;
+        }
+
+        /* Dạng 4: Hình tròn khổng lồ */
+        .layout-circle {
+            background: var(--c-main);
+        }
+        .layout-circle::before {
+            content: ''; position: absolute; top: -30%; left: -15%; width: 65%; height: 160%;
+            background: var(--c-alt); border-radius: 50%; z-index: 0;
+        }
+
+        /* Dạng 5: Khối xéo (Angled Block) */
+        .layout-angled {
+            background: var(--c-main);
+        }
+        .layout-angled::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 75%; height: 100%;
+            background: var(--c-alt); clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%); z-index: 0;
+        }
+
+
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        h1, h2, h3, h4 {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        p, li, td, th {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        p { margin-bottom: 15px; }
+
+        /* Hộp chữ nghiêng (Điểm nhấn) */
+        .accent-box-text {
+            background-color: #111; /* Nền đen */
+            color: var(--c-accent); /* Chữ màu accent của theme */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            padding: 10px 25px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: skewX(-8deg); 
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+        }
+        
+        .accent-box-text span {
+            display: inline-block;
+            transform: skewX(8deg); 
+        }
+
+        /* --- BỐ CỤC NỘI DUNG (CONTENT CARD) --- */
+        .content-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            padding: 40px 50px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 8px solid var(--c-alt); /* Nhấn viền dưới theo màu Alt */
+        }
+
+        .content-card .slide-title {
+            color: var(--c-main);
+            font-size: 40px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            border-bottom: 4px solid var(--c-accent);
+            padding-bottom: 10px;
+            display: inline-block;
+            align-self: flex-start;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* --- LAYOUTS BÊN TRONG --- */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: stretch;
+            height: 100%;
+        }
+
+        .text-column {
+            color: #333;
+            font-size: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .text-column p, .text-column li {
+            font-size: 20px;
+        }
+
+        .image-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            height: 400px;
+            width: 100%;
+            background: #f0f0f0;
+        }
+
+        .image-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        /* Tiled Layout */
+        .tiled-content {
+            display: flex; gap: 30px; width: 100%; height: 100%;
+        }
+
+        .tile {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-top: 6px solid var(--c-main);
+            border-radius: 12px;
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .tile .icon {
+            font-size: 45px; color: var(--c-alt); margin-bottom: 20px;
+        }
+
+        .tile h3 {
+            color: #111; font-size: 24px; font-weight: 800; margin-bottom: 15px;
+        }
+
+        .tile p {
+            color: #444; font-size: 18px;
+        }
+
+        /* Bullet List */
+        .styled-list {
+            list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .styled-list li {
+            background: #f8f9fa;
+            border-left: 6px solid var(--c-alt);
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            color: #333; font-size: 20px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+        }
+
+        .styled-list li strong {
+            color: var(--c-main); font-family: 'Montserrat', sans-serif; font-size: 22px;
+            display: block; margin-bottom: 5px; text-transform: uppercase;
+        }
+
+        /* Highlight Numbers */
+        .highlight-numbers-layout { align-items: center; }
+        .number-box {
+            background: var(--c-main); border-radius: 24px; color: white; padding: 40px; text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        .number-box .number {
+            font-family: 'Montserrat', sans-serif; font-size: 150px; font-weight: 900; line-height: 1; color: var(--c-accent);
+        }
+        .number-box .label {
+            font-family: 'Montserrat', sans-serif; font-size: 30px; font-weight: 800; text-transform: uppercase; margin-top: 10px;
+        }
+
+        /* Chart */
+        .doughnut-chart-container { display: flex; align-items: center; justify-content: center; gap: 60px; width: 100%; }
+        .doughnut-chart {
+            width: 380px; height: 380px; border-radius: 50%;
+            background: conic-gradient(var(--c-main) 0% 40%, var(--c-alt) 40% 70%, var(--c-accent) 70% 90%, #222 90% 100%);
+            position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .doughnut-chart::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 200px; height: 200px; background: white; border-radius: 50%;
+        }
+        .legend { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; }
+        .legend li { display: flex; align-items: center; font-size: 22px; font-weight: 600; color: #333; }
+        .color-box { width: 28px; height: 28px; border-radius: 6px; margin-right: 15px; }
+
+        /* Timeline */
+        .timeline-container { display: flex; justify-content: space-between; position: relative; width: 100%; padding: 40px 0; margin-top: 20px; }
+        .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 5px; background: #e2e8f0; transform: translateY(-50%); z-index: 1; }
+        .timeline-item { position: relative; z-index: 2; width: 22%; text-align: center; }
+        .timeline-dot {
+            width: 32px; height: 32px; background: white; border: 7px solid var(--c-alt); border-radius: 50%; margin: 0 auto 20px; position: relative;
+        }
+        .timeline-item:nth-child(even) .timeline-dot { margin: 20px auto 0; border-color: var(--c-main); }
+        .timeline-content {
+            background: #fff; padding: 25px; border-radius: 12px; border-top: 5px solid var(--c-alt); box-shadow: 0 8px 20px rgba(0,0,0,0.1); position: absolute; width: 100%;
+        }
+        .timeline-item:nth-child(odd) .timeline-content { bottom: 50px; }
+        .timeline-item:nth-child(even) .timeline-content { top: 50px; border-top: none; border-bottom: 5px solid var(--c-main); }
+        .timeline-content h4 { color: #111; font-size: 20px; margin-bottom: 10px; font-weight: 800; }
+        .timeline-content p { font-size: 16px; color: #555; margin: 0; line-height: 1.5; }
+
+        /* Tiêu đề Trang Bìa & Giữa */
+        .title-group, .section-center {
+            text-align: center;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%;
+        }
+        .title-group h1 { color: white; font-size: 85px; font-weight: 900; line-height: 1; letter-spacing: 2px; }
+        .title-group h2 { color: white; font-size: 75px; font-weight: 900; line-height: 1; margin-top: 5px; margin-bottom: 25px; }
+        .section-center h2 { color: white; font-size: 75px; margin-bottom: 25px; line-height: 1.1; }
+        .section-center p { color: white; font-size: 26px; font-family: 'Montserrat', sans-serif; font-weight: 600; max-width: 800px; text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title (Theme 1: Red/Blue, Layout: Diagonal) -->
+<div class="slide-container theme-1 layout-diagonal" id="slide1">
+    <div class="title-group">
+        <h1>ÔN THI TN THPT</h1>
+        <h2>MÔN TIẾNG ANH 2026</h2>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; color: white;">CHIẾN LƯỢC TỐI ƯU</span>
+            <div class="accent-box-text"><span>KIẾN THỨC TRỌNG TÂM</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 2: Section Title (Theme 2: Cyber Yellow/Dark, Layout: Circle) -->
+<div class="slide-container theme-2 layout-circle" id="slide2">
+    <div class="section-center">
+        <h2>CẤU TRÚC ĐỀ THI</h2>
+        <div class="accent-box-text" style="font-size: 26px; margin-bottom: 30px;"><span>PHÂN BỔ KIẾN THỨC</span></div>
+        <p>Hiểu rõ "luật chơi" của kỳ thi để phân bổ thời gian ôn luyện hiệu quả, tối đa hóa điểm số dựa trên trọng số từng phần.</p>
+    </div>
+</div>
+
+<!-- Slide 3: Chart (Theme 3: Emerald, Layout: Angled) -->
+<div class="slide-container theme-3 layout-angled" id="slide3">
+    <div class="content-card">
+        <h2 class="slide-title">TỶ TRỌNG CÁC PHẦN THI (DỰ KIẾN)</h2>
+        <div class="content-area">
+            <div class="doughnut-chart-container">
+                <div class="doughnut-chart"></div>
+                <ul class="legend">
+                    <li><div class="color-box" style="background: var(--c-main);"></div> Đọc hiểu & Điền từ (40%)</li>
+                    <li><div class="color-box" style="background: var(--c-alt);"></div> Ngữ pháp nền tảng (30%)</li>
+                    <li><div class="color-box" style="background: var(--c-accent);"></div> Từ vựng & Thành ngữ (20%)</li>
+                    <li><div class="color-box" style="background: #222;"></div> Ngữ âm & Trọng âm (10%)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: 3 Pillars (Theme 4: Purple/Pink, Layout: Triangle) -->
+<div class="slide-container theme-4 layout-triangle" id="slide4">
+    <div class="content-card">
+        <h2 class="slide-title">3 TRỤ CỘT NGỮ PHÁP CỐT LÕI</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <h3>Thì & Sự Hòa Hợp</h3>
+                    <p>Nắm vững cách sử dụng 12 thì cơ bản, sự phối hợp thì trong câu phức và nguyên tắc hòa hợp giữa Chủ ngữ - Động từ.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-code-branch"></i></div>
+                    <h3>Câu Điều Kiện</h3>
+                    <p>Thành thạo câu điều kiện loại 1, 2, 3, hỗn hợp. Kỹ năng rút gọn mệnh đề quan hệ và mệnh đề trạng ngữ.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-exchange-alt"></i></div>
+                    <h3>Bị Động & Gián Tiếp</h3>
+                    <p>Chuyển đổi linh hoạt câu chủ động sang bị động. Quy tắc lùi thì và đổi ngôi trong câu tường thuật.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Vocabulary (Theme 5: Mono Black/Orange, Layout: Split) -->
+<div class="slide-container theme-5 layout-split" id="slide5">
+    <div class="content-card">
+        <h2 class="slide-title">CHIẾN LƯỢC MỞ RỘNG TỪ VỰNG</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile" style="border-top-color: var(--c-alt);">
+                    <h3>Collocations & Idioms</h3>
+                    <p>Đây là phần phân loại học sinh khá giỏi. Việc học từ vựng đơn lẻ không còn hiệu quả.</p>
+                    <ul style="margin-top: 15px; padding-left: 20px; font-family: 'Roboto'; font-size: 18px; color: #444;">
+                        <li>Học từ theo cụm cố định.</li>
+                        <li>Thu thập thành ngữ từ đề minh họa.</li>
+                        <li>Áp dụng vào ngữ cảnh thực tế.</li>
+                    </ul>
+                </div>
+                <div class="tile" style="border-top-color: var(--c-main);">
+                    <h3>Phrasal Verbs</h3>
+                    <p>Thường xuất hiện trong phần tìm từ đồng nghĩa và điền từ, rất dễ nhầm lẫn.</p>
+                    <ul style="margin-top: 15px; padding-left: 20px; font-family: 'Roboto'; font-size: 18px; color: #444;">
+                        <li>Phân nhóm theo động từ gốc.</li>
+                        <li>Phân nhóm theo giới từ.</li>
+                        <li>Sử dụng flashcard để ghi nhớ.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Reading (Theme 1: Red/Blue, Layout: Angled) -->
+<div class="slide-container theme-1 layout-angled" id="slide6">
+    <div class="content-card">
+        <h2 class="slide-title">TUYỆT CHIÊU BÀI ĐỌC HIỂU</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column">
+                    <p>Phần Đọc hiểu chiếm tỷ trọng điểm lớn nhất. Không cần hiểu 100% từ vựng vẫn có thể chọn đáp án đúng.</p>
+                    <ul style="padding-left: 20px; margin-top: 15px;">
+                        <li><strong>Skimming:</strong> Đọc lướt câu đầu/cuối để nắm ý chính.</li>
+                        <li><strong>Scanning:</strong> Quét từ khóa để tìm thông tin chi tiết.</li>
+                        <li><strong>Guessing:</strong> Đoán nghĩa từ mới qua ngữ cảnh.</li>
+                        <li><strong>Loại trừ:</strong> Gạch bỏ các đáp án chứa từ mang tính tuyệt đối (always, never).</li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/14492178941924633294" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Time Mgmt (Theme 2: Cyber Yellow, Layout: Diagonal) -->
+<div class="slide-container theme-2 layout-diagonal" id="slide7">
+    <div class="content-card">
+        <h2 class="slide-title">QUẢN LÝ THỜI GIAN PHÒNG THI</h2>
+        <div class="content-area">
+            <div class="two-column highlight-numbers-layout">
+                <div class="number-box">
+                    <div class="number">60</div>
+                    <div class="label">Phút Thực Hành</div>
+                </div>
+                <div class="text-column">
+                    <p style="font-size: 24px; font-weight: 700; color: #111;">Chiến thuật 50 câu / 60 phút:</p>
+                    <ul class="styled-list" style="margin-top: 20px; background: transparent;">
+                        <li style="padding: 15px 0; border: none; box-shadow: none; display: flex; align-items: flex-start; gap: 15px;">
+                            <i class="fa-solid fa-stopwatch" style="color: var(--c-alt); margin-top: 5px; font-size: 24px;"></i>
+                            <span><strong>15 phút đầu:</strong> Ngữ âm, Trọng âm, Ngữ pháp.</span>
+                        </li>
+                        <li style="padding: 15px 0; border: none; box-shadow: none; display: flex; align-items: flex-start; gap: 15px;">
+                            <i class="fa-solid fa-stopwatch" style="color: var(--c-accent); margin-top: 5px; font-size: 24px;"></i>
+                            <span><strong>10 phút tiếp:</strong> Cloze test và Từ vựng.</span>
+                        </li>
+                        <li style="padding: 15px 0; border: none; box-shadow: none; display: flex; align-items: flex-start; gap: 15px;">
+                            <i class="fa-solid fa-stopwatch" style="color: var(--c-main); margin-top: 5px; font-size: 24px;"></i>
+                            <span><strong>30 phút:</strong> Tập trung giải quyết 2 bài Đọc hiểu.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Mistakes (Theme 3: Emerald, Layout: Circle) -->
+<div class="slide-container theme-3 layout-circle" id="slide8">
+    <div class="content-card">
+        <h2 class="slide-title">CÁC LỖI SAI ĐIỂN HÌNH</h2>
+        <div class="content-area">
+            <ul class="styled-list">
+                <li>
+                    <strong>Mắc bẫy Câu hỏi Đồng nghĩa / Trái nghĩa</strong>
+                    Đề bài yêu cầu tìm "OPPOSITE" nhưng khoanh "CLOSEST". Luôn phải gạch chân yêu cầu đề.
+                </li>
+                <li>
+                    <strong>Bỏ qua sự hòa hợp Chủ - Vị (S-V Agreement)</strong>
+                    Chủ ngữ chứa "Along with" hoặc đại từ bất định khiến học sinh dễ chia sai động từ.
+                </li>
+                <li>
+                    <strong>Mất quá nhiều thời gian cho một câu Khó</strong>
+                    Dành quá 3 phút cho một câu Idioms lạ sẽ làm mất cơ hội kiếm điểm ở phần dễ phía sau.
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Roadmap (Theme 4: Purple/Pink, Layout: Split) -->
+<div class="slide-container theme-4 layout-split" id="slide9">
+    <div class="content-card">
+        <h2 class="slide-title">LỘ TRÌNH ÔN TẬP 2025 - 2026</h2>
+        <div class="content-area" style="justify-content: flex-start; padding-top: 50px;">
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>GĐ 1: Khởi Động</h4>
+                        <p><strong>T7 - T10/2025:</strong> Lấy lại gốc, tập trung Ngữ pháp và phát âm.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>GĐ 2: Tăng Tốc</h4>
+                        <p><strong>T11 - T2/2026:</strong> Xây dựng Từ vựng, làm quen kỹ năng Đọc hiểu.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>GĐ 3: Bứt Phá</h4>
+                        <p><strong>T3 - T5/2026:</strong> Tổng ôn kiến thức. Luyện giải đề thi theo chuyên đề.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>GĐ 4: Về Đích</h4>
+                        <p><strong>Tháng 6/2026:</strong> Thực chiến đề thi thử, rèn luyện tâm lý phòng thi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Ending (Theme 5: Mono Black, Layout: Triangle) -->
+<div class="slide-container theme-5 layout-triangle" id="slide10">
+    <div class="section-center">
+        <h2>SẴN SÀNG BỨT PHÁ?</h2>
+        <p style="margin-bottom: 40px;">Chúc các sĩ tử 2K8 ôn tập hiệu quả và chinh phục thành công kỳ thi!</p>
+        <div class="accent-box-text" style="font-size: 22px; text-transform: none; padding: 15px 30px;">
+            <span><i class="fa-solid fa-envelope" style="margin-right: 15px; color: var(--c-alt);"></i> onthi2026@thptqg.vn</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
