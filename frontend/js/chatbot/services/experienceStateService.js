@@ -62,7 +62,12 @@ export function computeCompleted(kind, progress) {
 export function resolveSingleInitialState(currentExperienceState, kind, meta, mode, experienceId = "") {
   const history = readHistoryById(currentExperienceState);
   const historyEntry = experienceId && history ? history[experienceId] : null;
-  if (historyEntry && historyEntry.kind === kind && historyEntry.progress) {
+  if (
+    historyEntry
+    && historyEntry.kind === kind
+    && historyEntry.progress
+    && sameMeta(historyEntry.meta || {}, meta || {})
+  ) {
     return historyEntry.progress;
   }
   const persisted =

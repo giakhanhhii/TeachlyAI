@@ -72,6 +72,10 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     correct = score.correct;
     wrong = score.wrong;
   }
+  function syncScoreAndEmit() {
+    refreshScore();
+    emitState();
+  }
 
   function emitState() {
     if (typeof opts.onStateChange !== "function") return;
@@ -116,7 +120,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
         selected = pickedIndex;
         selectedByIndex[index] = pickedIndex;
         nextBtn.disabled = false;
-        emitState();
+        syncScoreAndEmit();
       },
     });
 

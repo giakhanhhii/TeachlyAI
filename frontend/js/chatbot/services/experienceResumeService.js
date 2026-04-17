@@ -122,10 +122,11 @@ export function createExperienceResumeService(deps) {
 
   function pushResumeDockFromLastOpened() {
     if (!lastOpenedExperience) return;
+    const resumeToPersist = lastOpenedExperience;
     if (resumeDockAlreadyPosted) {
       lastOpenedExperience = null;
       resumeDockAlreadyPosted = false;
-      persistActiveExperience(lastOpenedExperience);
+      persistActiveExperience(resumeToPersist);
       return;
     }
     const now = new Date().toISOString();
@@ -138,7 +139,7 @@ export function createExperienceResumeService(deps) {
       if (hasResumeDockInCurrentSession(resumeDock)) {
         lastOpenedExperience = null;
         resumeDockAlreadyPosted = false;
-        persistActiveExperience(lastOpenedExperience);
+        persistActiveExperience(resumeToPersist);
         return;
       }
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", { resumeDock });
@@ -153,7 +154,7 @@ export function createExperienceResumeService(deps) {
       if (hasResumeDockInCurrentSession(resumeDock)) {
         lastOpenedExperience = null;
         resumeDockAlreadyPosted = false;
-        persistActiveExperience(lastOpenedExperience);
+        persistActiveExperience(resumeToPersist);
         return;
       }
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", { resumeDock });
@@ -168,14 +169,14 @@ export function createExperienceResumeService(deps) {
       if (hasResumeDockInCurrentSession(resumeDock)) {
         lastOpenedExperience = null;
         resumeDockAlreadyPosted = false;
-        persistActiveExperience(lastOpenedExperience);
+        persistActiveExperience(resumeToPersist);
         return;
       }
       pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", { resumeDock });
     }
     lastOpenedExperience = null;
     resumeDockAlreadyPosted = false;
-    persistActiveExperience(lastOpenedExperience);
+    persistActiveExperience(resumeToPersist);
   }
 
   function persistCurrentActiveExperience() {

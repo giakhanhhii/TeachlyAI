@@ -23,16 +23,14 @@ let rerenderQueued = false;
 const rerenderDepsByElement = new WeakMap();
 /** @type {WeakRef<HTMLElement> | null} */
 let scheduledRerenderTargetRef = null;
-/** @type {HTMLElement | null} */
-let scheduledRerenderTargetEl = null;
 
 function scheduleRerender() {
-  const targetEl = scheduledRerenderTargetRef?.deref?.() || scheduledRerenderTargetEl;
+  const targetEl = scheduledRerenderTargetRef?.deref?.();
   if (rerenderQueued || !targetEl) return;
   rerenderQueued = true;
   const run = () => {
     rerenderQueued = false;
-    const currentTargetEl = scheduledRerenderTargetRef?.deref?.() || scheduledRerenderTargetEl;
+    const currentTargetEl = scheduledRerenderTargetRef?.deref?.();
     if (!currentTargetEl) return;
     const nextDeps = rerenderDepsByElement.get(currentTargetEl);
     if (!nextDeps) return;
@@ -62,7 +60,6 @@ export function renderSessionListUI(deps) {
   let actionInFlight = false;
   rerenderDepsByElement.set(chatListEl, deps);
   scheduledRerenderTargetRef = typeof WeakRef === "function" ? new WeakRef(chatListEl) : null;
-  scheduledRerenderTargetEl = chatListEl;
 
   renderChatList(
     chatListEl,
