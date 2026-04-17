@@ -8,7 +8,7 @@ import { renderQuizReviewView } from "./quizReviewView.js";
 /**
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
- * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "slide"|"quiz"|"flash") => void }} [deps]
+ * @param {{ onAiEdit?: (draft: string) => void, onContinueCreate?: (kind: "slide"|"quiz"|"flash", opts?: { preset?: "same"|"other" }) => void }} [deps]
  * @param {{ initialState?: any, onStateChange?: (state: any) => void }} [opts]
  */
 export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
@@ -168,7 +168,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
         renderQuestion();
       },
       onCreateOther: () => deps?.onContinueCreate?.("quiz", { preset: "other" }),
-      onContinueCreate: () => deps?.onContinueCreate?.("quiz"),
+      onContinueCreate: (kind, options) => deps?.onContinueCreate?.(kind, options),
     });
 
     backBtn.textContent = "Quay lại thẻ";

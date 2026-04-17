@@ -223,7 +223,10 @@ export function init() {
     const preset = opts && typeof opts === "object" ? opts.preset : undefined;
     const selected =
       preset === "same" || preset === "other" ? preset : await openContinueCreateDialog(validKind);
-    if (!selected) return;
+    if (!selected) {
+      input.focus();
+      return;
+    }
     const state = history.state && typeof history.state === "object" ? history.state : {};
     history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
     layerView.hide();
