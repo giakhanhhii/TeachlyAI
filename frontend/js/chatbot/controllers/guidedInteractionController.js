@@ -11,6 +11,19 @@ import { createFlowActionHandler } from "../services/flowIntegration.js";
 /**
  * @returns {Promise<File | null>}
  */
+/**
+ * Khi `guided` bị mất (vd. sau reload / edge case) nhưng biểu mẫu chủ đề vẫn còn trong chat,
+ * khôi phục tối thiểu để `computeFlowCardSubmit` xử lý được.
+ * @param {string} cardType
+ */
+function recoverGuidedForOrphanTopicForm(cardType) {
+  if (cardType === "slide_form") return { kind: "slide", step: "await_topic_form", data: {} };
+  if (cardType === "quiz_form") return { kind: "quiz", step: "await_topic_form", data: {} };
+  if (cardType === "flash_form") return { kind: "flash", step: "await_topic_form", data: {} };
+  if (cardType === "fullset_topic") return { kind: "fullset", step: "await_topic_form", data: {} };
+  return null;
+}
+
 function pickPdfWithDialog() {
   return new Promise((resolve) => {
     const input = document.createElement("input");
@@ -103,7 +116,12 @@ export function createGuidedInteractionController(deps) {
    * @param {HTMLElement | undefined} cardRoot
    */
   function handleFlowCardSubmit(cardType, payload, cardRoot) {
-    const result = computeFlowCardSubmit(getGuided(), cardType, payload);
+    let guidedForSubmit = getGuided();
+    if (!guidedForSubmit) {
+      const recovered = recoverGuidedForOrphanTopicForm(cardType);
+      if (recovered) guidedForSubmit = recovered;
+    }
+    const result = computeFlowCardSubmit(guidedForSubmit, cardType, payload);
     if (!result.handled) {
       reenableFlowCard(cardRoot);
       return;
