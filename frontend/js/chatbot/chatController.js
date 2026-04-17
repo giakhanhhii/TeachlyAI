@@ -39,6 +39,10 @@ import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventMa
 /** @type {any} */
 let guided = null;
 
+function setGuidedState(next) {
+  guided = next;
+}
+
 /** Tránh chồng chéo khi chuyển session quá nhanh. */
 let isSwitchingSession = false;
 
@@ -187,8 +191,10 @@ export function init() {
       overlay.appendChild(dialog);
       document.body.appendChild(overlay);
 
+      const keydownAbort = new AbortController();
+
       const close = (result) => {
-        document.removeEventListener("keydown", onKeyDown);
+        keydownAbort.abort();
         overlay.remove();
         resolve(result);
       };
@@ -196,7 +202,7 @@ export function init() {
       const onKeyDown = (e) => {
         if (e.key === "Escape") close(null);
       };
-      document.addEventListener("keydown", onKeyDown);
+      document.addEventListener("keydown", onKeyDown, { signal: keydownAbort.signal });
       otherBtn.addEventListener("click", () => close("other"));
       sameBtn.addEventListener("click", () => close("same"));
       overlay.addEventListener("click", (e) => {
@@ -224,7 +230,7 @@ export function init() {
     if (selected === "same") {
       experienceController.resetResumeState();
       experienceController.persistActiveExperience();
-      guided = { kind: validKind, step: "await_topic_form", data: {} };
+      setGuidedState({ kind: validKind, step: "await_topic_form", data: {} });
       const cardType =
         validKind === "fullset"
           ? "fullset_topic"
@@ -245,7 +251,7 @@ export function init() {
     } else {
       persistActiveExperience();
       createSession();
-      guided = null;
+      setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
       renderChatListUI();
@@ -267,9 +273,7 @@ export function init() {
 
   guidedController = createGuidedInteractionController({
     getGuided: () => guided,
-    setGuided: (next) => {
-      guided = next;
-    },
+    setGuided: setGuidedState,
     pushUser,
     pushBot,
     openSingleExperience,
@@ -342,10 +346,7 @@ export function init() {
         messages.scrollTop = messages.scrollHeight;
       }
     };
-    requestAnimationFrame(() => {
-      run();
-      requestAnimationFrame(run);
-    });
+    requestAnimationFrame(run);
   }
 
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
@@ -354,7 +355,7 @@ export function init() {
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
-      guided = null;
+      setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
       saveSessions();
@@ -370,7 +371,7 @@ export function init() {
       isSwitchingSession = false;
     }
   }, onSessionDeleted: async () => {
-    guided = null;
+    setGuidedState(null);
     experienceController.resetResumeState();
     persistActiveExperience();
     layerView.hide();
@@ -415,9 +416,7 @@ export function init() {
     clearMessages: () => msgView.clear(),
     renderLoadMoreControl,
     updateThreadLabel,
-    setGuided: (next) => {
-      guided = next;
-    },
+    setGuided: setGuidedState,
     resetResumeState: () => experienceController.resetResumeState(),
     hideLayer: () => layerView.hide(),
   });
@@ -448,7 +447,7 @@ export function init() {
     onCreateNewChat: () => {
       persistActiveExperience();
       createSession();
-      guided = null;
+      setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
       renderChatListUI();
