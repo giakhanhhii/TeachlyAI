@@ -1,10 +1,12 @@
 import { SAMPLES_FULLSET } from "../../data/sampleFlowData.js";
+import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   MSG_SKIP_PDF_HAS_FILE,
   MSG_AUTO_CONFIRM_PDF,
   addAutofillBtn,
   autofillCounters,
+  coerceSelectThemeValue,
   el,
   flowTextarea,
   normalizeFullsetCounts,
@@ -32,6 +34,19 @@ export function createFullsetTopicCard(deps) {
     level.appendChild(o);
   });
   root.appendChild(wrapField("Trình độ", level));
+
+  const slideTemplate = el("select", "flow-select");
+  const slideTplEmpty = document.createElement("option");
+  slideTplEmpty.value = "";
+  slideTplEmpty.textContent = "Chọn mẫu…";
+  slideTemplate.appendChild(slideTplEmpty);
+  SLIDE_TEMPLATE_OPTIONS.forEach((v) => {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = v;
+    slideTemplate.appendChild(o);
+  });
+  root.appendChild(wrapField("Mẫu slide", slideTemplate, "Chọn mẫu giao diện slide (giống form tạo slide)."));
 
   const slides = el("input", "flow-input");
   slides.type = "number";
@@ -66,6 +81,7 @@ export function createFullsetTopicCard(deps) {
     const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
     topic.value = String(s.t ?? "");
     level.value = normalizeFullsetLevelAutofill(s.l);
+    slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
     slides.value = String(sn);
     quiz.value = String(qn);
     flash.value = String(fn);
@@ -88,6 +104,7 @@ export function createFullsetTopicCard(deps) {
   function readFullsetState() {
     const t = topic.value.trim();
     const lv = level.value;
+    const stpl = slideTemplate.value;
     const s = slides.value.trim();
     const q = quiz.value.trim();
     const f = flash.value.trim();
@@ -99,6 +116,7 @@ export function createFullsetTopicCard(deps) {
     const complete =
       Boolean(t) &&
       Boolean(lv) &&
+      Boolean(stpl) &&
       Number.isFinite(sn) &&
       sn >= 1 &&
       sn <= 30 &&
@@ -126,6 +144,7 @@ export function createFullsetTopicCard(deps) {
       __auto: "1",
       topic: "(Teachly tự động)",
       level: "Cơ bản",
+      slideTemplate: SLIDE_TEMPLATE_DEFAULT,
       slides: String(sn),
       quiz: String(qn),
       flash: String(fn),
@@ -163,12 +182,14 @@ export function createFullsetTopicCard(deps) {
     }
     const t = topic.value.trim();
     const lv = level.value;
-    if (t && lv) {
+    const stpl = slideTemplate.value;
+    if (t && lv && stpl) {
       submit.disabled = true;
       skip.disabled = true;
       deps.onSubmit({
         topic: t,
         level: lv,
+        slideTemplate: stpl,
         slides: String(sn),
         quiz: String(qn),
         flash: String(fn),
@@ -182,6 +203,7 @@ export function createFullsetTopicCard(deps) {
       deps.onSubmit({
         topic: t || "(Teachly tự động)",
         level: lv || "Cơ bản",
+        slideTemplate: stpl || SLIDE_TEMPLATE_DEFAULT,
         slides: String(sn),
         quiz: String(qn),
         flash: String(fn),
