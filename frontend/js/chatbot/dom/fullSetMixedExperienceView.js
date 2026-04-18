@@ -7,7 +7,7 @@ import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
 
 /**
- * @typedef {{ topic: string, level: string, slides: string, quiz: string, flash: string, extra?: string }} FullSetMixedSpec
+ * @typedef {{ topic: string, level: string, slides: string, quiz: string, flash: string, extra?: string, slideTemplate?: string }} FullSetMixedSpec
  */
 
 /**
@@ -24,7 +24,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const spec = bundle.spec || {};
   const topic = spec.topic || "—";
   const notesLine = spec.extra ? ` | Yêu cầu thêm: ${spec.extra}` : "";
-  const slideMeta = { topic, count: spec.slides, notes: "Full set (demo mock)" };
+  const slideNotes =
+    spec.slideTemplate
+      ? `Mẫu slide: ${spec.slideTemplate} | Full set (demo mock)`
+      : "Full set (demo mock)";
+  const slideMeta = { topic, count: spec.slides, notes: slideNotes };
   const quizMeta = { topic, count: spec.quiz, notes: "Full set (demo mock)" };
   const flashMeta = { source: topic, count: spec.flash, extra: "Full set (demo mock)" };
   const [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
@@ -66,7 +70,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const summary = document.createElement("p");
   summary.className = "exp-meta-line";
   const sum = steps.length;
-  summary.textContent = `Full set — ${topic} | Trình độ: ${spec.level || "—"} | Slide ${spec.slides} + Quiz ${spec.quiz} + Flash ${spec.flash} = ${sum} mục (trộn lẫn)${notesLine}`;
+  const templateSeg = spec.slideTemplate ? ` | Mẫu slide: ${spec.slideTemplate}` : "";
+  summary.textContent = `Full set — ${topic} | Trình độ: ${spec.level || "—"}${templateSeg} | Slide ${spec.slides} + Quiz ${spec.quiz} + Flash ${spec.flash} = ${sum} mục (trộn lẫn)${notesLine}`;
   const total = Math.max(1, steps.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   const stage = document.createElement("div");

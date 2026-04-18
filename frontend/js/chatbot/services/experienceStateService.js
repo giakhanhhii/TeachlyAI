@@ -119,7 +119,9 @@ export function fullsetResumeItemsFromSpec(spec, openedAtIso) {
       meta: {
         topic,
         count: String(spec.slides || "—"),
-        notes: "Full set (demo mock)",
+        notes: spec.slideTemplate
+          ? `Mẫu slide: ${spec.slideTemplate} | Full set (demo mock)`
+          : "Full set (demo mock)",
         ...(slideExperienceId ? { __experienceId: slideExperienceId } : {}),
       },
       ...(slideExperienceId ? { experienceId: slideExperienceId } : {}),

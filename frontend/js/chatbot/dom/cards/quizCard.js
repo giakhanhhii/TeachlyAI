@@ -5,6 +5,7 @@ import {
   autofillCounters,
   el,
   flowTextarea,
+  normalizeFullsetLevelAutofill,
   removeSkipConfirm,
   showPartialFillConfirm,
   toPositiveInt,
@@ -31,8 +32,14 @@ export function createQuizFormCard(deps) {
   qn.placeholder = "VD: 20";
   root.appendChild(wrapField("Số lượng câu", qn));
 
-  const diff = flowTextarea("VD: 40% NB - 30% TH - 20% VD - 10% VDC", 2);
-  root.appendChild(wrapField("Tỉ lệ độ khó", diff));
+  const level = el("select", "flow-select");
+  ["", "Mất gốc", "Cơ bản", "Khá", "Nâng cao"].forEach((v, i) => {
+    const o = document.createElement("option");
+    o.value = i === 0 ? "" : v;
+    o.textContent = i === 0 ? "Chọn trình độ…" : v;
+    level.appendChild(o);
+  });
+  root.appendChild(wrapField("Trình độ", level));
 
   const notes = flowTextarea("Ghi chú thêm cho bộ đề…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -42,7 +49,7 @@ export function createQuizFormCard(deps) {
     srcText.value = String(item.s ?? "");
     kind.value = String(item.k ?? "");
     qn.value = String(toPositiveInt(item.q, 20));
-    diff.value = String(item.d ?? "");
+    level.value = normalizeFullsetLevelAutofill(item.d);
     notes.value = String(item.n ?? "");
   });
 
@@ -62,8 +69,10 @@ export function createQuizFormCard(deps) {
   function readQuizState() {
     const t = srcText.value.trim();
     const k = kind.value.trim();
+    const lv = level.value;
     const n = Number(qn.value);
-    const complete = Boolean(t) && Number.isFinite(n) && n >= 1 && Boolean(k);
+    const complete =
+      Boolean(t) && Number.isFinite(n) && n >= 1 && Boolean(k) && Boolean(lv);
     return { t, k, n, complete };
   }
 
@@ -82,7 +91,7 @@ export function createQuizFormCard(deps) {
       source: "(Teachly tự động)",
       kind: "Ôn tập THPTQG",
       count: "20",
-      difficulty: "",
+      difficulty: "Cơ bản",
       notes: "",
     });
   });
@@ -98,14 +107,15 @@ export function createQuizFormCard(deps) {
     }
     const t = srcText.value.trim();
     const k = kind.value.trim();
-    if (t && k) {
+    const lv = level.value;
+    if (t && k && lv) {
       submit.disabled = true;
       skip.disabled = true;
       deps.onSubmit({
         source: t,
         kind: k,
         count: String(n),
-        difficulty: diff.value.trim(),
+        difficulty: lv,
         notes: notes.value.trim(),
       });
       return;
@@ -117,7 +127,7 @@ export function createQuizFormCard(deps) {
         source: t || "(Teachly tự động)",
         kind: k || "Ôn tập THPTQG",
         count: String(n),
-        difficulty: diff.value.trim(),
+        difficulty: lv || "Khá",
         notes: notes.value.trim(),
       });
     });

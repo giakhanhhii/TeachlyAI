@@ -40,6 +40,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
     lines.push(
       `[Full Set — chủ đề] ${payload.topic}`,
       `Trình độ: ${payload.level}`,
+      `Mẫu slide: ${payload.slideTemplate || "—"}`,
       `Số lượng — Slide: ${payload.slides}, Quiz: ${payload.quiz}, Flashcard: ${payload.flash}`,
     );
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
@@ -56,6 +57,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
       fullsetMixed: {
         topic,
         level: String(payload.level || "—"),
+        slideTemplate: String(payload.slideTemplate || ""),
         slides: String(payload.slides || "0"),
         quiz: String(payload.quiz || "0"),
         flash: String(payload.flash || "0"),
@@ -68,7 +70,10 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           meta: {
             topic,
             count: String(payload.slides || "—"),
-            notes: "Full set (demo mock)",
+            notes:
+              payload.slideTemplate
+                ? `Mẫu slide: ${payload.slideTemplate} | Full set (demo mock)`
+                : "Full set (demo mock)",
             __experienceId: `${experienceId}:slide`,
           },
           experienceId: `${experienceId}:slide`,

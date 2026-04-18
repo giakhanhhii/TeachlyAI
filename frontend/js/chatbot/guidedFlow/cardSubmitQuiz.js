@@ -35,7 +35,7 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
 
   if (guided.kind === "quiz" && guided.step === "await_topic_form" && cardType === "quiz_form") {
     const topic = [payload.source, payload.kind].filter(Boolean).join(" — ") || "—";
-    const notes = [payload.difficulty ? `Tỉ lệ độ khó: ${payload.difficulty}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : ""]
+    const notes = [payload.difficulty ? `Trình độ: ${payload.difficulty}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : ""]
       .filter(Boolean)
       .join(" | ");
     const meta = {
