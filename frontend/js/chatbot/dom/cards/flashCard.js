@@ -34,10 +34,10 @@ export function createFlashcardFormCard(deps) {
 
   addAutofillBtn(root, () => {
     const s = SAMPLES_FLASH[autofillCounters.flash++ % SAMPLES_FLASH.length];
-    list.value = s.l;
-    back.value = s.b;
+    list.value = String(s.l ?? "");
+    back.value = String(s.b ?? "");
     count.value = String(clamp(toPositiveInt(s.c, 20), 1, 40));
-    notes.value = s.n;
+    notes.value = String(s.n ?? "");
   });
 
   const err = el("div", "flow-err");

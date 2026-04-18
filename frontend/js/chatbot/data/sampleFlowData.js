@@ -8,7 +8,7 @@ const SAMPLES_FULLSET = [
   { t: "Đọc hiểu: Chủ đề Technology & AI in Education", l: "Khá", s: "10", q: "15", f: "0", e: "Rèn luyện kỹ năng tìm main idea và infer." },
   { t: "Ngữ pháp: Câu bị động & Câu tường thuật (Lớp 12)", l: "Cơ bản", s: "8", q: "20", f: "10", e: "Ôn tập kỹ các cấu trúc biến đổi câu." },
   { t: "Từ vựng Unit 2: Cultural Diversity", l: "Khá", s: "10", q: "15", f: "20", e: "Các collocations về chủ đề văn hóa và phong tục." },
-  { t: "Luyện tập giới từ, cụm động từ (Phrasal Verbs)", l: "Khó", s: "5", q: "30", f: "20", e: "Những cụm từ dễ nhầm lẫn trong đề thi." },
+  { t: "Luyện tập giới từ, cụm động từ (Phrasal Verbs)", l: "Nâng cao", s: "5", q: "30", f: "20", e: "Những cụm từ dễ nhầm lẫn trong đề thi." },
   { t: "Unit 4: The Mass Media (Tiếng Anh 12)", l: "Khá", s: "10", q: "20", f: "10", e: "Từ vựng về truyền thông và báo chí." },
   { t: "Tổng ôn kiến thức cơ bản lớp 11 cho thi THPT QG", l: "Cơ bản", s: "12", q: "20", f: "10", e: "Ôn lại các thì và modal verbs lớp 11." },
 ];

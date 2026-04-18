@@ -6,7 +6,7 @@ import {
   clamp,
   el,
   flowTextarea,
-  normalizeFullsetCounts,
+  coerceSelectThemeValue,
   removeSkipConfirm,
   showPartialFillConfirm,
   toPositiveInt,
@@ -64,11 +64,11 @@ export function createSlideFormCard(deps) {
 
   addAutofillBtn(root, () => {
     const s = SAMPLES_SLIDE[autofillCounters.slide++ % SAMPLES_SLIDE.length];
-    docText.value = s.t;
+    docText.value = String(s.t ?? "");
     count.value = String(clamp(toPositiveInt(s.c, 10), 1, 30));
-    structure.value = s.s;
-    style.value = s.y;
-    notes.value = s.n;
+    structure.value = String(s.s ?? "");
+    style.value = coerceSelectThemeValue(SLIDE_THEME_OPTIONS, s.y, SLIDE_THEME_DEFAULT);
+    notes.value = String(s.n ?? "");
   });
 
   const err = el("div", "flow-err");
