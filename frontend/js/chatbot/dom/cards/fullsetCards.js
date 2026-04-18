@@ -8,6 +8,7 @@ import {
   el,
   flowTextarea,
   normalizeFullsetCounts,
+  normalizeFullsetLevelAutofill,
   randomFullsetTripleSum40,
   removeSkipConfirm,
   showAutoConfirmPanel,
@@ -63,12 +64,12 @@ export function createFullsetTopicCard(deps) {
   addAutofillBtn(root, () => {
     const s = SAMPLES_FULLSET[autofillCounters.fullset++ % SAMPLES_FULLSET.length];
     const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
-    topic.value = s.t;
-    level.value = s.l;
+    topic.value = String(s.t ?? "");
+    level.value = normalizeFullsetLevelAutofill(s.l);
     slides.value = String(sn);
     quiz.value = String(qn);
     flash.value = String(fn);
-    extra.value = s.e;
+    extra.value = String(s.e ?? "");
   });
 
   const err = el("div", "flow-err");

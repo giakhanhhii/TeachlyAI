@@ -39,11 +39,11 @@ export function createQuizFormCard(deps) {
 
   addAutofillBtn(root, () => {
     const item = SAMPLES_QUIZ[autofillCounters.quiz++ % SAMPLES_QUIZ.length];
-    srcText.value = item.s;
-    kind.value = item.k;
+    srcText.value = String(item.s ?? "");
+    kind.value = String(item.k ?? "");
     qn.value = String(toPositiveInt(item.q, 20));
-    diff.value = item.d;
-    notes.value = item.n;
+    diff.value = String(item.d ?? "");
+    notes.value = String(item.n ?? "");
   });
 
   const err = el("div", "flow-err");

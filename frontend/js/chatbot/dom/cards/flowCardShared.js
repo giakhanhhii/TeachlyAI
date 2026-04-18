@@ -153,3 +153,33 @@ export function normalizeFullsetCounts(slideRaw, quizRaw, flashRaw) {
   fn = Math.max(1, remaining);
   return { sn, qn, fn };
 }
+
+/** Giá trị hợp lệ cho ô Trình độ — Form Full Set (khớp <option value>) */
+const FULLSET_LEVEL_OPTION_VALUES = ["Mất gốc", "Cơ bản", "Khá", "Nâng cao"];
+
+/**
+ * Chuẩn hóa nhãn mẫu (vd. "Khó") thành một option có thật trong select Trình độ.
+ * @param {unknown} raw
+ * @returns {string}
+ */
+export function normalizeFullsetLevelAutofill(raw) {
+  const s = String(raw ?? "").trim();
+  if (FULLSET_LEVEL_OPTION_VALUES.includes(s)) return s;
+  if (s === "Khó") return "Nâng cao";
+  if (s === "Dễ") return "Cơ bản";
+  if (s === "Yếu") return "Mất gốc";
+  return "Khá";
+}
+
+/**
+ * Gán select chủ đề / enum: nếu raw không khớp option nào thì dùng fallback.
+ * @param {string[]} allowedValues
+ * @param {unknown} raw
+ * @param {string} fallback
+ * @returns {string}
+ */
+export function coerceSelectThemeValue(allowedValues, raw, fallback) {
+  const r = String(raw ?? "").trim();
+  if (allowedValues.includes(r)) return r;
+  return fallback;
+}
