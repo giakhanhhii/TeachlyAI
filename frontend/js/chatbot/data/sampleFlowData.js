@@ -14,18 +14,18 @@ const SAMPLES_FULLSET = [
 ];
 
 const SAMPLES_SLIDE = [
-  { t: "Thì của động từ & Sự hòa hợp chủ vị (Full)", c: "12", s: "Quy tắc 12 thì -> Hòa hợp chủ vị -> Lưu ý đặc biệt", y: "Trang trọng", n: "Dùng bảng so sánh để học sinh dễ nắm bắt." },
-  { t: "Câu bị động (Passive Voice) - Các dạng đặc biệt", c: "10", s: "Bị động kép -> Have something done -> It is said that...", y: "Trang trọng", n: "Tập trung vào các câu hỏi thường xuất hiện trong đề thi." },
-  { t: "Mệnh đề quan hệ & Rút gọn mệnh đề quan hệ", c: "15", s: "Đại từ quan hệ -> Rút gọn bằng Ving/V3 -> Lưu ý That", y: "Gần gũi", n: "Thêm nhiều bài tập vận dụng ngay sau mỗi phần lý thuyết." },
-  { t: "Unit 6: Endangered Species (Vocabulary)", c: "12", s: "Key terms -> Context examples -> Practice", y: "Hài hước", n: "Sử dụng hình ảnh các loài động vật quý hiếm." },
-  { t: "Word Formation: Word roots, Prefixes & Suffixes", c: "10", s: "Noun/Verb/Adj signals -> Common suffixes -> Exercises", y: "Trang trọng", n: "Dạy mẹo chọn đáp án theo hậu tố từ." },
-  { t: "Reported Speech with Gerund & Infinitive", c: "12", s: "Reporting verbs list -> Structure -> Example", y: "Gần gũi", n: "Dạng bài: 'He advised me to...', 'He denied Ving...'" },
-  { t: "Comparisons: Equative, Comparative & Superlative", c: "8", s: "Cấu trúc so sánh -> So sánh kép -> Phân biệt", y: "Hài hước", n: "Lấy ví dụ hài hước về các học sinh trong lớp." },
-  { t: "Conditionals: Type 1, 2, 3 & Mixed", c: "14", s: "Công thức -> Đảo ngữ -> Mixed type -> Unless", y: "Trang trọng", n: "Nhấn mạnh vào Đảo ngữ câu điều kiện." },
-  { t: "Unit 3: Ways of Socializing (Grade 12)", c: "10", s: "Verbal/Non-verbal -> Formal/Informal -> Vocabulary", y: "Gần gũi", n: "Tập trung vào các collocations về giao tiếp." },
-  { t: "Modal Verbs: May, Might, Should, Must (Present & Past)", c: "12", s: "Cấu trúc Modal -> Perfect Gerund -> Practice", y: "Trang trọng", n: "Phân biệt must have V3 vs should have V3." },
-  { t: "Conjunctions: Although, Because, In spite of, Due to", c: "10", s: "Clause vs Phrase -> Transform -> Linking words", y: "Gần gũi", n: "Bài tập viết lại câu chuyển đổi giữa clause và phrase." },
-  { t: "Inversion (Đảo ngữ) - Chuyên đề nâng cao", c: "15", s: "Never/Hardly -> Only/Not until -> Should/Were/Had", y: "Trang trọng", n: "Dành cho nhóm học sinh giỏi ôn thi chuyên." },
+  { t: "Thì của động từ & Sự hòa hợp chủ vị (Full)", c: "12", s: "Quy tắc 12 thì -> Hòa hợp chủ vị -> Lưu ý đặc biệt", y: "Chuyên nghiệp (đa sắc)", n: "Dùng bảng so sánh để học sinh dễ nắm bắt." },
+  { t: "Câu bị động (Passive Voice) - Các dạng đặc biệt", c: "10", s: "Bị động kép -> Have something done -> It is said that...", y: "Tối giản (Học thuật)", n: "Tập trung vào các câu hỏi thường xuất hiện trong đề thi." },
+  { t: "Mệnh đề quan hệ & Rút gọn mệnh đề quan hệ", c: "15", s: "Đại từ quan hệ -> Rút gọn bằng Ving/V3 -> Lưu ý That", y: "Vui tươi (Thân thiện)", n: "Thêm nhiều bài tập vận dụng ngay sau mỗi phần lý thuyết." },
+  { t: "Unit 6: Endangered Species (Vocabulary)", c: "12", s: "Key terms -> Context examples -> Practice", y: "Vũ trụ sáng (Trẻ trung)", n: "Sử dụng hình ảnh các loài động vật quý hiếm." },
+  { t: "Word Formation: Word roots, Prefixes & Suffixes", c: "10", s: "Noun/Verb/Adj signals -> Common suffixes -> Exercises", y: "Vũ trụ tối (Huyền bí)", n: "Dạy mẹo chọn đáp án theo hậu tố từ." },
+  { t: "Reported Speech with Gerund & Infinitive", c: "12", s: "Reporting verbs list -> Structure -> Example", y: "Biển cả", n: "Dạng bài: 'He advised me to...', 'He denied Ving...'" },
+  { t: "Comparisons: Equative, Comparative & Superlative", c: "8", s: "Cấu trúc so sánh -> So sánh kép -> Phân biệt", y: "Comic", n: "Lấy ví dụ hài hước về các học sinh trong lớp." },
+  { t: "Conditionals: Type 1, 2, 3 & Mixed", c: "14", s: "Công thức -> Đảo ngữ -> Mixed type -> Unless", y: "Chuyên nghiệp (đa sắc)", n: "Nhấn mạnh vào Đảo ngữ câu điều kiện." },
+  { t: "Unit 3: Ways of Socializing (Grade 12)", c: "10", s: "Verbal/Non-verbal -> Formal/Informal -> Vocabulary", y: "Vui tươi (Thân thiện)", n: "Tập trung vào các collocations về giao tiếp." },
+  { t: "Modal Verbs: May, Might, Should, Must (Present & Past)", c: "12", s: "Cấu trúc Modal -> Perfect Gerund -> Practice", y: "Tối giản (Học thuật)", n: "Phân biệt must have V3 vs should have V3." },
+  { t: "Conjunctions: Although, Because, In spite of, Due to", c: "10", s: "Clause vs Phrase -> Transform -> Linking words", y: "Biển cả", n: "Bài tập viết lại câu chuyển đổi giữa clause và phrase." },
+  { t: "Inversion (Đảo ngữ) - Chuyên đề nâng cao", c: "15", s: "Never/Hardly -> Only/Not until -> Should/Were/Had", y: "Vũ trụ tối (Huyền bí)", n: "Dành cho nhóm học sinh giỏi ôn thi chuyên." },
 ];
 
 const SAMPLES_QUIZ = [

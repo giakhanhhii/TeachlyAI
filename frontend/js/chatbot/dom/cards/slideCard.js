@@ -13,15 +13,27 @@ import {
   wrapField,
 } from "./flowCardShared.js";
 
+const SLIDE_THEME_OPTIONS = [
+  "Chuyên nghiệp (đa sắc)",
+  "Tối giản (Học thuật)",
+  "Vui tươi (Thân thiện)",
+  "Vũ trụ sáng (Trẻ trung)",
+  "Vũ trụ tối (Huyền bí)",
+  "Biển cả",
+  "Comic",
+];
+
+const SLIDE_THEME_DEFAULT = "Vui tươi (Thân thiện)";
+
 export function createSlideFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
   const docText = flowTextarea("Nhập tên bài học / chủ đề…", 2);
   const docBlock = el("div", "flow-field");
-  docBlock.appendChild(el("label", "flow-label", "Chủ đề bài giảng"));
+  docBlock.appendChild(el("label", "flow-label", "Tiêu đề bài giảng"));
   docBlock.appendChild(docText);
-  docBlock.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập chủ đề trực tiếp — mô tả rõ nội dung mong muốn."));
+  docBlock.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập tiêu đề trực tiếp — mô tả rõ nội dung mong muốn."));
   root.appendChild(docBlock);
 
   const count = el("input", "flow-input");
@@ -35,13 +47,17 @@ export function createSlideFormCard(deps) {
   root.appendChild(wrapField("Cấu trúc mong muốn", structure));
 
   const style = el("select", "flow-select");
-  ["", "Trang trọng", "Gần gũi", "Hài hước"].forEach((v, i) => {
+  const emptyOpt = document.createElement("option");
+  emptyOpt.value = "";
+  emptyOpt.textContent = "Chọn chủ đề…";
+  style.appendChild(emptyOpt);
+  SLIDE_THEME_OPTIONS.forEach((v) => {
     const o = document.createElement("option");
-    o.value = i === 0 ? "" : v;
-    o.textContent = i === 0 ? "Chọn phong cách…" : v;
+    o.value = v;
+    o.textContent = v;
     style.appendChild(o);
   });
-  root.appendChild(wrapField("Phong cách", style));
+  root.appendChild(wrapField("Chủ đề", style));
 
   const notes = flowTextarea("VD: Minigame, Thảo luận nhóm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -91,7 +107,7 @@ export function createSlideFormCard(deps) {
       topic: "(Teachly tự động)",
       count: "20",
       structure: "",
-      style: "Gần gũi",
+      style: SLIDE_THEME_DEFAULT,
       notes: "",
     });
   });
@@ -126,7 +142,7 @@ export function createSlideFormCard(deps) {
         topic: topic || "(Teachly tự động)",
         count: String(n),
         structure: structure.value.trim(),
-        style: sty || "Gần gũi",
+        style: sty || SLIDE_THEME_DEFAULT,
         notes: notes.value.trim(),
       });
     });

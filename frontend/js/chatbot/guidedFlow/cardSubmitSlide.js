@@ -8,7 +8,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
     const pdfFn = guided.data && guided.data.pdfFileName ? String(guided.data.pdfFileName) : "";
     const notes = [
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
-      payload.style ? `Phong cách: ${payload.style}` : "",
+      payload.style ? `Chủ đề: ${payload.style}` : "",
       payload.notes ? `Ghi chú: ${payload.notes}` : "",
       pdfFn ? `Tệp PDF: ${pdfFn}` : "",
       "Nguồn: PDF",
@@ -36,7 +36,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
   if (guided.kind === "slide" && guided.step === "await_topic_form" && cardType === "slide_form") {
     const notes = [
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
-      payload.style ? `Phong cách: ${payload.style}` : "",
+      payload.style ? `Chủ đề: ${payload.style}` : "",
       payload.notes ? `Ghi chú: ${payload.notes}` : "",
     ]
       .filter(Boolean)
