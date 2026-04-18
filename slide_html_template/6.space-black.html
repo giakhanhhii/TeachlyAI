@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám Phá Vũ Trụ - HTML Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ================= THE SETUP ================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #030712; /* Đen sâu */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 30px 0;
+            min-height: 100vh;
+        }
+
+        /* Container của từng slide - Màu xanh vũ trụ tối */
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background-color: #0B1120; /* Xanh đen vũ trụ */
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 60px 80px;
+            font-family: 'Nunito', sans-serif;
+            color: #D1D5DB; /* Text màu xám sáng */
+        }
+
+        /* --- BACKGROUND SHAPES (Lượn sóng và các nét vẽ) --- */
+        .slide-container::before, .slide-container::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Lượn sóng trên - Xanh dương tối */
+        .slide-container::before {
+            top: 0;
+            height: 250px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23151F38' fill-opacity='1' d='M0,128L48,138.7C96,149,192,171,288,165.3C384,160,480,128,576,112C672,96,768,96,864,122.7C960,149,1056,203,1152,213.3C1248,224,1344,192,1392,176L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+        }
+
+        /* Lượn sóng dưới - Xanh dương nhạt hơn một chút */
+        .slide-container.wave-bottom::after {
+            bottom: 0;
+            height: 200px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%231E2A47' fill-opacity='1' d='M0,192L48,170.7C96,149,192,107,288,112C384,117,480,171,576,197.3C672,224,768,224,864,208C960,192,1056,160,1152,149.3C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: bottom center;
+            background-repeat: no-repeat;
+        }
+
+        .slide-container > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- DECORATIVE STARS --- */
+        .star {
+            position: absolute;
+            color: #FFD166;
+            filter: drop-shadow(0 0 8px rgba(255, 209, 102, 0.8));
+            font-size: 35px;
+            z-index: 1;
+            transform: rotate(-15deg);
+        }
+        .star.s1 { top: 50px; left: 350px; font-size: 50px; }
+        .star.s2 { top: 120px; left: 450px; font-size: 30px; }
+        .star.s3 { top: 80px; right: 150px; font-size: 40px; transform: rotate(20deg); }
+
+        /* ================= TYPOGRAPHY ================= */
+        h1, h2, h3 {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 75px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .slide-title {
+            font-size: 50px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        h3 {
+            font-size: 32px;
+        }
+
+        p, li {
+            font-size: 24px;
+            line-height: 1.6;
+        }
+
+        .subtitle {
+            font-size: 30px;
+            font-weight: 600;
+            color: #4CC9F0; /* Màu cyan nổi bật */
+        }
+
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ================= LAYOUTS ================= */
+
+        /* 1. Title Slide */
+        .title-layout {
+            text-align: left;
+            margin-top: 150px;
+        }
+        .title-layout h1 {
+            color: #FFFFFF;
+            text-shadow: 3px 3px 0px #EF476F, 6px 6px 0px #4CC9F0; /* Neon glow shadow */
+        }
+
+        /* 2. Section Title */
+        .section-title-layout {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .section-title-layout h2 {
+            font-size: 65px;
+            text-shadow: 3px 3px 0px #FFD166;
+        }
+
+        /* 3. Two Column & Image Right */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .two-column.align-start {
+            align-items: start;
+        }
+
+        .image-wrapper {
+            border-radius: 40px;
+            overflow: hidden;
+            border: 4px solid #FFFFFF;
+            background-color: #111827; /* Nền tối cho ảnh */
+            box-shadow: 8px 8px 0px #4CC9F0;
+            height: 420px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .two-column .image-wrapper img {
+            object-fit: contain;
+            padding: 20px;
+        }
+
+        /* 4. Lists & Bullets */
+        .bullet-list ul {
+            list-style: none;
+        }
+        .bullet-list li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 20px;
+        }
+        .bullet-list li::before {
+            content: '★';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: #FFD166; /* Sao vàng */
+            font-size: 26px;
+        }
+
+        /* 5. Tiled Text with Icons */
+        .tiled-content {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: stretch;
+            width: 100%;
+        }
+        .tile {
+            background-color: #1E293B; /* Xanh xám tối */
+            border: 4px solid #FFFFFF;
+            border-radius: 30px;
+            padding: 40px 30px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 8px 8px 0px #FFD166;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .tile .icon-badge {
+            background-color: #4CC9F0;
+            border: 3px solid #FFFFFF;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: #0B1120;
+            margin-bottom: 25px;
+            box-shadow: 4px 4px 0px #EF476F;
+        }
+
+        /* 6. Highlighted Numbers */
+        .highlight-numbers-layout {
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin-top: 50px;
+        }
+        .highlight-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .number-badge {
+            background-color: #FFD166;
+            color: #0B1120;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 80px;
+            font-weight: 700;
+            padding: 30px 50px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            border: 5px solid #FFFFFF;
+            box-shadow: 10px 10px 0px #EF476F;
+            margin-bottom: 30px;
+        }
+
+        /* 7. Styled Bullet Points */
+        .styled-bullets ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+        .styled-bullets li {
+            display: flex;
+            align-items: center;
+            background-color: #1E293B;
+            border: 3px solid #FFFFFF;
+            border-radius: 20px;
+            padding: 20px 30px;
+            box-shadow: 5px 5px 0px #4CC9F0;
+        }
+        .styled-bullets .icon {
+            font-size: 45px;
+            color: #EF476F;
+            margin-right: 30px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* 8. Tiled Images */
+        .image-tile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+        }
+        .image-tile .image-wrapper {
+            height: 250px;
+            width: 100%;
+            border-radius: 50%;
+            margin-bottom: 25px;
+        }
+        
+        /* 9. Rounded Image */
+        .rounded-image-layout .image-wrapper {
+            border-radius: 50%;
+            height: 400px;
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        /* 10. Timeline */
+        .timeline-layout {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 60px;
+            width: 100%;
+        }
+        .timeline-line {
+            position: absolute;
+            top: 45px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: #FFFFFF;
+            border-radius: 3px;
+            z-index: 0;
+        }
+        .timeline-item {
+            position: relative;
+            z-index: 1;
+            width: 22%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .timeline-dot {
+            width: 90px;
+            height: 90px;
+            background-color: #4CC9F0;
+            border: 4px solid #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 28px;
+            color: #0B1120;
+            margin-bottom: 25px;
+            box-shadow: 4px 4px 0px #FFD166;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .timeline-item h3 {
+            font-size: 26px;
+            margin-bottom: 10px;
+            color: #FFD166;
+        }
+        .timeline-item p {
+            font-size: 18px;
+        }
+
+        /* 11. Quote */
+        .quote-layout {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #1E293B;
+            padding: 60px;
+            border: 5px dashed #FFFFFF;
+            border-radius: 40px;
+            position: relative;
+            box-shadow: 10px 10px 0px #FFD166;
+        }
+        .quote-layout i.fa-quote-left {
+            position: absolute;
+            top: -30px;
+            left: 40px;
+            font-size: 60px;
+            color: #FFD166;
+            background-color: #0B1120;
+            padding: 0 20px;
+        }
+        .quote-layout blockquote {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: #FFFFFF;
+            margin-bottom: 30px;
+        }
+        .quote-layout cite {
+            font-size: 26px;
+            color: #4CC9F0;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        /* 12. Q&A */
+        .qa-layout {
+            text-align: center;
+        }
+        .qa-layout h2 {
+            font-size: 80px;
+            margin-bottom: 30px;
+            text-shadow: 4px 4px 0px #4CC9F0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title_Slide -->
+<div class="slide-container" id="slide1">
+    <i class="fa-solid fa-star star s1"></i>
+    <i class="fa-solid fa-star star s2"></i>
+    <i class="fa-solid fa-star star s3"></i>
+    <div class="title-layout">
+        <h1>Khám Phá<br>Vũ Trụ</h1>
+        <p class="subtitle">Hành trình vươn tới những vì sao</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: Section_Title -->
+<div class="slide-container wave-bottom" id="slide2">
+    <i class="fa-solid fa-star star s1"></i>
+    <div class="section-title-layout">
+        <h2>Bạn đã sẵn sàng chưa?</h2>
+        <p class="subtitle">Cùng thắt dây an toàn và bắt đầu chuyến du hành không gian!</p>
+    </div>
+</div>
+
+<!-- SLIDE 3: Tiled_Text_With_Icons (Mục Lục) -->
+<div class="slide-container wave-bottom" id="slide3">
+    <h2 class="slide-title">Mục Lục Hành Trình</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon-badge"><i class="fa-solid fa-rocket"></i></div>
+                <h3>1. Nguồn Gốc</h3>
+                <p>Khám phá cách vũ trụ bắt đầu và vũ trụ thực sự là gì.</p>
+            </div>
+            <div class="tile">
+                <div class="icon-badge"><i class="fa-solid fa-sun"></i></div>
+                <h3>2. Hệ Mặt Trời</h3>
+                <p>Tìm hiểu về ngôi nhà chung của chúng ta và các hành tinh lân cận.</p>
+            </div>
+            <div class="tile">
+                <div class="icon-badge"><i class="fa-solid fa-user-astronaut"></i></div>
+                <h3>3. Khám Phá</h3>
+                <p>Những sự thật thú vị và bước chân vĩ đại của con người.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Image_Right_Text_Left (Vũ Trụ Là Gì) -->
+<div class="slide-container wave-bottom" id="slide4">
+    <i class="fa-solid fa-star star s3"></i>
+    <h2 class="slide-title">Vũ Trụ Là Gì?</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div class="bullet-list">
+                <ul>
+                    <li>Là toàn bộ không gian, thời gian bao la chứa mọi vật chất và năng lượng.</li>
+                    <li>Chứa hàng tỷ thiên hà, và mỗi thiên hà lại có hàng tỷ ngôi sao rực rỡ.</li>
+                    <li>Vũ trụ không đứng im, nó liên tục giãn nở ngày càng lớn hơn kể từ lúc bắt đầu!</li>
+                </ul>
+            </div>
+            <div>
+                <div class="image-wrapper">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/14973478151479594635" alt="Hình minh hoạ vũ trụ với các vì sao và hành tinh dễ thương">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: Two_Column_Tiled_Text (Sự Khởi Đầu) -->
+<div class="slide-container wave-bottom" id="slide5">
+    <i class="fa-solid fa-star star s2"></i>
+    <h2 class="slide-title">Sự Khởi Đầu Của Tất Cả</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+            <div class="tile">
+                <div class="icon-badge" style="background-color: #FFD166; color: #0B1120;"><i class="fa-solid fa-burst"></i></div>
+                <h3>Thuyết Big Bang</h3>
+                <p>Một vụ nổ siêu lớn (Big Bang) cách đây khoảng 13.8 tỷ năm chính là khởi nguồn của toàn bộ vũ trụ bao la này.</p>
+            </div>
+            <div class="tile">
+                <div class="icon-badge" style="background-color: #EF476F; color: #FFF; box-shadow: 4px 4px 0px #4CC9F0;"><i class="fa-solid fa-expand"></i></div>
+                <h3>Sự Giãn Nở</h3>
+                <p>Từ một điểm vô cùng nhỏ và đặc, vũ trụ bắt đầu nguội đi và không ngừng mở rộng với tốc độ ngày càng nhanh.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: Image_Right_Text_Left (Thiên Hà) -->
+<div class="slide-container wave-bottom" id="slide6">
+    <h2 class="slide-title">Thiên Hà (Galaxy)</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div class="bullet-list">
+                <ul>
+                    <li>Là một hệ thống khổng lồ chứa khí, bụi vũ trụ và hàng tỷ ngôi sao bị ràng buộc bởi lực hấp dẫn.</li>
+                    <li>Dải Ngân Hà (Milky Way) hình xoắn ốc tuyệt đẹp chính là "tổ ấm" của Trái Đất chúng ta.</li>
+                    <li>Các thiên hà có nhiều hình dáng thú vị: xoắn ốc, hình elip, hay không có hình dạng cố định.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="image-wrapper">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/2770169822737605625" alt="Hình minh hoạ dải thiên hà xoắn ốc tuyệt đẹp">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: Highlighted_Numbers (Những Con Số Khổng Lồ) -->
+<div class="slide-container wave-bottom" id="slide7">
+    <i class="fa-solid fa-star star s1"></i>
+    <h2 class="slide-title">Những Con Số Siêu Khổng Lồ</h2>
+    <div class="content-area">
+        <div class="highlight-numbers-layout">
+            <div class="highlight-box">
+                <div class="number-badge">13.8</div>
+                <h3>Tỷ Năm</h3>
+                <p>Là số tuổi ước tính của Vũ trụ.</p>
+            </div>
+            <div class="highlight-box">
+                <div class="number-badge" style="background-color: #4CC9F0; box-shadow: 10px 10px 0px #FFD166;">2,000</div>
+                <h3>Tỷ Thiên Hà</h3>
+                <p>Số lượng thiên hà trong vũ trụ quan sát được.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: Tiled_Images (Hệ Mặt Trời) -->
+<div class="slide-container wave-bottom" id="slide8">
+    <h2 class="slide-title">Hệ Mặt Trời Của Chúng Ta</h2>
+    <div class="content-area">
+        <div class="tiled-content">
+            <div class="image-tile">
+                <div class="image-wrapper">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/13504738754235942684" alt="Minh hoạ Mặt trời dễ thương">
+                </div>
+                <h3>Mặt Trời</h3>
+                <p>Ngôi sao ở vị trí trung tâm, cung cấp ánh sáng và sự sống.</p>
+            </div>
+            <div class="image-tile">
+                <div class="image-wrapper" style="box-shadow: 8px 8px 0px #EF476F;">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/3613803679487870787" alt="Minh hoạ Trái Đất dễ thương">
+                </div>
+                <h3>Trái Đất</h3>
+                <p>Hành tinh xanh tuyệt đẹp, nơi duy nhất biết đến có sự sống.</p>
+            </div>
+            <div class="image-tile">
+                <div class="image-wrapper" style="box-shadow: 8px 8px 0px #FFD166;">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/15723644614332886194" alt="Minh hoạ Sao Mộc dễ thương">
+                </div>
+                <h3>Sao Mộc</h3>
+                <p>Hành tinh khí khổng lồ, lớn nhất trong toàn bộ hệ Mặt Trời.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: Image_Right_Text_Left (Các Hành Tinh Đất Đá) -->
+<div class="slide-container wave-bottom" id="slide9">
+    <i class="fa-solid fa-star star s3"></i>
+    <h2 class="slide-title">Các Hành Tinh Đất Đá</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div class="bullet-list">
+                <ul>
+                    <li>Bao gồm 4 hành tinh: <strong>Thủy, Kim, Trái Đất, Hỏa</strong>.</li>
+                    <li>Nằm ở vị trí gần với Mặt Trời nhất.</li>
+                    <li>Có bề mặt rắn chắc, cấu tạo chủ yếu từ đất đá và kim loại nặng.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="image-wrapper">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/10002896421637230046" alt="Minh hoạ Sao Hoả (Hành tinh đất đá)">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: Image_Right_Text_Left (Hành Tinh Khí Khổng Lồ) -->
+<div class="slide-container wave-bottom" id="slide10">
+    <h2 class="slide-title">Hành Tinh Khí Khổng Lồ</h2>
+    <div class="content-area">
+        <div class="two-column">
+            <div class="bullet-list">
+                <ul>
+                    <li>Bao gồm 4 hành tinh: <strong>Mộc, Thổ, Thiên Vương, Hải Vương</strong>.</li>
+                    <li>Kích thước cực kỳ lớn so với các hành tinh đất đá.</li>
+                    <li>Không có bề mặt rắn, cấu tạo chủ yếu từ lớp khí Hydro và Heli dày đặc.</li>
+                </ul>
+            </div>
+            <div>
+                <div class="image-wrapper" style="border-color: #FFFFFF; box-shadow: 8px 8px 0px #EF476F;">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/12155399755018968705" alt="Minh hoạ Sao Thổ với vành đai rực rỡ">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: Rounded_Image_and_Text (Lỗ Đen Vũ Trụ) -->
+<div class="slide-container wave-bottom" id="slide11">
+    <i class="fa-solid fa-star star s2"></i>
+    <h2 class="slide-title">Bí Ẩn: Lỗ Đen Vũ Trụ</h2>
+    <div class="content-area">
+        <div class="two-column rounded-image-layout align-start">
+            <div>
+                <div class="image-wrapper" style="border-radius: 50%; box-shadow: 8px 8px 0px #FFD166;">
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/4637349100840623125" alt="Minh hoạ Lỗ đen vũ trụ đầy bí ẩn">
+                </div>
+            </div>
+            <div>
+                <h3 style="color: #EF476F; font-size: 38px;">Hố Đen Là Gì?</h3>
+                <p>Lỗ đen là một khu vực trong không gian nơi lực hấp dẫn mạnh đến mức không một vật chất nào, kể cả ánh sáng, có thể thoát ra được.</p><br>
+                <p>Chúng thường được sinh ra khi một ngôi sao khổng lồ kết thúc vòng đời và tự sụp đổ vào lõi của chính nó.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: Timeline (Lịch Sử Khám Phá) -->
+<div class="slide-container wave-bottom" id="slide12">
+    <h2 class="slide-title">Dấu Chân Con Người</h2>
+    <div class="content-area">
+        <div class="timeline-layout">
+            <div class="timeline-line"></div>
+            <div class="timeline-item">
+                <div class="timeline-dot">1957</div>
+                <h3>Sputnik 1</h3>
+                <p>Vệ tinh nhân tạo đầu tiên bay vào quỹ đạo.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot" style="background-color: #FFD166; box-shadow: 4px 4px 0px #EF476F;">1961</div>
+                <h3>Yuri Gagarin</h3>
+                <p>Con người đầu tiên bay vào không gian vũ trụ.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot" style="background-color: #EF476F; color: #FFF; box-shadow: 4px 4px 0px #4CC9F0;">1969</div>
+                <h3>Apollo 11</h3>
+                <p>Neil Armstrong đặt bước chân đầu tiên lên Mặt Trăng.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot" style="background-color: #4CC9F0;">2021</div>
+                <h3>James Webb</h3>
+                <p>Kính viễn vọng không gian mạnh nhất được phóng lên.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: Quote -->
+<div class="slide-container wave-bottom" id="slide13">
+    <i class="fa-solid fa-star star s1"></i>
+    <i class="fa-solid fa-star star s3"></i>
+    <h2 class="slide-title">Cảm Hứng Vô Tận</h2>
+    <div class="content-area">
+        <div class="quote-layout">
+            <i class="fa-solid fa-quote-left"></i>
+            <blockquote>"Vũ trụ không chỉ kỳ lạ hơn những gì chúng ta tưởng tượng, nó còn kỳ lạ hơn những gì chúng ta CÓ THỂ tưởng tượng."</blockquote>
+            <cite>— Nhà khoa học J. B. S. Haldane —</cite>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 14: Styled_Bullet_Points (Sự Thật Thú Vị) -->
+<div class="slide-container wave-bottom" id="slide14">
+    <h2 class="slide-title">Những Sự Thật Thú Vị!</h2>
+    <div class="content-area">
+        <div class="styled-bullets">
+            <ul>
+                <li>
+                    <div class="icon"><i class="fa-solid fa-volume-xmark"></i></div>
+                    <p>Hoàn toàn yên lặng: Vũ trụ là một chân không, không có không khí để truyền sóng âm thanh.</p>
+                </li>
+                <li>
+                    <div class="icon"><i class="fa-solid fa-shoe-prints" style="color: #FFD166;"></i></div>
+                    <p>Dấu chân vĩnh cửu: Dấu chân phi hành gia trên Mặt Trăng sẽ tồn tại hàng triệu năm vì không có gió thổi.</p>
+                </li>
+                <li>
+                    <div class="icon"><i class="fa-solid fa-gem" style="color: #4CC9F0;"></i></div>
+                    <p>Hành tinh kim cương: Có một hành tinh tên là "55 Cancri e" được cấu tạo chủ yếu bằng kim cương rực rỡ!</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 15: Q&A -->
+<div class="slide-container" id="slide15" style="justify-content: center;">
+    <i class="fa-solid fa-star star s1"></i>
+    <i class="fa-solid fa-star star s2"></i>
+    <div class="qa-layout">
+        <div class="image-wrapper" style="width: 250px; height: 250px; border-radius: 50%; margin: 0 auto 30px; box-shadow: none; border: none; background: transparent;">
+            <i class="fa-solid fa-user-astronaut" style="font-size: 150px; color: #EF476F; text-shadow: 5px 5px 0px #FFD166;"></i>
+        </div>
+        <h2>Bạn Có Thắc Mắc Nào Không?</h2>
+        <p class="subtitle">Cùng nhau thảo luận thêm về vũ trụ diệu kỳ nhé!</p>
+    </div>
+</div>
+
+</body>
+</html>
