@@ -62,6 +62,13 @@ export function init() {
     experienceBody,
     chatPhase,
   });
+  const baseLayerHide = layerView.hide.bind(layerView);
+  layerView.hide = () => {
+    baseLayerHide();
+    /** @type {HTMLElement} */ (messagesInner).querySelectorAll(".flow-card").forEach((root) => {
+      reenableFlowCard(/** @type {HTMLElement} */ (root));
+    });
+  };
   console.log("[chatController] experience layer view created");
 
   /** @type {ReturnType<typeof createMessageView>} */
