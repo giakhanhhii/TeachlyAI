@@ -55,4 +55,4 @@ Return the plan in clear sections with actionable steps:
 - Call out risks, trade-offs, and validation checklist.
 - End with: **“Waiting for approval to implement Docker files.”**
 
-After I review and explicitly approve the plan, you can proceed to generate implementation files
+After I review and explicitly approve the plan, you can proceed to generate implementation files.
