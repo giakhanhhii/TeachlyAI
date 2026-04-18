@@ -73,6 +73,11 @@
   align-items: stretch;
 }
 
+/* Slide deck: use more horizontal space so 16:9 preview matches the shell layout */
+.exp-shell-slide {
+  max-width: min(1200px, calc(100vw - 40px));
+}
+
 .exp-mixed-pick-hint {
   font-size: 13px;
   color: var(--muted, #607d8b);

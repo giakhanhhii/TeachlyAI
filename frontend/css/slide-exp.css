@@ -17,3 +17,24 @@
   margin-bottom: 8px;
 }
 
+/* Center slide preview in the experience column (avoids visual lean when iframe content is narrower). */
+.exp-shell-slide .exp-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.exp-slide-shell-iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: min(85vh, 920px);
+  margin-left: auto;
+  margin-right: auto;
+  background: #111;
+  border-radius: 12px;
+  border: 0;
+}
+
