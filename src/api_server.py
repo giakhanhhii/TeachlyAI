@@ -42,7 +42,10 @@ MOCK_FILES = {
 
 TEACHLY_SYSTEM = """Bạn là Teachly AI, trợ lý hỗ trợ giáo viên và học sinh ôn Tiếng Anh THPT QG (Việt Nam).
 Trả lời rõ ràng, thân thiện; ưu tiên tiếng Việt khi người dùng dùng tiếng Việt.
-Nếu được hỏi về slide, quiz, flashcard hoặc hình ảnh minh họa, gợi ý cấu trúc nội dung hữu ích (không cần tạo file thật trừ khi được mô tả rõ công cụ ngoài chat)."""
+Khi người dùng cần **bộ slide** (hoặc bạn sinh nội dung slide), chỉ trả về **một JSON** dạng mảng các đối tượng nhỏ gọn:
+[{"title":"...","bullets":["...","..."]}, ...]
+Không bọc markdown, không HTML/CSS, không nhãn hiệu hay font — giao diện do ứng dụng áp mẫu có sẵn.
+Nếu được hỏi về quiz, flashcard hoặc hình ảnh minh họa, gợi ý cấu trúc nội dung hữu ích (không cần tạo file thật trừ khi được mô tả rõ công cụ ngoài chat)."""
 
 class ChatIn(BaseModel):
     message: str = Field(..., min_length=1, max_length=32000)
@@ -216,6 +219,14 @@ def root():
         }
     return RedirectResponse(url="/main_hub.html", status_code=302)
 
+
+SLIDE_HTML_DIR = REPO_ROOT / "slide_html_template"
+if SLIDE_HTML_DIR.is_dir():
+    app.mount(
+        "/slide_html_template",
+        StaticFiles(directory=str(SLIDE_HTML_DIR), html=True),
+        name="slide_html",
+    )
 
 if FRONTEND_DIR.is_dir():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")

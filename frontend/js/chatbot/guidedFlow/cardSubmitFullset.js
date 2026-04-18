@@ -70,6 +70,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           meta: {
             topic,
             count: String(payload.slides || "—"),
+            slideTemplate: String(payload.slideTemplate || ""),
             notes:
               payload.slideTemplate
                 ? `Mẫu slide: ${payload.slideTemplate} | Full set (demo mock)`

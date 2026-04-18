@@ -19,6 +19,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       topic: payload.name || "—",
       count: payload.count || "—",
       notes: notes || "—",
+      slideTemplate: String(payload.style || ""),
     };
     return {
       handled: true,
@@ -45,6 +46,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       topic: payload.topic || "—",
       count: payload.count || "—",
       notes: notes || "—",
+      slideTemplate: String(payload.style || ""),
     };
     return {
       handled: true,
