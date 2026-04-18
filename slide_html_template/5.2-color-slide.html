@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn thi THPTQG 2026 Tiếng Anh - 20 Slide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- CORE SETUP --- */
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #1a1a1a;
+            display: grid; gap: 40px; grid-template-columns: 1fr;
+            margin: 0; min-height: 100vh; padding: 40px 0; place-items: center;
+        }
+
+        /* --- THEMES (BỘ MÀU SẮC) --- */
+        .theme-1 { --c-main: #1636d1; --c-alt: #d11222; --c-accent: #eab308; } /* Đỏ - Xanh */
+        .theme-2 { --c-main: #1e293b; --c-alt: #eab308; --c-accent: #38bdf8; } /* Than - Vàng */
+        .theme-3 { --c-main: #064e3b; --c-alt: #10b981; --c-accent: #fcd34d; } /* Lục - Rêu */
+        .theme-4 { --c-main: #2e1065; --c-alt: #db2777; --c-accent: #06b6d4; } /* Tím - Hồng */
+        .theme-5 { --c-main: #111111; --c-alt: #f97316; --c-accent: #ffffff; } /* Đen - Cam */
+
+        /* --- SLIDE CONTAINER BASE --- */
+        .slide-container {
+            align-items: center; border-radius: 8px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: flex; flex-direction: column; height: 720px; justify-content: center;
+            overflow: hidden; padding: 50px; position: relative; width: 1280px;
+        }
+
+        .slide-container::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px);
+            background-size: 20px 20px; z-index: 1; pointer-events: none;
+        }
+
+        .slide-container > * { position: relative; z-index: 2; }
+
+        /* --- LAYOUTS (DẠNG BỐ CỤC) --- */
+        .layout-diagonal { background: linear-gradient(115deg, var(--c-main) 50%, var(--c-alt) 50%); }
+        .layout-split { background: linear-gradient(90deg, var(--c-main) 35%, var(--c-alt) 35%); }
+        .layout-triangle { background: var(--c-main); }
+        .layout-triangle::before {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 100%; height: 100%;
+            background: var(--c-alt); clip-path: polygon(100% 0, 0 100%, 100% 100%); z-index: 0;
+        }
+        .layout-circle { background: var(--c-main); }
+        .layout-circle::before {
+            content: ''; position: absolute; top: -30%; left: -15%; width: 65%; height: 160%;
+            background: var(--c-alt); border-radius: 50%; z-index: 0;
+        }
+        .layout-angled { background: var(--c-main); }
+        .layout-angled::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 75%; height: 100%;
+            background: var(--c-alt); clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%); z-index: 0;
+        }
+
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; margin: 0; text-transform: uppercase; }
+        p, li, td, th { font-family: 'Roboto', sans-serif; margin: 0; line-height: 1.6; }
+        p { margin-bottom: 15px; }
+
+        .accent-box-text {
+            background-color: #111; color: var(--c-accent); font-family: 'Montserrat', sans-serif;
+            font-weight: 800; font-size: 20px; padding: 10px 25px; display: inline-block;
+            text-transform: uppercase; letter-spacing: 1px; transform: skewX(-8deg); 
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+        }
+        .accent-box-text span { display: inline-block; transform: skewX(8deg); }
+
+        /* --- BỐ CỤC NỘI DUNG (CONTENT CARD) --- */
+        .content-card {
+            background: #ffffff; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            padding: 40px 50px; width: 100%; height: 100%; display: flex; flex-direction: column;
+            border-bottom: 8px solid var(--c-alt);
+        }
+        .content-card .slide-title {
+            color: var(--c-main); font-size: 36px; font-weight: 900; margin-bottom: 30px;
+            border-bottom: 4px solid var(--c-accent); padding-bottom: 10px; display: inline-block; align-self: flex-start;
+        }
+        .content-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+
+        /* --- LAYOUTS BÊN TRONG --- */
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: stretch; height: 100%; }
+        .text-column { color: #333; font-size: 20px; display: flex; flex-direction: column; justify-content: center; }
+        .text-column p, .text-column li { font-size: 20px; }
+        
+        .image-wrapper {
+            border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            height: 400px; width: 100%; background: #f0f0f0;
+        }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .tiled-content { display: flex; gap: 30px; width: 100%; height: 100%; }
+        .tile {
+            background-color: #f8f9fa; border: 1px solid #e9ecef; border-top: 6px solid var(--c-main);
+            border-radius: 12px; flex: 1; padding: 30px; display: flex; flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .tile .icon { font-size: 45px; color: var(--c-alt); margin-bottom: 20px; }
+        .tile h3 { color: #111; font-size: 22px; font-weight: 800; margin-bottom: 15px; }
+        .tile p { color: #444; font-size: 18px; }
+
+        .styled-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; }
+        .styled-list li {
+            background: #f8f9fa; border-left: 6px solid var(--c-alt); padding: 20px 25px;
+            border-radius: 0 12px 12px 0; color: #333; font-size: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+        }
+        .styled-list li strong {
+            color: var(--c-main); font-family: 'Montserrat', sans-serif; font-size: 22px;
+            display: block; margin-bottom: 5px; text-transform: uppercase;
+        }
+
+        .highlight-numbers-layout { align-items: center; }
+        .number-box {
+            background: var(--c-main); border-radius: 24px; color: white; padding: 30px; text-align: center;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); flex: 1;
+        }
+        .number-box .number { font-family: 'Montserrat', sans-serif; font-size: 100px; font-weight: 900; line-height: 1; color: var(--c-accent); }
+        .number-box .label { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; text-transform: uppercase; margin-top: 10px; }
+
+        .doughnut-chart-container { display: flex; align-items: center; justify-content: center; gap: 60px; width: 100%; }
+        .doughnut-chart {
+            width: 380px; height: 380px; border-radius: 50%;
+            background: conic-gradient(var(--c-main) 0% 40%, var(--c-alt) 40% 70%, var(--c-accent) 70% 90%, #222 90% 100%);
+            position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .doughnut-chart::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 200px; height: 200px; background: white; border-radius: 50%;
+        }
+        .legend { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; }
+        .legend li { display: flex; align-items: center; font-size: 22px; font-weight: 600; color: #333; }
+        .color-box { width: 28px; height: 28px; border-radius: 6px; margin-right: 15px; }
+
+        .timeline-container { display: flex; justify-content: space-between; position: relative; width: 100%; padding: 40px 0; margin-top: 20px; }
+        .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 5px; background: #e2e8f0; transform: translateY(-50%); z-index: 1; }
+        .timeline-item { position: relative; z-index: 2; width: 22%; text-align: center; }
+        .timeline-dot {
+            width: 32px; height: 32px; background: white; border: 7px solid var(--c-alt); border-radius: 50%; margin: 0 auto 20px; position: relative;
+        }
+        .timeline-item:nth-child(even) .timeline-dot { margin: 20px auto 0; border-color: var(--c-main); }
+        .timeline-content {
+            background: #fff; padding: 25px; border-radius: 12px; border-top: 5px solid var(--c-alt); box-shadow: 0 8px 20px rgba(0,0,0,0.1); position: absolute; width: 100%;
+        }
+        .timeline-item:nth-child(odd) .timeline-content { bottom: 50px; }
+        .timeline-item:nth-child(even) .timeline-content { top: 50px; border-top: none; border-bottom: 5px solid var(--c-main); }
+        .timeline-content h4 { color: #111; font-size: 20px; margin-bottom: 10px; font-weight: 800; }
+        .timeline-content p { font-size: 16px; color: #555; margin: 0; line-height: 1.5; }
+
+        .title-group, .section-center {
+            text-align: center; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
+        }
+        .title-group h1 { color: white; font-size: 85px; font-weight: 900; line-height: 1; letter-spacing: 2px; }
+        .title-group h2 { color: white; font-size: 75px; font-weight: 900; line-height: 1; margin-top: 5px; margin-bottom: 25px; }
+        .section-center h2 { color: white; font-size: 70px; margin-bottom: 25px; line-height: 1.1; }
+        .section-center p { color: white; font-size: 24px; font-family: 'Montserrat', sans-serif; font-weight: 600; max-width: 800px; text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title (Theme 1, Diagonal) -->
+<div class="slide-container theme-1 layout-diagonal" id="slide1">
+    <div class="title-group">
+        <h1>ÔN THI TN THPT</h1>
+        <h2>MÔN TIẾNG ANH 2026</h2>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 800; color: white;">CHIẾN LƯỢC TỐI ƯU</span>
+            <div class="accent-box-text"><span>KIẾN THỨC TRỌNG TÂM</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 2: Intro (Theme 2, Circle) -->
+<div class="slide-container theme-2 layout-circle" id="slide2">
+    <div class="section-center">
+        <h2>TỔNG QUAN KỲ THI</h2>
+        <div class="accent-box-text" style="font-size: 26px; margin-bottom: 30px;"><span>THAY ĐỔI & THÍCH NGHI</span></div>
+        <p>Đề thi từ 2025-2026 đòi hỏi khả năng áp dụng ngôn ngữ thực tế cao hơn, giảm tải việc học thuộc lòng máy móc.</p>
+    </div>
+</div>
+
+<!-- Slide 3: Chart (Theme 3, Angled) -->
+<div class="slide-container theme-3 layout-angled" id="slide3">
+    <div class="content-card">
+        <h2 class="slide-title">CẤU TRÚC ĐỀ THI (DỰ KIẾN)</h2>
+        <div class="content-area">
+            <div class="doughnut-chart-container">
+                <div class="doughnut-chart"></div>
+                <ul class="legend">
+                    <li><div class="color-box" style="background: var(--c-main);"></div> Đọc hiểu & Điền từ (40%)</li>
+                    <li><div class="color-box" style="background: var(--c-alt);"></div> Ngữ pháp nền tảng (30%)</li>
+                    <li><div class="color-box" style="background: var(--c-accent);"></div> Từ vựng & Thành ngữ (20%)</li>
+                    <li><div class="color-box" style="background: #222;"></div> Ngữ âm & Giao tiếp (10%)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Goals (Theme 4, Split) -->
+<div class="slide-container theme-4 layout-split" id="slide4">
+    <div class="content-card">
+        <h2 class="slide-title">MỤC TIÊU ĐIỂM SỐ</h2>
+        <div class="content-area">
+            <div class="two-column highlight-numbers-layout">
+                <div class="number-box">
+                    <div class="number">8+</div>
+                    <div class="label">Mức Độ Khá Giỏi</div>
+                    <p style="font-family:'Roboto'; text-transform:none; font-weight:400; margin-top:15px; font-size:18px;">Nắm chắc Ngữ pháp, Từ vựng cơ bản. Không sai lỗi vặt.</p>
+                </div>
+                <div class="number-box" style="background: var(--c-alt);">
+                    <div class="number" style="color: #fff;">9+</div>
+                    <div class="label" style="color: var(--c-main);">Mức Độ Xuất Sắc</div>
+                    <p style="font-family:'Roboto'; text-transform:none; font-weight:400; margin-top:15px; font-size:18px;">Ăn điểm tuyệt đối phần Đọc hiểu khó, Phrasal Verbs & Idioms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Grammar Overview (Theme 5, Triangle) -->
+<div class="slide-container theme-5 layout-triangle" id="slide5">
+    <div class="content-card">
+        <h2 class="slide-title">3 TRỤ CỘT NGỮ PHÁP</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-clock"></i></div>
+                    <h3>Thì & Sự Hòa Hợp</h3>
+                    <p>12 thì cơ bản, sự phối hợp thì trong câu và nguyên tắc hòa hợp Chủ ngữ - Động từ.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-code-branch"></i></div>
+                    <h3>Mệnh Đề & CĐK</h3>
+                    <p>Câu điều kiện loại 1-2-3, rút gọn mệnh đề quan hệ và mệnh đề trạng ngữ.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-exchange-alt"></i></div>
+                    <h3>Bị Động & Gián Tiếp</h3>
+                    <p>Chuyển đổi câu chủ động sang bị động đặc biệt. Lùi thì trong câu tường thuật.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Grammar - Tenses (Theme 1, Circle) -->
+<div class="slide-container theme-1 layout-circle" id="slide6">
+    <div class="content-card">
+        <h2 class="slide-title">TRỌNG TÂM: CÁC THÌ TIẾNG ANH</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column">
+                    <p>Không cần học thuộc lòng vẹt, hãy tập trung vào các <strong>dấu hiệu nhận biết</strong> và <strong>sự phối hợp thì</strong> (Sequence of tenses).</p>
+                    <ul style="padding-left: 20px; margin-top: 15px;">
+                        <li>Quá khứ đơn + Quá khứ tiếp diễn (When/While)</li>
+                        <li>Hiện tại hoàn thành + Quá khứ đơn (Since)</li>
+                        <li>Tương lai hoàn thành + Tương lai đơn (By the time)</li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    <!-- Học sinh ôn tập ngữ pháp -->
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/8627692394658615937" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: Grammar - Clauses (Theme 2, Diagonal) -->
+<div class="slide-container theme-2 layout-diagonal" id="slide7">
+    <div class="content-card">
+        <h2 class="slide-title">TRỌNG TÂM: RÚT GỌN MỆNH ĐỀ</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column" style="background:#f8f9fa; padding:30px; border-radius:12px; border-left:6px solid var(--c-main);">
+                    <h3 style="font-family:'Montserrat'; font-weight:800; font-size:22px; color:var(--c-main); margin-bottom:15px;">Chủ động (V-ing)</h3>
+                    <p>Dùng V-ing khi đại từ quan hệ đóng vai trò chủ ngữ và động từ mang nghĩa chủ động.</p>
+                    <p style="color:#666; font-style:italic;">Ex: The man <strong>who is standing</strong> there -> The man <strong>standing</strong> there...</p>
+                </div>
+                <div class="text-column" style="background:#f8f9fa; padding:30px; border-radius:12px; border-left:6px solid var(--c-alt);">
+                    <h3 style="font-family:'Montserrat'; font-weight:800; font-size:22px; color:var(--c-alt); margin-bottom:15px;">Bị động (V3/ed)</h3>
+                    <p>Dùng V-ed/P2 khi đại từ quan hệ đóng vai trò chủ ngữ và động từ mang nghĩa bị động.</p>
+                    <p style="color:#666; font-style:italic;">Ex: The book <strong>which was written</strong> by... -> The book <strong>written</strong> by...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Grammar - Forms (Theme 3, Split) -->
+<div class="slide-container theme-3 layout-split" id="slide8">
+    <div class="content-card">
+        <h2 class="slide-title">DANH ĐỘNG TỪ & ĐỘNG TỪ NGUYÊN THỂ</h2>
+        <div class="content-area">
+            <ul class="styled-list">
+                <li>
+                    <strong>V + To V (Khuyên bảo, dự định)</strong>
+                    Quyết định, đồng ý, từ chối: <em>decide, agree, refuse, plan, hope, expect, promise...</em>
+                </li>
+                <li>
+                    <strong>V + V-ing (Thích thú, hoàn thành)</strong>
+                    Thích/ghét, tránh né, hoàn thành: <em>enjoy, mind, avoid, finish, suggest, practice...</em>
+                </li>
+                <li>
+                    <strong>Các động từ đặc biệt (Đổi nghĩa)</strong>
+                    Stop, Remember, Forget, Try, Regret: Có thể đi với cả <em>To V</em> hoặc <em>V-ing</em> nhưng mang ý nghĩa hoàn toàn khác nhau.
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 9: Vocab Overview (Theme 4, Angled) -->
+<div class="slide-container theme-4 layout-angled" id="slide9">
+    <div class="content-card">
+        <h2 class="slide-title">TỪ VỰNG - YẾU TỐ PHÂN LOẠI</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile" style="border-top-color: var(--c-main);">
+                    <h3>Từ Cùng Trường Nghĩa</h3>
+                    <p>Phân biệt các nhóm từ dễ nhầm lẫn. Ví dụ: Phân biệt <em>damage, harm, ruin, spoil</em>. Đề thi thường yêu cầu chọn từ phù hợp nhất với ngữ cảnh.</p>
+                </div>
+                <div class="tile" style="border-top-color: var(--c-alt);">
+                    <h3>Cụm Cố Định & Thành Ngữ</h3>
+                    <p>Chiếm từ 3-4 câu trong đề thi. Là "vũ khí" để đạt điểm 9+. Yêu cầu học sinh phải có vốn từ sâu và hiểu văn hóa bản địa.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: Collocations (Theme 5, Diagonal) -->
+<div class="slide-container theme-5 layout-diagonal" id="slide10">
+    <div class="content-card">
+        <h2 class="slide-title">CỤM TỪ CỐ ĐỊNH (COLLOCATIONS)</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column">
+                    <p>Đừng học từ đơn lẻ! Hãy học cách các từ "chơi" với nhau.</p>
+                    <ul style="padding-left: 20px; margin-top: 15px;">
+                        <li><strong>Make vs Do:</strong> <em>make a mistake</em> (không dùng do), <em>do homework</em> (không dùng make).</li>
+                        <li><strong>Động từ + Danh từ:</strong> <em>catch a cold, take an exam, set fire to.</em></li>
+                        <li><strong>Tính từ + Danh từ:</strong> <em>heavy rain, strong wind, deep sleep.</em></li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    <!-- Học từ vựng sáng tạo -->
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/12833023248803355754" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Phrasal Verbs (Theme 1, Triangle) -->
+<div class="slide-container theme-1 layout-triangle" id="slide11">
+    <div class="content-card">
+        <h2 class="slide-title">CỤM ĐỘNG TỪ (PHRASAL VERBS)</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column" style="background:#f8f9fa; padding:30px; border-radius:12px; border-left:6px solid var(--c-main);">
+                    <h3 style="font-family:'Montserrat'; font-weight:800; font-size:22px; margin-bottom:15px;">Nhóm theo Động từ</h3>
+                    <p>Học các giới từ đi kèm với 1 động từ gốc.</p>
+                    <ul style="margin-top:10px; font-size:18px;">
+                        <li><strong>Look:</strong> look for (tìm kiếm), look after (chăm sóc), look up (tra cứu).</li>
+                        <li><strong>Take:</strong> take off (cất cánh), take over (tiếp quản).</li>
+                    </ul>
+                </div>
+                <div class="text-column" style="background:#f8f9fa; padding:30px; border-radius:12px; border-left:6px solid var(--c-alt);">
+                    <h3 style="font-family:'Montserrat'; font-weight:800; font-size:22px; margin-bottom:15px;">Nhóm theo Giới từ</h3>
+                    <p>Học các động từ đi với cùng 1 giới từ.</p>
+                    <ul style="margin-top:10px; font-size:18px;">
+                        <li><strong>UP (Tăng/Hoàn thành):</strong> go up, turn up, use up.</li>
+                        <li><strong>OFF (Tách rời):</strong> turn off, put off, call off.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Idioms (Theme 2, Split) -->
+<div class="slide-container theme-2 layout-split" id="slide12">
+    <div class="content-card">
+        <h2 class="slide-title">THÀNH NGỮ (IDIOMS) CHINH PHỤC ĐIỂM 10</h2>
+        <div class="content-area">
+            <ul class="styled-list">
+                <li>
+                    <strong>Thành ngữ về Màu sắc</strong>
+                    <em>Out of the blue</em> (bất ngờ), <em>catch red-handed</em> (bắt quả tang), <em>green with envy</em> (ghen tị).
+                </li>
+                <li>
+                    <strong>Thành ngữ về Cơ thể</strong>
+                    <em>Keep an eye on</em> (để mắt tới), <em>give a hand</em> (giúp đỡ), <em>learn by heart</em> (học thuộc).
+                </li>
+                <li>
+                    <strong>Chiến thuật phòng thi:</strong>
+                    Nếu gặp idiom lạ, hãy dịch nghĩa đen của cụm từ đó và liên hệ với ngữ cảnh của câu để suy luận nghĩa bóng.
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: Reading Skim Scan (Theme 3, Circle) -->
+<div class="slide-container theme-3 layout-circle" id="slide13">
+    <div class="content-card">
+        <h2 class="slide-title">KỸ NĂNG ĐỌC: SKIMMING & SCANNING</h2>
+        <div class="content-area">
+            <div class="two-column highlight-numbers-layout">
+                <div class="number-box">
+                    <div class="number" style="font-size: 80px;">BƯỚC 1</div>
+                    <div class="label">SKIMMING</div>
+                    <p style="font-family:'Roboto'; text-transform:none; font-weight:400; margin-top:15px; font-size:18px;">Đọc lướt câu đầu và câu cuối mỗi đoạn để nắm Ý Chính (Main Idea). Bỏ qua từ mới.</p>
+                </div>
+                <div class="number-box" style="background: var(--c-alt);">
+                    <div class="number" style="color: #fff; font-size: 80px;">BƯỚC 2</div>
+                    <div class="label" style="color: var(--c-main);">SCANNING</div>
+                    <p style="font-family:'Roboto'; text-transform:none; font-weight:400; margin-top:15px; font-size:18px;">Đọc quét tìm Keywords (Tên riêng, số liệu) từ câu hỏi để đối chiếu vào bài văn.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: Reading Guessing (Theme 4, Diagonal) -->
+<div class="slide-container theme-4 layout-diagonal" id="slide14">
+    <div class="content-card">
+        <h2 class="slide-title">ĐỌC HIỂU: ĐOÁN NGHĨA TỪ MỚI</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column">
+                    <p>Câu hỏi: <em>"The word '...' in paragraph X is closest in meaning to..."</em></p>
+                    <p><strong>Cách giải quyết:</strong></p>
+                    <ul style="padding-left: 20px;">
+                        <li>Dựa vào từ nối đẳng lập (and, or): Từ cần đoán sẽ cùng nghĩa/loại với từ đi kèm.</li>
+                        <li>Dựa vào từ nối tương phản (but, however): Từ cần đoán ngược nghĩa với vế kia.</li>
+                        <li>Dựa vào ví dụ (such as, for example) đi ngay sau từ đó.</li>
+                    </ul>
+                </div>
+                <div class="text-column" style="background:#f8f9fa; padding:30px; border-radius:12px; border-left:6px solid var(--c-alt);">
+                    <h3 style="font-family:'Montserrat'; font-weight:800; font-size:22px; color:var(--c-alt); margin-bottom:15px;">Bẫy Phổ Biến</h3>
+                    <p>Đề thường đưa ra một từ quen thuộc nhưng dùng ở nghĩa thứ 2, thứ 3 (Ví dụ: <em>book</em> không phải quyển sách mà là đặt chỗ).</p>
+                    <p>Tuyệt đối không chọn đáp án chỉ vì thấy quen mặt chữ, phải đặt vào ngữ cảnh bài đọc.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 15: Pronunciation (Theme 5, Split) -->
+<div class="slide-container theme-5 layout-split" id="slide15">
+    <div class="content-card">
+        <h2 class="slide-title">NGỮ ÂM & TRỌNG ÂM</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile" style="border-top-color: var(--c-main);">
+                    <h3>Phát âm -ed & -s/es</h3>
+                    <p>Nắm chắc 3 quy tắc phát âm đuôi. Thường có 1 câu chắc chắn rơi vào phần này. Học thuộc các mẹo ghi nhớ (vd: Thời phong kiến phương Tây...).</p>
+                </div>
+                <div class="tile" style="border-top-color: var(--c-alt);">
+                    <h3>Quy Tắc Trọng Âm</h3>
+                    <p>Chú ý các hậu tố nhận trọng âm (-ee, -eer, -ique) và các hậu tố đẩy trọng âm cách nó 1 âm tiết (-ion, -ity, -ical).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: Communication (Theme 1, Angled) -->
+<div class="slide-container theme-1 layout-angled" id="slide16">
+    <div class="content-card">
+        <h2 class="slide-title">TÌNH HUỐNG GIAO TIẾP</h2>
+        <div class="content-area">
+            <ul class="styled-list">
+                <li>
+                    <strong>Lời Cảm ơn & Xin lỗi</strong>
+                    Thank you -> <em>You're welcome / My pleasure.</em><br>
+                    I'm sorry -> <em>Never mind / That's alright.</em>
+                </li>
+                <li>
+                    <strong>Đồng ý & Bất đồng ý kiến</strong>
+                    I totally agree -> <em>There is no doubt about it / You can say that again.</em><br>
+                    I don't think so -> <em>I'm afraid I disagree.</em>
+                </li>
+                <li>
+                    <strong>Lời Mời & Đề nghị</strong>
+                    Would you like to... -> <em>I'd love to / Sorry, I can't.</em>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 17: Cloze Test (Theme 2, Triangle) -->
+<div class="slide-container theme-2 layout-triangle" id="slide17">
+    <div class="content-card">
+        <h2 class="slide-title">BÀI ĐIỀN TỪ (CLOZE TEST)</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column">
+                    <p>Kết hợp cả Từ vựng và Ngữ pháp. 5 câu thường phân bổ như sau:</p>
+                    <ul style="padding-left: 20px; margin-top: 15px;">
+                        <li>1 câu Đại từ quan hệ (Who, Which, That, Where).</li>
+                        <li>1 câu Liên từ (However, Therefore, But, And).</li>
+                        <li>1 câu Lượng từ (Many, Much, Every, Some).</li>
+                        <li>2 câu Từ vựng/Cụm từ theo ngữ cảnh.</li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    <!-- Học sinh làm bài trắc nghiệm -->
+                    <img src="http://googleusercontent.com/image_collection/image_retrieval/8823889217355802728" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 18: Time Management (Theme 3, Split) -->
+<div class="slide-container theme-3 layout-split" id="slide18">
+    <div class="content-card">
+        <h2 class="slide-title">PHÂN BỔ 60 PHÚT LÀM BÀI</h2>
+        <div class="content-area" style="justify-content: flex-start; padding-top: 30px;">
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                <div class="timeline-item">
+                    <div class="timeline-content"><h4>15 Phút Đầu</h4><p>Dọn dẹp các câu Dễ: Ngữ âm, Ngữ pháp cơ bản, Giao tiếp.</p></div>
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content"><h4>10 Phút Tiếp</h4><p>Xử lý phần Từ vựng, Đồng nghĩa/Trái nghĩa và Cloze Test.</p></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content"><h4>30 Phút Cốt Lõi</h4><p>Tập trung cao độ giải quyết 2 bài Đọc hiểu. Làm bài dễ trước.</p></div>
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content"><h4>05 Phút Cuối</h4><p>Soát lại phiếu trả lời trắc nghiệm, không để trống câu nào.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 19: Roadmap (Theme 4, Circle) -->
+<div class="slide-container theme-4 layout-circle" id="slide19">
+    <div class="content-card">
+        <h2 class="slide-title">LỘ TRÌNH ÔN TẬP 2025 - 2026</h2>
+        <div class="content-area" style="justify-content: flex-start; padding-top: 30px;">
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                <div class="timeline-item">
+                    <div class="timeline-content"><h4>GĐ 1: Khởi Động</h4><p>T7-T10/2025: Lấy gốc Ngữ pháp, phát âm.</p></div>
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content"><h4>GĐ 2: Tăng Tốc</h4><p>T11-T2/2026: Cày Từ vựng, tập kỹ năng Đọc.</p></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content"><h4>GĐ 3: Bứt Phá</h4><p>T3-T5/2026: Giải đề theo chuyên đề, vá lỗ hổng.</p></div>
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content"><h4>GĐ 4: Về Đích</h4><p>T6/2026: Thi thử bấm giờ thực chiến.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 20: Outro (Theme 5, Diagonal) -->
+<div class="slide-container theme-5 layout-diagonal" id="slide20">
+    <div class="section-center">
+        <h2>SẴN SÀNG BỨT PHÁ?</h2>
+        <div class="accent-box-text" style="font-size: 26px; margin-bottom: 30px;"><span>THPTQG 2026 GỌI TÊN BẠN</span></div>
+        <p style="margin-bottom: 40px;">Bền bỉ, kỷ luật và chiến thuật đúng đắn sẽ đưa bạn đến cổng trường Đại học mơ ước!</p>
+        <div class="accent-box-text" style="font-size: 20px; text-transform: none; padding: 15px 30px; transform: none; box-shadow: none; border-radius: 50px;">
+            <span style="transform: none;"><i class="fa-solid fa-envelope" style="margin-right: 15px; color: var(--c-alt);"></i> onthi2026@thptqg.vn</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+```
