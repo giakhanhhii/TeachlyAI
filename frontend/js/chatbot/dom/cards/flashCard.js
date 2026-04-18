@@ -20,7 +20,7 @@ export function createFlashcardFormCard(deps) {
   root.appendChild(wrapField("Danh sách từ / Chủ đề", list, "Có thể bỏ qua — Teachly sẽ gợi ý theo ghi chú của bạn."));
 
   const back = flowTextarea("VD: Nghĩa tiếng Việt, Phiên âm, Ví dụ, Từ đồng nghĩa", 2);
-  root.appendChild(wrapField("Thông tin mặt sau", back));
+  root.appendChild(wrapField("Thông tin mặt trước & sau", back));
 
   const count = el("input", "flow-input");
   count.type = "number";
