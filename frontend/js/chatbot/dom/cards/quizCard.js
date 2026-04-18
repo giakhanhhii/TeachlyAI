@@ -9,6 +9,7 @@ import {
   removeSkipConfirm,
   showPartialFillConfirm,
   toPositiveInt,
+  appendSelectPlaceholder,
   wrapField,
 } from "./flowCardShared.js";
 
@@ -33,10 +34,11 @@ export function createQuizFormCard(deps) {
   root.appendChild(wrapField("Số lượng câu", qn));
 
   const level = el("select", "flow-select");
-  ["", "Mất gốc", "Cơ bản", "Khá", "Nâng cao"].forEach((v, i) => {
+  appendSelectPlaceholder(level, "Chọn trình độ…");
+  ["Mất gốc", "Cơ bản", "Khá", "Nâng cao"].forEach((v) => {
     const o = document.createElement("option");
-    o.value = i === 0 ? "" : v;
-    o.textContent = i === 0 ? "Chọn trình độ…" : v;
+    o.value = v;
+    o.textContent = v;
     level.appendChild(o);
   });
   root.appendChild(wrapField("Trình độ", level));

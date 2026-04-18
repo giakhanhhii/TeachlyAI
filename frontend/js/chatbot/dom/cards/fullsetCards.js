@@ -15,6 +15,7 @@ import {
   removeSkipConfirm,
   showAutoConfirmPanel,
   showPartialFillConfirm,
+  appendSelectPlaceholder,
   wrapField,
   wrapMini,
 } from "./flowCardShared.js";
@@ -27,19 +28,17 @@ export function createFullsetTopicCard(deps) {
   root.appendChild(wrapField("Chủ đề", topic, "Nhập tên bài học"));
 
   const level = el("select", "flow-select");
-  ["", "Mất gốc", "Cơ bản", "Khá", "Nâng cao"].forEach((v, i) => {
+  appendSelectPlaceholder(level, "Chọn trình độ…");
+  ["Mất gốc", "Cơ bản", "Khá", "Nâng cao"].forEach((v) => {
     const o = document.createElement("option");
-    o.value = i === 0 ? "" : v;
-    o.textContent = i === 0 ? "Chọn trình độ…" : v;
+    o.value = v;
+    o.textContent = v;
     level.appendChild(o);
   });
   root.appendChild(wrapField("Trình độ", level));
 
   const slideTemplate = el("select", "flow-select");
-  const slideTplEmpty = document.createElement("option");
-  slideTplEmpty.value = "";
-  slideTplEmpty.textContent = "Chọn mẫu…";
-  slideTemplate.appendChild(slideTplEmpty);
+  appendSelectPlaceholder(slideTemplate, "Chọn mẫu…");
   SLIDE_TEMPLATE_OPTIONS.forEach((v) => {
     const o = document.createElement("option");
     o.value = v;

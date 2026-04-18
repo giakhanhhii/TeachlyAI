@@ -49,6 +49,21 @@ export function wrapMini(labelText, control) {
   return f;
 }
 
+/**
+ * Option placeholder: vẫn hiện khi chưa chọn (ô đóng), nhưng không nằm trong danh sách khi mở select (hidden + disabled).
+ * @param {HTMLSelectElement} selectEl
+ * @param {string} label
+ */
+export function appendSelectPlaceholder(selectEl, label) {
+  const o = document.createElement("option");
+  o.value = "";
+  o.textContent = label;
+  o.disabled = true;
+  o.hidden = true;
+  o.selected = true;
+  selectEl.appendChild(o);
+}
+
 export function removeSkipConfirm(root) {
   root.querySelector(".flow-skip-confirm")?.remove();
 }

@@ -7,6 +7,7 @@ import {
   clamp,
   el,
   flowTextarea,
+  appendSelectPlaceholder,
   coerceSelectThemeValue,
   removeSkipConfirm,
   showPartialFillConfirm,
@@ -36,10 +37,7 @@ export function createSlideFormCard(deps) {
   root.appendChild(wrapField("Cấu trúc mong muốn", structure));
 
   const style = el("select", "flow-select");
-  const emptyOpt = document.createElement("option");
-  emptyOpt.value = "";
-  emptyOpt.textContent = "Chọn mẫu…";
-  style.appendChild(emptyOpt);
+  appendSelectPlaceholder(style, "Chọn mẫu…");
   SLIDE_TEMPLATE_OPTIONS.forEach((v) => {
     const o = document.createElement("option");
     o.value = v;
