@@ -1,6 +1,6 @@
 import {
   FLASH_VOCAB_TEXTAREA_PLACEHOLDER,
-  classifyFlashVocabLine,
+  getFlashVocabEditorLineHighlight,
   isEnglishOnlyVocabLine,
   parseDirectFlashVocabLines,
 } from "../../guidedFlow/flashVocabParse.js";
@@ -26,13 +26,13 @@ function renderHighlightLines(inner, raw, apiBackByLine) {
   if (lines.length === 0) return;
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
-    const kind = classifyFlashVocabLine(line.trim(), apiBackByLine);
+    const tier = getFlashVocabEditorLineHighlight(line.trim(), apiBackByLine);
     const span = document.createElement("span");
-    if (kind === "invalid" || kind === "skipped_en") {
+    if (tier === "reject") {
       span.className = "flow-vocab-seg--rejected";
-    } else if (kind === "auto_en") {
+    } else if (tier === "auto") {
       span.className = "flow-vocab-seg--auto";
-    } else if (kind === "pending_api") {
+    } else if (tier === "pending") {
       span.className = "flow-vocab-seg--auto-pending";
     }
     const nl = i < lines.length - 1 ? "\n" : "";
@@ -220,7 +220,7 @@ export function createFlashVocabFormCard(deps) {
     wrapField(
       "Danh sách (mỗi dòng một thẻ)",
       stack,
-      "Đỏ: lỗi / bỏ qua. Vàng đậm: đã có nghĩa (từ điển hoặc dịch tự động, 2–3 nghĩa). Vàng nhạt: đang dịch. Bấm «Tạo flashcard» một lần — nếu còn dịch, Teachly sẽ chờ dịch xong. Tối đa 200 thẻ.",
+      "Đỏ: sai form hoặc bỏ qua (không tạo thẻ). Vàng đậm: đã có nghĩa (từ điển hoặc dịch tự động, 2–3 nghĩa). Vàng nhạt: đang dịch. Bấm «Tạo flashcard» một lần — nếu còn dịch, Teachly sẽ chờ dịch xong. Tối đa 200 thẻ.",
     ),
   );
 

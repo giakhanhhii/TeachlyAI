@@ -68,6 +68,20 @@ export function classifyFlashVocabLine(trimmed, apiBackByLine = {}) {
 }
 
 /**
+ * Tách bạch màu trong ô nhập và trạng thái thẻ: đỏ = sai form / không tạo thẻ; vàng = đã có nghĩa; vàng nhạt = đang chờ dịch.
+ * @param {string} trimmed
+ * @param {Record<string, string>} [apiBackByLine]
+ * @returns {"reject"|"auto"|"pending"|"neutral"}
+ */
+export function getFlashVocabEditorLineHighlight(trimmed, apiBackByLine = {}) {
+  const kind = classifyFlashVocabLine(trimmed, apiBackByLine);
+  if (kind === "invalid" || kind === "skipped_en" || kind === "incomplete") return "reject";
+  if (kind === "auto_en") return "auto";
+  if (kind === "pending_api") return "pending";
+  return "neutral";
+}
+
+/**
  * @param {string} raw
  * @param {Record<string, string>} [apiBackByLine]
  * @returns {{ cards: { front: string, back: string }[], invalidLines: string[], skippedNonEnglish: number, pendingApiCount: number }}
