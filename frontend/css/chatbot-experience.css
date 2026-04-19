@@ -73,6 +73,11 @@
   align-items: stretch;
 }
 
+/* Full set — bước slide dùng iframe shell (cùng class với luồng Slide độc lập) */
+.exp-mixed-slide-host {
+  width: 100%;
+}
+
 /* Slide deck: use more horizontal space so 16:9 preview matches the shell layout */
 .exp-shell-slide {
   max-width: min(1200px, calc(100vw - 40px));

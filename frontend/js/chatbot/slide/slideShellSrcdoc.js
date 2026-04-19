@@ -1,3 +1,22 @@
+import { SLIDE_VISUAL_EDITOR_CSS, SLIDE_VISUAL_EDITOR_JS } from "./slideVisualEditorIframe.js";
+
+/**
+ * @param {Document} doc
+ */
+function injectSlideVisualEditor(doc) {
+  if (!doc.querySelector("style[data-slide-visual-editor]")) {
+    const st = doc.createElement("style");
+    st.setAttribute("data-slide-visual-editor", "1");
+    st.textContent = SLIDE_VISUAL_EDITOR_CSS;
+    doc.head.appendChild(st);
+  }
+  if (doc.querySelector("script[data-slide-visual-editor]")) return;
+  const s = doc.createElement("script");
+  s.setAttribute("data-slide-visual-editor", "1");
+  s.textContent = SLIDE_VISUAL_EDITOR_JS;
+  doc.body.appendChild(s);
+}
+
 /**
  * @param {Document} doc
  * @param {string} year
@@ -72,7 +91,13 @@ function decorateSlidePrototype(root, doc) {
     ul.setAttribute("data-shell", "bullets");
     ul.innerHTML = "";
   } else {
-    const sink = root.querySelector(".content-area") || root.querySelector(".comic-panel") || root;
+    /* Ưu tiên vùng nội dung trong card/template gốc — tránh gắn <ul> trực tiếp lên .slide-container (lệch layout, đè sticker). */
+    const sink =
+      root.querySelector(".content-area") ||
+      root.querySelector(".comic-panel") ||
+      root.querySelector(".title-content") ||
+      root.querySelector(".card") ||
+      root;
     const nu = doc.createElement("ul");
     nu.setAttribute("data-shell", "bullets");
     sink.appendChild(nu);
@@ -189,6 +214,14 @@ function injectShellPreviewFit(doc) {
       flex-direction: column !important;
       align-items: center !important;
     }
+    #slides-master-container[data-nav-mode="scroll"] {
+      gap: 28px !important;
+      padding-bottom: 24px !important;
+    }
+    /* Trình chiếu: một slide (themes comic / color không có sẵn rule .active) */
+    #slides-master-container[data-nav-mode="active"] .shell-slide-instance:not(.active) {
+      display: none !important;
+    }
     .shell-slide-instance.slide-container,
     .shell-slide-instance.slide {
       width: 100% !important;
@@ -200,14 +233,305 @@ function injectShellPreviewFit(doc) {
       aspect-ratio: 16 / 9 !important;
       box-sizing: border-box !important;
       align-self: center !important;
+      overflow: visible !important;
+      position: relative !important;
+    }
+    /* Sticker đưa vào trong .card (JS): nằm dưới lớp chữ; không hạ z-index xuống sau cả khung trắng */
+    .shell-slide-instance .card > .sticker,
+    .shell-slide-instance .content-card > .sticker,
+    .shell-slide-instance .comic-panel > .sticker {
+      pointer-events: none !important;
+    }
+    /* Khung nội dung: khớp chế độ Sửa — không transform:scale (xem slideVisualEditorIframe) */
+    .shell-slide-instance .card,
+    .shell-slide-instance .content-card,
+    .shell-slide-instance .comic-panel {
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
+    .shell-slide-instance .shell-panel-fit-sizer {
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+    .shell-slide-instance .shell-panel-fit-host {
+      display: flex;
+      flex-direction: column;
+    }
+    .shell-slide-instance .shell-panel-fit-outer {
+      flex-shrink: 0;
+      box-sizing: border-box;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+    }
+    .shell-slide-instance .shell-panel-fit-scaled {
+      box-sizing: border-box;
+      transform-origin: 0 0;
+      transform: none !important;
+      width: auto !important;
+      max-width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+    }
+    /* Phần tử đã chỉnh (data-edit-geom): cùng stacking + position như khi bật slide-visual-edit-on */
+    .shell-slide-instance [data-edit-geom="1"][data-shell="title"],
+    .shell-slide-instance ul[data-shell="bullets"][data-edit-geom="1"],
+    .shell-slide-instance ul[data-shell="bullets"] > li[data-edit-geom="1"] {
+      position: absolute !important;
+      z-index: 520 !important;
+    }
+    .shell-slide-instance img[data-edit-geom="1"] {
+      position: absolute !important;
+      z-index: 380 !important;
+    }
+    .shell-slide-instance .sticker[data-edit-geom="1"] {
+      position: absolute !important;
+      z-index: 400 !important;
+    }
+    .shell-slide-instance .card[data-edit-geom="1"],
+    .shell-slide-instance .content-card[data-edit-geom="1"],
+    .shell-slide-instance .comic-panel[data-edit-geom="1"] {
+      position: absolute !important;
+      z-index: 1 !important;
+    }
+    /*
+     * Font trang trí (Ultra, …) thường không đủ glyph tiếng Việt → dấu dùng font fallback, trông lệch cỡ/độ đậm.
+     * Nội dung động dùng stack sans hỗ trợ VN ổn định.
+     */
+    .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]),
+    .shell-slide-instance .slide-title:not([data-edit-geom="1"]),
+    .shell-slide-instance .section-card h1:not([data-edit-geom="1"]),
+    .shell-slide-instance .title-card h1:not([data-edit-geom="1"]),
+    .shell-slide-instance .comic-title:not([data-edit-geom="1"]),
+    .shell-slide-instance .outer-title:not([data-edit-geom="1"]),
+    .shell-slide-instance .toc-item h3:not([data-edit-geom="1"]),
+    .shell-slide-instance .toc-item p:not([data-edit-geom="1"]),
+    .shell-slide-instance .title-content p:not([data-edit-geom="1"]),
+    .shell-slide-instance .title-card p:not([data-edit-geom="1"]),
+    .shell-slide-instance .section-card > p:not([data-edit-geom="1"]),
+    .shell-slide-instance .badge:not([data-edit-geom="1"]),
+    .shell-slide-instance .mini-card h3:not([data-edit-geom="1"]),
+    .shell-slide-instance .mini-card p:not([data-edit-geom="1"]),
+    .shell-slide-instance .tl-item h3:not([data-edit-geom="1"]),
+    .shell-slide-instance .tl-item p:not([data-edit-geom="1"]),
+    .shell-slide-instance .text-part p:not([data-edit-geom="1"]),
+    .shell-slide-instance ul[data-shell="bullets"]:not([data-edit-geom="1"]),
+    .shell-slide-instance ul[data-shell="bullets"] li:not([data-edit-geom="1"]) {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif !important;
+      font-synthesis: none !important;
+      text-rendering: optimizeLegibility;
+    }
+    .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]),
+    .shell-slide-instance .slide-title:not([data-edit-geom="1"]),
+    .shell-slide-instance .section-card h1:not([data-edit-geom="1"]),
+    .shell-slide-instance .title-card h1:not([data-edit-geom="1"]),
+    .shell-slide-instance .comic-title:not([data-edit-geom="1"]) {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .shell-slide-instance ul[data-shell="bullets"]:not([data-edit-geom="1"]),
+    .shell-slide-instance ul[data-shell="bullets"] li:not([data-edit-geom="1"]) {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .shell-slide-instance .outer-title {
+      max-width: 100%;
+      box-sizing: border-box;
+      padding-left: 12px;
+      padding-right: 12px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .shell-slide-instance .content-area {
       max-width: 100% !important;
       width: 100% !important;
       box-sizing: border-box !important;
+      min-height: 0 !important;
+    }
+    /* Danh sách động trong khung tiêu đề (vd. sealife .title-content): căn lề, tách khỏi đoạn phụ đề */
+    .shell-slide-instance .title-content ul[data-shell="bullets"] {
+      margin-top: 18px;
+      width: 100%;
+      max-width: 960px;
+      text-align: left;
+      align-self: stretch;
+    }
+    /*
+     * Comic (8.comic.html): giữ Bangers / Comic Neue và căn chỉnh như template gốc.
+     * Shell trước đó ép system-ui + căn giữa flex khiến hero đẹp nhưng slide có .content-area bị “lơ” giữa khung.
+     */
+    .shell-theme-comic .shell-slide-instance.slide-container {
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .shell-theme-comic .shell-slide-instance .content-area {
+      align-items: center !important;
+    }
+    /* Khung trắng trong vùng nội dung chính: bám trên, căn ngang giữa */
+    .shell-theme-comic .shell-slide-instance .content-area .shell-panel-fit-sizer {
+      align-items: flex-start !important;
+      justify-content: center !important;
+    }
+    /* Hero / panel trắng trực tiếp dưới slide (BAM! / SPLASH!): căn giữa như mẫu */
+    .shell-theme-comic .shell-slide-instance.slide-container > .comic-panel.shell-panel-fit-host > .shell-panel-fit-sizer {
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .shell-theme-comic .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance .comic-title:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance .slide-title:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance .toc-item h3:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance .toc-item p:not([data-edit-geom="1"]) {
+      font-family: 'Bangers', system-ui, sans-serif !important;
+    }
+    .shell-theme-comic .shell-slide-instance h3:not([data-edit-geom="1"]) {
+      font-family: 'Bangers', system-ui, sans-serif !important;
+    }
+    .shell-theme-comic .shell-slide-instance p:not([data-shell]):not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance li:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance .subtitle:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance ul[data-shell="bullets"]:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance ul[data-shell="bullets"] li:not([data-edit-geom="1"]) {
+      font-family: 'Comic Neue', 'Comic Sans MS', cursive, system-ui, sans-serif !important;
+    }
+    .shell-theme-comic .shell-slide-instance .comic-title:not([data-edit-geom="1"]),
+    .shell-theme-comic .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]) {
+      word-break: normal;
+      overflow-wrap: break-word;
     }
   `;
   doc.head.appendChild(style);
+}
+
+/**
+ * Script trong iframe: bọc nội dung khung trắng (.card / .comic-panel / .content-card),
+ * đo kích thước và scale để vừa — không dùng thanh cuộn.
+ * @param {Document} doc
+ */
+function injectShellPanelFitScript(doc) {
+  if (doc.querySelector("script[data-slide-shell-panel-fit]")) return;
+  const s = doc.createElement("script");
+  s.setAttribute("data-slide-shell-panel-fit", "1");
+  s.textContent = `(function(){
+  function hasComicPanelAncestor(el) {
+    var p = el.parentElement;
+    while (p) {
+      if (p.classList && p.classList.contains("comic-panel")) return true;
+      p = p.parentElement;
+    }
+    return false;
+  }
+  function collectPanels(doc) {
+    var sel = ".shell-slide-instance .card, .shell-slide-instance .content-card, .shell-slide-instance .comic-panel";
+    return Array.prototype.filter.call(doc.querySelectorAll(sel), function (el) {
+      if (el.classList.contains("comic-panel") && hasComicPanelAncestor(el)) return false;
+      return true;
+    });
+  }
+  function wrapPanel(panel) {
+    if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
+    panel.classList.add("shell-panel-fit-host");
+    var sizer = document.createElement("div");
+    sizer.className = "shell-panel-fit-sizer";
+    var outer = document.createElement("div");
+    outer.className = "shell-panel-fit-outer";
+    var scaled = document.createElement("div");
+    scaled.className = "shell-panel-fit-scaled";
+    while (panel.firstChild) scaled.appendChild(panel.firstChild);
+    outer.appendChild(scaled);
+    sizer.appendChild(outer);
+    panel.appendChild(sizer);
+  }
+  var fitEditPaused = false;
+  function measureAndFit(panel) {
+    if (fitEditPaused || (document.body && document.body.classList.contains("slide-visual-edit-on"))) return;
+    var sizer = panel.querySelector(":scope > .shell-panel-fit-sizer");
+    if (!sizer) return;
+    var outer = sizer.querySelector(":scope > .shell-panel-fit-outer");
+    var scaled = outer && outer.querySelector(":scope > .shell-panel-fit-scaled");
+    if (!scaled) return;
+    scaled.style.transform = "";
+    scaled.style.width = "";
+    scaled.style.height = "";
+    if (outer) {
+      outer.style.width = "";
+      outer.style.height = "";
+    }
+    /* Không scale — CSS !important trong injectShellPreviewFit khớp chế độ Sửa (transform:none). */
+  }
+  function run() {
+    if (fitEditPaused) return;
+    if (document.body && document.body.classList.contains("slide-visual-edit-on")) return;
+    collectPanels(document).forEach(function (panel) {
+      wrapPanel(panel);
+      measureAndFit(panel);
+    });
+  }
+  window.__slideShellPanelFitRun = run;
+  var shellPanelFitRO = null;
+  function onWindowResizeForShellPanelFit() {
+    run();
+  }
+  function teardownShellPanelFitObservers() {
+    if (shellPanelFitRO) {
+      try {
+        shellPanelFitRO.disconnect();
+      } catch (e) {}
+      shellPanelFitRO = null;
+    }
+    try {
+      window.removeEventListener("resize", onWindowResizeForShellPanelFit);
+    } catch (e) {}
+  }
+  function setupShellPanelFitObservers() {
+    teardownShellPanelFitObservers();
+    if (typeof ResizeObserver !== "undefined") {
+      shellPanelFitRO = new ResizeObserver(function () {
+        run();
+      });
+      Array.prototype.forEach.call(document.querySelectorAll(".shell-slide-instance"), function (slide) {
+        shellPanelFitRO.observe(slide);
+      });
+    } else {
+      window.addEventListener("resize", onWindowResizeForShellPanelFit);
+    }
+  }
+  /*
+   * Bật Sửa: ngắt ResizeObserver + cờ pause — tránh race khiến run() vẫn scale cả khối
+   * khi kéo một dòng chữ (scrollWidth/Height đổi → RO → đổi scale chung).
+   * Tắt Sửa: gọi với on=false sau khi đã bỏ class slide-visual-edit-on trên body.
+   */
+  window.__slideShellPanelFitSetEditMode = function (on) {
+    fitEditPaused = !!on;
+    if (fitEditPaused) {
+      teardownShellPanelFitObservers();
+    } else {
+      run();
+      setupShellPanelFitObservers();
+    }
+  };
+  function init() {
+    function start() {
+      run();
+      setupShellPanelFitObservers();
+    }
+    requestAnimationFrame(function () {
+      requestAnimationFrame(start);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();`;
+  doc.body.appendChild(s);
 }
 
 /** Minimal fallback if theme file has no recognizable slides. */
@@ -218,12 +542,53 @@ function minimalShellDocument(year) {
   *{box-sizing:border-box;} body{margin:0;padding:24px;background:#0f172a;font-family:system-ui,sans-serif;}
   #slides-master-container{display:grid;gap:24px;}
   .slide-container{width:min(1280px,100%);min-height:720px;margin:0 auto;border-radius:14px;padding:48px;background:#fff;box-shadow:0 16px 40px rgba(0,0,0,.35);}
-  .slide-title{margin:0 0 20px;font-size:clamp(28px,3vw,48px);font-weight:800;color:#1d4ed8;}
-  ul[data-shell="bullets"]{margin:0;padding-left:28px;font-size:clamp(18px,1.8vw,28px);line-height:1.5;}
+  .slide-title{margin:0 0 20px;font-size:48px;font-weight:800;color:#1d4ed8;line-height:1.15;}
+  ul[data-shell="bullets"]{margin:0;padding-left:28px;font-size:22px;line-height:1.55;}
 </style></head><body>
 <template id="layout-content"><div class="slide-container"><h2 class="slide-title" data-shell="title"></h2><ul data-shell="bullets"></ul></div></template>
-<div id="slides-master-container" data-nav-mode="scroll"></div>
+<div id="slides-master-container" data-nav-mode="active"></div>
 </body></html>`;
+}
+
+/**
+ * Đưa .sticker (con trực tiếp của slide) vào trong khung .card / .content-card / .comic-panel:
+ * emoji vẫn nằm trên nền trắng góc, nhưng thứ tự DOM đặt sticker trước → chữ/badge/nội dung vẽ đè lên, không bị che.
+ * Theme sealife: slide có padding 60px, tọa độ absolute cũ gắn với slide → khi CB chuyển sang .card, bù trừ top/left (px).
+ * @param {Element} slideRoot
+ */
+function relocateThemeStickersUnderSlideContent(slideRoot) {
+  const host =
+    slideRoot.querySelector(".card") ||
+    slideRoot.querySelector(".content-card") ||
+    slideRoot.querySelector(".comic-panel");
+  if (!host) return;
+  const stickers = Array.from(slideRoot.querySelectorAll(":scope > .sticker"));
+  if (!stickers.length) return;
+  /** Khớp padding `.slide-container` trong sealife (7.sealife.html); chỉ bù khi có top/left dạng px. */
+  const SLIDE_PAD_PX = 60;
+  stickers.reverse().forEach((st) => {
+    host.insertBefore(st, host.firstChild);
+    const top = st.style.top;
+    const left = st.style.left;
+    const bottom = st.style.bottom;
+    const right = st.style.right;
+    if (top && /^\d+px$/.test(top.trim())) {
+      const v = parseInt(top, 10);
+      if (!Number.isNaN(v)) st.style.top = `${v - SLIDE_PAD_PX}px`;
+    }
+    if (left && /^\d+px$/.test(left.trim())) {
+      const v = parseInt(left, 10);
+      if (!Number.isNaN(v)) st.style.left = `${v - SLIDE_PAD_PX}px`;
+    }
+    if (bottom && /^-?\d+px$/.test(bottom.trim())) {
+      const v = parseInt(bottom, 10);
+      if (!Number.isNaN(v)) st.style.bottom = `${v - SLIDE_PAD_PX}px`;
+    }
+    if (right && /^\d+px$/.test(right.trim())) {
+      const v = parseInt(right, 10);
+      if (!Number.isNaN(v)) st.style.right = `${v - SLIDE_PAD_PX}px`;
+    }
+  });
 }
 
 /**
@@ -258,6 +623,10 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   const year = String(meta?.shellYear || new Date().getFullYear());
   applyShellYear(doc, year);
   stripIframeScripts(doc);
+  /** Comic template: đảm bảo class theme dù file chưa cập nhật tay */
+  if (doc.querySelector('link[href*="Bangers"]') && doc.body && !doc.body.classList.contains("shell-theme-comic")) {
+    doc.body.classList.add("shell-theme-comic");
+  }
 
   let master = doc.querySelector("#slides-master-container");
   let tpl =
@@ -277,6 +646,8 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
 
   if (!master || !variantTemplates.length) {
     injectShellPreviewFit(doc);
+    injectShellPanelFitScript(doc);
+    injectSlideVisualEditor(doc);
     return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
   }
 
@@ -292,17 +663,37 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     first.setAttribute("data-shell-slide-index", String(i));
     first.classList.add("shell-slide-instance");
     fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
+    if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
   });
 
-  if (master.getAttribute("data-nav-mode") === "active") {
+  const navMode = meta?.slideNavMode === "scroll" ? "scroll" : "active";
+  master.setAttribute("data-nav-mode", navMode);
+  if (navMode === "active") {
     master.querySelectorAll(".shell-slide-instance").forEach((el, i) => {
       el.classList.toggle("active", i === 0);
     });
+  } else {
+    master.querySelectorAll(".shell-slide-instance").forEach((el) => el.classList.remove("active"));
   }
 
   injectShellPreviewFit(doc);
+  injectShellPanelFitScript(doc);
+  injectSlideVisualEditor(doc);
   return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ * @param {boolean} enabled
+ */
+export function setSlideVisualEditMode(iframe, enabled) {
+  try {
+    const w = /** @type {{ __setSlideVisualEditEnabled?: (v: boolean) => void }} */ (iframe.contentWindow);
+    w?.__setSlideVisualEditEnabled?.(!!enabled);
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 /**
@@ -325,6 +716,15 @@ export function scrollShellSlideIntoView(iframe, index) {
 export function syncShellSlideNav(iframe, index) {
   const doc = iframe.contentDocument;
   if (!doc) return;
+  try {
+    const w = /** @type {{ __slideVisualEditIndex?: number, __slideVisualEditorRefresh?: () => void }} */ (
+      iframe.contentWindow
+    );
+    if (w) w.__slideVisualEditIndex = index;
+    w?.__slideVisualEditorRefresh?.();
+  } catch (_) {
+    /* ignore */
+  }
   const master = doc.querySelector("#slides-master-container");
   const mode = master?.getAttribute("data-nav-mode") || "scroll";
   const inst = doc.querySelectorAll(".shell-slide-instance");
@@ -336,4 +736,36 @@ export function syncShellSlideNav(iframe, index) {
     return;
   }
   scrollShellSlideIntoView(iframe, index);
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ * @param {"active" | "scroll"} mode
+ * @param {number} index current slide index
+ */
+export function setSlideShellNavMode(iframe, mode, index) {
+  const doc = iframe.contentDocument;
+  if (!doc) return;
+  const master = doc.querySelector("#slides-master-container");
+  if (!master) return;
+  const next = mode === "scroll" ? "scroll" : "active";
+  master.setAttribute("data-nav-mode", next);
+  const inst = doc.querySelectorAll(".shell-slide-instance");
+  if (!inst.length) return;
+  const idx = Math.min(Math.max(0, index), inst.length - 1);
+  try {
+    const w = /** @type {{ __slideVisualEditIndex?: number, __slideVisualEditorRefresh?: () => void }} */ (
+      iframe.contentWindow
+    );
+    if (w) w.__slideVisualEditIndex = idx;
+    w?.__slideVisualEditorRefresh?.();
+  } catch (_) {
+    /* ignore */
+  }
+  if (next === "active") {
+    inst.forEach((el, j) => el.classList.toggle("active", j === idx));
+    return;
+  }
+  inst.forEach((el) => el.classList.remove("active"));
+  scrollShellSlideIntoView(iframe, idx);
 }

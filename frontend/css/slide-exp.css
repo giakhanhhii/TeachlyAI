@@ -1,5 +1,5 @@
 .exp-slide-title {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
   margin: 0 0 16px;
   color: var(--text);
@@ -8,7 +8,7 @@
 .exp-slide-bullets {
   margin: 0;
   padding-left: 1.25rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
   line-height: 1.6;
   color: #333;
 }
@@ -25,6 +25,181 @@
   width: 100%;
 }
 
+.exp-slide-mode-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.exp-slide-mode-btn {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #cfd8dc;
+  background: #fff;
+  color: #37474f;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.exp-slide-mode-btn:hover {
+  background: #f5f9ff;
+  border-color: #90caf9;
+}
+
+.exp-slide-mode-btn.is-selected {
+  background: #e3f2fd;
+  border-color: #1976d2;
+  color: #0d47a1;
+}
+
+.exp-slide-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Bút chì + Sửa: góc trên phải khung slide (trái nút toàn màn hình); ẩn khi fullscreen trình chiếu */
+.exp-slide-visual-edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 56px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(15, 23, 42, 0.75);
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.exp-slide-visual-edit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.exp-slide-visual-edit-btn:not(:disabled):hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.exp-slide-visual-edit-btn.is-active {
+  background: rgba(22, 101, 52, 0.92);
+  border-color: rgba(134, 239, 172, 0.65);
+  color: #f0fdf4;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.35);
+}
+
+.exp-slide-visual-edit-icon {
+  flex-shrink: 0;
+  color: #93c5fd;
+}
+
+.exp-slide-visual-edit-btn.is-active .exp-slide-visual-edit-icon {
+  color: #bbf7d0;
+}
+
+/*
+ * Toàn màn hình trình chiếu: dùng lớp CSS (không dùng Fullscreen API) để mở hộp thoại chọn tệp
+ * không bị trình duyệt thoát fullscreen (API luôn thoát khi có dialog hệ thống).
+ */
+.exp-slide-viewport.exp-slide-viewport--faux-fs {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 90000;
+  width: 100vw !important;
+  width: 100dvw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  margin: 0 !important;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.exp-slide-viewport:fullscreen {
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.exp-slide-fs-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(15, 23, 42, 0.75);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.exp-slide-fs-btn:hover:not(:disabled) {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.exp-slide-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(15, 23, 42, 0.55);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.exp-slide-arrow:hover:not(:disabled) {
+  background: rgba(30, 41, 59, 0.85);
+}
+
+.exp-slide-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.exp-slide-arrow--prev {
+  left: 10px;
+}
+
+.exp-slide-arrow--next {
+  right: 56px;
+}
+
 .exp-slide-shell-iframe {
   display: block;
   width: 100%;
@@ -36,5 +211,111 @@
   background: #111;
   border-radius: 12px;
   border: 0;
+}
+
+/* Chọn ảnh từ máy (chỉnh slide) */
+.exp-slide-img-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.exp-slide-img-picker-panel {
+  width: min(720px, 100%);
+  max-height: min(90vh, 640px);
+  overflow: auto;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  border: 1px solid #e2e8f0;
+}
+
+.exp-slide-img-picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.exp-slide-img-picker-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.exp-slide-img-picker-close {
+  border: 0;
+  background: #f1f5f9;
+  color: #334155;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.exp-slide-img-picker-close:hover {
+  background: #e2e8f0;
+}
+
+.exp-slide-img-picker-body {
+  padding: 20px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+}
+
+.exp-slide-img-picker-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.exp-slide-img-picker-primary {
+  align-self: flex-start;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 0;
+  background: #1976d2;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.exp-slide-img-picker-primary:hover {
+  background: #1565c0;
+}
+
+.exp-slide-img-picker-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+.exp-slide-img-picker-err {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #b91c1c;
 }
 

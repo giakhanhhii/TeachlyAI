@@ -14,7 +14,7 @@ export async function mountFullSetHubExperience(layerView, bundle, openChild) {
   shell.appendChild(
     createExperienceTopBar({
       title: bundle.title || "Full set",
-    }),
+    }).bar,
   );
 
   const intro = document.createElement("p");

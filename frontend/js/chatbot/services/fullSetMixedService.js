@@ -90,7 +90,7 @@ export function initMixedQuizTracking(totalSteps, initial) {
 }
 
 /**
- * @param {{ kind: "slide"|"quiz"|"flash", data: any }[]} steps
+ * @param {{ kind: "slide_deck"|"quiz"|"flash", data: any }[]} steps
  */
 export function buildQuizStepOrder(steps) {
   /** @type {number[]} */

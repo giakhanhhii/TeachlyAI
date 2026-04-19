@@ -8,12 +8,13 @@ import {
 } from "../services/fullSetMixedService.js";
 
 /**
- * @param {"slide"|"quiz"|"flash"} kind
+ * @param {"slide"|"slide_deck"|"quiz"|"flash"} kind
  */
 export function createStepBadge(kind) {
   const badge = document.createElement("div");
   badge.className = "exp-mixed-kind-badge";
-  badge.textContent = kind === "quiz" ? "Trắc nghiệm" : kind === "slide" ? "Slide bài giảng" : "Flashcard";
+  badge.textContent =
+    kind === "quiz" ? "Trắc nghiệm" : kind === "flash" ? "Flashcard" : "Slide bài giảng";
   return badge;
 }
 
