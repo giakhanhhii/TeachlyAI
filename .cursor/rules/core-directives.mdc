@@ -1,6 +1,6 @@
 ---
 description: Core project coding and AI workflow directives
-alwaysApply: true
+Apply Intelligently: true
 ---
 
 # Cursor Rules - Quick Directives
@@ -16,7 +16,7 @@ alwaysApply: true
 - **Frontend:** Strict separation of UI (presentation) and Logic (hooks, services). Prefer colocating related files.
 
 ## 3. ANTI-GOD COMPONENT RULES (STRICT)
-- **Hard Line Limit:** NO file over **300 lines**. Period. Split it. (Views < 200 lines, Services/Controllers < 250 lines).
+- **Hard Line Limit:** NO file over **350 lines**. Period. Split it. (Views < 200 lines, Services/Controllers < 250 lines).
 - **Zero DOM in Services:** `*Service.js` must NEVER contain HTML strings or DOM API calls (`document.`, `element.`).
 - **Zero Business Logic in Views:** If a function calculates scores, formats data, or fetches API, it belongs in a `*Service.js`.
 - **No Monolithic Renders:** Do NOT lump multiple screens into one component. Split large UI flows into smaller components (e.g., separate `StepView`, `ReviewView`, `DialogView`).
