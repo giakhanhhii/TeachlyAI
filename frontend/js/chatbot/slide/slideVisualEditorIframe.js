@@ -60,7 +60,6 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
     flex-shrink: 0;
     visibility: hidden;
     pointer-events: none;
-    margin: 0;
     padding: 0;
     border: 0;
   }
@@ -337,23 +336,53 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     if (cs0.position === "absolute" || cs0.position === "fixed") return false;
     var parent = el.parentElement;
     if (!parent) return false;
-    /* Khớp ô nhìn thấy (rect) + đệm — offset-only có thể nhỏ hơn vài px → khối dưới bị đẩy lên */
+    /*
+     * offset*: ô layout (transform trên element không đổi offsetHeight).
+     * getBoundingClientRect: có tổ tiên transform thì AABB phình; chữ có text-shadow/stroke có thể rect > offset 1–2px.
+     * Lấy min(ô layout, rect) để spacer không cao/rộng hơn chỗ trong luồng → tránh tụt ~1mm (comic và theme khác).
+     */
     var r = el.getBoundingClientRect();
-    var w = Math.max(1, Math.ceil(r.width) + 2);
-    /* getBoundingClientRect không gồm margin; khi chuyển absolute margin không còn tạo khoảng trong flex → phải giữ bằng spacer */
-    var mt0 = parseFloat(cs0.marginTop) || 0;
-    var mb0 = parseFloat(cs0.marginBottom) || 0;
-    var h = Math.max(1, Math.ceil(r.height) + 2 + mt0 + mb0);
+    var ow = el.offsetWidth;
+    var oh = el.offsetHeight;
+    var w = Math.max(1, Math.min(ow, r.width));
+    var hBorder = Math.max(1, Math.min(oh, r.height));
     var sp = document.createElement("div");
     sp.className = "slide-visual-edit-flow-spacer";
     sp.setAttribute("data-edit-flow-spacer", "1");
     sp.setAttribute("aria-hidden", "true");
-    sp.style.width = w + "px";
-    sp.style.height = h + "px";
-    sp.style.minHeight = h + "px";
+    sp.style.marginTop = cs0.marginTop;
+    sp.style.marginBottom = cs0.marginBottom;
+    sp.style.marginLeft = cs0.marginLeft;
+    sp.style.marginRight = cs0.marginRight;
     sp.style.boxSizing = "border-box";
-    sp.style.flexShrink = "0";
-    sp.style.alignSelf = "flex-start";
+    var pcs = window.getComputedStyle(parent);
+    var disp = pcs.display;
+    var isFlex = disp === "flex" || disp === "inline-flex";
+    var flexDir = isFlex ? pcs.flexDirection || "row" : "";
+    var isRow = isFlex && (flexDir === "row" || flexDir === "row-reverse");
+    if (isFlex) {
+      sp.style.flexGrow = cs0.flexGrow;
+      sp.style.flexShrink = cs0.flexShrink;
+      sp.style.flexBasis = cs0.flexBasis;
+    }
+    /*
+     * Hai cột flex (comic .two-column): panel có flex:1 + stretch — spacer cố width px + flexShrink:0
+     * làm cột kề mất phần / bị dí. Dùng width:auto + copy flex, height:auto để stretch đúng trục chéo.
+     */
+    if (isRow) {
+      sp.style.width = "auto";
+      sp.style.minWidth = "0";
+      sp.style.maxWidth = "none";
+      sp.style.height = "auto";
+      sp.style.minHeight = "0";
+    } else {
+      sp.style.width = w + "px";
+      sp.style.height = hBorder + "px";
+      sp.style.minHeight = hBorder + "px";
+    }
+    if (cs0.alignSelf && cs0.alignSelf !== "auto") {
+      sp.style.alignSelf = cs0.alignSelf;
+    }
     parent.insertBefore(sp, el);
     el.setAttribute("data-edit-has-flow-spacer", "1");
     return true;
@@ -434,9 +463,12 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         el.style.setProperty("white-space", "pre-wrap", "important");
         el.style.setProperty("overflow-wrap", "break-word", "important");
       } else {
+        /* Khối .card / .comic-panel / ảnh: max(er, offset) dễ làm panel “nở” so với ô flex — khóa theo min */
         el.style.boxSizing = "border-box";
-        el.style.width = pxStr(snap.wpx);
-        el.style.height = pxStr(snap.hpx);
+        var wLock = Math.max(1, Math.min(snap.wpx, snap.ow));
+        var hLock = Math.max(1, Math.min(snap.hpx, snap.oh));
+        el.style.width = pxStr(wLock);
+        el.style.height = pxStr(hLock);
       }
     }
 
