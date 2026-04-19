@@ -1,3 +1,5 @@
+import { parseDirectFlashVocabLines } from "./flashVocabParse.js";
+
 /**
  * @param {any} guided
  * @param {string} cardType
@@ -45,6 +47,29 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       guided: null,
       effects: [
         { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard] ${src}` },
+        { type: "showFlash", meta },
+      ],
+    };
+  }
+
+  if (guided.kind === "flash" && guided.step === "await_vocab_form" && cardType === "flash_vocab_form") {
+    const raw = String(payload.vocabText || "").trim();
+    const { cards } = parseDirectFlashVocabLines(raw);
+    if (!cards.length) {
+      return { handled: false, guided, effects: [] };
+    }
+    const countStr = String(cards.length);
+    const meta = {
+      source: "Nhập từ vựng trực tiếp",
+      count: countStr,
+      extra: `${countStr} thẻ từ nhập tay`,
+      __directCardsJson: JSON.stringify(cards),
+    };
+    return {
+      handled: true,
+      guided: null,
+      effects: [
+        { type: "pushUser", text: `[Flashcard — từ vựng] ${countStr} thẻ` },
         { type: "showFlash", meta },
       ],
     };

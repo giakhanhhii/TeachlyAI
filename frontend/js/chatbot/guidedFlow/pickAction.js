@@ -98,6 +98,22 @@ function handleSingleModePick(guided, value, pdfFile) {
     };
   }
 
+  if (kind === "flash" && value === "flash_vocab") {
+    return {
+      handled: true,
+      guided: { kind: "flash", step: "await_vocab_form", data: {} },
+      effects: [
+        { type: "pushUser", text: "Nhập từ vựng trực tiếp" },
+        {
+          type: "pushBot",
+          text:
+            "Mỗi dòng một thẻ theo dạng từ: nghĩa — ví dụ preserve: bảo tồn, giữ gìn. Phần trước dấu hai chấm là mặt trước thẻ, phần sau là mặt sau.",
+          cardType: "flash_vocab_form",
+        },
+      ],
+    };
+  }
+
   return { handled: false, guided, effects: [] };
 }
 

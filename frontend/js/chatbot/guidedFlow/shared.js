@@ -21,6 +21,7 @@ const SOURCE_ACTIONS_BY_KIND = {
   flash: [
     { label: "Tải lên PDF", value: "flash_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
+    { label: "Nhập từ vựng trực tiếp", value: "flash_vocab" },
   ],
 };
 

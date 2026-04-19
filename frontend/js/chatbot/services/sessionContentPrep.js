@@ -104,6 +104,31 @@ export function prepareQuizSessionData(data, meta) {
 /** @param {any} data
  * @param {Record<string, string>} meta */
 export function prepareFlashSessionData(data, meta) {
+  const directRaw = meta && typeof meta.__directCardsJson === "string" ? meta.__directCardsJson.trim() : "";
+  if (directRaw) {
+    try {
+      const parsed = JSON.parse(directRaw);
+      if (Array.isArray(parsed) && parsed.length) {
+        const direct = parsed
+          .map((c) => ({
+            front: String(c?.front ?? "").trim(),
+            back: String(c?.back ?? "").trim(),
+          }))
+          .filter((c) => c.front && c.back);
+        if (direct.length) {
+          const want = parseCountInRange(meta?.count, 1, 500, direct.length);
+          return {
+            ...data,
+            title: `Flashcard — từ nhập tay (${direct.length} thẻ)`,
+            cards: direct.slice(0, want),
+          };
+        }
+      }
+    } catch {
+      // fall through to mock pool
+    }
+  }
+
   const want = parseCountInRange(meta?.count, 1, 500, 20);
   const pool = Array.isArray(data?.cards) ? data.cards : [];
   const cards = pickUniqueShuffled(pool, flashDedupeKey, want);
