@@ -303,43 +303,43 @@ function injectShellPreviewFit(doc) {
     }
     /*
      * Font trang trí (Ultra, …) thường không đủ glyph tiếng Việt → dấu dùng font fallback, trông lệch cỡ/độ đậm.
-     * Nội dung động dùng stack sans hỗ trợ VN ổn định.
+     * Nội dung động dùng stack sans hỗ trợ VN ổn định (kể cả khi đang Sửa / data-edit-geom).
      */
-    .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]),
-    .shell-slide-instance .slide-title:not([data-edit-geom="1"]),
-    .shell-slide-instance .section-card h1:not([data-edit-geom="1"]),
-    .shell-slide-instance .title-card h1:not([data-edit-geom="1"]),
-    .shell-slide-instance .comic-title:not([data-edit-geom="1"]),
-    .shell-slide-instance .outer-title:not([data-edit-geom="1"]),
-    .shell-slide-instance .toc-item h3:not([data-edit-geom="1"]),
-    .shell-slide-instance .toc-item p:not([data-edit-geom="1"]),
-    .shell-slide-instance .title-content p:not([data-edit-geom="1"]),
-    .shell-slide-instance .title-card p:not([data-edit-geom="1"]),
-    .shell-slide-instance .section-card > p:not([data-edit-geom="1"]),
-    .shell-slide-instance .badge:not([data-edit-geom="1"]),
-    .shell-slide-instance .mini-card h3:not([data-edit-geom="1"]),
-    .shell-slide-instance .mini-card p:not([data-edit-geom="1"]),
-    .shell-slide-instance .tl-item h3:not([data-edit-geom="1"]),
-    .shell-slide-instance .tl-item p:not([data-edit-geom="1"]),
-    .shell-slide-instance .text-part p:not([data-edit-geom="1"]),
-    .shell-slide-instance ul[data-shell="bullets"]:not([data-edit-geom="1"]),
-    .shell-slide-instance ul[data-shell="bullets"] li:not([data-edit-geom="1"]) {
+    .shell-slide-instance [data-shell="title"],
+    .shell-slide-instance .slide-title,
+    .shell-slide-instance .section-card h1,
+    .shell-slide-instance .title-card h1,
+    .shell-slide-instance .comic-title,
+    .shell-slide-instance .outer-title,
+    .shell-slide-instance .toc-item h3,
+    .shell-slide-instance .toc-item p,
+    .shell-slide-instance .title-content p,
+    .shell-slide-instance .title-card p,
+    .shell-slide-instance .section-card > p,
+    .shell-slide-instance .badge,
+    .shell-slide-instance .mini-card h3,
+    .shell-slide-instance .mini-card p,
+    .shell-slide-instance .tl-item h3,
+    .shell-slide-instance .tl-item p,
+    .shell-slide-instance .text-part p,
+    .shell-slide-instance ul[data-shell="bullets"],
+    .shell-slide-instance ul[data-shell="bullets"] li {
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif !important;
       font-synthesis: none !important;
       text-rendering: optimizeLegibility;
     }
-    .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]),
-    .shell-slide-instance .slide-title:not([data-edit-geom="1"]),
-    .shell-slide-instance .section-card h1:not([data-edit-geom="1"]),
-    .shell-slide-instance .title-card h1:not([data-edit-geom="1"]),
-    .shell-slide-instance .comic-title:not([data-edit-geom="1"]) {
+    .shell-slide-instance [data-shell="title"],
+    .shell-slide-instance .slide-title,
+    .shell-slide-instance .section-card h1,
+    .shell-slide-instance .title-card h1,
+    .shell-slide-instance .comic-title {
       overflow-wrap: anywhere;
       word-break: break-word;
       max-width: 100%;
       box-sizing: border-box;
     }
-    .shell-slide-instance ul[data-shell="bullets"]:not([data-edit-geom="1"]),
-    .shell-slide-instance ul[data-shell="bullets"] li:not([data-edit-geom="1"]) {
+    .shell-slide-instance ul[data-shell="bullets"],
+    .shell-slide-instance ul[data-shell="bullets"] li {
       overflow-wrap: anywhere;
       word-break: break-word;
     }
@@ -386,25 +386,25 @@ function injectShellPreviewFit(doc) {
       align-items: center !important;
       justify-content: center !important;
     }
-    .shell-theme-comic .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance .comic-title:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance .slide-title:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance .toc-item h3:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance .toc-item p:not([data-edit-geom="1"]) {
+    .shell-theme-comic .shell-slide-instance [data-shell="title"],
+    .shell-theme-comic .shell-slide-instance .comic-title,
+    .shell-theme-comic .shell-slide-instance .slide-title,
+    .shell-theme-comic .shell-slide-instance .toc-item h3,
+    .shell-theme-comic .shell-slide-instance .toc-item p {
       font-family: 'Bangers', system-ui, sans-serif !important;
     }
-    .shell-theme-comic .shell-slide-instance h3:not([data-edit-geom="1"]) {
+    .shell-theme-comic .shell-slide-instance h3 {
       font-family: 'Bangers', system-ui, sans-serif !important;
     }
-    .shell-theme-comic .shell-slide-instance p:not([data-shell]):not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance li:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance .subtitle:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance ul[data-shell="bullets"]:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance ul[data-shell="bullets"] li:not([data-edit-geom="1"]) {
+    .shell-theme-comic .shell-slide-instance p:not([data-shell]),
+    .shell-theme-comic .shell-slide-instance li,
+    .shell-theme-comic .shell-slide-instance .subtitle,
+    .shell-theme-comic .shell-slide-instance ul[data-shell="bullets"],
+    .shell-theme-comic .shell-slide-instance ul[data-shell="bullets"] li {
       font-family: 'Comic Neue', 'Comic Sans MS', cursive, system-ui, sans-serif !important;
     }
-    .shell-theme-comic .shell-slide-instance .comic-title:not([data-edit-geom="1"]),
-    .shell-theme-comic .shell-slide-instance [data-shell="title"]:not([data-edit-geom="1"]) {
+    .shell-theme-comic .shell-slide-instance .comic-title,
+    .shell-theme-comic .shell-slide-instance [data-shell="title"] {
       word-break: normal;
       overflow-wrap: break-word;
     }
