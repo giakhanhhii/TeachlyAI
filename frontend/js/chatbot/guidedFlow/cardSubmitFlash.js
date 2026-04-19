@@ -65,7 +65,9 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
     } catch {
       apiBack = {};
     }
-    const { cards } = parseDirectFlashVocabLines(raw, apiBack);
+    const autoT = payload.__autoTranslateEnLines;
+    const autoTranslateEnLines = autoT !== "0" && autoT !== "false";
+    const { cards } = parseDirectFlashVocabLines(raw, apiBack, { autoTranslateEnLines });
     if (!cards.length) {
       return { handled: false, guided, effects: [] };
     }

@@ -2,7 +2,7 @@ import { lookupEnToVi } from "./flashVocabLookup.js";
 
 /** Nội dung placeholder (chữ mờ) trong ô nhập từ vựng — không dùng tin nhắn bot riêng. */
 export const FLASH_VOCAB_TEXTAREA_PLACEHOLDER =
-  "Điền theo dạng\nTừ : nghĩa\nVí dụ: \nPreserve: bảo tồn\nAbandon: tư bỏ, bỏ rơi\n\nChỉ cần gõ obstacle (không cần dấu :) — hệ thống tự thêm nghĩa (từ điển hoặc dịch tự động).";
+  "Điền theo dạng (mỗi dòng 1 thẻ)\nTừ : nghĩa\nVí dụ: \nPreserve: bảo tồn\nAbandon: tư bỏ, bỏ rơi\n\nChỉ cần gõ obstacle (không cần dấu :) — hệ thống tự thêm nghĩa (từ điển hoặc dịch tự động).";
 
 /**
  * @param {string} trimmed
@@ -41,22 +41,26 @@ export function firstTokenIsEnglishAscii(front) {
 }
 
 /**
- * @typedef {"empty"|"comment"|"incomplete"|"invalid"|"skipped_en"|"auto_en"|"pending_api"|"ok"} FlashVocabLineKind
+ * @typedef {"empty"|"comment"|"incomplete"|"invalid"|"skipped_en"|"bare_en_auto_off"|"auto_en"|"pending_api"|"ok"} FlashVocabLineKind
  */
 
 /**
  * @param {string} trimmed
  * @param {Record<string, string>} [apiBackByLine] nghĩa từ API dịch, khóa = nguyên dòng trim
+ * @param {{ autoTranslateEnLines?: boolean }} [opts] tắt thì dòng EN không dấu : không dùng từ điển/API, bỏ qua khi tạo thẻ
  * @returns {FlashVocabLineKind}
  */
-export function classifyFlashVocabLine(trimmed, apiBackByLine = {}) {
+export function classifyFlashVocabLine(trimmed, apiBackByLine = {}, opts = {}) {
+  const autoEn = opts.autoTranslateEnLines !== false;
   if (!trimmed) return "empty";
   if (trimmed.startsWith("#")) return "comment";
   const idx = trimmed.indexOf(":");
   if (idx < 0) {
+    const englishBare = isEnglishOnlyVocabLine(trimmed);
+    if (!autoEn && englishBare) return "bare_en_auto_off";
     if (lookupEnToVi(trimmed)) return "auto_en";
     if (apiBackFor(apiBackByLine, trimmed)) return "auto_en";
-    if (isEnglishOnlyVocabLine(trimmed)) return "pending_api";
+    if (englishBare) return "pending_api";
     return "incomplete";
   }
   if (idx === 0) return "invalid";
@@ -71,11 +75,13 @@ export function classifyFlashVocabLine(trimmed, apiBackByLine = {}) {
  * Tách bạch màu trong ô nhập và trạng thái thẻ: đỏ = sai form / không tạo thẻ; vàng = đã có nghĩa; vàng nhạt = đang chờ dịch.
  * @param {string} trimmed
  * @param {Record<string, string>} [apiBackByLine]
+ * @param {{ autoTranslateEnLines?: boolean }} [opts]
  * @returns {"reject"|"auto"|"pending"|"neutral"}
  */
-export function getFlashVocabEditorLineHighlight(trimmed, apiBackByLine = {}) {
-  const kind = classifyFlashVocabLine(trimmed, apiBackByLine);
-  if (kind === "invalid" || kind === "skipped_en" || kind === "incomplete") return "reject";
+export function getFlashVocabEditorLineHighlight(trimmed, apiBackByLine = {}, opts = {}) {
+  const kind = classifyFlashVocabLine(trimmed, apiBackByLine, opts);
+  if (kind === "invalid" || kind === "skipped_en" || kind === "incomplete" || kind === "bare_en_auto_off")
+    return "reject";
   if (kind === "auto_en") return "auto";
   if (kind === "pending_api") return "pending";
   return "neutral";
@@ -84,9 +90,10 @@ export function getFlashVocabEditorLineHighlight(trimmed, apiBackByLine = {}) {
 /**
  * @param {string} raw
  * @param {Record<string, string>} [apiBackByLine]
- * @returns {{ cards: { front: string, back: string }[], invalidLines: string[], skippedNonEnglish: number, pendingApiCount: number }}
+ * @param {{ autoTranslateEnLines?: boolean }} [opts]
+ * @returns {{ cards: { front: string, back: string }[], invalidLines: string[], skippedNonEnglish: number, pendingApiCount: number, skippedBareEnglishNoAuto: number }}
  */
-export function parseDirectFlashVocabLines(raw, apiBackByLine = {}) {
+export function parseDirectFlashVocabLines(raw, apiBackByLine = {}, opts = {}) {
   const text = String(raw ?? "");
   const lines = text.split(/\r?\n/);
   /** @type {{ front: string, back: string }[]} */
@@ -95,10 +102,15 @@ export function parseDirectFlashVocabLines(raw, apiBackByLine = {}) {
   const invalidLines = [];
   let skippedNonEnglish = 0;
   let pendingApiCount = 0;
+  let skippedBareEnglishNoAuto = 0;
   for (const line of lines) {
     const trimmed = line.trim();
-    const kind = classifyFlashVocabLine(trimmed, apiBackByLine);
+    const kind = classifyFlashVocabLine(trimmed, apiBackByLine, opts);
     if (kind === "empty" || kind === "comment") continue;
+    if (kind === "bare_en_auto_off") {
+      skippedBareEnglishNoAuto += 1;
+      continue;
+    }
     if (kind === "ok") {
       const idx = trimmed.indexOf(":");
       const front = trimmed.slice(0, idx).trim();
@@ -130,5 +142,5 @@ export function parseDirectFlashVocabLines(raw, apiBackByLine = {}) {
     }
     invalidLines.push(trimmed);
   }
-  return { cards, invalidLines, skippedNonEnglish, pendingApiCount };
+  return { cards, invalidLines, skippedNonEnglish, pendingApiCount, skippedBareEnglishNoAuto };
 }

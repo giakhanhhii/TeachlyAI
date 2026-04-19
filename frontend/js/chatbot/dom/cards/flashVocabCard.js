@@ -1,45 +1,12 @@
 import {
   FLASH_VOCAB_TEXTAREA_PLACEHOLDER,
-  getFlashVocabEditorLineHighlight,
-  isEnglishOnlyVocabLine,
   parseDirectFlashVocabLines,
 } from "../../guidedFlow/flashVocabParse.js";
-import { lookupEnToVi } from "../../guidedFlow/flashVocabLookup.js";
-import {
-  fetchFlashTermTranslation,
-  fetchFlashTermsTranslationBatch,
-} from "../../services/flashVocabTranslateApi.js";
-import { el, wrapField } from "./flowCardShared.js";
+import { el } from "./flowCardShared.js";
+import { renderFlashVocabHighlightLines } from "./flashVocabHighlightLayer.js";
+import { createFlashVocabOpenAiTranslate } from "./flashVocabOpenAiTranslate.js";
 
 const MAX_PAIRS = 200;
-const TRANSLATE_DEBOUNCE_MS = 75;
-
-/**
- * Một luồng pre-wrap + span nối tiếp (có \\n giữa các dòng) để wrap khớp textarea — tránh từng dòng display:block gây lệch con trỏ.
- * @param {HTMLElement} inner
- * @param {string} raw
- * @param {Record<string, string>} apiBackByLine
- */
-function renderHighlightLines(inner, raw, apiBackByLine) {
-  inner.replaceChildren();
-  const lines = String(raw).split(/\r?\n/);
-  if (lines.length === 0) return;
-  for (let i = 0; i < lines.length; i += 1) {
-    const line = lines[i];
-    const tier = getFlashVocabEditorLineHighlight(line.trim(), apiBackByLine);
-    const span = document.createElement("span");
-    if (tier === "reject") {
-      span.className = "flow-vocab-seg--rejected";
-    } else if (tier === "auto") {
-      span.className = "flow-vocab-seg--auto";
-    } else if (tier === "pending") {
-      span.className = "flow-vocab-seg--auto-pending";
-    }
-    const nl = i < lines.length - 1 ? "\n" : "";
-    span.textContent = (line.length ? line : "\u00a0") + nl;
-    inner.appendChild(span);
-  }
-}
 
 /**
  * @param {{ onSubmit: (p: Record<string, string>) => void }} deps
@@ -48,20 +15,26 @@ export function createFlashVocabFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Nhập từ vựng trực tiếp"));
 
+  /** Bật: dòng tiếng Anh không «:» — vàng + gọi API/từ điển. Tắt: đỏ và không đưa vào thẻ. */
+  let autoTranslateEnLines = false;
+
+  const autoTranslateCb = /** @type {HTMLInputElement} */ (document.createElement("input"));
+  autoTranslateCb.type = "checkbox";
+  autoTranslateCb.checked = false;
+  autoTranslateCb.className = "flow-vocab-auto-switch-input";
+  autoTranslateCb.setAttribute("role", "switch");
+  autoTranslateCb.setAttribute("aria-checked", "false");
+  autoTranslateCb.setAttribute("aria-label", "Tự động dịch dòng tiếng Anh (không cần dấu :)");
+
   /** Nghĩa từ API OpenAI (EN→2–3 nghĩa VI), khóa = dòng trim (tiếng Anh không có dấu :). */
   const apiBackByLine = /** @type {Record<string, string>} */ ({});
   let translateDisabled = false;
-  let debounceTimer = /** @type {ReturnType<typeof setTimeout> | null} */ (null);
   let shownFlashTranslateBackendHint = false;
   /** Thông báo lỗi gần nhất từ API dịch — hiển thị thay vì gợi ý chung. */
   let lastServerHint = "";
 
-  function cancelScheduledTranslate() {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-      debounceTimer = null;
-    }
-  }
+  const err = el("div", "flow-err");
+  err.style.display = "none";
 
   const stack = el("div", "flow-vocab-editor-stack");
   const clip = el("div", "flow-vocab-highlight-clip");
@@ -87,8 +60,12 @@ export function createFlashVocabFormCard(deps) {
     inner.style.transform = `translateY(-${ta.scrollTop}px)`;
   }
 
+  function parseOpts() {
+    return { autoTranslateEnLines };
+  }
+
   function refreshHighlight() {
-    renderHighlightLines(inner, ta.value, apiBackByLine);
+    renderFlashVocabHighlightLines(inner, ta.value, apiBackByLine, parseOpts());
     requestAnimationFrame(() => {
       syncClipGutter();
       inner.style.minHeight = `${ta.scrollHeight}px`;
@@ -96,114 +73,40 @@ export function createFlashVocabFormCard(deps) {
     });
   }
 
-  /**
-   * @returns {string[]}
-   */
-  function collectTermsPendingOpenAiTranslate(raw) {
-    const lines = String(raw).split(/\r?\n/);
-    /** @type {Set<string>} */
-    const need = new Set();
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("#") || trimmed.includes(":")) continue;
-      if (lookupEnToVi(trimmed)) continue;
-      if (!isEnglishOnlyVocabLine(trimmed)) continue;
-      if (apiBackByLine[trimmed]) continue;
-      if (translateDisabled) continue;
-      need.add(trimmed);
-    }
-    return [...need];
-  }
+  const openAi = createFlashVocabOpenAiTranslate({
+    apiBackByLine,
+    getAutoTranslateEn: () => autoTranslateEnLines,
+    getTranslateDisabled: () => translateDisabled,
+    setTranslateDisabled: (v) => {
+      translateDisabled = v;
+    },
+    getLastServerHint: () => lastServerHint,
+    setLastServerHint: (s) => {
+      lastServerHint = s;
+    },
+    getShownBackendHint: () => shownFlashTranslateBackendHint,
+    setShownBackendHint: (v) => {
+      shownFlashTranslateBackendHint = v;
+    },
+    getRaw: () => ta.value,
+    onRefreshHighlight: refreshHighlight,
+    errEl: err,
+  });
 
-  /**
-   * Gọi API dịch theo lô (một vài lần gọi LLM cho cả danh sách).
-   * @param {string} raw
-   */
-  async function flushPendingTranslationsForRaw(raw) {
-    const terms = collectTermsPendingOpenAiTranslate(raw);
-    if (!terms.length) return { changed: false, failCount: 0, total: 0, serverHint: "" };
-    let map = /** @type {Record<string, string>} */ ({});
-    try {
-      map = await fetchFlashTermsTranslationBatch(terms);
-    } catch (e) {
-      const msg = String(/** @type {any} */ (e).message || "").trim();
-      if (msg) lastServerHint = msg;
-      const st = /** @type {any} */ (e).status;
-      if (st === 503 || String(/** @type {any} */ (e).message || "").includes("OPENAI_API_KEY")) {
-        translateDisabled = true;
-      }
-      if (st !== 404) {
-        return {
-          changed: false,
-          failCount: terms.length,
-          total: terms.length,
-          serverHint: msg,
-        };
-      }
-      map = {};
+  autoTranslateCb.addEventListener("change", () => {
+    autoTranslateEnLines = autoTranslateCb.checked;
+    autoTranslateCb.setAttribute("aria-checked", autoTranslateEnLines ? "true" : "false");
+    if (!autoTranslateEnLines) {
+      openAi.cancel();
+      err.style.display = "none";
     }
-    let changed = false;
-    for (const term of terms) {
-      const tr = String(map[term] || "").trim();
-      if (tr) {
-        apiBackByLine[term] = tr;
-        changed = true;
-      }
-    }
-    const missing = terms.filter((t) => !String(apiBackByLine[t] || "").trim());
-    if (missing.length > 0 && !translateDisabled) {
-      const settled = await Promise.allSettled(
-        missing.map(async (term) => {
-          const tr = await fetchFlashTermTranslation(term);
-          return { term, tr: String(tr || "").trim() };
-        }),
-      );
-      for (const s of settled) {
-        if (s.status !== "fulfilled") {
-          const reason = /** @type {any} */ (s.reason);
-          if (reason?.status === 503) translateDisabled = true;
-          continue;
-        }
-        const { term, tr } = s.value;
-        if (tr) {
-          apiBackByLine[term] = tr;
-          changed = true;
-        }
-      }
-    }
-    const failCount = terms.filter((t) => !String(apiBackByLine[t] || "").trim()).length;
-    if (failCount === 0) lastServerHint = "";
-    return { changed, failCount, total: terms.length, serverHint: lastServerHint };
-  }
-
-  function scheduleOpenAiFlashTranslate() {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      void (async () => {
-        debounceTimer = null;
-        const { changed, failCount, total, serverHint } = await flushPendingTranslationsForRaw(ta.value);
-        if (changed) {
-          refreshHighlight();
-          err.style.display = "none";
-        } else if (total > 0 && failCount === total) {
-          const hint = String(serverHint || "").trim();
-          if (hint) {
-            err.textContent = hint;
-            err.style.display = "block";
-          } else if (!shownFlashTranslateBackendHint) {
-            shownFlashTranslateBackendHint = true;
-            err.textContent =
-              "Không gọi được API dịch từ vựng. (1) Chạy backend: python run_teachly.py hoặc uvicorn src.api_server:app —host 127.0.0.1 —port 8000 — (2) Mở http://127.0.0.1:8000/chatbot_ui.html (hoặc meta teachly-api-base nếu dùng Live Server). (3) Điền OPENAI_API_KEY trong .env (dịch EN→VI 2–3 nghĩa ở thẻ này), rồi khởi động lại server.";
-            err.style.display = "block";
-          }
-        }
-      })();
-    }, TRANSLATE_DEBOUNCE_MS);
-  }
+    refreshHighlight();
+    openAi.schedule();
+  });
 
   ta.addEventListener("input", () => {
     refreshHighlight();
-    scheduleOpenAiFlashTranslate();
+    openAi.schedule();
   });
   ta.addEventListener("scroll", syncHighlightScroll);
   if (typeof ResizeObserver !== "undefined") {
@@ -214,18 +117,33 @@ export function createFlashVocabFormCard(deps) {
     ro.observe(ta);
   }
   refreshHighlight();
-  scheduleOpenAiFlashTranslate();
+  openAi.schedule();
 
-  root.appendChild(
-    wrapField(
-      "Danh sách (mỗi dòng một thẻ)",
-      stack,
-      "Đỏ: sai form hoặc bỏ qua (không tạo thẻ). Vàng đậm: đã có nghĩa (từ điển hoặc dịch tự động, 2–3 nghĩa). Vàng nhạt: đang dịch. Bấm «Tạo flashcard» một lần — nếu còn dịch, Teachly sẽ chờ dịch xong. Tối đa 200 thẻ.",
+  const listField = el("div", "flow-field");
+  const listHeader = el("div", "flow-vocab-list-header");
+  listHeader.appendChild(el("span", "flow-label flow-vocab-list-header-title", "Danh sách"));
+
+  const autoSwitchWrap = el("div", "flow-vocab-auto-switch-wrap");
+  autoSwitchWrap.appendChild(el("span", "flow-vocab-auto-switch-label", "Tự động dịch"));
+
+  const autoSwitchLabel = el("label", "flow-vocab-auto-switch");
+  autoSwitchLabel.title = "Tự động dịch dòng tiếng Anh (không cần dấu :)";
+  autoSwitchLabel.appendChild(autoTranslateCb);
+  autoSwitchLabel.appendChild(el("span", "flow-vocab-auto-switch-track"));
+  autoSwitchWrap.appendChild(autoSwitchLabel);
+
+  listHeader.appendChild(autoSwitchWrap);
+  listField.appendChild(listHeader);
+  listField.appendChild(stack);
+  listField.appendChild(
+    el(
+      "p",
+      "flow-hint",
+      "Công tắc bên phải: bật (xanh) thì dòng tiếng Anh không «:» tô vàng và dịch; tắt (xám) thì tô đỏ và không tạo thẻ. Đỏ khác: sai form / bỏ qua. Bấm «Tạo flashcard» một lần — nếu còn dịch, Teachly chờ dịch xong. Tối đa 200 thẻ.",
     ),
   );
+  root.appendChild(listField);
 
-  const err = el("div", "flow-err");
-  err.style.display = "none";
   root.appendChild(err);
 
   const actions = el("div", "flow-card-actions");
@@ -235,13 +153,13 @@ export function createFlashVocabFormCard(deps) {
   root.appendChild(actions);
 
   submit.addEventListener("click", async () => {
-    cancelScheduledTranslate();
+    openAi.cancel();
     err.style.display = "none";
     err.classList.remove("flow-vocab-translate-wait");
     const body = ta.value.trim();
-    let parsed = parseDirectFlashVocabLines(body, apiBackByLine);
+    let parsed = parseDirectFlashVocabLines(body, apiBackByLine, parseOpts());
 
-    if (parsed.pendingApiCount > 0 && !translateDisabled) {
+    if (parsed.pendingApiCount > 0 && !translateDisabled && autoTranslateEnLines) {
       submit.disabled = true;
       submit.classList.add("flow-vocab-submit-busy");
       const savedLabel = submit.textContent || "Tạo flashcard";
@@ -249,10 +167,10 @@ export function createFlashVocabFormCard(deps) {
       err.classList.add("flow-vocab-translate-wait");
       err.textContent = "Đợi Teachly tự động dịch nhé…";
       err.style.display = "block";
-      await flushPendingTranslationsForRaw(ta.value);
+      await openAi.flush(ta.value);
       err.classList.remove("flow-vocab-translate-wait");
       refreshHighlight();
-      parsed = parseDirectFlashVocabLines(body, apiBackByLine);
+      parsed = parseDirectFlashVocabLines(body, apiBackByLine, parseOpts());
       submit.classList.remove("flow-vocab-submit-busy");
       submit.textContent = savedLabel;
       submit.disabled = false;
@@ -267,7 +185,10 @@ export function createFlashVocabFormCard(deps) {
       return;
     }
     if (!parsed.cards.length) {
-      if (parsed.skippedNonEnglish > 0 && !parsed.invalidLines.length) {
+      if (!autoTranslateEnLines && parsed.skippedBareEnglishNoAuto > 0) {
+        err.textContent =
+          "Đã tắt tự động dịch: mọi dòng chỉ gõ tiếng Anh (không có :) đều bị bỏ qua. Bật lại công tắc bên phải tiêu đề hoặc nhập từng dạng word: nghĩa.";
+      } else if (parsed.skippedNonEnglish > 0 && !parsed.invalidLines.length) {
         err.textContent =
           "Các dòng đã bỏ qua vì từ đầu tiên trước dấu : không phải tiếng Anh (chữ Latin A–Z). Thêm ít nhất một dòng như preserve: bảo tồn, giữ gìn.";
       } else if (parsed.skippedNonEnglish > 0 && parsed.invalidLines.length) {
@@ -291,6 +212,7 @@ export function createFlashVocabFormCard(deps) {
     deps.onSubmit({
       vocabText: body,
       __apiBackJson: JSON.stringify(apiBackByLine),
+      __autoTranslateEnLines: autoTranslateEnLines ? "1" : "0",
     });
   });
 
