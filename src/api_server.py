@@ -1,26 +1,38 @@
 """
 Teachly local preview: API chat + static frontend on one port (default 8000).
 
-Chạy từ thư mục gốc repo:
-  uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
+Chạy từ thư mục gốc repo (cổng tùy chọn qua TEACHLY_PORT khi dùng run_teachly.py):
+  python run_teachly.py
+  hoặc: uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
 
-Mở trình duyệt: http://127.0.0.1:8000/
+Mở trình duyệt: cùng host/cổng với lệnh trên (vd http://127.0.0.1:8000/ ).
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
-
 from anthropic import Anthropic
+from openai import OpenAI
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from .config import ANTHROPIC_API_KEY, DEFAULT_MODEL, LOG_LEVEL
+from .config import (
+    ANTHROPIC_API_KEY,
+    DEFAULT_MODEL,
+    FLASH_TRANSLATE_OPENAI_MODEL,
+    LLM_PROVIDER,
+    LOG_LEVEL,
+    OPENAI_API_KEY,
+    OPENAI_OFFICIAL_BASE_URL,
+)
+from .flash_translate_clients import flash_translate_client_public_info
+from .flash_translate_service import flash_term_translate_en_to_vi, flash_terms_translate_batch
 from .database import DatabaseManager
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -83,27 +95,132 @@ class SessionMessagesOut(BaseModel):
     messages: list[SessionMessage]
 
 
-def _get_client() -> Anthropic:
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(
-            status_code=503,
-            detail="Chưa cấu hình ANTHROPIC_API_KEY. Tạo file .env từ .env.example và thêm key.",
-        )
-    return Anthropic(api_key=ANTHROPIC_API_KEY)
+class FlashTranslateIn(BaseModel):
+    term: str = Field(..., min_length=1, max_length=240)
 
 
-def _run_reply(client: Anthropic, history: list[dict]) -> str:
-    response = client.messages.create(
-        model=DEFAULT_MODEL,
-        max_tokens=4096,
-        system=TEACHLY_SYSTEM,
-        messages=history,
+class FlashTranslateOut(BaseModel):
+    translation: str
+
+
+class FlashTranslateBatchIn(BaseModel):
+    terms: list[str] = Field(..., min_length=1, max_length=200)
+
+
+class FlashTranslateBatchOut(BaseModel):
+    translations: dict[str, str]
+
+
+def _flash_translate_config_ok() -> bool:
+    return bool(OPENAI_API_KEY)
+
+
+def _flash_translate_missing_env_detail() -> str:
+    return (
+        "Chưa cấu hình OPENAI_API_KEY trong .env "
+        f"(dịch tự động thẻ nhập từ vựng dùng OpenAI, model {FLASH_TRANSLATE_OPENAI_MODEL})."
     )
-    parts: list[str] = []
-    for block in response.content:
-        if getattr(block, "type", None) == "text":
-            parts.append(block.text)
-    return "".join(parts).strip() or "(Không có nội dung phản hồi.)"
+
+
+def _http_exc_from_flash_translate(exc: BaseException) -> HTTPException:
+    """Chuẩn hoá lỗi SDK (429 quota, 401 key…) thành HTTPException có detail ngắn cho UI."""
+    code = getattr(exc, "status_code", None)
+    if code == 429:
+        detail = (
+            "OpenAI: hết hạn ngạch (429). Đợi vài phút, kiểm tra billing/plan, "
+            "hoặc giảm song song (FLASH_TRANSLATE_PARALLEL_CHUNKS=1 trong .env)."
+        )
+        return HTTPException(status_code=503, detail=detail)
+    if code in (401, 403):
+        detail = "OpenAI từ chối API key (401/403). Kiểm tra OPENAI_API_KEY trong .env."
+        return HTTPException(status_code=503, detail=detail)
+    low = str(exc).lower()
+    if "429" in str(exc) or "rate limit" in low:
+        detail = (
+            "OpenAI báo rate limit / quota. Thử lại sau hoặc kiểm tra usage tại platform.openai.com."
+        )
+        return HTTPException(status_code=503, detail=detail)
+    return HTTPException(
+        status_code=502,
+        detail=(str(exc) or "Lỗi gọi API dịch flash.").strip()[:900],
+    )
+
+
+def _get_client() -> Anthropic | OpenAI:
+    if LLM_PROVIDER == "openai":
+        if not OPENAI_API_KEY:
+            raise HTTPException(
+                status_code=503,
+                detail="Chưa cấu hình OPENAI_API_KEY. Tạo file .env từ .env.example và thêm key.",
+            )
+        return OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_OFFICIAL_BASE_URL)
+    else:
+        if not ANTHROPIC_API_KEY:
+            raise HTTPException(
+                status_code=503,
+                detail="Chưa cấu hình ANTHROPIC_API_KEY. Tạo file .env từ .env.example và thêm key.",
+            )
+        return Anthropic(api_key=ANTHROPIC_API_KEY)
+
+
+def _run_reply(client: Anthropic | OpenAI, history: list[dict]) -> str:
+    if isinstance(client, OpenAI):
+        # OpenAI expects system prompt as a message
+        messages = [{"role": "system", "content": TEACHLY_SYSTEM}] + history
+        response = client.chat.completions.create(
+            model=DEFAULT_MODEL,
+            messages=messages,
+            max_tokens=4096,
+        )
+        return response.choices[0].message.content or "(Không có nội dung phản hồi.)"
+    else:
+        # Anthropic SDK handles system prompt separately
+        response = client.messages.create(
+            model=DEFAULT_MODEL,
+            max_tokens=4096,
+            system=TEACHLY_SYSTEM,
+            messages=history,
+        )
+        parts: list[str] = []
+        for block in response.content:
+            if getattr(block, "type", None) == "text":
+                parts.append(block.text)
+        return "".join(parts).strip() or "(Không có nội dung phản hồi.)"
+
+
+def _cors_allow_origins() -> list[str]:
+    """Dev: thêm dải cổng 8000–8030 + TEACHLY_CORS_EXTRA (phân tách bằng dấu phẩy)."""
+    seen: set[str] = set()
+    out: list[str] = []
+
+    def add(origin: str) -> None:
+        u = (origin or "").strip().rstrip("/")
+        if not u or u in seen:
+            return
+        seen.add(u)
+        out.append(u)
+
+    for port in range(8000, 8031):
+        add(f"http://127.0.0.1:{port}")
+        add(f"http://localhost:{port}")
+    for o in (
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "http://127.0.0.1:8080",
+        "http://localhost:8080",
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://127.0.0.1:4173",
+        "http://localhost:4173",
+    ):
+        add(o)
+    extra = os.getenv("TEACHLY_CORS_EXTRA", "").strip()
+    if extra:
+        for part in extra.split(","):
+            add(part.strip())
+    return out
 
 
 app = FastAPI(title="Teachly Local", version="0.1.0")
@@ -111,16 +228,7 @@ db = DatabaseManager(REPO_ROOT / "data" / "teachly.sqlite3")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:8000",
-        "http://localhost:8000",
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-        "http://127.0.0.1:8080",
-        "http://localhost:8080",
-    ],
+    allow_origins=_cors_allow_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -129,11 +237,72 @@ app.add_middleware(
 
 @app.get("/api/health")
 def health():
+    """Phản hồi có `teachly_backend` + `health_schema_version` để không nhầm với API khác (vd. health có `openrouter_configured`)."""
+    flash_info = flash_translate_client_public_info()
     return {
         "ok": True,
+        "teachly_backend": True,
+        "health_schema_version": 2,
         "anthropic_configured": bool(ANTHROPIC_API_KEY),
+        "openai_configured": bool(OPENAI_API_KEY),
+        # Dịch flash EN→VI luôn gọi api.openai.com (xem flash_openai_base_url), không route qua OpenRouter.
+        "openrouter_used_for_flash": False,
+        "flash_translate_model": FLASH_TRANSLATE_OPENAI_MODEL,
+        "flash_translate_ready": _flash_translate_config_ok(),
+        "flash_openai_base_url": flash_info.get("flash_openai_base_url"),
+        "flash_httpx_trust_env": flash_info.get("flash_httpx_trust_env"),
         "frontend_dir_exists": FRONTEND_DIR.is_dir(),
     }
+
+
+@app.post("/api/flash/translate-term", response_model=FlashTranslateOut)
+def flash_translate_term(body: FlashTranslateIn):
+    """Dịch một từ/cụm EN→VI qua OpenAI (tối thiểu 2, tối đa 3 nghĩa Việt gần nhất)."""
+    if not _flash_translate_config_ok():
+        raise HTTPException(status_code=503, detail=_flash_translate_missing_env_detail())
+    term = body.term.strip()
+    try:
+        out = flash_term_translate_en_to_vi(term)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Flash translate (single) failed")
+        raise _http_exc_from_flash_translate(e) from e
+    if not out:
+        raise HTTPException(status_code=502, detail="Model trả về nghĩa rỗng.")
+    return FlashTranslateOut(translation=out)
+
+
+@app.post("/api/flash/translate-terms", response_model=FlashTranslateBatchOut)
+def flash_translate_terms(body: FlashTranslateBatchIn):
+    """Dịch nhiều từ/cụm EN→VI theo lô qua OpenAI (mỗi mục: tối thiểu 2, tối đa 3 nghĩa)."""
+    if not _flash_translate_config_ok():
+        raise HTTPException(status_code=503, detail=_flash_translate_missing_env_detail())
+    cleaned: list[str] = []
+    for t in body.terms:
+        if not isinstance(t, str):
+            continue
+        s = t.strip()
+        if not s:
+            continue
+        if len(s) > 240:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Mục quá dài (tối đa 240 ký tự): {s[:48]}…",
+            )
+        cleaned.append(s)
+    if not cleaned:
+        raise HTTPException(status_code=400, detail="Danh sách mục dịch rỗng.")
+    try:
+        out = flash_terms_translate_batch(cleaned)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    except Exception as e:
+        logger.exception("Flash translate (batch) failed")
+        raise _http_exc_from_flash_translate(e) from e
+    if not out:
+        raise HTTPException(status_code=502, detail="Model trả về bản dịch rỗng.")
+    return FlashTranslateBatchOut(translations=out)
 
 
 @app.get("/api/mock/{name}")

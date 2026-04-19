@@ -4,8 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Để trống = dùng cùng origin (khuyến nghị khi chạy uvicorn). Ví dụ chỉ backend khác cổng: content="http://127.0.0.1:8000" -->
+  <!-- Để trống = gọi API cùng origin (đúng khi mở http://127.0.0.1:8000/chatbot_ui.html qua uvicorn). -->
+  <!-- Nếu mở UI bằng Live Server / cổng khác: bật dòng dưới để dịch flashcard (OpenAI) gọi vào backend FastAPI. -->
   <meta name="teachly-api-base" content="" />
+  <!-- <meta name="teachly-api-base" content="http://127.0.0.1:8000" /> -->
   <title>Teachly AI</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/chatbot-tokens.css" />

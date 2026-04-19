@@ -54,7 +54,18 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
 
   if (guided.kind === "flash" && guided.step === "await_vocab_form" && cardType === "flash_vocab_form") {
     const raw = String(payload.vocabText || "").trim();
-    const { cards } = parseDirectFlashVocabLines(raw);
+    /** @type {Record<string, string>} */
+    let apiBack = {};
+    try {
+      const j = payload.__apiBackJson ? String(payload.__apiBackJson) : "";
+      if (j) {
+        const o = JSON.parse(j);
+        if (o && typeof o === "object") apiBack = /** @type {Record<string, string>} */ (o);
+      }
+    } catch {
+      apiBack = {};
+    }
+    const { cards } = parseDirectFlashVocabLines(raw, apiBack);
     if (!cards.length) {
       return { handled: false, guided, effects: [] };
     }

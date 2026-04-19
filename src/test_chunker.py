@@ -238,10 +238,10 @@ def run_test(use_llm: bool = True) -> None:
     if use_llm:
         try:
             from openai import OpenAI
-            from src.config import OPENAI_API_KEY
+            from src.config import OPENAI_API_KEY, OPENAI_OFFICIAL_BASE_URL
 
             if OPENAI_API_KEY:
-                client = OpenAI(api_key=OPENAI_API_KEY)
+                client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_OFFICIAL_BASE_URL)
                 print(f"[INFO] Sử dụng LLM: {model}")
             else:
                 print("[WARN] Không có OPENAI_API_KEY, dùng heuristic")

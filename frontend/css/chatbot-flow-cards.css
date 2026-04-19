@@ -290,3 +290,121 @@
   width: 16px;
   height: 16px;
 }
+
+/* Flash vocab: in-textarea red highlight (mirror layer behind transparent text) */
+.flow-vocab-editor-stack {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid rgba(16, 35, 58, 0.14);
+  background: rgba(255, 255, 255, 0.95);
+  box-sizing: border-box;
+}
+
+.flow-vocab-editor-stack:focus-within {
+  border-color: rgba(46, 125, 50, 0.55);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.18);
+}
+
+.flow-vocab-highlight-clip {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.flow-vocab-highlight-inner {
+  padding: 8px 10px;
+  box-sizing: border-box;
+  min-height: 100%;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.45;
+  letter-spacing: normal;
+  tab-size: 8;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  will-change: transform;
+}
+
+.flow-vocab-seg--rejected {
+  color: #b91c1c;
+}
+
+.flow-vocab-seg--auto {
+  color: #a16207;
+  background: rgba(254, 243, 199, 0.55);
+  border-radius: 2px;
+}
+
+.flow-vocab-seg--auto-pending {
+  color: #b45309;
+  background: rgba(254, 252, 232, 0.75);
+  border-radius: 2px;
+  border-bottom: 1px dashed rgba(180, 83, 9, 0.45);
+}
+
+.flow-vocab-submit-busy {
+  pointer-events: none;
+  opacity: 0.88;
+  animation: flow-vocab-submit-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes flow-vocab-submit-pulse {
+  0%,
+  100% {
+    opacity: 0.88;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.flow-err.flow-vocab-translate-wait {
+  color: #166534;
+  background: rgba(220, 252, 231, 0.55);
+  border: 1px dashed rgba(46, 125, 50, 0.35);
+}
+
+.flow-vocab-syntax-ta.flow-textarea {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border: none !important;
+  border-radius: 10px;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent;
+  caret-color: var(--text);
+  line-height: 1.45;
+  letter-spacing: normal;
+  tab-size: 8;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.flow-vocab-syntax-ta.flow-textarea:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.flow-vocab-syntax-ta.flow-textarea::selection {
+  background: rgba(76, 175, 80, 0.28);
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+
+.flow-vocab-syntax-ta.flow-textarea::placeholder {
+  color: rgba(16, 35, 58, 0.42);
+  opacity: 1;
+  -webkit-text-fill-color: rgba(16, 35, 58, 0.42);
+  white-space: pre-wrap;
+}

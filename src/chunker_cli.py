@@ -36,7 +36,7 @@ def _build_client(no_llm: bool, model: str):
 
     try:
         from openai import OpenAI
-        from .config import OPENAI_API_KEY
+        from .config import OPENAI_API_KEY, OPENAI_OFFICIAL_BASE_URL
 
         if not OPENAI_API_KEY:
             print(
@@ -45,7 +45,7 @@ def _build_client(no_llm: bool, model: str):
             )
             return None, model
 
-        client = OpenAI(api_key=OPENAI_API_KEY)
+        client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_OFFICIAL_BASE_URL)
         return client, model
     except Exception as e:
         print(f"[WARN] Không thể khởi tạo LLM client: {e}. Dùng heuristic.\n")
