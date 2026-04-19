@@ -8,6 +8,7 @@ const AI_SVG = `<svg class="exp-icon-svg" width="20" height="20" viewBox="0 0 24
 
 /**
  * @param {{ title: string, onAiEdit?: () => void }} p
+ * @returns {{ bar: HTMLDivElement }}
  */
 export function createExperienceTopBar(p) {
   const bar = document.createElement("div");
@@ -43,7 +44,7 @@ export function createExperienceTopBar(p) {
 
   bar.appendChild(left);
   bar.appendChild(right);
-  return bar;
+  return { bar };
 }
 
 /**

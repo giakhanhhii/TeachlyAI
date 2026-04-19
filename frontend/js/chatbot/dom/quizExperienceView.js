@@ -41,7 +41,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     createExperienceTopBar({
       title: titleText,
       onAiEdit: deps?.onAiEdit ? onAiForQuestion : undefined,
-    }),
+    }).bar,
   );
 
   const summary = document.createElement("p");

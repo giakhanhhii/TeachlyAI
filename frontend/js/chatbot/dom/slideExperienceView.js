@@ -2,8 +2,14 @@ import { fetchMockResource } from "../services/mockContentApi.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
-import { buildSlideDeckSrcdoc, syncShellSlideNav } from "../slide/slideShellSrcdoc.js";
+import {
+  buildSlideDeckSrcdoc,
+  setSlideShellNavMode,
+  syncShellSlideNav,
+  setSlideVisualEditMode,
+} from "../slide/slideShellSrcdoc.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
+import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
 
 /**
  * @param {Record<string, string>} meta
@@ -76,11 +82,13 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     deps.onAiEdit(buildAiDraftSlide(meta, index, s));
   };
 
+  let visualEditOn = false;
+
   shell.appendChild(
     createExperienceTopBar({
       title: deckTitle,
       onAiEdit: deps?.onAiEdit ? onAi : undefined,
-    }),
+    }).bar,
   );
 
   const tplLabel = meta.slideTemplate ? String(meta.slideTemplate) : "";
@@ -96,13 +104,213 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const stage = document.createElement("div");
   stage.className = "exp-stage exp-slide-stage";
-  shell.appendChild(stage);
 
   const iframe = document.createElement("iframe");
   iframe.className = "exp-slide-shell-iframe";
   iframe.setAttribute("title", "Slide deck");
   iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
   let shellReady = false;
+
+  function onSlideImagePickerMessage(e) {
+    const layer = document.getElementById("experienceLayer");
+    if (!layer?.classList.contains("visible")) return;
+    if (!e.data || e.data.type !== "a20-slide-edit" || e.data.action !== "open-image-picker") return;
+    if (e.source !== iframe.contentWindow) return;
+    const mountEl =
+      document.fullscreenElement === viewport ||
+      document.webkitFullscreenElement === viewport ||
+      viewport.classList.contains("exp-slide-viewport--faux-fs")
+        ? viewport
+        : document.body;
+    openSlideImagePicker((url) => {
+      try {
+        iframe.contentWindow?.postMessage({ type: "a20-slide-edit", action: "set-image-url", url }, "*");
+      } catch (_) {
+        /* ignore */
+      }
+    }, mountEl);
+  }
+  window.addEventListener("message", onSlideImagePickerMessage);
+
+  /** @type {"presentation" | "scroll"} */
+  let viewMode = "presentation";
+
+  /** Bỏ qua phím ←/→ ngay sau đổi fullscreen (tránh sự kiện lạ kích hoạt chuyển slide). */
+  let suppressArrowNavUntil = 0;
+
+  const modeBar = document.createElement("div");
+  modeBar.className = "exp-slide-mode-bar";
+  const modePresBtn = document.createElement("button");
+  modePresBtn.type = "button";
+  modePresBtn.className = "exp-slide-mode-btn";
+  modePresBtn.textContent = "Trình chiếu";
+  modePresBtn.setAttribute("aria-pressed", "true");
+  const modeScrollBtn = document.createElement("button");
+  modeScrollBtn.type = "button";
+  modeScrollBtn.className = "exp-slide-mode-btn";
+  modeScrollBtn.textContent = "Lướt";
+  modeScrollBtn.setAttribute("aria-pressed", "false");
+  modeBar.append(modePresBtn, modeScrollBtn);
+
+  const viewport = document.createElement("div");
+  viewport.className = "exp-slide-viewport";
+
+  const fsBtn = document.createElement("button");
+  fsBtn.type = "button";
+  fsBtn.className = "exp-slide-fs-btn";
+  fsBtn.setAttribute("aria-label", "Toàn màn hình");
+  fsBtn.title = "Toàn màn hình (chế độ Trình chiếu)";
+  fsBtn.innerHTML =
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m10-18h3a2 2 0 0 1 2 2v3M3 8V5a2 2 0 0 1 2-2h3"/></svg>';
+
+  const visualEditBtn = document.createElement("button");
+  visualEditBtn.type = "button";
+  visualEditBtn.className = "exp-slide-visual-edit-btn";
+  visualEditBtn.disabled = true;
+  visualEditBtn.hidden = true;
+  visualEditBtn.title = "Chỉnh sửa trên slide (kéo, màu, font, ảnh)";
+  visualEditBtn.setAttribute("aria-label", "Chế độ chỉnh sửa slide");
+  visualEditBtn.setAttribute("aria-pressed", "false");
+  visualEditBtn.innerHTML = `<svg class="exp-slide-visual-edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg><span>Sửa</span>`;
+  visualEditBtn.addEventListener("click", () => {
+    if (!shellReady) return;
+    visualEditOn = !visualEditOn;
+    visualEditBtn.classList.toggle("is-active", visualEditOn);
+    visualEditBtn.setAttribute("aria-pressed", visualEditOn ? "true" : "false");
+    setSlideVisualEditMode(iframe, visualEditOn);
+  });
+
+  const prevArrow = document.createElement("button");
+  prevArrow.type = "button";
+  prevArrow.className = "exp-slide-arrow exp-slide-arrow--prev";
+  prevArrow.setAttribute("aria-label", "Slide trước");
+  prevArrow.textContent = "←";
+
+  const nextArrow = document.createElement("button");
+  nextArrow.type = "button";
+  nextArrow.className = "exp-slide-arrow exp-slide-arrow--next";
+  nextArrow.setAttribute("aria-label", "Slide sau");
+  nextArrow.textContent = "→";
+
+  function syncViewModeToIframe() {
+    if (!shellReady) return;
+    setSlideShellNavMode(iframe, viewMode === "scroll" ? "scroll" : "active", index);
+  }
+
+  /** Fullscreen API (trình duyệt) — vẫn xử lý nếu từng có; không dùng cho nút toàn màn hình (xem faux-fs). */
+  function isNativeSlideViewportFullscreen() {
+    return document.fullscreenElement === viewport || document.webkitFullscreenElement === viewport;
+  }
+
+  /** Trình chiếu phủ màn hình: CSS `.exp-slide-viewport--faux-fs` (tránh thoát khi mở chọn tệp). */
+  function isSlidePresentationFullscreen() {
+    return isNativeSlideViewportFullscreen() || viewport.classList.contains("exp-slide-viewport--faux-fs");
+  }
+
+  function paintSlideChrome() {
+    const s = slides[index];
+    const pres = viewMode === "presentation";
+    const fsMode = isSlidePresentationFullscreen();
+    modePresBtn.setAttribute("aria-pressed", pres ? "true" : "false");
+    modeScrollBtn.setAttribute("aria-pressed", pres ? "false" : "true");
+    modePresBtn.classList.toggle("is-selected", pres);
+    modeScrollBtn.classList.toggle("is-selected", !pres);
+    prevArrow.disabled = index <= 0;
+    nextArrow.disabled = !s || index >= total - 1;
+    prevArrow.hidden = !pres || !shellReady;
+    nextArrow.hidden = !pres || !shellReady;
+    fsBtn.hidden = !pres || !shellReady;
+    /* Ẩn Sửa chỉ khi dùng Fullscreen API — chế độ faux-fs vẫn bật Sửa để chọn ảnh */
+    visualEditBtn.hidden = !pres || !shellReady || isNativeSlideViewportFullscreen();
+    modeBar.hidden = !shellReady;
+    fsBtn.setAttribute("aria-label", fsMode ? "Thoát toàn màn hình" : "Toàn màn hình");
+    fsBtn.title = fsMode ? "Thoát toàn màn hình" : "Toàn màn hình (chế độ Trình chiếu)";
+    fsBtn.innerHTML = fsMode
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m10-18h3a2 2 0 0 1 2 2v3M3 8V5a2 2 0 0 1 2-2h3"/></svg>';
+  }
+
+  function applyViewMode(next) {
+    viewport.classList.remove("exp-slide-viewport--faux-fs");
+    if (document.fullscreenElement === viewport) {
+      void document.exitFullscreen();
+    }
+    viewMode = next;
+    syncViewModeToIframe();
+    paintSlideChrome();
+  }
+
+  modePresBtn.addEventListener("click", () => applyViewMode("presentation"));
+  modeScrollBtn.addEventListener("click", () => applyViewMode("scroll"));
+
+  fsBtn.addEventListener("click", () => {
+    if (!shellReady || viewMode !== "presentation") return;
+    if (isNativeSlideViewportFullscreen()) {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (typeof exit === "function") void exit.call(document);
+      return;
+    }
+    viewport.classList.toggle("exp-slide-viewport--faux-fs");
+    suppressArrowNavUntil = performance.now() + 320;
+    paintSlideChrome();
+  });
+
+  function goPrev() {
+    if (index <= 0) return;
+    index -= 1;
+    renderSlide();
+  }
+
+  function goNext() {
+    if (!slides[index]) return;
+    if (index >= total - 1) return;
+    index += 1;
+    renderSlide();
+  }
+
+  prevArrow.addEventListener("click", () => goPrev());
+  nextArrow.addEventListener("click", () => goNext());
+
+  function onFsChange() {
+    suppressArrowNavUntil = performance.now() + 320;
+    const nativeFs = isNativeSlideViewportFullscreen();
+    if (nativeFs && visualEditOn) {
+      visualEditOn = false;
+      setSlideVisualEditMode(iframe, false);
+      visualEditBtn.classList.remove("is-active");
+      visualEditBtn.setAttribute("aria-pressed", "false");
+    }
+    paintSlideChrome();
+  }
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
+
+  function onDocKeydown(e) {
+    const layer = document.getElementById("experienceLayer");
+    if (!layer?.classList.contains("visible") || !shellReady || viewMode !== "presentation") return;
+    if (performance.now() < suppressArrowNavUntil) return;
+    if (
+      e.key === "Escape" &&
+      viewport.classList.contains("exp-slide-viewport--faux-fs") &&
+      !document.querySelector(".exp-slide-img-picker-backdrop")
+    ) {
+      e.preventDefault();
+      viewport.classList.remove("exp-slide-viewport--faux-fs");
+      suppressArrowNavUntil = performance.now() + 320;
+      paintSlideChrome();
+      return;
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      goPrev();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      goNext();
+    }
+  }
+  document.addEventListener("keydown", onDocKeydown);
+
+  shell.appendChild(stage);
 
   const footer = document.createElement("div");
   footer.className = "exp-footer-bar";
@@ -133,6 +341,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     if (shellReady) {
       syncShellSlideNav(iframe, index);
     }
+    paintSlideChrome();
     emitState();
   }
 
@@ -173,11 +382,13 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       const srcdoc = buildSlideDeckSrcdoc(html, slides, {
         ...meta,
         shellYear: String(meta.shellYear || new Date().getFullYear()),
+        slideNavMode: "active",
       });
       stage.innerHTML = "";
       iframe.style.border = "0";
       iframe.style.display = "none";
-      stage.appendChild(iframe);
+      viewport.append(iframe, visualEditBtn, prevArrow, nextArrow, fsBtn);
+      stage.append(modeBar, viewport);
       const loadPromise = new Promise((resolve) => {
         iframe.addEventListener("load", resolve, { once: true });
       });
@@ -190,7 +401,9 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       ]);
       shellReady = true;
       iframe.style.display = "";
-      syncShellSlideNav(iframe, index);
+      viewMode = "presentation";
+      syncViewModeToIframe();
+      visualEditBtn.disabled = false;
       paintNav();
     } catch (err) {
       console.warn("[slide-shell] fallback to plain slide view", err);
@@ -201,5 +414,6 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   })();
 
   root.appendChild(shell);
+  paintSlideChrome();
   renderSlide();
 }

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>English Grammar Ocean</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ultra&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ultra&family=Zilla+Slab:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
@@ -32,11 +34,11 @@
             position: relative;
             overflow: hidden;
             background-color: #6a8bf5;
-            background-image: 
+            background-image:
                 linear-gradient(135deg, #4e66c7 25%, transparent 25%) -20px 0,
                 linear-gradient(225deg, #4e66c7 25%, transparent 25%) -20px 0,
                 linear-gradient(315deg, #4e66c7 25%, transparent 25%),
-                linear-gradient(45deg, #4e66c7 25%, transparent 25%);	
+                linear-gradient(45deg, #4e66c7 25%, transparent 25%);
             background-size: 40px 40px;
             padding: 60px;
             display: flex;
@@ -44,19 +46,26 @@
         }
 
         /* Typography */
-        h1, h2, h3, h4, .title-font {
+        h1,
+        h2,
+        h3,
+        h4,
+        .title-font {
             font-family: 'Ultra', serif;
             color: #121212;
             font-weight: normal;
         }
 
-        p, li, .body-font {
+        p,
+        li,
+        .body-font {
             font-family: 'Zilla Slab', serif;
             color: #121212;
             font-size: 24px;
-            line-height: 1.6; /* Chữ đều và dễ đọc hơn */
+            line-height: 1.6;
+            /* Chữ đều và dễ đọc hơn */
         }
-        
+
         /* Căn đều hai bên cho các đoạn văn bản dài */
         .text-justify {
             text-align: justify;
@@ -71,7 +80,8 @@
             font-size: 60px;
             left: 0;
             z-index: 5;
-            text-shadow: 3px 3px 0 #121212; /* Làm nổi bật tiêu đề ngoài */
+            text-shadow: 3px 3px 0 #121212;
+            /* Làm nổi bật tiêu đề ngoài */
         }
 
         /* Cards */
@@ -97,13 +107,43 @@
             filter: drop-shadow(3px 4px 0px #121212);
             user-select: none;
         }
-        .s-whale { font-size: 110px; } /* Cá voi */
-        .s-nemo { font-size: 90px; } /* Cá nemo/cá hề */
-        .s-starfish { font-size: 85px; } /* Sao biển */
-        .s-seaweed { font-size: 100px; } /* Rong biển */
-        .s-octopus { font-size: 95px; } /* Bạch tuộc */
-        .s-crab { font-size: 80px; } /* Cua */
-        .s-bubble { font-size: 60px; filter: drop-shadow(2px 2px 0px #fff); } /* Bong bóng */
+
+        .s-whale {
+            font-size: 110px;
+        }
+
+        /* Cá voi */
+        .s-nemo {
+            font-size: 90px;
+        }
+
+        /* Cá nemo/cá hề */
+        .s-starfish {
+            font-size: 85px;
+        }
+
+        /* Sao biển */
+        .s-seaweed {
+            font-size: 100px;
+        }
+
+        /* Rong biển */
+        .s-octopus {
+            font-size: 95px;
+        }
+
+        /* Bạch tuộc */
+        .s-crab {
+            font-size: 80px;
+        }
+
+        /* Cua */
+        .s-bubble {
+            font-size: 60px;
+            filter: drop-shadow(2px 2px 0px #fff);
+        }
+
+        /* Bong bóng */
 
         /* Specific Layouts */
         .title-card {
@@ -111,8 +151,18 @@
             align-items: center;
             text-align: center;
         }
-        .title-card h1 { font-size: 70px; line-height: 1.2; margin-bottom: 30px; }
-        .title-card p { font-size: 32px; color: #333; }
+
+        .title-card h1 {
+            font-size: 70px;
+            line-height: 1.2;
+            margin-bottom: 30px;
+        }
+
+        .title-card p {
+            font-size: 32px;
+            color: #333;
+        }
+
         .badge {
             position: absolute;
             top: -20px;
@@ -126,10 +176,21 @@
         }
 
         /* Colors */
-        .bg-orange { background-color: #f26430; }
-        .bg-blue { background-color: #6a8bf5; }
-        .bg-green { background-color: #62b58f; }
-        .bg-pink { background-color: #fce4e4; }
+        .bg-orange {
+            background-color: #f26430;
+        }
+
+        .bg-blue {
+            background-color: #6a8bf5;
+        }
+
+        .bg-green {
+            background-color: #62b58f;
+        }
+
+        .bg-pink {
+            background-color: #fce4e4;
+        }
 
         /* TOC */
         .toc-grid {
@@ -140,7 +201,13 @@
             align-items: center;
             padding: 0 40px;
         }
-        .toc-item { display: flex; align-items: center; gap: 30px; }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
         .circle {
             width: 90px;
             height: 90px;
@@ -155,8 +222,17 @@
             flex-shrink: 0;
             box-shadow: 4px 4px 0 #121212;
         }
-        .toc-item h3 { font-size: 40px; margin-bottom: 10px; }
-        .toc-item p { font-size: 22px; color: #555; line-height: 1.5; }
+
+        .toc-item h3 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .toc-item p {
+            font-size: 22px;
+            color: #555;
+            line-height: 1.5;
+        }
 
         /* Section Title */
         .section-card {
@@ -164,6 +240,7 @@
             justify-content: center;
             text-align: center;
         }
+
         .oval-number {
             width: 250px;
             height: 130px;
@@ -178,8 +255,15 @@
             margin-bottom: 40px;
             box-shadow: 8px 8px 0 #121212;
         }
-        .section-card h1 { font-size: 80px; margin-bottom: 20px; }
-        .section-card p { font-size: 28px; }
+
+        .section-card h1 {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .section-card p {
+            font-size: 28px;
+        }
 
         /* Timeline */
         .timeline-container {
@@ -189,6 +273,7 @@
             height: 100%;
             position: relative;
         }
+
         .timeline-container .line {
             position: absolute;
             top: 50%;
@@ -198,6 +283,7 @@
             background-color: #121212;
             z-index: 1;
         }
+
         .tl-item {
             position: relative;
             z-index: 2;
@@ -208,8 +294,15 @@
             width: 280px;
             text-align: center;
         }
-        .tl-item h3 { font-size: 38px; }
-        .tl-item p { font-size: 22px; line-height: 1.5; }
+
+        .tl-item h3 {
+            font-size: 38px;
+        }
+
+        .tl-item p {
+            font-size: 22px;
+            line-height: 1.5;
+        }
 
         /* 3 Columns */
         .cols-3 {
@@ -230,6 +323,7 @@
             width: 100%;
             height: 100%;
         }
+
         .mini-card {
             background-color: #ffffff;
             border: 3px solid #121212;
@@ -243,8 +337,17 @@
             z-index: 10;
             box-shadow: 6px 6px 0 #121212;
         }
-        .mini-card h3 { font-size: 34px; margin-bottom: 15px; line-height: 1.3;}
-        .mini-card p { font-size: 24px; line-height: 1.5;}
+
+        .mini-card h3 {
+            font-size: 34px;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .mini-card p {
+            font-size: 24px;
+            line-height: 1.5;
+        }
 
         /* Image Layout */
         .image-layout {
@@ -253,6 +356,7 @@
             width: 100%;
             height: 100%;
         }
+
         .image-layout .text-part {
             flex: 1;
             display: flex;
@@ -261,17 +365,24 @@
             text-align: center;
             padding: 40px;
         }
+
         .image-layout .image-wrapper {
             flex: 1;
             border-radius: 40px;
             border: 3px solid #121212;
             overflow: hidden;
-            background: #bde0fe; /* Màu nước biển nhẹ làm nền */
+            background: #bde0fe;
+            /* Màu nước biển nhẹ làm nền */
             position: relative;
             z-index: 10;
             box-shadow: 8px 8px 0 #121212;
         }
-        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         /* Percentages */
         .pct-item {
@@ -282,6 +393,7 @@
             width: 300px;
             gap: 25px;
         }
+
         .doughnut {
             width: 180px;
             height: 180px;
@@ -293,6 +405,7 @@
             position: relative;
             box-shadow: 6px 6px 0 #121212;
         }
+
         .doughnut::before {
             content: '';
             position: absolute;
@@ -302,10 +415,24 @@
             border-radius: 50%;
             border: 3px solid #121212;
         }
-        .doughnut h2 { position: relative; z-index: 2; font-size: 50px; }
-        .d-25 { background: conic-gradient(#f26430 0% 25%, #6a8bf5 25% 100%); }
-        .d-50 { background: conic-gradient(#f26430 0% 50%, #6a8bf5 50% 100%); }
-        .d-75 { background: conic-gradient(#f26430 0% 80%, #6a8bf5 80% 100%); }
+
+        .doughnut h2 {
+            position: relative;
+            z-index: 2;
+            font-size: 50px;
+        }
+
+        .d-25 {
+            background: conic-gradient(#f26430 0% 25%, #6a8bf5 25% 100%);
+        }
+
+        .d-50 {
+            background: conic-gradient(#f26430 0% 50%, #6a8bf5 50% 100%);
+        }
+
+        .d-75 {
+            background: conic-gradient(#f26430 0% 80%, #6a8bf5 80% 100%);
+        }
 
         /* Activity Table */
         .activity-table {
@@ -315,17 +442,33 @@
             height: 250px;
             margin-top: 20px;
         }
-        .activity-table th, .activity-table td {
+
+        .activity-table th,
+        .activity-table td {
             border: 3px solid #121212;
             padding: 20px 30px;
             text-align: left;
             vertical-align: top;
             width: 50%;
         }
-        .activity-table th { font-family: 'Ultra', serif; font-size: 32px; text-align: center; vertical-align: middle; height: 60px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);}
-        .activity-table ul { margin-left: 30px; font-size: 24px; line-height: 1.8;}
+
+        .activity-table th {
+            font-family: 'Ultra', serif;
+            font-size: 32px;
+            text-align: center;
+            vertical-align: middle;
+            height: 60px;
+            box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-table ul {
+            margin-left: 30px;
+            font-size: 24px;
+            line-height: 1.8;
+        }
     </style>
 </head>
+
 <body>
 
     <!-- Slide 1: Title Slide -->
@@ -336,7 +479,7 @@
         <div class="sticker s-nemo" style="bottom: 40px; right: 50px; transform: rotate(15deg) scaleX(-1);">🐠</div>
         <div class="sticker s-starfish" style="top: 50px; right: 80px; transform: rotate(25deg);">⭐</div>
         <div class="sticker s-seaweed" style="bottom: 10px; left: 60px;">🌿</div>
-        
+
         <div class="card title-card">
             <div class="badge">English Class</div>
             <div class="title-content">
@@ -351,25 +494,37 @@
         <div class="sticker s-crab" style="top: 30px; left: 80px; transform: rotate(-15deg);">🦀</div>
         <div class="sticker s-nemo" style="top: 20px; right: 60px; transform: rotate(10deg);">🐠</div>
         <div class="sticker s-seaweed" style="bottom: -20px; left: 50%; transform: translateX(-50%);">🌿</div>
-        
+
         <h2 class="outer-title">What Will We Discover?</h2>
         <div class="card">
             <div class="toc-grid">
                 <div class="toc-item">
                     <div class="circle bg-orange">01</div>
-                    <div><h3>Parts of Speech</h3><p>The building blocks of English sentences.</p></div>
+                    <div>
+                        <h3>Parts of Speech</h3>
+                        <p>The building blocks of English sentences.</p>
+                    </div>
                 </div>
                 <div class="toc-item">
                     <div class="circle bg-blue" style="color:white;">02</div>
-                    <div><h3>The Tenses</h3><p>Navigating through past, present, and future.</p></div>
+                    <div>
+                        <h3>The Tenses</h3>
+                        <p>Navigating through past, present, and future.</p>
+                    </div>
                 </div>
                 <div class="toc-item">
                     <div class="circle bg-green">03</div>
-                    <div><h3>Sentence Structure</h3><p>How to put words together correctly.</p></div>
+                    <div>
+                        <h3>Sentence Structure</h3>
+                        <p>How to put words together correctly.</p>
+                    </div>
                 </div>
                 <div class="toc-item">
                     <div class="circle bg-pink">04</div>
-                    <div><h3>Punctuation</h3><p>The signs that guide our reading flow.</p></div>
+                    <div>
+                        <h3>Punctuation</h3>
+                        <p>The signs that guide our reading flow.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -379,7 +534,7 @@
     <div class="slide-container" id="slide3">
         <div class="sticker s-octopus" style="top: 50px; right: 80px; transform: rotate(10deg);">🐙</div>
         <div class="sticker s-starfish" style="bottom: 50px; left: 60px; transform: rotate(-20deg);">⭐</div>
-        
+
         <div class="card section-card">
             <div class="oval-number bg-pink">01</div>
             <h1>Parts of Speech</h1>
@@ -396,17 +551,20 @@
                 <div class="tl-item">
                     <h3>Nouns</h3>
                     <div class="circle bg-orange">A</div>
-                    <p class="text-justify">Words that name a person, place, thing, or idea. (e.g., Ocean, Fish, Beauty)</p>
+                    <p class="text-justify">Words that name a person, place, thing, or idea. (e.g., Ocean, Fish, Beauty)
+                    </p>
                 </div>
                 <div class="tl-item">
                     <h3>Verbs</h3>
                     <div class="circle bg-green">B</div>
-                    <p class="text-justify">Action words! They show what the noun is doing. (e.g., Swim, Splash, Dive)</p>
+                    <p class="text-justify">Action words! They show what the noun is doing. (e.g., Swim, Splash, Dive)
+                    </p>
                 </div>
                 <div class="tl-item">
                     <h3>Adjectives</h3>
                     <div class="circle bg-blue" style="color:white;">C</div>
-                    <p class="text-justify">Descriptive words that give more details about nouns. (e.g., Deep, Blue, Huge)</p>
+                    <p class="text-justify">Descriptive words that give more details about nouns. (e.g., Deep, Blue,
+                        Huge)</p>
                 </div>
             </div>
         </div>
@@ -417,10 +575,12 @@
         <div class="sticker s-whale" style="bottom: 30px; left: 40px; transform: rotate(15deg);">🐳</div>
         <div class="sticker s-bubble" style="bottom: 120px; left: 160px;">🫧</div>
         <div class="sticker s-crab" style="top: 40px; right: 80px; transform: rotate(-10deg);">🦀</div>
-        
+
         <div class="card title-card">
             <h1 style="font-size: 110px;">Did You Know?</h1>
-            <p style="font-size: 34px; max-width: 800px; line-height: 1.6;">There are over <strong style="color: #f26430;">1 million words</strong> in English, but you only need to know a few thousand to swim smoothly in conversations!</p>
+            <p style="font-size: 34px; max-width: 800px; line-height: 1.6;">There are over <strong
+                    style="color: #f26430;">1 million words</strong> in English, but you only need to know a few
+                thousand to swim smoothly in conversations!</p>
         </div>
     </div>
 
@@ -428,7 +588,7 @@
     <div class="slide-container" id="slide6">
         <div class="sticker s-starfish" style="top: 60px; left: 50px; transform: rotate(45deg);">⭐</div>
         <div class="sticker s-nemo" style="bottom: 40px; right: 50px; transform: rotate(-10deg);">🐠</div>
-        
+
         <div class="card section-card">
             <div class="oval-number bg-blue" style="color:white;">02</div>
             <h1>The Tenses</h1>
@@ -445,17 +605,20 @@
                 <div class="tl-item">
                     <div class="circle bg-orange">Past</div>
                     <h3>Yesterday</h3>
-                    <p class="text-justify">Things that already happened. We usually add <b>-ed</b> to regular verbs.<br><em>"The fish swamm away."</em></p>
+                    <p class="text-justify">Things that already happened. We usually add <b>-ed</b> to regular
+                        verbs.<br><em>"The fish swamm away."</em></p>
                 </div>
                 <div class="tl-item">
                     <div class="circle bg-green">Now</div>
                     <h3>Present</h3>
-                    <p class="text-justify">Things happening right now or general facts.<br><em>"The ocean is very deep."</em></p>
+                    <p class="text-justify">Things happening right now or general facts.<br><em>"The ocean is very
+                            deep."</em></p>
                 </div>
                 <div class="tl-item">
                     <div class="circle bg-blue" style="color:white; font-size: 24px;">Future</div>
                     <h3>Tomorrow</h3>
-                    <p class="text-justify">Things that have not happened yet. We use <b>will</b> or <b>going to</b>.<br><em>"We will explore the reef."</em></p>
+                    <p class="text-justify">Things that have not happened yet. We use <b>will</b> or <b>going
+                            to</b>.<br><em>"We will explore the reef."</em></p>
                 </div>
             </div>
         </div>
@@ -488,7 +651,7 @@
     <div class="slide-container" id="slide9">
         <div class="sticker s-seaweed" style="top: 50px; right: 60px;">🌿</div>
         <div class="sticker s-octopus" style="bottom: 30px; left: 40px; transform: rotate(-25deg);">🐙</div>
-        
+
         <div class="card section-card">
             <div class="oval-number bg-green">03</div>
             <h1>Sentence Structure</h1>
@@ -501,11 +664,14 @@
         <h2 class="outer-title" style="text-align: left; left: 60px;">The Golden Rule: S - V - O</h2>
         <div class="image-layout">
             <div class="card text-part">
-                <p class="text-justify" style="font-size: 28px;">Most English sentences follow a strict order: <b>Subject</b> (who does the action), <b>Verb</b> (the action), and <b>Object</b> (who receives it).<br><br><span style="color: #f26430;">The whale (S) eats (V) the plankton (O).</span></p>
+                <p class="text-justify" style="font-size: 28px;">Most English sentences follow a strict order:
+                    <b>Subject</b> (who does the action), <b>Verb</b> (the action), and <b>Object</b> (who receives
+                    it).<br><br><span style="color: #f26430;">The whale (S) eats (V) the plankton (O).</span></p>
             </div>
             <div class="image-wrapper">
                 <!-- Using Unsplash image for a whale/ocean scene to represent the subject-verb-object context beautifully -->
-                <img src="https://images.unsplash.com/photo-1568430462989-44163eb1752f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Beautiful whale tail in the ocean">
+                <img src="https://images.unsplash.com/photo-1568430462989-44163eb1752f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Beautiful whale tail in the ocean">
             </div>
         </div>
     </div>
@@ -518,17 +684,20 @@
                 <div class="tl-item">
                     <div class="circle bg-orange" style="font-size: 28px;">Simple</div>
                     <h3>Simple</h3>
-                    <p class="text-justify">Contains one independent clause with a subject and a verb. <em>"The crab walks."</em></p>
+                    <p class="text-justify">Contains one independent clause with a subject and a verb. <em>"The crab
+                            walks."</em></p>
                 </div>
                 <div class="tl-item">
                     <div class="circle bg-green" style="font-size: 22px;">Compound</div>
                     <h3>Compound</h3>
-                    <p class="text-justify">Two simple sentences joined by words like <b>and, but, so</b>. <em>"The sun is hot, so we swim."</em></p>
+                    <p class="text-justify">Two simple sentences joined by words like <b>and, but, so</b>. <em>"The sun
+                            is hot, so we swim."</em></p>
                 </div>
                 <div class="tl-item">
                     <div class="circle bg-blue" style="color:white; font-size: 24px;">Complex</div>
                     <h3>Complex</h3>
-                    <p class="text-justify">An independent clause plus a dependent clause. <em>"Because it rained, the sea was rough."</em></p>
+                    <p class="text-justify">An independent clause plus a dependent clause. <em>"Because it rained, the
+                            sea was rough."</em></p>
                 </div>
             </div>
         </div>
@@ -539,10 +708,12 @@
         <h2 class="outer-title" style="text-align: right; right: 60px;">Connecting Words</h2>
         <div class="image-layout">
             <div class="image-wrapper">
-                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="School of fish swimming together like connecting words">
+                <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="School of fish swimming together like connecting words">
             </div>
             <div class="card text-part">
-                <p class="text-justify" style="font-size: 28px;"><b>Conjunctions</b> are like the glue of grammar! Words like <em>and, but, or, because</em> help connect small sentences into bigger, better ideas.</p>
+                <p class="text-justify" style="font-size: 28px;"><b>Conjunctions</b> are like the glue of grammar! Words
+                    like <em>and, but, or, because</em> help connect small sentences into bigger, better ideas.</p>
             </div>
         </div>
     </div>
@@ -550,19 +721,26 @@
     <!-- Slide 13: Percentages (Fun facts) -->
     <div class="slide-container" id="slide13" style="padding-top: 120px;">
         <h2 class="outer-title">Grammar by the Numbers</h2>
-        <div class="card" style="flex-direction: row; justify-content: space-around; align-items: center; padding: 20px;">
+        <div class="card"
+            style="flex-direction: row; justify-content: space-around; align-items: center; padding: 20px;">
             <div class="pct-item">
-                <div class="doughnut d-50"><h2>50%</h2></div>
+                <div class="doughnut d-50">
+                    <h2>50%</h2>
+                </div>
                 <h3>Verbs ending</h3>
                 <p>Nearly 50% of verbs in past tense are regular (adding -ed).</p>
             </div>
             <div class="pct-item">
-                <div class="doughnut d-75"><h2>75%</h2></div>
+                <div class="doughnut d-75">
+                    <h2>75%</h2>
+                </div>
                 <h3>Subject First</h3>
                 <p>In 75% of languages, the Subject comes before the Object.</p>
             </div>
             <div class="pct-item">
-                <div class="doughnut d-25"><h2>25%</h2></div>
+                <div class="doughnut d-25">
+                    <h2>25%</h2>
+                </div>
                 <h3>Exceptions</h3>
                 <p>About 25% of English rules have weird exceptions. Just learn them!</p>
             </div>
@@ -573,7 +751,7 @@
     <div class="slide-container" id="slide14">
         <div class="sticker s-crab" style="top: 40px; left: 100px; transform: rotate(20deg);">🦀</div>
         <div class="sticker s-nemo" style="bottom: 20px; right: 80px; transform: rotate(-10deg) scaleX(-1);">🐠</div>
-        
+
         <div class="card section-card">
             <div class="oval-number bg-orange">04</div>
             <h1>Punctuation</h1>
@@ -595,7 +773,8 @@
                 </p>
             </div>
             <div class="image-wrapper">
-                <img src="https://images.unsplash.com/photo-1610006935756-32d5e7512270?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Ocean waves stopping at the shore">
+                <img src="https://images.unsplash.com/photo-1610006935756-32d5e7512270?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Ocean waves stopping at the shore">
             </div>
         </div>
     </div>
@@ -605,7 +784,8 @@
         <div class="sticker s-seaweed" style="top: 30px; right: 40px;">🌿</div>
         <h2 class="outer-title">Common Mistakes: Do & Don't</h2>
         <div class="card">
-            <p style="margin-bottom: 20px; text-align: center;">Let's compare the correct and incorrect ways to write.</p>
+            <p style="margin-bottom: 20px; text-align: center;">Let's compare the correct and incorrect ways to write.
+            </p>
             <table class="activity-table">
                 <tr>
                     <th class="bg-green">Correct (Do This!)</th>
@@ -683,10 +863,11 @@
     <div class="slide-container" id="slide19">
         <div class="sticker s-octopus" style="top: 50px; right: 80px; transform: rotate(-15deg);">🐙</div>
         <div class="sticker s-whale" style="bottom: 40px; left: 60px; transform: rotate(10deg);">🐳</div>
-        
+
         <div class="card title-card">
             <h1 style="font-size: 70px; margin-bottom: 20px;">Remember...</h1>
-            <p style="font-size: 34px; color: #52b788; line-height: 1.5; max-width: 900px;">"Grammar is not just a set of strict rules. It is the magic wand that makes your communication clear and powerful!"</p>
+            <p style="font-size: 34px; color: #52b788; line-height: 1.5; max-width: 900px;">"Grammar is not just a set
+                of strict rules. It is the magic wand that makes your communication clear and powerful!"</p>
         </div>
     </div>
 
@@ -695,7 +876,7 @@
         <div class="sticker s-nemo" style="top: 50px; left: 60px; transform: rotate(15deg);">🐠</div>
         <div class="sticker s-crab" style="bottom: 30px; right: 50px; transform: rotate(-25deg);">🦀</div>
         <div class="sticker s-starfish" style="top: 40px; right: 100px; transform: rotate(15deg);">⭐</div>
-        
+
         <div class="card title-card">
             <div class="badge">The End</div>
             <div class="title-content">
@@ -706,5 +887,6 @@
     </div>
 
 </body>
+
 </html>
 ```

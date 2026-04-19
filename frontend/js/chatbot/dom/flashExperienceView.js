@@ -75,7 +75,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     createExperienceTopBar({
       title: titleText,
       onAiEdit: deps?.onAiEdit ? onAi : undefined,
-    }),
+    }).bar,
   );
 
   const metaEl = document.createElement("p");
