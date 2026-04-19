@@ -9,7 +9,13 @@ export function computeFlowCardBack(guided, cardType) {
   if (!guided) return { handled: false, guided, effects: [] };
 
   const { kind, step } = guided;
-  if (step === "await_topic_form" || step === "await_pdf_confirm" || step === "await_pdf_meta" || step === "await_pdf_file") {
+  if (
+    step === "await_topic_form" ||
+    step === "await_vocab_form" ||
+    step === "await_pdf_confirm" ||
+    step === "await_pdf_meta" ||
+    step === "await_pdf_file"
+  ) {
     return {
       handled: true,
       guided: { kind, step: "await_source", data: {} },

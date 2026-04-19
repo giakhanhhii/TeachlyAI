@@ -8,6 +8,7 @@ function isWideFlowFormCardType(cardType) {
     cardType === "slide_form" ||
     cardType === "quiz_form" ||
     cardType === "flash_form" ||
+    cardType === "flash_vocab_form" ||
     cardType === "slide_pdf_meta" ||
     cardType === "quiz_pdf_meta" ||
     cardType === "flash_pdf_meta"

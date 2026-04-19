@@ -1,5 +1,6 @@
 import { takePendingPdfFile } from "../pdfPrefillStore.js";
 import { createFlashcardFormCard } from "./cards/flashCard.js";
+import { createFlashVocabFormCard } from "./cards/flashVocabCard.js";
 import { createFullsetPdfCard, createFullsetTopicCard } from "./cards/fullsetCards.js";
 import { createPickPdfGateCard, createFlashPdfMetaCard, createQuizPdfMetaCard, createSlidePdfMetaCard } from "./cards/pdfCards.js";
 import { createQuizFormCard } from "./cards/quizCard.js";
@@ -13,6 +14,7 @@ export {
   createSlideFormCard,
   createQuizFormCard,
   createFlashcardFormCard,
+  createFlashVocabFormCard,
 };
 
 /**
@@ -41,6 +43,8 @@ export function createFlowCard(cardType, deps) {
       return createQuizFormCard(deps);
     case "flash_form":
       return createFlashcardFormCard(deps);
+    case "flash_vocab_form":
+      return createFlashVocabFormCard(deps);
     default:
       return el("div", "flow-card", "");
   }

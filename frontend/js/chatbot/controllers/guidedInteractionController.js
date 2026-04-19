@@ -20,6 +20,7 @@ function recoverGuidedForOrphanTopicForm(cardType) {
   if (cardType === "slide_form") return { kind: "slide", step: "await_topic_form", data: {} };
   if (cardType === "quiz_form") return { kind: "quiz", step: "await_topic_form", data: {} };
   if (cardType === "flash_form") return { kind: "flash", step: "await_topic_form", data: {} };
+  if (cardType === "flash_vocab_form") return { kind: "flash", step: "await_vocab_form", data: {} };
   if (cardType === "fullset_topic") return { kind: "fullset", step: "await_topic_form", data: {} };
   return null;
 }
