@@ -15,7 +15,7 @@ export function createFlashVocabFormCard(deps) {
     wrapField(
       "Danh sách (mỗi dòng một thẻ)",
       ta,
-      "Định dạng: từ hoặc cụm mặt trước, dấu hai chấm, rồi nghĩa / mặt sau. Ví dụ: preserve: bảo tồn, giữ gìn — phần trước dấu : là mặt trước thẻ, phần sau là mặt sau. Tối đa 40 thẻ.",
+      "Định dạng: từ hoặc cụm mặt trước, dấu hai chấm, rồi nghĩa / mặt sau. Từ đầu tiên trước dấu : phải là tiếng Anh (chữ A–Z); dòng kiểu Buổi 19: ... sẽ được bỏ qua. Ví dụ: preserve: bảo tồn, giữ gìn. Tối đa 40 thẻ.",
     ),
   );
 
@@ -32,11 +32,20 @@ export function createFlashVocabFormCard(deps) {
   submit.addEventListener("click", () => {
     err.style.display = "none";
     const body = ta.value.trim();
-    const { cards, invalidLines } = parseDirectFlashVocabLines(body);
+    const { cards, invalidLines, skippedNonEnglish } = parseDirectFlashVocabLines(body);
     if (!cards.length) {
-      err.textContent = invalidLines.length
-        ? "Chưa có dòng hợp lệ. Mỗi dòng cần có dạng \"từ: nghĩa\" (có dấu hai chấm, không để trống hai bên)."
-        : "Hãy nhập ít nhất một dòng theo dạng từ: nghĩa.";
+      if (skippedNonEnglish > 0 && !invalidLines.length) {
+        err.textContent =
+          "Các dòng đã bỏ qua vì từ đầu tiên trước dấu : không phải tiếng Anh (chữ Latin A–Z). Thêm ít nhất một dòng như preserve: bảo tồn, giữ gìn.";
+      } else if (skippedNonEnglish > 0 && invalidLines.length) {
+        err.textContent =
+          "Chưa có thẻ hợp lệ: sửa các dòng sai định dạng và đảm bảo từ đầu tiên trước dấu : là tiếng Anh (ví dụ abandon: từ bỏ).";
+      } else if (invalidLines.length) {
+        err.textContent =
+          "Chưa có dòng hợp lệ. Mỗi dòng cần có dạng \"từ: nghĩa\" (có dấu hai chấm, không để trống hai bên).";
+      } else {
+        err.textContent = "Hãy nhập ít nhất một dòng theo dạng từ: nghĩa.";
+      }
       err.style.display = "block";
       return;
     }
