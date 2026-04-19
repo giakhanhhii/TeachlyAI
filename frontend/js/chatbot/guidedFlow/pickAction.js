@@ -106,8 +106,7 @@ function handleSingleModePick(guided, value, pdfFile) {
         { type: "pushUser", text: "Nhập từ vựng trực tiếp" },
         {
           type: "pushBot",
-          text:
-            "Mỗi dòng một thẻ theo dạng từ: nghĩa — ví dụ preserve: bảo tồn, giữ gìn. Phần trước dấu hai chấm là mặt trước thẻ, phần sau là mặt sau.",
+          text: "",
           cardType: "flash_vocab_form",
         },
       ],

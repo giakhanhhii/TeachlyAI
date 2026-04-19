@@ -5,7 +5,7 @@ Receives user input, calls tools as needed, and returns results.
 
 import logging
 from openai import OpenAI
-from .config import  DEFAULT_MODEL, LOG_LEVEL, OPENAI_API_KEY
+from .config import DEFAULT_MODEL, LOG_LEVEL, OPENAI_API_KEY, OPENAI_OFFICIAL_BASE_URL
 from .tools import get_tool_schemas, execute_tool
 from tools import LectureTools
 
@@ -20,7 +20,7 @@ Think step by step and use tools when necessary."""
 def create_agent():
     if not OPENAI_API_KEY:
         raise ValueError("OPENAI_API_KEY is not configured")
-    return OpenAI(api_key=OPENAI_API_KEY)
+    return OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_OFFICIAL_BASE_URL)
 
 
 def run_agent_loop(client, user_input: str, max_turns: int = 10) -> str:
