@@ -33,4 +33,4 @@ A "paralyzed" system usually means the `init()` function in `chatController.js` 
 - "+ New Chat" button works (creates a new session).
 - Sidebar can be collapsed/expanded.
 - All 4 hub cards (Full Set, Slide, Quiz, Flashcard) are clickable and initiate the corresponding flow.
-- No red error messages remain in the browser console
+- No red error messages remain in the browser console.
