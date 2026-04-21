@@ -307,6 +307,7 @@
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
+  pointer-events: none;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -316,6 +317,11 @@
   text-align: center;
   border: 2px solid var(--green);
   box-shadow: 0 8px 24px rgba(27, 94, 32, 0.12);
+}
+
+.flash-card:not(.flipped) .flash-front,
+.flash-card.flipped .flash-back {
+  pointer-events: auto;
 }
 
 .flash-front {
