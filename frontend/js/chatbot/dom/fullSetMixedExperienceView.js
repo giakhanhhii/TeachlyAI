@@ -4,10 +4,58 @@ import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav } from "../slide/slideShellSrcdoc.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
-import { buildQuizStepOrder, buildAiDraftQuiz, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
+import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
+
+function cloneMixedStep(step) {
+  if (!step || typeof step !== "object") return null;
+  const kind = step.kind === "slide_deck" || step.kind === "quiz" || step.kind === "flash" ? step.kind : "";
+  if (!kind) return null;
+  if (kind === "slide_deck") {
+    const slides = Array.isArray(step.data?.slides) ? step.data.slides.map((slide) => ({ ...slide })) : [];
+    return { kind, data: { slides } };
+  }
+  return { kind, data: step.data && typeof step.data === "object" ? { ...step.data } : step.data };
+}
+
+function cloneMixedSteps(steps) {
+  return Array.isArray(steps) ? steps.map(cloneMixedStep).filter(Boolean) : [];
+}
+
+function buildMixedStepFingerprint(step) {
+  if (!step || typeof step !== "object") return "";
+  if (step.kind === "slide_deck") {
+    const slides = Array.isArray(step.data?.slides) ? step.data.slides : [];
+    const firstTitle = String(slides[0]?.title || "").trim().toLowerCase();
+    return `slide:${slides.length}:${firstTitle}`;
+  }
+  if (step.kind === "quiz") {
+    const text = String(step.data?.text || "").replace(/\s+/g, " ").trim().toLowerCase();
+    return `quiz:${text}`;
+  }
+  if (step.kind === "flash") {
+    const id = String(step.data?.id || "").trim();
+    if (id) return `flash:id:${id}`;
+    const front = String(step.data?.front || "").trim().toLowerCase();
+    const back = String(step.data?.back || "").trim().toLowerCase();
+    const phonetic = String(step.data?.phonetic || "").trim().toLowerCase();
+    const hint = String(step.data?.hint || "").trim().toLowerCase();
+    return `flash:${front}::${back}::${phonetic}::${hint}`;
+  }
+  return "";
+}
+
+function buildMixedStepKeys(steps) {
+  const counts = new Map();
+  return steps.map((step) => {
+    const fingerprint = buildMixedStepFingerprint(step);
+    const nextCount = (counts.get(fingerprint) || 0) + 1;
+    counts.set(fingerprint, nextCount);
+    return `${fingerprint}#${nextCount}`;
+  });
+}
 
 /**
  * @typedef {{ topic: string, level: string, slides: string, quiz: string, flash: string, extra?: string, slideTemplate?: string }} FullSetMixedSpec
@@ -24,6 +72,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   hookFlashSpeechVoicesOnce();
   const root = layerView.body;
   root.innerHTML = "";
+  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
   const topic = spec.topic || "—";
   const notesLine = spec.extra ? ` | Yêu cầu thêm: ${spec.extra}` : "";
@@ -34,22 +83,52 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const slideMeta = { topic, count: spec.slides, notes: slideNotes };
   const quizMeta = { topic, count: spec.quiz, notes: "Full set (demo mock)" };
   const flashMeta = { source: topic, count: spec.flash, extra: "Full set (demo mock)" };
-  const [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
-  const slideData = prepareSlideSessionData(rawSlide, slideMeta);
-  const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
-  const flashData = prepareFlashSessionData(rawFlash, flashMeta);
-  const slides = Array.isArray(slideData.slides) ? slideData.slides : [];
-  const questions = Array.isArray(quizData.questions) ? quizData.questions : [];
-  const cards = Array.isArray(flashData.cards) ? flashData.cards : [];
-  /** Một bước slide = cả bộ trong iframe (giống thẻ Slide), tránh lặp một slide. */
+  const restoredSteps = cloneMixedSteps(initial?.stepsSnapshot);
+  let titleText = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : bundle.title || "Full set — ôn tập trộn";
   /** @type {{ kind: "slide_deck"|"quiz"|"flash", data: any }[]} */
-  const steps = [
-    ...(slides.length ? [{ kind: /** @type {"slide_deck"} */ ("slide_deck"), data: { slides } }] : []),
-    ...questions.map((data) => ({ kind: /** @type {"quiz"} */ ("quiz"), data })),
-    ...cards.map((data) => ({ kind: /** @type {"flash"} */ ("flash"), data })),
-  ];
-  shuffleInPlace(steps);
-  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  let steps = restoredSteps;
+  let slides = [];
+  let questions = [];
+  let cards = [];
+  if (!steps.length) {
+    const [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+    const slideData = prepareSlideSessionData(rawSlide, slideMeta);
+    const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
+    const flashData = prepareFlashSessionData(rawFlash, flashMeta);
+    titleText = quizData.title || slideData.title || bundle.title || "Full set — ôn tập trộn";
+    slides = Array.isArray(slideData.slides) ? slideData.slides : [];
+    questions = Array.isArray(quizData.questions) ? quizData.questions : [];
+    cards = Array.isArray(flashData.cards) ? flashData.cards : [];
+    steps = [
+      ...(slides.length ? [{ kind: /** @type {"slide_deck"} */ ("slide_deck"), data: { slides } }] : []),
+      ...questions.map((data) => ({ kind: /** @type {"quiz"} */ ("quiz"), data })),
+      ...cards.map((data) => ({ kind: /** @type {"flash"} */ ("flash"), data })),
+    ];
+    shuffleInPlace(steps);
+  }
+  if (!slides.length) {
+    const slideDeckStep = steps.find((step) => step?.kind === "slide_deck");
+    slides = Array.isArray(slideDeckStep?.data?.slides) ? slideDeckStep.data.slides : [];
+  }
+  if (!questions.length) questions = steps.filter((step) => step?.kind === "quiz").map((step) => step.data);
+  if (!cards.length) cards = steps.filter((step) => step?.kind === "flash").map((step) => step.data);
+  const stepKeys = buildMixedStepKeys(steps);
+  const stepKeySet = new Set(stepKeys);
+  const flashStepIndices = steps.reduce((acc, step, stepIndex) => {
+    if (step?.kind === "flash") acc.push(stepIndex);
+    return acc;
+  }, []);
+  const initialBookmarkedStepKeys = Array.isArray(initial?.bookmarkedStepKeys) ? initial.bookmarkedStepKeys.map(String) : [];
+  let bookmarkedStepKeys = new Set(initialBookmarkedStepKeys.filter((key) => stepKeySet.has(key)));
+  let bookmarkFilter = Boolean(initial?.bookmarkFilter) && bookmarkedStepKeys.size > 0;
+  let lastAllStepKey =
+    typeof initial?.lastAllStepKey === "string" && stepKeySet.has(initial.lastAllStepKey)
+      ? initial.lastAllStepKey
+      : stepKeys[0] || "";
+  let lastBookmarkStepKey =
+    typeof initial?.lastBookmarkStepKey === "string" && stepKeySet.has(initial.lastBookmarkStepKey)
+      ? initial.lastBookmarkStepKey
+      : "";
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   let correct = 0;
   let wrong = 0;
@@ -74,13 +153,28 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
-  const titleText = quizData.title || slideData.title || bundle.title || "Full set — ôn tập trộn";
-  const onAi = () => {
-    const step = steps[index];
-    if (!step || step.kind !== "quiz" || !deps?.onAiEdit) return;
-    deps.onAiEdit(buildAiDraftQuiz(quizMeta, index, step.data));
-  };
-  shell.appendChild(createExperienceTopBar({ title: titleText, onAiEdit: deps?.onAiEdit ? onAi : undefined }).bar);
+  const topBar = createExperienceTopBar({ title: titleText }).bar;
+  topBar.classList.add("exp-topbar-flash");
+  topBar.addEventListener("animationend", (event) => {
+    if (event.target === topBar) topBar.classList.remove("flash-bookmark-feedback");
+  });
+  const topBarRight = topBar.querySelector(".exp-topbar-right");
+  const bookmarkControl = document.createElement("div");
+  bookmarkControl.className = "flash-bookmark-control";
+  const bookmarkFilterBtn = document.createElement("button");
+  bookmarkFilterBtn.type = "button";
+  bookmarkFilterBtn.className = "flash-bookmark-filter-btn";
+  bookmarkFilterBtn.innerHTML = `
+    <svg class="flash-bookmark-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 3.75h10a1.25 1.25 0 0 1 1.25 1.25v15.22L12 16.6 5.75 20.22V5A1.25 1.25 0 0 1 7 3.75z" />
+    </svg>
+    <span class="flash-bookmark-filter-text">Bookmark</span>
+    <span class="flash-bookmark-filter-badge">0</span>
+  `;
+  const bookmarkFilterBadge = bookmarkFilterBtn.querySelector(".flash-bookmark-filter-badge");
+  bookmarkControl.appendChild(bookmarkFilterBtn);
+  topBarRight?.insertBefore(bookmarkControl, topBarRight.firstChild || null);
+  shell.appendChild(topBar);
   const summary = document.createElement("p");
   summary.className = "exp-meta-line";
   const sum = slides.length + questions.length + cards.length;
@@ -106,6 +200,70 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     refreshScore();
     emitState();
   }
+  function clampStepIndex(value) {
+    if (!Number.isFinite(Number(value))) return 0;
+    return Math.min(Math.max(0, Math.floor(Number(value))), Math.max(0, steps.length - 1));
+  }
+  function getVisibleStepIndices() {
+    if (!bookmarkFilter) return steps.map((_, stepIndex) => stepIndex);
+    return flashStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+  }
+  function resolveNearestVisibleStepIndex(visibleIndices, preferredIndex) {
+    const safePreferred = clampStepIndex(preferredIndex);
+    if (!visibleIndices.length) return 0;
+    if (visibleIndices.includes(safePreferred)) return safePreferred;
+    const nextVisible = visibleIndices.find((stepIndex) => stepIndex >= safePreferred);
+    return Number.isFinite(nextVisible) ? nextVisible : visibleIndices[visibleIndices.length - 1];
+  }
+  function syncVisibleState(preferredIndex = index) {
+    if (bookmarkFilter && bookmarkedStepKeys.size === 0) bookmarkFilter = false;
+    const visibleIndices = getVisibleStepIndices();
+    if (!visibleIndices.length) {
+      index = 0;
+      return { visibleIndices, visibleIndex: -1 };
+    }
+    index = resolveNearestVisibleStepIndex(visibleIndices, preferredIndex);
+    return { visibleIndices, visibleIndex: visibleIndices.indexOf(index) };
+  }
+  function triggerTopbarBookmarkFeedback() {
+    topBar.classList.remove("flash-bookmark-feedback");
+    void topBar.offsetWidth;
+    topBar.classList.add("flash-bookmark-feedback");
+  }
+  function restoreAllViewIndex() {
+    const resumeAllIndex = lastAllStepKey ? stepKeys.indexOf(lastAllStepKey) : -1;
+    if (resumeAllIndex >= 0) index = resumeAllIndex;
+  }
+  function renderBookmarkChrome() {
+    const bookmarkCount = bookmarkedStepKeys.size;
+    const hasBookmarks = bookmarkCount > 0;
+    bookmarkControl.classList.toggle("has-bookmarks", hasBookmarks);
+    if (!hasBookmarks) bookmarkFilter = false;
+    bookmarkFilterBtn.classList.toggle("active", bookmarkFilter);
+    bookmarkFilterBtn.disabled = !hasBookmarks;
+    if (bookmarkFilterBadge) bookmarkFilterBadge.textContent = String(bookmarkCount);
+    bookmarkFilterBtn.title = bookmarkFilter
+      ? `Đang xem ${bookmarkCount} flashcard đã bookmark. Bấm lần nữa để quay lại tất cả.`
+      : `Chỉ xem ${bookmarkCount} flashcard đã bookmark`;
+  }
+  function paintBookmarkedProgressSegments(visibleIndices) {
+    const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
+    const currentVisibleIndex = visibleIndices.indexOf(index);
+    segments.forEach((segment, segmentIndex) => {
+      const baseIndex = visibleIndices[segmentIndex];
+      const isBookmarkedFlash =
+        Number.isFinite(baseIndex) && steps[baseIndex]?.kind === "flash" && bookmarkedStepKeys.has(stepKeys[baseIndex]);
+      const shouldHighlight = bookmarkFilter ? segmentIndex <= currentVisibleIndex : Boolean(isBookmarkedFlash);
+      segment.classList.toggle("bookmarked", Boolean(isBookmarkedFlash && shouldHighlight));
+    });
+  }
+  function repaintCurrentProgress() {
+    const visibleIndices = bookmarkFilter ? getVisibleStepIndices() : steps.map((_, stepIndex) => stepIndex);
+    const visibleTotal = Math.max(1, visibleIndices.length);
+    const visibleIndex = Math.max(0, visibleIndices.indexOf(index));
+    progress.paint({ total: visibleTotal, index: visibleIndex, correct, wrong });
+    paintBookmarkedProgressSegments(visibleIndices);
+  }
   function emitState() {
     if (typeof opts.onStateChange !== "function") return;
     opts.onStateChange({
@@ -114,6 +272,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       spec: { ...spec },
       total: steps.length,
       index,
+      currentStepKey: stepKeys[index] || "",
       quizSelectedByStep: [...quizSelectedByStep],
       quizRevealedByStep: [...quizRevealedByStep],
       quizCountedByStep: [...quizCountedByStep],
@@ -123,11 +282,19 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       correct,
       wrong,
       slideDeckIndex,
+      stepsSnapshot: cloneMixedSteps(steps),
+      bookmarkedStepKeys: [...bookmarkedStepKeys],
+      bookmarkFilter,
+      lastAllStepKey,
+      lastBookmarkStepKey,
     });
   }
   function exitReviewToLastStep() {
     reviewMode = false;
-    index = Math.max(0, steps.length - 1);
+    const visibleIndices = getVisibleStepIndices();
+    index = bookmarkFilter
+      ? Math.max(0, visibleIndices.length ? visibleIndices[visibleIndices.length - 1] : 0)
+      : Math.max(0, steps.length - 1);
     footer.hidden = false;
     renderStep();
   }
@@ -139,7 +306,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     stage.className = "exp-stage";
     footer.hidden = true;
     refreshScore();
-    progress.paint({ total, index: Math.max(0, steps.length - 1), correct, wrong });
+    renderBookmarkChrome();
+    repaintCurrentProgress();
     renderFullSetMixedReviewView({
       stage,
       steps,
@@ -163,6 +331,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
   function refreshMixedNavChrome() {
     const st = steps[index];
+    if (bookmarkFilter) {
+      const visibleIndices = getVisibleStepIndices();
+      const visibleIndex = visibleIndices.indexOf(index);
+      backBtn.disabled = visibleIndex <= 0;
+      nextBtn.textContent = visibleIndex >= visibleIndices.length - 1 ? "Xem tất cả" : "Tiếp theo";
+      return;
+    }
     if (st?.kind === "slide_deck") {
       const dl = (st.data.slides || []).length;
       const atFirst = dl === 0 || slideDeckIndex <= 0;
@@ -183,6 +358,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     slideUiAbort = null;
     activeSlideDeckShell = null;
     footer.hidden = false;
+    syncVisibleState(index);
     const step = steps[index];
     stage.innerHTML = "";
     renderStepGen += 1;
@@ -190,7 +366,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     backBtn.textContent = "Quay lại";
     quizSelected = quizSelectedByStep[index] ?? null;
     quizRevealed = !!quizRevealedByStep[index];
+    if (!bookmarkFilter && stepKeys[index]) lastAllStepKey = stepKeys[index];
+    if (bookmarkFilter && stepKeys[index]) lastBookmarkStepKey = stepKeys[index];
     refreshScore();
+    renderBookmarkChrome();
     if (!step) {
       shell.classList.remove("exp-shell-slide");
       stage.className = "exp-stage";
@@ -198,7 +377,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       backBtn.disabled = true;
       nextBtn.textContent = "—";
       nextBtn.disabled = true;
-      progress.paint({ total, index: Math.max(0, index), correct, wrong });
+      repaintCurrentProgress();
       return;
     }
     stage.appendChild(createStepBadge(step.kind));
@@ -436,7 +615,20 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     } else if (step.kind === "flash") {
       shell.classList.remove("exp-shell-slide");
       stage.className = "exp-stage";
-      renderFlashStep(stage, step.data);
+      renderFlashStep(stage, step.data, {
+        isBookmarked: bookmarkedStepKeys.has(stepKeys[index]),
+        onToggleBookmark: (event) => {
+          event.stopPropagation();
+          const key = stepKeys[index];
+          const wasBookmarked = bookmarkedStepKeys.has(key);
+          if (wasBookmarked) bookmarkedStepKeys.delete(key);
+          else {
+            bookmarkedStepKeys.add(key);
+            triggerTopbarBookmarkFeedback();
+          }
+          renderStep();
+        },
+      });
       nextBtn.disabled = false;
     } else {
       shell.classList.remove("exp-shell-slide");
@@ -455,13 +647,41 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       });
       nextBtn.disabled = !quizUi.canProceed;
     }
-    progress.paint({ total, index, correct, wrong });
+    repaintCurrentProgress();
     refreshMixedNavChrome();
     emitState();
   }
+  bookmarkFilterBtn.addEventListener("click", () => {
+    if (bookmarkedStepKeys.size === 0) return;
+    if (bookmarkFilter) {
+      bookmarkFilter = false;
+      restoreAllViewIndex();
+      renderStep();
+      return;
+    }
+    bookmarkFilter = true;
+    const resumeBookmarkIndex =
+      lastBookmarkStepKey && bookmarkedStepKeys.has(lastBookmarkStepKey) ? stepKeys.indexOf(lastBookmarkStepKey) : -1;
+    const firstBookmarkedIndex = flashStepIndices.find((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    if (resumeBookmarkIndex >= 0) index = resumeBookmarkIndex;
+    else if (Number.isFinite(firstBookmarkedIndex)) index = firstBookmarkedIndex;
+    renderStep();
+  });
   nextBtn.addEventListener("click", () => {
     if (reviewMode) {
       void Promise.resolve(deps?.onContinueCreate?.("fullset"));
+      return;
+    }
+    const visibleIndices = getVisibleStepIndices();
+    const visibleIndex = visibleIndices.indexOf(index);
+    if (bookmarkFilter) {
+      if (visibleIndex < visibleIndices.length - 1) {
+        index = visibleIndices[visibleIndex + 1];
+      } else {
+        bookmarkFilter = false;
+        restoreAllViewIndex();
+      }
+      renderStep();
       return;
     }
     const step = steps[index];
@@ -513,7 +733,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           quizCorrectByStep[index] = ok;
         }
         refreshScore();
-        progress.paint({ total, index, correct, wrong });
+        repaintCurrentProgress();
         applyQuizRevealStyles(stage, q, picked);
         nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
         nextBtn.disabled = false;
@@ -550,6 +770,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   backBtn.addEventListener("click", () => {
     if (reviewMode) {
       exitReviewToLastStep();
+      return;
+    }
+    const visibleIndices = getVisibleStepIndices();
+    const visibleIndex = visibleIndices.indexOf(index);
+    if (bookmarkFilter) {
+      if (visibleIndex <= 0) return;
+      index = visibleIndices[visibleIndex - 1];
+      renderStep();
       return;
     }
     const step = steps[index];

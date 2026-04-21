@@ -7,7 +7,6 @@ import {
   getCurrentExperienceState,
   getActiveSessionIndex,
   setActiveSessionIndex,
-  findLatestSessionIndexByExperienceKind,
   getSessionsSnapshot,
   createSession,
   renameSession,
@@ -409,7 +408,6 @@ export function init() {
 
   flowService = createFlowService({
     getSessionsSnapshot,
-    findLatestSessionIndexByExperienceKind,
     persistActiveExperience,
     getCurrentSession,
     setCurrentExperienceState,

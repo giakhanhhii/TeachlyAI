@@ -1,5 +1,7 @@
 import { lookupEnToVi } from "./flashVocabLookup.js";
 
+const EN_VOCAB_TOKEN_RE = /^(?=.*[A-Za-z])[A-Za-z0-9'()/-]+$/;
+
 /** Nội dung placeholder (chữ mờ) trong ô nhập từ vựng — không dùng tin nhắn bot riêng. */
 export const FLASH_VOCAB_TEXTAREA_PLACEHOLDER =
   "Điền theo dạng (mỗi dòng 1 thẻ)\nTừ : nghĩa\nVí dụ: \nPreserve: bảo tồn\nAbandon: tư bỏ, bỏ rơi\n\nChỉ cần gõ obstacle (không cần dấu :) — hệ thống tự thêm nghĩa (từ điển hoặc dịch tự động).";
@@ -14,7 +16,7 @@ export function isEnglishOnlyVocabLine(trimmed) {
   if (t.includes(":")) return false;
   const parts = t.split(/\s+/).filter(Boolean);
   if (!parts.length) return false;
-  return parts.every((w) => /^[A-Za-z][A-Za-z0-9'-]*$/.test(w));
+  return parts.every((w) => EN_VOCAB_TOKEN_RE.test(w));
 }
 
 /**
@@ -37,7 +39,7 @@ export function firstTokenIsEnglishAscii(front) {
     .trim()
     .split(/\s+/)[0] || "";
   if (!token) return false;
-  return /^[A-Za-z][A-Za-z0-9'-]*$/.test(token);
+  return EN_VOCAB_TOKEN_RE.test(token);
 }
 
 /**

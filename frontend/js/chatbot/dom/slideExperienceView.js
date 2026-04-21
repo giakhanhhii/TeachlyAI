@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -396,7 +397,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       await Promise.race([
         loadPromise,
         new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("iframe load timeout")), 4000);
+          setTimeout(() => reject(new Error("iframe load timeout")), IFRAME_LOAD_TIMEOUT_MS);
         }),
       ]);
       shellReady = true;
