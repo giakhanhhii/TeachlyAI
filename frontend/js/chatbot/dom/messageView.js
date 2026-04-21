@@ -16,6 +16,15 @@ function isWideFlowFormCardType(cardType) {
 }
 
 /**
+ * Các nút chọn nguồn ban đầu cần luôn bấm lại được để đổi hướng ngay trong chat.
+ * @param {string} rawValue
+ */
+function isSourceSelectionAction(rawValue) {
+  const action = String(rawValue || "").trim().split("|", 1)[0];
+  return /^(fullset|slide|quiz|flash)_(pdf|topic)$/.test(action) || action === "flash_vocab";
+}
+
+/**
  * @param {{
  *   messagesEl: HTMLElement,
  *   messagesInnerEl: HTMLElement,
@@ -52,6 +61,9 @@ export function createMessageView(opts) {
     b.className = "msg-action-btn";
     b.textContent = action.label;
     b.dataset.flowValue = action.value;
+    if (isSourceSelectionAction(action.value)) {
+      b.dataset.keepEnabled = "1";
+    }
     b.onclick = handleFlowActionButtonClick;
     return b;
   }
@@ -296,6 +308,7 @@ export function createMessageView(opts) {
     if (!row) return;
     row.querySelectorAll(".msg-action-btn").forEach((node) => {
       const actionBtn = /** @type {HTMLButtonElement} */ (node);
+      if (actionBtn.dataset.keepEnabled === "1") return;
       actionBtn.disabled = true;
       actionBtn.setAttribute("aria-disabled", "true");
       actionBtn.style.opacity = "0.65";
