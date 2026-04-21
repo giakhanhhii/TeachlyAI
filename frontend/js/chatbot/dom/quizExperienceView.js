@@ -1,6 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
-import { buildAiDraftQuiz, recomputeScore } from "../services/quizService.js";
+import { recomputeScore } from "../services/quizService.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
@@ -30,19 +30,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
-
-  const onAiForQuestion = () => {
-    const q = questions[index];
-    if (!q || !deps?.onAiEdit) return;
-    deps.onAiEdit(buildAiDraftQuiz(meta, index, q));
-  };
-
-  shell.appendChild(
-    createExperienceTopBar({
-      title: titleText,
-      onAiEdit: deps?.onAiEdit ? onAiForQuestion : undefined,
-    }).bar,
-  );
+  shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
 
   const summary = document.createElement("p");
   summary.className = "exp-meta-line";

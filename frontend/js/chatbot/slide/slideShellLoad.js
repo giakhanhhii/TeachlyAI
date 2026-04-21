@@ -1,5 +1,7 @@
 import { getApiOrigin } from "../config.js";
 
+const SAFE_SHELL_FILENAME_RE = /^[a-zA-Z0-9._-]+\.html$/;
+
 function getBuiltinShellHtml() {
   return `<!DOCTYPE html>
 <html lang="vi">
@@ -55,6 +57,10 @@ function getBuiltinShellHtml() {
  * @returns {Promise<string>}
  */
 export async function fetchSlideShellHtml(filename, doc = document) {
+  if (!SAFE_SHELL_FILENAME_RE.test(String(filename || ""))) {
+    console.warn(`[slide-shell] invalid shell filename "${filename}", use builtin shell`);
+    return getBuiltinShellHtml();
+  }
   const base = getApiOrigin(doc).replace(/\/$/, "");
   const f = encodeURIComponent(filename);
   const candidates = [

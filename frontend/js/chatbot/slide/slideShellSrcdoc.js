@@ -1,3 +1,4 @@
+import { SLIDE_PAD_PX_DEFAULT } from "../constants.js";
 import { SLIDE_VISUAL_EDITOR_CSS, SLIDE_VISUAL_EDITOR_JS } from "./slideVisualEditorIframe.js";
 
 /**
@@ -89,7 +90,7 @@ function decorateSlidePrototype(root, doc) {
   }
   if (ul) {
     ul.setAttribute("data-shell", "bullets");
-    ul.innerHTML = "";
+    ul.replaceChildren();
   } else {
     /* Ưu tiên vùng nội dung trong card/template gốc — tránh gắn <ul> trực tiếp lên .slide-container (lệch layout, đè sticker). */
     const sink =
@@ -302,29 +303,12 @@ function injectShellPreviewFit(doc) {
       z-index: 1 !important;
     }
     /*
-     * Font trang trí (Ultra, …) thường không đủ glyph tiếng Việt → dấu dùng font fallback, trông lệch cỡ/độ đậm.
-     * Nội dung động dùng stack sans hỗ trợ VN ổn định (kể cả khi đang Sửa / data-edit-geom).
+     * Keep theme font-families by default. Vietnamese glyph fallback is handled by
+     * the template font stacks or theme-specific overrides below.
      */
     .shell-slide-instance [data-shell="title"],
-    .shell-slide-instance .slide-title,
-    .shell-slide-instance .section-card h1,
-    .shell-slide-instance .title-card h1,
-    .shell-slide-instance .comic-title,
-    .shell-slide-instance .outer-title,
-    .shell-slide-instance .toc-item h3,
-    .shell-slide-instance .toc-item p,
-    .shell-slide-instance .title-content p,
-    .shell-slide-instance .title-card p,
-    .shell-slide-instance .section-card > p,
-    .shell-slide-instance .badge,
-    .shell-slide-instance .mini-card h3,
-    .shell-slide-instance .mini-card p,
-    .shell-slide-instance .tl-item h3,
-    .shell-slide-instance .tl-item p,
-    .shell-slide-instance .text-part p,
     .shell-slide-instance ul[data-shell="bullets"],
     .shell-slide-instance ul[data-shell="bullets"] li {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif !important;
       font-synthesis: none !important;
       text-rendering: optimizeLegibility;
     }
@@ -564,8 +548,8 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
   if (!host) return;
   const stickers = Array.from(slideRoot.querySelectorAll(":scope > .sticker"));
   if (!stickers.length) return;
-  /** Khớp padding `.slide-container` trong sealife (7.sealife.html); chỉ bù khi có top/left dạng px. */
-  const SLIDE_PAD_PX = 60;
+  const slidePad = Number(slideRoot.getAttribute("data-slide-pad"));
+  const slidePadPx = Number.isFinite(slidePad) ? slidePad : SLIDE_PAD_PX_DEFAULT;
   stickers.reverse().forEach((st) => {
     host.insertBefore(st, host.firstChild);
     const top = st.style.top;
@@ -574,19 +558,19 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
     const right = st.style.right;
     if (top && /^\d+px$/.test(top.trim())) {
       const v = parseInt(top, 10);
-      if (!Number.isNaN(v)) st.style.top = `${v - SLIDE_PAD_PX}px`;
+      if (!Number.isNaN(v)) st.style.top = `${v - slidePadPx}px`;
     }
     if (left && /^\d+px$/.test(left.trim())) {
       const v = parseInt(left, 10);
-      if (!Number.isNaN(v)) st.style.left = `${v - SLIDE_PAD_PX}px`;
+      if (!Number.isNaN(v)) st.style.left = `${v - slidePadPx}px`;
     }
     if (bottom && /^-?\d+px$/.test(bottom.trim())) {
       const v = parseInt(bottom, 10);
-      if (!Number.isNaN(v)) st.style.bottom = `${v - SLIDE_PAD_PX}px`;
+      if (!Number.isNaN(v)) st.style.bottom = `${v - slidePadPx}px`;
     }
     if (right && /^\d+px$/.test(right.trim())) {
       const v = parseInt(right, 10);
-      if (!Number.isNaN(v)) st.style.right = `${v - SLIDE_PAD_PX}px`;
+      if (!Number.isNaN(v)) st.style.right = `${v - slidePadPx}px`;
     }
   });
 }
@@ -601,7 +585,7 @@ function fillContentSlots(root, title, bullets) {
   if (titleEl) titleEl.textContent = title;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
-    ul.innerHTML = "";
+    ul.replaceChildren();
     bullets.forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
@@ -651,7 +635,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
   }
 
-  master.innerHTML = "";
+  master.replaceChildren();
 
   const list = Array.isArray(slides) ? slides : [];
   const variantCount = variantTemplates.length;

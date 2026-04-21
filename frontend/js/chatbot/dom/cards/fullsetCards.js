@@ -1,5 +1,6 @@
 import { SAMPLES_FULLSET } from "../../data/sampleFlowData.js";
 import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
+import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   MSG_SKIP_PDF_HAS_FILE,
@@ -142,7 +143,7 @@ export function createFullsetTopicCard(deps) {
     deps.onSubmit({
       __auto: "1",
       topic: "(Teachly tự động)",
-      level: "Cơ bản",
+      level: DEFAULT_DIFFICULTY,
       slideTemplate: SLIDE_TEMPLATE_DEFAULT,
       slides: String(sn),
       quiz: String(qn),
@@ -201,7 +202,7 @@ export function createFullsetTopicCard(deps) {
       skip.disabled = true;
       deps.onSubmit({
         topic: t || "(Teachly tự động)",
-        level: lv || "Cơ bản",
+        level: lv || DEFAULT_DIFFICULTY,
         slideTemplate: stpl || SLIDE_TEMPLATE_DEFAULT,
         slides: String(sn),
         quiz: String(qn),

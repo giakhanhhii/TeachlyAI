@@ -1,4 +1,5 @@
 import { SAMPLES_QUIZ } from "../../data/sampleFlowData.js";
+import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
@@ -93,7 +94,7 @@ export function createQuizFormCard(deps) {
       source: "(Teachly tự động)",
       kind: "Ôn tập THPTQG",
       count: "20",
-      difficulty: "Cơ bản",
+      difficulty: DEFAULT_DIFFICULTY,
       notes: "",
     });
   });
@@ -129,7 +130,7 @@ export function createQuizFormCard(deps) {
         source: t || "(Teachly tự động)",
         kind: k || "Ôn tập THPTQG",
         count: String(n),
-        difficulty: lv || "Khá",
+        difficulty: lv || DEFAULT_DIFFICULTY,
         notes: notes.value.trim(),
       });
     });

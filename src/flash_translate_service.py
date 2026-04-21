@@ -52,18 +52,22 @@ def _extract_first_json_object(text: str) -> dict:
         s = re.sub(r"^```(?:json)?\s*", "", s, flags=re.IGNORECASE | re.MULTILINE)
         s = re.sub(r"\s*```\s*$", "", s).strip()
     start = s.find("{")
-    if start < 0:
+    end = s.rfind("}")
+    if start < 0 or end < start:
         raise ValueError("Model không trả về JSON object.")
-    depth = 0
-    for i in range(start, len(s)):
-        c = s[i]
-        if c == "{":
-            depth += 1
-        elif c == "}":
-            depth -= 1
-            if depth == 0:
-                return json.loads(s[start : i + 1])
-    raise ValueError("JSON object chưa đóng.")
+    last_error: Exception | None = None
+    for stop in range(end + 1, start, -1):
+        if s[stop - 1] != "}":
+            continue
+        try:
+            obj = json.loads(s[start:stop])
+        except json.JSONDecodeError as exc:
+            last_error = exc
+            continue
+        if not isinstance(obj, dict):
+            raise ValueError("JSON phải là object.")
+        return obj
+    raise ValueError("Không parse được JSON object.") from last_error
 
 
 def _chunk_cache_key(terms: tuple[str, ...]) -> tuple[int, tuple[str, ...]]:

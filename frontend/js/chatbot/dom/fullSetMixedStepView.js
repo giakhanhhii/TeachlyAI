@@ -7,6 +7,12 @@ import {
   quizStemToSafeHtml,
 } from "../services/fullSetMixedService.js";
 
+const BOOKMARK_SVG = `
+  <svg class="flash-bookmark-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M7 3.75h10a1.25 1.25 0 0 1 1.25 1.25v15.22L12 16.6 5.75 20.22V5A1.25 1.25 0 0 1 7 3.75z" />
+  </svg>
+`;
+
 /**
  * @param {"slide"|"slide_deck"|"quiz"|"flash"} kind
  */
@@ -40,8 +46,9 @@ export function renderSlideStep(stage, slide) {
 /**
  * @param {HTMLElement} stage
  * @param {any} card
+ * @param {{ isBookmarked?: boolean, onToggleBookmark?: (event: MouseEvent) => void }} [opts]
  */
-export function renderFlashStep(stage, card) {
+export function renderFlashStep(stage, card, opts = {}) {
   hookFlashSpeechVoicesOnce();
   const wrap = document.createElement("div");
   wrap.className = "flash-wrap";
@@ -68,6 +75,20 @@ export function renderFlashStep(stage, card) {
     </div>
   `;
 
+  const addBookmarkBtn = (faceEl) => {
+    if (!faceEl || typeof opts.onToggleBookmark !== "function") return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "flash-bookmark-btn";
+    btn.innerHTML = BOOKMARK_SVG;
+    btn.classList.toggle("active", Boolean(opts.isBookmarked));
+    btn.setAttribute("aria-pressed", opts.isBookmarked ? "true" : "false");
+    btn.setAttribute("aria-label", opts.isBookmarked ? "Bỏ bookmark flashcard" : "Bookmark flashcard");
+    btn.title = opts.isBookmarked ? "Bỏ bookmark" : "Bookmark";
+    btn.addEventListener("click", (event) => opts.onToggleBookmark?.(event));
+    faceEl.appendChild(btn);
+  };
+
   const addSoundBtn = (faceEl) => {
     const btn = document.createElement("button");
     btn.type = "button";
@@ -83,12 +104,16 @@ export function renderFlashStep(stage, card) {
     });
     btn.addEventListener("animationend", () => {
       btn.classList.remove("flash-sound-anim");
-    });
-    faceEl?.appendChild(btn);
+      });
+      faceEl?.appendChild(btn);
   };
 
-  addSoundBtn(inner.querySelector(".flash-front"));
-  addSoundBtn(inner.querySelector(".flash-back"));
+  const frontFace = inner.querySelector(".flash-front");
+  const backFace = inner.querySelector(".flash-back");
+  addBookmarkBtn(frontFace);
+  addBookmarkBtn(backFace);
+  addSoundBtn(frontFace);
+  addSoundBtn(backFace);
 
   inner.addEventListener("click", () => inner.classList.toggle("flipped"));
   inner.addEventListener("keydown", (e) => {

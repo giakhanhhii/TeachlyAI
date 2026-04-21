@@ -66,7 +66,6 @@ function createBuildNextFlowSessionTitle(deps) {
 /**
  * @param {{
  *   getSessionsSnapshot: () => any[],
- *   findLatestSessionIndexByExperienceKind: (kind: string) => number,
  *   persistActiveExperience: () => void,
  *   getCurrentSession: () => any,
  *   setCurrentExperienceState: (next: any) => void,
@@ -91,7 +90,6 @@ function createBuildNextFlowSessionTitle(deps) {
 export function createFlowService(deps) {
   const {
     getSessionsSnapshot,
-    findLatestSessionIndexByExperienceKind,
     persistActiveExperience,
     getCurrentSession,
     setCurrentExperienceState,
@@ -169,33 +167,13 @@ export function createFlowService(deps) {
   }
 
   /**
-   * Entry from Main Hub (`?flow=`): resume latest session for that experience, or start new flow.
+   * Entry from Main Hub (`?flow=`): always start a fresh flow instead of reopening the latest session.
    * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
    */
   async function handleFlowEntry(flowKind) {
     const expKind = flowToExperienceKind(flowKind);
     const sessions = getSessionsSnapshot();
     const previousActiveIndex = sessions.findIndex((s) => s === getCurrentSession());
-    const latestIdx = findLatestSessionIndexByExperienceKind(expKind);
-    if (latestIdx >= 0) {
-      persistActiveExperience();
-      setActiveSessionIndex(latestIdx);
-      setGuided(null);
-      resetResumeState();
-      hideLayer();
-      saveSessions();
-      renderChatListUI();
-      try {
-        await ensureSessionMessagesLoaded();
-      } catch {
-        // Keep local cache if remote loading fails.
-      }
-      renderMessages();
-      await restoreCurrentSessionExperience();
-      history.replaceState({}, "", "chatbot_ui.html");
-      return;
-    }
-
     persistActiveExperience();
     const stagedTitle = buildNextFlowSessionTitle(flowKind);
     const stagedExperienceState = {

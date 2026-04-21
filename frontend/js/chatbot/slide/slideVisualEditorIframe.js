@@ -366,15 +366,15 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       sp.style.flexBasis = cs0.flexBasis;
     }
     /*
-     * Hai cột flex (comic .two-column): panel có flex:1 + stretch — spacer cố width px + flexShrink:0
-     * làm cột kề mất phần / bị dí. Dùng width:auto + copy flex, height:auto để stretch đúng trục chéo.
+     * Flex row containers need an explicit measured spacer; width:auto can collapse
+     * once the edited element becomes absolute and leaves the flex layout.
      */
     if (isRow) {
-      sp.style.width = "auto";
-      sp.style.minWidth = "0";
+      sp.style.width = w + "px";
+      sp.style.minWidth = w + "px";
       sp.style.maxWidth = "none";
-      sp.style.height = "auto";
-      sp.style.minHeight = "0";
+      sp.style.height = hBorder + "px";
+      sp.style.minHeight = hBorder + "px";
     } else {
       sp.style.width = w + "px";
       sp.style.height = hBorder + "px";
