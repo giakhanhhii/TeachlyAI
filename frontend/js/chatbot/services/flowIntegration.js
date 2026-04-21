@@ -127,8 +127,8 @@ export function createFlowActionHandler(deps) {
     if (!value) return;
 
     let guided = getGuided();
-    if (!hasGuidedKind(guided)) {
-      const recovered = buildGuidedFromActionValue(rawValue, guided);
+    const recovered = buildGuidedFromActionValue(rawValue, guided);
+    if (!hasGuidedKind(guided) || guided?.step !== "await_source") {
       if (!hasGuidedKind(recovered)) {
         pushBot("Không thể khôi phục trạng thái phiên hiện tại. Bạn bắt đầu lại giúp mình nhé.");
         return;

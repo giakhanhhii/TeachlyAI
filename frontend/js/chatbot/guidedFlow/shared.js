@@ -1,5 +1,6 @@
 export const MSG_START_SOURCE =
   "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
+export const MSG_CONTINUE_SOURCE = "Bạn muốn tiếp tục theo cách nào?";
 
 /** Các nút “Tải lên PDF” ở bước chọn nguồn — cần chọn file trước khi vào form. */
 export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "quiz_pdf", "flash_pdf"]);
@@ -33,6 +34,16 @@ export function getSourceActions(kind) {
   return SOURCE_ACTIONS_BY_KIND[kind] ? [...SOURCE_ACTIONS_BY_KIND[kind]] : [];
 }
 
+/**
+ * @param {"fullset"|"slide"|"quiz"|"flash"} kind
+ * @param {string} [text]
+ */
+export function createSourceChoiceEffect(kind, text = MSG_CONTINUE_SOURCE) {
+  const actions = getSourceActions(kind);
+  if (!actions.length) return null;
+  return { type: "pushBot", text, actions };
+}
+
 /** Tin nhắn bot trước form meta PDF (slide / quiz / flash). */
 export function pdfMetaFormIntro(/** @type {"slide"|"quiz"|"flash"} */ kind) {
   if (kind === "slide") {
@@ -50,8 +61,7 @@ export function pdfMetaFormIntro(/** @type {"slide"|"quiz"|"flash"} */ kind) {
  * @returns {{ type: "pushBot", text: string, actions: { label: string, value: string }[] }[]}
  */
 export function getRestartAwaitSourceEffects(kind) {
-  const actions = getSourceActions(kind);
-  if (!actions.length) return [];
-  return [{ type: "pushBot", text: MSG_START_SOURCE, actions }];
+  const effect = createSourceChoiceEffect(kind);
+  return effect ? [effect] : [];
 }
 

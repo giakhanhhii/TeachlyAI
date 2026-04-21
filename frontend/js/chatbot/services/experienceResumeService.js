@@ -1,3 +1,5 @@
+import { getSourceActions } from "../guidedFlow/shared.js";
+
 /**
  * @param {{
  *  buildResumeTitle: (kind: "quiz"|"slide"|"flash", meta: Record<string, any>) => string,
@@ -19,6 +21,17 @@ export function createExperienceResumeService(deps) {
       return globalThis.crypto.randomUUID();
     }
     return `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  /**
+   * @param {"fullset"|"quiz"|"slide"|"flash"} kind
+   * @param {any} resumeDock
+   */
+  function pushContinuePrompt(kind, resumeDock) {
+    pushBot("Bạn muốn tiếp tục theo cách nào?", {
+      actions: getSourceActions(kind),
+      resumeDock,
+    });
   }
 
   /**
@@ -116,7 +129,7 @@ export function createExperienceResumeService(deps) {
       resumeDockAlreadyPosted = true;
       return;
     }
-    pushBot("Đã tạo xong. Bạn có thể bấm Mở để quay lại học liệu này.", { resumeDock });
+    pushContinuePrompt(kind, resumeDock);
     resumeDockAlreadyPosted = true;
   }
 
@@ -142,7 +155,7 @@ export function createExperienceResumeService(deps) {
         persistActiveExperience(resumeToPersist);
         return;
       }
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", { resumeDock });
+      pushContinuePrompt("fullset", resumeDock);
     } else if (lastOpenedExperience.fullsetMixedBack) {
       const resumeDock = {
         title: lastOpenedExperience.title,
@@ -157,7 +170,7 @@ export function createExperienceResumeService(deps) {
         persistActiveExperience(resumeToPersist);
         return;
       }
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", { resumeDock });
+      pushContinuePrompt("fullset", resumeDock);
     } else {
       const resumeDock = {
         kind: lastOpenedExperience.kind,
@@ -172,7 +185,7 @@ export function createExperienceResumeService(deps) {
         persistActiveExperience(resumeToPersist);
         return;
       }
-      pushBot("Bạn có thể mở lại học liệu tương tác vừa xem bất cứ lúc nào.", { resumeDock });
+      pushContinuePrompt(lastOpenedExperience.kind, resumeDock);
     }
     lastOpenedExperience = null;
     resumeDockAlreadyPosted = false;
