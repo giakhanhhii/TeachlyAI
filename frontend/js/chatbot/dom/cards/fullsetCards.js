@@ -117,6 +117,9 @@ export function createFullsetTopicCard(deps) {
       Boolean(t) &&
       Boolean(lv) &&
       Boolean(stpl) &&
+      Boolean(s) &&
+      Boolean(q) &&
+      Boolean(f) &&
       Number.isFinite(sn) &&
       sn >= 1 &&
       sn <= 30 &&
@@ -126,6 +129,59 @@ export function createFullsetTopicCard(deps) {
       fn >= 1 &&
       sumOk;
     return { t, lv, s, q, f, ex, complete };
+  }
+
+  function resolveFullsetCounts(slideRaw, quizRaw, flashRaw) {
+    const hasSlide = Boolean(slideRaw);
+    const hasQuiz = Boolean(quizRaw);
+    const hasFlash = Boolean(flashRaw);
+    const sn = hasSlide ? Number(slideRaw) : null;
+    const qn = hasQuiz ? Number(quizRaw) : null;
+    const fn = hasFlash ? Number(flashRaw) : null;
+
+    if (hasSlide && (!Number.isFinite(sn) || sn < 1 || sn > 30)) {
+      return { ok: false, message: "Số slide phải từ 1 đến 30." };
+    }
+    if (hasQuiz && (!Number.isFinite(qn) || qn < 1)) {
+      return { ok: false, message: "Số câu Quiz phải là số dương." };
+    }
+    if (hasFlash && (!Number.isFinite(fn) || fn < 1)) {
+      return { ok: false, message: "Số Flashcard phải là số dương." };
+    }
+
+    const values = {
+      slides: hasSlide ? sn : 10,
+      quiz: hasQuiz ? qn : 20,
+      flash: hasFlash ? fn : 10,
+    };
+    const specifiedTotal = (hasSlide ? sn : 0) + (hasQuiz ? qn : 0) + (hasFlash ? fn : 0);
+    const missingKeys = [];
+    if (!hasSlide) missingKeys.push("slides");
+    if (!hasQuiz) missingKeys.push("quiz");
+    if (!hasFlash) missingKeys.push("flash");
+
+    if (specifiedTotal + missingKeys.length > 40) {
+      return { ok: false, message: "Tổng Slide + Quiz + Flashcard không được vượt quá 40 sau khi Teachly tự điền phần còn thiếu." };
+    }
+
+    let total = values.slides + values.quiz + values.flash;
+    while (total > 40) {
+      let reduced = false;
+      for (const key of ["quiz", "flash", "slides"]) {
+        if (!missingKeys.includes(key)) continue;
+        if (values[key] > 1) {
+          values[key] -= 1;
+          total -= 1;
+          reduced = true;
+          if (total <= 40) break;
+        }
+      }
+      if (!reduced) {
+        return { ok: false, message: `Tổng Slide + Quiz + Flashcard không được vượt quá 40 (hiện tại: ${total}).` };
+      }
+    }
+
+    return { ok: true, slides: String(values.slides), quiz: String(values.quiz), flash: String(values.flash) };
   }
 
   skip.addEventListener("click", () => {
@@ -156,44 +212,36 @@ export function createFullsetTopicCard(deps) {
     removeSkipConfirm(root);
     err.style.display = "none";
     err.textContent = "";
-    const sn = Number(slides.value);
-    const qn = Number(quiz.value);
-    const fn = Number(flash.value);
-    if (!Number.isFinite(sn) || sn < 1 || sn > 30) {
-      err.textContent = "Số slide phải từ 1 đến 30.";
-      err.style.display = "block";
-      return;
-    }
-    if (!Number.isFinite(qn) || qn < 1) {
-      err.textContent = "Số câu Quiz phải là số dương.";
-      err.style.display = "block";
-      return;
-    }
-    if (!Number.isFinite(fn) || fn < 1) {
-      err.textContent = "Số Flashcard phải là số dương.";
-      err.style.display = "block";
-      return;
-    }
-    const sum = sn + qn + fn;
-    if (sum > 40) {
-      err.textContent = `Tổng Slide + Quiz + Flashcard không được vượt quá 40 (hiện tại: ${sum}).`;
+    const slideRaw = slides.value.trim();
+    const quizRaw = quiz.value.trim();
+    const flashRaw = flash.value.trim();
+    const resolvedCounts = resolveFullsetCounts(slideRaw, quizRaw, flashRaw);
+    if (!resolvedCounts.ok) {
+      err.textContent = resolvedCounts.message;
       err.style.display = "block";
       return;
     }
     const t = topic.value.trim();
     const lv = level.value;
     const stpl = slideTemplate.value;
-    if (t && lv && stpl) {
+    const extraValue = extra.value.trim();
+    const hasAnyInput = Boolean(t || lv || stpl || slideRaw || quizRaw || flashRaw || extraValue);
+    if (!hasAnyInput) {
+      err.textContent = "Vui lòng nhập ít nhất một thông tin hoặc nhấn Bỏ qua.";
+      err.style.display = "block";
+      return;
+    }
+    if (t && lv && stpl && slideRaw && quizRaw && flashRaw) {
       submit.disabled = true;
       skip.disabled = true;
       deps.onSubmit({
         topic: t,
         level: lv,
         slideTemplate: stpl,
-        slides: String(sn),
-        quiz: String(qn),
-        flash: String(fn),
-        extra: extra.value.trim(),
+        slides: resolvedCounts.slides,
+        quiz: resolvedCounts.quiz,
+        flash: resolvedCounts.flash,
+        extra: extraValue,
       });
       return;
     }
@@ -204,10 +252,10 @@ export function createFullsetTopicCard(deps) {
         topic: t || "(Teachly tự động)",
         level: lv || DEFAULT_DIFFICULTY,
         slideTemplate: stpl || SLIDE_TEMPLATE_DEFAULT,
-        slides: String(sn),
-        quiz: String(qn),
-        flash: String(fn),
-        extra: extra.value.trim(),
+        slides: resolvedCounts.slides,
+        quiz: resolvedCounts.quiz,
+        flash: resolvedCounts.flash,
+        extra: extraValue,
       });
     });
   });
