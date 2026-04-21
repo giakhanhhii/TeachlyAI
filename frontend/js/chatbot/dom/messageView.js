@@ -68,6 +68,48 @@ export function createMessageView(opts) {
   }
 
   /**
+   * @param {string} text
+   * @param {{ label: string, value: string }[]} actions
+   */
+  function createBotTextActionBubble(text, actions) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble bot";
+    if (text.trim()) {
+      const t = document.createElement("div");
+      t.style.whiteSpace = "pre-wrap";
+      t.textContent = text;
+      bubble.appendChild(t);
+    }
+    if (actions.length) {
+      const ar = document.createElement("div");
+      ar.className = "msg-actions";
+      actions.forEach((a) => {
+        ar.appendChild(createFlowActionButton(a));
+      });
+      bubble.appendChild(ar);
+      bubble.classList.add("startup");
+    }
+    return bubble;
+  }
+
+  /**
+   * @param {any} resumeDock
+   */
+  function createResumeDockBubble(resumeDock) {
+    const bubble = document.createElement("div");
+    bubble.className = "bubble bot bubble-has-resume-dock";
+    bubble.appendChild(
+      createResumeDockCard(
+        resumeDock,
+        (item) => onResumeExperience(item),
+        onResumeOpenAll,
+        onResumeOpenFullSetMixed,
+      ),
+    );
+    return bubble;
+  }
+
+  /**
    * @param {HTMLElement} contentNode
    * @param {string} [extraRowClass]
    */
@@ -178,6 +220,21 @@ export function createMessageView(opts) {
       return shell;
     }
 
+    if (showResume && headerParts) {
+      appendBotRow(createResumeDockBubble(resumeDock));
+      const bubble = createBotTextActionBubble(text, actions);
+      appendBotRow(bubble);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return bubble;
+    }
+
+    if (showResume && !headerParts) {
+      const bubble = createResumeDockBubble(resumeDock);
+      appendBotRow(bubble);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return bubble;
+    }
+
     const row = document.createElement("div");
     row.className = "msg-row bot";
     const avatar = document.createElement("div");
@@ -235,13 +292,7 @@ export function createMessageView(opts) {
   }
 
   function disableActionButtons(btnEl) {
-    const row = btnEl.closest(".msg-row");
-    if (!row) return;
-    row.querySelectorAll(".msg-action-btn").forEach((b) => {
-      b.disabled = true;
-      b.style.opacity = "0.65";
-      b.style.cursor = "default";
-    });
+    void btnEl;
   }
 
   function addThinkingBubble() {

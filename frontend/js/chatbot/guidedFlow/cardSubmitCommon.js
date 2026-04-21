@@ -1,4 +1,4 @@
-import { MSG_START_SOURCE, getSourceActions, pdfMetaFormIntro } from "./shared.js";
+import { createSourceChoiceEffect, pdfMetaFormIntro } from "./shared.js";
 
 /**
  * @param {any} guided
@@ -15,16 +15,13 @@ export function computePdfGateCardSubmit(guided, cardType, payload) {
   }
 
   if (payload.__no_file === "1") {
+    const choiceEffect = createSourceChoiceEffect(guided.kind);
     return {
       handled: true,
       guided: { kind: guided.kind, step: "await_source", data: {} },
       effects: [
         { type: "pushUser", text: "Bỏ qua" },
-        {
-          type: "pushBot",
-          text: MSG_START_SOURCE,
-          actions: getSourceActions(guided.kind),
-        },
+        ...(choiceEffect ? [choiceEffect] : []),
       ],
     };
   }

@@ -347,13 +347,11 @@ export function init() {
 
   function scrollToResumeDock() {
     const run = () => {
-      const resumeCards = messagesInner.querySelectorAll(".resume-dock-card");
-      const lastResumeCard = resumeCards.length ? resumeCards[resumeCards.length - 1] : null;
-      if (lastResumeCard && typeof lastResumeCard.scrollIntoView === "function") {
-        lastResumeCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      } else {
-        messages.scrollTop = messages.scrollHeight;
+      if (typeof messages.scrollTo === "function") {
+        messages.scrollTo({ top: messages.scrollHeight, behavior: "smooth" });
+        return;
       }
+      messages.scrollTop = messages.scrollHeight;
     };
     requestAnimationFrame(() => requestAnimationFrame(run));
   }

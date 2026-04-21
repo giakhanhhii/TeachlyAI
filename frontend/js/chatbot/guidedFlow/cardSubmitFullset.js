@@ -1,3 +1,5 @@
+import { getSourceActions } from "./shared.js";
+
 /**
  * @param {any} guided
  * @param {string} cardType
@@ -13,8 +15,8 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           { type: "pushUser", text: "Bỏ qua tải PDF — nhờ Teachly tự động soạn nội dung" },
           {
             type: "pushBot",
-            text:
-              "Đã ghi nhận: bạn không tải PDF.\n\nTeachly sẽ tự động đề xuất nội dung khi pipeline AI sẵn sàng. Bạn có thể tiếp tục chat hoặc quay về trang chủ.",
+            text: "Teachly đã ghi nhận lựa chọn của bạn. Bạn muốn tiếp tục theo cách nào?",
+            actions: getSourceActions("fullset"),
           },
         ],
       };
@@ -27,8 +29,8 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: `Đã chọn tệp PDF: ${name}` },
         {
           type: "pushBot",
-          text:
-            "Cảm ơn bạn! Tệp đã được ghi nhận trên giao diện.\n\nBước chuyển Markdown bằng Chandra OCR2 sẽ được kích hoạt khi tích hợp backend — bạn có thể tiếp tục trò chuyện hoặc quay về trang chủ để chọn chức năng khác.",
+          text: "Teachly đã nhận tệp PDF. Bạn muốn tiếp tục theo cách nào?",
+          actions: getSourceActions("fullset"),
         },
       ],
     };
@@ -109,8 +111,8 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
     };
     const baseBot =
       payload.__auto === "1"
-        ? "Bạn đã chọn để Teachly tự động soạn Full Set (giao diện demo). Khi backend sẵn sàng, hệ thống sẽ sinh nội dung phù hợp.\n\nBạn có thể tiếp tục chat hoặc quay về trang chủ."
-        : "Teachly đã nhận đủ thông tin để chuẩn bị Full Set theo chủ đề của bạn (giao diện demo).\n\nViệc sinh nội dung thực tế sẽ được nối với backend/AI ở bước sau.";
+        ? "Teachly đã chuẩn bị Full Set tự động. Bạn muốn tiếp tục theo cách nào?"
+        : "Teachly đã nhận thông tin Full Set. Bạn muốn tiếp tục theo cách nào?";
     return {
       handled: true,
       guided: null,
@@ -118,7 +120,8 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: lines.join("\n") },
         {
           type: "pushBot",
-          text: `${baseBot}\n\nNhấn "Mở tất cả" để làm một phiên trộn cả ba dạng trong một luồng (tổng mục = tổng ba ô, tối đa 40). Hoặc mở riêng Slide / Quiz / Flashcard bên dưới — mỗi nút "Mở" dùng đúng số lượng bạn đã nhập cho loại đó.`,
+          text: baseBot,
+          actions: getSourceActions("fullset"),
           resumeDock,
         },
       ],
