@@ -98,33 +98,7 @@ function createPdfMetaCard(opts) {
     removeSkipConfirm(root);
     err.style.display = "none";
     const st = readState();
-    if (st.nm && st.c && st.inRange) {
-      submit.disabled = true;
-      skip.disabled = true;
-      onSubmit({
-        name: st.nm,
-        count: String(st.n),
-        structure: st.st,
-        style: st.sy,
-        notes: st.nt,
-      });
-      return;
-    }
-    if (st.c && st.inRange && !st.nm) {
-      showPartialFillConfirm(root, err, () => {
-        submit.disabled = true;
-        skip.disabled = true;
-        onSubmit({
-          name: "(Teachly tự động)",
-          count: String(st.n),
-          structure: st.st,
-          style: st.sy,
-          notes: st.nt,
-        });
-      });
-      return;
-    }
-    if (!st.c || !st.inRange) {
+    if (st.c && !st.inRange) {
       err.textContent =
         countMax != null
           ? `Số lượng phải từ ${countMin} đến ${countMax}.`
@@ -132,8 +106,36 @@ function createPdfMetaCard(opts) {
       err.style.display = "block";
       return;
     }
-    err.textContent = "Vui lòng nhập tên.";
-    err.style.display = "block";
+    const hasAnyInput = Boolean(st.nm || st.c || st.st || st.sy || st.nt);
+    if (!hasAnyInput) {
+      err.textContent = "Vui lòng nhập ít nhất một thông tin hoặc nhấn Bỏ qua.";
+      err.style.display = "block";
+      return;
+    }
+    const useCount = st.c ? String(st.n) : String(defaultCount);
+    if (st.nm && st.c && st.inRange) {
+      submit.disabled = true;
+      skip.disabled = true;
+      onSubmit({
+        name: st.nm,
+        count: useCount,
+        structure: st.st,
+        style: st.sy,
+        notes: st.nt,
+      });
+      return;
+    }
+    showPartialFillConfirm(root, err, () => {
+      submit.disabled = true;
+      skip.disabled = true;
+      onSubmit({
+        name: st.nm || "(Teachly tự động)",
+        count: useCount,
+        structure: st.st,
+        style: st.sy,
+        notes: st.nt,
+      });
+    });
   });
 
   return root;

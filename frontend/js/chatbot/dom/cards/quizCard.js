@@ -73,10 +73,11 @@ export function createQuizFormCard(deps) {
     const t = srcText.value.trim();
     const k = kind.value.trim();
     const lv = level.value;
-    const n = Number(qn.value);
+    const countRaw = qn.value.trim();
+    const n = Number(countRaw);
     const complete =
-      Boolean(t) && Number.isFinite(n) && n >= 1 && Boolean(k) && Boolean(lv);
-    return { t, k, n, complete };
+      Boolean(t) && Boolean(countRaw) && Number.isFinite(n) && n >= 1 && Boolean(k) && Boolean(lv);
+    return { t, k, n, lv, countRaw, complete };
   }
 
   skip.addEventListener("click", () => {
@@ -102,24 +103,35 @@ export function createQuizFormCard(deps) {
   submit.addEventListener("click", () => {
     removeSkipConfirm(root);
     err.style.display = "none";
-    const n = Number(qn.value);
-    if (!Number.isFinite(n) || n < 1) {
-      err.textContent = "Số lượng câu phải là số dương.";
-      err.style.display = "block";
-      return;
+    const countRaw = qn.value.trim();
+    if (countRaw) {
+      const n = Number(countRaw);
+      if (!Number.isFinite(n) || n < 1) {
+        err.textContent = "Số lượng câu phải là số dương.";
+        err.style.display = "block";
+        return;
+      }
     }
     const t = srcText.value.trim();
     const k = kind.value.trim();
     const lv = level.value;
-    if (t && k && lv) {
+    const notesValue = notes.value.trim();
+    const hasAnyInput = Boolean(t || k || lv || countRaw || notesValue);
+    if (!hasAnyInput) {
+      err.textContent = "Vui lòng nhập ít nhất một thông tin hoặc nhấn Bỏ qua.";
+      err.style.display = "block";
+      return;
+    }
+    const useCount = countRaw || "20";
+    if (t && k && lv && countRaw) {
       submit.disabled = true;
       skip.disabled = true;
       deps.onSubmit({
         source: t,
         kind: k,
-        count: String(n),
+        count: useCount,
         difficulty: lv,
-        notes: notes.value.trim(),
+        notes: notesValue,
       });
       return;
     }
@@ -129,9 +141,9 @@ export function createQuizFormCard(deps) {
       deps.onSubmit({
         source: t || "(Teachly tự động)",
         kind: k || "Ôn tập THPTQG",
-        count: String(n),
+        count: useCount,
         difficulty: lv || DEFAULT_DIFFICULTY,
-        notes: notes.value.trim(),
+        notes: notesValue,
       });
     });
   });

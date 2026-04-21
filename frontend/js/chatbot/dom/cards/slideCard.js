@@ -73,10 +73,11 @@ export function createSlideFormCard(deps) {
 
   function readSlideState() {
     const topic = docText.value.trim();
-    const n = Number(count.value);
+    const countRaw = count.value.trim();
+    const n = Number(countRaw);
     const sty = style.value;
-    const complete = Boolean(topic) && Number.isFinite(n) && n >= 1 && n <= 30 && Boolean(sty);
-    return { topic, n, sty, complete };
+    const complete = Boolean(topic) && Boolean(countRaw) && Number.isFinite(n) && n >= 1 && n <= 30 && Boolean(sty);
+    return { topic, n, sty, countRaw, complete };
   }
 
   skip.addEventListener("click", () => {
@@ -102,23 +103,35 @@ export function createSlideFormCard(deps) {
   submit.addEventListener("click", () => {
     removeSkipConfirm(root);
     err.style.display = "none";
-    const n = Number(count.value);
-    if (!Number.isFinite(n) || n < 1 || n > 30) {
-      err.textContent = "Số slide phải từ 1 đến 30.";
-      err.style.display = "block";
-      return;
+    const countRaw = count.value.trim();
+    if (countRaw) {
+      const n = Number(countRaw);
+      if (!Number.isFinite(n) || n < 1 || n > 30) {
+        err.textContent = "Số slide phải từ 1 đến 30.";
+        err.style.display = "block";
+        return;
+      }
     }
     const topic = docText.value.trim();
     const sty = style.value;
-    if (topic && sty) {
+    const structureValue = structure.value.trim();
+    const notesValue = notes.value.trim();
+    const hasAnyInput = Boolean(topic || countRaw || structureValue || sty || notesValue);
+    if (!hasAnyInput) {
+      err.textContent = "Vui lòng nhập ít nhất một thông tin hoặc nhấn Bỏ qua.";
+      err.style.display = "block";
+      return;
+    }
+    const useCount = countRaw || "20";
+    if (topic && sty && countRaw) {
       submit.disabled = true;
       skip.disabled = true;
       deps.onSubmit({
         topic,
-        count: String(n),
-        structure: structure.value.trim(),
+        count: useCount,
+        structure: structureValue,
         style: sty,
-        notes: notes.value.trim(),
+        notes: notesValue,
       });
       return;
     }
@@ -127,10 +140,10 @@ export function createSlideFormCard(deps) {
       skip.disabled = true;
       deps.onSubmit({
         topic: topic || "(Teachly tự động)",
-        count: String(n),
-        structure: structure.value.trim(),
+        count: useCount,
+        structure: structureValue,
         style: sty || SLIDE_TEMPLATE_DEFAULT,
-        notes: notes.value.trim(),
+        notes: notesValue,
       });
     });
   });
