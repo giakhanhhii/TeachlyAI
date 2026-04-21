@@ -52,6 +52,7 @@ export function init() {
   const domEls = resolveChatDomElements();
   if (!domEls) return;
   const { messages, messagesInner, form, input, sendBtn, threadLabel, chatList, newChatBtn, chatPhase, experienceLayer, experienceBody, backToChatBtn, toggleSidebarBtn, topHomeBtn } = domEls;
+  const messageScroller = /** @type {HTMLElement} */ (messages);
 
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
@@ -347,11 +348,11 @@ export function init() {
 
   function scrollToResumeDock() {
     const run = () => {
-      if (typeof messages.scrollTo === "function") {
-        messages.scrollTo({ top: messages.scrollHeight, behavior: "smooth" });
+      if (typeof messageScroller.scrollTo === "function") {
+        messageScroller.scrollTo({ top: messageScroller.scrollHeight, behavior: "smooth" });
         return;
       }
-      messages.scrollTop = messages.scrollHeight;
+      messageScroller.scrollTop = messageScroller.scrollHeight;
     };
     requestAnimationFrame(() => requestAnimationFrame(run));
   }

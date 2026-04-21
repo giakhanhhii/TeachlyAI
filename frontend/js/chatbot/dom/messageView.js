@@ -292,7 +292,15 @@ export function createMessageView(opts) {
   }
 
   function disableActionButtons(btnEl) {
-    void btnEl;
+    const row = btnEl.closest(".msg-row");
+    if (!row) return;
+    row.querySelectorAll(".msg-action-btn").forEach((node) => {
+      const actionBtn = /** @type {HTMLButtonElement} */ (node);
+      actionBtn.disabled = true;
+      actionBtn.setAttribute("aria-disabled", "true");
+      actionBtn.style.opacity = "0.65";
+      actionBtn.style.cursor = "default";
+    });
   }
 
   function addThinkingBubble() {
