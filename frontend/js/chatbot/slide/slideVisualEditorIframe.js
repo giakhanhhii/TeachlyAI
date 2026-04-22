@@ -471,16 +471,15 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       };
     }
 
-    function releaseStickerAnchors() {
+    function releaseStickerAnchors(frozenX, frozenY) {
       if (!(el.classList && el.classList.contains("sticker"))) return;
-      var cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
-      var curLeft = cs && cs.left ? cs.left : "";
-      var curTop = cs && cs.top ? cs.top : "";
-      if (/^-?\d+(\.\d+)?px$/.test(curLeft)) {
-        el.style.setProperty("left", curLeft, "important");
+      var nextX = typeof frozenX === "number" && isFinite(frozenX) ? frozenX : parseFloat(el.getAttribute("data-edit-x"));
+      var nextY = typeof frozenY === "number" && isFinite(frozenY) ? frozenY : parseFloat(el.getAttribute("data-edit-y"));
+      if (isFinite(nextX)) {
+        el.style.setProperty("left", pxStr(nextX), "important");
       }
-      if (/^-?\d+(\.\d+)?px$/.test(curTop)) {
-        el.style.setProperty("top", curTop, "important");
+      if (isFinite(nextY)) {
+        el.style.setProperty("top", pxStr(nextY), "important");
       }
       el.style.setProperty("--sticker-inline-offset", "initial", "important");
       el.style.setProperty("--sticker-block-offset", "initial", "important");
@@ -542,7 +541,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         /* Fast-path: phần tử đã absolute + đã có toạ độ lưu.
          * Vẫn cần đảm bảo width/height đang được lock (có thể bị template CSS reset giữa 2 click).
          * Đo nhanh và re-apply nếu chưa được set inline. */
-        releaseStickerAnchors();
+        releaseStickerAnchors(x, y);
         el.style.setProperty("position", "absolute", "important");
         el.style.left = pxStr(x);
         el.style.top = pxStr(y);
@@ -565,7 +564,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         }
       }
       /* applyTextBoxStyles phải chạy trước absolute (xem nhánh snap3) */
-      releaseStickerAnchors();
+      releaseStickerAnchors(x, y);
       el.style.setProperty("position", "absolute", "important");
       el.style.left = pxStr(x);
       el.style.top = pxStr(y);
@@ -587,7 +586,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       }
       /* Đảm bảo width/height luôn được lock trước absolute — kể cả lần đầu tiên */
       applyTextBoxStyles(snap2);
-      releaseStickerAnchors();
+      releaseStickerAnchors(lx0, ty0);
       el.style.setProperty("position", "absolute", "important");
       el.style.left = pxStr(lx0);
       el.style.top = pxStr(ty0);
@@ -602,7 +601,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     el.setAttribute("data-edit-x", String(lx));
     el.setAttribute("data-edit-y", String(ty));
     applyTextBoxStyles(snap3);
-    releaseStickerAnchors();
+    releaseStickerAnchors(lx, ty);
     el.style.setProperty("position", "absolute", "important");
     el.style.left = pxStr(lx);
     el.style.top = pxStr(ty);
