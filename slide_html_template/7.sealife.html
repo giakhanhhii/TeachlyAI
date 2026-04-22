@@ -90,7 +90,7 @@
             border: 3px solid #121212;
             border-radius: 40px;
             position: relative;
-            z-index: 10;
+            z-index: 20;
             width: 100%;
             height: 100%;
             display: flex;
@@ -102,10 +102,11 @@
         /* Sea Creatures Stickers (Hoạt hình biển cả) */
         .sticker {
             position: absolute;
-            z-index: 15;
+            z-index: 12;
             font-size: 80px;
             filter: drop-shadow(3px 4px 0px #121212);
             user-select: none;
+            pointer-events: none;
         }
 
         .s-whale {
@@ -150,17 +151,64 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            padding: 44px 150px 52px;
+            overflow: hidden;
         }
 
         .title-card h1 {
-            font-size: 70px;
-            line-height: 1.2;
-            margin-bottom: 30px;
+            font-size: clamp(52px, 5.2vw, 78px) !important;
+            line-height: 1.08;
+            margin-bottom: 18px !important;
+            max-width: 100%;
+            text-wrap: balance;
         }
 
         .title-card p {
-            font-size: 32px;
+            font-size: clamp(22px, 2.2vw, 30px) !important;
             color: #333;
+            line-height: 1.45 !important;
+            max-width: 880px;
+        }
+
+        .title-content {
+            width: min(100%, 900px);
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-card h1,
+        .title-card p,
+        .title-card .title-content,
+        .title-card ul[data-shell="bullets"],
+        .section-card h1,
+        .section-card p,
+        .section-card ul[data-shell="bullets"] {
+            position: relative;
+            z-index: 24;
+        }
+
+        .title-card .badge {
+            z-index: 24;
+        }
+
+        .title-card ul[data-shell="bullets"],
+        .section-card ul[data-shell="bullets"] {
+            width: min(100%, 900px);
+            max-width: 900px;
+            margin: 18px auto 0;
+            padding-left: 28px;
+            font-size: clamp(18px, 1.8vw, 26px);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .title-card ul[data-shell="bullets"] li,
+        .section-card ul[data-shell="bullets"] li {
+            margin-bottom: 8px;
         }
 
         .badge {
@@ -239,6 +287,8 @@
             align-items: center;
             justify-content: center;
             text-align: center;
+            padding: 56px 150px;
+            overflow: hidden;
         }
 
         .oval-number {
@@ -257,12 +307,85 @@
         }
 
         .section-card h1 {
-            font-size: 80px;
-            margin-bottom: 20px;
+            font-size: clamp(50px, 5vw, 74px) !important;
+            margin-bottom: 16px !important;
+            line-height: 1.08;
+            max-width: 100%;
+            text-wrap: balance;
         }
 
         .section-card p {
-            font-size: 28px;
+            font-size: clamp(22px, 2vw, 28px) !important;
+            line-height: 1.45 !important;
+            max-width: 840px;
+        }
+
+        .title-card .sticker,
+        .section-card .sticker {
+            z-index: 14;
+        }
+
+        .title-card .s-whale,
+        .section-card .s-whale {
+            left: 22px !important;
+            right: auto !important;
+            top: auto !important;
+            bottom: 26px !important;
+            font-size: 88px !important;
+        }
+
+        .title-card .s-bubble,
+        .section-card .s-bubble {
+            left: 110px !important;
+            right: auto !important;
+            top: 44px !important;
+            bottom: auto !important;
+            font-size: 46px !important;
+        }
+
+        .title-card .s-seaweed,
+        .section-card .s-seaweed {
+            left: 24px !important;
+            right: auto !important;
+            top: auto !important;
+            bottom: 18px !important;
+            font-size: 84px !important;
+        }
+
+        .title-card .s-octopus,
+        .section-card .s-octopus {
+            left: 24px !important;
+            right: auto !important;
+            top: 34px !important;
+            bottom: auto !important;
+            font-size: 80px !important;
+        }
+
+        .title-card .s-nemo,
+        .section-card .s-nemo {
+            left: auto !important;
+            right: 22px !important;
+            top: auto !important;
+            bottom: 24px !important;
+            font-size: 72px !important;
+        }
+
+        .title-card .s-crab,
+        .section-card .s-crab {
+            left: auto !important;
+            right: 24px !important;
+            top: 36px !important;
+            bottom: auto !important;
+            font-size: 72px !important;
+        }
+
+        .title-card .s-starfish,
+        .section-card .s-starfish {
+            left: auto !important;
+            right: 28px !important;
+            top: 36px !important;
+            bottom: auto !important;
+            font-size: 66px !important;
         }
 
         /* Timeline */
