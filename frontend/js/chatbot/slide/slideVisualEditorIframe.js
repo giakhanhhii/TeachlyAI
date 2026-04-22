@@ -502,17 +502,22 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         return;
       }
       if (isTextShellTarget(el)) {
+        var isTitle = el.getAttribute("data-shell") === "title";
         /*
          * Dùng max(measured, available) đảm bảo text không bao giờ wrap sau khi absolute:
          * - measured (wpx/ow): kích thước thực khi element còn in-flow
          * - availW: ngân sách ngang tối đa từ containing block
          * Dùng border-box vì er.width / offsetWidth đều là border-box.
+         * Riêng title: giữ theo kích thước đang hiển thị để tránh “bung” thành box rộng
+         * rồi nhìn như bị giật khi mới click chọn.
          */
-        var wPx = Math.ceil(Math.max(snap.wpx, snap.ow, snap.availW));
-        var hMin = Math.ceil(Math.max(snap.hpx, snap.oh));
+        var wPx = isTitle
+          ? Math.max(snap.wpx, snap.ow)
+          : Math.ceil(Math.max(snap.wpx, snap.ow, snap.availW));
+        var hMin = isTitle ? Math.max(snap.hpx, snap.oh) : Math.ceil(Math.max(snap.hpx, snap.oh));
         el.style.setProperty("box-sizing", "border-box", "important");
-        el.style.setProperty("width", wPx + "px", "important");
-        el.style.setProperty("min-height", hMin + "px", "important");
+        el.style.setProperty("width", pxStr(wPx), "important");
+        el.style.setProperty("min-height", pxStr(hMin), "important");
         el.style.setProperty("height", "auto", "important");
         el.style.setProperty("max-height", "none", "important");
         el.style.setProperty("max-width", "none", "important");
