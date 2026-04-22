@@ -10,6 +10,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DIR = ROOT / "frontend" / "slide_html_template"
+LEGACY_DIR = ROOT / "slide_html_template"
+
+LEGACY_NAME_MAP = {
+    "4.space-bright.html": ("4.thptqg.html",),
+}
 
 BODY_1 = """<body>
 
@@ -290,12 +295,28 @@ def replace_body(html: str, new_body: str) -> str:
     return re.sub(r"(?is)<body[^>]*>.*?</body>", new_body.strip(), html, count=1)
 
 
+def resolve_template_path(name: str) -> Path:
+    candidates: list[Path] = [DIR / name]
+    for legacy_name in LEGACY_NAME_MAP.get(name, ()):
+        candidates.append(DIR / legacy_name)
+    candidates.append(LEGACY_DIR / name)
+    for legacy_name in LEGACY_NAME_MAP.get(name, ()):
+        candidates.append(LEGACY_DIR / legacy_name)
+    for path in candidates:
+        if path.is_file():
+            return path
+    checked = "\n - ".join(str(path) for path in candidates)
+    raise FileNotFoundError(f"Missing template '{name}'. Checked:\n - {checked}")
+
+
 def main() -> None:
+    DIR.mkdir(parents=True, exist_ok=True)
     for name, body in BODY_BY_FILE.items():
-        path = DIR / name
+        path = resolve_template_path(name)
         raw = path.read_text(encoding="utf-8")
         out = patch_title_year(replace_body(raw, body))
-        path.write_text(out, encoding="utf-8")
+        target_path = DIR / name
+        target_path.write_text(out, encoding="utf-8")
         print("patched", name)
 
     p2 = DIR / "2.on_thi_tn_thpt_2026.html"
