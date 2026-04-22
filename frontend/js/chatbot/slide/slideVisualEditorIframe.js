@@ -76,6 +76,7 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
     top: 0;
     right: 0;
     bottom: 0;
+    display: none;
     pointer-events: none;
     z-index: 100100;
   }
@@ -705,6 +706,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     handleLayer = document.createElement("div");
     handleLayer.className = "slide-visual-edit-handles";
     handleLayer.setAttribute("aria-hidden", "true");
+    handleLayer.style.display = "none";
     handleLayer.innerHTML =
       '<div class="ve-outline"></div>' +
       '<div class="ve-handle ve-corner ve-nw" data-ve-handle="nw"></div>' +
