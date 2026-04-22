@@ -243,6 +243,55 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance .comic-panel > .sticker {
       pointer-events: none !important;
     }
+    .shell-slide-instance .card > .sticker[data-sticker-side="left"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-side="left"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-side="left"] {
+      left: 22px !important;
+      right: auto !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-side="right"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-side="right"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-side="right"] {
+      right: 22px !important;
+      left: auto !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-lane="1"][data-sticker-side="left"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-lane="1"][data-sticker-side="left"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-lane="1"][data-sticker-side="left"] {
+      left: 96px !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-lane="1"][data-sticker-side="right"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-lane="1"][data-sticker-side="right"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-lane="1"][data-sticker-side="right"] {
+      right: 96px !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-vertical="top"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-vertical="top"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-vertical="top"] {
+      top: 24px !important;
+      bottom: auto !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-vertical="bottom"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-vertical="bottom"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-vertical="bottom"] {
+      bottom: 20px !important;
+      top: auto !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-lane="1"][data-sticker-vertical="top"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-lane="1"][data-sticker-vertical="top"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-lane="1"][data-sticker-vertical="top"] {
+      top: 68px !important;
+    }
+    .shell-slide-instance .card > .sticker[data-sticker-lane="1"][data-sticker-vertical="bottom"],
+    .shell-slide-instance .content-card > .sticker[data-sticker-lane="1"][data-sticker-vertical="bottom"],
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-lane="1"][data-sticker-vertical="bottom"] {
+      bottom: 66px !important;
+    }
+    .shell-slide-instance .title-card,
+    .shell-slide-instance .section-card {
+      padding-left: 170px !important;
+      padding-right: 170px !important;
+    }
     /* Khung nội dung: khớp chế độ Sửa — không transform:scale (xem slideVisualEditorIframe) */
     .shell-slide-instance .card,
     .shell-slide-instance .content-card,
@@ -550,7 +599,17 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
   if (!stickers.length) return;
   const slidePad = Number(slideRoot.getAttribute("data-slide-pad"));
   const slidePadPx = Number.isFinite(slidePad) ? slidePad : SLIDE_PAD_PX_DEFAULT;
+  /** @type {Map<string, number>} */
+  const laneCounts = new Map();
   stickers.reverse().forEach((st) => {
+    const side = st.style.right ? "right" : "left";
+    const vertical = st.style.bottom ? "bottom" : "top";
+    const laneKey = `${side}-${vertical}`;
+    const lane = laneCounts.get(laneKey) || 0;
+    laneCounts.set(laneKey, lane + 1);
+    st.dataset.stickerSide = side;
+    st.dataset.stickerVertical = vertical;
+    st.dataset.stickerLane = String(Math.min(lane, 1));
     host.insertBefore(st, host.firstChild);
     const top = st.style.top;
     const left = st.style.left;
