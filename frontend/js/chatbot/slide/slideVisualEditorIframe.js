@@ -492,6 +492,16 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     }
 
     function applyTextBoxStyles(snap) {
+      if (el.classList && el.classList.contains("sticker")) {
+        el.style.removeProperty("width");
+        el.style.removeProperty("height");
+        el.style.removeProperty("min-height");
+        el.style.removeProperty("max-height");
+        el.style.removeProperty("max-width");
+        el.style.setProperty("width", "auto", "important");
+        el.style.setProperty("height", "auto", "important");
+        return;
+      }
       if (isTextShellTarget(el)) {
         /*
          * Dùng max(measured, available) đảm bảo text không bao giờ wrap sau khi absolute:
@@ -620,17 +630,6 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   }
 
   function lockStickerForResize(el) {
-    el.style.boxSizing = "border-box";
-    el.style.display = "inline-block";
-    el.style.whiteSpace = "nowrap";
-    el.style.width = "auto";
-    el.style.height = "auto";
-    el.style.minWidth = "0";
-    el.style.minHeight = "0";
-    el.style.maxWidth = "none";
-    el.style.maxHeight = "none";
-    el.style.lineHeight = "1";
-    void el.offsetWidth;
     return el.getBoundingClientRect();
   }
 
@@ -688,10 +687,11 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     }
     var r0 = el.getBoundingClientRect();
     var wpx = Math.max(32, r0.width);
-    var hpx = Math.max(24, r0.height);
     el.style.width = wpx + "px";
     el.style.maxWidth = wpx + "px";
-    el.style.height = hpx + "px";
+    el.style.minHeight = "0";
+    el.style.height = "auto";
+    el.style.maxHeight = "none";
     void el.offsetWidth;
     return el.getBoundingClientRect();
   }
@@ -795,27 +795,27 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         nhC = Math.max(24, sh + dy);
       }
       if (kind === "text") {
-        el.style.width = nwC + "px";
-        el.style.maxWidth = nwC + "px";
-        el.style.height = nhC + "px";
+        var rawTextScale = Math.max(nwC / Math.max(sw, 1), nhC / Math.max(sh, 1));
+        var textScale = Math.max(0.35, Math.min(4, rawTextScale));
+        var scaledWidth = Math.max(32, sw * textScale);
+        el.style.width = scaledWidth + "px";
+        el.style.maxWidth = scaledWidth + "px";
+        el.style.minHeight = "0";
+        el.style.height = "auto";
+        el.style.maxHeight = "none";
         el.style.boxSizing = "border-box";
         var sf0 = resizeState.startFont || 16;
-        var scF = Math.sqrt(
-          Math.max(1e-6, nwC * nwC + nhC * nhC) / Math.max(1e-6, sw * sw + sh * sh),
-        );
-        var nf = Math.max(6, Math.min(260, sf0 * scF));
+        var nf = Math.max(6, Math.min(260, sf0 * textScale));
         el.style.setProperty("font-size", nf + "px", "important");
         placeCornerAnchored(el, h, bx, by, sw, sh);
         return;
       } else if (kind === "sticker") {
         var sfSticker = resizeState.startFont || 16;
-        var stickerScale = Math.max(nwC / Math.max(sw, 1), nhC / Math.max(sh, 1));
+        var rawStickerScale = Math.max(nwC / Math.max(sw, 1), nhC / Math.max(sh, 1));
+        var stickerScale = Math.max(0.35, Math.min(4.5, rawStickerScale));
         var nextFont = Math.max(8, Math.min(520, sfSticker * stickerScale));
-        el.style.setProperty("display", "inline-block", "important");
-        el.style.setProperty("white-space", "nowrap", "important");
         el.style.setProperty("width", "auto", "important");
         el.style.setProperty("height", "auto", "important");
-        el.style.setProperty("line-height", "1", "important");
         el.style.setProperty("font-size", nextFont + "px", "important");
         placeCornerAnchored(el, h, bx, by, sw, sh);
         return;
