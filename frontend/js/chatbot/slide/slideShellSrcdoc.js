@@ -456,39 +456,50 @@ function injectShellPanelFitScript(doc) {
       return true;
     });
   }
-  function applyPanelLayoutToScaled(panel, scaled) {
-    if (!panel || !scaled || !window.getComputedStyle) return;
+  function applyPanelLayoutToElement(cs, el, display) {
+    if (!cs || !el) return;
+    el.style.minWidth = "0";
+    el.style.minHeight = "0";
+    el.style.overflow = "visible";
+    if (display.indexOf("flex") !== -1) {
+      el.style.display = "flex";
+      el.style.flexDirection = cs.flexDirection || "column";
+      el.style.flexWrap = cs.flexWrap || "nowrap";
+      el.style.justifyContent = cs.justifyContent || "flex-start";
+      el.style.alignItems = cs.alignItems || "stretch";
+      el.style.alignContent = cs.alignContent || "stretch";
+      el.style.gap = cs.gap || "";
+      el.style.rowGap = cs.rowGap || "";
+      el.style.columnGap = cs.columnGap || "";
+      el.style.flex = "1 1 auto";
+      el.style.alignSelf = "stretch";
+    } else if (display.indexOf("grid") !== -1) {
+      el.style.display = "grid";
+      el.style.gridTemplateColumns = cs.gridTemplateColumns || "";
+      el.style.gridTemplateRows = cs.gridTemplateRows || "";
+      el.style.gridAutoFlow = cs.gridAutoFlow || "";
+      el.style.gridAutoColumns = cs.gridAutoColumns || "";
+      el.style.gridAutoRows = cs.gridAutoRows || "";
+      el.style.justifyItems = cs.justifyItems || "";
+      el.style.alignItems = cs.alignItems || "";
+      el.style.justifyContent = cs.justifyContent || "";
+      el.style.alignContent = cs.alignContent || "";
+      el.style.gap = cs.gap || "";
+      el.style.rowGap = cs.rowGap || "";
+      el.style.columnGap = cs.columnGap || "";
+      el.style.justifySelf = "stretch";
+      el.style.alignSelf = "stretch";
+    } else if (display) {
+      el.style.display = display;
+    }
+    el.style.width = "100%";
+  }
+  function applyPanelLayoutToScaled(panel, outer, scaled) {
+    if (!panel || !outer || !scaled || !window.getComputedStyle) return;
     var cs = window.getComputedStyle(panel);
     var display = cs && cs.display ? cs.display : "";
-    if (display.indexOf("flex") !== -1) {
-      scaled.style.display = "flex";
-      scaled.style.flexDirection = cs.flexDirection || "column";
-      scaled.style.flexWrap = cs.flexWrap || "nowrap";
-      scaled.style.justifyContent = cs.justifyContent || "flex-start";
-      scaled.style.alignItems = cs.alignItems || "stretch";
-      scaled.style.alignContent = cs.alignContent || "stretch";
-      scaled.style.gap = cs.gap || "";
-      scaled.style.rowGap = cs.rowGap || "";
-      scaled.style.columnGap = cs.columnGap || "";
-    } else if (display.indexOf("grid") !== -1) {
-      scaled.style.display = "grid";
-      scaled.style.gridTemplateColumns = cs.gridTemplateColumns || "";
-      scaled.style.gridTemplateRows = cs.gridTemplateRows || "";
-      scaled.style.gridAutoFlow = cs.gridAutoFlow || "";
-      scaled.style.gridAutoColumns = cs.gridAutoColumns || "";
-      scaled.style.gridAutoRows = cs.gridAutoRows || "";
-      scaled.style.justifyItems = cs.justifyItems || "";
-      scaled.style.alignItems = cs.alignItems || "";
-      scaled.style.justifyContent = cs.justifyContent || "";
-      scaled.style.alignContent = cs.alignContent || "";
-      scaled.style.gap = cs.gap || "";
-      scaled.style.rowGap = cs.rowGap || "";
-      scaled.style.columnGap = cs.columnGap || "";
-    } else if (display) {
-      scaled.style.display = display;
-    }
-    scaled.style.width = "100%";
-    scaled.style.minHeight = "0";
+    applyPanelLayoutToElement(cs, outer, display);
+    applyPanelLayoutToElement(cs, scaled, display);
   }
   function wrapPanel(panel) {
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
@@ -499,7 +510,7 @@ function injectShellPanelFitScript(doc) {
     outer.className = "shell-panel-fit-outer";
     var scaled = document.createElement("div");
     scaled.className = "shell-panel-fit-scaled";
-    applyPanelLayoutToScaled(panel, scaled);
+    applyPanelLayoutToScaled(panel, outer, scaled);
     while (panel.firstChild) scaled.appendChild(panel.firstChild);
     outer.appendChild(scaled);
     sizer.appendChild(outer);
