@@ -471,10 +471,63 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         /** @type {"presentation" | "scroll"} */
         let viewMode = "presentation";
         let suppressArrowNavUntil = 0;
+        let sharedOuterScrollTop = root.scrollTop;
+        let sharedDeckScrollTop = 0;
+        let sharedDeckScrollRatio = 0;
+
+        function readDeckScrollState() {
+          const doc = iframe.contentDocument;
+          if (!doc) return { top: sharedDeckScrollTop, ratio: sharedDeckScrollRatio };
+          const scrollingEl = doc.scrollingElement || doc.documentElement || doc.body;
+          const top = Math.max(
+            Number(scrollingEl?.scrollTop) || 0,
+            Number(doc.documentElement?.scrollTop) || 0,
+            Number(doc.body?.scrollTop) || 0,
+            0,
+          );
+          const viewportHeight = Math.max(
+            Number(scrollingEl?.clientHeight) || 0,
+            Number(doc.documentElement?.clientHeight) || 0,
+            Number(doc.body?.clientHeight) || 0,
+            Number(iframe.contentWindow?.innerHeight) || 0,
+            0,
+          );
+          const scrollHeight = Math.max(
+            Number(scrollingEl?.scrollHeight) || 0,
+            Number(doc.documentElement?.scrollHeight) || 0,
+            Number(doc.body?.scrollHeight) || 0,
+            0,
+          );
+          const max = Math.max(0, scrollHeight - viewportHeight);
+          sharedDeckScrollTop = top;
+          sharedDeckScrollRatio = max > 0 ? top / max : 0;
+          return { top: sharedDeckScrollTop, ratio: sharedDeckScrollRatio };
+        }
+
+        function restoreOuterScrollSoon() {
+          const restore = () => {
+            root.scrollTop = sharedOuterScrollTop;
+          };
+          restore();
+          requestAnimationFrame(restore);
+        }
+
+        root.addEventListener(
+          "scroll",
+          () => {
+            sharedOuterScrollTop = root.scrollTop;
+          },
+          { passive: true, signal: uiSignal },
+        );
 
         function syncViewModeToIframe() {
           if (!shellReady) return;
-          setSlideShellNavMode(iframe, viewMode === "scroll" ? "scroll" : "active", slideDeckIndex);
+          setSlideShellNavMode(
+            iframe,
+            viewMode === "scroll" ? "scroll" : "active",
+            slideDeckIndex,
+            viewMode === "presentation" ? readDeckScrollState() : undefined,
+          );
         }
 
         function paintSlideChrome() {
@@ -507,9 +560,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           if (next < 0 || next >= deckSlides.length) return;
           slideDeckIndex = next;
           syncViewModeToIframe();
-          syncShellSlideNav(iframe, slideDeckIndex);
+          syncShellSlideNav(iframe, slideDeckIndex, readDeckScrollState());
           paintSlideChrome();
           emitState();
+          restoreOuterScrollSoon();
           refreshMixedNavChrome();
         }
 
@@ -583,9 +637,18 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
             loading.remove();
             iframe.style.display = "";
             shellReady = true;
+            const captureDeckScroll = () => {
+              if (!shellReady || viewMode !== "presentation") return;
+              readDeckScrollState();
+            };
+            iframe.contentWindow?.addEventListener("scroll", captureDeckScroll, { passive: true });
+            iframe.contentDocument?.addEventListener("scroll", captureDeckScroll, {
+              passive: true,
+              capture: true,
+            });
             viewMode = "presentation";
             syncViewModeToIframe();
-            syncShellSlideNav(iframe, slideDeckIndex);
+            syncShellSlideNav(iframe, slideDeckIndex, readDeckScrollState());
             paintSlideChrome();
             activeSlideDeckShell = {
               iframe,

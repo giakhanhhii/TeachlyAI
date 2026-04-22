@@ -944,15 +944,74 @@ function setSlideShellDocumentViewportMode(doc, mode) {
 /**
  * @param {Document} doc
  */
-function resetSlideShellDocumentScroll(doc) {
+function readSlideShellDocumentScroll(doc) {
+  const nodes = [doc.scrollingElement, doc.documentElement, doc.body];
+  for (const node of nodes) {
+    if (!node) continue;
+    const top = Number(node.scrollTop);
+    if (Number.isFinite(top) && top > 0) return top;
+  }
+  return 0;
+}
+
+/**
+ * @param {Document} doc
+ * @returns {{ top: number, max: number }}
+ */
+function measureSlideShellDocumentScrollMetrics(doc) {
+  const root = doc.documentElement;
+  const body = doc.body;
+  const scrolling = doc.scrollingElement;
+  const viewportHeight = Math.max(
+    Number(doc.defaultView?.innerHeight) || 0,
+    Number(root?.clientHeight) || 0,
+    Number(body?.clientHeight) || 0,
+  );
+  const maxScroll = Math.max(
+    Number(scrolling?.scrollHeight || 0) - Number(scrolling?.clientHeight || viewportHeight),
+    Number(root?.scrollHeight || 0) - Number(root?.clientHeight || viewportHeight),
+    Number(body?.scrollHeight || 0) - Number(body?.clientHeight || viewportHeight),
+    0,
+  );
+  return {
+    top: readSlideShellDocumentScroll(doc),
+    max: Math.max(0, Math.ceil(maxScroll)),
+  };
+}
+
+/**
+ * @param {Document} doc
+ * @param {{ top?: number, ratio?: number } | undefined} scrollState
+ * @returns {number}
+ */
+function resolveSlideShellDocumentScrollTop(doc, scrollState) {
+  const { max } = measureSlideShellDocumentScrollMetrics(doc);
+  if (!scrollState || max <= 0) return 0;
+  const ratio = Number(scrollState.ratio);
+  if (Number.isFinite(ratio) && ratio > 0) {
+    return Math.max(0, Math.min(max, Math.round(max * Math.max(0, Math.min(1, ratio)))));
+  }
+  const top = Number(scrollState.top);
+  if (Number.isFinite(top) && top > 0) {
+    return Math.max(0, Math.min(max, Math.round(top)));
+  }
+  return 0;
+}
+
+/**
+ * @param {Document} doc
+ * @param {number} top
+ */
+function setSlideShellDocumentScroll(doc, top = 0) {
+  const nextTop = Math.max(0, Math.round(Number(top) || 0));
   const nodes = [doc.scrollingElement, doc.documentElement, doc.body];
   nodes.forEach((node) => {
     if (!node) return;
-    node.scrollTop = 0;
+    node.scrollTop = nextTop;
     node.scrollLeft = 0;
   });
   try {
-    doc.defaultView?.scrollTo(0, 0);
+    doc.defaultView?.scrollTo(0, nextTop);
   } catch (_) {
     /* ignore */
   }
@@ -1023,14 +1082,14 @@ function measureSlideShellActiveHeight(slide) {
 
 /**
  * @param {HTMLIFrameElement} iframe
+ * @param {{ top?: number, ratio?: number } | undefined} scrollState
  */
-function syncSlideShellActiveViewport(iframe) {
+function syncSlideShellActiveViewport(iframe, scrollState) {
   const doc = iframe.contentDocument;
   if (!doc) return;
   const master = doc.querySelector("#slides-master-container");
   if (!master || master.getAttribute("data-nav-mode") !== "active") return;
   setSlideShellDocumentViewportMode(doc, "active");
-  resetSlideShellDocumentScroll(doc);
   const activeSlide =
     doc.querySelector(".shell-slide-instance.active") ||
     doc.querySelector(".shell-slide-instance");
@@ -1042,31 +1101,34 @@ function syncSlideShellActiveViewport(iframe) {
   }
   iframe.style.aspectRatio = "auto";
   iframe.style.overflow = "hidden";
+  setSlideShellDocumentScroll(doc, resolveSlideShellDocumentScrollTop(doc, scrollState));
 }
 
 /**
  * @param {HTMLIFrameElement} iframe
+ * @param {{ top?: number, ratio?: number } | undefined} scrollState
  */
-function scheduleSlideShellActiveViewportSync(iframe) {
-  syncSlideShellActiveViewport(iframe);
+function scheduleSlideShellActiveViewportSync(iframe, scrollState) {
+  syncSlideShellActiveViewport(iframe, scrollState);
   const win = iframe.contentWindow;
   const raf =
     (win && typeof win.requestAnimationFrame === "function" && win.requestAnimationFrame.bind(win)) ||
     (typeof requestAnimationFrame === "function" ? requestAnimationFrame.bind(window) : null);
   if (raf) {
     raf(() => {
-      syncSlideShellActiveViewport(iframe);
-      raf(() => syncSlideShellActiveViewport(iframe));
+      syncSlideShellActiveViewport(iframe, scrollState);
+      raf(() => syncSlideShellActiveViewport(iframe, scrollState));
     });
   }
-  setTimeout(() => syncSlideShellActiveViewport(iframe), 80);
+  setTimeout(() => syncSlideShellActiveViewport(iframe, scrollState), 80);
 }
 
 /**
  * @param {HTMLIFrameElement} iframe
  * @param {number} index
+ * @param {{ top?: number, ratio?: number } | undefined} [scrollState]
  */
-export function syncShellSlideNav(iframe, index) {
+export function syncShellSlideNav(iframe, index, scrollState) {
   const doc = iframe.contentDocument;
   if (!doc) return;
   try {
@@ -1087,7 +1149,7 @@ export function syncShellSlideNav(iframe, index) {
     inst.forEach((el, i) => {
       el.classList.toggle("active", i === idx);
     });
-    scheduleSlideShellActiveViewportSync(iframe);
+    scheduleSlideShellActiveViewportSync(iframe, scrollState);
     return;
   }
   scheduleSlideShellScrollViewportSync(iframe);
@@ -1098,8 +1160,9 @@ export function syncShellSlideNav(iframe, index) {
  * @param {HTMLIFrameElement} iframe
  * @param {"active" | "scroll"} mode
  * @param {number} index current slide index
+ * @param {{ top?: number, ratio?: number } | undefined} [scrollState]
  */
-export function setSlideShellNavMode(iframe, mode, index) {
+export function setSlideShellNavMode(iframe, mode, index, scrollState) {
   const doc = iframe.contentDocument;
   if (!doc) return;
   const master = doc.querySelector("#slides-master-container");
@@ -1120,7 +1183,7 @@ export function setSlideShellNavMode(iframe, mode, index) {
   }
   if (next === "active") {
     inst.forEach((el, j) => el.classList.toggle("active", j === idx));
-    scheduleSlideShellActiveViewportSync(iframe);
+    scheduleSlideShellActiveViewportSync(iframe, scrollState);
     return;
   }
   inst.forEach((el) => el.classList.remove("active"));
