@@ -26,6 +26,12 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
   body.slide-visual-edit-on .shell-slide-instance .sticker {
     pointer-events: auto !important;
   }
+  body.slide-visual-edit-on .shell-slide-instance .sticker[data-edit-geom="1"] {
+    right: auto !important;
+    bottom: auto !important;
+    --sticker-inline-offset: initial !important;
+    --sticker-block-offset: initial !important;
+  }
   /* Phase 1: nested spans/bold và template pointer-events:none không được chặn hit-test */
   body.slide-visual-edit-on .shell-slide-instance img,
   body.slide-visual-edit-on .shell-slide-instance .card,
@@ -401,6 +407,27 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
     function offsetFromContainingBlock() {
       var cb = absoluteContainingBlock(el, slide);
+      var isSticker = !!(el.classList && el.classList.contains("sticker"));
+      if (isSticker && el.offsetParent === cb) {
+        var elCs0 = window.getComputedStyle(el);
+        var mElL0 = parseFloat(elCs0.marginLeft) || 0;
+        var mElT0 = parseFloat(elCs0.marginTop) || 0;
+        var lx0 = el.offsetLeft - mElL0 + cb.scrollLeft;
+        var ty0 = el.offsetTop - mElT0 + cb.scrollTop;
+        var ow0 = el.offsetWidth;
+        var oh0 = el.offsetHeight;
+        var availW0 = Math.max(1, cb.clientWidth - lx0);
+        return {
+          cb: cb,
+          lx: lx0,
+          ty: ty0,
+          wpx: Math.max(1, ow0),
+          hpx: Math.max(1, oh0),
+          ow: ow0,
+          oh: oh0,
+          availW: availW0,
+        };
+      }
       var er = el.getBoundingClientRect();
       var br = cb.getBoundingClientRect();
       /*
@@ -444,6 +471,19 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       };
     }
 
+    function releaseStickerAnchors() {
+      if (!(el.classList && el.classList.contains("sticker"))) return;
+      el.removeAttribute("data-sticker-side");
+      el.removeAttribute("data-sticker-vertical");
+      el.removeAttribute("data-sticker-lane");
+      el.style.removeProperty("right");
+      el.style.removeProperty("bottom");
+      el.style.setProperty("right", "auto", "important");
+      el.style.setProperty("bottom", "auto", "important");
+      el.style.removeProperty("--sticker-inline-offset");
+      el.style.removeProperty("--sticker-block-offset");
+    }
+
     function applyTextBoxStyles(snap) {
       if (isTextShellTarget(el)) {
         /*
@@ -485,6 +525,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         /* Fast-path: phần tử đã absolute + đã có toạ độ lưu.
          * Vẫn cần đảm bảo width/height đang được lock (có thể bị template CSS reset giữa 2 click).
          * Đo nhanh và re-apply nếu chưa được set inline. */
+        releaseStickerAnchors();
         el.style.setProperty("position", "absolute", "important");
         el.style.left = pxStr(x);
         el.style.top = pxStr(y);
@@ -507,6 +548,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         }
       }
       /* applyTextBoxStyles phải chạy trước absolute (xem nhánh snap3) */
+      releaseStickerAnchors();
       el.style.setProperty("position", "absolute", "important");
       el.style.left = pxStr(x);
       el.style.top = pxStr(y);
@@ -528,6 +570,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       }
       /* Đảm bảo width/height luôn được lock trước absolute — kể cả lần đầu tiên */
       applyTextBoxStyles(snap2);
+      releaseStickerAnchors();
       el.style.setProperty("position", "absolute", "important");
       el.style.left = pxStr(lx0);
       el.style.top = pxStr(ty0);
@@ -542,6 +585,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     el.setAttribute("data-edit-x", String(lx));
     el.setAttribute("data-edit-y", String(ty));
     applyTextBoxStyles(snap3);
+    releaseStickerAnchors();
     el.style.setProperty("position", "absolute", "important");
     el.style.left = pxStr(lx);
     el.style.top = pxStr(ty);
