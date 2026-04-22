@@ -237,12 +237,13 @@ function injectShellPreviewFit(doc) {
       overflow: visible !important;
       position: relative !important;
     }
-    /* Sticker đưa vào trong .card (JS): nằm dưới lớp chữ; không hạ z-index xuống sau cả khung trắng */
+    /* Sticker đưa vào trong .card (JS): luôn nổi trên chữ/nội dung của theme */
     .shell-slide-instance .card > .sticker,
     .shell-slide-instance .content-card > .sticker,
     .shell-slide-instance .comic-panel > .sticker,
     .shell-slide-instance > .sticker {
       pointer-events: none !important;
+      z-index: 620 !important;
     }
     .shell-slide-instance .card > .sticker[data-sticker-side="left"],
     .shell-slide-instance .content-card > .sticker[data-sticker-side="left"],
@@ -576,6 +577,8 @@ function minimalShellDocument(year) {
  */
 function relocateThemeStickersUnderSlideContent(slideRoot) {
   const preferSlideCorners = !!(
+    slideRoot.querySelector(".title-card") ||
+    slideRoot.querySelector(".section-card") ||
     slideRoot.querySelector(".outer-title") ||
     slideRoot.querySelector(".toc-grid") ||
     slideRoot.querySelector(".image-layout") ||
