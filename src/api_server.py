@@ -389,7 +389,7 @@ def root():
     return RedirectResponse(url="/main_hub.html", status_code=302)
 
 
-SLIDE_HTML_DIR = REPO_ROOT / "slide_html_template"
+SLIDE_HTML_DIR = REPO_ROOT / "frontend" / "slide_html_template"
 if SLIDE_HTML_DIR.is_dir():
     app.mount(
         "/slide_html_template",

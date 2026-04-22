@@ -6,12 +6,10 @@ Run from repo root: python scripts/apply_slide_shell_bodies.py
 from __future__ import annotations
 
 import re
-import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DIR = ROOT / "slide_html_template"
-FRONTEND_SHELL_DIR = ROOT / "frontend" / "slide_html_template"
+DIR = ROOT / "frontend" / "slide_html_template"
 
 BODY_1 = """<body>
 
@@ -269,7 +267,7 @@ FILE_2_FULL = r"""<!DOCTYPE html>
 BODY_BY_FILE = {
     "1.thptqg.html": BODY_1,
     "3.thptqg.html": BODY_3,
-    "4.thptqg.html": BODY_4,
+    "4.space-bright.html": BODY_4,
     "5.2-color-slide.html": BODY_5_2,
     "6.space-black.html": BODY_6,
     "7.sealife.html": BODY_7,
@@ -303,12 +301,6 @@ def main() -> None:
     p2 = DIR / "2.on_thi_tn_thpt_2026.html"
     p2.write_text(FILE_2_FULL.strip() + "\n", encoding="utf-8")
     print("patched", p2.name)
-
-    FRONTEND_SHELL_DIR.mkdir(parents=True, exist_ok=True)
-    for p in sorted(DIR.glob("*.html")):
-        shutil.copy2(p, FRONTEND_SHELL_DIR / p.name)
-    print("mirrored to", FRONTEND_SHELL_DIR)
-
 
 if __name__ == "__main__":
     main()
