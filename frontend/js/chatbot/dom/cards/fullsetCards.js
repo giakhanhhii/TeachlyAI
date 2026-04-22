@@ -167,14 +167,16 @@ export function createFullsetTopicCard(deps) {
     let total = values.slides + values.quiz + values.flash;
     while (total > 40) {
       let reduced = false;
-      for (const key of ["quiz", "flash", "slides"]) {
-        if (!missingKeys.includes(key)) continue;
-        if (values[key] > 1) {
-          values[key] -= 1;
-          total -= 1;
-          reduced = true;
-          if (total <= 40) break;
+      for (const keys of [missingKeys, ["quiz", "flash", "slides"]]) {
+        for (const key of keys) {
+          if (values[key] > 1) {
+            values[key] -= 1;
+            total -= 1;
+            reduced = true;
+            break;
+          }
         }
+        if (reduced || total <= 40) break;
       }
       if (!reduced) {
         return { ok: false, message: `Tổng Slide + Quiz + Flashcard không được vượt quá 40 (hiện tại: ${total}).` };
