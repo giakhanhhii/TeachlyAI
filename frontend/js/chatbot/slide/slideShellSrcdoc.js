@@ -59,6 +59,68 @@ function collectStaticSlideRoots(doc) {
 }
 
 /**
+ * @param {Document} doc
+ * @returns {boolean}
+ */
+function isComicThemeDoc(doc) {
+  return !!(doc.body && doc.body.classList.contains("shell-theme-comic")) || !!doc.querySelector('link[href*="Bangers"]');
+}
+
+/**
+ * Comic full-deck files contain many decorative/static-only slides (TOC, section cards, tables)
+ * that are not compatible with generic title+bullets shell filling. Keep only list-friendly
+ * content slides so generated comic decks stay aligned with the original template intent.
+ * @param {Document} doc
+ * @param {Element[]} roots
+ * @returns {Element[]}
+ */
+function filterShellVariantRoots(doc, roots) {
+  if (!roots.length) return roots;
+  if (!isComicThemeDoc(doc)) return roots;
+  const filtered = roots.filter((root) => {
+    if (root.querySelector("table, .table-layout, .activity-table, .task-grid")) return false;
+    return Boolean(root.querySelector("ul.comic-list, ul.styled-list, ul.legend, .bullet-list ul, ul"));
+  });
+  return filtered.length ? filtered : roots;
+}
+
+/**
+ * Keep the comic opening slide as the first generated slide so the deck starts
+ * with the same hero composition as the original template.
+ * @param {Element} root
+ * @param {Document} doc
+ */
+function decorateComicCoverPrototype(root, doc) {
+  root.removeAttribute("id");
+  const panel = root.querySelector(".comic-panel") || root;
+  const title =
+    panel.querySelector(".comic-title") || panel.querySelector("h1") || panel.querySelector("h2") || panel.querySelector("p");
+  if (title) {
+    title.setAttribute("data-shell", "title");
+    title.textContent = "";
+  }
+  Array.from(panel.querySelectorAll("h1, h2, p")).forEach((el) => {
+    if (el !== title) el.remove();
+  });
+  let ul = panel.querySelector("ul[data-shell=\"bullets\"]");
+  if (!ul) {
+    ul = panel.querySelector("ul.comic-list, ul");
+  }
+  if (!ul) {
+    const nu = doc.createElement("ul");
+    nu.className = "comic-list";
+    nu.style.marginTop = "30px";
+    nu.style.textAlign = "left";
+    nu.style.width = "100%";
+    nu.setAttribute("data-shell", "bullets");
+    panel.appendChild(nu);
+  } else {
+    ul.setAttribute("data-shell", "bullets");
+    ul.replaceChildren();
+  }
+}
+
+/**
  * Mark title + bullets placeholders on a cloned slide for data fill.
  * @param {Element} root
  * @param {Document} doc
@@ -121,8 +183,19 @@ function ensureShellFromFullDeck(doc) {
 
   if (master && tpl) return true;
 
-  const roots = collectStaticSlideRoots(doc);
-  if (!roots.length) return false;
+  const allRoots = collectStaticSlideRoots(doc);
+  const roots = filterShellVariantRoots(doc, allRoots);
+  if (!allRoots.length || !roots.length) return false;
+
+  if (isComicThemeDoc(doc) && allRoots[0]) {
+    const coverProto = allRoots[0].cloneNode(true);
+    decorateComicCoverPrototype(coverProto, doc);
+    const coverTpl = doc.createElement("template");
+    coverTpl.id = "layout-cover";
+    coverTpl.setAttribute("data-shell-layout-role", "cover");
+    coverTpl.content.appendChild(coverProto);
+    doc.body.appendChild(coverTpl);
+  }
 
   roots.forEach((root, idx) => {
     const proto = root.cloneNode(true);
@@ -134,7 +207,7 @@ function ensureShellFromFullDeck(doc) {
     doc.body.appendChild(t);
   });
 
-  roots.forEach((r) => r.remove());
+  allRoots.forEach((r) => r.remove());
 
   if (!master) {
     const m = doc.createElement("div");
@@ -147,6 +220,15 @@ function ensureShellFromFullDeck(doc) {
   }
 
   return true;
+}
+
+/**
+ * @param {Document} doc
+ * @returns {HTMLTemplateElement | null}
+ */
+function getShellCoverTemplate(doc) {
+  const cover = doc.querySelector("template[data-shell-layout-role=\"cover\"]");
+  return cover instanceof HTMLTemplateElement ? cover : null;
 }
 
 /**
@@ -741,9 +823,10 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   }
 
   master = doc.querySelector("#slides-master-container");
+  const coverTemplate = getShellCoverTemplate(doc);
   const variantTemplates = getShellVariantTemplates(doc);
 
-  if (!master || !variantTemplates.length) {
+  if (!master || (!coverTemplate && !variantTemplates.length)) {
     injectShellPreviewFit(doc);
     injectShellPanelFitScript(doc);
     injectSlideVisualEditor(doc);
@@ -755,7 +838,13 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   const list = Array.isArray(slides) ? slides : [];
   const variantCount = variantTemplates.length;
   list.forEach((s, i) => {
-    const pick = variantTemplates[i % variantCount];
+    const pick =
+      coverTemplate && i === 0
+        ? coverTemplate
+        : variantCount
+          ? variantTemplates[(coverTemplate ? i - 1 : i) % variantCount]
+          : coverTemplate;
+    if (!pick) return;
     const frag = pick.content.cloneNode(true);
     const first = frag.firstElementChild;
     if (!first) return;
@@ -810,6 +899,171 @@ export function scrollShellSlideIntoView(iframe, index) {
 
 /**
  * @param {HTMLIFrameElement} iframe
+ * @returns {number}
+ */
+function measureSlideShellDeckHeight(iframe) {
+  const doc = iframe.contentDocument;
+  if (!doc) return 0;
+  const master = doc.querySelector("#slides-master-container");
+  const body = doc.body;
+  const root = doc.documentElement;
+  const values = [
+    master?.scrollHeight || 0,
+    body?.scrollHeight || 0,
+    body?.offsetHeight || 0,
+    root?.scrollHeight || 0,
+    root?.offsetHeight || 0,
+  ];
+  if (master && typeof master.getBoundingClientRect === "function") {
+    values.push(master.getBoundingClientRect().height || 0);
+  }
+  return Math.max(...values.map((n) => Math.ceil(Number(n) || 0)), 0);
+}
+
+/**
+ * @param {Document} doc
+ * @param {"active" | "scroll"} mode
+ */
+function setSlideShellDocumentViewportMode(doc, mode) {
+  const root = doc.documentElement;
+  const body = doc.body;
+  const master = doc.querySelector("#slides-master-container");
+  [root, body, master].forEach((node) => {
+    if (!node) return;
+    if (mode === "active") {
+      node.style.overflowX = "hidden";
+      node.style.removeProperty("overflow-y");
+    } else {
+      node.style.removeProperty("overflow");
+      node.style.removeProperty("overflow-x");
+      node.style.removeProperty("overflow-y");
+    }
+  });
+}
+
+/**
+ * @param {Document} doc
+ */
+function resetSlideShellDocumentScroll(doc) {
+  const nodes = [doc.scrollingElement, doc.documentElement, doc.body];
+  nodes.forEach((node) => {
+    if (!node) return;
+    node.scrollTop = 0;
+    node.scrollLeft = 0;
+  });
+  try {
+    doc.defaultView?.scrollTo(0, 0);
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ */
+function syncSlideShellScrollViewport(iframe) {
+  const doc = iframe.contentDocument;
+  if (!doc) return;
+  const master = doc.querySelector("#slides-master-container");
+  if (!master || master.getAttribute("data-nav-mode") !== "scroll") return;
+  setSlideShellDocumentViewportMode(doc, "scroll");
+  const height = measureSlideShellDeckHeight(iframe);
+  if (height > 0) {
+    iframe.style.height = `${height}px`;
+  }
+  iframe.style.aspectRatio = "auto";
+  iframe.style.overflow = "hidden";
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ */
+function scheduleSlideShellScrollViewportSync(iframe) {
+  syncSlideShellScrollViewport(iframe);
+  const win = iframe.contentWindow;
+  const raf =
+    (win && typeof win.requestAnimationFrame === "function" && win.requestAnimationFrame.bind(win)) ||
+    (typeof requestAnimationFrame === "function" ? requestAnimationFrame.bind(window) : null);
+  if (raf) {
+    raf(() => {
+      syncSlideShellScrollViewport(iframe);
+      raf(() => syncSlideShellScrollViewport(iframe));
+    });
+  }
+  setTimeout(() => syncSlideShellScrollViewport(iframe), 80);
+}
+
+/**
+ * @param {Element} slide
+ * @returns {number}
+ */
+function measureSlideShellActiveHeight(slide) {
+  if (!slide || typeof slide.getBoundingClientRect !== "function") return 0;
+  const slideRect = slide.getBoundingClientRect();
+  const win = slide.ownerDocument?.defaultView || window;
+  let maxBottom = slideRect.bottom;
+  const nodes = slide.querySelectorAll("*");
+  nodes.forEach((node) => {
+    if (!node || node.nodeType !== 1) return;
+    const cs = win.getComputedStyle(node);
+    if (cs.display === "none" || cs.visibility === "hidden") return;
+    const rect = node.getBoundingClientRect();
+    if (!rect || (!rect.height && !rect.width)) return;
+    maxBottom = Math.max(maxBottom, rect.bottom);
+  });
+  const ownHeights = [
+    slide.scrollHeight || 0,
+    slide.offsetHeight || 0,
+    slide.clientHeight || 0,
+    slideRect.height || 0,
+    maxBottom - slideRect.top,
+  ];
+  return Math.max(...ownHeights.map((n) => Math.ceil(Number(n) || 0)), 0);
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ */
+function syncSlideShellActiveViewport(iframe) {
+  const doc = iframe.contentDocument;
+  if (!doc) return;
+  const master = doc.querySelector("#slides-master-container");
+  if (!master || master.getAttribute("data-nav-mode") !== "active") return;
+  setSlideShellDocumentViewportMode(doc, "active");
+  resetSlideShellDocumentScroll(doc);
+  const activeSlide =
+    doc.querySelector(".shell-slide-instance.active") ||
+    doc.querySelector(".shell-slide-instance");
+  const height = activeSlide ? measureSlideShellActiveHeight(activeSlide) : 0;
+  if (height > 0) {
+    iframe.style.height = `${height}px`;
+  } else {
+    iframe.style.removeProperty("height");
+  }
+  iframe.style.aspectRatio = "auto";
+  iframe.style.overflow = "hidden";
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ */
+function scheduleSlideShellActiveViewportSync(iframe) {
+  syncSlideShellActiveViewport(iframe);
+  const win = iframe.contentWindow;
+  const raf =
+    (win && typeof win.requestAnimationFrame === "function" && win.requestAnimationFrame.bind(win)) ||
+    (typeof requestAnimationFrame === "function" ? requestAnimationFrame.bind(window) : null);
+  if (raf) {
+    raf(() => {
+      syncSlideShellActiveViewport(iframe);
+      raf(() => syncSlideShellActiveViewport(iframe));
+    });
+  }
+  setTimeout(() => syncSlideShellActiveViewport(iframe), 80);
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
  * @param {number} index
  */
 export function syncShellSlideNav(iframe, index) {
@@ -828,13 +1082,16 @@ export function syncShellSlideNav(iframe, index) {
   const mode = master?.getAttribute("data-nav-mode") || "scroll";
   const inst = doc.querySelectorAll(".shell-slide-instance");
   if (!inst.length) return;
+  const idx = Math.min(Math.max(0, Number(index) || 0), inst.length - 1);
   if (mode === "active") {
     inst.forEach((el, i) => {
-      el.classList.toggle("active", i === index);
+      el.classList.toggle("active", i === idx);
     });
+    scheduleSlideShellActiveViewportSync(iframe);
     return;
   }
-  scrollShellSlideIntoView(iframe, index);
+  scheduleSlideShellScrollViewportSync(iframe);
+  scrollShellSlideIntoView(iframe, idx);
 }
 
 /**
@@ -863,8 +1120,10 @@ export function setSlideShellNavMode(iframe, mode, index) {
   }
   if (next === "active") {
     inst.forEach((el, j) => el.classList.toggle("active", j === idx));
+    scheduleSlideShellActiveViewportSync(iframe);
     return;
   }
   inst.forEach((el) => el.classList.remove("active"));
+  scheduleSlideShellScrollViewportSync(iframe);
   scrollShellSlideIntoView(iframe, idx);
 }
