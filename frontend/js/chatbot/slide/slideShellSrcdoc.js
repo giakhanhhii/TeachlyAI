@@ -456,6 +456,40 @@ function injectShellPanelFitScript(doc) {
       return true;
     });
   }
+  function applyPanelLayoutToScaled(panel, scaled) {
+    if (!panel || !scaled || !window.getComputedStyle) return;
+    var cs = window.getComputedStyle(panel);
+    var display = cs && cs.display ? cs.display : "";
+    if (display.indexOf("flex") !== -1) {
+      scaled.style.display = "flex";
+      scaled.style.flexDirection = cs.flexDirection || "column";
+      scaled.style.flexWrap = cs.flexWrap || "nowrap";
+      scaled.style.justifyContent = cs.justifyContent || "flex-start";
+      scaled.style.alignItems = cs.alignItems || "stretch";
+      scaled.style.alignContent = cs.alignContent || "stretch";
+      scaled.style.gap = cs.gap || "";
+      scaled.style.rowGap = cs.rowGap || "";
+      scaled.style.columnGap = cs.columnGap || "";
+    } else if (display.indexOf("grid") !== -1) {
+      scaled.style.display = "grid";
+      scaled.style.gridTemplateColumns = cs.gridTemplateColumns || "";
+      scaled.style.gridTemplateRows = cs.gridTemplateRows || "";
+      scaled.style.gridAutoFlow = cs.gridAutoFlow || "";
+      scaled.style.gridAutoColumns = cs.gridAutoColumns || "";
+      scaled.style.gridAutoRows = cs.gridAutoRows || "";
+      scaled.style.justifyItems = cs.justifyItems || "";
+      scaled.style.alignItems = cs.alignItems || "";
+      scaled.style.justifyContent = cs.justifyContent || "";
+      scaled.style.alignContent = cs.alignContent || "";
+      scaled.style.gap = cs.gap || "";
+      scaled.style.rowGap = cs.rowGap || "";
+      scaled.style.columnGap = cs.columnGap || "";
+    } else if (display) {
+      scaled.style.display = display;
+    }
+    scaled.style.width = "100%";
+    scaled.style.minHeight = "0";
+  }
   function wrapPanel(panel) {
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
     panel.classList.add("shell-panel-fit-host");
@@ -465,6 +499,7 @@ function injectShellPanelFitScript(doc) {
     outer.className = "shell-panel-fit-outer";
     var scaled = document.createElement("div");
     scaled.className = "shell-panel-fit-scaled";
+    applyPanelLayoutToScaled(panel, scaled);
     while (panel.firstChild) scaled.appendChild(panel.firstChild);
     outer.appendChild(scaled);
     sizer.appendChild(outer);
