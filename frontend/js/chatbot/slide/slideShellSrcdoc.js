@@ -641,14 +641,19 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
     const vertical = st.style.bottom ? "bottom" : "top";
     const laneKey = `${side}-${vertical}`;
     const lane = laneCounts.get(laneKey) || 0;
-    laneCounts.set(laneKey, lane + 1);
+    const laneIndex = Number.isFinite(lane) && lane >= 0 ? lane : 0;
+    laneCounts.set(laneKey, laneIndex + 1);
     st.dataset.stickerSide = side;
     st.dataset.stickerVertical = vertical;
-    st.dataset.stickerLane = String(lane);
-    st.style.setProperty("--sticker-inline-offset", `${inlineBasePx + lane * inlineStepPx}px`);
+    // Keep the full lane index so third/fourth stickers continue offsetting
+    // instead of collapsing onto the second sticker in the same corner.
+    st.dataset.stickerLane = String(laneIndex);
+    st.style.setProperty("--sticker-inline-offset", `${inlineBasePx + laneIndex * inlineStepPx}px`);
     st.style.setProperty(
       "--sticker-block-offset",
-      vertical === "bottom" ? `${bottomBasePx + lane * bottomStepPx}px` : `${topBasePx + lane * topStepPx}px`,
+      vertical === "bottom"
+        ? `${bottomBasePx + laneIndex * bottomStepPx}px`
+        : `${topBasePx + laneIndex * topStepPx}px`,
     );
     host.insertBefore(st, host.firstChild);
     const top = st.style.top;
