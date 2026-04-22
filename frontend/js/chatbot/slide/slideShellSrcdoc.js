@@ -240,30 +240,35 @@ function injectShellPreviewFit(doc) {
     /* Sticker đưa vào trong .card (JS): nằm dưới lớp chữ; không hạ z-index xuống sau cả khung trắng */
     .shell-slide-instance .card > .sticker,
     .shell-slide-instance .content-card > .sticker,
-    .shell-slide-instance .comic-panel > .sticker {
+    .shell-slide-instance .comic-panel > .sticker,
+    .shell-slide-instance > .sticker {
       pointer-events: none !important;
     }
     .shell-slide-instance .card > .sticker[data-sticker-side="left"],
     .shell-slide-instance .content-card > .sticker[data-sticker-side="left"],
-    .shell-slide-instance .comic-panel > .sticker[data-sticker-side="left"] {
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-side="left"],
+    .shell-slide-instance > .sticker[data-sticker-side="left"] {
       left: var(--sticker-inline-offset, 22px) !important;
       right: auto !important;
     }
     .shell-slide-instance .card > .sticker[data-sticker-side="right"],
     .shell-slide-instance .content-card > .sticker[data-sticker-side="right"],
-    .shell-slide-instance .comic-panel > .sticker[data-sticker-side="right"] {
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-side="right"],
+    .shell-slide-instance > .sticker[data-sticker-side="right"] {
       right: var(--sticker-inline-offset, 22px) !important;
       left: auto !important;
     }
     .shell-slide-instance .card > .sticker[data-sticker-vertical="top"],
     .shell-slide-instance .content-card > .sticker[data-sticker-vertical="top"],
-    .shell-slide-instance .comic-panel > .sticker[data-sticker-vertical="top"] {
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-vertical="top"],
+    .shell-slide-instance > .sticker[data-sticker-vertical="top"] {
       top: var(--sticker-block-offset, 24px) !important;
       bottom: auto !important;
     }
     .shell-slide-instance .card > .sticker[data-sticker-vertical="bottom"],
     .shell-slide-instance .content-card > .sticker[data-sticker-vertical="bottom"],
-    .shell-slide-instance .comic-panel > .sticker[data-sticker-vertical="bottom"] {
+    .shell-slide-instance .comic-panel > .sticker[data-sticker-vertical="bottom"],
+    .shell-slide-instance > .sticker[data-sticker-vertical="bottom"] {
       bottom: var(--sticker-block-offset, 20px) !important;
       top: auto !important;
     }
@@ -570,10 +575,16 @@ function minimalShellDocument(year) {
  * @param {Element} slideRoot
  */
 function relocateThemeStickersUnderSlideContent(slideRoot) {
-  const host =
-    slideRoot.querySelector(".card") ||
-    slideRoot.querySelector(".content-card") ||
-    slideRoot.querySelector(".comic-panel");
+  const preferSlideCorners = !!(
+    slideRoot.querySelector(".outer-title") ||
+    slideRoot.querySelector(".toc-grid") ||
+    slideRoot.querySelector(".image-layout") ||
+    slideRoot.querySelector(".activity-table") ||
+    slideRoot.querySelector(".task-grid")
+  );
+  const host = preferSlideCorners
+    ? slideRoot
+    : slideRoot.querySelector(".card") || slideRoot.querySelector(".content-card") || slideRoot.querySelector(".comic-panel");
   if (!host) return;
   const stickers = Array.from(slideRoot.querySelectorAll(":scope > .sticker"));
   if (!stickers.length) return;
@@ -581,11 +592,11 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
   const slidePadPx = Number.isFinite(slidePad) ? slidePad : SLIDE_PAD_PX_DEFAULT;
   /** @type {Map<string, number>} */
   const laneCounts = new Map();
-  const inlineBasePx = 22;
-  const inlineStepPx = 74;
-  const topBasePx = 24;
+  const inlineBasePx = preferSlideCorners ? 12 : 22;
+  const inlineStepPx = preferSlideCorners ? 56 : 74;
+  const topBasePx = preferSlideCorners && slideRoot.querySelector(".outer-title") ? 96 : preferSlideCorners ? 14 : 24;
   const topStepPx = 44;
-  const bottomBasePx = 20;
+  const bottomBasePx = preferSlideCorners ? 14 : 20;
   const bottomStepPx = 46;
   stickers.reverse().forEach((st) => {
     const side = st.style.right ? "right" : "left";
