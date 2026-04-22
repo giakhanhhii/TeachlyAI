@@ -473,15 +473,22 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
     function releaseStickerAnchors() {
       if (!(el.classList && el.classList.contains("sticker"))) return;
+      var cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
+      var curLeft = cs && cs.left ? cs.left : "";
+      var curTop = cs && cs.top ? cs.top : "";
+      if (/^-?\d+(\.\d+)?px$/.test(curLeft)) {
+        el.style.setProperty("left", curLeft, "important");
+      }
+      if (/^-?\d+(\.\d+)?px$/.test(curTop)) {
+        el.style.setProperty("top", curTop, "important");
+      }
+      el.style.setProperty("--sticker-inline-offset", "initial", "important");
+      el.style.setProperty("--sticker-block-offset", "initial", "important");
+      el.style.setProperty("right", "auto", "important");
+      el.style.setProperty("bottom", "auto", "important");
       el.removeAttribute("data-sticker-side");
       el.removeAttribute("data-sticker-vertical");
       el.removeAttribute("data-sticker-lane");
-      el.style.removeProperty("right");
-      el.style.removeProperty("bottom");
-      el.style.setProperty("right", "auto", "important");
-      el.style.setProperty("bottom", "auto", "important");
-      el.style.removeProperty("--sticker-inline-offset");
-      el.style.removeProperty("--sticker-block-offset");
     }
 
     function applyTextBoxStyles(snap) {
