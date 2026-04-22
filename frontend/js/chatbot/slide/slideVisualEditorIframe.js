@@ -607,6 +607,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
   function resizeElementKind(el) {
     if (!el) return "block";
+    if (el.classList && el.classList.contains("sticker")) return "sticker";
     if (el.tagName === "IMG") return "img";
     if (el.getAttribute("data-shell") === "title") return "text";
     if (el.getAttribute("data-shell") === "bullets" && el.tagName === "UL") {
@@ -616,6 +617,35 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       return "text";
     }
     return "block";
+  }
+
+  function lockStickerForResize(el) {
+    el.style.boxSizing = "border-box";
+    el.style.display = "inline-block";
+    el.style.whiteSpace = "nowrap";
+    el.style.width = "auto";
+    el.style.height = "auto";
+    el.style.minWidth = "0";
+    el.style.minHeight = "0";
+    el.style.maxWidth = "none";
+    el.style.maxHeight = "none";
+    el.style.lineHeight = "1";
+    void el.offsetWidth;
+    return el.getBoundingClientRect();
+  }
+
+  function placeCornerAnchored(el, handle, baseX, baseY, startW, startH) {
+    var rect = el.getBoundingClientRect();
+    var curW = Math.max(1, rect.width);
+    var curH = Math.max(1, rect.height);
+    var nextX = baseX;
+    var nextY = baseY;
+    if (handle === "nw" || handle === "sw") nextX = baseX + (startW - curW);
+    if (handle === "nw" || handle === "ne") nextY = baseY + (startH - curH);
+    el.setAttribute("data-edit-x", String(nextX));
+    el.setAttribute("data-edit-y", String(nextY));
+    el.style.left = nextX + "px";
+    el.style.top = nextY + "px";
   }
 
   /**
@@ -701,7 +731,9 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     ensureEditable(selected);
     var kind = resizeElementKind(selected);
     var r = selected.getBoundingClientRect();
-    if (kind === "text" && (h === "e" || h === "w")) {
+    if (kind === "sticker") {
+      r = lockStickerForResize(selected);
+    } else if (kind === "text" && (h === "e" || h === "w")) {
       r = lockTextBoxForEdgeResize(selected);
       selected.style.height = "auto";
       selected.style.maxHeight = "none";
@@ -745,47 +777,47 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       else if (h === "nw") d = (-dx - dy) / 2;
       else if (h === "ne") d = (dx - dy) / 2;
       else if (h === "sw") d = (-dx + dy) / 2;
+      var bx = resizeState.startDataEditX;
+      var by = resizeState.startDataEditY;
+      var nwC;
+      var nhC;
+      if (h === "se") {
+        nwC = Math.max(32, sw + dx);
+        nhC = Math.max(24, sh + dy);
+      } else if (h === "nw") {
+        nwC = Math.max(32, sw - dx);
+        nhC = Math.max(24, sh - dy);
+      } else if (h === "ne") {
+        nwC = Math.max(32, sw + dx);
+        nhC = Math.max(24, sh - dy);
+      } else {
+        nwC = Math.max(32, sw - dx);
+        nhC = Math.max(24, sh + dy);
+      }
       if (kind === "text") {
-        var bx = resizeState.startDataEditX;
-        var by = resizeState.startDataEditY;
-        var nwC;
-        var nhC;
-        if (h === "se") {
-          nwC = Math.max(32, sw + dx);
-          nhC = Math.max(24, sh + dy);
-          el.style.left = bx + "px";
-          el.style.top = by + "px";
-        } else if (h === "nw") {
-          nwC = Math.max(32, sw - dx);
-          nhC = Math.max(24, sh - dy);
-          el.setAttribute("data-edit-x", String(bx + dx));
-          el.setAttribute("data-edit-y", String(by + dy));
-          el.style.left = bx + dx + "px";
-          el.style.top = by + dy + "px";
-        } else if (h === "ne") {
-          nwC = Math.max(32, sw + dx);
-          nhC = Math.max(24, sh - dy);
-          el.setAttribute("data-edit-y", String(by + dy));
-          el.style.left = bx + "px";
-          el.style.top = by + dy + "px";
-        } else {
-          nwC = Math.max(32, sw - dx);
-          nhC = Math.max(24, sh + dy);
-          el.setAttribute("data-edit-x", String(bx + dx));
-          el.style.left = bx + dx + "px";
-          el.style.top = by + "px";
-        }
         el.style.width = nwC + "px";
         el.style.maxWidth = nwC + "px";
         el.style.height = nhC + "px";
         el.style.boxSizing = "border-box";
         var sf0 = resizeState.startFont || 16;
-        var sx = nwC / Math.max(sw, 1);
-        var sy = nhC / Math.max(sh, 1);
-        /* Giảm độ nhạy so với sqrt(sx*sy): exponent < 0.5 */
-        var scF = Math.pow(Math.max(1e-6, sx * sy), 0.38);
+        var scF = Math.sqrt(
+          Math.max(1e-6, nwC * nwC + nhC * nhC) / Math.max(1e-6, sw * sw + sh * sh),
+        );
         var nf = Math.max(6, Math.min(260, sf0 * scF));
-        el.style.fontSize = nf + "px";
+        el.style.setProperty("font-size", nf + "px", "important");
+        placeCornerAnchored(el, h, bx, by, sw, sh);
+        return;
+      } else if (kind === "sticker") {
+        var sfSticker = resizeState.startFont || 16;
+        var stickerScale = Math.max(nwC / Math.max(sw, 1), nhC / Math.max(sh, 1));
+        var nextFont = Math.max(8, Math.min(520, sfSticker * stickerScale));
+        el.style.setProperty("display", "inline-block", "important");
+        el.style.setProperty("white-space", "nowrap", "important");
+        el.style.setProperty("width", "auto", "important");
+        el.style.setProperty("height", "auto", "important");
+        el.style.setProperty("line-height", "1", "important");
+        el.style.setProperty("font-size", nextFont + "px", "important");
+        placeCornerAnchored(el, h, bx, by, sw, sh);
         return;
       } else if (kind === "img") {
         var s = 1 + d / 200;
@@ -797,12 +829,14 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
           var nh = (nw / el.naturalWidth) * el.naturalHeight;
           el.style.height = nh + "px";
         }
+        placeCornerAnchored(el, h, bx, by, sw, sh);
       } else {
         var sc2 = 1 + d / 220;
         sc2 = Math.max(0.25, Math.min(4, sc2));
         el.style.width = Math.max(40, sw * sc2) + "px";
         el.style.height = Math.max(40, sh * sc2) + "px";
         el.style.boxSizing = "border-box";
+        placeCornerAnchored(el, h, bx, by, sw, sh);
       }
       return;
     }
