@@ -310,8 +310,6 @@ def resolve_template_path(name: str) -> Path:
 
 
 def resolve_output_path(name: str, source_path: Path) -> Path:
-    if source_path.parent == LEGACY_DIR:
-        return source_path
     return DIR / name
 
 
