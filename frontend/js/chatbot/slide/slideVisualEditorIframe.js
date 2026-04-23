@@ -755,6 +755,21 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         el.style.setProperty("max-width", "none", "important");
         el.style.setProperty("white-space", "pre-wrap", "important");
         el.style.setProperty("overflow-wrap", "break-word", "important");
+      } else if (isEditablePanelElement(el, slide)) {
+        /*
+         * Card/panel chứa nhiều text thường đang dùng flex/grid hoặc phụ thuộc natural height.
+         * Nếu khóa cứng height ngay khi click chọn, chỉ cần width lệch nhẹ là nội dung reflow
+         * rồi tiêu đề/đoạn/list bị tụt xuống trong hầu hết template.
+         * Giữ width theo kích thước hiện tại nhưng để height:auto và chỉ neo min-height gốc.
+         */
+        el.style.setProperty("box-sizing", "border-box", "important");
+        var wPanel = Math.max(1, Math.min(snap.wpx, snap.ow));
+        var hPanel = Math.max(1, Math.min(snap.hpx, snap.oh));
+        el.style.setProperty("width", pxStr(wPanel), "important");
+        el.style.setProperty("min-height", pxStr(hPanel), "important");
+        el.style.setProperty("height", "auto", "important");
+        el.style.setProperty("max-height", "none", "important");
+        el.style.setProperty("max-width", "none", "important");
       } else {
         /* Khối .card / .comic-panel / ảnh: max(er, offset) dễ làm panel “nở” so với ô flex — khóa theo min */
         el.style.boxSizing = "border-box";
