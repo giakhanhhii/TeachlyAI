@@ -641,10 +641,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
               if (!shellReady || viewMode !== "presentation") return;
               readDeckScrollState();
             };
-            iframe.contentWindow?.addEventListener("scroll", captureDeckScroll, { passive: true });
+            iframe.contentWindow?.addEventListener("scroll", captureDeckScroll, {
+              passive: true,
+              signal: uiSignal,
+            });
             iframe.contentDocument?.addEventListener("scroll", captureDeckScroll, {
               passive: true,
               capture: true,
+              signal: uiSignal,
             });
             viewMode = "presentation";
             syncViewModeToIframe();
