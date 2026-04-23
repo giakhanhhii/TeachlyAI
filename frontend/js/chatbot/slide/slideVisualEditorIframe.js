@@ -761,7 +761,6 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       startDataEditX: parseFloat(selected.getAttribute("data-edit-x")) || 0,
       startDataEditY: parseFloat(selected.getAttribute("data-edit-y")) || 0,
       startFont: parseFloat(cs.fontSize) || 16,
-      startDiag: Math.sqrt(r.width * r.width + r.height * r.height) || 1,
       kind: kind,
     };
   }
