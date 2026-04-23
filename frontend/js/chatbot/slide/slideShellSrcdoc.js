@@ -1,6 +1,9 @@
 import { SLIDE_PAD_PX_DEFAULT } from "../constants.js";
 import { SLIDE_VISUAL_EDITOR_CSS, SLIDE_VISUAL_EDITOR_JS } from "./slideVisualEditorIframe.js";
 
+const slideShellScrollViewportSyncJobs = new WeakMap();
+const slideShellActiveViewportSyncJobs = new WeakMap();
+
 /**
  * @param {Document} doc
  */
@@ -1035,21 +1038,53 @@ function syncSlideShellScrollViewport(iframe) {
 }
 
 /**
+ * @param {{ raf1?: number | null, raf2?: number | null, timeoutId?: number | null, cancelRaf?: ((id: number) => void) | null } | undefined} job
+ */
+function cancelSlideShellViewportSyncJob(job) {
+  if (!job) return;
+  if (job.cancelRaf) {
+    if (job.raf1 != null) job.cancelRaf(job.raf1);
+    if (job.raf2 != null) job.cancelRaf(job.raf2);
+  }
+  if (job.timeoutId != null) {
+    clearTimeout(job.timeoutId);
+  }
+}
+
+/**
  * @param {HTMLIFrameElement} iframe
  */
 function scheduleSlideShellScrollViewportSync(iframe) {
+  cancelSlideShellViewportSyncJob(slideShellScrollViewportSyncJobs.get(iframe));
   syncSlideShellScrollViewport(iframe);
   const win = iframe.contentWindow;
   const raf =
     (win && typeof win.requestAnimationFrame === "function" && win.requestAnimationFrame.bind(win)) ||
     (typeof requestAnimationFrame === "function" ? requestAnimationFrame.bind(window) : null);
+  const cancelRaf =
+    (win && typeof win.cancelAnimationFrame === "function" && win.cancelAnimationFrame.bind(win)) ||
+    (typeof cancelAnimationFrame === "function" ? cancelAnimationFrame.bind(window) : null);
+  const job = { raf1: null, raf2: null, timeoutId: null, cancelRaf };
+  slideShellScrollViewportSyncJobs.set(iframe, job);
+  const runIfCurrent = () => {
+    if (slideShellScrollViewportSyncJobs.get(iframe) !== job) return false;
+    syncSlideShellScrollViewport(iframe);
+    return true;
+  };
   if (raf) {
-    raf(() => {
-      syncSlideShellScrollViewport(iframe);
-      raf(() => syncSlideShellScrollViewport(iframe));
+    job.raf1 = raf(() => {
+      job.raf1 = null;
+      if (!runIfCurrent()) return;
+      job.raf2 = raf(() => {
+        job.raf2 = null;
+        runIfCurrent();
+      });
     });
   }
-  setTimeout(() => syncSlideShellScrollViewport(iframe), 80);
+  job.timeoutId = setTimeout(() => {
+    job.timeoutId = null;
+    runIfCurrent();
+  }, 80);
 }
 
 /**
@@ -1109,18 +1144,36 @@ function syncSlideShellActiveViewport(iframe, scrollState) {
  * @param {{ top?: number, ratio?: number } | undefined} scrollState
  */
 function scheduleSlideShellActiveViewportSync(iframe, scrollState) {
+  cancelSlideShellViewportSyncJob(slideShellActiveViewportSyncJobs.get(iframe));
   syncSlideShellActiveViewport(iframe, scrollState);
   const win = iframe.contentWindow;
   const raf =
     (win && typeof win.requestAnimationFrame === "function" && win.requestAnimationFrame.bind(win)) ||
     (typeof requestAnimationFrame === "function" ? requestAnimationFrame.bind(window) : null);
+  const cancelRaf =
+    (win && typeof win.cancelAnimationFrame === "function" && win.cancelAnimationFrame.bind(win)) ||
+    (typeof cancelAnimationFrame === "function" ? cancelAnimationFrame.bind(window) : null);
+  const job = { raf1: null, raf2: null, timeoutId: null, cancelRaf };
+  slideShellActiveViewportSyncJobs.set(iframe, job);
+  const runIfCurrent = () => {
+    if (slideShellActiveViewportSyncJobs.get(iframe) !== job) return false;
+    syncSlideShellActiveViewport(iframe, scrollState);
+    return true;
+  };
   if (raf) {
-    raf(() => {
-      syncSlideShellActiveViewport(iframe, scrollState);
-      raf(() => syncSlideShellActiveViewport(iframe, scrollState));
+    job.raf1 = raf(() => {
+      job.raf1 = null;
+      if (!runIfCurrent()) return;
+      job.raf2 = raf(() => {
+        job.raf2 = null;
+        runIfCurrent();
+      });
     });
   }
-  setTimeout(() => syncSlideShellActiveViewport(iframe, scrollState), 80);
+  job.timeoutId = setTimeout(() => {
+    job.timeoutId = null;
+    runIfCurrent();
+  }, 80);
 }
 
 /**
