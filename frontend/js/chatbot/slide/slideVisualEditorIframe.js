@@ -78,6 +78,12 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
     outline: none !important;
     z-index: 10050 !important;
   }
+  body.slide-visual-edit-on .shell-slide-instance [data-edit-text-active="1"],
+  body.slide-visual-edit-on .shell-slide-instance [data-edit-text-active="1"] * {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    cursor: text !important;
+  }
   /* Giữ chỗ trong luồng khi phần tử chuyển sang absolute — tránh cả khung slide co/giãn khi bấm chữ */
   body.slide-visual-edit-on .shell-slide-instance .slide-visual-edit-flow-spacer {
     box-sizing: border-box;
@@ -236,6 +242,8 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
 export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   var enabled = false;
   var selected = null;
+  var textEditEl = null;
+  var textEditSnapshot = "";
   var drag = null;
   var toolbar = null;
   var handleLayer = null;
@@ -369,6 +377,12 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       tag === "TH" ||
       tag === "CAPTION"
     );
+  }
+
+  function canDirectTextEdit(el) {
+    if (!el || !isEditableTextElement(el)) return false;
+    var tag = el.tagName;
+    return tag !== "UL" && tag !== "OL" && tag !== "TABLE";
   }
 
   function isTransparentColor(value) {
@@ -1084,6 +1098,11 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   function syncHandlePositions() {
     buildHandleLayer();
     if (!handleLayer || !enabled) return;
+    if (textEditEl && selected === textEditEl) {
+      handleLayer.style.display = "none";
+      handleLayer.classList.remove("is-visible");
+      return;
+    }
     if (!selected) {
       handleLayer.style.display = "none";
       handleLayer.classList.remove("is-visible");
@@ -1159,6 +1178,60 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     if (selected) selected.setAttribute("data-edit-selected", "1");
     syncToolbarFromSelection();
     observeSelected();
+    scheduleSyncHandles();
+  }
+
+  function moveCaretToEnd(el) {
+    if (!el) return;
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      var sel = window.getSelection();
+      if (!sel) return;
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (err) {}
+  }
+
+  function endTextEdit(commit) {
+    if (!textEditEl) return;
+    var el = textEditEl;
+    if (!commit) {
+      el.innerHTML = textEditSnapshot;
+    }
+    el.removeAttribute("contenteditable");
+    el.removeAttribute("data-edit-text-active");
+    el.removeAttribute("spellcheck");
+    textEditEl = null;
+    textEditSnapshot = "";
+    try {
+      var sel = window.getSelection();
+      if (sel) sel.removeAllRanges();
+    } catch (err) {}
+    scheduleSyncHandles();
+  }
+
+  function beginTextEdit(el) {
+    if (!enabled || !canDirectTextEdit(el)) return;
+    if (textEditEl === el) {
+      try {
+        el.focus();
+      } catch (err) {}
+      moveCaretToEnd(el);
+      return;
+    }
+    endTextEdit(true);
+    select(el);
+    textEditEl = el;
+    textEditSnapshot = el.innerHTML;
+    el.setAttribute("contenteditable", "true");
+    el.setAttribute("data-edit-text-active", "1");
+    el.setAttribute("spellcheck", "false");
+    try {
+      el.focus();
+    } catch (err) {}
+    moveCaretToEnd(el);
     scheduleSyncHandles();
   }
 
@@ -1279,9 +1352,13 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
   function onPointerDown(e) {
     if (!enabled) return;
+    if (textEditEl && textEditEl.contains(e.target)) return;
     if (toolbar && toolbar.contains(e.target)) return;
     if (handleLayer && handleLayer.contains(e.target) && e.target.getAttribute("data-ve-handle")) {
       return;
+    }
+    if (textEditEl) {
+      endTextEdit(true);
     }
     var slide = activeSlide();
     if (!slide || !slide.contains(e.target)) return;
@@ -1304,6 +1381,18 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       prepared: false,
       moved: false,
     };
+  }
+
+  function onDoubleClick(e) {
+    if (!enabled) return;
+    if (toolbar && toolbar.contains(e.target)) return;
+    var slide = activeSlide();
+    if (!slide || !slide.contains(e.target)) return;
+    var hit = resolveHit(slide, e.target);
+    if (!canDirectTextEdit(hit)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    beginTextEdit(hit);
   }
 
   function onPointerMove(e) {
@@ -1349,6 +1438,34 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     scheduleSyncHandles();
   }
 
+  function onKeyDown(e) {
+    if (!textEditEl) return;
+    var target = e.target;
+    if (target !== textEditEl && !(textEditEl.contains(target))) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      endTextEdit(false);
+      try {
+        target.blur();
+      } catch (err) {}
+      return;
+    }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      endTextEdit(true);
+      try {
+        target.blur();
+      } catch (err) {}
+    }
+  }
+
+  function onFocusOut(e) {
+    if (!textEditEl) return;
+    var next = e.relatedTarget;
+    if (next && textEditEl.contains(next)) return;
+    endTextEdit(true);
+  }
+
   function onMessage(ev) {
     var d = ev.data;
     if (!d || d.type !== "a20-slide-edit" || d.action !== "set-image-url" || !d.url) return;
@@ -1360,8 +1477,11 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
   function bindGlobalHandlers() {
     document.addEventListener("pointerdown", onPointerDown, true);
+    document.addEventListener("dblclick", onDoubleClick, true);
     document.addEventListener("pointermove", onPointerMove, true);
     document.addEventListener("pointerup", onPointerUp, true);
+    document.addEventListener("keydown", onKeyDown, true);
+    document.addEventListener("focusout", onFocusOut, true);
     window.addEventListener("message", onMessage);
     window.addEventListener("scroll", scheduleSyncHandles, true);
     window.addEventListener("resize", scheduleSyncHandles);
@@ -1393,6 +1513,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     if (toolbar) {
       toolbar.classList.toggle("is-visible", enabled);
       if (!enabled) {
+        endTextEdit(true);
         select(null);
         if (handleLayer) {
           handleLayer.style.display = "none";
