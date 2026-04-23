@@ -1346,13 +1346,13 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     }
     e.preventDefault();
     select(hit);
-    ensureEditable(hit);
     drag = {
       el: hit,
       startX: e.clientX,
       startY: e.clientY,
       baseX: parseFloat(hit.getAttribute("data-edit-x")) || 0,
       baseY: parseFloat(hit.getAttribute("data-edit-y")) || 0,
+      prepared: false,
       moved: false,
     };
   }
@@ -1371,6 +1371,12 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       drag.moved = true;
     }
     if (!drag.moved) return;
+    if (!drag.prepared) {
+      ensureEditable(drag.el);
+      drag.baseX = parseFloat(drag.el.getAttribute("data-edit-x")) || 0;
+      drag.baseY = parseFloat(drag.el.getAttribute("data-edit-y")) || 0;
+      drag.prepared = true;
+    }
     e.preventDefault();
     var nx = drag.baseX + dx;
     var ny = drag.baseY + dy;
