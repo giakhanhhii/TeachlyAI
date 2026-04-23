@@ -1320,17 +1320,27 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     var font = toolbar.querySelector('select[data-ve="font"]');
     var imgBtn = toolbar.querySelector(".slide-visual-edit-img-btn");
 
-    function applyStyles() {
+    function applyFg() {
       if (!selected) return;
       if (fg && fg.value) selected.style.setProperty("color", fg.value, "important");
+      scheduleSyncHandles();
+    }
+
+    function applyBg() {
+      if (!selected) return;
       if (bg && bg.value) selected.style.setProperty("background-color", bg.value, "important");
+      scheduleSyncHandles();
+    }
+
+    function applyFont() {
+      if (!selected) return;
       if (font && font.value) selected.style.setProperty("font-family", font.value, "important");
       scheduleSyncHandles();
     }
 
-    if (fg) fg.addEventListener("input", applyStyles);
-    if (bg) bg.addEventListener("input", applyStyles);
-    if (font) font.addEventListener("change", applyStyles);
+    if (fg) fg.addEventListener("input", applyFg);
+    if (bg) bg.addEventListener("input", applyBg);
+    if (font) font.addEventListener("change", applyFont);
 
     if (imgBtn) {
       imgBtn.addEventListener("click", function (e) {
