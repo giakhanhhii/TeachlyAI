@@ -4,8 +4,8 @@
  */
 export const SLIDE_THEME_TO_SHELL_FILE = Object.freeze({
   "Chuyên nghiệp (đa sắc)": "1.thptqg.html",
-  "Tối giản (Học thuật)": "5.2-color-slide.html",
-  "Vui tươi (Thân thiện)": "2.on_thi_tn_thpt_2026.html",
+  "Tối giản (Học thuật)": "2.on_thi_tn_thpt_2026.html",
+  "Vui tươi (Thân thiện)": "3.friendly.html",
   "Vũ trụ sáng (Trẻ trung)": "4.space-bright.html",
   "Vũ trụ tối (Huyền bí)": "6.space-black.html",
   "Biển cả": "7.sealife.html",
