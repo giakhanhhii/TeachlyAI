@@ -965,6 +965,7 @@ function measureSlideShellDocumentScrollMetrics(doc) {
   const root = doc.documentElement;
   const body = doc.body;
   const scrolling = doc.scrollingElement;
+  const nodes = [scrolling, root, body];
   const viewportHeight = Math.max(
     Number(doc.defaultView?.innerHeight) || 0,
     Number(root?.clientHeight) || 0,
@@ -976,8 +977,17 @@ function measureSlideShellDocumentScrollMetrics(doc) {
     Number(body?.scrollHeight || 0) - Number(body?.clientHeight || viewportHeight),
     0,
   );
+  let top = 0;
+  for (const node of nodes) {
+    if (!node) continue;
+    const nextTop = Number(node.scrollTop);
+    if (Number.isFinite(nextTop) && nextTop > 0) {
+      top = nextTop;
+      break;
+    }
+  }
   return {
-    top: readSlideShellDocumentScroll(doc),
+    top,
     max: Math.max(0, Math.ceil(maxScroll)),
   };
 }
