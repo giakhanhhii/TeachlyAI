@@ -255,29 +255,6 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     return document.querySelector('[data-shell-slide-index="' + idx + '"]');
   }
 
-  function collectOuterPanels(slide) {
-    var nodes = slide.querySelectorAll(".card, .content-card, .comic-panel");
-    var out = [];
-    Array.prototype.forEach.call(nodes, function (el) {
-      var p = el.parentElement;
-      var under = false;
-      while (p && p !== slide) {
-        if (
-          p.classList &&
-          (p.classList.contains("card") ||
-            p.classList.contains("content-card") ||
-            p.classList.contains("comic-panel"))
-        ) {
-          under = true;
-          break;
-        }
-        p = p.parentElement;
-      }
-      if (!under) out.push(el);
-    });
-    return out;
-  }
-
   function hasVisibleText(el) {
     return !!(el && typeof el.textContent === "string" && /\\S/.test(el.textContent));
   }
@@ -452,42 +429,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     return true;
   }
 
-  function collectTargets(slide) {
-    if (!slide) return [];
-    var list = [];
-    collectOuterPanels(slide).forEach(function (panel) {
-      list.push(panel);
-    });
-    slide.querySelectorAll("div,section,article,aside,figure").forEach(function (node) {
-      if (isEditablePanelElement(node, slide)) list.push(node);
-    });
-    slide.querySelectorAll("img").forEach(function (img) {
-      list.push(img);
-    });
-    var t = slide.querySelector('[data-shell="title"]');
-    if (t) list.push(t);
-    slide.querySelectorAll('ul[data-shell="bullets"]').forEach(function (bul) {
-      list.push(bul);
-    });
-    slide
-      .querySelectorAll(
-        'h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,td,th,caption,div,span,a,[data-shell="title"],ul[data-shell="bullets"]'
-      )
-      .forEach(function (node) {
-        if (isEditableTextElement(node)) list.push(node);
-      });
-    slide.querySelectorAll(".sticker").forEach(function (s) {
-      list.push(s);
-    });
-    return list;
-  }
-
-  function targetSet(slide) {
-    return new Set(collectTargets(slide));
-  }
-
   function resolveHit(slide, node) {
-    var set = targetSet(slide);
     var n = node;
     var fallback = null;
     /* span/b/i; text node; shadow root (parentElement === null) */
@@ -496,9 +438,13 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         n = n.parentNode;
         continue;
       }
-      if (set.has(n)) {
+      if (n.nodeType === 1) {
         if (isStructuredTextTarget(n)) return n;
-        if (!fallback) fallback = n;
+        if (n.tagName === "IMG") return n;
+        if (n.classList && n.classList.contains("sticker")) return n;
+        if (!fallback && (isEditableTextElement(n) || isEditablePanelElement(n, slide))) {
+          fallback = n;
+        }
       }
       var pe = n.parentElement;
       if (pe) {
