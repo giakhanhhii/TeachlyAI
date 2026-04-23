@@ -385,6 +385,16 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     return tag !== "UL" && tag !== "OL" && tag !== "TABLE";
   }
 
+  function hasLegacyPanelClass(el) {
+    return !!(
+      el &&
+      el.classList &&
+      (el.classList.contains("card") ||
+        el.classList.contains("content-card") ||
+        el.classList.contains("comic-panel"))
+    );
+  }
+
   function isTransparentColor(value) {
     return !value || value === "transparent" || value === "rgba(0, 0, 0, 0)";
   }
@@ -432,14 +442,16 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     if (isEditableTextElement(el)) return false;
     var cs = window.getComputedStyle(el);
     if (!cs || cs.display === "contents" || cs.display === "inline") return false;
-    if (isTransparentColor(cs.backgroundColor) && cs.boxShadow === "none" && !hasVisibleBorder(cs)) {
-      return false;
-    }
-    if (!hasVisibleText(el) && !el.querySelector("img,svg,video,canvas")) return false;
     var rect = el.getBoundingClientRect();
     var slideRect = slide.getBoundingClientRect();
     if (rect.width < 40 || rect.height < 28) return false;
     if (rect.width >= slideRect.width * 0.985 && rect.height >= slideRect.height * 0.985) return false;
+    /* Backward-compat: các panel class cũ luôn phải chọn được như thời collectTargets(). */
+    if (hasLegacyPanelClass(el)) return true;
+    if (isTransparentColor(cs.backgroundColor) && cs.boxShadow === "none" && !hasVisibleBorder(cs)) {
+      return false;
+    }
+    if (!hasVisibleText(el) && !el.querySelector("img,svg,video,canvas")) return false;
     return true;
   }
 
