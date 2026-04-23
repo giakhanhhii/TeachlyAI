@@ -1292,6 +1292,9 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     }
     e.preventDefault();
     select(hit);
+    /* Chỉ chọn ở pointerdown.
+     * Việc "materialize" geometry (ensureEditable) được trì hoãn tới lúc drag/resize thật sự
+     * để tránh side effect layout ngay khi chỉ click chọn phần tử. */
     drag = {
       el: hit,
       startX: e.clientX,
@@ -1318,6 +1321,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     }
     if (!drag.moved) return;
     if (!drag.prepared) {
+      /* Chỉ khi người dùng thực sự kéo thì mới chuyển phần tử sang editable geometry. */
       ensureEditable(drag.el);
       drag.baseX = parseFloat(drag.el.getAttribute("data-edit-x")) || 0;
       drag.baseY = parseFloat(drag.el.getAttribute("data-edit-y")) || 0;
