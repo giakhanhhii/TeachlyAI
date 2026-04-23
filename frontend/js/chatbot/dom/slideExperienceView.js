@@ -63,7 +63,11 @@ function renderSlidesPlain(stage, slides, index) {
  */
 export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
-  const root = layerView.body;
+  const root = /** @type {HTMLElement & { __slideExperienceAbort?: AbortController | null }} */ (layerView.body);
+  root.__slideExperienceAbort?.abort();
+  const slideUiAbort = new AbortController();
+  const uiSignal = slideUiAbort.signal;
+  root.__slideExperienceAbort = slideUiAbort;
   const raw = await fetchMockResource("slide");
   const data = prepareSlideSessionData(raw, meta);
   const deckTitle = data.title || "Bộ slide";
@@ -76,6 +80,22 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-slide";
+  const teardownObserver = new MutationObserver(() => {
+    if (!shell.isConnected) {
+      slideUiAbort.abort();
+    }
+  });
+  teardownObserver.observe(root, { childList: true });
+  uiSignal.addEventListener(
+    "abort",
+    () => {
+      teardownObserver.disconnect();
+      if (root.__slideExperienceAbort === slideUiAbort) {
+        delete root.__slideExperienceAbort;
+      }
+    },
+    { once: true },
+  );
 
   const onAi = () => {
     const s = slides[index];
@@ -129,7 +149,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     requestAnimationFrame(restore);
   }
 
-  root.addEventListener("scroll", syncSharedOuterScroll, { passive: true });
+  root.addEventListener("scroll", syncSharedOuterScroll, { passive: true, signal: uiSignal });
 
   shell.appendChild(
     createExperienceTopBar({
@@ -177,7 +197,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       }
     }, mountEl);
   }
-  window.addEventListener("message", onSlideImagePickerMessage);
+  window.addEventListener("message", onSlideImagePickerMessage, { signal: uiSignal });
 
   /** @type {"presentation" | "scroll"} */
   let viewMode = "presentation";
@@ -334,8 +354,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     }
     paintSlideChrome();
   }
-  document.addEventListener("fullscreenchange", onFsChange);
-  document.addEventListener("webkitfullscreenchange", onFsChange);
+  document.addEventListener("fullscreenchange", onFsChange, { signal: uiSignal });
+  document.addEventListener("webkitfullscreenchange", onFsChange, { signal: uiSignal });
 
   function onDocKeydown(e) {
     const layer = document.getElementById("experienceLayer");
@@ -360,7 +380,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       goNext();
     }
   }
-  document.addEventListener("keydown", onDocKeydown);
+  document.addEventListener("keydown", onDocKeydown, { signal: uiSignal });
 
   shell.appendChild(stage);
 
@@ -443,7 +463,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       viewport.append(iframe, visualEditBtn, prevArrow, nextArrow, fsBtn);
       stage.append(modeBar, viewport);
       const loadPromise = new Promise((resolve) => {
-        iframe.addEventListener("load", resolve, { once: true });
+        iframe.addEventListener("load", resolve, { once: true, signal: uiSignal });
       });
       iframe.srcdoc = srcdoc;
       await Promise.race([
@@ -457,8 +477,15 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         if (!shellReady || viewMode !== "presentation") return;
         readDeckScrollState();
       };
-      iframe.contentWindow?.addEventListener("scroll", captureDeckScroll, { passive: true });
-      iframe.contentDocument?.addEventListener("scroll", captureDeckScroll, { passive: true, capture: true });
+      iframe.contentWindow?.addEventListener("scroll", captureDeckScroll, {
+        passive: true,
+        signal: uiSignal,
+      });
+      iframe.contentDocument?.addEventListener("scroll", captureDeckScroll, {
+        passive: true,
+        capture: true,
+        signal: uiSignal,
+      });
       iframe.style.display = "";
       viewMode = "presentation";
       syncViewModeToIframe();
