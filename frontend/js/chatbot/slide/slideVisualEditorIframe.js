@@ -32,7 +32,7 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
     --sticker-inline-offset: initial !important;
     --sticker-block-offset: initial !important;
   }
-  /* Phase 1: nested spans/bold và template pointer-events:none không được chặn hit-test */
+  /* Phase 1: nested text nodes và template pointer-events:none không được chặn hit-test */
   body.slide-visual-edit-on .shell-slide-instance img,
   body.slide-visual-edit-on .shell-slide-instance .card,
   body.slide-visual-edit-on .shell-slide-instance .content-card,
@@ -40,7 +40,25 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
   body.slide-visual-edit-on .shell-slide-instance [data-shell="title"],
   body.slide-visual-edit-on .shell-slide-instance [data-shell="title"] *,
   body.slide-visual-edit-on .shell-slide-instance ul[data-shell="bullets"],
-  body.slide-visual-edit-on .shell-slide-instance ul[data-shell="bullets"] * {
+  body.slide-visual-edit-on .shell-slide-instance ul[data-shell="bullets"] *,
+  body.slide-visual-edit-on .shell-slide-instance h1,
+  body.slide-visual-edit-on .shell-slide-instance h2,
+  body.slide-visual-edit-on .shell-slide-instance h3,
+  body.slide-visual-edit-on .shell-slide-instance h4,
+  body.slide-visual-edit-on .shell-slide-instance h5,
+  body.slide-visual-edit-on .shell-slide-instance h6,
+  body.slide-visual-edit-on .shell-slide-instance p,
+  body.slide-visual-edit-on .shell-slide-instance li,
+  body.slide-visual-edit-on .shell-slide-instance blockquote,
+  body.slide-visual-edit-on .shell-slide-instance figcaption,
+  body.slide-visual-edit-on .shell-slide-instance td,
+  body.slide-visual-edit-on .shell-slide-instance th,
+  body.slide-visual-edit-on .shell-slide-instance span,
+  body.slide-visual-edit-on .shell-slide-instance a,
+  body.slide-visual-edit-on .shell-slide-instance strong,
+  body.slide-visual-edit-on .shell-slide-instance em,
+  body.slide-visual-edit-on .shell-slide-instance b,
+  body.slide-visual-edit-on .shell-slide-instance i {
     pointer-events: auto !important;
   }
   body.slide-visual-edit-on .shell-slide-instance .card,
@@ -260,11 +278,188 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     return out;
   }
 
+  function hasVisibleText(el) {
+    return !!(el && typeof el.textContent === "string" && /\\S/.test(el.textContent));
+  }
+
+  function hasDirectText(el) {
+    if (!el || !el.childNodes) return false;
+    for (var i = 0; i < el.childNodes.length; i++) {
+      var child = el.childNodes[i];
+      if (child && child.nodeType === 3 && /\\S/.test(child.nodeValue || "")) return true;
+    }
+    return false;
+  }
+
+  function isTextLeafLike(el) {
+    if (!el || !el.children || !el.children.length) return false;
+    for (var i = 0; i < el.children.length; i++) {
+      var child = el.children[i];
+      if (!child || child.nodeType !== 1) continue;
+      var tag = child.tagName;
+      var inlineOnly =
+        tag === "SPAN" ||
+        tag === "A" ||
+        tag === "STRONG" ||
+        tag === "EM" ||
+        tag === "B" ||
+        tag === "I" ||
+        tag === "U" ||
+        tag === "SMALL" ||
+        tag === "SUB" ||
+        tag === "SUP" ||
+        tag === "MARK" ||
+        tag === "BR";
+      if (!inlineOnly) return false;
+      if (tag !== "BR" && !hasDirectText(child) && !isTextLeafLike(child)) return false;
+    }
+    return hasVisibleText(el);
+  }
+
+  function isEditableTextElement(el) {
+    if (!el || el.nodeType !== 1) return false;
+    if (
+      el.classList &&
+      (el.classList.contains("sticker") ||
+        el.classList.contains("card") ||
+        el.classList.contains("content-card") ||
+        el.classList.contains("comic-panel") ||
+        el.classList.contains("slide-visual-edit-flow-spacer"))
+    ) {
+      return false;
+    }
+    var tag = el.tagName;
+    if (
+      tag === "SCRIPT" ||
+      tag === "STYLE" ||
+      tag === "TEMPLATE" ||
+      tag === "IMG" ||
+      tag === "SVG" ||
+      tag === "PATH" ||
+      tag === "BR" ||
+      tag === "HR"
+    ) {
+      return false;
+    }
+    if (el.getAttribute("data-shell") === "title") return true;
+    if (tag === "UL" && el.getAttribute("data-shell") === "bullets") return true;
+    if (tag === "LI" && el.parentElement && el.parentElement.getAttribute("data-shell") === "bullets") return true;
+    if (!hasVisibleText(el)) return false;
+    if (
+      tag === "H1" ||
+      tag === "H2" ||
+      tag === "H3" ||
+      tag === "H4" ||
+      tag === "H5" ||
+      tag === "H6" ||
+      tag === "P" ||
+      tag === "LI" ||
+      tag === "BLOCKQUOTE" ||
+      tag === "FIGCAPTION" ||
+      tag === "TD" ||
+      tag === "TH" ||
+      tag === "CAPTION"
+    ) {
+      return true;
+    }
+    if (tag === "DIV") {
+      return hasDirectText(el);
+    }
+    if (tag === "SPAN" || tag === "A") {
+      if (hasDirectText(el)) return true;
+      return isTextLeafLike(el);
+    }
+    return false;
+  }
+
+  function isStructuredTextTarget(el) {
+    if (!el || el.nodeType !== 1) return false;
+    var tag = el.tagName;
+    if (el.getAttribute("data-shell") === "title") return true;
+    if (tag === "UL" && el.getAttribute("data-shell") === "bullets") return true;
+    return (
+      tag === "H1" ||
+      tag === "H2" ||
+      tag === "H3" ||
+      tag === "H4" ||
+      tag === "H5" ||
+      tag === "H6" ||
+      tag === "P" ||
+      tag === "LI" ||
+      tag === "BLOCKQUOTE" ||
+      tag === "FIGCAPTION" ||
+      tag === "TD" ||
+      tag === "TH" ||
+      tag === "CAPTION"
+    );
+  }
+
+  function isTransparentColor(value) {
+    return !value || value === "transparent" || value === "rgba(0, 0, 0, 0)";
+  }
+
+  function hasVisibleBorder(cs) {
+    if (!cs) return false;
+    var sides = [
+      [cs.borderTopStyle, cs.borderTopWidth],
+      [cs.borderRightStyle, cs.borderRightWidth],
+      [cs.borderBottomStyle, cs.borderBottomWidth],
+      [cs.borderLeftStyle, cs.borderLeftWidth],
+    ];
+    for (var i = 0; i < sides.length; i++) {
+      var style = sides[i][0];
+      var width = parseFloat(sides[i][1]) || 0;
+      if (style && style !== "none" && width > 0) return true;
+    }
+    return false;
+  }
+
+  function isEditablePanelElement(el, slide) {
+    if (!el || el.nodeType !== 1 || !slide || el === slide) return false;
+    if (
+      el.classList &&
+      (el.classList.contains("sticker") ||
+        el.classList.contains("slide-visual-edit-flow-spacer") ||
+        el.classList.contains("shell-panel-fit-wrap") ||
+        el.classList.contains("shell-panel-fit-sizer"))
+    ) {
+      return false;
+    }
+    var tag = el.tagName;
+    if (
+      tag === "IMG" ||
+      tag === "SVG" ||
+      tag === "PATH" ||
+      tag === "SCRIPT" ||
+      tag === "STYLE" ||
+      tag === "TEMPLATE" ||
+      tag === "BR" ||
+      tag === "HR"
+    ) {
+      return false;
+    }
+    if (isEditableTextElement(el)) return false;
+    var cs = window.getComputedStyle(el);
+    if (!cs || cs.display === "contents" || cs.display === "inline") return false;
+    if (isTransparentColor(cs.backgroundColor) && cs.boxShadow === "none" && !hasVisibleBorder(cs)) {
+      return false;
+    }
+    if (!hasVisibleText(el) && !el.querySelector("img,svg,video,canvas")) return false;
+    var rect = el.getBoundingClientRect();
+    var slideRect = slide.getBoundingClientRect();
+    if (rect.width < 40 || rect.height < 28) return false;
+    if (rect.width >= slideRect.width * 0.985 && rect.height >= slideRect.height * 0.985) return false;
+    return true;
+  }
+
   function collectTargets(slide) {
     if (!slide) return [];
     var list = [];
     collectOuterPanels(slide).forEach(function (panel) {
       list.push(panel);
+    });
+    slide.querySelectorAll("div,section,article,aside,figure").forEach(function (node) {
+      if (isEditablePanelElement(node, slide)) list.push(node);
     });
     slide.querySelectorAll("img").forEach(function (img) {
       list.push(img);
@@ -274,6 +469,13 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     slide.querySelectorAll('ul[data-shell="bullets"]').forEach(function (bul) {
       list.push(bul);
     });
+    slide
+      .querySelectorAll(
+        'h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,td,th,caption,div,span,a,[data-shell="title"],ul[data-shell="bullets"]'
+      )
+      .forEach(function (node) {
+        if (isEditableTextElement(node)) list.push(node);
+      });
     slide.querySelectorAll(".sticker").forEach(function (s) {
       list.push(s);
     });
@@ -287,13 +489,17 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   function resolveHit(slide, node) {
     var set = targetSet(slide);
     var n = node;
+    var fallback = null;
     /* span/b/i; text node; shadow root (parentElement === null) */
     while (n && n !== slide) {
       if (n.nodeType === 3) {
         n = n.parentNode;
         continue;
       }
-      if (set.has(n)) return n;
+      if (set.has(n)) {
+        if (isStructuredTextTarget(n)) return n;
+        if (!fallback) fallback = n;
+      }
       var pe = n.parentElement;
       if (pe) {
         n = pe;
@@ -303,7 +509,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         n = null;
       }
     }
-    return null;
+    return fallback;
   }
 
   function getSlideInstance(el) {
@@ -333,6 +539,22 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     return slide;
   }
 
+  function createFlowSpacerElement(el) {
+    if (!el || !el.tagName) return document.createElement("div");
+    var tag = el.tagName;
+    if (
+      tag === "TD" ||
+      tag === "TH" ||
+      tag === "CAPTION" ||
+      tag === "LI" ||
+      tag === "UL" ||
+      tag === "OL"
+    ) {
+      return document.createElement(tag.toLowerCase());
+    }
+    return document.createElement("div");
+  }
+
   /**
    * Khi đưa title/bullet/card sang absolute, chỗ cũ trong flex/block bị mất → panel nhảy.
    * Chèn spacer (invisible, cùng kích thước ô cũ) trước khi absolute — chỉ khi phần tử vẫn đang trong luồng.
@@ -353,15 +575,36 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     var oh = el.offsetHeight;
     var w = Math.max(1, Math.min(ow, r.width));
     var hBorder = Math.max(1, Math.min(oh, r.height));
-    var sp = document.createElement("div");
+    var sp = createFlowSpacerElement(el);
     sp.className = "slide-visual-edit-flow-spacer";
     sp.setAttribute("data-edit-flow-spacer", "1");
     sp.setAttribute("aria-hidden", "true");
+    if (el.hasAttribute("colspan")) sp.setAttribute("colspan", el.getAttribute("colspan"));
+    if (el.hasAttribute("rowspan")) sp.setAttribute("rowspan", el.getAttribute("rowspan"));
     sp.style.marginTop = cs0.marginTop;
     sp.style.marginBottom = cs0.marginBottom;
     sp.style.marginLeft = cs0.marginLeft;
     sp.style.marginRight = cs0.marginRight;
     sp.style.boxSizing = "border-box";
+    sp.style.display = cs0.display;
+    sp.style.verticalAlign = cs0.verticalAlign;
+    sp.style.paddingTop = cs0.paddingTop;
+    sp.style.paddingRight = cs0.paddingRight;
+    sp.style.paddingBottom = cs0.paddingBottom;
+    sp.style.paddingLeft = cs0.paddingLeft;
+    sp.style.borderTopWidth = cs0.borderTopWidth;
+    sp.style.borderRightWidth = cs0.borderRightWidth;
+    sp.style.borderBottomWidth = cs0.borderBottomWidth;
+    sp.style.borderLeftWidth = cs0.borderLeftWidth;
+    sp.style.borderTopStyle = cs0.borderTopStyle;
+    sp.style.borderRightStyle = cs0.borderRightStyle;
+    sp.style.borderBottomStyle = cs0.borderBottomStyle;
+    sp.style.borderLeftStyle = cs0.borderLeftStyle;
+    sp.style.borderTopColor = cs0.borderTopColor;
+    sp.style.borderRightColor = cs0.borderRightColor;
+    sp.style.borderBottomColor = cs0.borderBottomColor;
+    sp.style.borderLeftColor = cs0.borderLeftColor;
+    sp.style.listStyleType = "none";
     var pcs = window.getComputedStyle(parent);
     var disp = pcs.display;
     var isFlex = disp === "flex" || disp === "inline-flex";
@@ -398,13 +641,6 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   function ensureEditable(el) {
     var slide = getSlideInstance(el);
     if (!slide) return;
-
-    function isTextShellTarget(node) {
-      if (!node) return false;
-      if (node.getAttribute("data-shell") === "title") return true;
-      if (node.tagName === "UL" && node.getAttribute("data-shell") === "bullets") return true;
-      return false;
-    }
 
     function offsetFromContainingBlock() {
       var cb = absoluteContainingBlock(el, slide);
@@ -502,19 +738,14 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         el.style.setProperty("height", "auto", "important");
         return;
       }
-      if (isTextShellTarget(el)) {
+      if (isEditableTextElement(el)) {
         var isTitle = el.getAttribute("data-shell") === "title";
         /*
-         * Dùng max(measured, available) đảm bảo text không bao giờ wrap sau khi absolute:
-         * - measured (wpx/ow): kích thước thực khi element còn in-flow
-         * - availW: ngân sách ngang tối đa từ containing block
-         * Dùng border-box vì er.width / offsetWidth đều là border-box.
-         * Riêng title: giữ theo kích thước đang hiển thị để tránh “bung” thành box rộng
-         * rồi nhìn như bị giật khi mới click chọn.
+         * Khoá theo kích thước đang hiển thị thực tế để không làm text box “nở” ngang
+         * khi chuyển sang absolute. Cách lấy chiều rộng theo available-width trước đây
+         * từng làm cell/bullet/title rộng sang cột khác rồi chữ từ nhiều dòng bị dồn thành 1 dòng.
          */
-        var wPx = isTitle
-          ? Math.max(snap.wpx, snap.ow)
-          : Math.ceil(Math.max(snap.wpx, snap.ow, snap.availW));
+        var wPx = isTitle ? Math.max(snap.wpx, snap.ow) : Math.ceil(Math.max(snap.wpx, snap.ow));
         var hMin = isTitle ? Math.max(snap.hpx, snap.oh) : Math.ceil(Math.max(snap.hpx, snap.oh));
         el.style.setProperty("box-sizing", "border-box", "important");
         el.style.setProperty("width", pxStr(wPx), "important");
@@ -551,7 +782,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         el.style.setProperty("position", "absolute", "important");
         el.style.left = pxStr(x);
         el.style.top = pxStr(y);
-        if (isTextShellTarget(el) && !el.style.width) {
+        if (isEditableTextElement(el) && !el.style.width) {
           var snapFast = offsetFromContainingBlock();
           applyTextBoxStyles(snapFast);
         }
@@ -624,13 +855,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     if (!el) return "block";
     if (el.classList && el.classList.contains("sticker")) return "sticker";
     if (el.tagName === "IMG") return "img";
-    if (el.getAttribute("data-shell") === "title") return "text";
-    if (el.getAttribute("data-shell") === "bullets" && el.tagName === "UL") {
-      return "text";
-    }
-    if (el.tagName === "LI" && el.parentElement && el.parentElement.getAttribute("data-shell") === "bullets") {
-      return "text";
-    }
+    if (isEditableTextElement(el)) return "text";
     return "block";
   }
 
