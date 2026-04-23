@@ -292,34 +292,28 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   }
 
   function isTextLeafLike(el) {
-    if (!el || !el.children) return true;
+    if (!el || !el.children || !el.children.length) return false;
     for (var i = 0; i < el.children.length; i++) {
       var child = el.children[i];
       if (!child || child.nodeType !== 1) continue;
       var tag = child.tagName;
-      if (
-        child.getAttribute("data-shell") === "title" ||
-        child.getAttribute("data-shell") === "bullets" ||
-        tag === "H1" ||
-        tag === "H2" ||
-        tag === "H3" ||
-        tag === "H4" ||
-        tag === "H5" ||
-        tag === "H6" ||
-        tag === "P" ||
-        tag === "LI" ||
-        tag === "BLOCKQUOTE" ||
-        tag === "FIGCAPTION" ||
-        tag === "TD" ||
-        tag === "TH" ||
-        tag === "UL" ||
-        tag === "OL" ||
-        tag === "TABLE"
-      ) {
-        return false;
-      }
+      var inlineOnly =
+        tag === "SPAN" ||
+        tag === "A" ||
+        tag === "STRONG" ||
+        tag === "EM" ||
+        tag === "B" ||
+        tag === "I" ||
+        tag === "U" ||
+        tag === "SMALL" ||
+        tag === "SUB" ||
+        tag === "SUP" ||
+        tag === "MARK" ||
+        tag === "BR";
+      if (!inlineOnly) return false;
+      if (tag !== "BR" && !hasDirectText(child) && !isTextLeafLike(child)) return false;
     }
-    return true;
+    return hasVisibleText(el);
   }
 
   function isEditableTextElement(el) {
@@ -368,7 +362,10 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     ) {
       return true;
     }
-    if (tag === "SPAN" || tag === "DIV" || tag === "A") {
+    if (tag === "DIV") {
+      return hasDirectText(el);
+    }
+    if (tag === "SPAN" || tag === "A") {
       if (hasDirectText(el)) return true;
       return isTextLeafLike(el);
     }
@@ -397,11 +394,72 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     );
   }
 
+  function isTransparentColor(value) {
+    return !value || value === "transparent" || value === "rgba(0, 0, 0, 0)";
+  }
+
+  function hasVisibleBorder(cs) {
+    if (!cs) return false;
+    var sides = [
+      [cs.borderTopStyle, cs.borderTopWidth],
+      [cs.borderRightStyle, cs.borderRightWidth],
+      [cs.borderBottomStyle, cs.borderBottomWidth],
+      [cs.borderLeftStyle, cs.borderLeftWidth],
+    ];
+    for (var i = 0; i < sides.length; i++) {
+      var style = sides[i][0];
+      var width = parseFloat(sides[i][1]) || 0;
+      if (style && style !== "none" && width > 0) return true;
+    }
+    return false;
+  }
+
+  function isEditablePanelElement(el, slide) {
+    if (!el || el.nodeType !== 1 || !slide || el === slide) return false;
+    if (
+      el.classList &&
+      (el.classList.contains("sticker") ||
+        el.classList.contains("slide-visual-edit-flow-spacer") ||
+        el.classList.contains("shell-panel-fit-wrap") ||
+        el.classList.contains("shell-panel-fit-sizer"))
+    ) {
+      return false;
+    }
+    var tag = el.tagName;
+    if (
+      tag === "IMG" ||
+      tag === "SVG" ||
+      tag === "PATH" ||
+      tag === "SCRIPT" ||
+      tag === "STYLE" ||
+      tag === "TEMPLATE" ||
+      tag === "BR" ||
+      tag === "HR"
+    ) {
+      return false;
+    }
+    if (isEditableTextElement(el)) return false;
+    var cs = window.getComputedStyle(el);
+    if (!cs || cs.display === "contents" || cs.display === "inline") return false;
+    if (isTransparentColor(cs.backgroundColor) && cs.boxShadow === "none" && !hasVisibleBorder(cs)) {
+      return false;
+    }
+    if (!hasVisibleText(el) && !el.querySelector("img,svg,video,canvas")) return false;
+    var rect = el.getBoundingClientRect();
+    var slideRect = slide.getBoundingClientRect();
+    if (rect.width < 40 || rect.height < 28) return false;
+    if (rect.width >= slideRect.width * 0.985 && rect.height >= slideRect.height * 0.985) return false;
+    return true;
+  }
+
   function collectTargets(slide) {
     if (!slide) return [];
     var list = [];
     collectOuterPanels(slide).forEach(function (panel) {
       list.push(panel);
+    });
+    slide.querySelectorAll("div,section,article,aside,figure").forEach(function (node) {
+      if (isEditablePanelElement(node, slide)) list.push(node);
     });
     slide.querySelectorAll("img").forEach(function (img) {
       list.push(img);
