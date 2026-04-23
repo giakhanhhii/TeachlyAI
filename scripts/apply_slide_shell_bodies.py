@@ -309,13 +309,19 @@ def resolve_template_path(name: str) -> Path:
     raise FileNotFoundError(f"Missing template '{name}'. Checked:\n - {checked}")
 
 
+def resolve_output_path(name: str, source_path: Path) -> Path:
+    if source_path.parent == LEGACY_DIR:
+        return source_path
+    return DIR / name
+
+
 def main() -> None:
     DIR.mkdir(parents=True, exist_ok=True)
     for name, body in BODY_BY_FILE.items():
         path = resolve_template_path(name)
         raw = path.read_text(encoding="utf-8")
         out = patch_title_year(replace_body(raw, body))
-        target_path = DIR / name
+        target_path = resolve_output_path(name, path)
         target_path.write_text(out, encoding="utf-8")
         print("patched", name)
 
