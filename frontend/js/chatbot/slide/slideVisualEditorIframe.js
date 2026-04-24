@@ -281,6 +281,8 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   var handlesRaf = 0;
   var ro = null;
   var DRAG_THRESHOLD = 5;
+  var imageHistory = [];
+  var IMAGE_HISTORY_LIMIT = 40;
 
   function activeSlide() {
     var master = document.querySelector("#slides-master-container");
@@ -942,6 +944,150 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     } catch (err) {}
   }
 
+  function resolveImageOperationHost(el) {
+    if (!el || el.nodeType !== 1) return null;
+    if (el.tagName === "IMG") return el.parentElement || el;
+    return resolveImageHost(el);
+  }
+
+  function cloneImageNodeFromHtml(html) {
+    if (!html) return null;
+    var wrap = document.createElement("div");
+    wrap.innerHTML = html;
+    var node = wrap.firstElementChild;
+    return node && node.tagName === "IMG" ? node : null;
+  }
+
+  function captureImageState(host) {
+    if (!host || host.nodeType !== 1) return null;
+    var img = null;
+    if (host.tagName === "IMG") {
+      img = host;
+    } else {
+      img = findDirectImgChild(host);
+      if (!img && host.querySelector) img = host.querySelector("img");
+    }
+    return {
+      hasImage: !!img,
+      imgHtml: img ? img.outerHTML : "",
+    };
+  }
+
+  function sameImageState(a, b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return !!a.hasImage === !!b.hasImage && String(a.imgHtml || "") === String(b.imgHtml || "");
+  }
+
+  function pushImageHistory(host, before, after) {
+    if (!host || !before || !after || sameImageState(before, after)) return;
+    imageHistory.push({
+      host: host,
+      before: before,
+      after: after,
+    });
+    if (imageHistory.length > IMAGE_HISTORY_LIMIT) {
+      imageHistory.shift();
+    }
+  }
+
+  function restoreImageState(host, state) {
+    if (!host || host.nodeType !== 1 || !state) return false;
+    var current = null;
+    if (host.tagName === "IMG") {
+      current = host;
+    } else {
+      current = findDirectImgChild(host);
+      if (!current && host.querySelector) current = host.querySelector("img");
+    }
+    if (!state.hasImage) {
+      if (current && current.parentElement) {
+        current.parentElement.removeChild(current);
+      }
+      return true;
+    }
+    var nextImg = cloneImageNodeFromHtml(state.imgHtml);
+    if (!nextImg) return false;
+    if (host.tagName === "IMG") {
+      if (current) {
+        current.setAttribute("src", nextImg.getAttribute("src") || "");
+        if (nextImg.getAttribute("alt")) current.setAttribute("alt", nextImg.getAttribute("alt"));
+        else current.removeAttribute("alt");
+        current.style.cssText = nextImg.style.cssText;
+      }
+      return true;
+    }
+    var hostCs = window.getComputedStyle(host);
+    if (hostCs.position === "static") {
+      host.style.position = "relative";
+    }
+    host.style.overflow = "hidden";
+    if (current && current.parentElement) current.parentElement.replaceChild(nextImg, current);
+    else host.appendChild(nextImg);
+    return true;
+  }
+
+  function applyImageUrlToSelection(url) {
+    var host = resolveImageOperationHost(selected);
+    if (!host || !url) return false;
+    var before = captureImageState(host);
+    var img = resolveSelectedImageTarget(selected, true);
+    if (!img) return false;
+    img.setAttribute("src", url);
+    if (!img.getAttribute("alt")) {
+      img.setAttribute("alt", "Local slide image");
+    }
+    var after = captureImageState(host);
+    pushImageHistory(host, before, after);
+    if (host !== img && selected !== host && host.isConnected) {
+      select(host);
+    } else {
+      scheduleSyncHandles();
+    }
+    return true;
+  }
+
+  function deleteSelectedImage() {
+    var host = resolveImageOperationHost(selected);
+    var img = resolveSelectedImageTarget(selected, false);
+    if (!host || !img) return false;
+    var before = captureImageState(host);
+    if (img.parentElement) {
+      img.parentElement.removeChild(img);
+    } else {
+      return false;
+    }
+    var after = captureImageState(host);
+    pushImageHistory(host, before, after);
+    if (host && host.isConnected) {
+      select(host);
+    } else {
+      select(null);
+    }
+    scheduleSyncHandles();
+    return true;
+  }
+
+  function undoLastImageAction() {
+    var entry = imageHistory.pop();
+    if (!entry || !entry.host || !entry.host.isConnected) return false;
+    var ok = restoreImageState(entry.host, entry.before);
+    if (!ok) return false;
+    if (entry.host.isConnected) {
+      select(entry.host);
+    } else {
+      select(null);
+    }
+    scheduleSyncHandles();
+    return true;
+  }
+
+  function isFormControlTarget(node) {
+    if (!node || node.nodeType !== 1) return false;
+    var tag = node.tagName;
+    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON";
+  }
+
   function lockStickerForResize(el) {
     return el.getBoundingClientRect();
   }
@@ -1304,10 +1450,23 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     } catch (e) {}
   }
 
+  function focusEditorSurface() {
+    try {
+      if (document.body && document.body.tabIndex < 0) {
+        document.body.tabIndex = -1;
+      }
+      if (window.focus) window.focus();
+      if (document.body && document.body.focus) {
+        document.body.focus({ preventScroll: true });
+      }
+    } catch (e) {}
+  }
+
   function select(el) {
     selected = el;
     clearSelectedAttr();
     if (selected) selected.setAttribute("data-edit-selected", "1");
+    focusEditorSurface();
     syncToolbarFromSelection();
     observeSelected();
     scheduleSyncHandles();
@@ -1581,23 +1740,42 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   }
 
   function onKeyDown(e) {
-    if (!textEditEl) return;
     var target = e.target;
-    if (target !== textEditEl && !(textEditEl.contains(target))) return;
-    if (e.key === "Escape") {
-      e.preventDefault();
-      endTextEdit(false);
-      try {
-        target.blur();
-      } catch (err) {}
+    if (textEditEl) {
+      if (target !== textEditEl && !(textEditEl.contains(target))) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        endTextEdit(false);
+        try {
+          target.blur();
+        } catch (err) {}
+        return;
+      }
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        endTextEdit(true);
+        try {
+          target.blur();
+        } catch (err) {}
+      }
       return;
     }
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      endTextEdit(true);
-      try {
-        target.blur();
-      } catch (err) {}
+    if (!enabled) return;
+    var key = String(e.key || "");
+    var lowerKey = key.toLowerCase();
+    if (isFormControlTarget(target)) return;
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && lowerKey === "z") {
+      if (undoLastImageAction()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      return;
+    }
+    if (!e.ctrlKey && !e.metaKey && !e.altKey && (key === "Delete" || key === "Backspace")) {
+      if (deleteSelectedImage()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     }
   }
 
@@ -1611,17 +1789,13 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   function onMessage(ev) {
     var d = ev.data;
     if (!d || d.type !== "a20-slide-edit" || d.action !== "set-image-url" || !d.url) return;
-    var img = resolveSelectedImageTarget(selected, true);
-    if (img) {
-      img.setAttribute("src", d.url);
-      if (!img.getAttribute("alt")) {
-        img.setAttribute("alt", "Local slide image");
-      }
-      scheduleSyncHandles();
-    }
+    applyImageUrlToSelection(d.url);
   }
 
   function bindGlobalHandlers() {
+    if (document.body && !document.body.hasAttribute("tabindex")) {
+      document.body.setAttribute("tabindex", "-1");
+    }
     document.addEventListener("pointerdown", onPointerDown, true);
     document.addEventListener("dblclick", onDoubleClick, true);
     document.addEventListener("pointermove", onPointerMove, true);
