@@ -120,6 +120,28 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
     box-sizing: border-box;
     touch-action: none;
   }
+  .slide-visual-edit-handles .ve-image-action {
+    position: absolute;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    background: #0f766e;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .slide-visual-edit-handles .ve-image-action:hover {
+    background: #0d9488;
+  }
+  .slide-visual-edit-handles .ve-image-action svg {
+    pointer-events: none;
+  }
   .slide-visual-edit-handles .ve-corner {
     width: 14px;
     height: 14px;
@@ -229,6 +251,14 @@ export const SLIDE_VISUAL_EDITOR_CSS = `
   }
   .slide-visual-edit-toolbar button:hover {
     background: #475569;
+  }
+  .slide-visual-edit-toolbar .slide-visual-edit-img-btn {
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .slide-visual-edit-toolbar .slide-visual-edit-img-btn svg {
+    flex-shrink: 0;
   }
   .slide-visual-edit-hint {
     width: 100%;
@@ -846,6 +876,72 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     return "block";
   }
 
+  function hasImageFrameHint(el) {
+    if (!el || el.nodeType !== 1) return false;
+    var tokens = "";
+    if (typeof el.className === "string") tokens += " " + el.className;
+    if (typeof el.id === "string" && el.id) tokens += " " + el.id;
+    return /(image-wrapper|image-frame|image-slot|photo-frame|picture-frame|media-frame|media-slot|visual-frame|illustration-frame)/i.test(tokens);
+  }
+
+  function findDirectImgChild(el) {
+    if (!el || !el.children) return null;
+    for (var i = 0; i < el.children.length; i++) {
+      var child = el.children[i];
+      if (child && child.tagName === "IMG") return child;
+    }
+    return null;
+  }
+
+  function resolveImageHost(el) {
+    if (!el || el.nodeType !== 1) return null;
+    if (el.tagName === "IMG") return el.parentElement || el;
+    if (hasImageFrameHint(el)) return el;
+    if (findDirectImgChild(el)) return el;
+    if (el.querySelector && el.querySelector("img")) return el;
+    return null;
+  }
+
+  function resolveSelectedImageTarget(el, createIfMissing) {
+    if (!el || el.nodeType !== 1) return null;
+    if (el.tagName === "IMG") return el;
+    var host = resolveImageHost(el);
+    if (!host) return null;
+    var img = findDirectImgChild(host);
+    if (!img && host.querySelector) {
+      img = host.querySelector("img");
+    }
+    if (img || !createIfMissing) return img;
+    img = document.createElement("img");
+    img.alt = "Local slide image";
+    img.setAttribute("data-edit-generated-img", "1");
+    img.style.display = "block";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.maxWidth = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "inherit";
+    var hostCs = window.getComputedStyle(host);
+    if (hostCs.position === "static") {
+      host.style.position = "relative";
+    }
+    host.style.overflow = "hidden";
+    host.appendChild(img);
+    return img;
+  }
+
+  function selectionSupportsImageInsert(el) {
+    if (!el || el.nodeType !== 1) return false;
+    return !!resolveSelectedImageTarget(el, false) || hasImageFrameHint(el);
+  }
+
+  function requestLocalImagePick() {
+    if (!selectionSupportsImageInsert(selected)) return;
+    try {
+      window.parent.postMessage({ type: "a20-slide-edit", action: "open-image-picker" }, "*");
+    } catch (err) {}
+  }
+
   function lockStickerForResize(el) {
     return el.getBoundingClientRect();
   }
@@ -928,11 +1024,25 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       '<div class="ve-handle ve-edge ve-n" data-ve-handle="n"></div>' +
       '<div class="ve-handle ve-edge ve-s" data-ve-handle="s"></div>' +
       '<div class="ve-handle ve-edge ve-e" data-ve-handle="e"></div>' +
-      '<div class="ve-handle ve-edge ve-w" data-ve-handle="w"></div>';
+      '<div class="ve-handle ve-edge ve-w" data-ve-handle="w"></div>' +
+      '<button type="button" class="ve-image-action" aria-label="Chọn ảnh từ máy">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"></rect><circle cx="8.5" cy="10.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>' +
+      "</button>";
     document.body.appendChild(handleLayer);
     handleLayer.querySelectorAll("[data-ve-handle]").forEach(function (node) {
       node.addEventListener("pointerdown", onHandlePointerDown, true);
     });
+    var imgAction = handleLayer.querySelector(".ve-image-action");
+    if (imgAction) {
+      imgAction.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        requestLocalImagePick();
+      });
+      imgAction.addEventListener("pointerdown", function (e) {
+        e.stopPropagation();
+      });
+    }
   }
 
   function onHandlePointerDown(e) {
@@ -1167,6 +1277,16 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     var sEl = handleLayer.querySelector(".ve-s");
     if (nEl) nEl.style.display = hideNS ? "none" : "";
     if (sEl) sEl.style.display = hideNS ? "none" : "";
+    var imgAction = handleLayer.querySelector(".ve-image-action");
+    if (imgAction) {
+      if (selectionSupportsImageInsert(selected)) {
+        imgAction.style.display = "flex";
+        imgAction.style.left = Math.round(r.right + 14) + "px";
+        imgAction.style.top = Math.round(r.top - 14) + "px";
+      } else {
+        imgAction.style.display = "none";
+      }
+    }
   }
 
   function observeSelected() {
@@ -1302,7 +1422,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       }
     }
     if (imgBtn) {
-      imgBtn.style.display = selected.tagName === "IMG" ? "inline-block" : "none";
+      imgBtn.style.display = selectionSupportsImageInsert(selected) ? "inline-flex" : "none";
     }
   }
 
@@ -1323,7 +1443,9 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       '<option value="Merriweather,Georgia,serif">Merriweather</option>' +
       '<option value="Inter,system-ui,sans-serif">Inter</option>' +
       '</select></label>' +
-      '<button type="button" class="slide-visual-edit-img-btn" style="display:none;">Chọn ảnh từ máy</button>' +
+      '<button type="button" class="slide-visual-edit-img-btn" style="display:none;">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"></rect><circle cx="8.5" cy="10.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>' +
+      "<span>Cho ảnh vào</span></button>" +
       "</div>";
     document.body.appendChild(toolbar);
 
@@ -1357,10 +1479,8 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     if (imgBtn) {
       imgBtn.addEventListener("click", function (e) {
         e.stopPropagation();
-        if (!selected || selected.tagName !== "IMG") return;
-        try {
-          window.parent.postMessage({ type: "a20-slide-edit", action: "open-image-picker" }, "*");
-        } catch (err) {}
+        if (!selectionSupportsImageInsert(selected)) return;
+        requestLocalImagePick();
       });
     }
 
@@ -1491,8 +1611,12 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   function onMessage(ev) {
     var d = ev.data;
     if (!d || d.type !== "a20-slide-edit" || d.action !== "set-image-url" || !d.url) return;
-    if (selected && selected.tagName === "IMG") {
-      selected.setAttribute("src", d.url);
+    var img = resolveSelectedImageTarget(selected, true);
+    if (img) {
+      img.setAttribute("src", d.url);
+      if (!img.getAttribute("alt")) {
+        img.setAttribute("alt", "Local slide image");
+      }
       scheduleSyncHandles();
     }
   }

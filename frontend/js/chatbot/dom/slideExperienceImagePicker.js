@@ -63,9 +63,19 @@ export function openSlideImagePicker(onPick, mountParent) {
     err.hidden = false;
   }
 
-  pickBtn.addEventListener("click", () => {
+  let triedAutoOpen = false;
+
+  function openNativePicker() {
     err.hidden = true;
-    input.click();
+    try {
+      input.click();
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  pickBtn.addEventListener("click", () => {
+    openNativePicker();
   });
 
   input.addEventListener("change", () => {
@@ -101,6 +111,10 @@ export function openSlideImagePicker(onPick, mountParent) {
   panel.append(head, body);
   backdrop.appendChild(panel);
   mountEl.appendChild(backdrop);
+  if (!triedAutoOpen) {
+    triedAutoOpen = true;
+    openNativePicker();
+  }
 
   function close() {
     backdrop.remove();
