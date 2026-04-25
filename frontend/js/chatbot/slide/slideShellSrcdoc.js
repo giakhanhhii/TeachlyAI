@@ -296,20 +296,22 @@ function ensureShellFromFullDeck(doc) {
 
   if (hasComicCover) {
     const coverProto = allRoots[0].cloneNode(true);
-    decorateComicCoverPrototype(coverProto, doc);
+    coverProto.removeAttribute("id");
     const coverTpl = doc.createElement("template");
     coverTpl.id = "layout-cover";
     coverTpl.setAttribute("data-shell-layout-role", "cover");
+    coverTpl.setAttribute("data-shell-authored-content", "1");
     coverTpl.content.appendChild(coverProto);
     doc.body.appendChild(coverTpl);
   }
 
   variantRoots.forEach((root, idx) => {
     const proto = root.cloneNode(true);
-    decorateSlidePrototype(proto, doc);
+    proto.removeAttribute("id");
     const t = doc.createElement("template");
     t.id = idx === 0 ? "layout-content" : `layout-content-v${idx}`;
     t.setAttribute("data-shell-layout-variant", String(idx));
+    t.setAttribute("data-shell-authored-content", "1");
     if (idx === variantRoots.length - 1) {
       t.setAttribute("data-shell-layout-role", "ending");
     }
@@ -348,6 +350,14 @@ function getShellCoverTemplate(doc) {
 function getShellEndingTemplate(doc) {
   const ending = doc.querySelector("template[data-shell-layout-role=\"ending\"]");
   return ending instanceof HTMLTemplateElement ? ending : null;
+}
+
+/**
+ * @param {HTMLTemplateElement | null | undefined} tpl
+ * @returns {boolean}
+ */
+function isAuthoredShellTemplate(tpl) {
+  return !!(tpl instanceof HTMLTemplateElement && tpl.getAttribute("data-shell-authored-content") === "1");
 }
 
 /**
@@ -672,6 +682,27 @@ function injectShellPreviewFit(doc) {
     .shell-theme-comic .shell-slide-instance .comic-panel [data-shell="title"] {
       margin-top: 10px !important;
     }
+    .shell-slide-instance[data-shell-authored-slide="1"] .card,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card,
+    .shell-slide-instance[data-shell-authored-slide="1"] .comic-panel,
+    .shell-slide-instance[data-shell-authored-slide="1"] [data-shell="body"],
+    .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"],
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-area {
+      overflow: visible !important;
+      min-height: auto !important;
+      max-height: none !important;
+      height: auto !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-sizer,
+    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-outer,
+    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-scaled {
+      overflow: visible !important;
+      width: auto !important;
+      height: auto !important;
+      max-width: none !important;
+      max-height: none !important;
+      transform: none !important;
+    }
   `;
   doc.head.appendChild(style);
 }
@@ -697,6 +728,7 @@ function injectShellPanelFitScript(doc) {
   function collectPanels(doc) {
     var sel = ".shell-slide-instance .card, .shell-slide-instance .content-card, .shell-slide-instance .comic-panel";
     return Array.prototype.filter.call(doc.querySelectorAll(sel), function (el) {
+      if (el.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return false;
       if (el.classList.contains("comic-panel") && hasComicPanelAncestor(el)) return false;
       return true;
     });
@@ -756,6 +788,7 @@ function injectShellPanelFitScript(doc) {
   }
   function fitShellTitles(doc) {
     Array.prototype.forEach.call(doc.querySelectorAll('.shell-slide-instance [data-shell="title"]'), function (title) {
+      if (title.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
       fitTitle(title);
     });
   }
@@ -805,6 +838,7 @@ function injectShellPanelFitScript(doc) {
     applyPanelLayoutToElement(cs, scaled, display);
   }
   function wrapPanel(panel) {
+    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
     panel.classList.add("shell-panel-fit-host");
     var sizer = document.createElement("div");
@@ -821,6 +855,7 @@ function injectShellPanelFitScript(doc) {
   }
   var fitEditPaused = false;
   function measureAndFit(panel) {
+    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
     if (fitEditPaused || (document.body && document.body.classList.contains("slide-visual-edit-on"))) return;
     var sizer = panel.querySelector(":scope > .shell-panel-fit-sizer");
     if (!sizer) return;
@@ -884,6 +919,7 @@ function injectShellPanelFitScript(doc) {
         run();
       });
       Array.prototype.forEach.call(document.querySelectorAll(".shell-slide-instance"), function (slide) {
+        if (slide.matches('[data-shell-authored-slide="1"]')) return;
         shellPanelFitRO.observe(slide);
       });
     } else {
@@ -1101,7 +1137,9 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     const isLastSlide = i === list.length - 1;
     const bodyIndex = coverTemplate ? i - 1 : i;
     const pick =
-      coverTemplate && i === 0
+      list.length === 1 && endingTemplate
+        ? endingTemplate
+        : coverTemplate && i === 0
         ? coverTemplate
         : isLastSlide && endingTemplate
           ? endingTemplate
@@ -1112,8 +1150,13 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     if (!first) return;
     first.setAttribute("data-shell-slide-index", String(i));
     first.classList.add("shell-slide-instance");
-    fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
-    if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
+    const isAuthoredSlide = isAuthoredShellTemplate(pick);
+    if (isAuthoredSlide) {
+      first.setAttribute("data-shell-authored-slide", "1");
+    } else {
+      fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
+    }
+    if (first instanceof Element && !isAuthoredSlide) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
   });
 
