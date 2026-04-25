@@ -37,7 +37,7 @@
             height: 720px;
             justify-content: center;
             overflow: hidden;
-            padding: 50px;
+            padding: 36px 74px 42px;
             position: relative;
             width: 1280px;
             color: #111827;
@@ -72,33 +72,37 @@
 
         .slide-title {
             font-family: 'Bangers', system-ui;
-            font-size: 80px;
+            font-size: 68px;
             color: #fde047; /* Yellow */
             text-shadow: 6px 6px 0px #111827;
             -webkit-text-stroke: 0.5px #111827;
-            margin: 0 0 30px 20px;
+            margin: 0 0 18px 10px;
             letter-spacing: 2px;
             align-self: flex-start;
             width: 100%;
+            max-width: calc(100% - 120px);
+            line-height: 0.95;
+            flex-shrink: 0;
         }
 
         h3 {
             font-family: 'Bangers', system-ui;
-            font-size: 50px;
+            font-size: 42px;
             color: #f43f5e; /* Pink */
             -webkit-text-stroke: 0.5px #111827;
             letter-spacing: 1px;
-            margin: 0 0 15px 0;
+            margin: 0 0 10px 0;
+            line-height: 0.95;
         }
 
         p, li, .subtitle {
             font-family: var(--comic-body-font);
-            font-size: 30px;
+            font-size: 25px;
             font-weight: 500;
-            line-height: 1.45;
+            line-height: 1.35;
             letter-spacing: 0.01em;
             color: #111827;
-            margin: 0 0 15px 0;
+            margin: 0 0 10px 0;
             font-synthesis: none;
         }
 
@@ -113,7 +117,7 @@
             background-color: #ffffff;
             border: 6px solid #111827;
             box-shadow: 12px 12px 0px #111827;
-            padding: 40px;
+            padding: 30px 32px;
             position: relative;
             z-index: 2;
         }
@@ -171,12 +175,24 @@
         }
 
         .content-area {
-            width: 1180px;
+            width: 100%;
+            max-width: 1120px;
             flex-grow: 1;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
+            min-height: 0;
             z-index: 5;
+        }
+
+        .slide-container:has(.slide-title) {
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+
+        .slide-container:has(.slide-title) .content-area {
+            flex: 1 1 auto;
+            min-height: 0;
         }
 
         .two-column {
@@ -240,40 +256,44 @@
         .comic-grid-2 {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 28px;
+            gap: 20px;
             width: 100%;
+            align-items: start;
+            align-content: start;
         }
 
         .comic-grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            gap: 18px;
             width: 100%;
+            align-items: start;
+            align-content: start;
         }
 
         .mini-panel {
             background-color: #ffffff;
             border: 5px solid #111827;
             box-shadow: 8px 8px 0px #111827;
-            padding: 28px 30px;
+            padding: 22px 24px;
         }
 
         .mini-panel h3 {
-            font-size: 36px;
-            margin-bottom: 12px;
+            font-size: 32px;
+            margin-bottom: 8px;
         }
 
         .formula-box {
             background-color: #fde047;
             border: 5px solid #111827;
             box-shadow: 8px 8px 0px #111827;
-            padding: 18px 28px;
+            padding: 14px 22px;
             font-family: 'Bangers', system-ui;
-            font-size: 42px;
+            font-size: 36px;
             letter-spacing: 2px;
             color: #111827;
             width: fit-content;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
 
         .rule-rows {
@@ -318,15 +338,17 @@
         .strategy-strip {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
+            gap: 18px;
             width: 100%;
+            align-items: start;
+            align-content: start;
         }
 
         .strategy-step {
             background-color: #ffffff;
             border: 5px dashed #111827;
             box-shadow: 8px 8px 0px #111827;
-            padding: 22px 24px;
+            padding: 18px 20px;
         }
 
         .strategy-step .badge {
@@ -348,7 +370,7 @@
             border: 5px solid #111827;
             border-radius: 36px;
             box-shadow: 8px 8px 0px #111827;
-            padding: 24px 28px;
+            padding: 18px 22px;
             position: relative;
         }
 
@@ -368,8 +390,10 @@
         .check-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 22px;
+            gap: 18px;
             width: 100%;
+            align-items: start;
+            align-content: start;
         }
 
         .check-item {
@@ -379,7 +403,7 @@
             background-color: #ffffff;
             border: 5px solid #111827;
             box-shadow: 8px 8px 0px #111827;
-            padding: 20px 22px;
+            padding: 18px 20px;
         }
 
         .check-item i {
@@ -391,13 +415,48 @@
         .timeline {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 14px;
             width: 100%;
+        }
+
+        .compact-two-column,
+        .compact-card-row,
+        .compact-strategy-strip,
+        .compact-grid-3,
+        .compact-grid-2,
+        .compact-check-grid {
+            height: auto !important;
+            flex: 0 0 auto;
+            align-items: start;
+            align-content: start;
+        }
+
+        .compact-two-column {
+            height: auto !important;
+            align-items: flex-start;
+        }
+
+        .compact-card-row {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .compact-card-row > .comic-panel,
+        .compact-two-column > .comic-panel,
+        .compact-strategy-strip > .strategy-step,
+        .compact-grid-3 > .mini-panel,
+        .compact-grid-2 > .comic-panel,
+        .compact-grid-2 > .mini-panel,
+        .compact-check-grid > .check-item {
+            height: auto;
+            min-height: 0;
+            align-self: start;
         }
 
         .timeline-step {
             display: grid;
-            grid-template-columns: 150px 1fr;
+            grid-template-columns: 138px 1fr;
             align-items: stretch;
             border: 5px solid #111827;
             box-shadow: 8px 8px 0px #111827;
@@ -407,7 +466,7 @@
         .timeline-step .time-box {
             background-color: #fde047;
             font-family: 'Bangers', system-ui;
-            font-size: 42px;
+            font-size: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -416,7 +475,34 @@
 
         .timeline-step .time-content {
             background-color: #ffffff;
-            padding: 18px 24px;
+            padding: 14px 18px;
+        }
+
+        .timeline-step .time-content h3 {
+            font-size: 34px;
+            margin-bottom: 6px;
+        }
+
+        .timeline-step .time-content p {
+            font-size: 22px;
+            line-height: 1.28;
+            margin-bottom: 0;
+        }
+
+        .slide-container:has(.slide-title) .comic-badge {
+            top: 24px !important;
+        }
+
+        .slide-container:has(.slide-title) .comic-badge[style*="bottom"] {
+            top: auto !important;
+        }
+
+        .slide-container:has(.slide-title) .comic-badge[style*="left"] {
+            left: 48px !important;
+        }
+
+        .slide-container:has(.slide-title) .comic-badge[style*="right"] {
+            right: 48px !important;
         }
 
     </style>
@@ -502,7 +588,7 @@
 <div class="slide-container" id="slide5">
     <h2 class="slide-title" style="color: #7dd3fc;">CONDITIONAL SENTENCES</h2>
     <div class="content-area">
-        <div class="two-column">
+        <div class="two-column compact-two-column">
             <div class="comic-panel" style="background-color: #7dd3fc; padding: 40px;">
                 <h3 style="color: #111827; -webkit-text-stroke: 0; text-shadow: none; text-align: center; font-size: 50px;">REAL</h3>
                 <ul class="comic-list" style="color: #111827;">
@@ -602,7 +688,7 @@
 <div class="slide-container" id="slide9">
     <h2 class="slide-title" style="color: #7dd3fc;">ESSENTIAL PHRASAL VERBS</h2>
     <div class="content-area">
-        <div style="display: flex; gap: 30px; height: 100%;">
+        <div class="compact-card-row" style="display: flex; gap: 30px; height: 100%;">
             <div class="comic-panel" style="flex: 1; text-align: center; background-color: #fde047;">
                 <div style="font-size: 70px; color: #f43f5e; margin-bottom: 20px;"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <h3 style="color: #111827; -webkit-text-stroke: 0;">LOOK UP</h3>
@@ -630,7 +716,7 @@
     <div class="comic-badge yellow" style="top: 30px; right: 50px;">ZAP!</div>
     <h2 class="slide-title" style="color: #f43f5e;">IDIOMS THAT SAVE THE DAY</h2>
     <div class="content-area">
-        <div style="display: flex; gap: 30px; height: 100%;">
+        <div class="compact-card-row" style="display: flex; gap: 30px; height: 100%;">
             <div class="comic-panel" style="flex: 1; padding: 25px; display: flex; flex-direction: column; align-items: center;">
                 <div class="image-wrapper" style="height: 220px; margin-bottom: 20px;"><img src="http://googleusercontent.com/image_collection/image_retrieval/2723188854307097424" alt="[Hình ảnh Miếng bánh]"></div>
                 <h3 style="font-size: 40px; text-align: center;">PIECE OF CAKE</h3>
@@ -766,7 +852,7 @@
     <div class="comic-badge yellow" style="top: 42px; left: 70px; transform: rotate(-12deg);">BANG!</div>
     <h2 class="slide-title">WORD STRESS RULES</h2>
     <div class="content-area">
-        <div class="comic-panel" style="height: 100%; padding: 30px 34px;">
+        <div class="comic-panel" style="height: 100%; padding: 24px 26px;">
             <div class="rule-rows">
                 <div class="rule-row">
                     <div class="rule-label">2 SYL</div>
@@ -801,7 +887,7 @@
     <div class="comic-badge white" style="top: 90px; right: 90px; transform: rotate(10deg); color: #f43f5e;">FLASH!</div>
     <h2 class="slide-title" style="color: #7dd3fc;">PASSIVE VOICE</h2>
     <div class="content-area">
-        <div class="comic-panel" style="height: 100%;">
+        <div class="comic-panel" style="height: 100%; padding: 22px 24px;">
             <div class="formula-box">S + BE + V3/ED (+ BY O)</div>
             <div class="comic-grid-2">
                 <div class="mini-panel">
@@ -849,7 +935,7 @@
                 </ul>
             </div>
         </div>
-        <div class="speech-note" style="margin-top: 26px;">
+        <div class="speech-note" style="margin-top: 18px;">
             <p><strong>Remember:</strong> câu mệnh lệnh thường đổi thành <strong>tell/ask + O + to V</strong>; câu hỏi Yes/No dùng <strong>if/whether</strong>; Wh-question giữ từ hỏi.</p>
         </div>
     </div>
@@ -925,7 +1011,7 @@
     <div class="comic-badge yellow" style="top: 40px; left: 70px; transform: rotate(-12deg);">KAPOW!</div>
     <h2 class="slide-title">WORD FORMATION</h2>
     <div class="content-area">
-        <div class="strategy-strip" style="height: 100%;">
+        <div class="strategy-strip compact-strategy-strip" style="height: 100%;">
             <div class="strategy-step">
                 <span class="badge">1</span>
                 <h3 style="color: #f43f5e;">Sau mạo từ</h3>
@@ -949,7 +1035,7 @@
 <div class="slide-container" id="slide22">
     <h2 class="slide-title" style="color: #fde047;">COMMUNICATION SKILLS</h2>
     <div class="content-area">
-        <div class="comic-grid-3" style="height: 100%;">
+        <div class="comic-grid-3 compact-grid-3" style="height: 100%;">
             <div class="mini-panel">
                 <h3 style="color: #f43f5e;">Invitations</h3>
                 <p><strong>Would you like to...?</strong> <strong>Do you want to...?</strong> Đáp lại nên lịch sự: <em>I'd love to.</em></p>
@@ -971,7 +1057,7 @@
     <div class="comic-badge white" style="top: 42px; right: 70px; transform: rotate(12deg); color: #7dd3fc;">CHECK!</div>
     <h2 class="slide-title" style="color: #f43f5e;">ERROR IDENTIFICATION</h2>
     <div class="content-area">
-        <div class="comic-grid-2" style="height: 100%;">
+        <div class="comic-grid-2 compact-grid-2" style="height: 100%;">
             <div class="comic-panel">
                 <h3 style="color: #f43f5e;">Lỗi hay gặp</h3>
                 <ul class="comic-list">
@@ -998,8 +1084,8 @@
 <div class="slide-container" id="slide24">
     <h2 class="slide-title" style="color: #7dd3fc;">CLOZE TEST HACKS</h2>
     <div class="content-area">
-        <div class="comic-panel" style="height: 100%;">
-            <div class="comic-grid-2">
+        <div class="comic-panel" style="height: 100%; padding: 22px 24px;">
+            <div class="comic-grid-2 compact-grid-2">
                 <div class="mini-panel">
                     <h3 style="color: #f43f5e;">Blank = grammar</h3>
                     <p>Nếu 4 đáp án là các dạng của cùng 1 từ, hãy xét <strong>từ loại</strong>, <strong>thì</strong>, hoặc <strong>mệnh đề</strong> xung quanh chỗ trống.</p>
@@ -1026,7 +1112,7 @@
     <div class="comic-badge cyan" style="top: 42px; right: 70px; transform: rotate(10deg);">PING!</div>
     <h2 class="slide-title">READING QUESTION TYPES</h2>
     <div class="content-area">
-        <div class="comic-grid-3" style="height: 100%;">
+        <div class="comic-grid-3 compact-grid-3" style="height: 100%;">
             <div class="mini-panel">
                 <h3 style="color: #f43f5e;">Main idea</h3>
                 <p>Tập trung câu chủ đề đầu đoạn và câu kết. Đừng sa vào chi tiết nhỏ.</p>
@@ -1040,7 +1126,7 @@
                 <p>Suy luận từ dữ kiện, không chọn đáp án đưa thêm thông tin ngoài bài.</p>
             </div>
         </div>
-        <div class="speech-note" style="margin-top: 24px;">
+        <div class="speech-note" style="margin-top: 16px;">
             <p><strong>Comic rule:</strong> Question trước, passage sau. Đọc câu hỏi trước để biết mình đang “săn” thông tin nào.</p>
         </div>
     </div>
@@ -1091,7 +1177,7 @@
     <div class="comic-badge yellow" style="top: 40px; left: 70px; transform: rotate(-12deg);">SORT!</div>
     <h2 class="slide-title" style="color: #f43f5e;">ARRANGEMENT QUESTIONS</h2>
     <div class="content-area">
-        <div class="comic-grid-2" style="height: 100%;">
+        <div class="comic-grid-2 compact-grid-2" style="height: 100%;">
             <div class="comic-panel">
                 <h3 style="color: #f43f5e;">Sắp xếp câu</h3>
                 <ul class="comic-list">
@@ -1117,7 +1203,7 @@
     <div class="comic-badge white" style="top: 40px; right: 70px; transform: rotate(11deg); color: #f43f5e;">TICK!</div>
     <h2 class="slide-title" style="color: #7dd3fc;">TIME MANAGEMENT</h2>
     <div class="content-area">
-        <div class="timeline" style="height: 100%;">
+        <div class="timeline" style="height: 100%; margin-top: 2px;">
             <div class="timeline-step">
                 <div class="time-box">5'</div>
                 <div class="time-content">
@@ -1155,7 +1241,7 @@
     <div class="comic-badge cyan" style="top: 42px; right: 70px; transform: rotate(10deg);">READY?</div>
     <h2 class="slide-title">FINAL REVIEW CHECKLIST</h2>
     <div class="content-area">
-        <div class="check-grid" style="height: 100%;">
+        <div class="check-grid compact-check-grid" style="height: 100%;">
             <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #f43f5e; font-size: 34px;">Ngữ âm</h3><p>Ôn lại quy tắc <strong>-ed</strong>, <strong>-s/-es</strong> và trọng âm hậu tố.</p></div></div>
             <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #7dd3fc; font-size: 34px;">Ngữ pháp</h3><p>Rà nhanh thì, bị động, câu điều kiện, mệnh đề quan hệ, reported speech.</p></div></div>
             <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #111827; font-size: 34px;">Từ vựng</h3><p>Xem lại collocations, phrasal verbs, synonyms - antonyms, word formation.</p></div></div>
