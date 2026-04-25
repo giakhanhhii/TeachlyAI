@@ -178,6 +178,59 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   iframe.setAttribute("title", "Slide deck");
   iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
   let shellReady = false;
+  let focusViewportRaf = 0;
+  let boundIframeWindow = null;
+  let boundIframeDocument = null;
+
+  function clearPendingViewportFocus() {
+    if (!focusViewportRaf) return;
+    cancelAnimationFrame(focusViewportRaf);
+    focusViewportRaf = 0;
+  }
+
+  function detachIframeInteractionListeners() {
+    if (boundIframeWindow) {
+      boundIframeWindow.removeEventListener("scroll", captureDeckScroll);
+      boundIframeWindow = null;
+    }
+    if (boundIframeDocument) {
+      boundIframeDocument.removeEventListener("scroll", captureDeckScroll, true);
+      boundIframeDocument.removeEventListener("keydown", onPresentationKeydown, true);
+      boundIframeDocument = null;
+    }
+  }
+
+  function bindIframeInteractionListeners() {
+    const nextWindow = iframe.contentWindow || null;
+    const nextDocument = iframe.contentDocument || null;
+    if (!nextWindow || !nextDocument) return;
+    if (boundIframeWindow === nextWindow && boundIframeDocument === nextDocument) return;
+    detachIframeInteractionListeners();
+    nextWindow.addEventListener("scroll", captureDeckScroll, {
+      passive: true,
+      signal: uiSignal,
+    });
+    nextDocument.addEventListener("scroll", captureDeckScroll, {
+      passive: true,
+      capture: true,
+      signal: uiSignal,
+    });
+    nextDocument.addEventListener("keydown", onPresentationKeydown, {
+      capture: true,
+      signal: uiSignal,
+    });
+    boundIframeWindow = nextWindow;
+    boundIframeDocument = nextDocument;
+  }
+
+  uiSignal.addEventListener(
+    "abort",
+    () => {
+      clearPendingViewportFocus();
+      detachIframeInteractionListeners();
+    },
+    { once: true },
+  );
 
   function onSlideImagePickerMessage(e) {
     const layer = document.getElementById("experienceLayer");
@@ -278,16 +331,26 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     );
   }
 
+  function captureDeckScroll() {
+    if (!shellReady || viewMode !== "presentation") return;
+    readDeckScrollState();
+  }
+
   function focusSlideViewport() {
     if (viewMode !== "presentation") return;
-    requestAnimationFrame(() => {
+    if (focusViewportRaf) return;
+    focusViewportRaf = requestAnimationFrame(() => {
+      focusViewportRaf = 0;
+      if (uiSignal.aborted || viewMode !== "presentation" || !viewport.isConnected) return;
+      const activeEl = document.activeElement;
       try {
-        if (document.activeElement instanceof HTMLElement && isKeyboardEditingTarget(document.activeElement)) {
-          document.activeElement.blur();
+        if (activeEl instanceof HTMLElement && isKeyboardEditingTarget(activeEl)) {
+          activeEl.blur();
         }
       } catch (_) {
         /* ignore */
       }
+      if (document.activeElement === viewport) return;
       try {
         viewport.focus({ preventScroll: true });
       } catch (_) {
@@ -509,23 +572,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         }),
       ]);
       shellReady = true;
-      const captureDeckScroll = () => {
-        if (!shellReady || viewMode !== "presentation") return;
-        readDeckScrollState();
-      };
-      iframe.contentWindow?.addEventListener("scroll", captureDeckScroll, {
-        passive: true,
-        signal: uiSignal,
-      });
-      iframe.contentDocument?.addEventListener("scroll", captureDeckScroll, {
-        passive: true,
-        capture: true,
-        signal: uiSignal,
-      });
-      iframe.contentDocument?.addEventListener("keydown", onPresentationKeydown, {
-        capture: true,
-        signal: uiSignal,
-      });
+      bindIframeInteractionListeners();
       iframe.style.display = "";
       viewMode = "presentation";
       syncViewModeToIframe();

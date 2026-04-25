@@ -24,10 +24,19 @@ export function openSlideImagePicker(onPick) {
   input.style.pointerEvents = "none";
 
   let closed = false;
+  let settleTimer = 0;
+
+  function clearSettleTimer() {
+    if (!settleTimer) return;
+    window.clearTimeout(settleTimer);
+    settleTimer = 0;
+  }
 
   function cleanup() {
     if (closed) return;
     closed = true;
+    clearSettleTimer();
+    window.removeEventListener("focus", onWindowFocus);
     input.remove();
   }
 
@@ -35,7 +44,17 @@ export function openSlideImagePicker(onPick) {
     window.alert(msg);
   }
 
+  function onWindowFocus() {
+    clearSettleTimer();
+    settleTimer = window.setTimeout(() => {
+      if (closed) return;
+      const file = input.files && input.files[0];
+      if (!file) cleanup();
+    }, 280);
+  }
+
   input.addEventListener("change", () => {
+    clearSettleTimer();
     const file = input.files && input.files[0];
     if (!file) {
       cleanup();
@@ -68,7 +87,10 @@ export function openSlideImagePicker(onPick) {
     reader.readAsDataURL(file);
   });
 
+  input.addEventListener("cancel", cleanup);
+
   document.body.appendChild(input);
+  window.addEventListener("focus", onWindowFocus);
   try {
     input.click();
   } catch (_) {
