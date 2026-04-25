@@ -422,6 +422,137 @@
             margin-bottom: 30px;
             text-shadow: 4px 4px 0px #A2D2FF;
         }
+
+        /* 13. Extra layouts for mixed study slides */
+        .mini-note {
+            color: #27536a;
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        .example-box {
+            background: #fff;
+            border: 3px dashed #023047;
+            border-radius: 24px;
+            box-shadow: 6px 6px 0 #FFD166;
+            margin-top: 18px;
+            padding: 22px 28px;
+        }
+
+        .example-box p {
+            font-size: 22px;
+        }
+
+        .formula {
+            color: #EF476F;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+        }
+
+        .compact-list li {
+            font-size: 22px;
+            margin-bottom: 14px;
+        }
+
+        .grid-2 {
+            align-items: stretch;
+            display: grid;
+            gap: 35px;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+        }
+
+        .grid-3 {
+            align-items: stretch;
+            display: grid;
+            gap: 28px;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+        }
+
+        .small-tile {
+            background: #fff;
+            border: 3px solid #023047;
+            border-radius: 24px;
+            box-shadow: 6px 6px 0 #A2D2FF;
+            padding: 24px;
+        }
+
+        .small-tile h3 {
+            color: #EF476F;
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .small-tile p, .small-tile li {
+            font-size: 20px;
+            line-height: 1.5;
+        }
+
+        .small-tile ul {
+            margin-left: 20px;
+        }
+
+        .big-icon {
+            align-items: center;
+            background: #A2D2FF;
+            border: 5px solid #023047;
+            border-radius: 50%;
+            box-shadow: 8px 8px 0 #FFD166;
+            color: #023047;
+            display: flex;
+            font-size: 86px;
+            height: 190px;
+            justify-content: center;
+            margin: 0 auto;
+            width: 190px;
+        }
+
+        .tip-ribbon {
+            background: #EF476F;
+            border: 3px solid #023047;
+            border-radius: 16px;
+            color: #fff;
+            display: inline-block;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding: 10px 18px;
+        }
+
+        .table-like {
+            border-collapse: separate;
+            border-spacing: 0 14px;
+            width: 100%;
+        }
+
+        .table-row {
+            align-items: center;
+            display: grid;
+            gap: 18px;
+            grid-template-columns: 230px 1fr;
+            margin-bottom: 14px;
+        }
+
+        .label-pill {
+            background: #FFD166;
+            border: 3px solid #023047;
+            border-radius: 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            padding: 12px 18px;
+            text-align: center;
+        }
+
+        .row-text {
+            background: #fff;
+            border: 3px solid #023047;
+            border-radius: 18px;
+            box-shadow: 4px 4px 0 #A2D2FF;
+            font-size: 21px;
+            padding: 14px 18px;
+        }
     </style>
 </head>
 <body>
@@ -800,103 +931,106 @@
     </div>
 </div>
 
-<!-- SLIDE 19: Tiled_Text_With_Icons (Word form & collocations) -->
+<!-- SLIDE 19: Table layout (Word form) -->
 <div class="slide-container wave-bottom" id="slide19">
     <h2 class="slide-title">Word Form Và Collocations</h2>
     <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <div class="icon-badge"><i class="fa-solid fa-font"></i></div>
-                <h3>Word Form</h3>
-                <p>Nhìn vị trí trong câu để chọn danh từ, động từ, tính từ hay trạng từ.</p>
+        <div class="table-like">
+            <div class="table-row">
+                <div class="label-pill">Danh từ</div>
+                <div class="row-text">Thường đứng sau mạo từ, tính từ sở hữu hoặc tính từ: <strong>the development, his decision, global education</strong>.</div>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #FFD166;"><i class="fa-solid fa-link"></i></div>
-                <h3>Collocations</h3>
-                <p>Ghi nhớ cụm cố định như make a decision, do homework, take responsibility.</p>
+            <div class="table-row">
+                <div class="label-pill">Tính từ</div>
+                <div class="row-text">Đứng trước danh từ hoặc sau linking verbs: <strong>a successful student, become popular, feel nervous</strong>.</div>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #A2D2FF;"><i class="fa-solid fa-arrows-turn-to-dots"></i></div>
-                <h3>Phrasal Verbs</h3>
-                <p>Ôn các cụm quen thuộc như look after, turn down, put off, carry out.</p>
+            <div class="table-row">
+                <div class="label-pill">Trạng từ</div>
+                <div class="row-text">Bổ nghĩa cho động từ, tính từ hoặc cả câu: <strong>study carefully, extremely useful, fortunately</strong>.</div>
+            </div>
+            <div class="table-row">
+                <div class="label-pill">Collocation</div>
+                <div class="row-text">Học theo cụm cố định như <strong>make progress, take responsibility, do research, raise awareness</strong>.</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 20: Image_Right_Text_Left (Tenses) -->
+<!-- SLIDE 20: Table + icon (Tenses) -->
 <div class="slide-container wave-bottom" id="slide20">
     <i class="fa-solid fa-star star s2"></i>
     <h2 class="slide-title">Thì Động Từ: Dấu Hiệu Nhận Biết</h2>
     <div class="content-area">
-        <div class="two-column">
-            <div class="bullet-list">
-                <ul>
-                    <li><strong>Hiện tại đơn:</strong> every day, usually, often, sometimes.</li>
-                    <li><strong>Hiện tại tiếp diễn:</strong> now, at the moment, right now, look, listen.</li>
-                    <li><strong>Hiện tại hoàn thành:</strong> since, for, already, yet, recently.</li>
-                    <li><strong>Quá khứ đơn:</strong> yesterday, last night, ago, in 2024.</li>
-                    <li><strong>Tương lai:</strong> tomorrow, next week, soon, in the future.</li>
-                </ul>
+        <div class="grid-2">
+            <div class="table-like">
+                <div class="table-row">
+                    <div class="label-pill">Present Simple</div>
+                    <div class="row-text">every day, always, often, usually, sometimes.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill">Present Continuous</div>
+                    <div class="row-text">now, at the moment, right now, look, listen.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill">Present Perfect</div>
+                    <div class="row-text">since, for, already, yet, recently, so far.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill">Past Simple</div>
+                    <div class="row-text">yesterday, last week, ago, in 2024.</div>
+                </div>
             </div>
             <div>
-                <div class="image-wrapper" style="background: linear-gradient(135deg, #FFF7D6 0%, #FFFFFF 100%);">
-                    <i class="fa-solid fa-clock" style="font-size: 180px; color: #023047;"></i>
+                <div class="big-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="example-box">
+                    <p><span class="formula">Mẹo:</span> nhìn trạng từ thời gian trước, rồi mới xét nghĩa của cả câu để tránh nhầm giữa quá khứ đơn và hiện tại hoàn thành.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 21: Tiled_Text_With_Icons (Grammar clusters) -->
+<!-- SLIDE 21: 3 cards (Grammar clusters) -->
 <div class="slide-container wave-bottom" id="slide21">
     <h2 class="slide-title">Cụm Ngữ Pháp Trọng Tâm Lớp 12</h2>
     <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <div class="icon-badge"><i class="fa-solid fa-shuffle"></i></div>
+        <div class="grid-3">
+            <div class="small-tile">
                 <h3>Câu Bị Động</h3>
-                <p>Công thức nền: <strong>be + V3/V-ed</strong>, chú ý chia “be” theo thì của câu gốc.</p>
+                <p>Công thức lõi: <strong>be + V3/V-ed</strong>. Hãy giữ nguyên thì của câu chủ động khi chuyển đổi.</p>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #FFD166;"><i class="fa-solid fa-quote-right"></i></div>
+            <div class="small-tile">
                 <h3>Tường Thuật</h3>
-                <p>Đổi ngôi, lùi thì và thay đổi trạng từ chỉ thời gian, nơi chốn phù hợp.</p>
+                <p>Đổi ngôi, lùi thì, thay đổi trạng từ thời gian và nơi chốn như now → then, here → there.</p>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #A2D2FF;"><i class="fa-solid fa-code-branch"></i></div>
+            <div class="small-tile">
                 <h3>Mệnh Đề Quan Hệ</h3>
-                <p>Nhớ nhóm từ khóa: who, whom, which, whose, where, when.</p>
+                <p>Nhớ nhóm từ khóa: <strong>who, whom, which, whose, where, when</strong> và phân biệt xác định/không xác định.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 22: Timeline (Conditionals) -->
+<!-- SLIDE 22: Table layout (Conditionals & wish) -->
 <div class="slide-container wave-bottom" id="slide22">
     <h2 class="slide-title">Câu Điều Kiện Và Wish</h2>
     <div class="content-area">
-        <div class="timeline-layout">
-            <div class="timeline-line"></div>
-            <div class="timeline-item">
-                <div class="timeline-dot">Type 1</div>
-                <h3>If + V(s/es)</h3>
-                <p>Diễn tả điều kiện có thể xảy ra ở hiện tại hoặc tương lai.</p>
+        <div class="table-like">
+            <div class="table-row">
+                <div class="label-pill">Type 1</div>
+                <div class="row-text"><strong>If + present simple, S + will + V</strong>: điều kiện có thể xảy ra trong hiện tại hoặc tương lai.</div>
             </div>
-            <div class="timeline-item">
-                <div class="timeline-dot" style="background-color: #FFD166;">Type 2</div>
-                <h3>If + V2/ed</h3>
-                <p>Nói về tình huống không có thật ở hiện tại: would + V.</p>
+            <div class="table-row">
+                <div class="label-pill">Type 2</div>
+                <div class="row-text"><strong>If + past simple, S + would/could + V</strong>: điều không có thật ở hiện tại.</div>
             </div>
-            <div class="timeline-item">
-                <div class="timeline-dot" style="background-color: #EF476F; color: #FFF;">Type 3</div>
-                <h3>If + had + V3</h3>
-                <p>Diễn tả điều kiện không có thật trong quá khứ: would have + V3.</p>
+            <div class="table-row">
+                <div class="label-pill">Type 3</div>
+                <div class="row-text"><strong>If + had + V3, S + would/could have + V3</strong>: điều không có thật trong quá khứ.</div>
             </div>
-            <div class="timeline-item">
-                <div class="timeline-dot" style="background-color: #A2D2FF;">Wish</div>
-                <h3>Giả định</h3>
-                <p>Wish + past simple / past perfect tùy mốc thời gian muốn tiếc nuối.</p>
+            <div class="table-row">
+                <div class="label-pill">Wish</div>
+                <div class="row-text"><strong>Wish + past simple / past perfect</strong>: diễn tả ước muốn trái với hiện tại hoặc tiếc nuối quá khứ.</div>
             </div>
         </div>
     </div>
@@ -930,93 +1064,95 @@
     </div>
 </div>
 
-<!-- SLIDE 24: Image_Right_Text_Left (Cloze test) -->
+<!-- SLIDE 24: Grid + note (Cloze test) -->
 <div class="slide-container wave-bottom" id="slide24">
     <h2 class="slide-title">Cloze Test: Cách Làm Nhanh</h2>
     <div class="content-area">
-        <div class="two-column">
-            <div class="bullet-list">
-                <ul>
-                    <li>Đọc nhanh tiêu đề hoặc câu đầu để xác định chủ đề của đoạn văn.</li>
-                    <li>Nhìn từ trước và sau chỗ trống để đoán loại từ hoặc cấu trúc ngữ pháp.</li>
-                    <li>Loại dần đáp án sai nghĩa, sai ngữ pháp, sai collocation.</li>
-                    <li>Đọc lại cả đoạn sau khi chọn xong để kiểm tra sự tự nhiên và mạch logic.</li>
-                </ul>
+        <div class="grid-2">
+            <div class="small-tile">
+                <h3>Xác định loại chỗ trống</h3>
+                <p>Cần danh từ, động từ, tính từ, trạng từ hay liên từ? Hãy nhìn thật kỹ từ đứng trước và sau khoảng trống.</p>
             </div>
-            <div>
-                <div class="image-wrapper" style="background: linear-gradient(135deg, #E0F2FE 0%, #FFF 100%);">
-                    <i class="fa-solid fa-puzzle-piece" style="font-size: 180px; color: #023047;"></i>
-                </div>
+            <div class="small-tile">
+                <h3>Đọc liên kết ý</h3>
+                <p>Từ nối như however, therefore, although, because quyết định quan hệ đối lập, nguyên nhân hay kết quả.</p>
             </div>
+        </div>
+        <div class="example-box">
+            <p><span class="formula">Chiến thuật:</span> đọc lướt toàn đoạn một lần để nắm chủ đề, sau đó xử lý từng chỗ trống bằng cả ngữ pháp lẫn ngữ nghĩa.</p>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 25: Tiled_Text_With_Icons (Reading comprehension) -->
+<!-- SLIDE 25: 3 cards (Reading comprehension) -->
 <div class="slide-container wave-bottom" id="slide25">
     <h2 class="slide-title">Đọc Hiểu: Nhóm Câu Hỏi Phổ Biến</h2>
     <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <div class="icon-badge"><i class="fa-solid fa-lightbulb"></i></div>
+        <div class="grid-3">
+            <div class="small-tile">
                 <h3>Main Idea</h3>
-                <p>Tìm ý chính bằng cách nhìn câu chủ đề và các từ lặp lại nhiều lần.</p>
+                <p>Tìm ý chính bằng câu chủ đề, phần mở đầu và các từ khóa lặp lại trong toàn bài.</p>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #FFD166;"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="small-tile">
                 <h3>Reference</h3>
-                <p>Xác định đại từ this, they, it đang thay cho danh từ nào ở gần đó.</p>
+                <p>Xác định đại từ this, they, it, these đang thay cho danh từ nào gần nhất và hợp nghĩa.</p>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #A2D2FF;"><i class="fa-solid fa-brain"></i></div>
+            <div class="small-tile">
                 <h3>Inference</h3>
-                <p>Suy luận từ chi tiết trong bài, tránh chọn đáp án chỉ “nghe có vẻ đúng”.</p>
+                <p>Suy luận dựa trên dữ kiện có trong bài, không chọn đáp án chỉ vì thấy quen hoặc hợp lý ngoài đời.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 26: Two_Column_Tiled_Text (Sentence transformation) -->
+<!-- SLIDE 26: Table layout (Sentence transformation) -->
 <div class="slide-container wave-bottom" id="slide26">
     <i class="fa-solid fa-star star s3"></i>
     <h2 class="slide-title">Viết Lại Câu: Cặp Cấu Trúc Cần Nhớ</h2>
     <div class="content-area">
-        <div class="tiled-content">
-            <div class="tile">
-                <div class="icon-badge"><i class="fa-solid fa-equals"></i></div>
-                <h3>Because ↔ Because of</h3>
-                <p>Đổi mệnh đề sang cụm danh từ hoặc V-ing cho đúng cấu trúc.</p>
+        <div class="table-like">
+            <div class="table-row">
+                <div class="label-pill">Because</div>
+                <div class="row-text"><strong>Because + clause</strong> ↔ <strong>Because of + noun / V-ing</strong>.</div>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #FFD166;"><i class="fa-solid fa-not-equal"></i></div>
-                <h3>Although ↔ Despite</h3>
-                <p>Không dùng đồng thời although và but trong cùng một câu.</p>
+            <div class="table-row">
+                <div class="label-pill">Although</div>
+                <div class="row-text"><strong>Although + clause</strong> ↔ <strong>Despite / In spite of + noun / V-ing</strong>.</div>
             </div>
-            <div class="tile">
-                <div class="icon-badge" style="background-color: #A2D2FF;"><i class="fa-solid fa-repeat"></i></div>
-                <h3>Too...to ↔ So...that</h3>
-                <p>Biến đổi nhưng vẫn phải giữ nguyên nghĩa và quan hệ logic của câu gốc.</p>
+            <div class="table-row">
+                <div class="label-pill">Too / Enough</div>
+                <div class="row-text"><strong>too + adj + to V</strong> ↔ <strong>not + adj trái nghĩa + enough + to V</strong>.</div>
+            </div>
+            <div class="table-row">
+                <div class="label-pill">So / Such</div>
+                <div class="row-text"><strong>so + adj/adv + that</strong> và <strong>such + (a/an) + adj + noun + that</strong>.</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 27: Highlighted_Numbers (Study rhythm) -->
+<!-- SLIDE 27: Replaced stress slide -->
 <div class="slide-container wave-bottom" id="slide27">
     <i class="fa-solid fa-star star s2"></i>
-    <h2 class="slide-title">Nhịp Ôn Tập Hiệu Quả</h2>
+    <h2 class="slide-title">Dạng Bài: Trọng Âm (Stress)</h2>
     <div class="content-area">
-        <div class="highlight-numbers-layout">
-            <div class="highlight-box">
-                <div class="number-badge">30'</div>
-                <h3>Mỗi Chuyên Đề</h3>
-                <p>Ôn ngắn, tập trung, chữa kỹ lỗi sai ngay sau khi làm.</p>
+        <span class="tip-ribbon">Quy tắc nhận diện nhanh</span>
+        <div class="table-like">
+            <div class="table-row">
+                <div class="label-pill">2 âm tiết</div>
+                <div class="row-text">Danh từ và tính từ thường nhấn âm 1; động từ thường nhấn âm 2. Ví dụ: <strong>TAble</strong>, <strong>beGIN</strong>.</div>
             </div>
-            <div class="highlight-box">
-                <div class="number-badge" style="background-color: #A2D2FF;">1</div>
-                <h3>Bảng Lỗi Sai</h3>
-                <p>Dùng một bảng duy nhất để theo dõi lỗi ngữ pháp, từ vựng và đọc hiểu.</p>
+            <div class="table-row">
+                <div class="label-pill">Đuôi cố định</div>
+                <div class="row-text"><strong>-tion, -sion, -ic</strong> thường nhấn trước đuôi; <strong>-ee, -eer, -ese</strong> thường nhấn ở chính đuôi.</div>
             </div>
+            <div class="table-row">
+                <div class="label-pill">3 âm tiết+</div>
+                <div class="row-text">Hãy để ý họ từ và hậu tố. Nhiều từ có cùng họ sẽ giữ quy luật nhấn tương đối ổn định.</div>
+            </div>
+        </div>
+        <div class="example-box">
+            <p><span class="formula">Mẹo:</span> nếu phân vân, đọc cả 4 đáp án trong đầu để tìm từ có nhịp khác hẳn ba từ còn lại.</p>
         </div>
     </div>
 </div>
@@ -1051,42 +1187,46 @@
     </div>
 </div>
 
-<!-- SLIDE 29: Styled_Bullet_Points (Exam strategy) -->
+<!-- SLIDE 29: Summary checklist -->
 <div class="slide-container wave-bottom" id="slide29">
     <i class="fa-solid fa-star star s1"></i>
     <i class="fa-solid fa-star star s3"></i>
-    <h2 class="slide-title">Chiến Thuật Vào Phòng Thi</h2>
+    <h2 class="slide-title">Checklist Trước Ngày Thi</h2>
     <div class="content-area">
-        <div class="styled-bullets">
-            <ul>
-                <li>
-                    <div class="icon"><i class="fa-solid fa-gauge-high"></i></div>
-                    <p>Làm trước câu chắc điểm, không dừng quá lâu ở một câu khó ngay từ đầu.</p>
-                </li>
-                <li>
-                    <div class="icon"><i class="fa-solid fa-filter-circle-xmark" style="color: #FFD166;"></i></div>
-                    <p>Dùng loại trừ để giảm còn 2 phương án trước khi ra quyết định cuối cùng.</p>
-                </li>
-                <li>
-                    <div class="icon"><i class="fa-solid fa-circle-check" style="color: #A2D2FF;"></i></div>
-                    <p>Dành vài phút cuối để soát tô đáp án, đại từ, thì động từ và từ khóa phủ định.</p>
-                </li>
-            </ul>
+        <div class="grid-2">
+            <div class="small-tile">
+                <h3>Kiến thức</h3>
+                <ul>
+                    <li>Ôn lại động từ bất quy tắc và các công thức ngữ pháp lõi.</li>
+                    <li>Nhìn lại sổ lỗi sai cá nhân sau các đề luyện tập.</li>
+                    <li>Rà lại word form, giới từ đi kèm và collocations quen thuộc.</li>
+                </ul>
+            </div>
+            <div class="small-tile">
+                <h3>Kỹ năng & tâm lý</h3>
+                <ul>
+                    <li>Làm trước câu chắc điểm, không sa lầy câu khó.</li>
+                    <li>Đọc kỹ từ khóa phủ định và yêu cầu câu hỏi.</li>
+                    <li>Giữ bình tĩnh, dành thời gian cuối để soát tô đáp án.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="example-box">
+            <p><span class="formula">Nguyên tắc cuối:</span> làm chắc phần nền trước, sau đó mới quay lại xử lý câu phân loại.</p>
         </div>
     </div>
 </div>
 
-<!-- SLIDE 30: Q&A -->
+<!-- SLIDE 30: Summary / goodbye -->
 <div class="slide-container" id="slide30" style="justify-content: center;">
     <i class="fa-solid fa-star star s1"></i>
     <i class="fa-solid fa-star star s2"></i>
     <div class="qa-layout">
         <div class="image-wrapper" style="width: 250px; height: 250px; border-radius: 50%; margin: 0 auto 30px; box-shadow: none; border: none; background: transparent;">
-            <!-- Dùng một icon dễ thương thay cho hình -->
-            <i class="fa-solid fa-user-astronaut" style="font-size: 150px; color: #EF476F; text-shadow: 5px 5px 0px #FFD166;"></i>
+            <i class="fa-solid fa-graduation-cap" style="font-size: 150px; color: #EF476F; text-shadow: 5px 5px 0px #FFD166;"></i>
         </div>
-        <h2>Bạn Có Thắc Mắc Nào Không?</h2>
-        <p class="subtitle">Cùng nhau thảo luận thêm về vũ trụ diệu kỳ nhé!</p>
+        <h2>Tổng Kết Và Tạm Biệt</h2>
+        <p class="subtitle">Nắm chắc ngữ âm, từ vựng, ngữ pháp và kỹ năng làm bài. Ôn đều, sửa lỗi đều, bình tĩnh khi làm đề — đó là con đường ngắn nhất để đạt điểm mục tiêu THPTQG.</p>
     </div>
 </div>
 
