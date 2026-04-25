@@ -28,7 +28,7 @@ const BACKEND_HINT =
 export function createFlashVocabOpenAiTranslate(p) {
   let debounceTimer = /** @type {ReturnType<typeof setTimeout> | null} */ (null);
   let runVersion = 0;
-  const inFlightTerms = /** @type {Set<string>} */ (new Set());
+  const inFlightTerms = /** @type {Map<string, number>} */ (new Map());
 
   function cancel() {
     runVersion += 1;
@@ -40,9 +40,10 @@ export function createFlashVocabOpenAiTranslate(p) {
 
   /**
    * @param {string} raw
+   * @param {number} activeRun
    * @returns {string[]}
    */
-  function collectTermsPending(raw) {
+  function collectTermsPending(raw, activeRun) {
     const lines = String(raw).split(/\r?\n/);
     const need = /** @type {Set<string>} */ (new Set());
     for (const line of lines) {
@@ -52,7 +53,7 @@ export function createFlashVocabOpenAiTranslate(p) {
       if (lookupEnToVi(trimmed)) continue;
       if (!isEnglishOnlyVocabLine(trimmed)) continue;
       if (p.apiBackByLine[trimmed]) continue;
-      if (inFlightTerms.has(trimmed)) continue;
+      if (inFlightTerms.get(trimmed) === activeRun) continue;
       if (p.getTranslateDisabled()) continue;
       need.add(trimmed);
     }
@@ -63,11 +64,11 @@ export function createFlashVocabOpenAiTranslate(p) {
    * @param {string} raw
    */
   async function flush(raw) {
-    const terms = collectTermsPending(raw);
-    if (!terms.length) return { changed: false, failCount: 0, total: 0, serverHint: "" };
     const myRun = runVersion;
+    const terms = collectTermsPending(raw, myRun);
+    if (!terms.length) return { changed: false, failCount: 0, total: 0, serverHint: "" };
     const isCurrent = () => myRun === runVersion && p.getAutoTranslateEn() && !p.getTranslateDisabled();
-    terms.forEach((term) => inFlightTerms.add(term));
+    terms.forEach((term) => inFlightTerms.set(term, myRun));
     let map = /** @type {Record<string, string>} */ ({});
     try {
       map = await fetchFlashTermsTranslationBatch(terms);
@@ -79,7 +80,9 @@ export function createFlashVocabOpenAiTranslate(p) {
         p.setTranslateDisabled(true);
       }
       if (st !== 404) {
-        terms.forEach((term) => inFlightTerms.delete(term));
+        terms.forEach((term) => {
+          if (inFlightTerms.get(term) === myRun) inFlightTerms.delete(term);
+        });
         return {
           changed: false,
           failCount: terms.length,
@@ -90,7 +93,9 @@ export function createFlashVocabOpenAiTranslate(p) {
       map = {};
     }
     if (!isCurrent()) {
-      terms.forEach((term) => inFlightTerms.delete(term));
+      terms.forEach((term) => {
+        if (inFlightTerms.get(term) === myRun) inFlightTerms.delete(term);
+      });
       return { changed: false, failCount: 0, total: terms.length, serverHint: "" };
     }
     let changed = false;
@@ -110,7 +115,9 @@ export function createFlashVocabOpenAiTranslate(p) {
         }),
       );
       if (!isCurrent()) {
-        terms.forEach((term) => inFlightTerms.delete(term));
+        terms.forEach((term) => {
+          if (inFlightTerms.get(term) === myRun) inFlightTerms.delete(term);
+        });
         return { changed: false, failCount: 0, total: terms.length, serverHint: "" };
       }
       for (const s of settled) {
@@ -128,7 +135,9 @@ export function createFlashVocabOpenAiTranslate(p) {
     }
     const failCount = terms.filter((t) => !String(p.apiBackByLine[t] || "").trim()).length;
     if (failCount === 0) p.setLastServerHint("");
-    terms.forEach((term) => inFlightTerms.delete(term));
+    terms.forEach((term) => {
+      if (inFlightTerms.get(term) === myRun) inFlightTerms.delete(term);
+    });
     return { changed, failCount, total: terms.length, serverHint: p.getLastServerHint() };
   }
 
