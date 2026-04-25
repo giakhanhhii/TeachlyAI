@@ -70,21 +70,17 @@ function isComicThemeDoc(doc) {
 }
 
 /**
- * Comic full-deck files contain many decorative/static-only slides (TOC, section cards, tables)
- * that are not compatible with generic title+bullets shell filling. Keep only list-friendly
- * content slides so generated comic decks stay aligned with the original template intent.
+ * Keep the source order of theme layouts intact.
+ * We intentionally do not filter out table/grid/timeline slides here because the editor
+ * now relies on the full set of authored slide variants to avoid visible repetition when
+ * users generate a 30-slide deck from a 30-layout template.
  * @param {Document} doc
  * @param {Element[]} roots
  * @returns {Element[]}
  */
 function filterShellVariantRoots(doc, roots) {
-  if (!roots.length) return roots;
-  if (!isComicThemeDoc(doc)) return roots;
-  const filtered = roots.filter((root) => {
-    if (root.querySelector("table, .table-layout, .activity-table, .task-grid")) return false;
-    return Boolean(root.querySelector("ul.comic-list, ul.styled-list, ul.legend, .bullet-list ul, ul"));
-  });
-  return filtered.length ? filtered : roots;
+  void doc;
+  return roots;
 }
 
 /**
@@ -190,7 +186,10 @@ function ensureShellFromFullDeck(doc) {
   const roots = filterShellVariantRoots(doc, allRoots);
   if (!allRoots.length || !roots.length) return false;
 
-  if (isComicThemeDoc(doc) && allRoots[0]) {
+  const hasComicCover = isComicThemeDoc(doc) && !!allRoots[0];
+  const variantRoots = hasComicCover ? roots.slice(1) : roots;
+
+  if (hasComicCover) {
     const coverProto = allRoots[0].cloneNode(true);
     decorateComicCoverPrototype(coverProto, doc);
     const coverTpl = doc.createElement("template");
@@ -200,7 +199,7 @@ function ensureShellFromFullDeck(doc) {
     doc.body.appendChild(coverTpl);
   }
 
-  roots.forEach((root, idx) => {
+  variantRoots.forEach((root, idx) => {
     const proto = root.cloneNode(true);
     decorateSlidePrototype(proto, doc);
     const t = doc.createElement("template");
@@ -253,6 +252,178 @@ function getShellVariantTemplates(doc) {
     doc.querySelector("template#shell-slide-content") ||
     doc.querySelector("template[data-shell-layout=\"content\"]");
   return single ? [single] : [];
+}
+
+/**
+ * @param {Element} root
+ * @returns {Element | null}
+ */
+function getPrimaryShellPanel(root) {
+  return (
+    root.querySelector(".content-card, .card, .section-card, .comic-panel, .content-panel, .panel, .title-content") ||
+    root.querySelector(".content-area") ||
+    root
+  );
+}
+
+/**
+ * Apply a lightweight visual mutation so derived variants are visibly different
+ * without depending on a template-specific DOM structure.
+ * @param {Element} root
+ * @param {number} variantIndex
+ */
+function styleDerivedShellVariant(root, variantIndex) {
+  const panel = getPrimaryShellPanel(root);
+  const title = root.querySelector("[data-shell=\"title\"]");
+  const bullets = root.querySelector("ul[data-shell=\"bullets\"]");
+  const recipe = Math.max(0, Number(variantIndex) || 0) % 12;
+
+  root.setAttribute("data-shell-derived-variant", String(variantIndex));
+  root.style.overflow = root.style.overflow || "hidden";
+
+  if (panel && panel !== root) {
+    panel.style.position = panel.style.position || "relative";
+    panel.style.zIndex = panel.style.zIndex || "2";
+  }
+
+  if (title instanceof HTMLElement) {
+    title.style.maxWidth = "100%";
+    title.style.wordBreak = "break-word";
+  }
+
+  if (bullets instanceof HTMLElement) {
+    bullets.style.marginTop = bullets.style.marginTop || "18px";
+    bullets.style.alignSelf = bullets.style.alignSelf || "stretch";
+  }
+
+  switch (recipe) {
+    case 0:
+      if (panel) panel.style.borderTop = "10px solid var(--c-accent, #f59e0b)";
+      if (title instanceof HTMLElement) title.style.textAlign = "center";
+      break;
+    case 1:
+      if (panel) panel.style.borderLeft = "12px solid var(--c-alt, #dc2626)";
+      if (title instanceof HTMLElement) title.style.alignSelf = "center";
+      break;
+    case 2:
+      if (panel) panel.style.borderRight = "12px solid var(--c-main, #2563eb)";
+      if (title instanceof HTMLElement) title.style.textAlign = "right";
+      break;
+    case 3:
+      root.style.padding = "64px 56px 44px";
+      if (panel) panel.style.borderBottom = "10px solid var(--c-accent, #f59e0b)";
+      break;
+    case 4:
+      if (panel) {
+        panel.style.transform = "rotate(-1deg)";
+        panel.style.boxShadow = "18px 18px 0 rgba(0,0,0,0.18)";
+      }
+      if (title instanceof HTMLElement) {
+        title.style.display = "inline-block";
+        title.style.padding = "8px 18px";
+        title.style.background = "rgba(255,255,255,0.18)";
+      }
+      break;
+    case 5:
+      if (panel) {
+        panel.style.border = "4px dashed var(--c-alt, #dc2626)";
+        panel.style.borderRadius = "28px";
+      }
+      break;
+    case 6:
+      if (title instanceof HTMLElement) {
+        title.style.display = "inline-block";
+        title.style.padding = "10px 18px";
+        title.style.background = "var(--c-main, #1d4ed8)";
+        title.style.color = "#fff";
+        title.style.borderRadius = "999px";
+      }
+      break;
+    case 7:
+      if (panel) {
+        panel.style.borderRadius = "36px";
+        panel.style.boxShadow = "0 0 0 6px rgba(255,255,255,0.22), 0 18px 36px rgba(0,0,0,0.18)";
+      }
+      if (title instanceof HTMLElement) title.style.letterSpacing = "2px";
+      break;
+    case 8:
+      root.style.border = "8px solid rgba(255,255,255,0.16)";
+      root.style.boxShadow = "0 22px 42px rgba(0,0,0,0.35)";
+      if (title instanceof HTMLElement) title.style.transform = "translateY(-4px)";
+      break;
+    case 9:
+      if (panel) {
+        panel.style.background = "rgba(255,255,255,0.96)";
+        panel.style.borderTop = "8px solid var(--c-main, #2563eb)";
+        panel.style.borderBottom = "8px solid var(--c-alt, #dc2626)";
+      }
+      if (bullets instanceof HTMLElement) {
+        bullets.style.columns = "2";
+        bullets.style.columnGap = "28px";
+      }
+      break;
+    case 10:
+      root.style.padding = "44px 70px 60px";
+      if (panel) panel.style.borderRadius = "18px 42px 18px 42px";
+      if (title instanceof HTMLElement) title.style.alignSelf = "stretch";
+      break;
+    case 11:
+      if (panel) {
+        panel.style.outline = "4px solid rgba(255,255,255,0.32)";
+        panel.style.outlineOffset = "-10px";
+      }
+      if (title instanceof HTMLElement) {
+        title.style.display = "inline-block";
+        title.style.paddingBottom = "10px";
+        title.style.borderBottom = "6px solid var(--c-accent, #f59e0b)";
+      }
+      break;
+  }
+}
+
+/**
+ * @param {Document} doc
+ * @param {HTMLTemplateElement} source
+ * @param {number} variantIndex
+ * @returns {HTMLTemplateElement | null}
+ */
+function createDerivedShellVariantTemplate(doc, source, variantIndex) {
+  if (!(source instanceof HTMLTemplateElement)) return null;
+  const frag = source.content.cloneNode(true);
+  const root = frag.firstElementChild;
+  if (!(root instanceof Element)) return null;
+  styleDerivedShellVariant(root, variantIndex);
+  const tpl = doc.createElement("template");
+  tpl.id = `layout-content-auto-${variantIndex}`;
+  tpl.setAttribute("data-shell-layout-variant", String(variantIndex));
+  tpl.content.appendChild(frag);
+  doc.body.appendChild(tpl);
+  return tpl;
+}
+
+/**
+ * Guarantee enough unique-looking layout variants for the requested deck length.
+ * Missing variants are cloned from authored templates then restyled so the preview
+ * does not visibly loop back to the first slides.
+ * @param {Document} doc
+ * @param {HTMLTemplateElement[]} templates
+ * @param {number} minimumCount
+ * @returns {HTMLTemplateElement[]}
+ */
+function ensureShellVariantTemplateCount(doc, templates, minimumCount) {
+  const need = Math.max(0, Math.floor(Number(minimumCount) || 0));
+  if (!templates.length || need <= templates.length) return templates;
+  const base = templates.slice();
+  const out = templates.slice();
+  let cursor = 0;
+  while (out.length < need) {
+    const source = base[cursor % base.length];
+    const next = createDerivedShellVariantTemplate(doc, source, out.length);
+    if (!next) break;
+    out.push(next);
+    cursor += 1;
+  }
+  return out;
 }
 
 /**
@@ -839,13 +1010,16 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   master.replaceChildren();
 
   const list = Array.isArray(slides) ? slides : [];
-  const variantCount = variantTemplates.length;
+  const requestedVariantCount = Math.max(0, list.length - (coverTemplate ? 1 : 0));
+  const resolvedVariantTemplates = ensureShellVariantTemplateCount(doc, variantTemplates, requestedVariantCount);
+  const variantCount = resolvedVariantTemplates.length;
   list.forEach((s, i) => {
+    const variantIndex = coverTemplate ? i - 1 : i;
     const pick =
       coverTemplate && i === 0
         ? coverTemplate
         : variantCount
-          ? variantTemplates[(coverTemplate ? i - 1 : i) % variantCount]
+          ? resolvedVariantTemplates[variantIndex] || resolvedVariantTemplates[variantIndex % variantCount]
           : coverTemplate;
     if (!pick) return;
     const frag = pick.content.cloneNode(true);
