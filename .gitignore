@@ -53,3 +53,5 @@ output/
 AI-Log-Hook/
 docker_plan.md
 repeat_git_task.ps1
+# Added by code-review-graph
+.code-review-graph/

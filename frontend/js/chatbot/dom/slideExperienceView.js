@@ -221,6 +221,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const viewport = document.createElement("div");
   viewport.className = "exp-slide-viewport";
+  viewport.tabIndex = -1;
 
   const fsBtn = document.createElement("button");
   fsBtn.type = "button";
@@ -269,6 +270,31 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     );
   }
 
+  function isKeyboardEditingTarget(target) {
+    return !!(
+      target instanceof Element &&
+      target.closest('input, textarea, select, [contenteditable="true"], [data-edit-text-active="1"]')
+    );
+  }
+
+  function focusSlideViewport() {
+    if (viewMode !== "presentation") return;
+    requestAnimationFrame(() => {
+      try {
+        if (document.activeElement instanceof HTMLElement && isKeyboardEditingTarget(document.activeElement)) {
+          document.activeElement.blur();
+        }
+      } catch (_) {
+        /* ignore */
+      }
+      try {
+        viewport.focus({ preventScroll: true });
+      } catch (_) {
+        /* ignore */
+      }
+    });
+  }
+
   /** Fullscreen API (trình duyệt) — vẫn xử lý nếu từng có; không dùng cho nút toàn màn hình (xem faux-fs). */
   function isNativeSlideViewportFullscreen() {
     return document.fullscreenElement === viewport || document.webkitFullscreenElement === viewport;
@@ -310,6 +336,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     viewMode = next;
     syncViewModeToIframe();
     paintSlideChrome();
+    focusSlideViewport();
   }
 
   modePresBtn.addEventListener("click", () => applyViewMode("presentation"));
@@ -357,10 +384,11 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   document.addEventListener("fullscreenchange", onFsChange, { signal: uiSignal });
   document.addEventListener("webkitfullscreenchange", onFsChange, { signal: uiSignal });
 
-  function onDocKeydown(e) {
+  function onPresentationKeydown(e) {
     const layer = document.getElementById("experienceLayer");
     if (!layer?.classList.contains("visible") || !shellReady || viewMode !== "presentation") return;
     if (performance.now() < suppressArrowNavUntil) return;
+    if (isKeyboardEditingTarget(e.target)) return;
     if (
       e.key === "Escape" &&
       viewport.classList.contains("exp-slide-viewport--faux-fs") &&
@@ -380,7 +408,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       goNext();
     }
   }
-  document.addEventListener("keydown", onDocKeydown, { signal: uiSignal });
+  document.addEventListener("keydown", onPresentationKeydown, { signal: uiSignal, capture: true });
 
   shell.appendChild(stage);
 
@@ -416,6 +444,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     paintSlideChrome();
     emitState();
     restoreOuterScrollSoon();
+    focusSlideViewport();
   }
 
   function renderSlide() {
@@ -483,6 +512,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       });
       iframe.contentDocument?.addEventListener("scroll", captureDeckScroll, {
         passive: true,
+        capture: true,
+        signal: uiSignal,
+      });
+      iframe.contentDocument?.addEventListener("keydown", onPresentationKeydown, {
         capture: true,
         signal: uiSignal,
       });

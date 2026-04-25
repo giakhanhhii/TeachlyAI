@@ -316,6 +316,223 @@
         .section-center h2 { color: white; font-size: 75px; margin-bottom: 25px; line-height: 1.1; }
         .section-center p { color: white; font-size: 26px; font-family: 'Montserrat', sans-serif; font-weight: 600; max-width: 800px; text-align: center; }
 
+
+        /* --- EXTENDED SLIDE COMPONENTS --- */
+        .slide-kicker {
+            color: var(--c-alt);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .big-word {
+            color: var(--c-main);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        .mini-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(4, 1fr);
+            height: 100%;
+            width: 100%;
+        }
+
+        .mini-card {
+            align-items: center;
+            background: #f8fafc;
+            border-radius: 18px;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .mini-card i {
+            color: var(--c-alt);
+            font-size: 46px;
+            margin-bottom: 16px;
+        }
+
+        .mini-card h3 {
+            color: var(--c-main);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .mini-card p {
+            color: #475569;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .process-steps {
+            counter-reset: step;
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .process-step {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+            padding: 26px 18px;
+            position: relative;
+            text-align: center;
+            border-bottom: 6px solid var(--c-alt);
+        }
+
+        .process-step::before {
+            counter-increment: step;
+            content: counter(step);
+            align-items: center;
+            background: var(--c-main);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            height: 52px;
+            justify-content: center;
+            left: 50%;
+            position: absolute;
+            top: -26px;
+            transform: translateX(-50%);
+            width: 52px;
+        }
+
+        .process-step h3 { color: #111; font-size: 19px; margin: 24px 0 10px; }
+        .process-step p { color: #475569; font-size: 16px; margin: 0; }
+
+        .strategy-table {
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 16px;
+            width: 100%;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+        }
+
+        .strategy-table th {
+            background: var(--c-main);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            padding: 18px;
+            text-transform: uppercase;
+        }
+
+        .strategy-table td {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 19px;
+            padding: 18px 20px;
+        }
+
+        .strategy-table tr:nth-child(even) td { background: #f8fafc; }
+        .strategy-table td:first-child { color: var(--c-alt); font-family: 'Montserrat', sans-serif; font-weight: 900; }
+
+        .quote-block {
+            background: #111;
+            border-left: 12px solid var(--c-alt);
+            border-radius: 18px;
+            color: white;
+            padding: 46px 54px;
+            width: 92%;
+        }
+
+        .quote-block p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin: 0;
+        }
+
+        .quote-block .source {
+            color: var(--c-accent);
+            display: block;
+            font-family: 'Roboto', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 22px;
+        }
+
+        .score-bars { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+        .score-row { display: grid; grid-template-columns: 220px 1fr 90px; gap: 18px; align-items: center; }
+        .score-label { color: #111; font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 800; text-transform: uppercase; }
+        .bar-track { background: #e2e8f0; border-radius: 999px; height: 28px; overflow: hidden; }
+        .bar-fill { background: linear-gradient(90deg, var(--c-main), var(--c-alt)); border-radius: 999px; height: 100%; }
+        .score-num { color: var(--c-main); font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900; }
+
+        .flashcard-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .flashcard {
+            background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+            border-radius: 20px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            min-height: 300px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .flashcard::before { content: ''; position: absolute; top: 0; left: 0; height: 10px; width: 100%; background: var(--c-alt); }
+        .flashcard .term { color: var(--c-main); font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; margin-bottom: 16px; text-transform: uppercase; }
+        .flashcard .meaning { color: #334155; font-size: 19px; margin-bottom: 18px; }
+        .flashcard .example { background: #111; border-radius: 12px; color: white; font-size: 17px; padding: 16px; }
+
+        .question-box {
+            background: #f8fafc;
+            border-radius: 20px;
+            border: 3px solid #e2e8f0;
+            padding: 34px;
+        }
+        .question-box .q-title { color: var(--c-main); font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900; margin-bottom: 18px; }
+        .answer-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); margin-top: 22px; }
+        .answer { background: white; border-radius: 12px; border-left: 7px solid var(--c-alt); color: #334155; font-size: 20px; padding: 18px; }
+        .answer.correct { background: #ecfdf5; border-left-color: #10b981; font-weight: 700; }
+
+        .formula-strip { display: flex; gap: 20px; align-items: center; justify-content: center; }
+        .formula-part { background: white; border-radius: 16px; color: var(--c-main); font-family: 'Montserrat', sans-serif; font-size: 30px; font-weight: 900; padding: 24px 28px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .formula-plus { color: var(--c-alt); font-family: 'Montserrat', sans-serif; font-size: 46px; font-weight: 900; }
+
+        .dos-donts { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; height: 100%; }
+        .do-box, .dont-box { border-radius: 20px; padding: 32px; background: #fff; box-shadow: 0 8px 18px rgba(0,0,0,0.08); }
+        .do-box { border-top: 8px solid #10b981; }
+        .dont-box { border-top: 8px solid #ef4444; }
+        .dos-donts h3 { font-size: 28px; margin-bottom: 20px; }
+        .dos-donts ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+        .dos-donts li { color: #334155; font-size: 20px; }
+        .dos-donts i { margin-right: 12px; }
+
+        .radar-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+        .radar {
+            aspect-ratio: 1;
+            background: radial-gradient(circle, transparent 20%, #e2e8f0 21% 22%, transparent 23% 40%, #e2e8f0 41% 42%, transparent 43% 60%, #e2e8f0 61% 62%, transparent 63%), conic-gradient(from 0deg, rgba(0,0,0,0.04) 0deg 60deg, transparent 60deg 120deg, rgba(0,0,0,0.04) 120deg 180deg, transparent 180deg 240deg, rgba(0,0,0,0.04) 240deg 300deg, transparent 300deg 360deg);
+            border-radius: 50%;
+            position: relative;
+            width: 430px;
+            margin: auto;
+        }
+        .radar-shape { position: absolute; inset: 70px; background: rgba(16, 185, 129, 0.35); clip-path: polygon(50% 0, 90% 28%, 78% 82%, 28% 90%, 8% 38%); border: 4px solid var(--c-alt); }
+        .radar-label { position: absolute; color: #111; font-family: 'Montserrat'; font-weight: 800; font-size: 16px; }
+
+        .final-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; width: 100%; }
+        .final-card { background: rgba(255,255,255,0.92); border-radius: 20px; padding: 34px; text-align: center; border-bottom: 8px solid var(--c-alt); }
+        .final-card i { color: var(--c-main); font-size: 52px; margin-bottom: 18px; }
+        .final-card h3 { color: #111; font-size: 24px; margin-bottom: 12px; }
+        .final-card p { color: #334155; font-size: 18px; margin: 0; }
+
     </style>
 </head>
 <body>
@@ -430,7 +647,7 @@
                     </ul>
                 </div>
                 <div class="image-wrapper">
-                    <img src="http://googleusercontent.com/image_collection/image_retrieval/14492178941924633294" alt="">
+                    <img src="https://googleusercontent.com/image_collection/image_retrieval/14492178941924633294" alt="">
                 </div>
             </div>
         </div>
@@ -536,8 +753,378 @@
     </div>
 </div>
 
-<!-- Slide 10: Ending (Theme 5: Mono Black, Layout: Triangle) -->
+<!-- Slide 10: Grade 12 Focus (Theme 5: Mono Black, Layout: Triangle) -->
 <div class="slide-container theme-5 layout-triangle" id="slide10">
+    <div class="content-card">
+        <h2 class="slide-title">TRỌNG TÂM TIẾNG ANH LỚP 12</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile" style="border-top-color: var(--c-alt);">
+                    <div class="icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h3>Ngữ pháp lớp 12</h3>
+                    <p>Ưu tiên mệnh đề quan hệ, câu điều kiện, câu bị động, câu tường thuật, đảo ngữ và liên từ trong câu phức.</p>
+                </div>
+                <div class="tile" style="border-top-color: var(--c-main);">
+                    <div class="icon"><i class="fa-solid fa-book"></i></div>
+                    <h3>Từ vựng theo chủ đề</h3>
+                    <p>Ôn các chủ đề quen thuộc như giáo dục, môi trường, công nghệ, văn hóa, việc làm và đời sống xã hội.</p>
+                </div>
+                <div class="tile" style="border-top-color: var(--c-alt);">
+                    <div class="icon"><i class="fa-solid fa-pen-nib"></i></div>
+                    <h3>Kỹ năng làm bài</h3>
+                    <p>Kết hợp đọc hiểu, điền từ, tìm lỗi sai và viết lại câu để chuẩn bị chắc nền cho kỳ thi THPTQG.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Slide 11: Big Picture (Theme 1, Layout: Circle) -->
+<div class="slide-container theme-1 layout-circle" id="slide11">
+    <div class="content-card">
+        <h2 class="slide-title">BỨC TRANH TỔNG QUAN KIẾN THỨC</h2>
+        <div class="content-area">
+            <div class="mini-grid">
+                <div class="mini-card"><i class="fa-solid fa-layer-group"></i><h3>Nền tảng</h3><p>Nắm chắc ngữ pháp, ngữ âm, từ loại.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-book-open-reader"></i><h3>Kỹ năng</h3><p>Luyện đọc, điền từ, tìm lỗi và viết lại câu.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-bullseye"></i><h3>Chiến thuật</h3><p>Phân bổ thời gian, xử lý bẫy đáp án.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-rocket"></i><h3>Bứt phá</h3><p>Luyện đề, chữa lỗi, tối ưu điểm số.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Pronunciation (Theme 2, Layout: Triangle) -->
+<div class="slide-container theme-2 layout-triangle" id="slide12">
+    <div class="content-card">
+        <h2 class="slide-title">NGỮ ÂM: 4 ĐIỂM DỄ LẤY</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="text-column">
+                    <div class="slide-kicker">Ưu tiên làm nhanh</div>
+                    <div class="big-word">SOUND<br>FIRST</div>
+                    <p style="margin-top: 24px;">Nhóm câu phát âm và trọng âm thường không cần đọc toàn câu. Hãy học theo cụm âm hay gặp và luyện phản xạ 30 giây/câu.</p>
+                </div>
+                <ul class="styled-list">
+                    <li><strong>Đuôi -ed</strong>/t/, /d/, /ɪd/ theo âm cuối của động từ.</li>
+                    <li><strong>Đuôi -s/-es</strong>/s/, /z/, /ɪz/ theo phụ âm cuối.</li>
+                    <li><strong>Trọng âm 2 âm tiết</strong>Danh từ thường nhấn âm 1, động từ thường nhấn âm 2.</li>
+                    <li><strong>Hậu tố quen thuộc</strong>-tion, -ic, -ity, -graphy giúp đoán trọng âm nhanh.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 13: Word Form (Theme 3, Layout: Diagonal) -->
+<div class="slide-container theme-3 layout-diagonal" id="slide13">
+    <div class="content-card">
+        <h2 class="slide-title">TỪ LOẠI: NHÌN VỊ TRÍ, CHỌN ĐÁP ÁN</h2>
+        <div class="content-area">
+            <table class="strategy-table">
+                <thead><tr><th>Vị trí</th><th>Dấu hiệu</th><th>Từ loại cần chọn</th></tr></thead>
+                <tbody>
+                    <tr><td>Sau mạo từ</td><td>a / an / the + ____</td><td>Danh từ hoặc cụm danh từ</td></tr>
+                    <tr><td>Sau to be</td><td>is / are / was / were + ____</td><td>Tính từ hoặc V-ing/V3</td></tr>
+                    <tr><td>Trước danh từ</td><td>____ + noun</td><td>Tính từ</td></tr>
+                    <tr><td>Sau động từ</td><td>verb + ____</td><td>Trạng từ hoặc tân ngữ</td></tr>
+                    <tr><td>Sau giới từ</td><td>in / on / at / of + ____</td><td>Danh từ hoặc V-ing</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 14: Tenses (Theme 4, Layout: Angled) -->
+<div class="slide-container theme-4 layout-angled" id="slide14">
+    <div class="content-card">
+        <h2 class="slide-title">THÌ ĐỘNG TỪ: 5 DẤU HIỆU VÀNG</h2>
+        <div class="content-area">
+            <div class="process-steps">
+                <div class="process-step"><h3>Every day</h3><p>Hiện tại đơn cho thói quen, sự thật.</p></div>
+                <div class="process-step"><h3>Now</h3><p>Hiện tại tiếp diễn cho hành động đang xảy ra.</p></div>
+                <div class="process-step"><h3>Since/For</h3><p>Hiện tại hoàn thành hoặc hoàn thành tiếp diễn.</p></div>
+                <div class="process-step"><h3>When/While</h3><p>Phối hợp quá khứ đơn và quá khứ tiếp diễn.</p></div>
+                <div class="process-step"><h3>By the time</h3><p>Hoàn thành trước một mốc thời gian.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 15: Relative Clauses (Theme 5, Layout: Circle) -->
+<div class="slide-container theme-5 layout-circle" id="slide15">
+    <div class="content-card">
+        <h2 class="slide-title">MỆNH ĐỀ QUAN HỆ: SƠ ĐỒ CHỌN TỪ</h2>
+        <div class="content-area">
+            <div class="formula-strip">
+                <div class="formula-part">Người</div><div class="formula-plus">→</div><div class="formula-part">who / whom</div>
+                <div class="formula-plus">|</div>
+                <div class="formula-part">Vật</div><div class="formula-plus">→</div><div class="formula-part">which</div>
+            </div>
+            <div style="height: 40px;"></div>
+            <div class="formula-strip">
+                <div class="formula-part">Sở hữu</div><div class="formula-plus">→</div><div class="formula-part">whose</div>
+                <div class="formula-plus">|</div>
+                <div class="formula-part">Nơi chốn</div><div class="formula-plus">→</div><div class="formula-part">where</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 16: Passive Voice (Theme 1, Layout: Split) -->
+<div class="slide-container theme-1 layout-split" id="slide16">
+    <div class="content-card">
+        <h2 class="slide-title">CÂU BỊ ĐỘNG: CÔNG THỨC KHUNG</h2>
+        <div class="content-area">
+            <div class="two-column highlight-numbers-layout">
+                <div class="number-box"><div class="number">BE</div><div class="label">+ V3/V-ed</div></div>
+                <div class="text-column">
+                    <p style="font-size: 24px; font-weight: 700; color: #111;">Quy trình chuyển đổi:</p>
+                    <ul class="styled-list" style="margin-top: 20px;">
+                        <li><strong>Bước 1</strong>Xác định tân ngữ của câu chủ động.</li>
+                        <li><strong>Bước 2</strong>Đưa tân ngữ lên làm chủ ngữ mới.</li>
+                        <li><strong>Bước 3</strong>Chia “be” theo thì gốc, giữ V3/V-ed.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 17: Reported Speech (Theme 2, Layout: Angled) -->
+<div class="slide-container theme-2 layout-angled" id="slide17">
+    <div class="content-card">
+        <h2 class="slide-title">CÂU TƯỜNG THUẬT: 3 ĐIỀU PHẢI ĐỔI</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile"><div class="icon"><i class="fa-solid fa-user-pen"></i></div><h3>Đổi ngôi</h3><p>I → he/she, we → they, my → his/her tùy người nói và người nghe.</p></div>
+                <div class="tile"><div class="icon"><i class="fa-solid fa-arrow-rotate-left"></i></div><h3>Lùi thì</h3><p>Present → Past, Past → Past Perfect, Will → Would khi động từ tường thuật ở quá khứ.</p></div>
+                <div class="tile"><div class="icon"><i class="fa-solid fa-location-dot"></i></div><h3>Đổi trạng từ</h3><p>now → then, here → there, today → that day, tomorrow → the next day.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 18: Conditionals (Theme 3, Layout: Triangle) -->
+<div class="slide-container theme-3 layout-triangle" id="slide18">
+    <div class="content-card">
+        <h2 class="slide-title">CÂU ĐIỀU KIỆN: BẢNG SIÊU TỐC</h2>
+        <div class="content-area">
+            <table class="strategy-table">
+                <thead><tr><th>Loại</th><th>If-clause</th><th>Main clause</th><th>Ý nghĩa</th></tr></thead>
+                <tbody>
+                    <tr><td>Type 1</td><td>Present simple</td><td>will + V</td><td>Có thể xảy ra</td></tr>
+                    <tr><td>Type 2</td><td>Past simple</td><td>would + V</td><td>Không thật hiện tại</td></tr>
+                    <tr><td>Type 3</td><td>Past perfect</td><td>would have + V3</td><td>Không thật quá khứ</td></tr>
+                    <tr><td>Mixed</td><td>Past perfect</td><td>would + V</td><td>Quá khứ ảnh hưởng hiện tại</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 19: Modals (Theme 4, Layout: Diagonal) -->
+<div class="slide-container theme-4 layout-diagonal" id="slide19">
+    <div class="content-card">
+        <h2 class="slide-title">ĐỘNG TỪ KHUYẾT THIẾU: NHẬN DIỆN Ý NGHĨA</h2>
+        <div class="content-area">
+            <div class="flashcard-row">
+                <div class="flashcard"><div class="term">Must</div><p class="meaning">Bắt buộc, suy luận chắc chắn.</p><p class="example">You must finish the task today.</p></div>
+                <div class="flashcard"><div class="term">Should</div><p class="meaning">Lời khuyên, điều nên làm.</p><p class="example">You should review your mistakes.</p></div>
+                <div class="flashcard"><div class="term">May/Might</div><p class="meaning">Khả năng không chắc chắn.</p><p class="example">The answer might be B.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 20: Cloze Test (Theme 5, Layout: Angled) -->
+<div class="slide-container theme-5 layout-angled" id="slide20">
+    <div class="content-card">
+        <h2 class="slide-title">CLOZE TEST: 5 BƯỚC KHÔNG LẠC HƯỚNG</h2>
+        <div class="content-area">
+            <div class="process-steps">
+                <div class="process-step"><h3>Đọc tiêu đề</h3><p>Nắm chủ đề chung.</p></div>
+                <div class="process-step"><h3>Xác định loại từ</h3><p>Nhìn vị trí ô trống.</p></div>
+                <div class="process-step"><h3>Đọc câu trước/sau</h3><p>Tìm mạch liên kết.</p></div>
+                <div class="process-step"><h3>So sánh đáp án</h3><p>Loại đáp án sai ngữ pháp.</p></div>
+                <div class="process-step"><h3>Đọc lại đoạn</h3><p>Kiểm tra độ tự nhiên.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 21: Synonyms Antonyms (Theme 1, Layout: Triangle) -->
+<div class="slide-container theme-1 layout-triangle" id="slide21">
+    <div class="content-card">
+        <h2 class="slide-title">ĐỒNG NGHĨA - TRÁI NGHĨA: TRÁNH BẪY</h2>
+        <div class="content-area">
+            <div class="dos-donts">
+                <div class="do-box">
+                    <h3 style="color:#10b981;"><i class="fa-solid fa-circle-check"></i>NÊN</h3>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i>Khoanh tròn yêu cầu CLOSEST hoặc OPPOSITE.</li>
+                        <li><i class="fa-solid fa-check"></i>Đọc cả câu để hiểu sắc thái nghĩa.</li>
+                        <li><i class="fa-solid fa-check"></i>Ưu tiên nghĩa trong ngữ cảnh, không học vẹt.</li>
+                    </ul>
+                </div>
+                <div class="dont-box">
+                    <h3 style="color:#ef4444;"><i class="fa-solid fa-circle-xmark"></i>TRÁNH</h3>
+                    <ul>
+                        <li><i class="fa-solid fa-xmark"></i>Chọn ngay nghĩa quen thuộc đầu tiên.</li>
+                        <li><i class="fa-solid fa-xmark"></i>Bỏ qua tiền tố phủ định un-, in-, dis-.</li>
+                        <li><i class="fa-solid fa-xmark"></i>Nhầm trái nghĩa với từ khác loại.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 22: Error Identification (Theme 2, Layout: Split) -->
+<div class="slide-container theme-2 layout-split" id="slide22">
+    <div class="content-card">
+        <h2 class="slide-title">TÌM LỖI SAI: 4 VÙNG CẦN SOI</h2>
+        <div class="content-area">
+            <div class="mini-grid">
+                <div class="mini-card"><i class="fa-solid fa-scale-balanced"></i><h3>S-V Agreement</h3><p>Chủ ngữ số ít/số nhiều và động từ.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-clock"></i><h3>Tenses</h3><p>Mốc thời gian và sự phối hợp thì.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-link"></i><h3>Connectors</h3><p>Although, because, despite, however.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-font"></i><h3>Word Form</h3><p>Danh từ, động từ, tính từ, trạng từ.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 23: Reading Inference (Theme 3, Layout: Circle) -->
+<div class="slide-container theme-3 layout-circle" id="slide23">
+    <div class="content-card">
+        <h2 class="slide-title">ĐỌC HIỂU: XỬ LÝ CÂU SUY LUẬN</h2>
+        <div class="content-area">
+            <div class="quote-block">
+                <p>“Không chọn đáp án nghe có vẻ đúng. Chọn đáp án được chứng minh bằng chi tiết trong bài.”</p>
+                <span class="source">Quy tắc vàng khi làm câu inference / imply / suggest</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 24: Writing Transformation (Theme 4, Layout: Triangle) -->
+<div class="slide-container theme-4 layout-triangle" id="slide24">
+    <div class="content-card">
+        <h2 class="slide-title">VIẾT LẠI CÂU: CẶP CẤU TRÚC THƯỜNG GẶP</h2>
+        <div class="content-area">
+            <table class="strategy-table">
+                <thead><tr><th>Dạng gốc</th><th>Cấu trúc tương đương</th><th>Điểm chú ý</th></tr></thead>
+                <tbody>
+                    <tr><td>Because</td><td>Because of + N/V-ing</td><td>Đổi mệnh đề thành cụm danh từ</td></tr>
+                    <tr><td>Although</td><td>Despite/In spite of</td><td>Không dùng “but” trong cùng câu</td></tr>
+                    <tr><td>Too...to</td><td>So...that</td><td>Đổi chủ ngữ và động từ phù hợp</td></tr>
+                    <tr><td>Prefer</td><td>Would rather</td><td>Lưu ý V nguyên thể hoặc mệnh đề</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 25: Practice Question (Theme 5, Layout: Diagonal) -->
+<div class="slide-container theme-5 layout-diagonal" id="slide25">
+    <div class="content-card">
+        <h2 class="slide-title">MINI QUIZ: CHỌN ĐÁP ÁN ĐÚNG</h2>
+        <div class="content-area">
+            <div class="question-box">
+                <div class="q-title">The students were excited because they ______ the final exam.</div>
+                <div class="answer-grid">
+                    <div class="answer">A. pass</div>
+                    <div class="answer correct">B. had passed</div>
+                    <div class="answer">C. have passing</div>
+                    <div class="answer">D. were pass</div>
+                </div>
+                <p style="margin-top: 24px; font-size: 19px; color: #334155;"><strong>Gợi ý:</strong> Hành động “đỗ kỳ thi” xảy ra trước cảm xúc “were excited” trong quá khứ → dùng quá khứ hoàn thành.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 26: Vocabulary Themes (Theme 1, Layout: Angled) -->
+<div class="slide-container theme-1 layout-angled" id="slide26">
+    <div class="content-card">
+        <h2 class="slide-title">TỪ VỰNG THEO CHỦ ĐỀ HAY RA</h2>
+        <div class="content-area">
+            <div class="mini-grid">
+                <div class="mini-card"><i class="fa-solid fa-leaf"></i><h3>Environment</h3><p>pollution, conservation, renewable energy.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-graduation-cap"></i><h3>Education</h3><p>curriculum, scholarship, distance learning.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-laptop-code"></i><h3>Technology</h3><p>innovation, automation, digital literacy.</p></div>
+                <div class="mini-card"><i class="fa-solid fa-heart-pulse"></i><h3>Health</h3><p>nutrition, lifestyle, mental well-being.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 27: Weekly Plan (Theme 2, Layout: Circle) -->
+<div class="slide-container theme-2 layout-circle" id="slide27">
+    <div class="content-card">
+        <h2 class="slide-title">KẾ HOẠCH 7 NGÀY ÔN TẬP MẪU</h2>
+        <div class="content-area">
+            <table class="strategy-table">
+                <thead><tr><th>Ngày</th><th>Nhiệm vụ chính</th><th>Sản phẩm cần có</th></tr></thead>
+                <tbody>
+                    <tr><td>Thứ 2</td><td>Ôn thì và hòa hợp chủ-vị</td><td>30 câu ngữ pháp</td></tr>
+                    <tr><td>Thứ 3</td><td>Học 25 cụm collocation</td><td>Flashcard + ví dụ</td></tr>
+                    <tr><td>Thứ 4</td><td>Luyện cloze test</td><td>2 đoạn + chữa lỗi</td></tr>
+                    <tr><td>Thứ 5</td><td>Đọc hiểu chủ đề xã hội</td><td>1 bài dài, 1 bài ngắn</td></tr>
+                    <tr><td>Thứ 6</td><td>Mini test 30 phút</td><td>Bảng lỗi sai cá nhân</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 28: Tracking Scores (Theme 3, Layout: Split) -->
+<div class="slide-container theme-3 layout-split" id="slide28">
+    <div class="content-card">
+        <h2 class="slide-title">THEO DÕI TIẾN BỘ THEO KỸ NĂNG</h2>
+        <div class="content-area">
+            <div class="score-bars">
+                <div class="score-row"><div class="score-label">Ngữ pháp</div><div class="bar-track"><div class="bar-fill" style="width: 82%;"></div></div><div class="score-num">82%</div></div>
+                <div class="score-row"><div class="score-label">Từ vựng</div><div class="bar-track"><div class="bar-fill" style="width: 68%;"></div></div><div class="score-num">68%</div></div>
+                <div class="score-row"><div class="score-label">Đọc hiểu</div><div class="bar-track"><div class="bar-fill" style="width: 74%;"></div></div><div class="score-num">74%</div></div>
+                <div class="score-row"><div class="score-label">Ngữ âm</div><div class="bar-track"><div class="bar-fill" style="width: 90%;"></div></div><div class="score-num">90%</div></div>
+                <div class="score-row"><div class="score-label">Tốc độ</div><div class="bar-track"><div class="bar-fill" style="width: 60%;"></div></div><div class="score-num">60%</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 29: Skill Radar (Theme 4, Layout: Circle) -->
+<div class="slide-container theme-4 layout-circle" id="slide29">
+    <div class="content-card">
+        <h2 class="slide-title">BẢN ĐỒ NĂNG LỰC CÁ NHÂN</h2>
+        <div class="content-area">
+            <div class="radar-grid">
+                <div class="radar">
+                    <div class="radar-shape"></div>
+                    <span class="radar-label" style="top: 8px; left: 190px;">Grammar</span>
+                    <span class="radar-label" style="top: 120px; right: 8px;">Reading</span>
+                    <span class="radar-label" style="bottom: 28px; right: 60px;">Vocabulary</span>
+                    <span class="radar-label" style="bottom: 28px; left: 48px;">Speed</span>
+                    <span class="radar-label" style="top: 120px; left: 8px;">Phonetics</span>
+                </div>
+                <div class="text-column">
+                    <p style="font-size: 24px; font-weight: 800; color: #111;">Dùng radar để xác định điểm yếu thật sự.</p>
+                    <ul style="padding-left: 20px; margin-top: 18px;">
+                        <li>Điểm thấp nhất → ưu tiên học trong tuần.</li>
+                        <li>Điểm cao nhất → duy trì bằng bài ngắn.</li>
+                        <li>Cập nhật sau mỗi 2 đề thi thử.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 30: Ending (Theme 5: Mono Black, Layout: Triangle) -->
+<div class="slide-container theme-5 layout-triangle" id="slide30">
     <div class="section-center">
         <h2>SẴN SÀNG BỨT PHÁ?</h2>
         <p style="margin-bottom: 40px;">Chúc các sĩ tử 2K8 ôn tập hiệu quả và chinh phục thành công kỳ thi!</p>
