@@ -447,6 +447,83 @@
         }
         .activity-table th { font-family: 'Roboto Slab', serif; font-size: 32px; text-align: center; vertical-align: middle; height: 60px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2);}
         .activity-table ul { margin-left: 30px; font-size: 24px; line-height: 1.8;}
+
+        /* Study deck additions */
+        .table-like {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 230px 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .label-pill {
+            border: 3px solid #121212;
+            border-radius: 22px;
+            box-shadow: 5px 5px 0 #121212;
+            color: #121212;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto Slab', serif;
+            font-size: 26px;
+            font-weight: 900;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .row-text {
+            background: #ffffff;
+            border: 3px solid #121212;
+            border-radius: 22px;
+            box-shadow: 6px 6px 0 rgba(18, 18, 18, 0.2);
+            font-size: 22px;
+            line-height: 1.6;
+            padding: 22px 26px;
+        }
+
+        .tip-ribbon {
+            align-self: center;
+            background: #f26430;
+            border: 3px solid #121212;
+            border-radius: 18px;
+            box-shadow: 5px 5px 0 #121212;
+            color: #ffffff;
+            display: inline-block;
+            font-family: 'Roboto Slab', serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            padding: 12px 24px;
+        }
+
+        .big-note {
+            background: #ffffff;
+            border: 3px dashed #121212;
+            border-radius: 30px;
+            box-shadow: 8px 8px 0 rgba(18, 18, 18, 0.18);
+            padding: 34px 42px;
+            text-align: center;
+        }
+
+        .big-note p {
+            font-size: 30px;
+            line-height: 1.55;
+        }
+
+        .study-quote {
+            color: #f26430;
+            font-family: 'Roboto Slab', serif;
+            font-size: 42px;
+            font-weight: 900;
+            line-height: 1.35;
+        }
     </style>
 </head>
 <body>
@@ -704,130 +781,323 @@
         </div>
     </div>
 
-    <!-- Slide 15: Image Right (Punctuation flow) -->
-    <div class="slide-container" id="slide15" style="padding-top: 120px;">
+    <!-- Slide 15: Section transition -->
+    <div class="slide-container" id="slide15">
         <div class="sticker s-starfish" style="top: 20px; left: 40px; transform: rotate(10deg);">⭐</div>
-        <h2 class="outer-title" style="text-align: left; left: 60px;">Stop, Yield, & Ask!</h2>
-        <div class="image-layout">
-            <div class="card text-part">
-                <p class="text-justify" style="font-size: 26px;">
-                    <b>Period (.)</b> means FULL STOP.<br>
-                    <b>Comma (,)</b> means PAUSE for a breath.<br>
-                    <b>Question Mark (?)</b> means you are asking something.<br>
-                    Without them, our writing would be a confusing flood of words!
-                </p>
-            </div>
-            <div class="image-wrapper">
-                <img src="https://images.unsplash.com/photo-1610006935756-32d5e7512270?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Ocean waves stopping at the shore">
-            </div>
+        <div class="sticker s-nemo" style="bottom: 30px; right: 60px; transform: rotate(-8deg) scaleX(-1);">🐠</div>
+        <div class="card section-card">
+            <div class="oval-number bg-orange">05</div>
+            <h1>THPTQG English 12</h1>
+            <p>Let's dive from general grammar into exam-focused knowledge and smart test strategies.</p>
         </div>
     </div>
 
-    <!-- Slide 16: Activity Table -->
+    <!-- Slide 16: Stress table -->
     <div class="slide-container" id="slide16" style="padding-top: 120px;">
         <div class="sticker s-seaweed" style="top: 30px; right: 40px;">🌿</div>
-        <h2 class="outer-title">Common Mistakes: Do & Don't</h2>
+        <h2 class="outer-title">Stress Rules Under the Sea</h2>
         <div class="card">
-            <p style="margin-bottom: 20px; text-align: center;">Let's compare the correct and incorrect ways to write.</p>
-            <table class="activity-table">
-                <tr>
-                    <th class="bg-green">Correct (Do This!)</th>
-                    <th class="bg-orange" style="color:white;">Incorrect (Don't Do This!)</th>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li><b>You're</b> going to the beach.</li>
-                            <li><b>Their</b> boat is very fast.</li>
-                            <li>Let's eat, Grandpa! <i>(With comma)</i></li>
-                        </ul>
-                    </td>
-                    <td>
-                        <ul>
-                            <li><b>Your</b> going to the beach.</li>
-                            <li><b>There</b> boat is very fast.</li>
-                            <li>Let's eat Grandpa! <i>(Missing comma - scary!)</i></li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+            <span class="tip-ribbon">Quick stress guide</span>
+            <div class="table-like">
+                <div class="table-row">
+                    <div class="label-pill bg-pink">2 syllables</div>
+                    <div class="row-text">Nouns and adjectives often stress the first syllable, while many verbs stress the second. Example: <strong>TAble</strong>, <strong>HAPpy</strong>, <strong>beGIN</strong>.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-green">Fixed endings</div>
+                    <div class="row-text"><strong>-tion, -sion, -ic</strong> often take stress before the ending. <strong>-ee, -eer, -ese</strong> usually stress the ending itself.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-blue" style="color:#fff;">Exam trick</div>
+                    <div class="row-text">If you're unsure, read all four options silently and spot the word whose rhythm clearly differs from the other three.</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Slide 17: Timeline (Writing process) -->
+    <!-- Slide 17: Tenses -->
     <div class="slide-container" id="slide17" style="padding-top: 120px;">
-        <h2 class="outer-title">Steps to Better Grammar</h2>
+        <h2 class="outer-title">Tense Signals You Must Remember</h2>
+        <div class="card">
+            <div class="table-like">
+                <div class="table-row">
+                    <div class="label-pill bg-orange">Present Simple</div>
+                    <div class="row-text">every day, always, often, usually, sometimes. Used for habits, routines and general truths.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-green">Present Perfect</div>
+                    <div class="row-text">since, for, already, yet, recently, so far. Often confused with past simple in the exam.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-blue" style="color:#fff;">Past Simple</div>
+                    <div class="row-text">yesterday, last week, ago, in 2024. Use it for actions completed at a clear time in the past.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 18: Grammar clusters -->
+    <div class="slide-container" id="slide18" style="padding-top: 120px;">
+        <h2 class="outer-title">Core Grammar Clusters</h2>
+        <div class="task-grid">
+            <div class="mini-card">
+                <h3>Passive Voice</h3>
+                <p><strong>be + V3/ed</strong>. Keep the original tense and only add “by” when the doer matters.</p>
+            </div>
+            <div class="mini-card">
+                <h3>Reported Speech</h3>
+                <p>Change pronouns, backshift tenses, and adjust time/place words like now → then, here → there.</p>
+            </div>
+            <div class="mini-card">
+                <h3>Relative Clauses</h3>
+                <p>Remember <strong>who, whom, which, whose, where, when</strong> and watch for reduced forms.</p>
+            </div>
+            <div class="mini-card">
+                <h3>Conditionals</h3>
+                <p>Type 1, 2, 3 and wish structures are all frequent grammar hotspots in THPTQG questions.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 19: Word form and collocations -->
+    <div class="slide-container" id="slide19" style="padding-top: 120px;">
+        <div class="sticker s-octopus" style="top: 50px; right: 80px; transform: rotate(-15deg);">🐙</div>
+        <h2 class="outer-title">Word Form & Collocations</h2>
+        <div class="card">
+            <div class="table-like">
+                <div class="table-row">
+                    <div class="label-pill bg-orange">Nouns</div>
+                    <div class="row-text">Usually appear after articles, possessives or adjectives: <strong>the decision, his success, global education</strong>.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-green">Adjectives</div>
+                    <div class="row-text">Common before nouns or after linking verbs: <strong>a successful student, become popular, feel nervous</strong>.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-pink">Collocations</div>
+                    <div class="row-text">Learn chunks such as <strong>make progress, take responsibility, do research, raise awareness</strong>.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 20: Vocabulary themes -->
+    <div class="slide-container" id="slide20">
+        <div class="sticker s-whale" style="bottom: 32px; left: 40px; transform: rotate(10deg);">🐳</div>
+        <div class="sticker s-crab" style="top: 40px; right: 80px; transform: rotate(-10deg);">🦀</div>
+        <div class="card title-card">
+            <div class="title-content">
+                <h1 style="font-size: 68px;">Vocabulary Themes</h1>
+                <ul data-shell="bullets" style="display:block; text-align:left; max-width:780px;">
+                    <li>Education: curriculum, scholarship, academic performance, online learning.</li>
+                    <li>Environment: pollution, conservation, biodiversity, renewable energy.</li>
+                    <li>Technology: innovation, automation, digital skills, artificial intelligence.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 21: Error identification -->
+    <div class="slide-container" id="slide21" style="padding-top: 120px;">
+        <h2 class="outer-title">Error Identification Steps</h2>
         <div class="card">
             <div class="timeline-container">
                 <div class="line"></div>
                 <div class="tl-item">
-                    <h3>Think</h3>
-                    <div class="circle bg-orange">1</div>
-                    <p class="text-justify">Plan what you want to say. Who is the subject? What is the verb?</p>
+                    <h3>Step 1</h3>
+                    <div class="circle bg-orange">SV</div>
+                    <p class="text-justify">Check subject-verb agreement and find the real subject, not just the nearest noun.</p>
                 </div>
                 <div class="tl-item">
-                    <h3>Draft</h3>
-                    <div class="circle bg-green">2</div>
-                    <p class="text-justify">Write your sentence down. Don't worry too much about perfection yet.</p>
+                    <h3>Step 2</h3>
+                    <div class="circle bg-green">Tense</div>
+                    <p class="text-justify">Use time expressions and sentence logic to test whether the tense is correct.</p>
                 </div>
                 <div class="tl-item">
-                    <h3>Review</h3>
-                    <div class="circle bg-blue" style="color:white;">3</div>
-                    <p class="text-justify">Check your tenses and punctuation. Does it sound right?</p>
+                    <h3>Step 3</h3>
+                    <div class="circle bg-blue" style="color:white;">Form</div>
+                    <p class="text-justify">Look for word form, prepositions, comparisons, relative clauses and parallel structure.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Slide 18: Task Cards (Action plan) -->
-    <div class="slide-container" id="slide18" style="padding-top: 120px;">
-        <h2 class="outer-title">How to Improve?</h2>
+    <!-- Slide 22: Cloze test -->
+    <div class="slide-container" id="slide22" style="padding-top: 120px;">
+        <h2 class="outer-title">Cloze Test Strategy</h2>
         <div class="task-grid">
             <div class="mini-card">
-                <h3>Read <span style="color: #f26430;">Daily</span></h3>
-                <p>Reading books or articles naturally teaches your brain the correct grammar patterns.</p>
+                <h3>Read the Topic</h3>
+                <p>Skim the title or first sentence to understand what the paragraph is mainly about.</p>
             </div>
             <div class="mini-card">
-                <h3>Keep <span style="color: #6a8bf5;">Writing</span></h3>
-                <p>Write a short journal entry every day. Practice makes permanent!</p>
+                <h3>Check Grammar</h3>
+                <p>Look at the words before and after the blank to identify the needed part of speech.</p>
             </div>
             <div class="mini-card">
-                <h3>Listen <span style="color: #62b58f;">Actively</span></h3>
-                <p>Listen to English podcasts or movies. Pay attention to how native speakers use tenses.</p>
+                <h3>Use Meaning</h3>
+                <p>Eliminate options that do not fit the context, collocation, or connector relationship.</p>
             </div>
             <div class="mini-card">
-                <h3>Don't <span style="color: #f26430;">Fear Mistakes</span></h3>
-                <p>Making mistakes is the best way to learn. Keep trying and communicating!</p>
+                <h3>Read Again</h3>
+                <p>Always reread the full paragraph to make sure the completed text sounds natural and logical.</p>
             </div>
         </div>
     </div>
 
-    <!-- Slide 19: Whoa! (Encouragement) -->
-    <div class="slide-container" id="slide19">
-        <div class="sticker s-octopus" style="top: 50px; right: 80px; transform: rotate(-15deg);">🐙</div>
-        <div class="sticker s-whale" style="bottom: 40px; left: 60px; transform: rotate(10deg);">🐳</div>
-        
+    <!-- Slide 23: Reading comprehension -->
+    <div class="slide-container" id="slide23" style="padding-top: 120px;">
+        <h2 class="outer-title">Reading Comprehension</h2>
+        <div class="card" style="flex-direction: row; justify-content: space-around; align-items: center; padding: 20px;">
+            <div class="pct-item">
+                <div class="doughnut d-50"><h2>Main</h2></div>
+                <h3>Main Idea</h3>
+                <p>Read the opening and closing of each paragraph to locate the central idea quickly.</p>
+            </div>
+            <div class="pct-item">
+                <div class="doughnut d-75"><h2>Ref</h2></div>
+                <h3>Reference</h3>
+                <p>Find which noun a pronoun such as it, they, this, these refers to in nearby lines.</p>
+            </div>
+            <div class="pct-item">
+                <div class="doughnut d-25"><h2>Inf</h2></div>
+                <h3>Inference</h3>
+                <p>Choose the answer supported by the text, not the one that only seems true outside the passage.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 24: Memory formula -->
+    <div class="slide-container" id="slide24">
+        <div class="sticker s-octopus" style="top: 44px; right: 74px; transform: rotate(8deg);">🐙</div>
+        <div class="sticker s-starfish" style="bottom: 36px; left: 58px; transform: rotate(-10deg);">⭐</div>
         <div class="card title-card">
-            <h1 style="font-size: 70px; margin-bottom: 20px;">Remember...</h1>
-            <p style="font-size: 34px; color: #52b788; line-height: 1.5; max-width: 900px;">"Grammar is not just a set of strict rules. It is the magic wand that makes your communication clear and powerful!"</p>
+            <div class="big-note">
+                <p class="study-quote">IF + S + V2/ED, S + WOULD/COULD + V</p>
+                <p style="margin-top:18px;">This is the key pattern for <strong>Conditional Type 2</strong>, used for unreal situations in the present.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Slide 20: Title Slide (Thank You) -->
-    <div class="slide-container" id="slide20">
+    <!-- Slide 25: Sentence transformation -->
+    <div class="slide-container" id="slide25" style="padding-top: 120px;">
+        <h2 class="outer-title">Sentence Transformation</h2>
+        <div class="card">
+            <div class="table-like">
+                <div class="table-row">
+                    <div class="label-pill bg-orange">Because</div>
+                    <div class="row-text"><strong>Because + clause</strong> can become <strong>Because of + noun / V-ing</strong>.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-green">Although</div>
+                    <div class="row-text"><strong>Although + clause</strong> can become <strong>Despite / In spite of + noun / V-ing</strong>.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-blue" style="color:#fff;">Too / Enough</div>
+                    <div class="row-text"><strong>too + adj + to V</strong> often transforms into <strong>not + adj opposite + enough + to V</strong>.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 26: Communication -->
+    <div class="slide-container" id="slide26" style="padding-top: 120px;">
+        <h2 class="outer-title">Communicative Functions</h2>
+        <div class="task-grid">
+            <div class="mini-card">
+                <h3>Invitation</h3>
+                <p>Would you like to...? / Why don't we...? Answers: I'd love to / That sounds great.</p>
+            </div>
+            <div class="mini-card">
+                <h3>Thanks & Apology</h3>
+                <p>Thanks a lot → You're welcome. I'm sorry → Never mind / That's all right.</p>
+            </div>
+            <div class="mini-card">
+                <h3>Agreement</h3>
+                <p>I totally agree / That's true / I couldn't agree more.</p>
+            </div>
+            <div class="mini-card">
+                <h3>Disagreement</h3>
+                <p>I'm afraid I disagree / That's not always true / I don't think so.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 27: Final traps -->
+    <div class="slide-container" id="slide27" style="padding-top: 120px;">
+        <h2 class="outer-title">Common Traps in the Exam</h2>
+        <div class="card">
+            <div class="table-like">
+                <div class="table-row">
+                    <div class="label-pill bg-pink">Negatives</div>
+                    <div class="row-text">Words like <strong>not, hardly, rarely, without</strong> can reverse the whole meaning if you read too fast.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-orange">Parallelism</div>
+                    <div class="row-text">Structures joined by <strong>and, or, but</strong> should keep the same grammatical form.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill bg-green">Familiar words</div>
+                    <div class="row-text">An answer containing the same word as the passage is not always correct. Check meaning and function carefully.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 28: Study plan -->
+    <div class="slide-container" id="slide28" style="padding-top: 120px;">
+        <h2 class="outer-title">7-Day Revision Plan</h2>
+        <div class="card">
+            <div class="timeline-container">
+                <div class="line"></div>
+                <div class="tl-item">
+                    <h3>Days 1-2</h3>
+                    <div class="circle bg-orange">Base</div>
+                    <p class="text-justify">Review pronunciation, stress, word form and the most common tense patterns.</p>
+                </div>
+                <div class="tl-item">
+                    <h3>Days 3-4</h3>
+                    <div class="circle bg-green">Grammar</div>
+                    <p class="text-justify">Practice passive voice, reported speech, conditionals and relative clauses.</p>
+                </div>
+                <div class="tl-item">
+                    <h3>Days 5-7</h3>
+                    <div class="circle bg-blue" style="color:white;">Skills</div>
+                    <p class="text-justify">Do reading, cloze tests, error identification, then finish with one timed practice test.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 29: Checklist -->
+    <div class="slide-container" id="slide29">
+        <div class="sticker s-whale" style="bottom: 30px; left: 40px; transform: rotate(12deg);">🐳</div>
+        <div class="sticker s-bubble" style="top: 30px; right: 100px;">🫧</div>
+        <div class="card title-card">
+            <div class="title-content">
+                <h1 style="font-size: 64px;">Checklist Before Exam Day</h1>
+                <ul data-shell="bullets" style="display:block; text-align:left; max-width:820px;">
+                    <li>Review irregular verbs, grammar hotspots, and your personal error notebook.</li>
+                    <li>Check stress rules, connectors, word form and collocations one more time.</li>
+                    <li>Do easy questions first, stay calm, and leave time to recheck answers.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 30: Goodbye -->
+    <div class="slide-container" id="slide30">
         <div class="sticker s-nemo" style="top: 50px; left: 60px; transform: rotate(15deg);">🐠</div>
         <div class="sticker s-crab" style="bottom: 30px; right: 50px; transform: rotate(-25deg);">🦀</div>
         <div class="sticker s-starfish" style="top: 40px; right: 100px; transform: rotate(15deg);">⭐</div>
-        
         <div class="card title-card">
-            <div class="badge">The End</div>
+            <div class="badge">30 / 30</div>
             <div class="title-content">
-                <h1 style="font-size: 90px; color: #f26430;">Thank You!</h1>
-                <p>Keep exploring the deep ocean of English!</p>
+                <h1 style="font-size: 82px; color: #f26430;">Summary & Goodbye</h1>
+                <p>Master pronunciation, vocabulary, grammar and exam strategy step by step. Keep practicing, keep correcting mistakes, and you will swim confidently through the THPTQG English test.</p>
             </div>
         </div>
     </div>
 
 </body>
 </html>
-```
