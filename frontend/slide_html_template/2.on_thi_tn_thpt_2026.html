@@ -1,231 +1,737 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn thi TN THPT 2026 - Môn Tiếng Anh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { background: #e9ecf7; font-family: 'Segoe UI', Arial, sans-serif; color: #111; }
+        body { padding: 24px; }
+        .deck { display: flex; flex-direction: column; gap: 24px; align-items: center; }
+        .slide {
+            width: 1280px;
+            height: 720px;
+            overflow: hidden;
+            padding: 38px 58px 64px;
+            position: relative;
+            background: #fff;
+            box-shadow: 0 16px 36px rgba(23, 52, 178, 0.14);
+            display: flex;
+            flex-direction: column;
+        }
+        .slide > h2 { margin-bottom: 18px; }
+        .slide-blue { background: linear-gradient(135deg, #1734b2 0%, #1a3bbf 58%, #0d1f78 100%); color: #fff; }
+        .slide-light { background: #f5f7ff; }
+        .eyebrow { font-size: 14px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #f5c518; margin-bottom: 12px; }
+        .main-title { font-family: 'Montserrat', sans-serif; font-size: 62px; font-weight: 950; line-height: 1.08; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 22px; color: #fff; }
+        h2 { font-family: 'Montserrat', sans-serif; font-size: 35px; font-weight: 900; color: #d62c2c; text-transform: uppercase; line-height: 1.12; }
+        h3 { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 800; line-height: 1.2; color: #172044; margin-bottom: 9px; text-transform: uppercase; }
+        p, li, td, th { font-family: 'Roboto', sans-serif; font-size: 18px; line-height: 1.35; color: #37415f; }
+        .slide-blue p, .slide-blue li { color: #eef2ff; }
+        .subtitle-bar { display: flex; align-items: center; gap: 12px; color: #d9e0ff; font-size: 20px; margin-top: 10px; }
+        .tag { background: #f5c518; color: #1734b2; padding: 8px 18px; font-weight: 900; font-size: 15px; letter-spacing: 0.6px; border-radius: 999px; box-shadow: 0 8px 18px rgba(23, 52, 178, 0.1); }
+        .grid-2, .grid-3, .grid-4, .two-pane { width: 100%; align-items: stretch; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+        .two-pane { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: 20px; }
+        .card {
+            background: #fff;
+            border: 1.5px solid #dde2f3;
+            border-radius: 18px;
+            padding: 20px 22px;
+            box-shadow: 0 8px 18px rgba(25, 43, 120, 0.07);
+            min-width: 0;
+        }
+        .card h3, .card p, .card li { color: #37415f; }
+        .card.blue { background: #1a3bbf; border-color: #1a3bbf; }
+        .card.blue h3, .card.blue p, .card.blue li { color: #fff; }
+        .card.red { border-left: 7px solid #d62c2c; }
+        .card.gold { border-left: 7px solid #f5c518; }
+        ul { padding-left: 22px; }
+        li { margin-bottom: 7px; }
+        .quote { font-size: 22px; font-weight: 700; color: #1a3bbf; line-height: 1.4; }
+        .big-num { font-family: 'Montserrat', sans-serif; font-size: 88px; font-weight: 950; color: #f5c518; line-height: 1; }
+        .label { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; color: inherit; }
+        .pill { display: inline-block; background: #eef2ff; color: #1a3bbf; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 800; margin: 0 8px 10px 0; }
+        .example {
+            font-size: 17px;
+            color: #3d4668;
+            background: #eef2ff;
+            border-left: 5px solid #1a3bbf;
+            padding: 11px 13px;
+            margin-top: 10px;
+            border-radius: 10px;
+            line-height: 1.32;
+        }
+        .callout {
+            margin-top: 16px;
+            background: linear-gradient(135deg, #eaf0ff 0%, #f8faff 100%);
+            color: #1734b2;
+            border-radius: 16px;
+            padding: 17px 21px;
+            font-size: 19px;
+            line-height: 1.36;
+            border-left: 8px solid #d62c2c;
+            box-shadow: 0 8px 18px rgba(25, 43, 120, 0.07);
+        }
+        .callout strong { color: #d62c2c; }
+        .checklist { list-style: none; padding-left: 0; }
+        .checklist li { list-style: none; position: relative; padding-left: 28px; }
+        .checklist li::before { content: '✓'; position: absolute; left: 0; top: 0; font-weight: 900; color: #1a3bbf; }
+        .numbered { counter-reset: item; list-style: none; padding-left: 0; }
+        .numbered li { list-style: none; position: relative; padding-left: 42px; }
+        .numbered li::before {
+            counter-increment: item;
+            content: counter(item);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #1a3bbf;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 15px;
+        }
+        .table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; }
+        .table th { background: #1a3bbf; color: #fff; text-align: left; font-size: 18px; padding: 13px 15px; }
+        .table td { border-bottom: 1px solid #e8ebf7; padding: 13px 15px; font-size: 17px; color: #333; vertical-align: top; line-height: 1.28; }
+        .memory-line {
+            width: 100%;
+            margin-top: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #edf3ff 100%);
+            border: 1.4px solid #d9e1fb;
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 7px 16px rgba(25, 43, 120, 0.06);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .memory-line b {
+            flex: 0 0 auto;
+            color: #1734b2;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.45px;
+            line-height: 1.2;
+            padding-top: 1px;
+        }
+        .memory-line span { color: #3d4668; font-size: 16px; line-height: 1.28; }
+        .exam-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; width: 100%; margin-top: 14px; }
+        .exam-chip {
+            min-height: 66px;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f6ff 100%);
+            border: 1.4px solid #d9e1fb;
+            border-radius: 16px;
+            padding: 13px 15px;
+            box-shadow: 0 7px 16px rgba(25, 43, 120, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .exam-chip b { display: block; color: #1734b2; font-size: 14px; text-transform: uppercase; letter-spacing: 0.35px; margin-bottom: 4px; }
+        .exam-chip span { color: #3d4668; font-size: 16px; line-height: 1.22; }
+        .timeline { position: relative; margin-top: 4px; }
+        .timeline::before { content: ''; position: absolute; left: 5%; right: 5%; top: 168px; height: 3px; background: #c7cbe0; }
+        .phase-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; position: relative; }
+        .phase { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .phase.top { padding-bottom: 162px; justify-content: flex-start; }
+        .phase.bottom { padding-top: 162px; }
+        .dot { width: 20px; height: 20px; border-radius: 50%; border: 4px solid #1a3bbf; background: #fff; z-index: 1; position: absolute; top: 159px; }
+        .dot.red { border-color: #d62c2c; }
+        .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; }
+        .footer {
+            position: absolute;
+            left: 58px;
+            right: 58px;
+            bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #7c8299;
+            z-index: 2;
+        }
+        .slide-blue .footer { color: #dbe2ff; }
+        .slide-blue .card { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); box-shadow: none; }
+        .slide-blue .card h3 { color: #f5c518; }
+        .slide-blue .card p, .slide-blue .card li { color: #eef2ff; }
+        .slide-blue .memory-line { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.24); box-shadow: none; }
+        .slide-blue .memory-line b { color: #f5c518; }
+        .slide-blue .memory-line span { color: #eef2ff; }
+        .slide-blue .exam-chip { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.22); box-shadow: none; }
+        .slide-blue .exam-chip b { color: #f5c518; }
+        .slide-blue .exam-chip span { color: #eef2ff; }
+        .source { font-size: 12px; color: #6b7084; margin-top: 10px; }
+        .divider { display: none; }
+        .ending-slide .eyebrow { color: #f5c518; }
+        .ending-pill {
+            margin-top: 28px;
+            background: #f5c518;
+            color: #1734b2;
+            padding: 14px 30px;
+            border-radius: 999px;
+            font-size: 18px;
+            font-weight: 900;
+            box-shadow: 0 10px 24px rgba(0,0,0,.14);
+        }
+        @media print {
+            body { padding: 0; background: #fff; }
+            .deck { gap: 0; }
+            .slide { box-shadow: none; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="deck">
+        <section class="slide-container slide slide-blue">
+            <div class="center">
+                <div class="eyebrow">Lộ trình kiến thức trọng tâm</div>
+                <h1 class="main-title">Ôn thi TN THPT<br>Môn Tiếng Anh 2026</h1>
+                <div class="subtitle-bar"><span>Grade 12 English Knowledge</span><span class="tag">Từ nền tảng đến chiến thuật</span></div>
+                <p style="max-width:820px;margin-top:26px;font-size:21px;">Bộ slide hệ thống hóa ngữ pháp, từ vựng, đọc hiểu và phương pháp luyện đề cho học sinh lớp 12 theo định hướng cấu trúc thi THPTQG.</p>
+                <div class="exam-strip" style="max-width:940px;margin-top:28px;">
+                    <div class="exam-chip"><b>Ngữ pháp</b><span>Hệ thống hóa dạng câu trọng tâm.</span></div>
+                    <div class="exam-chip"><b>Từ vựng</b><span>Học theo chủ đề và collocation.</span></div>
+                    <div class="exam-chip"><b>Đọc hiểu</b><span>Tăng tốc bằng chứng cứ trong bài.</span></div>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
 
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; }
-  .slide { width: 100%; padding: 60px 80px; }
-  .slide-blue { background: #1a3bbf; color: white; }
-  .slide-white { background: #fff; color: #111; }
-  .slide-light { background: #f5f7ff; color: #111; }
-  h1.main-title { font-size: 52px; font-weight: 900; color: white; line-height: 1.1; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
-  .subtitle-bar { display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #cdd5ff; font-size: 15px; }
-  .subtitle-bar span.tag { background: #111; color: #fff; padding: 4px 12px; font-weight: 600; font-size: 13px; letter-spacing: 0.5px; }
-  .section-title { font-size: 28px; font-weight: 900; color: #d62c2c; text-transform: uppercase; margin-bottom: 28px; letter-spacing: 0.5px; }
-  .blue-box { background: #1a3bbf; border-radius: 14px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 40px; }
-  .blue-box .big-num { font-size: 80px; font-weight: 900; color: #f5c518; line-height: 1; }
-  .blue-box .box-label { font-size: 18px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
-  .time-rows { display: flex; flex-direction: column; gap: 18px; flex: 1; }
-  .time-item { display: flex; flex-direction: column; gap: 2px; }
-  .time-item .t-label { font-weight: 800; font-size: 16px; text-transform: uppercase; }
-  .time-item .t-label.red { color: #d62c2c; }
-  .time-item .t-label.gold { color: #c89000; }
-  .time-item .t-label.blue { color: #1a3bbf; }
-  .time-item .t-desc { font-size: 14px; color: #444; }
-  .time-strat-label { font-size: 14px; color: #555; margin-bottom: 14px; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
-  .grammar-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
-  .g-card { border: 1.5px solid #dde; border-radius: 12px; padding: 22px 20px; background: #fff; }
-  .g-icon { font-size: 22px; margin-bottom: 12px; color: #d62c2c; }
-  .g-card h3 { font-size: 15px; font-weight: 800; text-transform: uppercase; color: #111; margin-bottom: 8px; }
-  .g-card p { font-size: 13px; color: #444; line-height: 1.6; }
-  .error-list { display: flex; flex-direction: column; gap: 0; }
-  .error-item { border-left: 4px solid #1a3bbf; padding: 16px 20px; background: #fff; border-bottom: 1px solid #eee; }
-  .error-item h3 { font-size: 14px; font-weight: 800; color: #d62c2c; text-transform: uppercase; margin-bottom: 5px; }
-  .error-item p { font-size: 13px; color: #444; }
-  .vocab-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .v-card { border: 1.5px solid #dde; border-radius: 10px; padding: 22px 20px; background: #fff; }
-  .v-card h3 { font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; color: #111; }
-  .v-card p { font-size: 13px; color: #555; margin-bottom: 10px; }
-  .v-card ul { padding-left: 16px; }
-  .v-card ul li { font-size: 13px; color: #444; margin-bottom: 4px; }
-  .timeline-wrap { display: flex; flex-direction: row; align-items: center; gap: 0; position: relative; margin-top: 30px; }
-  .tl-step { flex: 1; text-align: center; position: relative; }
-  .tl-dot { width: 18px; height: 18px; border-radius: 50%; border: 3px solid; margin: 0 auto 8px; background: white; }
-  .tl-dot.top { border-color: #1a3bbf; }
-  .tl-dot.bottom { border-color: #d62c2c; }
-  .tl-line { position: absolute; top: 8px; left: 50%; width: 100%; height: 2px; background: #bbb; z-index: 0; }
-  .tl-card { border-radius: 8px; padding: 12px 14px; font-size: 13px; background: #fff; border: 1px solid #dde; text-align: left; }
-  .tl-card.top { margin-bottom: 12px; }
-  .tl-card.bottom { margin-top: 12px; }
-  .tl-card strong { display: block; font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; color: #1a3bbf; }
-  .tl-card span { color: #d62c2c; font-weight: 700; font-size: 12px; }
-  .tl-card p { color: #444; font-size: 12px; margin-top: 4px; }
-  .tl-connector { flex: 0 0 40px; height: 2px; background: #bbb; margin-top: 9px; align-self: flex-start; }
-  .cta-title { font-size: 52px; font-weight: 900; color: #fff; text-align: center; margin-bottom: 18px; }
-  .cta-sub { color: #cdd5ff; text-align: center; font-size: 17px; margin-bottom: 30px; }
-  .cta-email { background: #111; color: #fff; display: inline-flex; align-items: center; gap: 10px; padding: 12px 28px; font-size: 15px; border-radius: 4px; }
-  .cta-center { display: flex; flex-direction: column; align-items: center; }
-  .divider { border: none; border-top: 1px solid #eee; margin: 0; }
-</style>
+        <section class="slide-container slide slide-white">
+            <h2>Định hướng bài thi</h2>
+            <div class="two-pane">
+                <div class="card blue" style="text-align:center;padding:30px 24px;">
+                    <div class="big-num">50</div>
+                    <div class="label">câu trắc nghiệm</div>
+                    <div style="height:22px"></div>
+                    <div class="big-num" style="font-size:70px;">60’</div>
+                    <div class="label">thời gian làm bài</div>
+                </div>
+                <div>
+                    <p class="quote">Mục tiêu không chỉ là nhớ kiến thức, mà là đọc, hiểu và chọn đáp án đúng trong áp lực thời gian.</p>
+                    <ul style="margin-top:22px;">
+                        <li>Trọng tâm nghiêng mạnh về đọc hiểu, từ vựng trong ngữ cảnh và xử lý logic câu.</li>
+                        <li>Muốn điểm cao, học sinh cần kết hợp kiến thức lõi với chiến thuật loại trừ và quản lý thời gian.</li>
+                        <li>Luyện đề phải đi kèm chữa lỗi theo chuyên đề, không chỉ làm thật nhiều câu.</li>
+                    </ul>
+                    <div class="source">Định hướng nội dung được xây theo nhóm kỹ năng thường gặp trong đề ôn thi THPTQG tiếng Anh lớp 12.</div>
+                </div>
+            </div>
+            <div class="memory-line"><b>Ghi nhớ nhanh</b><span>Nắm đúng cấu trúc bài thi sẽ giúp em phân bổ sức cho đúng phần: câu ngắn làm nhanh, bài đọc xử lý có chứng cứ.</span></div>
+            <div class="exam-strip">
+                <div class="exam-chip"><b>Ưu tiên</b><span>Làm chắc câu dễ trước, không sa lầy.</span></div>
+                <div class="exam-chip"><b>Theo dõi</b><span>Ghi lỗi sai theo dạng câu hỏi.</span></div>
+                <div class="exam-chip"><b>Mục tiêu</b><span>Tăng độ chính xác rồi mới tăng tốc.</span></div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
 
-<h2 class="sr-only">Ôn thi TN THPT Môn Tiếng Anh 2026 - Presentation Slides</h2>
+        <section class="slide-container slide slide-light">
+            <h2>Bản đồ kiến thức cần nắm</h2>
+            <div class="grid-4">
+                <div class="card"><h3>Ngữ pháp</h3><p>Thì, mệnh đề, câu bị động, câu điều kiện, rút gọn, liên từ và giới từ.</p></div>
+                <div class="card"><h3>Từ vựng</h3><p>Word form, collocation, idiom, phrasal verb, synonym và antonym.</p></div>
+                <div class="card"><h3>Đọc hiểu</h3><p>Main idea, detail, inference, reference và vocabulary in context.</p></div>
+                <div class="card"><h3>Chiến thuật</h3><p>Phân bổ thời gian, scan keyword, loại trừ đáp án và chữa lỗi.</p></div>
+            </div>
+            <div class="callout">Quy tắc ôn tập hiệu quả: <strong>học theo dạng câu hỏi</strong> → ghi lỗi sai → luyện lại sau 24 giờ → tổng hợp vào sổ bẫy cá nhân.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
 
-<!-- Slide 1: Title -->
-<div class="slide slide-blue" style="min-height:200px; display:flex; flex-direction:column; justify-content:center;">
-  <h1 class="main-title">Ôn thi TN THPT<br>Môn Tiếng Anh 2026</h1>
-  <div class="subtitle-bar">
-    <span>Chiến lược tối ưu</span>
-    <span class="tag">Kiến thức trọng tâm</span>
-  </div>
-</div>
+        <section class="slide-container slide slide-white">
+            <h2>Quản lý thời gian phòng thi</h2>
+            <div class="two-pane">
+                <div class="card blue" style="text-align:center;padding:28px 22px;">
+                    <div class="big-num">60</div>
+                    <div class="label">phút thực chiến</div>
+                    <p style="margin-top:18px;font-size:18px;">Trung bình hơn 1 phút/câu, nhưng phần đọc hiểu cần nhiều thời gian hơn.</p>
+                </div>
+                <div class="card">
+                    <h3>Gợi ý phân bổ thời gian</h3>
+                    <ul class="checklist">
+                        <li><strong>12 - 15 phút:</strong> ngữ âm, trọng âm, từ vựng và ngữ pháp câu ngắn.</li>
+                        <li><strong>10 - 12 phút:</strong> cloze test, word form, chức năng giao tiếp.</li>
+                        <li><strong>28 - 30 phút:</strong> các bài đọc hiểu dài, ưu tiên câu main idea và detail trước.</li>
+                        <li><strong>3 - 5 phút cuối:</strong> rà đáp án, kiểm câu bỏ trống và tránh sửa theo cảm tính.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="memory-line"><b>Ghi nhớ nhanh</b><span>Điểm số ổn định thường đến từ việc kiểm soát thời gian tốt hơn, chứ không phải cố ăn bằng được một câu quá khó.</span></div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
 
-<hr class="divider">
+        <section class="slide-container slide slide-light">
+            <h2>Cách đọc yêu cầu đề để tránh mất điểm</h2>
+            <div class="grid-3">
+                <div class="card red"><h3>Từ khóa yêu cầu</h3><p>Luôn gạch chân closest, opposite, not true, mainly about, inferred, refers to trước khi nhìn đáp án.</p><div class="example">“Opposite in meaning” không phải “closest in meaning”.</div></div>
+                <div class="card gold"><h3>Đơn vị thông tin</h3><p>Không đọc đáp án rời rạc. Hãy quay lại câu chứa chứng cứ và 1 - 2 câu xung quanh để kiểm tra ngữ cảnh.</p><div class="example">Một đại từ như this/it/they thường cần câu trước để hiểu đúng.</div></div>
+                <div class="card"><h3>Mức độ câu hỏi</h3><p>Câu nhận biết làm nhanh; câu suy luận phải có căn cứ. Đáp án quá rộng hoặc quá cực đoan thường là nhiễu.</p><div class="example">Chọn đáp án “đủ đúng”, không chọn đáp án “nghe hay”.</div></div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
 
-<!-- Slide 2: Time Management -->
-<div class="slide slide-white">
-  <div class="section-title">Quản lý thời gian phòng thi</div>
-  <div class="two-col" style="align-items:center;">
-    <div class="blue-box" style="max-width:280px;">
-      <div class="big-num">60</div>
-      <div class="box-label">Phút thực hành</div>
+        <section class="slide-container slide slide-white">
+            <h2>Ngữ âm: Phát âm và âm cuối</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Âm đuôi -s / -es</h3>
+                    <ul>
+                        <li><strong>/s/</strong>: sau âm vô thanh như /p/, /t/, /k/, /f/.</li>
+                        <li><strong>/iz/</strong>: sau /s/, /z/, /sh/, /ch/, /x/, /ge/.</li>
+                        <li><strong>/z/</strong>: các trường hợp còn lại.</li>
+                    </ul>
+                    <div class="example">books /s/ • watches /iz/ • plays /z/</div>
+                </div>
+                <div class="card">
+                    <h3>Âm đuôi -ed</h3>
+                    <ul>
+                        <li><strong>/t/</strong>: sau âm vô thanh như /p/, /k/, /f/, /s/.</li>
+                        <li><strong>/id/</strong>: sau /t/ hoặc /d/.</li>
+                        <li><strong>/d/</strong>: các trường hợp còn lại.</li>
+                    </ul>
+                    <div class="example">looked /t/ • wanted /id/ • cleaned /d/</div>
+                </div>
+            </div>
+            <p style="margin-top:22px;">Cách luyện nhanh: chia theo nhóm quy tắc, ghi 3 ví dụ quen thuộc và làm câu nhận diện trong giới hạn 30 giây.</p>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Trọng âm: Nhận diện bằng hậu tố</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Nhấn trước hậu tố</h3><p>Các hậu tố như <strong>-tion, -sion, -ic, -ity, -ical</strong> thường kéo trọng âm về âm tiết phía trước.</p><div class="example">education • economic • ability</div></div>
+                <div class="card"><h3>Ít đổi trọng âm</h3><p>Các hậu tố <strong>-ful, -less, -ness, -ly, -er, -or</strong> thường không làm đổi trọng âm gốc.</p><div class="example">careful • happiness • quickly</div></div>
+                <div class="card"><h3>Từ hai âm tiết</h3><p>Nhiều danh từ và tính từ nhấn âm đầu, còn nhiều động từ nhấn âm hai. Cần học thêm ngoại lệ thường gặp.</p><div class="example">record (n) • record (v)</div></div>
+            </div>
+            <div class="callout">Mẹo học: gom từ theo “gia đình từ” để nhớ cả trọng âm lẫn word form: <strong>photograph → photography → photographic</strong>.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Thì động từ: Dấu hiệu và chức năng</h2>
+            <table class="table">
+                <tr><th>Nhóm thì</th><th>Khi nào dùng?</th><th>Bẫy thường gặp</th></tr>
+                <tr><td>Hiện tại đơn / tiếp diễn</td><td>Thói quen, sự thật, lịch trình; hành động đang diễn ra hoặc xu hướng hiện tại.</td><td>Nhầm trạng từ tần suất với dấu hiệu tiếp diễn; quên -s/es ở ngôi thứ ba.</td></tr>
+                <tr><td>Quá khứ đơn / hoàn thành</td><td>Sự kiện đã xong; hành động xảy ra trước một mốc quá khứ khác.</td><td>Bỏ qua before, after, by the time, already, just.</td></tr>
+                <tr><td>Tương lai / tương lai hoàn thành</td><td>Dự đoán, kế hoạch, lời hứa; hành động hoàn tất trước một mốc tương lai.</td><td>Sau when, before, after, as soon as không dùng will.</td></tr>
+            </table>
+            <p style="margin-top:18px;">Nguyên tắc an toàn: xác định mốc thời gian → quan hệ trước/sau → chủ ngữ → dạng động từ.</p>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Sự hòa hợp chủ ngữ - động từ</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Chủ ngữ thật</h3><p>Bỏ qua cụm chen giữa bằng dấu phẩy hoặc cụm giới từ để tìm chủ ngữ chính.</p><div class="example">The list of items <strong>is</strong> on the desk.</div></div>
+                <div class="card"><h3>Đại từ bất định</h3><p>Each, every, everyone, someone, nobody thường đi với động từ số ít.</p><div class="example">Everyone <strong>has</strong> a different strategy.</div></div>
+                <div class="card"><h3>Either / Neither</h3><p>Either/Neither of + plural noun vẫn thường chia số ít trong ngữ pháp chuẩn của đề.</p><div class="example">Neither of the answers <strong>is</strong> correct.</div></div>
+            </div>
+            <div class="callout">Bẫy rất hay gặp: <strong>along with, together with, as well as</strong> không làm chủ ngữ thành số nhiều.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Bị động và câu tường thuật</h2>
+            <div class="grid-2">
+                <div class="card red">
+                    <h3>Câu bị động</h3>
+                    <ul>
+                        <li>Công thức lõi: <strong>be + V3/V-ed</strong>.</li>
+                        <li>Giữ đúng thì của động từ chính khi chuyển đổi.</li>
+                        <li>Chú ý dạng với modal verbs: can be done, must be finished.</li>
+                        <li>Dạng đặc biệt: It is said that... / S + is said to...</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Câu tường thuật</h3>
+                    <ul>
+                        <li>Lùi thì khi động từ tường thuật ở quá khứ: present → past, will → would.</li>
+                        <li>Đổi đại từ, trạng từ chỉ thời gian và nơi chốn theo ngữ cảnh.</li>
+                        <li>Câu hỏi gián tiếp dùng trật tự khẳng định, không đảo trợ động từ.</li>
+                        <li>Mệnh lệnh: tell/ask + O + to V.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Câu điều kiện, Wish và If only</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Loại 1</h3><p>Diễn tả khả năng có thật ở hiện tại hoặc tương lai.</p><div class="example">If it rains, we will stay home.</div></div>
+                <div class="card"><h3>Loại 2</h3><p>Giả định trái hiện tại hoặc khó xảy ra.</p><div class="example">If I were you, I would revise daily.</div></div>
+                <div class="card"><h3>Loại 3</h3><p>Giả định trái quá khứ, thường dùng để tiếc nuối.</p><div class="example">If she had known, she would have helped.</div></div>
+            </div>
+            <div class="card" style="margin-top:22px;"><h3>Wish / If only</h3><p><strong>wish + past simple</strong> cho hiện tại; <strong>wish + past perfect</strong> cho quá khứ; <strong>wish + would V</strong> cho mong muốn thay đổi hành vi hoặc tình huống.</p></div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Mệnh đề quan hệ và rút gọn</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Chọn đại từ quan hệ</h3>
+                    <ul>
+                        <li><strong>who</strong>: người làm chủ ngữ.</li>
+                        <li><strong>whom</strong>: người làm tân ngữ.</li>
+                        <li><strong>which</strong>: vật hoặc sự việc.</li>
+                        <li><strong>whose</strong>: sở hữu.</li>
+                        <li><strong>where/when/why</strong>: nơi chốn, thời gian, lý do.</li>
+                    </ul>
+                </div>
+                <div class="card gold">
+                    <h3>Rút gọn mệnh đề</h3>
+                    <ul>
+                        <li>Chủ động: dùng <strong>V-ing</strong>.</li>
+                        <li>Bị động: dùng <strong>V3/V-ed</strong>.</li>
+                        <li>Sau số thứ tự, so sánh nhất, only: dùng <strong>to V</strong>.</li>
+                        <li>Không rút gọn nếu làm mơ hồ chủ thể hành động.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="example">The students <strong>who are preparing</strong> for the exam → The students <strong>preparing</strong> for the exam.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Liên từ, giới từ và mệnh đề trạng ngữ</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Tương phản</h3><p><strong>Although/Though/Even though + clause</strong>; <strong>Despite/In spite of + noun/V-ing</strong>.</p><div class="example">Despite the rain, they continued.</div></div>
+                <div class="card red"><h3>Nguyên nhân - kết quả</h3><p><strong>Because/Since/As + clause</strong>; <strong>Because of/Due to + noun/V-ing</strong>; <strong>so/such...that</strong>.</p><div class="example">She was so tired that she slept early.</div></div>
+                <div class="card"><h3>Mục đích</h3><p><strong>to V / in order to V / so as to V</strong>; <strong>so that + S + can/could</strong>.</p><div class="example">He studied hard so that he could pass.</div></div>
+            </div>
+            <div class="memory-line"><b>Ghi nhớ nhanh</b><span>Sau giới từ chỉ dùng danh từ, cụm danh từ hoặc V-ing; đây là bẫy rất hay gặp trong câu ngữ pháp.</span></div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Word form: Biến đổi loại từ</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Cách xác định loại từ cần điền</h3>
+                    <ul>
+                        <li>Sau mạo từ và tính từ sở hữu thường là danh từ.</li>
+                        <li>Sau to be và linking verbs thường là tính từ hoặc danh từ.</li>
+                        <li>Trước danh từ thường cần tính từ.</li>
+                        <li>Sau trạng từ chỉ mức độ thường là tính từ hoặc trạng từ.</li>
+                    </ul>
+                </div>
+                <div class="card red">
+                    <h3>Nhóm hậu tố cần nhớ</h3>
+                    <p><span class="pill">Noun: -tion, -ment, -ness</span><span class="pill">Adj: -ive, -al, -ous</span><span class="pill">Adv: -ly</span><span class="pill">Verb: -ize, -en, -ify</span></p>
+                    <div class="example">success → successful → successfully • decide → decision → decisive</div>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Mạo từ, lượng từ và từ hạn định</h2>
+            <div class="grid-3">
+                <div class="card"><h3>A / An / The</h3><p><strong>a/an</strong> dùng khi nhắc lần đầu hoặc một đối tượng bất kỳ; <strong>the</strong> dùng khi đã xác định.</p><div class="example">a university • an hour • the sun</div></div>
+                <div class="card gold"><h3>Few / A few / Little / A little</h3><p><strong>Few/little</strong> gần như không đủ; <strong>a few/a little</strong> là có một ít, đủ dùng.</p><div class="example">few friends ≠ a few friends</div></div>
+                <div class="card"><h3>Much / Many</h3><p><strong>many</strong> cho danh từ đếm được số nhiều; <strong>much</strong> cho danh từ không đếm được.</p><div class="example">many solutions • much information</div></div>
+            </div>
+            <div class="callout">Muốn tránh sai dạng này, hãy xác định thật rõ danh từ phía sau là <strong>đếm được</strong> hay <strong>không đếm được</strong>.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>So sánh, đảo ngữ và nhấn mạnh</h2>
+            <div class="grid-3">
+                <div class="card"><h3>So sánh</h3><ul><li>Tính từ ngắn: adj-er than.</li><li>Tính từ dài: more + adj + than.</li><li>Double comparative: the more..., the more...</li></ul></div>
+                <div class="card red"><h3>Đảo ngữ</h3><ul><li>Never/Rarely/Seldom + auxiliary + S + V.</li><li>Only when/after/by + inversion.</li><li>Not until + time + inversion.</li></ul></div>
+                <div class="card"><h3>Nhấn mạnh</h3><ul><li>It is/was...that...</li><li>Do/does/did + V để nhấn mạnh.</li><li>So/Neither + auxiliary + S.</li></ul></div>
+            </div>
+            <div class="example">Not until she reviewed her mistakes <strong>did she improve</strong> her score.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Các lỗi sai ngữ pháp điển hình</h2>
+            <div class="grid-2">
+                <div class="card red">
+                    <h3>Những lỗi hay gặp</h3>
+                    <ul>
+                        <li>Chia động từ theo danh từ gần nhất thay vì chủ ngữ thật.</li>
+                        <li>Dùng sai giới từ sau tính từ hoặc động từ.</li>
+                        <li>Nhầm V-ing và to V sau động từ đặc biệt.</li>
+                        <li>Chọn liên từ không khớp quan hệ nghĩa.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Quy trình sửa lỗi</h3>
+                    <ol class="numbered">
+                        <li>Xác định loại lỗi: từ loại, thì, cấu trúc hay nghĩa.</li>
+                        <li>Khoanh vùng cụm chứa lỗi, không chữa lan man.</li>
+                        <li>Thay đáp án vào câu và đọc lại toàn bộ câu.</li>
+                        <li>Ghi lỗi vào sổ theo chủ điểm để ôn lại.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Chiến lược mở rộng từ vựng</h2>
+            <div class="grid-2">
+                <div class="card gold">
+                    <h3>Học theo cụm</h3>
+                    <p>Từ vựng trong đề thường kiểm tra khả năng chọn từ đúng ngữ cảnh. Vì vậy, nên ghi cả cụm và câu ví dụ đi kèm.</p>
+                    <ul>
+                        <li>make progress, take responsibility, raise awareness</li>
+                        <li>environmental protection, technological advancement</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Ôn theo chu kỳ lặp</h3>
+                    <p>Mỗi ngày 20 - 30 từ hoặc cụm là đủ nếu có ôn lại sau 1 ngày, 3 ngày, 7 ngày và 14 ngày.</p>
+                    <ul>
+                        <li>Flashcard: mặt trước là câu có chỗ trống.</li>
+                        <li>Mặt sau là đáp án, nghĩa và collocation liên quan.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Collocations &amp; Idioms</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Collocations cần ưu tiên</h3><p>Ưu tiên học theo nhóm verb + noun, adjective + noun, noun + preposition và adverb + adjective.</p><div class="example">do research • heavy traffic • access to • highly effective</div></div>
+                <div class="card"><h3>Idioms trong ngữ cảnh</h3><p>Không học nghĩa từng chữ. Hãy nhớ nghĩa chung, sắc thái và một ví dụ thực tế.</p><div class="example">break the ice = làm giảm căng thẳng ban đầu</div></div>
+                <div class="card"><h3>Cách đoán khi chưa biết</h3><p>Dựa vào sắc thái tích cực hoặc tiêu cực, chủ đề và loại từ phù hợp với chỗ trống.</p><div class="example">Đáp án đúng phải vừa hợp nghĩa vừa đúng cấu trúc.</div></div>
+            </div>
+            <div class="callout">Mỗi tuần nên chia theo 3 chủ đề chính: <strong>Education - Environment - Technology</strong>; mỗi chủ đề ghi 15 - 20 cụm có ví dụ.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Phrasal verbs: Học theo nhóm nghĩa</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Nhóm động từ gốc thường gặp</h3>
+                    <ul>
+                        <li><strong>look</strong>: look up, look after, look forward to, look into</li>
+                        <li><strong>take</strong>: take off, take up, take after, take over</li>
+                        <li><strong>put</strong>: put off, put up with, put out, put on</li>
+                        <li><strong>turn</strong>: turn down, turn up, turn into, turn out</li>
+                    </ul>
+                </div>
+                <div class="card red">
+                    <h3>Cách phân biệt đáp án</h3>
+                    <ul>
+                        <li>Xem tân ngữ đứng trước hay sau tiểu từ.</li>
+                        <li>Kiểm tra nghĩa của câu trước và sau.</li>
+                        <li>Loại đáp án nghĩa gần đúng nhưng sai cấu trúc.</li>
+                        <li>Học luôn giới từ đi sau: look forward to + V-ing.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="example">She decided to <strong>take up</strong> English seriously before the exam. = bắt đầu học hoặc làm một hoạt động.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Đồng nghĩa - trái nghĩa trong ngữ cảnh</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Không dịch máy móc</h3><p>Một từ có nhiều nghĩa. Nghĩa đúng là nghĩa khớp với câu đang xét, không phải nghĩa em nhớ đầu tiên.</p><div class="example">issue = vấn đề / phát hành / số báo</div></div>
+                <div class="card"><h3>Nhìn sắc thái</h3><p>Đáp án gần nghĩa phải cùng sắc thái trang trọng, tích cực hoặc tiêu cực và cùng mức độ mạnh yếu.</p><div class="example">concerned ≈ worried, không phải angry</div></div>
+                <div class="card"><h3>Đọc kỹ yêu cầu</h3><p>Với câu hỏi trái nghĩa, nên tự nghĩ từ trái trước rồi mới nhìn đáp án để tránh bị nhiễu.</p><div class="example">expand ↔ shrink / reduce</div></div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Chức năng giao tiếp và phản hồi tự nhiên</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Các tình huống hay gặp</h3>
+                    <ul>
+                        <li>Lời mời: accept hoặc refuse politely.</li>
+                        <li>Lời xin lỗi: accept apology hoặc express regret.</li>
+                        <li>Lời khen: cảm ơn, không phủ định quá mạnh.</li>
+                        <li>Đề nghị hoặc nhờ giúp: agree, offer help, request clarification.</li>
+                    </ul>
+                </div>
+                <div class="card gold">
+                    <h3>Nguyên tắc chọn đáp án</h3>
+                    <ul>
+                        <li>Phản hồi phải lịch sự và đúng vai giao tiếp.</li>
+                        <li>Không chọn câu quá cộc, quá cảm xúc hoặc lạc chủ đề.</li>
+                        <li>Kiểm tra xem câu trả lời có giải quyết lời nói trước đó không.</li>
+                        <li>Ưu tiên ngữ điệu tự nhiên trong tiếng Anh.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="example">“Would you mind opening the window?” → “Not at all.” / “No, of course not.”</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Dạng tìm lỗi sai: Checklist 5 bước</h2>
+            <div class="grid-2">
+                <div class="card red">
+                    <h3>5 điểm cần quét nhanh</h3>
+                    <ol class="numbered">
+                        <li>Động từ: thì, dạng, hòa hợp chủ - vị.</li>
+                        <li>Danh từ: số ít/số nhiều, mạo từ, lượng từ.</li>
+                        <li>Đại từ: tham chiếu đúng người hoặc vật chưa?</li>
+                        <li>Liên từ/giới từ: quan hệ nghĩa có hợp lý không?</li>
+                        <li>Từ loại: danh từ, tính từ, trạng từ, động từ.</li>
+                    </ol>
+                </div>
+                <div class="card">
+                    <h3>Chiến thuật làm bài</h3>
+                    <p>Không đọc từng đáp án tách rời. Hãy đọc cả câu, xác định cấu trúc chính, rồi kiểm tra từng phần được gạch chân.</p>
+                    <div class="example">The number of students <strong>is</strong> increasing, not “are increasing”.</div>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Biến đổi câu và nối câu</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Giữ nguyên nghĩa</h3><p>Chuyển đổi phải bảo toàn thời gian, chủ thể, mức độ và sắc thái câu gốc.</p><div class="example">Although ↔ Despite; because ↔ because of</div></div>
+                <div class="card"><h3>Cấu trúc tương đương</h3><p>Nắm các cặp too...to, enough...to, so...that, such...that, prefer...to, would rather.</p><div class="example">He is too young to drive.</div></div>
+                <div class="card"><h3>Nối câu logic</h3><p>Chọn liên từ dựa vào quan hệ: nguyên nhân, kết quả, tương phản, điều kiện hoặc mục đích.</p><div class="example">She studied hard; therefore, she improved.</div></div>
+            </div>
+            <div class="callout">Câu biến đổi chỉ được xem là đúng khi <strong>đúng công thức</strong>, <strong>đúng nghĩa gốc</strong> và vẫn tự nhiên trong tiếng Anh.</div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Đọc điền: Cloze test</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>4 loại chỗ trống</h3>
+                    <ul>
+                        <li><strong>Ngữ pháp:</strong> liên từ, giới từ, đại từ, mạo từ.</li>
+                        <li><strong>Từ vựng:</strong> nghĩa và sắc thái trong ngữ cảnh.</li>
+                        <li><strong>Word form:</strong> danh từ, động từ, tính từ, trạng từ.</li>
+                        <li><strong>Liên kết văn bản:</strong> however, therefore, moreover, in contrast.</li>
+                    </ul>
+                </div>
+                <div class="card gold">
+                    <h3>Quy trình 3 lượt đọc</h3>
+                    <ol class="numbered">
+                        <li>Đọc tiêu đề hoặc câu đầu để nắm chủ đề.</li>
+                        <li>Làm từng chỗ trống nhưng luôn nhìn câu trước và sau.</li>
+                        <li>Đọc lại toàn đoạn để kiểm tra mạch nghĩa và độ trôi chảy.</li>
+                    </ol>
+                    <div class="example">Đáp án đúng phải giúp đoạn văn trôi chảy về cả ngữ pháp lẫn ý nghĩa.</div>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Đọc hiểu: Main idea và Detail</h2>
+            <div class="grid-2">
+                <div class="card blue"><h3>Main idea</h3><p>Đọc câu mở đầu, câu kết, từ khóa lặp lại và thái độ chung của tác giả. Đáp án đúng thường bao quát toàn bài.</p></div>
+                <div class="card"><h3>Detail questions</h3><p>Dùng kỹ thuật scan: tìm từ khóa trong câu hỏi, quay lại đoạn tương ứng, đọc 1 - 2 câu xung quanh và tìm cách diễn đạt lại.</p></div>
+            </div>
+            <div class="card" style="margin-top:24px;"><h3>Phân biệt nhanh</h3><p><strong>Main idea</strong> hỏi bài nói về gì; <strong>detail</strong> hỏi thông tin nào đúng hoặc sai theo bài. Với câu NOT true, kiểm từng đáp án trong bài.</p></div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Đọc hiểu: Inference, Reference, Vocabulary</h2>
+            <div class="grid-3">
+                <div class="card"><h3>Inference</h3><p>Suy luận phải dựa trên bằng chứng trong bài. Không chọn đáp án quá cực đoan hoặc thêm ý ngoài văn bản.</p><div class="example">probably • imply • suggest • infer</div></div>
+                <div class="card"><h3>Reference</h3><p>Với it, they, this, that, these, hãy quay lại danh từ gần trước đó và kiểm tra logic nghĩa.</p><div class="example">They = students? parents? policies?</div></div>
+                <div class="card"><h3>Vocabulary in context</h3><p>Đoán nghĩa bằng từ xung quanh, dấu câu, ví dụ, tương phản và quan hệ nguyên nhân - kết quả.</p><div class="example">however thường báo hiệu sắc thái trái chiều</div></div>
+            </div>
+            <div class="memory-line"><b>Ghi nhớ nhanh</b><span>Nếu em không chỉ ra được câu làm chứng cứ thì đáp án inference hoặc reference vẫn chưa đủ chắc.</span></div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-white">
+            <h2>Lộ trình ôn tập 2025 - 2026</h2>
+            <div class="timeline">
+                <div class="phase-grid">
+                    <div class="phase top"><div class="card"><h3 style="color:#1a3bbf;">GĐ 1: Khởi động</h3><p><strong>T7 - T10</strong></p><p>Lấy lại nền tảng: thì, từ loại, mệnh đề, phát âm; làm bài ngắn theo chuyên đề.</p></div><span class="dot" style="left:11%;"></span></div>
+                    <div class="phase bottom"><span class="dot red" style="left:36%;"></span><div class="card"><h3 style="color:#d62c2c;">GĐ 2: Tăng tốc</h3><p><strong>T11 - T2</strong></p><p>Mở rộng từ vựng, cloze test, đọc hiểu; bắt đầu tính giờ khi làm bài.</p></div></div>
+                    <div class="phase top"><div class="card"><h3 style="color:#1a3bbf;">GĐ 3: Bứt phá</h3><p><strong>T3 - T5</strong></p><p>Tổng ôn chuyên đề, luyện đề chuẩn cấu trúc, phân tích lỗi sai và tăng tốc độ.</p></div><span class="dot" style="left:61%;"></span></div>
+                    <div class="phase bottom"><span class="dot red" style="left:86%;"></span><div class="card"><h3 style="color:#d62c2c;">GĐ 4: Về đích</h3><p><strong>Tháng 6</strong></p><p>Thi thử theo giờ thật, ổn định tâm lý, rà sổ lỗi và chiến thuật tô đáp án.</p></div></div>
+                </div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <section class="slide-container slide slide-light">
+            <h2>Checklist trước ngày thi</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>7 ngày cuối</h3>
+                    <ul class="checklist">
+                        <li>Không học lan man thêm tài liệu mới quá khó.</li>
+                        <li>Ôn lại sổ lỗi sai: thì, từ loại, đọc hiểu, collocation.</li>
+                        <li>Làm 2 - 3 đề hoàn chỉnh theo giờ thật, chữa kỹ hơn làm nhiều.</li>
+                        <li>Ngủ đúng giờ và giữ nhịp sinh học gần với ngày thi.</li>
+                    </ul>
+                </div>
+                <div class="card red">
+                    <h3>Trong phòng thi</h3>
+                    <ul class="checklist">
+                        <li>Đọc kỹ hướng dẫn, kiểm tra mã đề và số câu.</li>
+                        <li>Không bỏ trống đáp án; câu khó đánh dấu để quay lại.</li>
+                        <li>Không đổi đáp án cuối giờ nếu không có lý do rõ ràng.</li>
+                        <li>Kiểm tra phiếu trả lời trước khi nộp bài.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="callout">Tâm thế cần giữ: <strong>làm chắc câu dễ, bình tĩnh với câu khó, không để một câu làm hỏng cả bài.</strong></div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
+
+        <!-- Always keep the final section as the closing slide -->
+        <section class="slide-container slide slide-blue ending-slide" data-role="ending-slide">
+            <div class="center">
+                <div class="eyebrow">Kết luận</div>
+                <div style="font-size:58px;font-weight:950;margin-bottom:18px;">Sẵn sàng bứt phá?</div>
+                <p style="max-width:850px;font-size:23px;">Điểm số cao đến từ hệ thống kiến thức rõ ràng, thói quen luyện đề đều đặn và khả năng tự sửa lỗi. Hãy biến mỗi đề luyện thành một lần nâng cấp chiến thuật.</p>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px;width:1020px;">
+                    <div class="card"><h3>Nắm chắc nền tảng</h3><p>Ngữ pháp và từ vựng lõi.</p></div>
+                    <div class="card"><h3>Luyện đúng dạng</h3><p>Đọc hiểu, đọc điền và logic câu.</p></div>
+                    <div class="card"><h3>Thi đúng chiến thuật</h3><p>Quản lý thời gian và giữ tâm lý ổn định.</p></div>
+                </div>
+                <div class="ending-pill">✉ onthi2026@thptqg.vn</div>
+            </div>
+            <div class="footer"><span>Ôn thi TN THPT 2026 • Tiếng Anh lớp 12</span><span class="page-number"></span></div>
+        </section>
     </div>
-    <div>
-      <div class="time-strat-label">Chiến thuật 50 câu / 60 phút:</div>
-      <div class="time-rows">
-        <div class="time-item">
-          <span class="t-label red">⏱ 15 phút đầu:</span>
-          <span class="t-desc">Ngữ âm, Trọng âm, Ngữ pháp.</span>
-        </div>
-        <div class="time-item">
-          <span class="t-label gold">⏱ 10 phút tiếp:</span>
-          <span class="t-desc">Cloze test và Từ vựng.</span>
-        </div>
-        <div class="time-item">
-          <span class="t-label blue">⏱ 30 phút:</span>
-          <span class="t-desc">Tập trung giải quyết 2 bài Đọc hiểu.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<hr class="divider">
+    <script>
+        (function () {
+            const slides = Array.from(document.querySelectorAll('.slide'));
+            const total = String(slides.length).padStart(2, '0');
 
-<!-- Slide 3: Grammar -->
-<div class="slide slide-light">
-  <div class="section-title">3 Trụ cột ngữ pháp cốt lõi</div>
-  <div class="grammar-cards">
-    <div class="g-card">
-      <div class="g-icon">↺</div>
-      <h3>Thì & Sự hòa hợp</h3>
-      <p>Nắm vững cách sử dụng 12 thì cơ bản, sự phối hợp thì trong câu phức và nguyên tắc hòa hợp giữa Chủ ngữ - Động từ (Subject-Verb Agreement).</p>
-    </div>
-    <div class="g-card">
-      <div class="g-icon">⑂</div>
-      <h3>Câu điều kiện</h3>
-      <p>Thành thạo câu điều kiện loại 1, 2, 3, hỗn hợp. Kỹ năng rút gọn mệnh đề quan hệ và mệnh đề trạng ngữ chỉ thời gian, nguyên nhân.</p>
-    </div>
-    <div class="g-card">
-      <div class="g-icon">⇄</div>
-      <h3>Bị động & Gián tiếp</h3>
-      <p>Chuyển đổi linh hoạt câu chủ động sang bị động (bao gồm bị động đặc biệt). Quy tắc lùi thì và đổi ngôi trong câu tường thuật.</p>
-    </div>
-  </div>
-</div>
+            slides.forEach((slide, index) => {
+                const page = String(index + 1).padStart(2, '0');
+                const pageEl = slide.querySelector('.page-number');
+                if (pageEl) pageEl.textContent = page + '/' + total;
+            });
 
-<hr class="divider">
-
-<!-- Slide 4: Common Errors -->
-<div class="slide slide-white">
-  <div class="section-title">Các lỗi sai điển hình</div>
-  <div class="error-list">
-    <div class="error-item">
-      <h3>Mắc bẫy câu hỏi đồng nghĩa / trái nghĩa</h3>
-      <p>Đề bài yêu cầu tìm "OPPOSITE" nhưng khoanh "CLOSEST". Luôn gạch chân yêu cầu đề.</p>
-    </div>
-    <div class="error-item">
-      <h3>Bỏ qua sự hòa hợp chủ - vị (S-V Agreement)</h3>
-      <p>Chủ ngữ chứa "Along with" hoặc đại từ bất định khiến học sinh chia sai động từ.</p>
-    </div>
-    <div class="error-item">
-      <h3>Mất quá nhiều thời gian cho một câu khó</h3>
-      <p>Dành quá 3 phút cho một câu Idioms lạ sẽ làm mất cơ hội kiếm điểm phần sau.</p>
-    </div>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- Slide 5: Vocabulary -->
-<div class="slide slide-light">
-  <div class="section-title">Chiến lược mở rộng từ vựng</div>
-  <div class="vocab-cards">
-    <div class="v-card">
-      <h3>Collocations & Idioms</h3>
-      <p>Đây là phần phân loại học sinh khá giỏi. Việc học từ vựng đơn lẻ không còn hiệu quả.</p>
-      <ul>
-        <li>Học từ theo cụm cố định.</li>
-        <li>Thu thập thành ngữ từ để minh họa.</li>
-        <li>Áp dụng vào ngữ cảnh thực tế.</li>
-      </ul>
-    </div>
-    <div class="v-card">
-      <h3>Phrasal Verbs</h3>
-      <p>Thường xuất hiện trong phần tìm từ đồng nghĩa và điền từ, rất dễ nhầm lẫn.</p>
-      <ul>
-        <li>Phân nhóm theo động từ gốc (look, take).</li>
-        <li>Phân nhóm theo giới từ (up, out, off).</li>
-        <li>Sử dụng flashcard để ghi nhớ.</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- Slide 6: Timeline -->
-<div class="slide slide-white">
-  <div class="section-title">Lộ trình ôn tập 2025 - 2026</div>
-  <div style="position:relative; padding: 20px 0 10px;">
-    <!-- Connecting line -->
-    <div style="position:absolute; top:50%; left:8%; width:84%; height:2px; background:#bbb; z-index:0; transform:translateY(-50%);"></div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; position:relative; z-index:1;">
-      <!-- GD1 bottom -->
-      <div style="display:flex; flex-direction:column; align-items:center; padding-top:100px;">
-        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #1a3bbf;background:#fff;margin-bottom:10px;"></div>
-        <div class="tl-card" style="width:100%;">
-          <strong>GĐ 1: Khởi động</strong>
-          <span>T7 - T10/2025</span>
-          <p>Lấy lại gốc, tập trung Ngữ pháp nền tảng và phát âm.</p>
-        </div>
-      </div>
-      <!-- GD2 top -->
-      <div style="display:flex; flex-direction:column; align-items:center;">
-        <div class="tl-card" style="width:100%; margin-bottom:10px;">
-          <strong style="color:#d62c2c;">GĐ 2: Tăng tốc</strong>
-          <span>T11 - T2/2026</span>
-          <p>Xây dựng Từ vựng, làm quen kỹ năng Đọc hiểu.</p>
-        </div>
-        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #d62c2c;background:#fff;margin-top:0;"></div>
-      </div>
-      <!-- GD3 bottom -->
-      <div style="display:flex; flex-direction:column; align-items:center; padding-top:100px;">
-        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #1a3bbf;background:#fff;margin-bottom:10px;"></div>
-        <div class="tl-card" style="width:100%;">
-          <strong>GĐ 3: Bứt phá</strong>
-          <span>T3 - T5/2026</span>
-          <p>Tổng ôn kiến thức. Luyện giải đề thi theo chuyên đề.</p>
-        </div>
-      </div>
-      <!-- GD4 top -->
-      <div style="display:flex; flex-direction:column; align-items:center;">
-        <div class="tl-card" style="width:100%; margin-bottom:10px;">
-          <strong style="color:#d62c2c;">GĐ 4: Về đích</strong>
-          <span>Tháng 6/2026</span>
-          <p>Thực chiến đề thi thử, rèn luyện tâm lý phòng thi.</p>
-        </div>
-        <div style="width:16px;height:16px;border-radius:50%;border:3px solid #d62c2c;background:#fff;margin-top:0;"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<hr class="divider">
-
-<!-- Slide 7: CTA -->
-<div class="slide slide-blue" style="min-height:200px; display:flex; flex-direction:column; justify-content:center;">
-  <div class="cta-center">
-    <div class="cta-title">Sẵn sàng bứt phá?</div>
-    <div class="cta-sub">Chúc các sĩ tử 2K8 ôn tập hiệu quả và chinh phục thành công kỳ thi!</div>
-    <div class="cta-email">✉ onthi2026@thptqg.vn</div>
-  </div>
-</div>
+            const lastSlide = slides[slides.length - 1];
+            if (lastSlide) {
+                lastSlide.classList.add('ending-slide');
+                lastSlide.setAttribute('data-role', 'ending-slide');
+            }
+        })();
+    </script>
+</body>
+</html>
