@@ -120,6 +120,103 @@ function decorateComicCoverPrototype(root, doc) {
 }
 
 /**
+ * @param {Element} el
+ * @returns {boolean}
+ */
+function isDecorativeShellNode(el) {
+  const cls =
+    typeof el.className === "string"
+      ? el.className
+      : Array.isArray(el.classList)
+        ? el.classList.join(" ")
+        : String(el.getAttribute?.("class") || "");
+  if (/(badge|decor|sticker|spark|shape|burst|bubble|ribbon|tag|halo|glow|star|pow|bam|wham|zap|boom|swoosh|flash|snap|crack)/i.test(cls)) {
+    return true;
+  }
+  if (el.tagName === "I" && /\bfa[srldb]?\b|\bfa-/.test(cls)) return true;
+  return false;
+}
+
+/**
+ * @param {Element} root
+ * @returns {Element}
+ */
+function resolveShellContentSink(root) {
+  return (
+    root.querySelector(
+      ".content-area, .bullet-list, .text-column, .text-content, .content-panel, .panel-content, .section-center, .title-group, .title-content, .content-card, .comic-panel, .card",
+    ) || root
+  );
+}
+
+/**
+ * @param {Element} sink
+ * @param {Element | null} title
+ * @returns {Element[]}
+ */
+function collectShellTextTargets(sink, title) {
+  const selector = [
+    "li",
+    "p",
+    "td",
+    "th",
+    "blockquote",
+    "cite",
+    "h3",
+    "h4",
+    ".t-desc",
+    ".label",
+    ".box-label",
+    ".subtitle",
+    ".text-column p",
+    ".timeline-content p",
+    ".timeline-content h4",
+    ".tile h3",
+    ".tile p",
+    ".mini-panel h3",
+    ".mini-panel p",
+    ".g-card h3",
+    ".g-card p",
+    ".error-item h3",
+    ".error-item p",
+    ".v-card h3",
+    ".v-card p",
+    ".tl-card strong",
+    ".tl-card p",
+    ".time-item .t-desc",
+  ].join(", ");
+  return Array.from(sink.querySelectorAll(selector)).filter((el) => {
+    if (!(el instanceof Element)) return false;
+    if (title && (el === title || el.contains(title))) return false;
+    if (isDecorativeShellNode(el)) return false;
+    if (el.querySelector(selector)) return false;
+    return true;
+  });
+}
+
+/**
+ * @param {Document} doc
+ * @param {Element} sink
+ * @returns {HTMLUListElement}
+ */
+function ensureFallbackShellList(doc, sink) {
+  let body = sink.querySelector('[data-shell="body"]');
+  if (!(body instanceof HTMLElement)) {
+    body = doc.createElement("div");
+    body.className = "shell-dynamic-body";
+    body.setAttribute("data-shell", "body");
+    sink.appendChild(body);
+  }
+  let list = body.querySelector('ul[data-shell="bullets"]');
+  if (!(list instanceof HTMLUListElement)) {
+    list = doc.createElement("ul");
+    list.setAttribute("data-shell", "bullets");
+    body.appendChild(list);
+  }
+  return list;
+}
+
+/**
  * Mark title + bullets placeholders on a cloned slide for data fill.
  * @param {Element} root
  * @param {Document} doc
@@ -151,19 +248,27 @@ function decorateSlidePrototype(root, doc) {
   }
   if (ul) {
     ul.setAttribute("data-shell", "bullets");
+    const originalItems = Array.from(ul.querySelectorAll(":scope > li")).map((li) => li.textContent || "");
+    if (originalItems.length) {
+      ul.setAttribute("data-shell-original-items", JSON.stringify(originalItems));
+    }
     ul.replaceChildren();
-  } else {
-    /* Ưu tiên vùng nội dung trong card/template gốc — tránh gắn <ul> trực tiếp lên .slide-container (lệch layout, đè sticker). */
-    const sink =
-      root.querySelector(".content-area") ||
-      root.querySelector(".comic-panel") ||
-      root.querySelector(".title-content") ||
-      root.querySelector(".card") ||
-      root;
-    const nu = doc.createElement("ul");
-    nu.setAttribute("data-shell", "bullets");
-    sink.appendChild(nu);
+    return;
   }
+
+  const sink = resolveShellContentSink(root);
+  const textTargets = collectShellTextTargets(sink, title instanceof Element ? title : null);
+  if (textTargets.length) {
+    textTargets.forEach((node, idx) => {
+      node.setAttribute("data-shell-text-target", String(idx));
+      node.setAttribute("data-shell-original-text", node.textContent || "");
+      node.textContent = "";
+    });
+    return;
+  }
+
+  const list = ensureFallbackShellList(doc, sink);
+  list.replaceChildren();
 }
 
 /**
@@ -205,6 +310,9 @@ function ensureShellFromFullDeck(doc) {
     const t = doc.createElement("template");
     t.id = idx === 0 ? "layout-content" : `layout-content-v${idx}`;
     t.setAttribute("data-shell-layout-variant", String(idx));
+    if (idx === variantRoots.length - 1) {
+      t.setAttribute("data-shell-layout-role", "ending");
+    }
     t.content.appendChild(proto);
     doc.body.appendChild(t);
   });
@@ -234,6 +342,15 @@ function getShellCoverTemplate(doc) {
 }
 
 /**
+ * @param {Document} doc
+ * @returns {HTMLTemplateElement | null}
+ */
+function getShellEndingTemplate(doc) {
+  const ending = doc.querySelector("template[data-shell-layout-role=\"ending\"]");
+  return ending instanceof HTMLTemplateElement ? ending : null;
+}
+
+/**
  * Layout templates: multiple variants from `ensureShellFromFullDeck`, or a single author template.
  * @param {Document} doc
  * @returns {HTMLTemplateElement[]}
@@ -252,178 +369,6 @@ function getShellVariantTemplates(doc) {
     doc.querySelector("template#shell-slide-content") ||
     doc.querySelector("template[data-shell-layout=\"content\"]");
   return single ? [single] : [];
-}
-
-/**
- * @param {Element} root
- * @returns {Element | null}
- */
-function getPrimaryShellPanel(root) {
-  return (
-    root.querySelector(".content-card, .card, .section-card, .comic-panel, .content-panel, .panel, .title-content") ||
-    root.querySelector(".content-area") ||
-    root
-  );
-}
-
-/**
- * Apply a lightweight visual mutation so derived variants are visibly different
- * without depending on a template-specific DOM structure.
- * @param {Element} root
- * @param {number} variantIndex
- */
-function styleDerivedShellVariant(root, variantIndex) {
-  const panel = getPrimaryShellPanel(root);
-  const title = root.querySelector("[data-shell=\"title\"]");
-  const bullets = root.querySelector("ul[data-shell=\"bullets\"]");
-  const recipe = Math.max(0, Number(variantIndex) || 0) % 12;
-
-  root.setAttribute("data-shell-derived-variant", String(variantIndex));
-  root.style.overflow = root.style.overflow || "hidden";
-
-  if (panel && panel !== root) {
-    panel.style.position = panel.style.position || "relative";
-    panel.style.zIndex = panel.style.zIndex || "2";
-  }
-
-  if (title instanceof HTMLElement) {
-    title.style.maxWidth = "100%";
-    title.style.wordBreak = "break-word";
-  }
-
-  if (bullets instanceof HTMLElement) {
-    bullets.style.marginTop = bullets.style.marginTop || "18px";
-    bullets.style.alignSelf = bullets.style.alignSelf || "stretch";
-  }
-
-  switch (recipe) {
-    case 0:
-      if (panel) panel.style.borderTop = "10px solid var(--c-accent, #f59e0b)";
-      if (title instanceof HTMLElement) title.style.textAlign = "center";
-      break;
-    case 1:
-      if (panel) panel.style.borderLeft = "12px solid var(--c-alt, #dc2626)";
-      if (title instanceof HTMLElement) title.style.alignSelf = "center";
-      break;
-    case 2:
-      if (panel) panel.style.borderRight = "12px solid var(--c-main, #2563eb)";
-      if (title instanceof HTMLElement) title.style.textAlign = "right";
-      break;
-    case 3:
-      root.style.padding = "64px 56px 44px";
-      if (panel) panel.style.borderBottom = "10px solid var(--c-accent, #f59e0b)";
-      break;
-    case 4:
-      if (panel) {
-        panel.style.transform = "rotate(-1deg)";
-        panel.style.boxShadow = "18px 18px 0 rgba(0,0,0,0.18)";
-      }
-      if (title instanceof HTMLElement) {
-        title.style.display = "inline-block";
-        title.style.padding = "8px 18px";
-        title.style.background = "rgba(255,255,255,0.18)";
-      }
-      break;
-    case 5:
-      if (panel) {
-        panel.style.border = "4px dashed var(--c-alt, #dc2626)";
-        panel.style.borderRadius = "28px";
-      }
-      break;
-    case 6:
-      if (title instanceof HTMLElement) {
-        title.style.display = "inline-block";
-        title.style.padding = "10px 18px";
-        title.style.background = "var(--c-main, #1d4ed8)";
-        title.style.color = "#fff";
-        title.style.borderRadius = "999px";
-      }
-      break;
-    case 7:
-      if (panel) {
-        panel.style.borderRadius = "36px";
-        panel.style.boxShadow = "0 0 0 6px rgba(255,255,255,0.22), 0 18px 36px rgba(0,0,0,0.18)";
-      }
-      if (title instanceof HTMLElement) title.style.letterSpacing = "2px";
-      break;
-    case 8:
-      root.style.border = "8px solid rgba(255,255,255,0.16)";
-      root.style.boxShadow = "0 22px 42px rgba(0,0,0,0.35)";
-      if (title instanceof HTMLElement) title.style.transform = "translateY(-4px)";
-      break;
-    case 9:
-      if (panel) {
-        panel.style.background = "rgba(255,255,255,0.96)";
-        panel.style.borderTop = "8px solid var(--c-main, #2563eb)";
-        panel.style.borderBottom = "8px solid var(--c-alt, #dc2626)";
-      }
-      if (bullets instanceof HTMLElement) {
-        bullets.style.columns = "2";
-        bullets.style.columnGap = "28px";
-      }
-      break;
-    case 10:
-      root.style.padding = "44px 70px 60px";
-      if (panel) panel.style.borderRadius = "18px 42px 18px 42px";
-      if (title instanceof HTMLElement) title.style.alignSelf = "stretch";
-      break;
-    case 11:
-      if (panel) {
-        panel.style.outline = "4px solid rgba(255,255,255,0.32)";
-        panel.style.outlineOffset = "-10px";
-      }
-      if (title instanceof HTMLElement) {
-        title.style.display = "inline-block";
-        title.style.paddingBottom = "10px";
-        title.style.borderBottom = "6px solid var(--c-accent, #f59e0b)";
-      }
-      break;
-  }
-}
-
-/**
- * @param {Document} doc
- * @param {HTMLTemplateElement} source
- * @param {number} variantIndex
- * @returns {HTMLTemplateElement | null}
- */
-function createDerivedShellVariantTemplate(doc, source, variantIndex) {
-  if (!(source instanceof HTMLTemplateElement)) return null;
-  const frag = source.content.cloneNode(true);
-  const root = frag.firstElementChild;
-  if (!(root instanceof Element)) return null;
-  styleDerivedShellVariant(root, variantIndex);
-  const tpl = doc.createElement("template");
-  tpl.id = `layout-content-auto-${variantIndex}`;
-  tpl.setAttribute("data-shell-layout-variant", String(variantIndex));
-  tpl.content.appendChild(frag);
-  doc.body.appendChild(tpl);
-  return tpl;
-}
-
-/**
- * Guarantee enough unique-looking layout variants for the requested deck length.
- * Missing variants are cloned from authored templates then restyled so the preview
- * does not visibly loop back to the first slides.
- * @param {Document} doc
- * @param {HTMLTemplateElement[]} templates
- * @param {number} minimumCount
- * @returns {HTMLTemplateElement[]}
- */
-function ensureShellVariantTemplateCount(doc, templates, minimumCount) {
-  const need = Math.max(0, Math.floor(Number(minimumCount) || 0));
-  if (!templates.length || need <= templates.length) return templates;
-  const base = templates.slice();
-  const out = templates.slice();
-  let cursor = 0;
-  while (out.length < need) {
-    const source = base[cursor % base.length];
-    const next = createDerivedShellVariantTemplate(doc, source, out.length);
-    if (!next) break;
-    out.push(next);
-    cursor += 1;
-  }
-  return out;
 }
 
 /**
@@ -548,9 +493,9 @@ function injectShellPreviewFit(doc) {
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      overflow: visible;
+      overflow: hidden;
     }
     .shell-slide-instance .shell-panel-fit-host {
       display: flex;
@@ -559,18 +504,34 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance .shell-panel-fit-outer {
       flex-shrink: 0;
       box-sizing: border-box;
-      width: 100% !important;
-      height: auto !important;
-      min-height: 0 !important;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
     .shell-slide-instance .shell-panel-fit-scaled {
       box-sizing: border-box;
-      transform-origin: 0 0;
-      transform: none !important;
-      width: auto !important;
+      transform-origin: top center;
+      width: auto;
+      max-width: none;
+      height: auto;
+      min-height: 0;
+    }
+    .shell-slide-instance [data-shell="body"] {
+      width: 100% !important;
       max-width: 100% !important;
-      height: auto !important;
+      flex: 1 1 auto !important;
       min-height: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      align-items: stretch !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      gap: 12px;
     }
     /* Phần tử đã chỉnh (data-edit-geom): cùng stacking + position như khi bật slide-visual-edit-on */
     .shell-slide-instance [data-edit-geom="1"][data-shell="title"],
@@ -617,6 +578,18 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       overflow-wrap: anywhere;
       word-break: break-word;
+    }
+    .shell-slide-instance ul[data-shell="bullets"] {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      margin-top: 0 !important;
+    }
+    .shell-slide-instance ul[data-shell="bullets"] li {
+      margin-bottom: 10px;
     }
     .shell-slide-instance .outer-title {
       max-width: 100%;
@@ -787,7 +760,23 @@ function injectShellPanelFitScript(doc) {
       outer.style.width = "";
       outer.style.height = "";
     }
-    /* Không scale — CSS !important trong injectShellPreviewFit khớp chế độ Sửa (transform:none). */
+    var panelRect = panel.getBoundingClientRect ? panel.getBoundingClientRect() : null;
+    var availW = Math.max(0, Math.floor((panelRect && panelRect.width) || panel.clientWidth || panel.offsetWidth || 0));
+    var availH = Math.max(0, Math.floor((panelRect && panelRect.height) || panel.clientHeight || panel.offsetHeight || 0));
+    if (!availW || !availH) return;
+    var naturalW = Math.max(scaled.scrollWidth || 0, scaled.offsetWidth || 0, 1);
+    var naturalH = Math.max(scaled.scrollHeight || 0, scaled.offsetHeight || 0, 1);
+    if (!naturalW || !naturalH) return;
+    var scaleX = availW / naturalW;
+    var scaleY = availH / naturalH;
+    var scale = Math.min(1, scaleX, scaleY);
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    scaled.style.width = naturalW + "px";
+    scaled.style.height = naturalH + "px";
+    scaled.style.transform = "scale(" + scale + ")";
+    if (outer) {
+      outer.style.height = Math.max(1, Math.floor(naturalH * scale)) + "px";
+    }
   }
   function run() {
     if (fitEditPaused) return;
@@ -957,10 +946,31 @@ function fillContentSlots(root, title, bullets) {
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     ul.replaceChildren();
-    bullets.forEach((b) => {
+    let originalItems = [];
+    try {
+      originalItems = JSON.parse(ul.getAttribute("data-shell-original-items") || "[]");
+      if (!Array.isArray(originalItems)) originalItems = [];
+    } catch {
+      originalItems = [];
+    }
+    const items = bullets.length ? bullets.slice() : originalItems.slice();
+    if (items.length < originalItems.length) {
+      items.push(...originalItems.slice(items.length));
+    }
+    items.forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
       ul.appendChild(li);
+    });
+    return;
+  }
+  const targets = Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+    (a, b) =>
+      Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
+  );
+  if (targets.length) {
+    targets.forEach((node, idx) => {
+      node.textContent = bullets[idx] || node.getAttribute("data-shell-original-text") || "";
     });
   }
 }
@@ -998,6 +1008,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
 
   master = doc.querySelector("#slides-master-container");
   const coverTemplate = getShellCoverTemplate(doc);
+  const endingTemplate = getShellEndingTemplate(doc);
   const variantTemplates = getShellVariantTemplates(doc);
 
   if (!master || (!coverTemplate && !variantTemplates.length)) {
@@ -1010,17 +1021,16 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   master.replaceChildren();
 
   const list = Array.isArray(slides) ? slides : [];
-  const requestedVariantCount = Math.max(0, list.length - (coverTemplate ? 1 : 0));
-  const resolvedVariantTemplates = ensureShellVariantTemplateCount(doc, variantTemplates, requestedVariantCount);
-  const variantCount = resolvedVariantTemplates.length;
+  const bodyTemplates = endingTemplate ? variantTemplates.filter((tpl) => tpl !== endingTemplate) : variantTemplates;
   list.forEach((s, i) => {
-    const variantIndex = coverTemplate ? i - 1 : i;
+    const isLastSlide = i === list.length - 1;
+    const bodyIndex = coverTemplate ? i - 1 : i;
     const pick =
       coverTemplate && i === 0
         ? coverTemplate
-        : variantCount
-          ? resolvedVariantTemplates[variantIndex] || resolvedVariantTemplates[variantIndex % variantCount]
-          : coverTemplate;
+        : isLastSlide && endingTemplate
+          ? endingTemplate
+          : bodyTemplates[bodyIndex] || null;
     if (!pick) return;
     const frag = pick.content.cloneNode(true);
     const first = frag.firstElementChild;
@@ -1046,6 +1056,32 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   injectShellPanelFitScript(doc);
   injectSlideVisualEditor(doc);
   return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+}
+
+/**
+ * Count how many authored slide layouts exist in a shell file.
+ * No synthetic variants are added here; the number reflects the original template only.
+ * @param {string} shellHtml
+ * @returns {number}
+ */
+export function countRenderableShellSlides(shellHtml) {
+  const parser = new DOMParser();
+  let doc = parser.parseFromString(String(shellHtml || ""), "text/html");
+  stripIframeScripts(doc);
+  if (doc.querySelector('link[href*="Bangers"]') && doc.body && !doc.body.classList.contains("shell-theme-comic")) {
+    doc.body.classList.add("shell-theme-comic");
+  }
+  let master = doc.querySelector("#slides-master-container");
+  let tpl =
+    doc.querySelector("template#layout-content") ||
+    doc.querySelector("template#shell-slide-content") ||
+    doc.querySelector("template[data-shell-layout=\"content\"]");
+  if (!master || !tpl) {
+    if (!ensureShellFromFullDeck(doc)) return 0;
+  }
+  const coverTemplate = getShellCoverTemplate(doc);
+  const variantTemplates = getShellVariantTemplates(doc);
+  return (coverTemplate ? 1 : 0) + variantTemplates.length;
 }
 
 /**

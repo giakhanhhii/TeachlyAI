@@ -5,6 +5,7 @@ import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import {
   buildSlideDeckSrcdoc,
+  countRenderableShellSlides,
   setSlideShellNavMode,
   syncShellSlideNav,
   setSlideVisualEditMode,
@@ -71,11 +72,11 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const raw = await fetchMockResource("slide");
   const data = prepareSlideSessionData(raw, meta);
   const deckTitle = data.title || "Bộ slide";
-  const slides = Array.isArray(data.slides) ? data.slides : [];
+  let slides = Array.isArray(data.slides) ? data.slides : [];
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
-  const total = Math.max(1, slides.length);
+  let total = Math.max(1, slides.length);
   index = Math.min(Math.max(0, index), Math.max(0, slides.length - 1));
 
   const shell = document.createElement("div");
@@ -481,6 +482,12 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     try {
       const file = resolveSlideShellFilename(meta.slideTemplate);
       const html = await fetchSlideShellHtml(file);
+      const maxRenderableSlides = countRenderableShellSlides(html);
+      if (maxRenderableSlides > 0 && slides.length > maxRenderableSlides) {
+        slides = slides.slice(0, maxRenderableSlides);
+        total = Math.max(1, slides.length);
+        index = Math.min(index, Math.max(0, slides.length - 1));
+      }
       const srcdoc = buildSlideDeckSrcdoc(html, slides, {
         ...meta,
         shellYear: String(meta.shellYear || new Date().getFullYear()),

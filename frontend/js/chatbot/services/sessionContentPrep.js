@@ -92,6 +92,43 @@ export function slideDedupeKey(s) {
   return t ? `t:${t}#${b0.slice(0, 100)}` : "";
 }
 
+/** @param {any} s */
+function isLikelyEndingSlide(s) {
+  const title = String(s?.title || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  if (!title) return false;
+  return /(tổng kết|tong ket|tạm biệt|tam biet|summary|goodbye|conclusion|mission complete|you'?re ready|sẵn sàng|loi chuc|lời chúc|động lực|dong luc|checklist trước ngày thi|final review checklist)/i.test(
+    title,
+  );
+}
+
+/** @param {any} s */
+function endingSlideScore(s) {
+  const title = String(s?.title || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  if (!title) return 0;
+  if (/(tổng kết|tong ket|summary|conclusion|tạm biệt|tam biet|goodbye|mission complete)/i.test(title)) return 4;
+  if (/(lời chúc|loi chuc|động lực|dong luc|you'?re ready|sẵn sàng)/i.test(title)) return 3;
+  if (/(checklist trước ngày thi|final review checklist)/i.test(title)) return 2;
+  return isLikelyEndingSlide(s) ? 1 : 0;
+}
+
+/**
+ * @param {any[]} pool
+ * @returns {any | null}
+ */
+function pickPreferredEndingSlide(pool) {
+  const ranked = pool
+    .filter(isLikelyEndingSlide)
+    .map((slide) => ({ slide, score: endingSlideScore(slide) }))
+    .sort((a, b) => b.score - a.score);
+  return ranked.length ? ranked[0].slide : null;
+}
+
 /** @param {any} data
  * @param {Record<string, string>} meta */
 export function prepareQuizSessionData(data, meta) {
@@ -140,6 +177,10 @@ export function prepareFlashSessionData(data, meta) {
 export function prepareSlideSessionData(data, meta) {
   const want = parseCountInRange(meta?.count, 1, 30, 10);
   const pool = Array.isArray(data?.slides) ? data.slides : [];
-  const slides = pickUniqueShuffled(pool, slideDedupeKey, want);
+  const preferredEnding = pickPreferredEndingSlide(pool);
+  const endingSlide = preferredEnding || pool[pool.length - 1] || null;
+  const contentPool = pool.filter((slide) => !isLikelyEndingSlide(slide));
+  const bodySlides = pickUniqueShuffled(contentPool, slideDedupeKey, Math.max(0, want - 1));
+  const slides = want <= 1 ? (endingSlide ? [endingSlide] : []) : endingSlide ? [...bodySlides, endingSlide] : bodySlides;
   return { ...data, slides };
 }
