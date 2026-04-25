@@ -973,6 +973,61 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     };
   }
 
+  function getHistorySlideRoot(el) {
+    if (!el || typeof el.closest !== "function") return null;
+    return el.closest("[data-shell-slide-index]");
+  }
+
+  function buildElementPathWithin(root, el) {
+    if (!root || !el || root === el) return [];
+    var path = [];
+    var node = el;
+    while (node && node !== root) {
+      var parent = node.parentElement;
+      if (!parent) return null;
+      var idx = -1;
+      for (var i = 0; i < parent.children.length; i++) {
+        if (parent.children[i] === node) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx < 0) return null;
+      path.push(idx);
+      node = parent;
+    }
+    if (node !== root) return null;
+    path.reverse();
+    return path;
+  }
+
+  function createImageHistoryLocator(host) {
+    var slideRoot = getHistorySlideRoot(host);
+    if (!slideRoot) return null;
+    var slideIndex = slideRoot.getAttribute("data-shell-slide-index");
+    if (!slideIndex) return null;
+    var path = buildElementPathWithin(slideRoot, host);
+    if (!path) return null;
+    return {
+      slideIndex: String(slideIndex),
+      path: path,
+    };
+  }
+
+  function resolveImageHistoryHost(locator) {
+    if (!locator || !locator.slideIndex) return null;
+    var slideRoot = document.querySelector('[data-shell-slide-index="' + locator.slideIndex + '"]');
+    if (!slideRoot) return null;
+    var node = slideRoot;
+    var path = Array.isArray(locator.path) ? locator.path : [];
+    for (var i = 0; i < path.length; i++) {
+      var childIndex = Number(path[i]);
+      if (!node.children || childIndex < 0 || childIndex >= node.children.length) return null;
+      node = node.children[childIndex];
+    }
+    return node && node.nodeType === 1 ? node : null;
+  }
+
   function sameImageState(a, b) {
     if (!a && !b) return true;
     if (!a || !b) return false;
@@ -981,8 +1036,10 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
   function pushImageHistory(host, before, after) {
     if (!host || !before || !after || sameImageState(before, after)) return;
+    var locator = createImageHistoryLocator(host);
+    if (!locator) return;
     imageHistory.push({
-      host: host,
+      hostLocator: locator,
       before: before,
       after: after,
     });
@@ -1069,17 +1126,29 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
   }
 
   function undoLastImageAction() {
-    var entry = imageHistory.pop();
-    if (!entry || !entry.host || !entry.host.isConnected) return false;
-    var ok = restoreImageState(entry.host, entry.before);
-    if (!ok) return false;
-    if (entry.host.isConnected) {
-      select(entry.host);
-    } else {
-      select(null);
+    while (imageHistory.length) {
+      var entry = imageHistory[imageHistory.length - 1];
+      if (!entry) {
+        imageHistory.pop();
+        continue;
+      }
+      var host = resolveImageHistoryHost(entry.hostLocator);
+      if (!host || !host.isConnected) {
+        imageHistory.pop();
+        continue;
+      }
+      var ok = restoreImageState(host, entry.before);
+      if (!ok) return false;
+      imageHistory.pop();
+      if (host.isConnected) {
+        select(host);
+      } else {
+        select(null);
+      }
+      scheduleSyncHandles();
+      return true;
     }
-    scheduleSyncHandles();
-    return true;
+    return false;
   }
 
   function isFormControlTarget(node) {
