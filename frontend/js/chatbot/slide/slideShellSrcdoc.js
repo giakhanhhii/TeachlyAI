@@ -629,10 +629,19 @@ function injectShellPreviewFit(doc) {
       align-items: flex-start !important;
       justify-content: center !important;
     }
+    .shell-theme-comic .shell-slide-instance .comic-panel > .shell-panel-fit-sizer {
+      padding-top: 40px !important;
+      box-sizing: border-box !important;
+    }
     /* Hero / panel trắng trực tiếp dưới slide (BAM! / SPLASH!): căn giữa như mẫu */
     .shell-theme-comic .shell-slide-instance.slide-container > .comic-panel.shell-panel-fit-host > .shell-panel-fit-sizer {
       align-items: center !important;
       justify-content: center !important;
+    }
+    .shell-theme-comic .shell-slide-instance .comic-badge,
+    .shell-theme-comic .shell-slide-instance .comic-number,
+    .shell-theme-comic .shell-slide-instance [style*="position: absolute"] {
+      z-index: 8 !important;
     }
     .shell-theme-comic .shell-slide-instance [data-shell="title"],
     .shell-theme-comic .shell-slide-instance .comic-title,
@@ -640,9 +649,13 @@ function injectShellPreviewFit(doc) {
     .shell-theme-comic .shell-slide-instance .toc-item h3,
     .shell-theme-comic .shell-slide-instance .toc-item p {
       font-family: 'Bangers', system-ui, sans-serif !important;
+      position: relative;
+      z-index: 16;
     }
     .shell-theme-comic .shell-slide-instance h3 {
       font-family: 'Bangers', system-ui, sans-serif !important;
+      position: relative;
+      z-index: 14;
     }
     .shell-theme-comic .shell-slide-instance p:not([data-shell]),
     .shell-theme-comic .shell-slide-instance li,
@@ -655,6 +668,9 @@ function injectShellPreviewFit(doc) {
     .shell-theme-comic .shell-slide-instance [data-shell="title"] {
       word-break: normal;
       overflow-wrap: break-word;
+    }
+    .shell-theme-comic .shell-slide-instance .comic-panel [data-shell="title"] {
+      margin-top: 10px !important;
     }
   `;
   doc.head.appendChild(style);
@@ -683,6 +699,64 @@ function injectShellPanelFitScript(doc) {
     return Array.prototype.filter.call(doc.querySelectorAll(sel), function (el) {
       if (el.classList.contains("comic-panel") && hasComicPanelAncestor(el)) return false;
       return true;
+    });
+  }
+  function getTitleHost(title) {
+    return (
+      title.closest(".comic-panel, .content-card, .card, .title-card, .section-card, .section-center, .title-group") ||
+      title.closest(".shell-slide-instance") ||
+      title.parentElement
+    );
+  }
+  function getNumericCssValue(value) {
+    var n = parseFloat(value || "");
+    return isFinite(n) ? n : 0;
+  }
+  function fitTitle(title) {
+    if (!title || title.getAttribute("data-edit-geom") === "1" || !window.getComputedStyle) return;
+    var host = getTitleHost(title);
+    if (!host) return;
+    if (!title.dataset.shellBaseFontSize) {
+      var baseCs = window.getComputedStyle(title);
+      title.dataset.shellBaseFontSize = String(getNumericCssValue(baseCs.fontSize) || 0);
+      title.dataset.shellBaseLineHeight = String(getNumericCssValue(baseCs.lineHeight) || 0);
+    }
+    var base = getNumericCssValue(title.dataset.shellBaseFontSize) || getNumericCssValue(window.getComputedStyle(title).fontSize) || 48;
+    var min = host.classList.contains("comic-panel") ? Math.max(34, base * 0.52) : Math.max(24, base * 0.6);
+    title.style.fontSize = base + "px";
+    if (host.classList.contains("comic-panel")) {
+      title.style.lineHeight = "0.92";
+      title.style.maxWidth = "82%";
+      title.style.marginLeft = "auto";
+      title.style.marginRight = "auto";
+      title.style.textAlign = "center";
+    }
+    var hostCs = window.getComputedStyle(host);
+    var availW =
+      (host.clientWidth || host.getBoundingClientRect().width || 0) -
+      getNumericCssValue(hostCs.paddingLeft) -
+      getNumericCssValue(hostCs.paddingRight) -
+      (host.classList.contains("comic-panel") ? 36 : 16);
+    if (!availW || availW < 80) return;
+    var maxLines = host.classList.contains("comic-panel") ? 3 : 4;
+    if (title.classList.contains("cta-title") || title.classList.contains("section-title")) {
+      maxLines = 2;
+    }
+    var size = base;
+    while (size > min) {
+      var cs = window.getComputedStyle(title);
+      var lineHeight = getNumericCssValue(cs.lineHeight) || size * 0.95;
+      var rect = title.getBoundingClientRect();
+      var overW = title.scrollWidth > availW + 1 || rect.width > availW + 1;
+      var overH = title.offsetHeight > lineHeight * maxLines + 2;
+      if (!overW && !overH) break;
+      size -= host.classList.contains("comic-panel") ? 2 : 1;
+      title.style.fontSize = size + "px";
+    }
+  }
+  function fitShellTitles(doc) {
+    Array.prototype.forEach.call(doc.querySelectorAll('.shell-slide-instance [data-shell="title"]'), function (title) {
+      fitTitle(title);
     });
   }
   function applyPanelLayoutToElement(cs, el, display) {
@@ -781,6 +855,7 @@ function injectShellPanelFitScript(doc) {
   function run() {
     if (fitEditPaused) return;
     if (document.body && document.body.classList.contains("slide-visual-edit-on")) return;
+    fitShellTitles(document);
     collectPanels(document).forEach(function (panel) {
       wrapPanel(panel);
       measureAndFit(panel);
