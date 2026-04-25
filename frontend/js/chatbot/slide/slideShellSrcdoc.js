@@ -484,8 +484,8 @@ function injectShellPreviewFit(doc) {
       bottom: var(--sticker-block-offset, 20px) !important;
       top: auto !important;
     }
-    .shell-slide-instance .title-card,
-    .shell-slide-instance .section-card {
+    .shell-slide-instance:not([data-shell-authored-slide="1"]) .title-card,
+    .shell-slide-instance:not([data-shell-authored-slide="1"]) .section-card {
       padding-left: 170px !important;
       padding-right: 170px !important;
     }
