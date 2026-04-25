@@ -237,6 +237,188 @@
         .table-layout tr:last-child td { border-bottom: none; }
         .table-layout tr:nth-child(even) { background-color: #f8fafc; }
 
+        .comic-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+            width: 100%;
+        }
+
+        .comic-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+        }
+
+        .mini-panel {
+            background-color: #ffffff;
+            border: 5px solid #111827;
+            box-shadow: 8px 8px 0px #111827;
+            padding: 28px 30px;
+        }
+
+        .mini-panel h3 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background-color: #fde047;
+            border: 5px solid #111827;
+            box-shadow: 8px 8px 0px #111827;
+            padding: 18px 28px;
+            font-family: 'Bangers', system-ui;
+            font-size: 42px;
+            letter-spacing: 2px;
+            color: #111827;
+            width: fit-content;
+            margin-bottom: 24px;
+        }
+
+        .rule-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .rule-row {
+            display: grid;
+            grid-template-columns: 220px 1fr 1fr;
+            gap: 0;
+            border: 5px solid #111827;
+            box-shadow: 6px 6px 0px #111827;
+            overflow: hidden;
+        }
+
+        .rule-row > div {
+            background-color: #ffffff;
+            padding: 18px 22px;
+            border-right: 5px solid #111827;
+            font-size: 26px;
+            line-height: 1.4;
+        }
+
+        .rule-row > div:last-child {
+            border-right: none;
+        }
+
+        .rule-row .rule-label {
+            background-color: #7dd3fc;
+            font-family: 'Bangers', system-ui;
+            font-size: 34px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .strategy-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            width: 100%;
+        }
+
+        .strategy-step {
+            background-color: #ffffff;
+            border: 5px dashed #111827;
+            box-shadow: 8px 8px 0px #111827;
+            padding: 22px 24px;
+        }
+
+        .strategy-step .badge {
+            display: inline-flex;
+            width: 48px;
+            height: 48px;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #111827;
+            background-color: #f43f5e;
+            color: #fff;
+            font-family: 'Bangers', system-ui;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .speech-note {
+            background-color: #ffffff;
+            border: 5px solid #111827;
+            border-radius: 36px;
+            box-shadow: 8px 8px 0px #111827;
+            padding: 24px 28px;
+            position: relative;
+        }
+
+        .speech-note::after {
+            content: '';
+            position: absolute;
+            left: 40px;
+            bottom: -26px;
+            width: 34px;
+            height: 34px;
+            background: #ffffff;
+            border-right: 5px solid #111827;
+            border-bottom: 5px solid #111827;
+            transform: rotate(45deg);
+        }
+
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            width: 100%;
+        }
+
+        .check-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            background-color: #ffffff;
+            border: 5px solid #111827;
+            box-shadow: 8px 8px 0px #111827;
+            padding: 20px 22px;
+        }
+
+        .check-item i {
+            font-size: 28px;
+            color: #16a34a;
+            margin-top: 4px;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            width: 100%;
+        }
+
+        .timeline-step {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            align-items: stretch;
+            border: 5px solid #111827;
+            box-shadow: 8px 8px 0px #111827;
+            overflow: hidden;
+        }
+
+        .timeline-step .time-box {
+            background-color: #fde047;
+            font-family: 'Bangers', system-ui;
+            font-size: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 5px solid #111827;
+        }
+
+        .timeline-step .time-content {
+            background-color: #ffffff;
+            padding: 18px 24px;
+        }
+
     </style>
 </head>
 <body class="shell-theme-comic">
@@ -531,25 +713,49 @@
 
 
 <div class="slide-container" id="slide15">
-    <div class="comic-badge cyan" style="top: 40px; right: 80px; transform: rotate(10deg);">SNAP!</div>
-    <h2 class="slide-title" style="color: #fde047;">TRICKY ENDINGS</h2>
+    <div class="comic-badge cyan" style="top: 36px; right: 70px; transform: rotate(10deg);">SNAP!</div>
+    <h2 class="slide-title" style="color: #fde047;">PRONUNCIATION POWER</h2>
     <div class="content-area">
-         <div class="two-column">
-            <div class="comic-panel" style="border-width: 8px; padding: 40px;">
-                <h3 style="text-align: center; font-size: 55px; color: #f43f5e;">-ED RULES</h3>
-                <ul class="comic-list" style="margin-top: 30px;">
-                    <li style="margin-bottom: 30px;"><strong>/id/:</strong> After /t/ or /d/<br><em>wanted, needed</em></li>
-                    <li style="margin-bottom: 30px;"><strong>/t/:</strong> After voiceless (p, k, f, s, sh, ch)<br><em>helped, looked, watched</em></li>
-                    <li><strong>/d/:</strong> After voiced (all others)<br><em>played, called, loved</em></li>
-                </ul>
+        <div class="comic-grid-2" style="height: 100%;">
+            <div class="comic-panel" style="padding: 36px;">
+                <h3 style="text-align: center; color: #f43f5e;">-ED ENDINGS</h3>
+                <div class="rule-rows" style="margin-top: 20px;">
+                    <div class="rule-row">
+                        <div class="rule-label">/id/</div>
+                        <div>After <strong>/t/</strong> or <strong>/d/</strong></div>
+                        <div><em>wanted, needed, visited</em></div>
+                    </div>
+                    <div class="rule-row">
+                        <div class="rule-label" style="background-color: #fde047;">/t/</div>
+                        <div>After voiceless sounds: <strong>p, k, f, s, sh, ch</strong></div>
+                        <div><em>looked, laughed, watched</em></div>
+                    </div>
+                    <div class="rule-row">
+                        <div class="rule-label" style="background-color: #f43f5e; color: #fff;">/d/</div>
+                        <div>After voiced sounds</div>
+                        <div><em>played, opened, called</em></div>
+                    </div>
+                </div>
             </div>
-            <div class="comic-panel" style="border-width: 8px; padding: 40px;">
-                <h3 style="text-align: center; font-size: 55px; color: #7dd3fc;">-S / -ES RULES</h3>
-                <ul class="comic-list" style="margin-top: 30px;">
-                    <li style="margin-bottom: 30px;"><strong>/iz/:</strong> After s, z, sh, ch, ge, ce<br><em>misses, watches, changes</em></li>
-                    <li style="margin-bottom: 30px;"><strong>/s/:</strong> After voiceless (p, t, k, f, th)<br><em>stops, hits, looks</em></li>
-                    <li><strong>/z/:</strong> After voiced (all others)<br><em>plays, dogs, goes</em></li>
-                </ul>
+            <div class="comic-panel" style="padding: 36px; background-color: #f8fafc;">
+                <h3 style="text-align: center; color: #7dd3fc;">-S / -ES ENDINGS</h3>
+                <div class="rule-rows" style="margin-top: 20px;">
+                    <div class="rule-row">
+                        <div class="rule-label">/iz/</div>
+                        <div>After <strong>s, z, sh, ch, ge, ce</strong></div>
+                        <div><em>changes, watches, misses</em></div>
+                    </div>
+                    <div class="rule-row">
+                        <div class="rule-label" style="background-color: #fde047;">/s/</div>
+                        <div>After voiceless sounds: <strong>p, t, k, f, th</strong></div>
+                        <div><em>stops, laughs, likes</em></div>
+                    </div>
+                    <div class="rule-row">
+                        <div class="rule-label" style="background-color: #f43f5e; color: #fff;">/z/</div>
+                        <div>After voiced sounds</div>
+                        <div><em>plays, learns, goes</em></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -557,52 +763,231 @@
 
 
 <div class="slide-container" id="slide16">
+    <div class="comic-badge yellow" style="top: 42px; left: 70px; transform: rotate(-12deg);">BANG!</div>
     <h2 class="slide-title">WORD STRESS RULES</h2>
     <div class="content-area">
-        <div class="comic-panel" style="height: 100%;">
-            <ul class="comic-list" style="margin-top: 20px; font-size: 28px;">
-                <li style="margin-bottom: 30px;"><strong>2-Syllable Rule:</strong> Most Nouns & Adjectives stress the <strong>1st</strong> syllable <em>(PRE-sent, HAP-py)</em>. Most Verbs stress the <strong>2nd</strong> syllable <em>(pre-SENT, be-GIN)</em>.</li>
-                <li style="margin-bottom: 30px;"><strong>Words ending in -ic, -sion, -tion:</strong> Stress is on the syllable right <strong>BEFORE</strong> the suffix. <em>(eco-NOM-ic, in-for-MA-tion)</em>.</li>
-                <li style="margin-bottom: 30px;"><strong>Words ending in -cy, -ty, -phy, -gy, -al:</strong> Stress is on the <strong>3rd</strong> syllable from the end. <em>(de-MOC-ra-cy, ge-OG-ra-phy)</em>.</li>
-                <li><strong>Compound Nouns:</strong> Stress the <strong>1st</strong> part <em>(BLACK-bird, GREEN-house)</em>.</li>
-            </ul>
+        <div class="comic-panel" style="height: 100%; padding: 30px 34px;">
+            <div class="rule-rows">
+                <div class="rule-row">
+                    <div class="rule-label">2 SYL</div>
+                    <div><strong>Nouns / Adjectives:</strong> often stress the <strong>1st</strong> syllable.</div>
+                    <div><em>PRE-sent, TA-ble, HAP-py</em></div>
+                </div>
+                <div class="rule-row">
+                    <div class="rule-label" style="background-color: #fde047;">VERBS</div>
+                    <div><strong>2-syllable verbs:</strong> often stress the <strong>2nd</strong> syllable.</div>
+                    <div><em>re-LAX, be-GIN, de-CIDE</em></div>
+                </div>
+                <div class="rule-row">
+                    <div class="rule-label" style="background-color: #f43f5e; color: #fff;">-TION</div>
+                    <div>Words ending in <strong>-ic, -sion, -tion</strong> stress the syllable before the suffix.</div>
+                    <div><em>eco-NOM-ic, infor-MA-tion</em></div>
+                </div>
+                <div class="rule-row">
+                    <div class="rule-label" style="background-color: #ffffff;">-CY</div>
+                    <div>Words ending in <strong>-cy, -ty, -phy, -gy, -al</strong> usually stress the third syllable from the end.</div>
+                    <div><em>de-MOC-ra-cy, ge-OG-ra-phy</em></div>
+                </div>
+            </div>
+            <div class="speech-note" style="margin-top: 22px;">
+                <p><strong>Quick hack:</strong> Khi gặp 4 từ trong đề, ưu tiên nhìn hậu tố trước rồi so 1 từ khác quy tắc với 3 từ còn lại.</p>
+            </div>
         </div>
     </div>
 </div>
 
 
 <div class="slide-container" id="slide17">
-    <div class="comic-badge pink" style="top: 150px; left: 200px; transform: rotate(-15deg); font-size: 60px; background-color: #f43f5e; color: #fff;">TICK TOCK!</div>
-    <div class="comic-panel" style="text-align: center; border-color: #7dd3fc; padding: 80px; width: 900px; border-width: 8px;">
-        <h1 class="comic-title" style="font-size: 100px; color: #fde047;">TIME MANAGEMENT</h1>
-        <p style="font-size: 34px; color: #111827; font-family: 'Bangers'; letter-spacing: 3px; margin-top: 20px;">MASTER THE 60-MINUTE EXAM CLOCK</p>
+    <div class="comic-badge white" style="top: 90px; right: 90px; transform: rotate(10deg); color: #f43f5e;">FLASH!</div>
+    <h2 class="slide-title" style="color: #7dd3fc;">PASSIVE VOICE</h2>
+    <div class="content-area">
+        <div class="comic-panel" style="height: 100%;">
+            <div class="formula-box">S + BE + V3/ED (+ BY O)</div>
+            <div class="comic-grid-2">
+                <div class="mini-panel">
+                    <h3 style="color: #f43f5e;">3 bước đổi câu</h3>
+                    <p>Đưa tân ngữ của câu chủ động lên đầu, chia <strong>be</strong> đúng thì, rồi đổi động từ chính sang <strong>V3/ed</strong>.</p>
+                </div>
+                <div class="mini-panel" style="background-color: #eefaff;">
+                    <h3 style="color: #7dd3fc;">Modal verbs</h3>
+                    <p>Công thức: <strong>modal + be + V3/ed</strong>. Ví dụ: <em>The homework must be finished tonight.</em></p>
+                </div>
+                <div class="mini-panel" style="background-color: #fff7d6;">
+                    <h3 style="color: #111827;">Causative form</h3>
+                    <p><strong>have/get something done</strong> diễn tả nhờ ai làm gì: <em>I had my bike repaired yesterday.</em></p>
+                </div>
+                <div class="mini-panel">
+                    <h3 style="color: #f43f5e;">Dấu hiệu bẫy</h3>
+                    <p>Nếu câu có tân ngữ rõ ràng và nhấn mạnh hành động hơn người làm, khả năng cao đáp án cần bị động.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 
 <div class="slide-container" id="slide18">
-    <h2 class="slide-title">60-MINUTE BREAKDOWN</h2>
+    <h2 class="slide-title" style="color: #fde047;">REPORTED SPEECH</h2>
     <div class="content-area">
-        <div class="comic-panel" style="display: flex; align-items: center; justify-content: center; height: 100%; gap: 80px;">
-            <div style="position: relative; width: 400px; height: 400px; border-radius: 50%; background: conic-gradient(#f43f5e 0% 45%, #fde047 45% 85%, #7dd3fc 85% 100%); border: 8px solid #111827; box-shadow: 12px 12px 0px #111827;">
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; background-color: #fff; border-radius: 50%; border: 8px solid #111827; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-family: 'Bangers'; font-size: 60px; color: #111827;">TIME</span>
-                </div>
+        <div class="comic-grid-2" style="height: 100%;">
+            <div class="comic-panel">
+                <h3 style="color: #f43f5e;">Lùi thì cơ bản</h3>
+                <ul class="comic-list">
+                    <li><strong>Present Simple</strong> → Past Simple</li>
+                    <li><strong>Present Continuous</strong> → Past Continuous</li>
+                    <li><strong>Will</strong> → Would</li>
+                    <li><strong>Can</strong> → Could</li>
+                </ul>
             </div>
-            <div style="flex: 1;">
-                <ul style="list-style: none; padding: 0;">
-                    <li style="display: flex; align-items: center; margin-bottom: 30px; font-size: 34px; font-weight: 500; font-family: var(--comic-body-font);">
-                        <div style="width: 40px; height: 40px; background-color: #f43f5e; border: 5px solid #111827; margin-right: 20px;"></div>
-                        <span style="color: #f43f5e; font-family: 'Bangers'; margin-right: 15px; font-size: 45px; -webkit-text-stroke: 0.5px #111827;">45%</span> Reading (27 mins)
-                    </li>
-                    <li style="display: flex; align-items: center; margin-bottom: 30px; font-size: 34px; font-weight: 500; font-family: var(--comic-body-font);">
-                        <div style="width: 40px; height: 40px; background-color: #fde047; border: 5px solid #111827; margin-right: 20px;"></div>
-                        <span style="color: #fde047; font-family: 'Bangers'; margin-right: 15px; font-size: 45px; -webkit-text-stroke: 0.5px #111827; text-shadow: 2px 2px 0px #111827;">40%</span> Grammar & Vocab (24 mins)
-                    </li>
-                    <li style="display: flex; align-items: center; font-size: 34px; font-weight: 500; font-family: var(--comic-body-font);">
-                        <div style="width: 40px; height: 40px; background-color: #7dd3fc; border: 5px solid #111827; margin-right: 20px;"></div>
-                        <span style="color: #7dd3fc; font-family: 'Bangers'; margin-right: 15px; font-size: 45px; -webkit-text-stroke: 0.5px #111827;">15%</span> Review (9 mins)
-                    </li>
+            <div class="comic-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">Đổi trạng từ thời gian</h3>
+                <ul class="comic-list">
+                    <li><strong>today</strong> → that day</li>
+                    <li><strong>tomorrow</strong> → the next day</li>
+                    <li><strong>yesterday</strong> → the day before</li>
+                    <li><strong>here</strong> → there</li>
+                </ul>
+            </div>
+        </div>
+        <div class="speech-note" style="margin-top: 26px;">
+            <p><strong>Remember:</strong> câu mệnh lệnh thường đổi thành <strong>tell/ask + O + to V</strong>; câu hỏi Yes/No dùng <strong>if/whether</strong>; Wh-question giữ từ hỏi.</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide19">
+    <div class="comic-badge cyan" style="top: 40px; right: 70px; transform: rotate(10deg);">ZOOM!</div>
+    <h2 class="slide-title" style="color: #f43f5e;">GERUNDS & INFINITIVES</h2>
+    <div class="content-area">
+        <div class="strategy-strip" style="height: 100%;">
+            <div class="strategy-step">
+                <span class="badge">1</span>
+                <h3 style="color: #f43f5e;">V-ing sau giới từ</h3>
+                <p><strong>in, on, at, of, for, without, before, after</strong> thường đi với V-ing: <em>good at speaking</em>.</p>
+            </div>
+            <div class="strategy-step" style="background-color: #eefaff;">
+                <span class="badge" style="background-color: #7dd3fc; color: #111827;">2</span>
+                <h3 style="color: #7dd3fc;">to V cho mục đích</h3>
+                <p>Dùng <strong>to V</strong> sau nhiều động từ như <strong>want, decide, hope, plan</strong> hoặc để chỉ mục đích.</p>
+            </div>
+            <div class="strategy-step" style="background-color: #fff7d6;">
+                <span class="badge" style="background-color: #fde047; color: #111827;">3</span>
+                <h3 style="color: #111827;">Nhóm đặc biệt</h3>
+                <p><strong>remember, stop, try</strong> đổi nghĩa khi theo sau bởi V-ing hoặc to V, nên phải đọc ngữ cảnh thật kỹ.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide20">
+    <h2 class="slide-title" style="color: #7dd3fc;">COMPARISONS</h2>
+    <div class="content-area">
+        <div class="comic-panel table-layout" style="padding: 0; height: 100%;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Form</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Equality</strong></td>
+                        <td>as + adj/adv + as</td>
+                        <td>Lan is <em>as careful as</em> her sister.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Comparative</strong></td>
+                        <td>adj-er / more + adj</td>
+                        <td>This task is <em>more difficult than</em> I thought.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Superlative</strong></td>
+                        <td>the adj-est / the most + adj</td>
+                        <td>English is <em>the most important</em> subject for her.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Double comp.</strong></td>
+                        <td>the more..., the more...</td>
+                        <td><em>The more</em> you practise, <em>the better</em> you perform.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide21">
+    <div class="comic-badge yellow" style="top: 40px; left: 70px; transform: rotate(-12deg);">KAPOW!</div>
+    <h2 class="slide-title">WORD FORMATION</h2>
+    <div class="content-area">
+        <div class="strategy-strip" style="height: 100%;">
+            <div class="strategy-step">
+                <span class="badge">1</span>
+                <h3 style="color: #f43f5e;">Sau mạo từ</h3>
+                <p>Sau <strong>a/an/the</strong> thường cần <strong>danh từ</strong>: <em>a success, an invention</em>.</p>
+            </div>
+            <div class="strategy-step" style="background-color: #eefaff;">
+                <span class="badge" style="background-color: #7dd3fc; color: #111827;">2</span>
+                <h3 style="color: #7dd3fc;">Trước danh từ</h3>
+                <p>Vị trí trước danh từ thường cần <strong>tính từ</strong>: <em>an effective method</em>.</p>
+            </div>
+            <div class="strategy-step" style="background-color: #fff7d6;">
+                <span class="badge" style="background-color: #fde047; color: #111827;">3</span>
+                <h3 style="color: #111827;">Sau động từ thường</h3>
+                <p>Sau động từ như <strong>become, seem, feel</strong> thường là <strong>tính từ</strong>; sau động từ hành động thường là <strong>trạng từ</strong>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide22">
+    <h2 class="slide-title" style="color: #fde047;">COMMUNICATION SKILLS</h2>
+    <div class="content-area">
+        <div class="comic-grid-3" style="height: 100%;">
+            <div class="mini-panel">
+                <h3 style="color: #f43f5e;">Invitations</h3>
+                <p><strong>Would you like to...?</strong> <strong>Do you want to...?</strong> Đáp lại nên lịch sự: <em>I'd love to.</em></p>
+            </div>
+            <div class="mini-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">Suggestions</h3>
+                <p><strong>Why don't we...?</strong> <strong>How about V-ing?</strong> Câu trả lời phải đúng mục đích giao tiếp.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #fff7d6;">
+                <h3 style="color: #111827;">Thanks & Apologies</h3>
+                <p><strong>Thank you</strong> → <em>You're welcome.</em> <strong>Sorry</strong> → <em>Never mind.</em></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide23">
+    <div class="comic-badge white" style="top: 42px; right: 70px; transform: rotate(12deg); color: #7dd3fc;">CHECK!</div>
+    <h2 class="slide-title" style="color: #f43f5e;">ERROR IDENTIFICATION</h2>
+    <div class="content-area">
+        <div class="comic-grid-2" style="height: 100%;">
+            <div class="comic-panel">
+                <h3 style="color: #f43f5e;">Lỗi hay gặp</h3>
+                <ul class="comic-list">
+                    <li>Hòa hợp chủ ngữ - động từ.</li>
+                    <li>Sai thì hoặc sai dạng động từ sau động từ chính.</li>
+                    <li>Nhầm loại từ: adjective / adverb / noun.</li>
+                    <li>Dùng sai giới từ, đại từ quan hệ hoặc mạo từ.</li>
+                </ul>
+            </div>
+            <div class="comic-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">Cách xử lý nhanh</h3>
+                <ul class="comic-list">
+                    <li>Đọc lần 1 để xác định khung chủ vị.</li>
+                    <li>Đọc lần 2 để soi thì và từ loại.</li>
+                    <li>Nếu chưa ra, nhìn từ nối hoặc trạng từ thời gian.</li>
+                    <li>Loại 3 đáp án đúng trước khi chốt lỗi sai.</li>
                 </ul>
             </div>
         </div>
@@ -610,28 +995,183 @@
 </div>
 
 
-<div class="slide-container" id="slide19">
-    <div class="comic-badge yellow" style="top: 80px; left: 100px;">WOW!</div>
-    <div class="comic-panel" style="text-align: center; max-width: 1050px; padding: 80px;">
-        <i class="fa-solid fa-quote-left" style="font-size: 80px; color: #fde047; position: absolute; top: 30px; left: 40px; -webkit-text-stroke: 1px #111827;"></i>
-        <blockquote style="font-family: 'Bangers'; font-size: 65px; color: #f43f5e; line-height: 1.2; margin: 0 0 40px 0; -webkit-text-stroke: 0.5px #111827; text-shadow: 4px 4px 0px #111827;">
-            "SUCCESS IS THE SUM OF SMALL EFFORTS, REPEATED DAY IN AND DAY OUT."
-        </blockquote>
-        <cite style="font-size: 34px; font-weight: 500; color: #111827; font-style: normal; font-family: var(--comic-body-font);">— ROBERT COLLIER</cite>
-        <i class="fa-solid fa-quote-right" style="font-size: 80px; color: #7dd3fc; position: absolute; bottom: 30px; right: 40px; -webkit-text-stroke: 1px #111827;"></i>
+<div class="slide-container" id="slide24">
+    <h2 class="slide-title" style="color: #7dd3fc;">CLOZE TEST HACKS</h2>
+    <div class="content-area">
+        <div class="comic-panel" style="height: 100%;">
+            <div class="comic-grid-2">
+                <div class="mini-panel">
+                    <h3 style="color: #f43f5e;">Blank = grammar</h3>
+                    <p>Nếu 4 đáp án là các dạng của cùng 1 từ, hãy xét <strong>từ loại</strong>, <strong>thì</strong>, hoặc <strong>mệnh đề</strong> xung quanh chỗ trống.</p>
+                </div>
+                <div class="mini-panel" style="background-color: #fff7d6;">
+                    <h3 style="color: #111827;">Blank = vocabulary</h3>
+                    <p>Nếu 4 đáp án khác nghĩa, hãy đọc <strong>cụm từ đi kèm</strong> và chủ đề đoạn văn để chọn từ hợp ngữ cảnh.</p>
+                </div>
+                <div class="mini-panel" style="background-color: #eefaff;">
+                    <h3 style="color: #7dd3fc;">Connector clues</h3>
+                    <p><strong>however, therefore, although, because</strong> thường quyết định quan hệ logic giữa 2 vế.</p>
+                </div>
+                <div class="mini-panel">
+                    <h3 style="color: #f43f5e;">Best habit</h3>
+                    <p>Luôn đọc cả câu trước và câu sau chỗ trống. Nhiều đáp án chỉ đúng khi nhìn được mạch ý của cả đoạn.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 
-<div class="slide-container" id="slide20">
-    <div class="comic-badge cyan" style="top: 150px; right: 150px; transform: rotate(15deg); font-size: 60px;">BOOM!</div>
-    <div class="comic-panel" style="text-align: center; background-color: #fde047; padding: 80px; border-width: 8px;">
-        <h1 class="comic-title" style="font-size: 130px; color: #111827; -webkit-text-stroke: 0; text-shadow: 6px 6px 0px #fff;">YOU'RE READY!</h1>
-        <p style="font-size: 40px; color: #f43f5e; font-family: 'Bangers'; letter-spacing: 3px; margin: 30px 0; -webkit-text-stroke: 0.5px #111827;">SMASH THAT EXAM! ANY QUESTIONS?</p>
-        <div style="margin-top: 50px; font-size: 30px; font-weight: 500; padding-top: 30px; border-top: 6px solid #111827; display: inline-block;">
-            <i class="fa-solid fa-envelope" style="color: #f43f5e; margin-right: 10px;"></i> support@englishprep2026.edu<br><br>
-            <i class="fa-solid fa-globe" style="color: #7dd3fc; margin-right: 10px;"></i> www.englishprep2026.edu
+<div class="slide-container" id="slide25">
+    <div class="comic-badge cyan" style="top: 42px; right: 70px; transform: rotate(10deg);">PING!</div>
+    <h2 class="slide-title">READING QUESTION TYPES</h2>
+    <div class="content-area">
+        <div class="comic-grid-3" style="height: 100%;">
+            <div class="mini-panel">
+                <h3 style="color: #f43f5e;">Main idea</h3>
+                <p>Tập trung câu chủ đề đầu đoạn và câu kết. Đừng sa vào chi tiết nhỏ.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">Reference</h3>
+                <p>Từ như <strong>it, they, this</strong> thường chỉ về danh từ gần nhất nhưng phải hợp nghĩa.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #fff7d6;">
+                <h3 style="color: #111827;">Inference</h3>
+                <p>Suy luận từ dữ kiện, không chọn đáp án đưa thêm thông tin ngoài bài.</p>
+            </div>
         </div>
+        <div class="speech-note" style="margin-top: 24px;">
+            <p><strong>Comic rule:</strong> Question trước, passage sau. Đọc câu hỏi trước để biết mình đang “săn” thông tin nào.</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide26">
+    <h2 class="slide-title" style="color: #fde047;">SENTENCE TRANSFORMATION</h2>
+    <div class="content-area">
+        <div class="comic-panel table-layout" style="padding: 0; height: 100%;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Core idea</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>too ... to</strong></td>
+                        <td>Quá ... không thể ...</td>
+                        <td>He is too young to drive.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>so ... that</strong></td>
+                        <td>Quá ... đến nỗi ...</td>
+                        <td>It was so late that we went home.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>because / because of</strong></td>
+                        <td>Mệnh đề ↔ cụm danh từ</td>
+                        <td>Because it rained, we stayed in.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>although / despite</strong></td>
+                        <td>Nhượng bộ</td>
+                        <td>Despite the rain, they played.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide27">
+    <div class="comic-badge yellow" style="top: 40px; left: 70px; transform: rotate(-12deg);">SORT!</div>
+    <h2 class="slide-title" style="color: #f43f5e;">ARRANGEMENT QUESTIONS</h2>
+    <div class="content-area">
+        <div class="comic-grid-2" style="height: 100%;">
+            <div class="comic-panel">
+                <h3 style="color: #f43f5e;">Sắp xếp câu</h3>
+                <ul class="comic-list">
+                    <li>Tìm câu mở đầu không chứa đại từ mơ hồ.</li>
+                    <li>Ghép cặp nguyên nhân - kết quả, vấn đề - giải pháp.</li>
+                    <li>Bám từ nối: <strong>first, then, however, therefore</strong>.</li>
+                </ul>
+            </div>
+            <div class="comic-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">Sắp xếp đoạn</h3>
+                <ul class="comic-list">
+                    <li>Câu chủ đề thường đứng đầu đoạn.</li>
+                    <li>Ví dụ và chi tiết hỗ trợ thường ở giữa.</li>
+                    <li>Câu kết thường khái quát hoặc mở rộng ý.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide28">
+    <div class="comic-badge white" style="top: 40px; right: 70px; transform: rotate(11deg); color: #f43f5e;">TICK!</div>
+    <h2 class="slide-title" style="color: #7dd3fc;">TIME MANAGEMENT</h2>
+    <div class="content-area">
+        <div class="timeline" style="height: 100%;">
+            <div class="timeline-step">
+                <div class="time-box">5'</div>
+                <div class="time-content">
+                    <h3 style="color: #f43f5e;">Warm up</h3>
+                    <p>Quét nhanh toàn đề, đánh dấu phần dễ lấy điểm trước như pronunciation, stress, giao tiếp.</p>
+                </div>
+            </div>
+            <div class="timeline-step">
+                <div class="time-box" style="background-color: #7dd3fc;">25'</div>
+                <div class="time-content">
+                    <h3 style="color: #7dd3fc;">Grammar + Vocab</h3>
+                    <p>Làm liền mạch phần ngữ pháp, từ vựng, error identification và cloze để giữ nhịp.</p>
+                </div>
+            </div>
+            <div class="timeline-step">
+                <div class="time-box" style="background-color: #f43f5e; color: #fff;">22'</div>
+                <div class="time-content">
+                    <h3 style="color: #f43f5e;">Reading</h3>
+                    <p>Đọc câu hỏi trước rồi quay lại bài. Mỗi đoạn đọc hiểu nên tự giới hạn thời gian rõ ràng.</p>
+                </div>
+            </div>
+            <div class="timeline-step">
+                <div class="time-box">8'</div>
+                <div class="time-content">
+                    <h3 style="color: #111827;">Review</h3>
+                    <p>Quay lại câu gắn cờ, kiểm tra tô đáp án và rà lỗi ngớ ngẩn như bỏ sót câu hoặc tô lệch.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide29">
+    <div class="comic-badge cyan" style="top: 42px; right: 70px; transform: rotate(10deg);">READY?</div>
+    <h2 class="slide-title">FINAL REVIEW CHECKLIST</h2>
+    <div class="content-area">
+        <div class="check-grid" style="height: 100%;">
+            <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #f43f5e; font-size: 34px;">Ngữ âm</h3><p>Ôn lại quy tắc <strong>-ed</strong>, <strong>-s/-es</strong> và trọng âm hậu tố.</p></div></div>
+            <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #7dd3fc; font-size: 34px;">Ngữ pháp</h3><p>Rà nhanh thì, bị động, câu điều kiện, mệnh đề quan hệ, reported speech.</p></div></div>
+            <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #111827; font-size: 34px;">Từ vựng</h3><p>Xem lại collocations, phrasal verbs, synonyms - antonyms, word formation.</p></div></div>
+            <div class="check-item"><i class="fa-solid fa-circle-check"></i><div><h3 style="color: #f43f5e; font-size: 34px;">Chiến thuật</h3><p>Luyện 1 đề đủ thời gian và ghi lại lỗi sai cuối cùng trước ngày thi.</p></div></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="slide-container" id="slide30">
+    <div class="comic-badge yellow" style="top: 80px; left: 90px; transform: rotate(-12deg); font-size: 52px;">BOOM!</div>
+    <div class="comic-badge cyan" style="bottom: 90px; right: 100px; transform: rotate(12deg); font-size: 46px;">SEE YA!</div>
+    <div class="comic-panel" style="text-align: center; max-width: 980px; padding: 80px; background-color: #fde047;">
+        <h1 class="comic-title" style="font-size: 110px; color: #111827; -webkit-text-stroke: 0; text-shadow: 6px 6px 0px #fff;">MISSION COMPLETE</h1>
+        <p style="font-size: 38px; color: #f43f5e; font-family: 'Bangers'; letter-spacing: 3px; margin: 26px 0;">REVIEW SMART. STAY CALM. SCORE HIGH.</p>
+        <p style="font-size: 28px; max-width: 760px; margin: 0 auto;">Tổng kết kiến thức trọng tâm: pronunciation, stress, grammar, vocabulary, reading và chiến thuật phòng thi. Chúc bạn vào phòng thi thật tự tin.</p>
     </div>
 </div>
 
