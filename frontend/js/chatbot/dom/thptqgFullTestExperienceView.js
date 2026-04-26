@@ -570,10 +570,16 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       } else {
         const compactHead = document.createElement("div");
         compactHead.className = "thptqg-compact-head";
-        compactHead.innerHTML = `
-          <h3 class="thptqg-group-title">${String(group?.title || "")}</h3>
-          ${group?.instruction ? `<p class="thptqg-group-instruction">${String(group.instruction)}</p>` : ""}
-        `;
+        const compactTitle = document.createElement("h3");
+        compactTitle.className = "thptqg-group-title";
+        compactTitle.textContent = String(group?.title || "");
+        compactHead.appendChild(compactTitle);
+        if (group?.instruction) {
+          const compactInstruction = document.createElement("p");
+          compactInstruction.className = "thptqg-group-instruction";
+          compactInstruction.textContent = String(group.instruction);
+          compactHead.appendChild(compactInstruction);
+        }
         section.appendChild(compactHead);
 
         if (Array.isArray(group?.context) && group.context.length) {
@@ -770,13 +776,17 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         });
         questionsCell.appendChild(chip);
       });
-      row.innerHTML = `
-        <td>${stat.label} - ${stat.title}</td>
-        <td>${stat.correct}</td>
-        <td>${stat.wrong}</td>
-        <td>${stat.skipped}</td>
-        <td>${stat.accuracy.toFixed(2)}%</td>
-      `;
+      [
+        `${stat.label} - ${stat.title}`,
+        String(stat.correct),
+        String(stat.wrong),
+        String(stat.skipped),
+        `${stat.accuracy.toFixed(2)}%`,
+      ].forEach((value) => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.appendChild(cell);
+      });
       row.appendChild(questionsCell);
       tbody.appendChild(row);
     });
@@ -797,7 +807,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       .forEach((part) => {
         const block = document.createElement("div");
         block.className = "thptqg-detail-block";
-        block.innerHTML = `<h4>${part.label} - ${part.title}</h4>`;
+        const blockTitle = document.createElement("h4");
+        blockTitle.textContent = `${part.label} - ${part.title}`;
+        block.appendChild(blockTitle);
         const list = document.createElement("div");
         list.className = "thptqg-detail-list";
         const questions = (Array.isArray(test.questions) ? test.questions : []).filter((question) => String(question?.partId || "") === String(part?.id || ""));
@@ -809,13 +821,21 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           const statusText = !answered ? "Bỏ qua" : isCorrect ? "Trả lời đúng" : "Trả lời sai";
           const item = document.createElement("div");
           item.className = `thptqg-detail-item${detailQuestionId === questionId ? " active" : ""}`;
-          item.innerHTML = `
-            <div class="thptqg-detail-item-main">
-              <div class="thptqg-detail-item-number">Câu ${question.number}</div>
-              <div class="thptqg-detail-item-status">${statusText}</div>
-              <div class="thptqg-detail-item-answer">Bạn chọn: ${answerLetter(picked)} | Đáp án đúng: ${answerLetter(question.correctIndex)}</div>
-            </div>
-          `;
+          const itemMain = document.createElement("div");
+          itemMain.className = "thptqg-detail-item-main";
+          const itemNumber = document.createElement("div");
+          itemNumber.className = "thptqg-detail-item-number";
+          itemNumber.textContent = `Câu ${question.number}`;
+          const itemStatus = document.createElement("div");
+          itemStatus.className = "thptqg-detail-item-status";
+          itemStatus.textContent = statusText;
+          const itemAnswer = document.createElement("div");
+          itemAnswer.className = "thptqg-detail-item-answer";
+          itemAnswer.textContent = `Bạn chọn: ${answerLetter(picked)} | Đáp án đúng: ${answerLetter(question.correctIndex)}`;
+          itemMain.appendChild(itemNumber);
+          itemMain.appendChild(itemStatus);
+          itemMain.appendChild(itemAnswer);
+          item.appendChild(itemMain);
           const action = createButton("Chi tiết", "thptqg-secondary-btn small", () => {
             detailQuestionId = questionId;
             emitState();
@@ -835,19 +855,39 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         const detailCard = document.createElement("div");
         detailCard.className = "thptqg-answer-detail-card";
         const picked = answersByQuestion[detailQuestionId];
-        detailCard.innerHTML = `
-          <div class="thptqg-answer-detail-head">
-            <div>
-              <div class="thptqg-part-label">${detailQuestion.partId.toUpperCase()}</div>
-              <h4>Đáp án chi tiết câu ${detailQuestion.number}</h4>
-            </div>
-          </div>
-          <p class="exp-q-text">${quizStemToSafeHtml(stripQuestionLabel(detailQuestion.prompt))}</p>
-          <div class="thptqg-answer-row">
-            <span>Bạn chọn: <strong>${answerLetter(picked)}</strong></span>
-            <span>Đáp án đúng: <strong>${answerLetter(detailQuestion.correctIndex)}</strong></span>
-          </div>
-        `;
+        const detailHead = document.createElement("div");
+        detailHead.className = "thptqg-answer-detail-head";
+        const detailHeadInner = document.createElement("div");
+        const partLabel = document.createElement("div");
+        partLabel.className = "thptqg-part-label";
+        partLabel.textContent = String(detailQuestion.partId || "").toUpperCase();
+        const detailHeading = document.createElement("h4");
+        detailHeading.textContent = `Đáp án chi tiết câu ${detailQuestion.number}`;
+        detailHeadInner.appendChild(partLabel);
+        detailHeadInner.appendChild(detailHeading);
+        detailHead.appendChild(detailHeadInner);
+        detailCard.appendChild(detailHead);
+
+        const detailPrompt = document.createElement("p");
+        detailPrompt.className = "exp-q-text";
+        detailPrompt.innerHTML = quizStemToSafeHtml(stripQuestionLabel(detailQuestion.prompt));
+        detailCard.appendChild(detailPrompt);
+
+        const answerRow = document.createElement("div");
+        answerRow.className = "thptqg-answer-row";
+        const pickedSpan = document.createElement("span");
+        pickedSpan.textContent = "Bạn chọn: ";
+        const pickedStrong = document.createElement("strong");
+        pickedStrong.textContent = answerLetter(picked);
+        pickedSpan.appendChild(pickedStrong);
+        const correctSpan = document.createElement("span");
+        correctSpan.textContent = "Đáp án đúng: ";
+        const correctStrong = document.createElement("strong");
+        correctStrong.textContent = answerLetter(detailQuestion.correctIndex);
+        correctSpan.appendChild(correctStrong);
+        answerRow.appendChild(pickedSpan);
+        answerRow.appendChild(correctSpan);
+        detailCard.appendChild(answerRow);
 
         const optionList = document.createElement("div");
         optionList.className = "quiz-review-options";
@@ -864,7 +904,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
         const evidence = document.createElement("div");
         evidence.className = "thptqg-evidence";
-        evidence.innerHTML = `<strong>Trích đoạn chứa đáp án:</strong> ${detailQuestion.explanationEvidence || "Không có."}`;
+        const evidenceLabel = document.createElement("strong");
+        evidenceLabel.textContent = "Trích đoạn chứa đáp án:";
+        evidence.appendChild(evidenceLabel);
+        evidence.appendChild(document.createTextNode(` ${detailQuestion.explanationEvidence || "Không có."}`));
         detailCard.appendChild(evidence);
 
         const details = document.createElement("details");
