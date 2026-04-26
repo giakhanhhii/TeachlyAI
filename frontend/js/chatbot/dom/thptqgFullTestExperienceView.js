@@ -162,6 +162,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   let timerValueEl = null;
   let pendingScrollQuestionId = "";
   const historyAbort = new AbortController();
+  let timer = 0;
+  let removalObserver = null;
+  let disposed = false;
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-thptqg";
@@ -247,6 +250,26 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function updateTimer() {
     if (!timerValueEl) return;
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
+  }
+
+  function persistLiveProgress() {
+    if (disposed) return;
+    if (!startedAt || submittedAt || view !== "attempt") return;
+    snapshotElapsed();
+    emitState();
+  }
+
+  function disposeExperience() {
+    if (disposed) return;
+    persistLiveProgress();
+    disposed = true;
+    if (timer) {
+      clearInterval(timer);
+      timer = 0;
+    }
+    removalObserver?.disconnect();
+    removalObserver = null;
+    historyAbort.abort();
   }
 
   function captureAttemptScrollState() {
@@ -976,14 +999,20 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     updateTimer();
   }
 
-  const timer = setInterval(() => {
+  timer = setInterval(() => {
     if (!document.body.contains(shell)) {
-      clearInterval(timer);
-      historyAbort.abort();
+      disposeExperience();
       return;
     }
     updateTimer();
   }, 1000);
+
+  removalObserver = new MutationObserver(() => {
+    if (!root.contains(shell)) {
+      disposeExperience();
+    }
+  });
+  removalObserver.observe(root, { childList: true });
 
   const restoredTest = getActiveTest();
   if (restoredTest && !reviewMode && submittedAt) {
