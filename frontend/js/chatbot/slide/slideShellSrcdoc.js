@@ -787,10 +787,9 @@ function injectShellPanelFitScript(doc) {
     title.style.fontSize = base + "px";
     function fitsAtSize(size) {
       title.style.fontSize = size + "px";
-      var rect = title.getBoundingClientRect();
       var lineHeight = size * lineHeightRatio;
-      var overW = title.scrollWidth > availW + 1 || rect.width > availW + 1;
-      var overH = title.offsetHeight > lineHeight * maxLines + 2;
+      var overW = title.scrollWidth > availW + 1;
+      var overH = title.scrollHeight > lineHeight * maxLines + 2;
       return !overW && !overH;
     }
     var low = min;
