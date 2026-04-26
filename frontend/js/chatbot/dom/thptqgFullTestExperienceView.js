@@ -1,8 +1,10 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { quizStemToSafeHtml } from "../services/quizService.js";
+import { HISTORY_EXPERIENCE_PHASE } from "../services/historyService.js";
 import { createExperienceTopBar } from "./experienceChrome.js";
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
+const THPTQG_NAV_STATE_KEY = "__thptqgNav";
 
 function cloneRecord(input) {
   if (!input || typeof input !== "object") return {};
@@ -161,6 +163,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   let elapsedBaseTick = Date.now();
   let timerValueEl = null;
   let pendingScrollQuestionId = "";
+  const historyAbort = new AbortController();
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-thptqg";
@@ -248,16 +251,57 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
   }
 
-  function openCatalog() {
+  function buildHistorySnapshot() {
+    return {
+      view,
+      testId: selectedTestId,
+      currentPartId,
+      currentQuestion,
+      startedAt,
+      submittedAt,
+      reviewMode,
+      activeResultPartId,
+      detailQuestionId,
+    };
+  }
+
+  function writeHistory(mode = "replace") {
+    const current = history.state && typeof history.state === "object" ? history.state : {};
+    const next = {
+      ...current,
+      phase: HISTORY_EXPERIENCE_PHASE,
+      experienceKind: "thptqg_fulltest",
+      [THPTQG_NAV_STATE_KEY]: buildHistorySnapshot(),
+    };
+    if (mode === "push") history.pushState(next, "", location.href);
+    else history.replaceState(next, "", location.href);
+  }
+
+  function restoreFromHistorySnapshot(snapshot) {
+    if (!snapshot || typeof snapshot !== "object") return false;
+    view = snapshot.view === "attempt" || snapshot.view === "result" ? snapshot.view : "catalog";
+    selectedTestId = typeof snapshot.testId === "string" ? snapshot.testId : "";
+    currentPartId = typeof snapshot.currentPartId === "string" ? snapshot.currentPartId : "";
+    currentQuestion = typeof snapshot.currentQuestion === "string" ? snapshot.currentQuestion : "";
+    startedAt = typeof snapshot.startedAt === "string" ? snapshot.startedAt : startedAt;
+    submittedAt = typeof snapshot.submittedAt === "string" ? snapshot.submittedAt : "";
+    reviewMode = Boolean(snapshot.reviewMode);
+    activeResultPartId = typeof snapshot.activeResultPartId === "string" ? snapshot.activeResultPartId : "overview";
+    detailQuestionId = typeof snapshot.detailQuestionId === "string" ? snapshot.detailQuestionId : "";
+    return true;
+  }
+
+  function openCatalog(historyMode = "push") {
     snapshotElapsed();
     view = "catalog";
     activeResultPartId = "overview";
     detailQuestionId = "";
     emitState();
     render();
+    writeHistory(historyMode);
   }
 
-  function startOrResumeTest(test) {
+  function startOrResumeTest(test, historyMode = "push") {
     if (!test || test.status !== "available") return;
     selectedTestId = test.id;
     ensureSelectionForTest(test);
@@ -273,6 +317,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     view = submittedAt ? "result" : "attempt";
     emitState();
     render();
+    writeHistory(historyMode);
   }
 
   function jumpToQuestion(test, questionId) {
@@ -284,6 +329,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     pendingScrollQuestionId = questionId;
     emitState();
     render();
+    writeHistory("replace");
   }
 
   function toggleFlag(questionId) {
@@ -293,6 +339,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     pendingScrollQuestionId = questionId;
     emitState();
     render();
+    writeHistory("replace");
   }
 
   function pickAnswer(questionId, optionIndex) {
@@ -305,9 +352,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     pendingScrollQuestionId = questionId;
     emitState();
     render();
+    writeHistory("replace");
   }
 
-  function submitTest(test) {
+  function submitTest(test, historyMode = "push") {
     if (!test || submittedAt) return;
     if (!window.confirm("Nộp bài ngay bây giờ?")) return;
     elapsedSeconds = snapshotElapsed();
@@ -318,6 +366,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     detailQuestionId = "";
     emitState();
     render();
+    writeHistory(historyMode);
   }
 
   function renderCatalog() {
@@ -386,7 +435,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         <p class="thptqg-exam-subtitle">Mỗi part gồm 10 câu. Chọn part để chuyển nhanh giữa các phần của đề.</p>
       </div>
     `;
-    examHead.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog()));
+    examHead.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog("push")));
     stage.appendChild(examHead);
 
     const layout = document.createElement("div");
@@ -414,6 +463,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         currentQuestion = String(firstQuestion?.id || currentQuestion);
         emitState();
         render();
+        writeHistory("replace");
       });
       topPartTabs.appendChild(button);
     });
@@ -447,6 +497,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           pendingScrollQuestionId = questionId;
           emitState();
           render();
+          writeHistory("replace");
         });
         header.appendChild(badge);
 
@@ -564,7 +615,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     timerValueEl.className = "thptqg-timer";
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
     timerCard.appendChild(timerValueEl);
-    timerCard.appendChild(createButton("NỘP BÀI", "thptqg-submit-btn", () => submitTest(test)));
+    timerCard.appendChild(createButton("NỘP BÀI", "thptqg-submit-btn", () => submitTest(test, "push")));
     sidebar.appendChild(timerCard);
 
     const partsCard = document.createElement("div");
@@ -580,6 +631,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         currentQuestion = String(firstQuestion?.id || currentQuestion);
         emitState();
         render();
+        writeHistory("replace");
       });
       partList.appendChild(button);
     });
@@ -640,11 +692,12 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const actionRow = document.createElement("div");
     actionRow.className = "thptqg-action-row";
-    actionRow.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog()));
+    actionRow.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog("push")));
     actionRow.appendChild(createButton("Xem lại bài làm", "thptqg-secondary-btn", () => {
       view = "attempt";
       render();
       emitState();
+      writeHistory("push");
     }));
     stage.appendChild(actionRow);
 
@@ -679,6 +732,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       activeResultPartId = "overview";
       emitState();
       render();
+      writeHistory("replace");
     });
     filterRow.appendChild(overviewBtn);
     parts.forEach((part) => {
@@ -686,6 +740,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         activeResultPartId = String(part.id || "overview");
         emitState();
         render();
+        writeHistory("replace");
       });
       filterRow.appendChild(button);
     });
@@ -719,6 +774,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           detailQuestionId = questionId;
           emitState();
           render();
+          writeHistory("push");
         });
         questionsCell.appendChild(chip);
       });
@@ -772,6 +828,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
             detailQuestionId = questionId;
             emitState();
             render();
+            writeHistory("push");
           });
           item.appendChild(action);
           list.appendChild(item);
@@ -855,10 +912,24 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   const timer = setInterval(() => {
     if (!document.body.contains(shell)) {
       clearInterval(timer);
+      historyAbort.abort();
       return;
     }
     updateTimer();
   }, 1000);
+
+  window.addEventListener(
+    "popstate",
+    (event) => {
+      const state = event.state && typeof event.state === "object" ? event.state : {};
+      if (state.phase !== HISTORY_EXPERIENCE_PHASE) return;
+      if (state.experienceKind !== "thptqg_fulltest") return;
+      if (!restoreFromHistorySnapshot(state[THPTQG_NAV_STATE_KEY])) return;
+      emitState();
+      render();
+    },
+    { signal: historyAbort.signal },
+  );
 
   const restoredTest = getActiveTest();
   if (restoredTest && !reviewMode && submittedAt) {
@@ -867,4 +938,5 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   if (restoredTest) ensureSelectionForTest(restoredTest);
   emitState();
   render();
+  writeHistory("replace");
 }
