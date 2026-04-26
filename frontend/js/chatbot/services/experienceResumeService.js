@@ -137,12 +137,6 @@ export function createExperienceResumeService(deps) {
   function pushResumeDockFromLastOpened() {
     if (!lastOpenedExperience) return;
     const resumeToPersist = lastOpenedExperience;
-    if (resumeDockAlreadyPosted) {
-      lastOpenedExperience = null;
-      resumeDockAlreadyPosted = false;
-      persistActiveExperience(resumeToPersist);
-      return;
-    }
     const now = new Date().toISOString();
     if (lastOpenedExperience.bundleBack) {
       const resumeDock = {

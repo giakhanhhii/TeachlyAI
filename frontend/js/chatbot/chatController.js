@@ -527,6 +527,8 @@ export function init() {
       return true;
     }
     layerView.hide();
+    pushResumeDockFromLastOpened();
+    scrollToResumeDock();
     return true;
   }
 
