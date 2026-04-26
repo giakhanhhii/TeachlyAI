@@ -7,10 +7,11 @@
  *   apiUrl: string,
  *   sendBtn: HTMLButtonElement,
  *   inputEl: HTMLInputElement | HTMLTextAreaElement,
+ *   onConversationMutation?: (mode?: "push"|"replace") => void,
  * }} deps
  */
 export function createMessageController(deps) {
-  const { getCurrentSession, saveSessions, getMessageView, postChat, apiUrl, sendBtn, inputEl } = deps;
+  const { getCurrentSession, saveSessions, getMessageView, postChat, apiUrl, sendBtn, inputEl, onConversationMutation } = deps;
 
   /**
    * @param {boolean} next
@@ -36,6 +37,7 @@ export function createMessageController(deps) {
     getMessageView().addMessage("user", text);
     current.messages.push({ role: "user", text });
     saveSessions();
+    onConversationMutation?.("push");
   }
 
   /**
@@ -63,6 +65,7 @@ export function createMessageController(deps) {
     if (resumeDock) entry.resumeDock = resumeDock;
     current.messages.push(entry);
     saveSessions();
+    onConversationMutation?.("push");
   }
 
   /**
@@ -85,6 +88,7 @@ export function createMessageController(deps) {
       current.messagesLoaded = true;
       current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
       saveSessions();
+      onConversationMutation?.("push");
       inputEl.value = "";
       const thinking = msgView.addThinkingBubble();
       try {
@@ -97,6 +101,7 @@ export function createMessageController(deps) {
         current.messagesLoaded = true;
         current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
         saveSessions();
+        onConversationMutation?.("push");
       } catch (err) {
         thinking.row.remove();
         hooks.onError(`Lỗi: ${err.message}`);

@@ -87,6 +87,7 @@ export function resolveChatDomElements() {
  *   hideLayer: () => void,
  *   persistActiveExperience: () => void,
  *   pushResumeDockFromLastOpened: () => void,
+ *   restoreNavigationSnapshot?: (snapshot: any, state?: any) => boolean,
  *   scrollToResumeDock: () => void,
  *   ensureSessions: () => void,
  *   ensureHistoryBaseState: () => void,
@@ -117,6 +118,7 @@ export function setupChatEventManager(deps) {
     hideLayer,
     persistActiveExperience,
     pushResumeDockFromLastOpened,
+    restoreNavigationSnapshot,
     scrollToResumeDock,
     ensureSessions,
     ensureHistoryBaseState,
@@ -183,6 +185,7 @@ export function setupChatEventManager(deps) {
       hideLayer,
       persistActiveExperience,
       pushResumeDockFromLastOpened,
+      restoreNavigationSnapshot,
       onReturnedToChat: scrollToResumeDock,
     }),
   );
