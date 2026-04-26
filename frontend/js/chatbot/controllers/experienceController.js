@@ -82,20 +82,31 @@ export function createExperienceController(deps) {
     resumeService.persistCurrentActiveExperience();
   }
 
+  function resolveHistoryOpts(historyOpts) {
+    if (!historyOpts || typeof historyOpts !== "object") {
+      return { mode: "push", canBackToChat: true };
+    }
+    return {
+      mode: historyOpts.mode === "replace" ? "replace" : "push",
+      canBackToChat: Boolean(historyOpts.canBackToChat),
+    };
+  }
+
   /**
    * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
    * @param {Record<string, string>} meta
    * @param {"fresh"|"resume"} mode
    * @param {string} [forcedExperienceId]
+   * @param {{ mode?: "push" | "replace", canBackToChat?: boolean }} [historyOpts]
    */
-  async function openSingleExperience(kind, meta, mode, forcedExperienceId = "") {
+  async function openSingleExperience(kind, meta, mode, forcedExperienceId = "", historyOpts) {
     const seedMeta = meta && typeof meta === "object" ? meta : {};
     const experienceId =
       forcedExperienceId || resumeService.readExperienceIdFromMeta(seedMeta) || resumeService.generateExperienceId();
     const scopedMeta = resumeService.withExperienceIdMeta(seedMeta, experienceId);
     resumeService.rememberOpenExperience(kind, scopedMeta, experienceId);
     persistActiveExperience();
-    ensureExperienceHistoryEntry();
+    ensureExperienceHistoryEntry(resolveHistoryOpts(historyOpts));
     const initialState = resolveSingleInitialState(getCurrentExperienceState() || {}, kind, scopedMeta, mode, experienceId);
     const mountOpts = {
       initialState,
@@ -127,8 +138,9 @@ export function createExperienceController(deps) {
 
   /**
    * @param {{ kind: string, meta: Record<string, string>, experienceId?: string }} item
+   * @param {{ mode?: "push" | "replace", canBackToChat?: boolean }} [historyOpts]
    */
-  async function openResumeExperience(item) {
+  async function openResumeExperience(item, historyOpts) {
     const kind = normalizeExperienceKind(item?.kind || "");
     if (kind !== "quiz" && kind !== "slide" && kind !== "flash" && kind !== "thptqg_fulltest") {
       layerView.hide();
@@ -144,6 +156,7 @@ export function createExperienceController(deps) {
         resumeMeta,
         "resume",
         experienceId,
+        historyOpts,
       );
     } catch {
       layerView.hide();
@@ -153,11 +166,12 @@ export function createExperienceController(deps) {
   /**
    * @param {any[]} items
    * @param {string} bundleTitle
+   * @param {{ mode?: "push" | "replace", canBackToChat?: boolean }} [historyOpts]
    */
-  async function openResumeOpenAll(items, bundleTitle) {
+  async function openResumeOpenAll(items, bundleTitle, historyOpts) {
     resumeService.rememberOpenBundleForBack(bundleTitle || "Full set", items);
     persistActiveExperience();
-    ensureExperienceHistoryEntry();
+    ensureExperienceHistoryEntry(resolveHistoryOpts(historyOpts));
     layerView.prepareShow();
     historyService.seedFullsetHubState({
       bundleTitle: bundleTitle || "Full set",
@@ -175,15 +189,17 @@ export function createExperienceController(deps) {
   /**
    * @param {Record<string, string>} spec
    * @param {string} bundleTitle
+   * @param {string} [forcedExperienceId]
+   * @param {{ mode?: "push" | "replace", canBackToChat?: boolean }} [historyOpts]
    */
-  async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "") {
+  async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "", historyOpts) {
     const safeSpec = spec && typeof spec === "object" ? { ...spec } : {};
     const experienceId =
       forcedExperienceId || resumeService.readExperienceIdFromMeta(safeSpec) || resumeService.generateExperienceId();
     const scopedSpec = resumeService.withExperienceIdMeta(safeSpec, experienceId);
     resumeService.rememberOpenFullSetMixedForBack(bundleTitle || "Full set", scopedSpec, experienceId);
     persistActiveExperience();
-    ensureExperienceHistoryEntry();
+    ensureExperienceHistoryEntry(resolveHistoryOpts(historyOpts));
     layerView.prepareShow();
     const initialState = resolveFullsetInitialState(getCurrentExperienceState(), scopedSpec, experienceId);
     await mountFullSetMixedExperience(

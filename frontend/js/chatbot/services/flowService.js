@@ -85,6 +85,7 @@ function createBuildNextFlowSessionTitle(deps) {
  *   setGuided: (next: any) => void,
  *   resetResumeState: () => void,
  *   hideLayer: () => void,
+ *   commitNavigationSnapshot?: (mode?: "push"|"replace") => void,
  * }} deps
  */
 export function createFlowService(deps) {
@@ -109,6 +110,7 @@ export function createFlowService(deps) {
     setGuided,
     resetResumeState,
     hideLayer,
+    commitNavigationSnapshot,
   } = deps;
 
   const buildNextFlowSessionTitle = createBuildNextFlowSessionTitle({ getSessionsSnapshot });
@@ -154,6 +156,7 @@ export function createFlowService(deps) {
       setCurrentExperienceState(stagedExperienceState);
       saveSessions();
       renderChatListUI();
+      commitNavigationSnapshot?.("push");
     } catch (err) {
       if (current && typeof current === "object") {
         current.title = prevTitle;
@@ -202,6 +205,9 @@ export function createFlowService(deps) {
     renderChatListUI();
     clearMessages();
     try {
+      const navState = history.state && typeof history.state === "object" ? history.state : {};
+      history.replaceState({ ...navState, phase: "chat" }, "", "chatbot_ui.html");
+      commitNavigationSnapshot?.("replace");
       try {
         await ensureSessionMessagesLoaded();
       } catch {
@@ -214,8 +220,7 @@ export function createFlowService(deps) {
       setCurrentExperienceState(stagedExperienceState);
       saveSessions();
       renderChatListUI();
-      const state = history.state && typeof history.state === "object" ? history.state : {};
-      history.replaceState({ ...state }, "", "chatbot_ui.html");
+      commitNavigationSnapshot?.("push");
     } catch (err) {
       if (createdSessionIndex !== null) {
         const list = getSessionsSnapshot();

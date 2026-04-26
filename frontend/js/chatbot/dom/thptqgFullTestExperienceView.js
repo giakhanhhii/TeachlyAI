@@ -266,6 +266,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   }
 
   function writeHistory(mode = "replace") {
+    void mode;
     const current = history.state && typeof history.state === "object" ? history.state : {};
     const next = {
       ...current,
@@ -273,8 +274,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       experienceKind: "thptqg_fulltest",
       [THPTQG_NAV_STATE_KEY]: buildHistorySnapshot(),
     };
-    if (mode === "push") history.pushState(next, "", location.href);
-    else history.replaceState(next, "", location.href);
+    history.replaceState(next, "", location.href);
   }
 
   function restoreFromHistorySnapshot(snapshot) {
