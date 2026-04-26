@@ -6,8 +6,10 @@ import {
   getCurrentSession,
   getCurrentExperienceState,
   getActiveSessionIndex,
+  getCurrentSessionId,
   setActiveSessionIndex,
   getSessionsSnapshot,
+  exportCurrentSessionState,
   createSession,
   renameSession,
   togglePinSession,
@@ -16,6 +18,7 @@ import {
   getSessionByIndex,
   setSessionMessages,
   prependSessionMessages,
+  restoreSessionStateById,
   restoreSessionsState,
 } from "./sessionStore.js";
 import { computeStartFlow } from "./guidedFlow.js";
@@ -59,6 +62,17 @@ let isSwitchingSession = false;
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 const BROWSER_BACK_BRIDGE_KEY = "__teachlyBrowserBackBridge";
+const HISTORY_NAV_SEQ_KEY = "__teachlyNavSeq";
+const HISTORY_SESSION_ID_KEY = "__teachlySessionId";
+
+function getBrowserHistoryIndex() {
+  try {
+    const entryIndex = globalThis.navigation?.currentEntry?.index;
+    return Number.isFinite(Number(entryIndex)) ? Math.floor(Number(entryIndex)) : null;
+  } catch {
+    return null;
+  }
+}
 
 function sameOriginReferrerHref() {
   try {
@@ -126,6 +140,9 @@ export function init() {
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
   initializeBrowserBackBridge();
+  let currentHistoryNavSeq =
+    Number.isFinite(Number(history.state?.[HISTORY_NAV_SEQ_KEY])) ? Math.floor(Number(history.state[HISTORY_NAV_SEQ_KEY])) : 0;
+  let currentBrowserHistoryIndex = getBrowserHistoryIndex();
 
   function resolveCurrentPhase() {
     return experienceLayer.classList.contains("visible") ? HISTORY_EXPERIENCE_PHASE : HISTORY_CHAT_PHASE;
@@ -133,22 +150,43 @@ export function init() {
 
   function buildAppNavigationSnapshot() {
     return {
-      sessions: getSessionsSnapshot(),
-      activeSessionIndex: getActiveSessionIndex(),
+      session: exportCurrentSessionState(),
+      activeSessionId: getCurrentSessionId(),
       guided,
     };
+  }
+
+  function resolveHistoryDirection(targetNavSeq) {
+    const targetBrowserHistoryIndex = getBrowserHistoryIndex();
+    if (targetBrowserHistoryIndex !== null && currentBrowserHistoryIndex !== null) {
+      const delta = targetBrowserHistoryIndex - currentBrowserHistoryIndex;
+      if (delta < 0) return -1;
+      if (delta > 0) return 1;
+    }
+    const safeTargetNavSeq = Number.isFinite(Number(targetNavSeq)) ? Math.floor(Number(targetNavSeq)) : currentHistoryNavSeq - 1;
+    return safeTargetNavSeq <= currentHistoryNavSeq ? -1 : 1;
   }
 
   function writeAppNavigationState(mode = "replace", phase = resolveCurrentPhase()) {
     if (suppressNavigationSnapshotWrite) return;
     const current = history.state && typeof history.state === "object" ? history.state : {};
+    const nextNavSeq =
+      mode === "push"
+        ? currentHistoryNavSeq + 1
+        : Number.isFinite(Number(current[HISTORY_NAV_SEQ_KEY]))
+          ? Math.floor(Number(current[HISTORY_NAV_SEQ_KEY]))
+          : currentHistoryNavSeq;
     const next = {
       ...current,
       phase,
+      [HISTORY_NAV_SEQ_KEY]: nextNavSeq,
+      [HISTORY_SESSION_ID_KEY]: getCurrentSessionId(),
       [HISTORY_APP_NAV_KEY]: buildAppNavigationSnapshot(),
     };
     if (mode === "push") history.pushState(next, "", location.href);
     else history.replaceState(next, "", location.href);
+    currentHistoryNavSeq = nextNavSeq;
+    currentBrowserHistoryIndex = getBrowserHistoryIndex();
   }
 
   commitNavigationSnapshot = writeAppNavigationState;
@@ -449,8 +487,19 @@ export function init() {
     if (!snapshot || typeof snapshot !== "object") return false;
     suppressNavigationSnapshotWrite = true;
     try {
-      const sessions = Array.isArray(snapshot.sessions) ? snapshot.sessions : [];
-      restoreSessionsState(sessions, Number.isInteger(snapshot.activeSessionIndex) ? snapshot.activeSessionIndex : 0);
+      const targetSessionId =
+        typeof snapshot.activeSessionId === "string" ? snapshot.activeSessionId.trim() : "";
+      if (targetSessionId && snapshot.session && typeof snapshot.session === "object") {
+        restoreSessionStateById(targetSessionId, snapshot.session);
+      } else {
+        const sessions = Array.isArray(snapshot.sessions) ? snapshot.sessions : [];
+        const fallbackActiveIndex = Number.isInteger(snapshot.activeSessionIndex) ? snapshot.activeSessionIndex : 0;
+        const legacyActiveIndex =
+          targetSessionId && Array.isArray(snapshot.sessions)
+            ? snapshot.sessions.findIndex((session) => session?.sessionId === targetSessionId)
+            : -1;
+        restoreSessionsState(sessions, legacyActiveIndex >= 0 ? legacyActiveIndex : fallbackActiveIndex);
+      }
       guided = snapshot.guided ?? null;
       renderChatListUI();
       renderMessages();
@@ -461,7 +510,18 @@ export function init() {
   }
 
   async function restoreBrowserState(snapshot, state) {
+    const targetSessionId = typeof snapshot?.activeSessionId === "string" ? snapshot.activeSessionId : "";
+    const currentSessionId = getCurrentSessionId();
+    const targetNavSeq = Number(state?.[HISTORY_NAV_SEQ_KEY]);
+    if (targetSessionId && currentSessionId && targetSessionId !== currentSessionId) {
+      const direction = resolveHistoryDirection(targetNavSeq);
+      if (direction < 0) history.back();
+      else history.forward();
+      return true;
+    }
     if (!restoreNavigationSnapshot(snapshot)) return false;
+    currentHistoryNavSeq = Number.isFinite(targetNavSeq) ? Math.floor(targetNavSeq) : currentHistoryNavSeq;
+    currentBrowserHistoryIndex = getBrowserHistoryIndex();
     if (state?.phase === HISTORY_EXPERIENCE_PHASE) {
       await restoreCurrentSessionExperience();
       return true;

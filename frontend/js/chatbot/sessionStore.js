@@ -35,6 +35,16 @@ let sessions = safeReadSessions();
 let activeSession = Number(localStorage.getItem(LS_ACTIVE_SESSION) || "0");
 let saveQueued = false;
 
+function makeSessionId() {
+  const fallback = `session_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  try {
+    if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  } catch {
+    // Ignore and use fallback.
+  }
+  return fallback;
+}
+
 function deepCopy(value) {
   try {
     return structuredClone(value);
@@ -45,6 +55,7 @@ function deepCopy(value) {
 
 function makeDefaultSession(index) {
   return {
+    sessionId: makeSessionId(),
     title: `Đoạn chat ${index + 1}`,
     thread_id: "",
     messages: [],
@@ -74,6 +85,10 @@ function normalizeSession(session, index = 0) {
     ? Math.floor(safeRemoteOffsetRaw)
     : safeMessages.length;
   return {
+    sessionId:
+      typeof session.sessionId === "string" && session.sessionId.trim()
+        ? session.sessionId.trim()
+        : makeSessionId(),
     title: safeTitle,
     thread_id: safeThread,
     messages: safeMessages,
@@ -132,6 +147,20 @@ export function getActiveSessionIndex() {
   return activeSession;
 }
 
+export function getCurrentSessionId() {
+  const current = getCurrentSession();
+  return typeof current?.sessionId === "string" ? current.sessionId : "";
+}
+
+/**
+ * @param {string} sessionId
+ */
+export function getSessionIndexById(sessionId) {
+  const target = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!target) return -1;
+  return sessions.findIndex((session) => session?.sessionId === target);
+}
+
 export function setActiveSessionIndex(idx) {
   const n = Number(idx);
   if (!Number.isFinite(n) || n < 0 || n >= sessions.length) {
@@ -143,6 +172,10 @@ export function setActiveSessionIndex(idx) {
 
 export function getSessionsSnapshot() {
   return sessions;
+}
+
+export function exportCurrentSessionState() {
+  return deepCopy(getCurrentSession());
 }
 
 export function exportSessionsState() {
@@ -163,6 +196,27 @@ export function restoreSessionsState(nextSessions, nextActiveSession) {
   sessions = safeSessions.length ? safeSessions : [makeDefaultSession(0)];
   activeSession = Number.isFinite(Number(nextActiveSession)) ? Math.floor(Number(nextActiveSession)) : 0;
   if (activeSession < 0 || activeSession >= sessions.length) activeSession = 0;
+}
+
+/**
+ * @param {string} sessionId
+ * @param {any} nextSession
+ * @param {{ activate?: boolean }} [opts]
+ */
+export function restoreSessionStateById(sessionId, nextSession, opts = {}) {
+  const target = typeof sessionId === "string" ? sessionId.trim() : "";
+  if (!target) return -1;
+  const normalized = normalizeSession({ ...(nextSession && typeof nextSession === "object" ? nextSession : {}), sessionId: target }, sessions.length);
+  if (!normalized) return -1;
+  let index = getSessionIndexById(target);
+  if (index < 0) {
+    sessions.push(normalized);
+    index = sessions.length - 1;
+  } else {
+    sessions[index] = normalized;
+  }
+  if (opts.activate !== false) activeSession = index;
+  return index;
 }
 
 /**
