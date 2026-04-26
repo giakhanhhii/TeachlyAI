@@ -39,6 +39,32 @@ function canReuseEmptySession(session) {
 }
 
 /**
+ * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
+ * @param {any} session
+ */
+function buildStartupResumeDock(flowKind, session) {
+  const resume = session?.experienceState?.resume;
+  if (!resume || typeof resume !== "object") return null;
+  const resumeKind = String(resume.kind || "").toLowerCase();
+  if (flowKind === "quiz") {
+    if (resumeKind !== "quiz" && resumeKind !== "thptqg_fulltest") return null;
+  } else if (flowKind === "slide") {
+    if (resumeKind !== "slide") return null;
+  } else if (flowKind === "flashcard") {
+    if (resumeKind !== "flash") return null;
+  } else {
+    return null;
+  }
+  return {
+    kind: resumeKind,
+    meta: resume.meta && typeof resume.meta === "object" ? { ...resume.meta } : {},
+    experienceId: typeof resume.experienceId === "string" ? resume.experienceId : "",
+    title: typeof resume.title === "string" && resume.title.trim() ? resume.title.trim() : resumeKind,
+    openedAt: typeof resume.openedAt === "string" ? resume.openedAt : new Date().toISOString(),
+  };
+}
+
+/**
  * @param {{
  *   getSessionsSnapshot: () => any[],
  * }} deps
@@ -120,8 +146,14 @@ export function createFlowService(deps) {
    */
   async function startWithGuidedEffects(flowKind) {
     const start = computeStartFlow(flowKind);
+    const resumeDock = buildStartupResumeDock(flowKind, getCurrentSession());
+    const effects = resumeDock
+      ? start.effects.map((effect, index) =>
+          index === 0 && effect?.type === "pushBot" ? { ...effect, resumeDock } : effect,
+        )
+      : start.effects;
     setGuided(start.guided);
-    await applyEffects(start.effects);
+    await applyEffects(effects);
     saveSessions();
     renderLoadMoreControl();
     updateThreadLabel();
