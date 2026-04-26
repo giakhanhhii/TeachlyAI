@@ -249,6 +249,37 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
   }
 
+  function captureAttemptScrollState() {
+    const activeTest = getActiveTest();
+    if (view !== "attempt" || !activeTest) return null;
+    return {
+      bodyScrollTop: root.scrollTop,
+      passageScrollTops: Array.from(stage.querySelectorAll(".thptqg-passage-scroll")).map((el) =>
+        el instanceof HTMLElement ? el.scrollTop : 0,
+      ),
+      questionScrollTops: Array.from(stage.querySelectorAll(".thptqg-question-scroll")).map((el) =>
+        el instanceof HTMLElement ? el.scrollTop : 0,
+      ),
+    };
+  }
+
+  function restoreAttemptScrollState(scrollState) {
+    if (!scrollState || typeof scrollState !== "object") return;
+    if (Number.isFinite(Number(scrollState.bodyScrollTop))) {
+      root.scrollTop = Math.max(0, Number(scrollState.bodyScrollTop));
+    }
+    Array.from(stage.querySelectorAll(".thptqg-passage-scroll")).forEach((el, index) => {
+      if (!(el instanceof HTMLElement)) return;
+      const top = Array.isArray(scrollState.passageScrollTops) ? scrollState.passageScrollTops[index] : null;
+      if (Number.isFinite(Number(top))) el.scrollTop = Math.max(0, Number(top));
+    });
+    Array.from(stage.querySelectorAll(".thptqg-question-scroll")).forEach((el, index) => {
+      if (!(el instanceof HTMLElement)) return;
+      const top = Array.isArray(scrollState.questionScrollTops) ? scrollState.questionScrollTops[index] : null;
+      if (Number.isFinite(Number(top))) el.scrollTop = Math.max(0, Number(top));
+    });
+  }
+
   function buildHistorySnapshot() {
     return {
       view,
@@ -327,7 +358,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (flaggedQuestions.has(questionId)) flaggedQuestions.delete(questionId);
     else flaggedQuestions.add(questionId);
     currentQuestion = questionId;
-    pendingScrollQuestionId = questionId;
     emitState();
     render();
     writeHistory("replace");
@@ -340,7 +370,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       [questionId]: optionIndex,
     };
     currentQuestion = questionId;
-    pendingScrollQuestionId = questionId;
     emitState();
     render();
     writeHistory("replace");
@@ -414,6 +443,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   }
 
   function renderAttempt(test) {
+    const previousScrollState = captureAttemptScrollState();
     stage.innerHTML = "";
     const parts = Array.isArray(test.parts) ? test.parts : [];
     const activePart = parts.find((part) => String(part?.id || "") === currentPartId) || parts[0] || null;
@@ -670,6 +700,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     layout.appendChild(workspace);
     layout.appendChild(sidebar);
     stage.appendChild(layout);
+
+    restoreAttemptScrollState(previousScrollState);
 
     if (pendingScrollQuestionId) {
       const target = stage.querySelector(`[data-question-id="${pendingScrollQuestionId}"]`);
