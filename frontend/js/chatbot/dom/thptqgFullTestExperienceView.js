@@ -118,6 +118,13 @@ function createButton(label, className, onClick) {
   return button;
 }
 
+function isLongReadingGroup(group) {
+  const context = Array.isArray(group?.context) ? group.context : [];
+  const joined = context.join(" ").trim();
+  const questionCount = Array.isArray(group?.questionNumbers) ? group.questionNumbers.length : 0;
+  return context.length >= 3 || joined.length >= 850 || (context.length >= 2 && questionCount >= 6);
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -412,56 +419,21 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const groupsWrap = document.createElement("div");
     groupsWrap.className = "thptqg-exam-groups";
     (Array.isArray(activePart?.groups) ? activePart.groups : []).forEach((group) => {
-      const section = document.createElement("section");
-      section.className = "thptqg-exam-group-layout";
-
-      const passagePane = document.createElement("div");
-      passagePane.className = "thptqg-passage-pane";
-      const title = document.createElement("h3");
-      title.className = "thptqg-group-title";
-      title.textContent = String(group?.title || "");
-      passagePane.appendChild(title);
-      if (group?.instruction) {
-        const instruction = document.createElement("p");
-        instruction.className = "thptqg-group-instruction";
-        instruction.textContent = String(group.instruction);
-        passagePane.appendChild(instruction);
-      }
-      if (Array.isArray(group?.context) && group.context.length) {
-        const contextWrap = document.createElement("div");
-        contextWrap.className = "thptqg-context thptqg-passage-scroll";
-        group.context.forEach((line) => {
-          const paragraph = document.createElement("p");
-          paragraph.textContent = String(line);
-          contextWrap.appendChild(paragraph);
-        });
-        passagePane.appendChild(contextWrap);
-      }
-
-      const questionPane = document.createElement("div");
-      questionPane.className = "thptqg-question-pane";
-      const questionPaneHead = document.createElement("div");
-      questionPaneHead.className = "thptqg-question-pane-head";
-      questionPaneHead.innerHTML = `
-        <div class="thptqg-question-pane-title">Câu hỏi</div>
-        <div class="thptqg-inline-note">Chọn đáp án và dùng sidebar bên phải để nhảy nhanh tới câu cần làm.</div>
-      `;
-      questionPane.appendChild(questionPaneHead);
-      const questionScroll = document.createElement("div");
-      questionScroll.className = "thptqg-question-scroll";
       const questionNumbers = Array.isArray(group?.questionNumbers) ? group.questionNumbers : [];
-      questionNumbers.forEach((questionNumber) => {
-        const question = (Array.isArray(test.questions) ? test.questions : []).find((item) => Number(item?.number) === Number(questionNumber));
-        if (!question) return;
+      const longReading = isLongReadingGroup(group);
+      const section = document.createElement("section");
+      section.className = longReading ? "thptqg-exam-group-layout" : "thptqg-compact-group";
+
+      function appendQuestionCard(question, container, variant = "default") {
         const questionId = String(question.id || "");
         const pickedIndex = answersByQuestion[questionId];
         const answered = Number.isFinite(Number(pickedIndex));
         const card = document.createElement("article");
-        card.className = `thptqg-question-card${currentQuestion === questionId ? " current" : ""}`;
+        card.className = `thptqg-question-card${currentQuestion === questionId ? " current" : ""}${variant === "compact" ? " compact" : ""}`;
         card.dataset.questionId = questionId;
 
         const header = document.createElement("div");
-        header.className = "thptqg-question-head";
+        header.className = `thptqg-question-head${variant === "compact" ? " compact" : ""}`;
         const badge = document.createElement("button");
         badge.type = "button";
         badge.className = "thptqg-question-badge";
@@ -472,38 +444,111 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           emitState();
           render();
         });
-        const status = document.createElement("div");
-        status.className = `thptqg-question-status${answered ? " answered" : ""}`;
-        status.textContent = answered ? `Đã chọn ${answerLetter(pickedIndex)}` : "Chưa chọn";
-        const flagBtn = createButton(flaggedQuestions.has(questionId) ? "Bỏ đánh dấu" : "Đánh dấu", "thptqg-flag-btn", () => toggleFlag(questionId));
-        if (flaggedQuestions.has(questionId)) flagBtn.classList.add("active");
         header.appendChild(badge);
-        header.appendChild(status);
-        header.appendChild(flagBtn);
+
+        if (variant !== "compact") {
+          const status = document.createElement("div");
+          status.className = `thptqg-question-status${answered ? " answered" : ""}`;
+          status.textContent = answered ? `Đã chọn ${answerLetter(pickedIndex)}` : "Chưa chọn";
+          header.appendChild(status);
+          const flagBtn = createButton(flaggedQuestions.has(questionId) ? "Bỏ đánh dấu" : "Đánh dấu", "thptqg-flag-btn", () => toggleFlag(questionId));
+          if (flaggedQuestions.has(questionId)) flagBtn.classList.add("active");
+          header.appendChild(flagBtn);
+        }
+
         card.appendChild(header);
 
         const prompt = document.createElement("p");
-        prompt.className = "exp-q-text";
+        prompt.className = `exp-q-text${variant === "compact" ? " compact" : ""}`;
         prompt.innerHTML = quizStemToSafeHtml(String(question.prompt || ""));
         card.appendChild(prompt);
 
         const optionsWrap = document.createElement("div");
-        optionsWrap.className = "exp-option-grid";
+        optionsWrap.className = variant === "compact" ? "exp-option-grid compact" : "exp-option-grid";
         (Array.isArray(question.options) ? question.options : []).forEach((option, optionIndex) => {
           const optionBtn = document.createElement("button");
           optionBtn.type = "button";
-          optionBtn.className = `exp-opt-btn${Number(pickedIndex) === optionIndex ? " selected" : ""}`;
+          optionBtn.className = `exp-opt-btn${Number(pickedIndex) === optionIndex ? " selected" : ""}${variant === "compact" ? " compact" : ""}`;
           optionBtn.textContent = `${OPTION_LETTERS[optionIndex] || optionIndex}. ${option}`;
           optionBtn.addEventListener("click", () => pickAnswer(questionId, optionIndex));
           optionsWrap.appendChild(optionBtn);
         });
         card.appendChild(optionsWrap);
-        questionScroll.appendChild(card);
-      });
-      questionPane.appendChild(questionScroll);
+        container.appendChild(card);
+      }
 
-      section.appendChild(passagePane);
-      section.appendChild(questionPane);
+      if (longReading) {
+        const passagePane = document.createElement("div");
+        passagePane.className = "thptqg-passage-pane";
+        const title = document.createElement("h3");
+        title.className = "thptqg-group-title";
+        title.textContent = String(group?.title || "");
+        passagePane.appendChild(title);
+        if (group?.instruction) {
+          const instruction = document.createElement("p");
+          instruction.className = "thptqg-group-instruction";
+          instruction.textContent = String(group.instruction);
+          passagePane.appendChild(instruction);
+        }
+        if (Array.isArray(group?.context) && group.context.length) {
+          const contextWrap = document.createElement("div");
+          contextWrap.className = "thptqg-context thptqg-passage-scroll";
+          group.context.forEach((line) => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = String(line);
+            contextWrap.appendChild(paragraph);
+          });
+          passagePane.appendChild(contextWrap);
+        }
+
+        const questionPane = document.createElement("div");
+        questionPane.className = "thptqg-question-pane";
+        const questionPaneHead = document.createElement("div");
+        questionPaneHead.className = "thptqg-question-pane-head";
+        questionPaneHead.innerHTML = `
+          <div class="thptqg-question-pane-title">Câu hỏi</div>
+          <div class="thptqg-inline-note">Chọn đáp án và dùng sidebar bên phải để nhảy nhanh tới câu cần làm.</div>
+        `;
+        questionPane.appendChild(questionPaneHead);
+        const questionScroll = document.createElement("div");
+        questionScroll.className = "thptqg-question-scroll";
+        questionNumbers.forEach((questionNumber) => {
+          const question = (Array.isArray(test.questions) ? test.questions : []).find((item) => Number(item?.number) === Number(questionNumber));
+          if (!question) return;
+          appendQuestionCard(question, questionScroll);
+        });
+        questionPane.appendChild(questionScroll);
+        section.appendChild(passagePane);
+        section.appendChild(questionPane);
+      } else {
+        const compactHead = document.createElement("div");
+        compactHead.className = "thptqg-compact-head";
+        compactHead.innerHTML = `
+          <h3 class="thptqg-group-title">${String(group?.title || "")}</h3>
+          ${group?.instruction ? `<p class="thptqg-group-instruction">${String(group.instruction)}</p>` : ""}
+        `;
+        section.appendChild(compactHead);
+
+        if (Array.isArray(group?.context) && group.context.length) {
+          const compactContext = document.createElement("div");
+          compactContext.className = "thptqg-compact-context";
+          group.context.forEach((line) => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = String(line);
+            compactContext.appendChild(paragraph);
+          });
+          section.appendChild(compactContext);
+        }
+
+        const compactList = document.createElement("div");
+        compactList.className = "thptqg-compact-list";
+        questionNumbers.forEach((questionNumber) => {
+          const question = (Array.isArray(test.questions) ? test.questions : []).find((item) => Number(item?.number) === Number(questionNumber));
+          if (!question) return;
+          appendQuestionCard(question, compactList, "compact");
+        });
+        section.appendChild(compactList);
+      }
       groupsWrap.appendChild(section);
     });
     workspace.appendChild(groupsWrap);
