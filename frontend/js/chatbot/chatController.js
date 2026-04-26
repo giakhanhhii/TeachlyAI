@@ -16,7 +16,6 @@ import {
   getSessionByIndex,
   setSessionMessages,
   prependSessionMessages,
-  exportSessionsState,
   restoreSessionsState,
 } from "./sessionStore.js";
 import { computeStartFlow } from "./guidedFlow.js";
@@ -35,8 +34,7 @@ import { createChatSessionListRenderer } from "./controllers/chatSessionListCont
 import {
   HISTORY_APP_NAV_KEY,
   HISTORY_CHAT_PHASE,
-  ensureHistoryBaseState,
-  ensureExperienceHistoryEntry,
+  HISTORY_EXPERIENCE_PHASE,
 } from "./services/historyService.js";
 import { createFlowService } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
@@ -60,13 +58,62 @@ function setGuidedState(next) {
 let isSwitchingSession = false;
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
+const BROWSER_BACK_BRIDGE_KEY = "__teachlyBrowserBackBridge";
 
-function deepCopy(value) {
+function sameOriginReferrerHref() {
   try {
-    return structuredClone(value);
+    if (!document.referrer) return "";
+    const refUrl = new URL(document.referrer, location.href);
+    if (refUrl.origin !== location.origin) return "";
+    return refUrl.href;
   } catch {
-    return JSON.parse(JSON.stringify(value));
+    return "";
   }
+}
+
+function fallbackPreviousPageHref() {
+  return new URL("main_hub.html", location.href).href;
+}
+
+function isSameAppPageHref(a, b) {
+  try {
+    const left = new URL(a, location.href);
+    const right = new URL(b, location.href);
+    return (
+      left.origin === right.origin &&
+      left.pathname === right.pathname &&
+      left.search === right.search &&
+      left.hash === right.hash
+    );
+  } catch {
+    return false;
+  }
+}
+
+function initializeBrowserBackBridge() {
+  const state = history.state && typeof history.state === "object" ? history.state : {};
+  if (state[BROWSER_BACK_BRIDGE_KEY]) return;
+  if (history.length > 1) return;
+
+  const referrerHref = sameOriginReferrerHref();
+  const previousHref =
+    referrerHref && !isSameAppPageHref(referrerHref, location.href)
+      ? referrerHref
+      : fallbackPreviousPageHref();
+  if (!previousHref || previousHref === location.href) return;
+
+  const currentHref = location.href;
+  history.replaceState({ [BROWSER_BACK_BRIDGE_KEY]: "previous" }, "", previousHref);
+  history.pushState({ [BROWSER_BACK_BRIDGE_KEY]: "current" }, "", currentHref);
+
+  window.addEventListener("popstate", (event) => {
+    const nextState = event.state && typeof event.state === "object" ? event.state : {};
+    if (nextState[BROWSER_BACK_BRIDGE_KEY] !== "previous") return;
+    const targetHref = location.href;
+    setTimeout(() => {
+      location.assign(targetHref);
+    }, 0);
+  });
 }
 
 export function init() {
@@ -78,22 +125,26 @@ export function init() {
 
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
+  initializeBrowserBackBridge();
+
+  function resolveCurrentPhase() {
+    return experienceLayer.classList.contains("visible") ? HISTORY_EXPERIENCE_PHASE : HISTORY_CHAT_PHASE;
+  }
 
   function buildAppNavigationSnapshot() {
-    const exported = exportSessionsState();
     return {
-      sessions: exported.sessions,
-      activeSession: exported.activeSession,
-      guided: deepCopy(guided),
+      sessions: getSessionsSnapshot(),
+      activeSessionIndex: getActiveSessionIndex(),
+      guided,
     };
   }
 
-  function writeAppNavigationState(mode = "replace") {
+  function writeAppNavigationState(mode = "replace", phase = resolveCurrentPhase()) {
     if (suppressNavigationSnapshotWrite) return;
-    const state = history.state && typeof history.state === "object" ? history.state : {};
+    const current = history.state && typeof history.state === "object" ? history.state : {};
     const next = {
-      ...state,
-      phase: HISTORY_CHAT_PHASE,
+      ...current,
+      phase,
       [HISTORY_APP_NAV_KEY]: buildAppNavigationSnapshot(),
     };
     if (mode === "push") history.pushState(next, "", location.href);
@@ -101,6 +152,10 @@ export function init() {
   }
 
   commitNavigationSnapshot = writeAppNavigationState;
+  const ensureExperienceHistoryEntry = (opts = {}) => {
+    const mode = opts?.mode === "replace" ? "replace" : "push";
+    writeAppNavigationState(mode, HISTORY_EXPERIENCE_PHASE);
+  };
 
   const layerView = createExperienceLayerView({
     experienceLayer,
@@ -198,6 +253,7 @@ export function init() {
 
   function openChatWithAiDraft(text) {
     layerView.hide();
+    writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
     input.value = text;
     input.focus();
   }
@@ -281,9 +337,8 @@ export function init() {
       input.focus();
       return;
     }
-    const state = history.state && typeof history.state === "object" ? history.state : {};
-    history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
     layerView.hide();
+    writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
     if (selected === "same") {
       experienceController.resetResumeState();
       experienceController.persistActiveExperience();
@@ -314,7 +369,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       saveSessions();
-      writeAppNavigationState("push");
+      writeAppNavigationState("replace");
     }
     input.focus();
   }
@@ -394,7 +449,8 @@ export function init() {
     if (!snapshot || typeof snapshot !== "object") return false;
     suppressNavigationSnapshotWrite = true;
     try {
-      restoreSessionsState(snapshot.sessions, snapshot.activeSession);
+      const sessions = Array.isArray(snapshot.sessions) ? snapshot.sessions : [];
+      restoreSessionsState(sessions, Number.isInteger(snapshot.activeSessionIndex) ? snapshot.activeSessionIndex : 0);
       guided = snapshot.guided ?? null;
       renderChatListUI();
       renderMessages();
@@ -402,6 +458,16 @@ export function init() {
     } finally {
       suppressNavigationSnapshotWrite = false;
     }
+  }
+
+  async function restoreBrowserState(snapshot, state) {
+    if (!restoreNavigationSnapshot(snapshot)) return false;
+    if (state?.phase === HISTORY_EXPERIENCE_PHASE) {
+      await restoreCurrentSessionExperience();
+      return true;
+    }
+    layerView.hide();
+    return true;
   }
 
   function renderLoadMoreControl() {
@@ -437,7 +503,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       await restoreCurrentSessionExperience();
-      writeAppNavigationState("push");
+      writeAppNavigationState("replace", resolveCurrentPhase());
     } finally {
       isSwitchingSession = false;
     }
@@ -447,7 +513,7 @@ export function init() {
     persistActiveExperience();
     layerView.hide();
     renderMessages();
-    writeAppNavigationState("push");
+    writeAppNavigationState("replace");
   } });
 
   messageHistoryService = createMessageHistoryService({
@@ -525,25 +591,30 @@ export function init() {
       renderChatListUI();
       renderMessages();
       saveSessions();
-      writeAppNavigationState("push");
+      writeAppNavigationState("replace", resolveCurrentPhase());
       input.focus();
     },
     hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
+    isExperienceVisible: () => experienceLayer.classList.contains("visible"),
     hideLayer: () => layerView.hide(),
     persistActiveExperience,
     pushResumeDockFromLastOpened,
-    restoreNavigationSnapshot,
+    restoreNavigationSnapshot: (snapshot, state) => restoreBrowserState(snapshot, state),
+    restoreCurrentSessionExperienceFromHistory: () => restoreCurrentSessionExperience(),
     scrollToResumeDock,
     ensureSessions,
-    ensureHistoryBaseState,
+    ensureHistoryBaseState: () => {},
     renderChatListUI,
     ensureSessionMessagesLoaded: () => ensureSessionMessagesLoaded(),
     renderMessages,
     handleFlowEntry: (flowKind) => flowService.handleFlowEntry(flowKind),
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
     onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
-    onInitCompleted: () => { console.log("[chatController] init completed"); },
+    onInitCompleted: () => {
+      writeAppNavigationState("replace", resolveCurrentPhase());
+      console.log("[chatController] init completed");
+    },
   });
 
-  writeAppNavigationState("replace");
+  writeAppNavigationState("replace", resolveCurrentPhase());
 }

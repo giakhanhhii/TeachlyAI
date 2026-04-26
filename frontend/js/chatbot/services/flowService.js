@@ -205,8 +205,6 @@ export function createFlowService(deps) {
     renderChatListUI();
     clearMessages();
     try {
-      const navState = history.state && typeof history.state === "object" ? history.state : {};
-      history.replaceState({ ...navState, phase: "chat" }, "", "chatbot_ui.html");
       commitNavigationSnapshot?.("replace");
       try {
         await ensureSessionMessagesLoaded();
@@ -220,7 +218,7 @@ export function createFlowService(deps) {
       setCurrentExperienceState(stagedExperienceState);
       saveSessions();
       renderChatListUI();
-      commitNavigationSnapshot?.("push");
+      commitNavigationSnapshot?.("replace");
     } catch (err) {
       if (createdSessionIndex !== null) {
         const list = getSessionsSnapshot();

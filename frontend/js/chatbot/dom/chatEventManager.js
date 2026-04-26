@@ -1,7 +1,5 @@
 import { bindNewChatButton } from "../controllers/sessionController.js";
 import {
-  HISTORY_CAN_BACK_TO_CHAT_KEY,
-  HISTORY_CHAT_PHASE,
   createPopStateHandler,
   inExperienceHistoryState,
 } from "../services/historyService.js";
@@ -85,10 +83,12 @@ export function resolveChatDomElements() {
  *   onSendPrompt: (prompt: string) => void,
  *   onCreateNewChat: () => void | Promise<void>,
  *   hasLastOpenedExperience: () => boolean,
+ *   isExperienceVisible?: () => boolean,
  *   hideLayer: () => void,
  *   persistActiveExperience: () => void,
  *   pushResumeDockFromLastOpened: () => void,
  *   restoreNavigationSnapshot?: (snapshot: any, state?: any) => boolean,
+ *   restoreCurrentSessionExperienceFromHistory?: () => Promise<void>,
  *   scrollToResumeDock: () => void,
  *   ensureSessions: () => void,
  *   ensureHistoryBaseState: () => void,
@@ -116,10 +116,12 @@ export function setupChatEventManager(deps) {
     onSendPrompt,
     onCreateNewChat,
     hasLastOpenedExperience,
+    isExperienceVisible,
     hideLayer,
     persistActiveExperience,
     pushResumeDockFromLastOpened,
     restoreNavigationSnapshot,
+    restoreCurrentSessionExperienceFromHistory,
     scrollToResumeDock,
     ensureSessions,
     ensureHistoryBaseState,
@@ -163,12 +165,8 @@ export function setupChatEventManager(deps) {
 
   backToChatBtn?.addEventListener("click", () => {
     if (inExperienceHistoryState()) {
-      const state = history.state && typeof history.state === "object" ? history.state : {};
-      if (state[HISTORY_CAN_BACK_TO_CHAT_KEY]) {
-        history.back();
-        return;
-      }
-      history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
+      history.back();
+      return;
     }
     hideLayer();
     pushResumeDockFromLastOpened();
@@ -186,17 +184,11 @@ export function setupChatEventManager(deps) {
   window.addEventListener(
     "popstate",
     createPopStateHandler({
-      hasLastOpenedExperience: () => hasLastOpenedExperience(),
-      hideLayer,
-      persistActiveExperience,
-      pushResumeDockFromLastOpened,
       restoreNavigationSnapshot,
-      onReturnedToChat: scrollToResumeDock,
     }),
   );
 
   ensureSessions();
-  ensureHistoryBaseState();
   renderChatListUI();
   onInitBaseRendered?.();
 
