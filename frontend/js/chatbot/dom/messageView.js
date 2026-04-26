@@ -21,7 +21,7 @@ function isWideFlowFormCardType(cardType) {
  */
 function isSourceSelectionAction(rawValue) {
   const action = String(rawValue || "").trim().split("|", 1)[0];
-  return /^(fullset|slide|quiz|flash)_(pdf|topic)$/.test(action) || action === "flash_vocab";
+  return /^(fullset|slide|quiz|flash)_(pdf|topic)$/.test(action) || action === "flash_vocab" || action === "quiz_fulltest";
 }
 
 /**

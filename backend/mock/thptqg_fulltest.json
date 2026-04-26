@@ -1,0 +1,225 @@
+{
+  "_replace_note": "THPTQG full-test mock bundle cho mode 'Làm full đề THPTQG'. Bản v1 dùng 4 part, mỗi part 10 câu, chấm theo answer key của mockdata_40.md.",
+  "catalog": {
+    "title": "THPTQG simulation tests",
+    "subtitle": "Thư viện đề giả lập THPTQG Tiếng Anh",
+    "ctaLabel": "Làm full đề THPTQG"
+  },
+  "tests": [
+    {
+      "id": "thptqg-simulation-test-1",
+      "title": "THPTQG simulation test 1",
+      "durationMinutes": 60,
+      "questionCount": 40,
+      "status": "available",
+      "yearLabel": "Mock 01",
+      "source": "mockdata_40.md",
+      "parts": [
+        {
+          "id": "part-1",
+          "label": "Part 1",
+          "title": "Câu 1-10",
+          "questionStart": 1,
+          "questionEnd": 10,
+          "groups": [
+            {
+              "id": "part-1-group-1",
+              "title": "TravelMate Cloze Test",
+              "instruction": "Đọc đoạn quảng cáo và chọn đáp án A, B, C hoặc D phù hợp nhất cho các chỗ trống.",
+              "context": [
+                "DISCOVER NEW TRAVEL BUDDIES WITH TRAVELMATE",
+                "\"Who will you explore your next destination with? Will they share the same (1)_____ for adventure, or will they prefer a more relaxing trip?\" If you often wonder (2)_____ your travel companions before your next vacation, we have exciting news for you! TravelMate, a (3)_____, allows you to select your future travel buddies before your trip.",
+                "This service is designed to give you a more enjoyable and personalized experience. All you need to do is share your travel preferences with the platform, and you'll be matched with others (4)_____ similar tastes. Whether you're looking to (5)_____ new friends or reconnect with previous ones, TravelMate makes it easy. If you're seeking adventure or simply want (6)_____ a relaxing getaway, there's a perfect match waiting for you!"
+              ],
+              "questionNumbers": [1, 2, 3, 4, 5, 6]
+            },
+            {
+              "id": "part-1-group-2",
+              "title": "Sustainable Living Cloze Test",
+              "instruction": "Tiếp tục đọc tờ rơi và chọn đáp án phù hợp nhất cho câu 7-10.",
+              "context": [
+                "Sustainable Living: Every Action Matters!",
+                "Adopting sustainable practices in our daily lives can have a significant impact on the environment. Here are (7)_____ insights to help you make a difference!",
+                "Each year, billions of plastic items are discarded, a large portion of our waste. This not only fills landfills but also (8)_____ aquatic ecosystems, harming marine wildlife.",
+                "Start by minimizing your consumption. For example, (9)_____ reusable cutlery and plates instead of disposable ones. If you have items that are still functional but no longer needed, repurpose them through local swap events or community programs (10)_____ discarding them."
+              ],
+              "questionNumbers": [7, 8, 9, 10]
+            }
+          ]
+        },
+        {
+          "id": "part-2",
+          "label": "Part 2",
+          "title": "Câu 11-20",
+          "questionStart": 11,
+          "questionEnd": 20,
+          "groups": [
+            {
+              "id": "part-2-group-1",
+              "title": "Sustainable Living Cloze Test (continued)",
+              "instruction": "Hoàn thành nốt đoạn văn cho câu 11-12.",
+              "context": [
+                "When shopping, (11)_____ brands that use sustainable materials, helping reduce your carbon footprint. Lastly, (12)_____ waste properly by separating recyclables from general waste, aiding the recycling process."
+              ],
+              "questionNumbers": [11, 12]
+            },
+            {
+              "id": "part-2-group-2",
+              "title": "Sentence Ordering",
+              "instruction": "Sắp xếp các phát ngôn hoặc câu để tạo thành hội thoại/đoạn văn hợp lý cho câu 13-17.",
+              "context": [
+                "Mỗi câu gồm các mảnh a, b, c... Hãy chọn phương án cho thứ tự đúng nhất."
+              ],
+              "questionNumbers": [13, 14, 15, 16, 17]
+            },
+            {
+              "id": "part-2-group-3",
+              "title": "Cristiano Ronaldo Passage",
+              "instruction": "Đọc đoạn văn và chọn đáp án phù hợp nhất cho các chỗ trống ở câu 18-20.",
+              "context": [
+                "Cristiano Ronaldo, one of the greatest football players of all time, (18)_____. Born on February 5, 1985, in Funchal, Madeira, Portugal, he showed exceptional talent from a young age.",
+                "During his time at Manchester United, Ronaldo developed into a world-class player, winning three Premier League titles and the UEFA Champions League. He became well known for his incredible speed and powerful shots (19)_____. In 2009, he transferred to Real Madrid, where he broke numerous records, including becoming the club's all-time leading scorer. (20)_____."
+              ],
+              "questionNumbers": [18, 19, 20]
+            }
+          ]
+        },
+        {
+          "id": "part-3",
+          "label": "Part 3",
+          "title": "Câu 21-30",
+          "questionStart": 21,
+          "questionEnd": 30,
+          "groups": [
+            {
+              "id": "part-3-group-1",
+              "title": "Cristiano Ronaldo Passage (continued)",
+              "instruction": "Hoàn thành nốt đoạn văn ở câu 21-22.",
+              "context": [
+                "Possessing remarkable athleticism and a keen sense of strategy, (21)_____. His training regimen, which includes intense workouts and a strict diet, ensures that he remains at peak performance.",
+                "Beyond his football career, Ronaldo is a philanthropist who uses his platform to give back to the community. (22)_____. His influence extends far beyond the pitch, making him a global icon and a role model for aspiring athletes."
+              ],
+              "questionNumbers": [21, 22]
+            },
+            {
+              "id": "part-3-group-2",
+              "title": "Vietnamese Cultural Identity",
+              "instruction": "Đọc đoạn văn và chọn đáp án đúng nhất cho câu 23-30.",
+              "context": [
+                "Vietnamese cultural identity is a rich and intricate tapestry that reflects the nation's long and storied history. Rooted in over a thousand years of civilization, Vietnam's cultural identity is a fusion of indigenous traditions and external influences, shaped by its geographical location and historical interactions.",
+                "First and foremost, at the heart of Vietnamese culture is a deep reverence for family and community. Confucian values emphasizing respect for elders, filial piety, and social harmony have played a pivotal role in shaping Vietnamese society.",
+                "Secondly, Vietnamese cuisine is celebrated worldwide for its exquisite flavors and diversity. Traditional art forms like water puppetry, silk painting, and folk music continue to thrive alongside contemporary artistic movements. Ao dai exemplifies the fusion of elegance and modesty in Vietnamese fashion, symbolizing cultural pride and identity.",
+                "Today, in the face of modernization and globalization, Vietnamese cultural identity remains resilient. While adapting to the challenges of the 21st century, the Vietnamese people continue to honor their traditions and pass on their heritage to future generations."
+              ],
+              "questionNumbers": [23, 24, 25, 26, 27, 28, 29, 30]
+            }
+          ]
+        },
+        {
+          "id": "part-4",
+          "label": "Part 4",
+          "title": "Câu 31-40",
+          "questionStart": 31,
+          "questionEnd": 40,
+          "groups": [
+            {
+              "id": "part-4-group-1",
+              "title": "News Consumption Passage",
+              "instruction": "Đọc đoạn văn về tin tức và trả lời câu 31-40.",
+              "context": [
+                "Keeping up with what is happening in the world is generally seen as an essential part of being a well-informed and educated citizen. Watching, listening to or reading the news can satisfy our curiosity, make us think, help us make choices and even avoid danger.",
+                "The frequency, speed and way we access news has completely changed over the past few decades. Whereas previously most newspapers were published daily and TV and radio news broadcasts were limited, now we are constantly bombarded with news from all sides, and we have 24-hour news channels.",
+                "The content of news reports is almost always negative. I Throughout history, our survival has depended on noticing threats and avoiding danger, so the human brain is hard-wired to seek out information that is frightening or alarming. II It is about humans paying more attention to negative things because that kept us alive in the past and this is reflected in the news we consume. III In addition, because people now use smartphones to record events live, the news we see has become far more graphic and shocking. IV",
+                "Recent studies have shown that our news habits have disadvantages for our physical and emotional health. Watching terrible or sad news on TV can worsen people's moods and make them worry more about their own lives. Exposure to this ever-increasing bad news can take a toll on our positivity and affect our health.",
+                "While it is true that staying aware and informed is not a bad thing, we should not forget that we have a choice, not only about how much news we consume, but equally importantly about the kind of news we want to see."
+              ],
+              "questionNumbers": [31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+            }
+          ]
+        }
+      ],
+      "questions": [
+        { "id": "q1", "number": 1, "partId": "part-1", "prompt": "Question 1. Choose the option that best fits blank (1).", "options": ["enthusiastically", "enthusiast", "enthusiasm", "enthusiastic"], "correctIndex": 2, "explanation": "Sau cụm 'the same' cần một danh từ. 'Enthusiasm for adventure' là cụm tự nhiên nhất.", "explanationEvidence": "Cấu trúc: the same + noun + for." },
+        { "id": "q2", "number": 2, "partId": "part-1", "prompt": "Question 2. Choose the option that best fits blank (2).", "options": ["about", "for", "over", "with"], "correctIndex": 0, "explanation": "Động từ 'wonder' đi với giới từ 'about' khi diễn tả băn khoăn về ai/điều gì.", "explanationEvidence": "Collocation: wonder about somebody/something." },
+        { "id": "q3", "number": 3, "partId": "part-1", "prompt": "Question 3. Choose the option that best fits blank (3).", "options": ["travel platform new", "new travel platform", "travel new platform", "new platform travel"], "correctIndex": 1, "explanation": "Thứ tự tính từ và danh từ đúng là 'a new travel platform'.", "explanationEvidence": "Adjective + noun phrase." },
+        { "id": "q4", "number": 4, "partId": "part-1", "prompt": "Question 4. Choose the option that best fits blank (4).", "options": ["who has", "had", "to have", "having"], "correctIndex": 3, "explanation": "Cụm rút gọn 'others having similar tastes' phù hợp ngữ pháp và nghĩa.", "explanationEvidence": "Phân từ hiện tại rút gọn mệnh đề quan hệ." },
+        { "id": "q5", "number": 5, "partId": "part-1", "prompt": "Question 5. Choose the option that best fits blank (5).", "options": ["take", "make", "give", "do"], "correctIndex": 1, "explanation": "Cụm đúng là 'make new friends'.", "explanationEvidence": "Collocation: make friends." },
+        { "id": "q6", "number": 6, "partId": "part-1", "prompt": "Question 6. Choose the option that best fits blank (6).", "options": ["have", "to having", "to have", "having"], "correctIndex": 2, "explanation": "Sau 'want' dùng động từ nguyên mẫu có 'to'.", "explanationEvidence": "Cấu trúc: want to do something." },
+        { "id": "q7", "number": 7, "partId": "part-1", "prompt": "Question 7. Choose the option that best fits blank (7).", "options": ["another", "others", "each", "some"], "correctIndex": 3, "explanation": "Cần một từ hạn định trước danh từ số nhiều 'insights'; 'some insights' là tự nhiên nhất.", "explanationEvidence": "some + plural noun." },
+        { "id": "q8", "number": 8, "partId": "part-1", "prompt": "Question 8. Choose the option that best fits blank (8).", "options": ["devastates", "nourishes", "conserves", "enhances"], "correctIndex": 0, "explanation": "Ngữ cảnh đang nói đến tác hại của rác thải nhựa nên động từ đúng là 'devastates'.", "explanationEvidence": "harming marine wildlife => tác động tiêu cực." },
+        { "id": "q9", "number": 9, "partId": "part-1", "prompt": "Question 9. Choose the option that best fits blank (9).", "options": ["turn up", "opt for", "rely on", "throw away"], "correctIndex": 1, "explanation": "Câu khuyên chọn đồ tái sử dụng nên 'opt for' là phù hợp nhất.", "explanationEvidence": "opt for = choose." },
+        { "id": "q10", "number": 10, "partId": "part-1", "prompt": "Question 10. Choose the option that best fits blank (10).", "options": ["because of", "thanks to", "according to", "instead of"], "correctIndex": 3, "explanation": "Ý câu là tái sử dụng thay vì vứt bỏ, nên dùng 'instead of'.", "explanationEvidence": "instead of + V-ing/noun." },
+        { "id": "q11", "number": 11, "partId": "part-2", "prompt": "Question 11. Choose the option that best fits blank (11).", "options": ["inquire", "seek", "verify", "demand"], "correctIndex": 1, "explanation": "Khi mua sắm, ta 'seek brands' dùng vật liệu bền vững.", "explanationEvidence": "seek = look for." },
+        { "id": "q12", "number": 12, "partId": "part-2", "prompt": "Question 12. Choose the option that best fits blank (12).", "options": ["manage", "accumulate", "distribute", "utilize"], "correctIndex": 0, "explanation": "Cụm đúng là 'manage waste properly'.", "explanationEvidence": "manage waste = xử lý/quản lý rác thải." },
+        { "id": "q13", "number": 13, "partId": "part-2", "prompt": "Question 13. Choose the best arrangement of the utterances.\na. Nam: Oh, I'm sorry, but I can't. I have to visit my grandparents today.\nb. Lan: Never mind. Another time, perhaps.\nc. Lan: Nam, there's an art exhibition near my school. Let's go to see it this afternoon.", "options": ["c-a-b", "b-c-a", "c-b-a", "a-c-b"], "correctIndex": 0, "explanation": "Lan rủ đi xem triển lãm trước, Nam từ chối vì bận, rồi Lan đáp lại lịch sự.", "explanationEvidence": "Diễn tiến hội thoại tự nhiên: lời mời -> từ chối -> kết thúc." },
+        { "id": "q14", "number": 14, "partId": "part-2", "prompt": "Question 14. Choose the best arrangement of the utterances.\na. Mark: Working night shifts must be really hard. When does he sleep?\nb. Lan: That's right. My dad is a factory worker, so he works in shifts. Today he's on the night shift.\nc. Lan: Come in, Mark. Did you find my place easily?\nd. Mark: Yes, I actually met your dad in the street and he showed me the way. He said he was on his way to work.\ne. Lan: He goes to bed right after he comes home in the morning when there's no one at home.", "options": ["c-d-b-a-e", "c-e-d-b-a", "d-b-a-e-c", "d-e-a-b-c"], "correctIndex": 0, "explanation": "Mở đầu bằng lời chào, sau đó Mark kể gặp bố Lan, Lan giải thích bố đang đi làm, Mark hỏi thêm, rồi Lan trả lời.", "explanationEvidence": "Trật tự logic theo ngữ cảnh thăm nhà." },
+        { "id": "q15", "number": 15, "partId": "part-2", "prompt": "Question 15. Choose the best arrangement of the email lines.\na. Thank you so much for the travel guidebook you sent me.\nb. Also, I really appreciate your tips on local restaurants.\nc. I've already booked the flights, so everything is falling into place!\nd. I'm looking forward to seeing all the art galleries you mentioned in Florence.\ne. I'm hoping we can catch up before I leave.", "options": ["b-e-a-d-c", "c-b-d-e-a", "a-d-c-b-e", "e-c-b-a-d"], "correctIndex": 2, "explanation": "Email hợp lý nhất là cảm ơn trước, nhắc thêm nơi muốn đến, cập nhật đã đặt vé, cảm ơn tips ăn uống và chốt hẹn cà phê.", "explanationEvidence": "Bố cục email cảm ơn -> cập nhật kế hoạch -> lời kết." },
+        { "id": "q16", "number": 16, "partId": "part-2", "prompt": "Question 16. Choose the best arrangement of the sentences.\na. Additionally, choosing eco-friendly products and supporting renewable energy contributes to a greener planet.\nb. Planting trees helps reduce carbon dioxide levels and improves air quality.\nc. Simple actions like reducing plastic use, recycling, and conserving water can make a significant difference.\nd. It's important for individuals, businesses, and governments to work together for future generations.\ne. Protecting the environment is crucial for ensuring a healthy and sustainable future.", "options": ["e-c-b-a-d", "e-a-c-d-b", "e-c-a-b-d", "d-e-a-c-b"], "correctIndex": 0, "explanation": "Câu chủ đề phải đứng đầu, tiếp theo là ví dụ hành động đơn giản, rồi trồng cây, thêm lựa chọn năng lượng xanh và kết luận kêu gọi hợp tác.", "explanationEvidence": "Đoạn văn diễn dịch với kết luận ở cuối." },
+        { "id": "q17", "number": 17, "partId": "part-2", "prompt": "Question 17. Choose the best arrangement of the sentences.\na. Urbanisation is a process that cannot be stopped, and the best way to minimise its problems is to plan for growth.\nb. Big cities attract a lot of people as they usually offer more employment opportunities as well as a better life.\nc. Urbanisation occurs in many parts of the world, both in developed and developing nations.\nd. However, when too many people move to a big city without good planning, its infrastructure can become ineffective.\ne. It refers to the process in which urban areas grow as people leave the countryside.", "options": ["c-b-d-e-a", "c-e-b-d-a", "c-e-d-b-a", "c-d-e-b-a"], "correctIndex": 1, "explanation": "Đoạn văn nên giới thiệu urbanisation trước, giải thích khái niệm, nêu lý do thành phố hút dân, chỉ ra vấn đề và kết bằng giải pháp quy hoạch.", "explanationEvidence": "Định nghĩa -> lợi ích -> vấn đề -> giải pháp." },
+        { "id": "q18", "number": 18, "partId": "part-2", "prompt": "Question 18. Choose the option that best fits blank (18).", "options": ["has made a significant impact on the sport", "impacting significantly on the sport", "whose significant impact on the sport", "have a significant impact on the sport recognized"], "correctIndex": 0, "explanation": "Câu cần một mệnh đề hoàn chỉnh sau chủ ngữ 'Cristiano Ronaldo'.", "explanationEvidence": "A creates a grammatical main clause." },
+        { "id": "q19", "number": 19, "partId": "part-2", "prompt": "Question 19. Choose the option that best fits blank (19).", "options": ["gave a lot of fear to his opponent on the pitch", "which made him a formidable opponent on the pitch", "allowed him to become a formidable opponent on the pitch", "of which the success in passing opponents and scoring"], "correctIndex": 1, "explanation": "Mệnh đề quan hệ 'which made him...' nối tự nhiên với cụm 'speed and powerful shots'.", "explanationEvidence": "which refers back to speed and powerful shots." },
+        { "id": "q20", "number": 20, "partId": "part-2", "prompt": "Question 20. Choose the option that best fits blank (20).", "options": ["Young athletes have inspired Ronaldo to strengthen his relentless drive and work ethic", "The relentless drive and work ethic of Ronaldo have forced many young fans to become footballers", "Ronaldo's relentless drive and work ethic have inspired many young athletes who aspire to follow his footsteps", "Aiming to encourage young athletes to become footballers, Ronaldo trained hard and shared his experiences with them"], "correctIndex": 2, "explanation": "Phương án C giữ mạch nói về ảnh hưởng tích cực của Ronaldo với giới trẻ.", "explanationEvidence": "Ý nối tiếp thành tích cá nhân -> nguồn cảm hứng cho người khác." },
+        { "id": "q21", "number": 21, "partId": "part-3", "prompt": "Question 21. Choose the option that best fits blank (21).", "options": ["The label of one of the all-time best players is attributed to Ronaldo", "Experts consistently regard Ronaldo as one of the greatest players of all time", "Achieving the title of the best player of all time is a simple feat for Ronaldo", "Ronaldo consistently demonstrates why he is considered one of the best players of all time"], "correctIndex": 3, "explanation": "Bảng đáp án của bộ mock chấm câu này theo phương án D và hệ thống giữ nguyên answer key gốc.", "explanationEvidence": "Answer key đi kèm mockdata_40.md: 21.D." },
+        { "id": "q22", "number": 22, "partId": "part-3", "prompt": "Question 22. Choose the option that best fits blank (22).", "options": ["Various charities would definitely struggle to support causes like children's hospitals and disaster relief efforts without Ronaldo's contributions", "His millions of dollars serve as an aid to causes like children's hospitals and disaster relief efforts", "Spending millions of dollars, various charities can support causes such as children's hospitals and disaster relief efforts on behalf of Ronaldo", "He has donated millions of dollars to various charities, supporting causes such as children's hospitals and disaster relief efforts"], "correctIndex": 3, "explanation": "Phương án D hoàn chỉnh và phù hợp nhất khi nói về hoạt động thiện nguyện của Ronaldo.", "explanationEvidence": "donated millions of dollars to various charities." },
+        { "id": "q23", "number": 23, "partId": "part-3", "prompt": "Question 23. The word 'indigenous' in paragraph 1 is OPPOSITE in meaning to _____.", "options": ["local", "foreign", "native", "traditional"], "correctIndex": 1, "explanation": "'Indigenous' nghĩa là bản địa; trái nghĩa phù hợp nhất là 'foreign'.", "explanationEvidence": "indigenous >< foreign." },
+        { "id": "q24", "number": 24, "partId": "part-3", "prompt": "Question 24. Which of the following is NOT mentioned as Confucian values emphasizing respect for?", "options": ["filial piety", "social harmony", "individualism", "elders"], "correctIndex": 2, "explanation": "Đoạn văn nêu elders, filial piety và social harmony; không nhắc tới individualism.", "explanationEvidence": "Paragraph 2 lists respect for elders, filial piety, and social harmony." },
+        { "id": "q25", "number": 25, "partId": "part-3", "prompt": "Question 25. The word 'reverence' in paragraph 2 could be best replaced by _____.", "options": ["disrespect", "admiration", "indifference", "criticism"], "correctIndex": 1, "explanation": "'Reverence' mang nghĩa sự kính trọng, gần nhất với 'admiration'.", "explanationEvidence": "deep reverence for family and community." },
+        { "id": "q26", "number": 26, "partId": "part-3", "prompt": "Question 26. Which of the following best paraphrases the underlined sentence in paragraph 3?", "options": ["The ao dai, known for its elegance and modesty, represents a blend of Vietnamese fashion that embodies cultural identity and pride.", "As a traditional dress, the ao dai reflects the combination of sophistication and simplicity in Vietnamese fashion, representing the nation's cultural values.", "The graceful ao dai, a traditional Vietnamese attire, signifies the blend of elegance and restraint, illustrating the pride and identity of Vietnamese culture.", "Known as a traditional dress, the ao dai beautifully combines elegance with symbol of Vietnam's cultural identity and pride."], "correctIndex": 0, "explanation": "Phương án A diễn đạt đầy đủ nhất ý 'elegance and modesty' cùng vai trò biểu tượng bản sắc văn hóa.", "explanationEvidence": "Ao dai symbolizes cultural pride and identity." },
+        { "id": "q27", "number": 27, "partId": "part-3", "prompt": "Question 27. The word 'their' in paragraph 4 refers to _____.", "options": ["Vietnamese cuisine", "Vietnamese people", "Traditional art forms", "Agricultural heritage"], "correctIndex": 1, "explanation": "'Their traditions' nói về traditions của người Việt Nam.", "explanationEvidence": "the Vietnamese people continue to honor their traditions." },
+        { "id": "q28", "number": 28, "partId": "part-3", "prompt": "Question 28. Which of the following is TRUE according to the passage?", "options": ["Vietnamese cultural identity is static and unchanging", "Modernization has completely erased Vietnamese traditions", "Vietnamese cuisine has gained international recognition", "Water puppetry is no longer practiced in Vietnam"], "correctIndex": 2, "explanation": "Đoạn văn nói rõ Vietnamese cuisine is celebrated worldwide, nên C là đúng.", "explanationEvidence": "Vietnamese cuisine is celebrated worldwide." },
+        { "id": "q29", "number": 29, "partId": "part-3", "prompt": "Question 29. In which paragraph does the writer mention a present concession relationship?", "options": ["Paragraph 1", "Paragraph 2", "Paragraph 3", "Paragraph 4"], "correctIndex": 3, "explanation": "Cụm 'While adapting..., the Vietnamese people continue...' thể hiện quan hệ nhượng bộ ở đoạn 4.", "explanationEvidence": "While adapting to the challenges..., they continue to honor traditions." },
+        { "id": "q30", "number": 30, "partId": "part-3", "prompt": "Question 30. In which paragraph does the writer state that Vietnamese cultural identity is influenced by both internal and external factors?", "options": ["Paragraph 1", "Paragraph 2", "Paragraph 3", "Paragraph 4"], "correctIndex": 0, "explanation": "Đoạn 1 nói rõ cultural identity là sự hòa trộn của indigenous traditions và external influences.", "explanationEvidence": "a fusion of indigenous traditions and external influences." },
+        { "id": "q31", "number": 31, "partId": "part-4", "prompt": "Question 31. The word 'limited' in paragraph 2 is OPPOSITE in meaning to _____.", "options": ["infinite", "restricted", "reliable", "harmonious"], "correctIndex": 0, "explanation": "'Limited' đối lập với 'infinite'.", "explanationEvidence": "limited >< infinite." },
+        { "id": "q32", "number": 32, "partId": "part-4", "prompt": "Question 32. Where in paragraph 3 does the sentence 'There is a concept known as negativity bias.' best fit?", "options": ["I", "II", "III", "IV"], "correctIndex": 1, "explanation": "Câu này nên đứng trước phần giải thích khái niệm negativity bias, tức vị trí II theo answer key gốc.", "explanationEvidence": "Vị trí trước câu 'It is about humans paying more attention...'." },
+        { "id": "q33", "number": 33, "partId": "part-4", "prompt": "Question 33. Which of the following best summarizes paragraph 3?", "options": ["The news focuses mostly on positive events, which helps people feel better.", "Humans tend to pay more attention to negative news because it has helped us survive in the past.", "News reports today are less shocking and more focused on personal stories.", "The news today is about entertaining content rather than alarming or frightening events."], "correctIndex": 1, "explanation": "Đoạn 3 giải thích vì sao con người bị hút vào tin xấu: cơ chế sinh tồn và negativity bias.", "explanationEvidence": "hard-wired to seek out frightening or alarming information." },
+        { "id": "q34", "number": 34, "partId": "part-4", "prompt": "Question 34. The word 'them' in paragraph 4 refers to _____.", "options": ["people", "moods", "news", "lives"], "correctIndex": 0, "explanation": "'Them' quay lại chủ thể là 'people'.", "explanationEvidence": "make them worry more about their own lives." },
+        { "id": "q35", "number": 35, "partId": "part-4", "prompt": "Question 35. The phrase 'take a toll on' in paragraph 4 could be best replaced by _____.", "options": ["pay attention to", "cause harm to", "bring benefits to", "lend support to"], "correctIndex": 1, "explanation": "'Take a toll on' mang nghĩa gây tác hại/ảnh hưởng xấu.", "explanationEvidence": "affect our health negatively." },
+        { "id": "q36", "number": 36, "partId": "part-4", "prompt": "Question 36. Which of the following is NOT mentioned as one of the effects that news can have on humans according to recent studies?", "options": ["worry", "tiredness", "sadness", "poor sleep"], "correctIndex": 2, "explanation": "Đoạn văn nêu stress, anxiety, tiredness, poor sleep và worry; không nêu trực tiếp sadness trong danh sách này.", "explanationEvidence": "survey mentions stress, anxiety, tiredness, poor sleep." },
+        { "id": "q37", "number": 37, "partId": "part-4", "prompt": "Question 37. Which of the following is TRUE according to the passage?", "options": ["Watching negative news regularly has no real impact on people's mental or physical health.", "We can control both the amount and type of news we consume, which helps reduce its harmful effects.", "The news today focuses mainly on positive stories that make people feel less stressed and more relaxed.", "News consumption has decreased because many people no longer find it relevant or interesting to keep up with."], "correctIndex": 0, "explanation": "Bộ mock full-test này cố ý chấm theo bảng đáp án gốc đính kèm `mockdata_40.md`, trong đó câu 37 được khóa ở đáp án A.", "explanationEvidence": "Answer key gốc: 37.A." },
+        { "id": "q38", "number": 38, "partId": "part-4", "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 5?", "options": ["We should stop watching the news entirely to avoid its harmful effects.", "The news should be controlled by the government to limit negative impacts.", "It is important to be mindful of both how much and what kind of news we consume.", "It doesn't matter what kind of news we watch as long as we stay informed."], "correctIndex": 2, "explanation": "Ý câu nhấn mạnh việc chọn lọc cả lượng tin tức lẫn loại tin tức tiêu thụ.", "explanationEvidence": "a choice about how much news and what kind of news we want to see." },
+        { "id": "q39", "number": 39, "partId": "part-4", "prompt": "Question 39. Which of the following can be inferred from the passage?", "options": ["The rise of 24-hour news channels has led to a significant increase in news consumption.", "People are generally more interested in positive news stories than negative ones.", "Exposure to bad news has no noticeable impact on people's mental or physical health.", "Modern technology has made it more difficult for people to avoid news altogether."], "correctIndex": 0, "explanation": "Theo answer key của bộ mock, đáp án A là lựa chọn được dùng để chấm cho câu này.", "explanationEvidence": "Answer key gốc: 39.A." },
+        { "id": "q40", "number": 40, "partId": "part-4", "prompt": "Question 40. Which of the following best summarizes the passage?", "options": ["People are generally unaffected by the news, and it has no significant impact on their emotional or physical well-being.", "Watching the news can harm our well-being, and it's better to stop watching it altogether to protect our health.", "Negative news contributes to stress and anxiety, but the problem lies in how it's presented, not the news itself.", "Staying informed is important, but excessive negative news can harm our health, so we must choose carefully."], "correctIndex": 3, "explanation": "Đây là câu tóm tắt toàn bài đầy đủ nhất: vẫn cần cập nhật tin tức, nhưng cần tiêu thụ có chọn lọc để bảo vệ sức khỏe.", "explanationEvidence": "The conclusion balances staying informed with careful consumption." }
+      ]
+    },
+    {
+      "id": "thptqg-simulation-test-2",
+      "title": "THPTQG simulation test 2",
+      "durationMinutes": 60,
+      "questionCount": 40,
+      "status": "locked",
+      "yearLabel": "Sắp có",
+      "parts": [],
+      "questions": []
+    },
+    {
+      "id": "thptqg-simulation-test-3",
+      "title": "THPTQG simulation test 3",
+      "durationMinutes": 60,
+      "questionCount": 40,
+      "status": "locked",
+      "yearLabel": "Sắp có",
+      "parts": [],
+      "questions": []
+    },
+    {
+      "id": "thptqg-simulation-test-4",
+      "title": "THPTQG simulation test 4",
+      "durationMinutes": 60,
+      "questionCount": 40,
+      "status": "locked",
+      "yearLabel": "Sắp có",
+      "parts": [],
+      "questions": []
+    },
+    {
+      "id": "thptqg-simulation-test-5",
+      "title": "THPTQG simulation test 5",
+      "durationMinutes": 60,
+      "questionCount": 40,
+      "status": "locked",
+      "yearLabel": "Sắp có",
+      "parts": [],
+      "questions": []
+    }
+  ]
+}

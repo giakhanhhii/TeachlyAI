@@ -24,6 +24,7 @@ import { resumeDockSignature } from "../utils/serialization.js";
  *   mountFlashExperience: (layerView: any, meta: Record<string, string>, hooks: any, opts: any) => Promise<void>,
  *   mountFullSetHubExperience: (layerView: any, opts: any, onOpen: (item: any) => Promise<void>) => Promise<void>,
  *   mountFullSetMixedExperience: (layerView: any, opts: any, hooks: any, mountOpts: any) => Promise<void>,
+ *   mountThptqgFullTestExperience: (layerView: any, meta: Record<string, string>, hooks: any, opts: any) => Promise<void>,
  *   experienceHooks: any,
  *   pushBot: (text: string, opts?: any) => void,
  * }} deps
@@ -41,6 +42,7 @@ export function createExperienceController(deps) {
     mountFlashExperience,
     mountFullSetHubExperience,
     mountFullSetMixedExperience,
+    mountThptqgFullTestExperience,
     experienceHooks,
     pushBot,
   } = deps;
@@ -81,7 +83,7 @@ export function createExperienceController(deps) {
   }
 
   /**
-   * @param {"quiz"|"slide"|"flash"} kind
+   * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
    * @param {Record<string, string>} meta
    * @param {"fresh"|"resume"} mode
    * @param {string} [forcedExperienceId]
@@ -119,7 +121,8 @@ export function createExperienceController(deps) {
     }
     if (kind === "quiz") await mountQuizExperience(layerView, scopedMeta, experienceHooks, mountOpts);
     else if (kind === "slide") await mountSlideExperience(layerView, scopedMeta, experienceHooks, mountOpts);
-    else await mountFlashExperience(layerView, scopedMeta, experienceHooks, mountOpts);
+    else if (kind === "flash") await mountFlashExperience(layerView, scopedMeta, experienceHooks, mountOpts);
+    else await mountThptqgFullTestExperience(layerView, scopedMeta, experienceHooks, mountOpts);
   }
 
   /**
@@ -127,7 +130,7 @@ export function createExperienceController(deps) {
    */
   async function openResumeExperience(item) {
     const kind = normalizeExperienceKind(item?.kind || "");
-    if (kind !== "quiz" && kind !== "slide" && kind !== "flash") {
+    if (kind !== "quiz" && kind !== "slide" && kind !== "flash" && kind !== "thptqg_fulltest") {
       layerView.hide();
       return;
     }
@@ -137,7 +140,7 @@ export function createExperienceController(deps) {
         (item && typeof item.experienceId === "string" ? item.experienceId : "") ||
         resumeService.readExperienceIdFromMeta(resumeMeta);
       await openSingleExperience(
-        /** @type {"quiz"|"slide"|"flash"} */ (kind),
+        /** @type {"quiz"|"slide"|"flash"|"thptqg_fulltest"} */ (kind),
         resumeMeta,
         "resume",
         experienceId,

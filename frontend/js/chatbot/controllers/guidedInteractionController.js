@@ -63,8 +63,8 @@ function pickPdfWithDialog() {
  *   setGuided: (next: any) => void,
  *   pushUser: (text: string) => void,
  *   pushBot: (text: string, opts?: any) => void,
- *   openSingleExperience: (kind: "quiz" | "slide" | "flash", meta: Record<string, string>, mode: "fresh" | "resume", experienceId?: string) => Promise<void>,
- *   pushQuickResumeDock: (kind: "quiz" | "slide" | "flash", meta: Record<string, string>, experienceId?: string) => void,
+ *   openSingleExperience: (kind: "quiz" | "slide" | "flash" | "thptqg_fulltest", meta: Record<string, string>, mode: "fresh" | "resume", experienceId?: string) => Promise<void>,
+ *   pushQuickResumeDock: (kind: "quiz" | "slide" | "flash" | "thptqg_fulltest", meta: Record<string, string>, experienceId?: string) => void,
  *   reenableFlowCard: (cardRoot: HTMLElement | undefined) => void,
  *   disableActionButtons: (btnEl: HTMLElement) => void,
  * }} deps
@@ -121,6 +121,10 @@ export function createGuidedInteractionController(deps) {
         const scoped = ensureMetaExperienceId(e.meta || {});
         await openSingleExperience("slide", scoped.meta, "fresh", scoped.experienceId);
         pushQuickResumeDock("slide", scoped.meta, scoped.experienceId);
+      } else if (e.type === "showThptqgFullTest") {
+        const scoped = ensureMetaExperienceId(e.meta || {});
+        await openSingleExperience("thptqg_fulltest", scoped.meta, "fresh", scoped.experienceId);
+        pushQuickResumeDock("thptqg_fulltest", scoped.meta, scoped.experienceId);
       }
     }
   }
