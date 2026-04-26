@@ -127,6 +127,7 @@ function createButton(label, className, onClick) {
 export async function mountThptqgFullTestExperience(layerView, meta, deps, opts = {}) {
   void deps;
   layerView.prepareShow();
+  layerView.setVariant?.("thptqg-fullpage");
   const root = layerView.body;
   root.innerHTML = "";
 
@@ -363,57 +364,91 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function renderAttempt(test) {
     stage.innerHTML = "";
     const parts = Array.isArray(test.parts) ? test.parts : [];
-    const questionMap = getQuestionMap(test);
     const activePart = parts.find((part) => String(part?.id || "") === currentPartId) || parts[0] || null;
     ensureSelectionForTest(test);
 
-    const actionRow = document.createElement("div");
-    actionRow.className = "thptqg-action-row";
-    actionRow.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog()));
-    stage.appendChild(actionRow);
+    const examHead = document.createElement("div");
+    examHead.className = "thptqg-exam-head";
+    examHead.innerHTML = `
+      <div>
+        <h2 class="thptqg-exam-title">${test.title}</h2>
+        <p class="thptqg-exam-subtitle">Mỗi part gồm 10 câu. Chọn part để chuyển nhanh giữa các phần của đề.</p>
+      </div>
+    `;
+    examHead.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog()));
+    stage.appendChild(examHead);
 
     const layout = document.createElement("div");
-    layout.className = "thptqg-attempt-layout";
-    const main = document.createElement("div");
-    main.className = "thptqg-main-panel";
+    layout.className = "thptqg-exam-layout";
+    const workspace = document.createElement("div");
+    workspace.className = "thptqg-exam-workspace";
     const sidebar = document.createElement("aside");
     sidebar.className = "thptqg-side-panel";
 
-    const partHead = document.createElement("div");
-    partHead.className = "thptqg-part-head";
-    partHead.innerHTML = `
-      <div>
+    const workspaceTop = document.createElement("div");
+    workspaceTop.className = "thptqg-exam-workspace-top";
+    workspaceTop.innerHTML = `
+      <div class="thptqg-exam-workspace-copy">
         <div class="thptqg-part-label">${activePart?.label || "Part"}</div>
-        <h2>${activePart?.title || "Làm đề"}</h2>
+        <h3>${activePart?.title || "Làm đề"}</h3>
       </div>
-      <div class="thptqg-inline-note">Mỗi part gồm 10 câu trong bản full-test v1.</div>
     `;
-    main.appendChild(partHead);
+    const topPartTabs = document.createElement("div");
+    topPartTabs.className = "thptqg-exam-part-tabs";
+    parts.forEach((part) => {
+      const button = createButton(String(part?.label || ""), `thptqg-part-btn${currentPartId === part.id ? " active" : ""}`, () => {
+        currentPartId = String(part.id || "");
+        const firstQuestionNumber = Number(part?.questionStart || 0);
+        const firstQuestion = (Array.isArray(test.questions) ? test.questions : []).find((question) => Number(question?.number) === firstQuestionNumber);
+        currentQuestion = String(firstQuestion?.id || currentQuestion);
+        emitState();
+        render();
+      });
+      topPartTabs.appendChild(button);
+    });
+    workspaceTop.appendChild(topPartTabs);
+    workspace.appendChild(workspaceTop);
 
+    const groupsWrap = document.createElement("div");
+    groupsWrap.className = "thptqg-exam-groups";
     (Array.isArray(activePart?.groups) ? activePart.groups : []).forEach((group) => {
       const section = document.createElement("section");
-      section.className = "thptqg-group-card";
+      section.className = "thptqg-exam-group-layout";
+
+      const passagePane = document.createElement("div");
+      passagePane.className = "thptqg-passage-pane";
       const title = document.createElement("h3");
       title.className = "thptqg-group-title";
       title.textContent = String(group?.title || "");
-      section.appendChild(title);
+      passagePane.appendChild(title);
       if (group?.instruction) {
         const instruction = document.createElement("p");
         instruction.className = "thptqg-group-instruction";
         instruction.textContent = String(group.instruction);
-        section.appendChild(instruction);
+        passagePane.appendChild(instruction);
       }
       if (Array.isArray(group?.context) && group.context.length) {
         const contextWrap = document.createElement("div");
-        contextWrap.className = "thptqg-context";
+        contextWrap.className = "thptqg-context thptqg-passage-scroll";
         group.context.forEach((line) => {
           const paragraph = document.createElement("p");
           paragraph.textContent = String(line);
           contextWrap.appendChild(paragraph);
         });
-        section.appendChild(contextWrap);
+        passagePane.appendChild(contextWrap);
       }
 
+      const questionPane = document.createElement("div");
+      questionPane.className = "thptqg-question-pane";
+      const questionPaneHead = document.createElement("div");
+      questionPaneHead.className = "thptqg-question-pane-head";
+      questionPaneHead.innerHTML = `
+        <div class="thptqg-question-pane-title">Câu hỏi</div>
+        <div class="thptqg-inline-note">Chọn đáp án và dùng sidebar bên phải để nhảy nhanh tới câu cần làm.</div>
+      `;
+      questionPane.appendChild(questionPaneHead);
+      const questionScroll = document.createElement("div");
+      questionScroll.className = "thptqg-question-scroll";
       const questionNumbers = Array.isArray(group?.questionNumbers) ? group.questionNumbers : [];
       questionNumbers.forEach((questionNumber) => {
         const question = (Array.isArray(test.questions) ? test.questions : []).find((item) => Number(item?.number) === Number(questionNumber));
@@ -463,10 +498,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           optionsWrap.appendChild(optionBtn);
         });
         card.appendChild(optionsWrap);
-        section.appendChild(card);
+        questionScroll.appendChild(card);
       });
-      main.appendChild(section);
+      questionPane.appendChild(questionScroll);
+
+      section.appendChild(passagePane);
+      section.appendChild(questionPane);
+      groupsWrap.appendChild(section);
     });
+    workspace.appendChild(groupsWrap);
 
     const timerCard = document.createElement("div");
     timerCard.className = "thptqg-side-card";
@@ -528,7 +568,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     });
     sidebar.appendChild(mapCard);
 
-    layout.appendChild(main);
+    layout.appendChild(workspace);
     layout.appendChild(sidebar);
     stage.appendChild(layout);
 
@@ -749,6 +789,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function render() {
     const activeTest = getActiveTest();
+    shell.classList.toggle("thptqg-attempt-screen", view === "attempt" && Boolean(activeTest));
+    shell.classList.toggle("thptqg-result-screen", view === "result" && Boolean(activeTest));
+    shell.classList.toggle("thptqg-catalog-screen", view === "catalog" || !activeTest);
     if (view === "catalog" || !activeTest) {
       renderCatalog();
       timerValueEl = null;
