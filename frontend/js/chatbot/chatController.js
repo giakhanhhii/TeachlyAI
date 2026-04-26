@@ -16,6 +16,8 @@ import {
   getSessionByIndex,
   setSessionMessages,
   prependSessionMessages,
+  exportSessionsState,
+  restoreSessionsState,
 } from "./sessionStore.js";
 import { computeStartFlow } from "./guidedFlow.js";
 import { createExperienceLayerView } from "./dom/experienceLayerView.js";
@@ -30,7 +32,12 @@ import { createMessageController } from "./controllers/messageController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
 import { createGuidedInteractionController } from "./controllers/guidedInteractionController.js";
 import { createChatSessionListRenderer } from "./controllers/chatSessionListController.js";
-import { HISTORY_CHAT_PHASE, ensureHistoryBaseState, ensureExperienceHistoryEntry } from "./services/historyService.js";
+import {
+  HISTORY_APP_NAV_KEY,
+  HISTORY_CHAT_PHASE,
+  ensureHistoryBaseState,
+  ensureExperienceHistoryEntry,
+} from "./services/historyService.js";
 import { createFlowService } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
@@ -38,15 +45,29 @@ import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventMa
 
 /** @type {any} */
 let guided = null;
+let suppressNavigationSnapshotWrite = false;
+/** @type {null | ((mode?: "push"|"replace") => void)} */
+let commitNavigationSnapshot = null;
 
 function setGuidedState(next) {
   guided = next;
+  if (!suppressNavigationSnapshotWrite) {
+    commitNavigationSnapshot?.("replace");
+  }
 }
 
 /** Tránh chồng chéo khi chuyển session quá nhanh. */
 let isSwitchingSession = false;
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
+
+function deepCopy(value) {
+  try {
+    return structuredClone(value);
+  } catch {
+    return JSON.parse(JSON.stringify(value));
+  }
+}
 
 export function init() {
   console.log("[chatController] init started");
@@ -57,6 +78,29 @@ export function init() {
 
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
+
+  function buildAppNavigationSnapshot() {
+    const exported = exportSessionsState();
+    return {
+      sessions: exported.sessions,
+      activeSession: exported.activeSession,
+      guided: deepCopy(guided),
+    };
+  }
+
+  function writeAppNavigationState(mode = "replace") {
+    void mode;
+    if (suppressNavigationSnapshotWrite) return;
+    const state = history.state && typeof history.state === "object" ? history.state : {};
+    const next = {
+      ...state,
+      phase: HISTORY_CHAT_PHASE,
+    };
+    delete next[HISTORY_APP_NAV_KEY];
+    history.replaceState(next, "", location.href);
+  }
+
+  commitNavigationSnapshot = writeAppNavigationState;
 
   const layerView = createExperienceLayerView({
     experienceLayer,
@@ -90,6 +134,7 @@ export function init() {
     apiUrl,
     sendBtn,
     inputEl: input,
+    onConversationMutation: (mode = "push") => writeAppNavigationState(mode),
   });
 
   const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };
@@ -269,6 +314,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       saveSessions();
+      writeAppNavigationState("push");
     }
     input.focus();
   }
@@ -344,6 +390,20 @@ export function init() {
     messageHistoryService.renderMessages();
   }
 
+  function restoreNavigationSnapshot(snapshot) {
+    if (!snapshot || typeof snapshot !== "object") return false;
+    suppressNavigationSnapshotWrite = true;
+    try {
+      restoreSessionsState(snapshot.sessions, snapshot.activeSession);
+      guided = snapshot.guided ?? null;
+      renderChatListUI();
+      renderMessages();
+      return true;
+    } finally {
+      suppressNavigationSnapshotWrite = false;
+    }
+  }
+
   function renderLoadMoreControl() {
     messageHistoryService.renderLoadMoreControl();
   }
@@ -377,6 +437,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       await restoreCurrentSessionExperience();
+      writeAppNavigationState("push");
     } finally {
       isSwitchingSession = false;
     }
@@ -386,6 +447,7 @@ export function init() {
     persistActiveExperience();
     layerView.hide();
     renderMessages();
+    writeAppNavigationState("push");
   } });
 
   messageHistoryService = createMessageHistoryService({
@@ -462,12 +524,14 @@ export function init() {
       renderChatListUI();
       renderMessages();
       saveSessions();
+      writeAppNavigationState("push");
       input.focus();
     },
     hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
     hideLayer: () => layerView.hide(),
     persistActiveExperience,
     pushResumeDockFromLastOpened,
+    restoreNavigationSnapshot,
     scrollToResumeDock,
     ensureSessions,
     ensureHistoryBaseState,
@@ -479,4 +543,6 @@ export function init() {
     onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
     onInitCompleted: () => { console.log("[chatController] init completed"); },
   });
+
+  writeAppNavigationState("replace");
 }

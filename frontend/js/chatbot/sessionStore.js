@@ -35,6 +35,14 @@ let sessions = safeReadSessions();
 let activeSession = Number(localStorage.getItem(LS_ACTIVE_SESSION) || "0");
 let saveQueued = false;
 
+function deepCopy(value) {
+  try {
+    return structuredClone(value);
+  } catch {
+    return JSON.parse(JSON.stringify(value));
+  }
+}
+
 function makeDefaultSession(index) {
   return {
     title: `Đoạn chat ${index + 1}`,
@@ -135,6 +143,26 @@ export function setActiveSessionIndex(idx) {
 
 export function getSessionsSnapshot() {
   return sessions;
+}
+
+export function exportSessionsState() {
+  return {
+    sessions: deepCopy(sessions),
+    activeSession,
+  };
+}
+
+/**
+ * @param {any[]} nextSessions
+ * @param {number} nextActiveSession
+ */
+export function restoreSessionsState(nextSessions, nextActiveSession) {
+  const safeSessions = Array.isArray(nextSessions)
+    ? nextSessions.map((session, index) => normalizeSession(session, index)).filter(Boolean)
+    : [];
+  sessions = safeSessions.length ? safeSessions : [makeDefaultSession(0)];
+  activeSession = Number.isFinite(Number(nextActiveSession)) ? Math.floor(Number(nextActiveSession)) : 0;
+  if (activeSession < 0 || activeSession >= sessions.length) activeSession = 0;
 }
 
 /**

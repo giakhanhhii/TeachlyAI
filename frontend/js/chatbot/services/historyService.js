@@ -1,5 +1,6 @@
 export const HISTORY_CHAT_PHASE = "chat";
 export const HISTORY_EXPERIENCE_PHASE = "experience";
+export const HISTORY_APP_NAV_KEY = "__appNav";
 
 export function ensureHistoryBaseState() {
   const state = history.state && typeof history.state === "object" ? history.state : {};
@@ -25,6 +26,7 @@ export function inExperienceHistoryState() {
  *   hideLayer: () => void,
  *   persistActiveExperience: () => void,
  *   pushResumeDockFromLastOpened: () => void,
+ *   restoreNavigationSnapshot?: (snapshot: any, state: any) => boolean,
  *   onReturnedToChat?: () => void,
  * }} deps
  */
@@ -34,11 +36,18 @@ export function createPopStateHandler(deps) {
     hideLayer,
     persistActiveExperience,
     pushResumeDockFromLastOpened,
+    restoreNavigationSnapshot,
     onReturnedToChat,
   } = deps;
   return function onPopState() {
     const state = history.state && typeof history.state === "object" ? history.state : {};
     if (state.phase === HISTORY_EXPERIENCE_PHASE) return;
+    if (state[HISTORY_APP_NAV_KEY] && restoreNavigationSnapshot?.(state[HISTORY_APP_NAV_KEY], state)) {
+      hideLayer();
+      persistActiveExperience();
+      onReturnedToChat?.();
+      return;
+    }
     if (!hasLastOpenedExperience()) {
       hideLayer();
       persistActiveExperience();

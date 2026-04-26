@@ -214,7 +214,8 @@ export function createFlowService(deps) {
       setCurrentExperienceState(stagedExperienceState);
       saveSessions();
       renderChatListUI();
-      history.replaceState({}, "", "chatbot_ui.html");
+      const state = history.state && typeof history.state === "object" ? history.state : {};
+      history.replaceState({ ...state }, "", "chatbot_ui.html");
     } catch (err) {
       if (createdSessionIndex !== null) {
         const list = getSessionsSnapshot();
