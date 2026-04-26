@@ -387,81 +387,92 @@
             transform: rotate(45deg);
         }
 
-        #slide16 .content-area {
-            max-width: 1140px !important;
-            width: 113.5% !important;
-            margin-left: -6.75% !important;
-            margin-top: -6px !important;
-            transform: scale(0.88);
+        .slide-compact-stress {
+            justify-content: center;
+            padding: 32px 44px 34px !important;
+        }
+
+        .slide-compact-stress .content-area {
+            width: 116% !important;
+            max-width: 1200px !important;
+            margin: 4px auto 0 !important;
+            align-items: center;
+            justify-content: center;
+            transform: scale(0.92);
             transform-origin: top center;
         }
 
-        #slide16 .slide-title {
-            font-size: 46px !important;
-            margin: 0 0 6px 8px !important;
-            line-height: 0.96 !important;
-            letter-spacing: 1px;
-            text-shadow: 4px 4px 0px #111827;
+        .slide-compact-stress .slide-title {
+            align-self: center !important;
+            font-size: 56px !important;
+            margin: 0 0 16px 0 !important;
+            max-width: 100% !important;
+            line-height: 0.92 !important;
+            letter-spacing: 0.8px;
+            text-shadow: 3px 3px 0px #111827;
+            text-align: center;
         }
 
-        #slide16 .comic-badge {
-            top: 24px !important;
-            left: 48px !important;
-            transform: rotate(-12deg) scale(0.82) !important;
+        .slide-compact-stress .comic-badge {
+            display: none !important;
         }
 
-        #slide16 .comic-panel {
-            padding: 8px 10px !important;
+        .slide-compact-stress .comic-panel {
+            width: 100%;
+            max-width: 1140px;
+            height: auto !important;
+            padding: 16px 18px !important;
             border-width: 5px;
             box-shadow: 8px 8px 0px #111827;
         }
 
-        #slide16 .rule-rows {
-            gap: 6px !important;
+        .slide-compact-stress .rule-rows {
+            gap: 10px !important;
         }
 
-        #slide16 .rule-row {
-            grid-template-columns: 150px 1.22fr 0.92fr !important;
+        .slide-compact-stress .rule-row {
+            grid-template-columns: 170px 1.28fr 0.98fr !important;
             border-width: 4px;
             box-shadow: 3px 3px 0px #111827;
         }
 
-        #slide16 .rule-row > div {
-            padding: 8px 10px !important;
-            font-size: 16px !important;
-            line-height: 1.08 !important;
+        .slide-compact-stress .rule-row > div {
+            padding: 12px 14px !important;
+            font-size: 19px !important;
+            line-height: 1.18 !important;
             border-right-width: 4px;
         }
 
-        #slide16 .rule-row .rule-label {
-            font-size: 21px !important;
+        .slide-compact-stress .rule-row .rule-label {
+            font-size: 27px !important;
             letter-spacing: 0.2px;
         }
 
-        #slide16 .rule-row em {
+        .slide-compact-stress .speech-note {
+            margin-top: 16px !important;
+            padding: 14px 18px !important;
+            border-width: 2px;
+            border-radius: 18px;
+            box-shadow: 2px 2px 0px #111827;
+        }
+
+        .slide-compact-stress .speech-note p {
+            font-size: 14px !important;
+            line-height: 1.2 !important;
+            margin: 0 !important;
+        }
+
+        .slide-compact-stress .rule-row em {
             font-size: 15px !important;
         }
 
-        #slide16 .speech-note {
-            margin-top: 6px !important;
-            padding: 8px 12px !important;
-            border-width: 3px;
-            border-radius: 22px;
-            box-shadow: 4px 4px 0px #111827;
-        }
-
-        #slide16 .speech-note p {
-            font-size: 13.5px !important;
-            line-height: 1.16 !important;
-        }
-
-        #slide16 .speech-note::after {
-            left: 22px;
-            bottom: -12px;
-            width: 16px;
-            height: 16px;
-            border-right-width: 3px;
-            border-bottom-width: 3px;
+        .slide-compact-stress .speech-note::after {
+            left: 16px;
+            bottom: -7px;
+            width: 10px;
+            height: 10px;
+            border-right-width: 2px;
+            border-bottom-width: 2px;
         }
 
         .check-grid {
@@ -925,7 +936,7 @@
 </div>
 
 
-<div class="slide-container" id="slide16">
+<div class="slide-container slide-compact-stress" id="slide16">
     <div class="comic-badge yellow" style="top: 42px; left: 70px; transform: rotate(-12deg);">BANG!</div>
     <h2 class="slide-title">WORD STRESS RULES</h2>
     <div class="content-area">
