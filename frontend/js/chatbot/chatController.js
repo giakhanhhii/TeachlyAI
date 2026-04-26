@@ -24,6 +24,7 @@ import { mountFlashExperience } from "./dom/flashExperienceView.js";
 import { mountSlideExperience } from "./dom/slideExperienceView.js";
 import { mountFullSetHubExperience } from "./dom/fullSetHubExperienceView.js";
 import { mountFullSetMixedExperience } from "./dom/fullSetMixedExperienceView.js";
+import { mountThptqgFullTestExperience } from "./dom/thptqgFullTestExperienceView.js";
 import { createMessageView } from "./dom/messageView.js";
 import { createMessageController } from "./controllers/messageController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
@@ -104,6 +105,7 @@ export function init() {
     mountFlashExperience,
     mountFullSetHubExperience,
     mountFullSetMixedExperience,
+    mountThptqgFullTestExperience,
     experienceHooks,
     pushBot,
   });

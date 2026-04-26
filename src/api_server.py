@@ -50,6 +50,7 @@ MOCK_FILES = {
     "quiz": "quiz_thpt_en.json",
     "flashcard": "flashcard_en.json",
     "slide": "slide_thpt_en.json",
+    "thptqg_fulltest": "thptqg_fulltest.json",
 }
 
 TEACHLY_SYSTEM = """Bạn là Teachly AI, trợ lý hỗ trợ giáo viên và học sinh ôn Tiếng Anh THPT QG (Việt Nam).

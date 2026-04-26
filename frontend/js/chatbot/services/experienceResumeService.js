@@ -2,7 +2,7 @@ import { getSourceActions } from "../guidedFlow/shared.js";
 
 /**
  * @param {{
- *  buildResumeTitle: (kind: "quiz"|"slide"|"flash", meta: Record<string, any>) => string,
+ *  buildResumeTitle: (kind: "quiz"|"slide"|"flash"|"thptqg_fulltest", meta: Record<string, any>) => string,
  *  fullsetResumeItemsFromSpec: (spec: Record<string, string>, openedAt: string) => any[],
  *  hasResumeDockInCurrentSession: (dock: any) => boolean,
  *  pushBot: (text: string, opts?: any) => void,
@@ -24,12 +24,13 @@ export function createExperienceResumeService(deps) {
   }
 
   /**
-   * @param {"fullset"|"quiz"|"slide"|"flash"} kind
+   * @param {"fullset"|"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
    * @param {any} resumeDock
    */
   function pushContinuePrompt(kind, resumeDock) {
+    const actionKind = kind === "thptqg_fulltest" ? "thptqg_fulltest" : kind;
     pushBot("Bạn muốn tiếp tục theo cách nào?", {
-      actions: getSourceActions(kind),
+      actions: getSourceActions(actionKind),
       resumeDock,
     });
   }
@@ -59,7 +60,7 @@ export function createExperienceResumeService(deps) {
   }
 
   /**
-   * @param {"quiz"|"slide"|"flash"} kind
+   * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
    * @param {Record<string, string>} meta
    * @param {string} [experienceId]
    */
@@ -109,7 +110,7 @@ export function createExperienceResumeService(deps) {
   }
 
   /**
-   * @param {"quiz"|"slide"|"flash"} kind
+   * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
    * @param {Record<string, string>} meta
    * @param {string} [forcedExperienceId]
    */

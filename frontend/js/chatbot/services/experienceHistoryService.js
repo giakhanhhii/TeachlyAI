@@ -12,7 +12,7 @@ export function createExperienceHistoryService(deps) {
 
   /**
    * @param {any} currentState
-   * @param {{ experienceId: string, kind: "quiz"|"slide"|"flash"|"fullset", meta: Record<string, any>, progress: any, completed: boolean }} params
+   * @param {{ experienceId: string, kind: "quiz"|"slide"|"flash"|"fullset"|"thptqg_fulltest", meta: Record<string, any>, progress: any, completed: boolean }} params
    */
   function upsertHistoryByExperienceId(currentState, params) {
     const { experienceId, kind, meta, progress, completed } = params;
@@ -76,7 +76,7 @@ export function createExperienceHistoryService(deps) {
   }
 
   /**
-   * @param {{ kind: "quiz"|"slide"|"flash", meta: Record<string, any>, experienceId: string, resume: any }} params
+   * @param {{ kind: "quiz"|"slide"|"flash"|"thptqg_fulltest", meta: Record<string, any>, experienceId: string, resume: any }} params
    */
   function seedSingleExperience(params) {
     const { kind, meta, experienceId, resume } = params;
@@ -102,7 +102,7 @@ export function createExperienceHistoryService(deps) {
 
   /**
    * @param {{
-   *  kind: "quiz"|"slide"|"flash",
+   *  kind: "quiz"|"slide"|"flash"|"thptqg_fulltest",
    *  meta: Record<string, any>,
    *  experienceId: string,
    *  progress: any,

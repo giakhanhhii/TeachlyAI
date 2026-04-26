@@ -98,6 +98,24 @@ function handleSingleModePick(guided, value, pdfFile) {
     };
   }
 
+  if (kind === "quiz" && value === "quiz_fulltest") {
+    return {
+      handled: true,
+      guided: null,
+      effects: [
+        { type: "pushUser", text: "Làm full đề THPTQG" },
+        {
+          type: "showThptqgFullTest",
+          meta: {
+            catalogTitle: "THPTQG simulation tests",
+            source: "mockdata_40.md",
+            notes: "Mỗi part gồm 10 câu trong bản v1.",
+          },
+        },
+      ],
+    };
+  }
+
   if (kind === "flash" && value === "flash_vocab") {
     return {
       handled: true,

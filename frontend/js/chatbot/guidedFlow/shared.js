@@ -5,7 +5,7 @@ export const MSG_CONTINUE_SOURCE = "Bạn muốn tiếp tục theo cách nào?";
 /** Các nút “Tải lên PDF” ở bước chọn nguồn — cần chọn file trước khi vào form. */
 export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "quiz_pdf", "flash_pdf"]);
 
-/** @type {Record<"fullset"|"slide"|"quiz"|"flash", { label: string, value: string }[]>} */
+/** @type {Record<"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest", { label: string, value: string }[]>} */
 const SOURCE_ACTIONS_BY_KIND = {
   fullset: [
     { label: "Tải lên PDF", value: "fullset_pdf" },
@@ -18,16 +18,22 @@ const SOURCE_ACTIONS_BY_KIND = {
   quiz: [
     { label: "Tải lên PDF", value: "quiz_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
+    { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
   ],
   flash: [
     { label: "Tải lên PDF", value: "flash_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
     { label: "Nhập từ vựng trực tiếp", value: "flash_vocab" },
   ],
+  thptqg_fulltest: [
+    { label: "Tải lên PDF", value: "quiz_pdf" },
+    { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
+    { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
+  ],
 };
 
 /**
- * @param {"fullset"|"slide"|"quiz"|"flash"} kind
+ * @param {"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest"} kind
  * @returns {{ label: string, value: string }[]}
  */
 export function getSourceActions(kind) {
@@ -35,7 +41,7 @@ export function getSourceActions(kind) {
 }
 
 /**
- * @param {"fullset"|"slide"|"quiz"|"flash"} kind
+ * @param {"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest"} kind
  * @param {string} [text]
  */
 export function createSourceChoiceEffect(kind, text = MSG_CONTINUE_SOURCE) {
@@ -57,7 +63,7 @@ export function pdfMetaFormIntro(/** @type {"slide"|"quiz"|"flash"} */ kind) {
 
 /**
  * Lặp lại câu hỏi mở đầu + 2 nút khi người dùng hủy chọn PDF.
- * @param {"fullset"|"slide"|"quiz"|"flash"} kind
+ * @param {"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest"} kind
  * @returns {{ type: "pushBot", text: string, actions: { label: string, value: string }[] }[]}
  */
 export function getRestartAwaitSourceEffects(kind) {

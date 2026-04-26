@@ -1,11 +1,12 @@
 /**
- * @param {"quiz"|"slide"|"flash"} kind
+ * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
  * @param {Record<string, string>} meta
  */
 export function buildResumeTitle(kind, meta) {
   if (kind === "quiz") return `Trắc nghiệm — ${meta.topic || "Bộ đề"}`;
   if (kind === "slide") return `Slide — ${meta.topic || "Bài giảng"}`;
   if (kind === "flash") return `Flashcard — ${meta.source || "Bộ thẻ"}`;
+  if (kind === "thptqg_fulltest") return `Full đề THPTQG — ${meta.testTitle || meta.catalogTitle || "Simulation test"}`;
   return "Học liệu";
 }
 
@@ -35,7 +36,7 @@ function readHistoryById(state) {
 }
 
 /**
- * @param {"quiz"|"slide"|"flash"|"fullset"} kind
+ * @param {"quiz"|"slide"|"flash"|"fullset"|"thptqg_fulltest"} kind
  * @param {any} progress
  */
 export function computeCompleted(kind, progress) {
@@ -50,12 +51,15 @@ export function computeCompleted(kind, progress) {
   if (kind === "fullset") {
     return Boolean(progress?.completed) || index >= total - 1;
   }
+  if (kind === "thptqg_fulltest") {
+    return Boolean(progress?.submittedAt);
+  }
   return true;
 }
 
 /**
  * @param {any} currentExperienceState
- * @param {"quiz"|"slide"|"flash"} kind
+ * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
  * @param {Record<string, string>} meta
  * @param {"fresh"|"resume"} mode
  */
@@ -96,6 +100,7 @@ export function resolveFullsetInitialState(currentExperienceState, spec, experie
  */
 export function normalizeExperienceKind(rawKind) {
   const normalized = String(rawKind || "").toLowerCase();
+  if (normalized === "thptqg_fulltest" || normalized === "quiz_fulltest" || normalized === "fulltest") return "thptqg_fulltest";
   if (normalized === "flashcard" || normalized === "flash") return "flash";
   if (normalized.startsWith("quiz")) return "quiz";
   if (normalized.startsWith("slide")) return "slide";
