@@ -774,17 +774,41 @@ function injectShellPanelFitScript(doc) {
     if (title.classList.contains("cta-title") || title.classList.contains("section-title")) {
       maxLines = 2;
     }
-    var size = base;
-    while (size > min) {
-      var cs = window.getComputedStyle(title);
-      var lineHeight = getNumericCssValue(cs.lineHeight) || size * 0.95;
+    var lineHeightRatio =
+      (getNumericCssValue(title.dataset.shellBaseLineHeight) || 0) / Math.max(base, 1) || (host.classList.contains("comic-panel") ? 0.92 : 0.95);
+    var cacheKey = [availW, maxLines, base, min, title.textContent || ""].join("|");
+    if (title.dataset.shellFitCacheKey === cacheKey && title.dataset.shellFitFontSize) {
+      title.style.fontSize = title.dataset.shellFitFontSize + "px";
+      return;
+    }
+    function fitsAtSize(size) {
+      title.style.fontSize = size + "px";
       var rect = title.getBoundingClientRect();
+      var lineHeight = size * lineHeightRatio;
       var overW = title.scrollWidth > availW + 1 || rect.width > availW + 1;
       var overH = title.offsetHeight > lineHeight * maxLines + 2;
-      if (!overW && !overH) break;
-      size -= host.classList.contains("comic-panel") ? 2 : 1;
-      title.style.fontSize = size + "px";
+      return !overW && !overH;
     }
+    var low = min;
+    var high = base;
+    var best = min;
+    if (fitsAtSize(base)) {
+      best = base;
+    } else {
+      while (high - low > 1) {
+        var mid = Math.floor((low + high) / 2);
+        if (fitsAtSize(mid)) {
+          best = mid;
+          low = mid;
+        } else {
+          high = mid;
+        }
+      }
+      if (best !== low && fitsAtSize(low)) best = low;
+    }
+    title.style.fontSize = best + "px";
+    title.dataset.shellFitCacheKey = cacheKey;
+    title.dataset.shellFitFontSize = String(best);
   }
   function fitShellTitles(doc) {
     Array.prototype.forEach.call(doc.querySelectorAll('.shell-slide-instance [data-shell="title"]'), function (title) {
