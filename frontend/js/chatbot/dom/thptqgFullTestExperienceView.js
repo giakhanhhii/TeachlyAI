@@ -125,6 +125,10 @@ function isLongReadingGroup(group) {
   return context.length >= 3 || joined.length >= 850 || (context.length >= 2 && questionCount >= 6);
 }
 
+function stripQuestionLabel(prompt) {
+  return String(prompt || "").replace(/^Question\s+\d+\.\s*/i, "");
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -460,7 +464,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
         const prompt = document.createElement("p");
         prompt.className = `exp-q-text${variant === "compact" ? " compact" : ""}`;
-        prompt.innerHTML = quizStemToSafeHtml(String(question.prompt || ""));
+        prompt.innerHTML = quizStemToSafeHtml(stripQuestionLabel(question.prompt));
         card.appendChild(prompt);
 
         const optionsWrap = document.createElement("div");
@@ -789,7 +793,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
               <h4>Đáp án chi tiết câu ${detailQuestion.number}</h4>
             </div>
           </div>
-          <p class="exp-q-text">${quizStemToSafeHtml(String(detailQuestion.prompt || ""))}</p>
+          <p class="exp-q-text">${quizStemToSafeHtml(stripQuestionLabel(detailQuestion.prompt))}</p>
           <div class="thptqg-answer-row">
             <span>Bạn chọn: <strong>${answerLetter(picked)}</strong></span>
             <span>Đáp án đúng: <strong>${answerLetter(detailQuestion.correctIndex)}</strong></span>
