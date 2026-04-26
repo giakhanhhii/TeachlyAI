@@ -748,15 +748,15 @@ function injectShellPanelFitScript(doc) {
     if (!title || title.getAttribute("data-edit-geom") === "1" || !window.getComputedStyle) return;
     var host = getTitleHost(title);
     if (!host) return;
+    var isComicPanel = host.classList.contains("comic-panel");
     if (!title.dataset.shellBaseFontSize) {
       var baseCs = window.getComputedStyle(title);
       title.dataset.shellBaseFontSize = String(getNumericCssValue(baseCs.fontSize) || 0);
       title.dataset.shellBaseLineHeight = String(getNumericCssValue(baseCs.lineHeight) || 0);
     }
     var base = getNumericCssValue(title.dataset.shellBaseFontSize) || getNumericCssValue(window.getComputedStyle(title).fontSize) || 48;
-    var min = host.classList.contains("comic-panel") ? Math.max(34, base * 0.52) : Math.max(24, base * 0.6);
-    title.style.fontSize = base + "px";
-    if (host.classList.contains("comic-panel")) {
+    var min = isComicPanel ? Math.max(34, base * 0.52) : Math.max(24, base * 0.6);
+    if (isComicPanel) {
       title.style.lineHeight = "0.92";
       title.style.maxWidth = "82%";
       title.style.marginLeft = "auto";
@@ -768,19 +768,23 @@ function injectShellPanelFitScript(doc) {
       (host.clientWidth || host.getBoundingClientRect().width || 0) -
       getNumericCssValue(hostCs.paddingLeft) -
       getNumericCssValue(hostCs.paddingRight) -
-      (host.classList.contains("comic-panel") ? 36 : 16);
+      (isComicPanel ? 36 : 16);
     if (!availW || availW < 80) return;
-    var maxLines = host.classList.contains("comic-panel") ? 3 : 4;
+    var maxLines = isComicPanel ? 3 : 4;
     if (title.classList.contains("cta-title") || title.classList.contains("section-title")) {
       maxLines = 2;
     }
     var lineHeightRatio =
-      (getNumericCssValue(title.dataset.shellBaseLineHeight) || 0) / Math.max(base, 1) || (host.classList.contains("comic-panel") ? 0.92 : 0.95);
-    var cacheKey = [availW, maxLines, base, min, title.textContent || ""].join("|");
+      (getNumericCssValue(title.dataset.shellBaseLineHeight) || 0) / Math.max(base, 1) || (isComicPanel ? 0.92 : 0.95);
+    var cacheKey = [Math.round(availW), maxLines, base, min, title.textContent || ""].join("|");
     if (title.dataset.shellFitCacheKey === cacheKey && title.dataset.shellFitFontSize) {
-      title.style.fontSize = title.dataset.shellFitFontSize + "px";
+      var cachedSize = title.dataset.shellFitFontSize + "px";
+      if (title.style.fontSize !== cachedSize) {
+        title.style.fontSize = cachedSize;
+      }
       return;
     }
+    title.style.fontSize = base + "px";
     function fitsAtSize(size) {
       title.style.fontSize = size + "px";
       var rect = title.getBoundingClientRect();
