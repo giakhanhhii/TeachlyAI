@@ -540,6 +540,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     renderSlide();
   });
 
+  if (slides.length > 0) {
+    stage.innerHTML = `<p class="exp-empty">Đang tải giao diện slide...</p>`;
+  }
+
   (async () => {
     if (slides.length === 0) return;
     try {
@@ -588,5 +592,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   root.appendChild(shell);
   paintSlideChrome();
-  renderSlide();
+  if (slides.length === 0) {
+    renderSlide();
+  }
 }
