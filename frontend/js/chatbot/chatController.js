@@ -89,15 +89,15 @@ export function init() {
   }
 
   function writeAppNavigationState(mode = "replace") {
-    void mode;
     if (suppressNavigationSnapshotWrite) return;
     const state = history.state && typeof history.state === "object" ? history.state : {};
     const next = {
       ...state,
       phase: HISTORY_CHAT_PHASE,
+      [HISTORY_APP_NAV_KEY]: buildAppNavigationSnapshot(),
     };
-    delete next[HISTORY_APP_NAV_KEY];
-    history.replaceState(next, "", location.href);
+    if (mode === "push") history.pushState(next, "", location.href);
+    else history.replaceState(next, "", location.href);
   }
 
   commitNavigationSnapshot = writeAppNavigationState;
@@ -490,6 +490,7 @@ export function init() {
     setGuided: setGuidedState,
     resetResumeState: () => experienceController.resetResumeState(),
     hideLayer: () => layerView.hide(),
+    commitNavigationSnapshot: (mode = "replace") => writeAppNavigationState(mode),
   });
 
   messageHistoryService.setStartupFlowHandler((flowKind) => flowService.startFlowInCurrentSession(flowKind));

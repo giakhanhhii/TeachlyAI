@@ -1,5 +1,6 @@
 import { bindNewChatButton } from "../controllers/sessionController.js";
 import {
+  HISTORY_CAN_BACK_TO_CHAT_KEY,
   HISTORY_CHAT_PHASE,
   createPopStateHandler,
   inExperienceHistoryState,
@@ -163,6 +164,10 @@ export function setupChatEventManager(deps) {
   backToChatBtn?.addEventListener("click", () => {
     if (inExperienceHistoryState()) {
       const state = history.state && typeof history.state === "object" ? history.state : {};
+      if (state[HISTORY_CAN_BACK_TO_CHAT_KEY]) {
+        history.back();
+        return;
+      }
       history.replaceState({ ...state, phase: HISTORY_CHAT_PHASE }, "", location.href);
     }
     hideLayer();
