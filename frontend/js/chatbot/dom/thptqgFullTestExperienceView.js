@@ -266,6 +266,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
   }
 
+  function refreshTimerImmediately() {
+    updateTimer();
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => updateTimer());
+    } else {
+      setTimeout(() => updateTimer(), 0);
+    }
+  }
+
   function persistLiveProgress() {
     if (disposed) return;
     if (!startedAt || submittedAt || view !== "attempt") return;
@@ -376,6 +385,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     view = submittedAt ? "result" : "attempt";
     emitState();
     render();
+    refreshTimerImmediately();
     writeHistory(historyMode);
   }
 
@@ -1029,7 +1039,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   timer = setInterval(() => {
     updateTimer();
-  }, 1000);
+  }, 250);
 
   removalObserver = new MutationObserver(() => {
     if (!root.contains(shell)) {
