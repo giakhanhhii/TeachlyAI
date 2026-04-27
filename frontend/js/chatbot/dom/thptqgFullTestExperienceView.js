@@ -678,12 +678,21 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const timerCard = document.createElement("div");
     timerCard.className = "thptqg-side-card";
-    timerCard.innerHTML = `<div class="thptqg-side-title">Thời gian làm bài</div>`;
+    timerCard.innerHTML = `<div class="thptqg-side-title">${reviewMode && submittedAt ? "Thời gian làm bài tổng" : "Thời gian làm bài"}</div>`;
     timerValueEl = document.createElement("div");
     timerValueEl.className = "thptqg-timer";
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
     timerCard.appendChild(timerValueEl);
-    timerCard.appendChild(createButton("Nộp bài", "thptqg-submit-btn", () => submitTest(test, "replace")));
+    timerCard.appendChild(
+      reviewMode && submittedAt
+        ? createButton("Xem kết quả", "thptqg-submit-btn", () => {
+            view = "result";
+            emitState();
+            render();
+            writeHistory("replace");
+          })
+        : createButton("Nộp bài", "thptqg-submit-btn", () => submitTest(test, "replace")),
+    );
     sidebar.appendChild(timerCard);
 
     const partsCard = document.createElement("div");
