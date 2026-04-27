@@ -188,7 +188,7 @@ export function createFlowService(deps) {
       setCurrentExperienceState(stagedExperienceState);
       saveSessions();
       renderChatListUI();
-      commitNavigationSnapshot?.("push");
+      commitNavigationSnapshot?.("replace");
     } catch (err) {
       if (current && typeof current === "object") {
         current.title = prevTitle;
