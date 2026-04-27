@@ -77,3 +77,31 @@ See each file for the format and examples.
 ## AI Logging
 
 Prompts and tool calls are **automatically logged** when you use any supported AI tool (Claude Code, Cursor, Codex, Gemini, Copilot). No manual steps needed after running `setup_hooks.sh`.
+
+## Development Testing
+
+Week 1 tooling adds a local safety net without changing runtime behavior.
+
+### Python backend tests
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest tests/backend -q
+```
+
+### Front-end tooling
+
+```bash
+npm install
+npm run lint
+npm run test:unit
+```
+
+### Playwright smoke tests
+
+Install Chromium only for the lightest setup:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
