@@ -70,6 +70,7 @@ function computeResultSummary(test, answersByQuestion) {
     correct: 0,
     wrong: 0,
     skipped: 0,
+    invalid: 0,
     partStats: [],
   };
   const questions = Array.isArray(test?.questions) ? test.questions : [];
@@ -91,12 +92,16 @@ function computeResultSummary(test, answersByQuestion) {
       correct: 0,
       wrong: 0,
       skipped: 0,
+      invalid: 0,
       questionIds: partQuestions.map((question) => String(question?.id || "")),
     };
     partQuestions.forEach((question) => {
       const pickedIndex = toValidAnswerIndex(answersByQuestion[String(question?.id || "")]);
       const correctIndex = toValidAnswerIndex(question?.correctIndex);
-      if (pickedIndex === null || correctIndex === null) {
+      if (correctIndex === null) {
+        stat.invalid += 1;
+        summary.invalid += 1;
+      } else if (pickedIndex === null) {
         stat.skipped += 1;
         summary.skipped += 1;
       } else if (pickedIndex === correctIndex) {
@@ -107,18 +112,21 @@ function computeResultSummary(test, answersByQuestion) {
         summary.wrong += 1;
       }
     });
-    stat.accuracy = stat.total ? (stat.correct / stat.total) * 100 : 0;
+    stat.gradableTotal = Math.max(0, stat.total - stat.invalid);
+    stat.accuracy = stat.gradableTotal ? (stat.correct / stat.gradableTotal) * 100 : 0;
     summary.partStats.push(stat);
   });
 
-  summary.score10 = summary.total ? (summary.correct / summary.total) * 10 : 0;
+  summary.gradableTotal = Math.max(0, summary.total - summary.invalid);
+  summary.score10 = summary.gradableTotal ? (summary.correct / summary.gradableTotal) * 10 : 0;
   return summary;
 }
 
 function getQuestionAnswerState(question, answersByQuestion) {
   const pickedIndex = toValidAnswerIndex(answersByQuestion[String(question?.id || "")]);
   const correctIndex = toValidAnswerIndex(question?.correctIndex);
-  if (pickedIndex === null || correctIndex === null) return "unanswered";
+  if (correctIndex === null) return "invalid";
+  if (pickedIndex === null) return "unanswered";
   return pickedIndex === correctIndex ? "correct" : "wrong";
 }
 
@@ -818,6 +826,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       { label: "Đúng", value: `${result.correct}/${result.total}`, tone: "ok" },
       { label: "Sai", value: String(result.wrong), tone: "bad" },
       { label: "Bỏ qua", value: String(result.skipped), tone: "muted" },
+      { label: "Không chấm", value: String(result.invalid), tone: "muted" },
       { label: "Điểm 10", value: result.score10.toFixed(1), tone: "accent" },
     ];
     cards.forEach((item) => {
@@ -868,6 +877,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           <th>Số câu đúng</th>
           <th>Số câu sai</th>
           <th>Số câu bỏ qua</th>
+          <th>Không thể chấm</th>
           <th>Độ chính xác</th>
           <th>Danh sách câu hỏi</th>
         </tr>
@@ -896,6 +906,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         String(stat.correct),
         String(stat.wrong),
         String(stat.skipped),
+        String(stat.invalid),
         `${stat.accuracy.toFixed(2)}%`,
       ].forEach((value) => {
         const cell = document.createElement("td");
@@ -978,8 +989,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           const picked = answersByQuestion[questionId];
           const answerState = getQuestionAnswerState(question, answersByQuestion);
           const isCorrect = answerState === "correct";
+          const isInvalid = answerState === "invalid";
           const statusText =
-            answerState === "correct" ? "Bạn làm đúng câu này." : answerState === "wrong" ? "Bạn làm sai câu này." : "Bạn chưa trả lời câu này.";
+            answerState === "correct"
+              ? "Bạn làm đúng câu này."
+              : answerState === "wrong"
+                ? "Bạn làm sai câu này."
+                : isInvalid
+                  ? "Câu này chưa thể chấm do thiếu đáp án chuẩn."
+                  : "Bạn chưa trả lời câu này.";
           const detailCard = document.createElement("div");
           detailCard.className = `thptqg-answer-detail-card quiz-review-card${detailQuestionId === questionId ? " active" : ""}`;
           const detailHead = document.createElement("div");
@@ -1021,8 +1039,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           (Array.isArray(question.options) ? question.options : []).forEach((option, index) => {
             const line = document.createElement("div");
             let className = "quiz-review-option";
-            if (index === Number(question.correctIndex)) className += " correct";
-            if (Number(picked) === index && Number(picked) !== Number(question.correctIndex)) className += " wrong";
+            const correctIndex = toValidAnswerIndex(question.correctIndex);
+            if (correctIndex !== null && index === correctIndex) className += " correct";
+            if (Number(picked) === index && (correctIndex === null || Number(picked) !== correctIndex)) className += " wrong";
             line.className = className;
             line.textContent = `${OPTION_LETTERS[index] || index}. ${option}`;
             optionList.appendChild(line);
@@ -1030,7 +1049,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           detailCard.appendChild(optionList);
 
           const resultLine = document.createElement("div");
-          resultLine.className = `quiz-review-result ${isCorrect ? "ok" : answerState === "wrong" ? "bad" : ""}`.trim();
+          resultLine.className = `quiz-review-result ${isCorrect ? "ok" : answerState === "wrong" ? "bad" : isInvalid ? "invalid" : ""}`.trim();
           resultLine.textContent = statusText;
           detailCard.appendChild(resultLine);
 
