@@ -5,6 +5,17 @@ import {
 } from "../services/historyService.js";
 import { normalizeFlowParam } from "../services/flowService.js";
 
+function clearFlowParamFromUrl() {
+  try {
+    const url = new URL(location.href);
+    if (!url.searchParams.has("flow")) return;
+    url.searchParams.delete("flow");
+    history.replaceState(history.state, "", url.toString());
+  } catch {
+    // Ignore URL cleanup failures and keep the current page usable.
+  }
+}
+
 export function resolveChatDomElements() {
   const messages = document.getElementById("messages");
   const messagesInner = document.getElementById("messagesInner");
@@ -203,6 +214,7 @@ export function setupChatEventManager(deps) {
     const flowKind = normalizeFlowParam(params.get("flow"));
     if (flowKind) {
       await handleFlowEntry(flowKind);
+      clearFlowParamFromUrl();
       return;
     }
     await restoreCurrentSessionExperience();
