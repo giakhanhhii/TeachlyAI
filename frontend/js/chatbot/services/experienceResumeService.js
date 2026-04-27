@@ -205,6 +205,30 @@ export function createExperienceResumeService(deps) {
     return lastOpenedExperience;
   }
 
+  function estimateResumeStateRichness(state) {
+    if (!state || typeof state !== "object") return -1;
+    let score = 0;
+    if (typeof state.view === "string" && state.view) score += 2;
+    if (typeof state.startedAt === "string" && state.startedAt) score += 2;
+    if (typeof state.submittedAt === "string" && state.submittedAt) score += 4;
+    if (typeof state.currentQuestion === "string" && state.currentQuestion) score += 1;
+    if (typeof state.currentPartId === "string" && state.currentPartId) score += 1;
+    if (typeof state.detailQuestionId === "string" && state.detailQuestionId) score += 1;
+    if (typeof state.activeResultPartId === "string" && state.activeResultPartId) score += 1;
+    if (typeof state.elapsedSeconds === "number" && Number.isFinite(state.elapsedSeconds)) score += 1;
+    if (state.reviewMode) score += 2;
+    score += Object.keys(state.answersByQuestion && typeof state.answersByQuestion === "object" ? state.answersByQuestion : {}).length;
+    score += Array.isArray(state.flaggedQuestions) ? state.flaggedQuestions.length : 0;
+    return score;
+  }
+
+  function chooseBetterResumeState(primary, secondary) {
+    const primaryScore = estimateResumeStateRichness(primary);
+    const secondaryScore = estimateResumeStateRichness(secondary);
+    if (secondaryScore > primaryScore) return secondary;
+    return primary;
+  }
+
   /**
    * @param {{
    *  kind: "quiz"|"slide"|"flash"|"thptqg_fulltest",
@@ -223,7 +247,10 @@ export function createExperienceResumeService(deps) {
       ...lastOpenedExperience,
       meta: meta && typeof meta === "object" ? { ...meta } : { ...(lastOpenedExperience.meta || {}) },
       title: typeof title === "string" && title.trim() ? title.trim() : lastOpenedExperience.title,
-      resumeState: progress && typeof progress === "object" ? progress : lastOpenedExperience.resumeState || null,
+      resumeState: chooseBetterResumeState(
+        progress && typeof progress === "object" ? progress : null,
+        lastOpenedExperience.resumeState || null,
+      ) || null,
     };
   }
 

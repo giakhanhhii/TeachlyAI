@@ -1,7 +1,7 @@
 import { bindNewChatButton } from "../controllers/sessionController.js";
 import {
+  canBackToChatFromHistoryState,
   createPopStateHandler,
-  inExperienceHistoryState,
 } from "../services/historyService.js";
 import { normalizeFlowParam } from "../services/flowService.js";
 
@@ -175,7 +175,7 @@ export function setupChatEventManager(deps) {
   });
 
   backToChatBtn?.addEventListener("click", () => {
-    if (inExperienceHistoryState()) {
+    if (canBackToChatFromHistoryState()) {
       history.back();
       return;
     }

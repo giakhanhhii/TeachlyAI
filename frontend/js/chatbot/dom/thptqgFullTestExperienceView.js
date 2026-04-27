@@ -26,6 +26,11 @@ function answerLetter(index) {
   return Number.isFinite(Number(index)) && Number(index) >= 0 ? OPTION_LETTERS[Number(index)] || "?" : "—";
 }
 
+function toValidAnswerIndex(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric >= 0 ? numeric : null;
+}
+
 function deepCopyBundle(bundle) {
   try {
     return structuredClone(bundle);
@@ -89,11 +94,12 @@ function computeResultSummary(test, answersByQuestion) {
       questionIds: partQuestions.map((question) => String(question?.id || "")),
     };
     partQuestions.forEach((question) => {
-      const picked = answersByQuestion[String(question?.id || "")];
-      if (!Number.isFinite(Number(picked))) {
+      const pickedIndex = toValidAnswerIndex(answersByQuestion[String(question?.id || "")]);
+      const correctIndex = toValidAnswerIndex(question?.correctIndex);
+      if (pickedIndex === null || correctIndex === null) {
         stat.skipped += 1;
         summary.skipped += 1;
-      } else if (Number(picked) === Number(question?.correctIndex)) {
+      } else if (pickedIndex === correctIndex) {
         stat.correct += 1;
         summary.correct += 1;
       } else {
@@ -110,9 +116,10 @@ function computeResultSummary(test, answersByQuestion) {
 }
 
 function getQuestionAnswerState(question, answersByQuestion) {
-  const picked = answersByQuestion[String(question?.id || "")];
-  if (!Number.isFinite(Number(picked))) return "unanswered";
-  return Number(picked) === Number(question?.correctIndex) ? "correct" : "wrong";
+  const pickedIndex = toValidAnswerIndex(answersByQuestion[String(question?.id || "")]);
+  const correctIndex = toValidAnswerIndex(question?.correctIndex);
+  if (pickedIndex === null || correctIndex === null) return "unanswered";
+  return pickedIndex === correctIndex ? "correct" : "wrong";
 }
 
 function createButton(label, className, onClick) {
@@ -268,11 +275,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function refreshTimerImmediately() {
     updateTimer();
-    if (typeof requestAnimationFrame === "function") {
-      requestAnimationFrame(() => updateTimer());
-    } else {
-      setTimeout(() => updateTimer(), 0);
-    }
   }
 
   function clearTimerSchedule() {

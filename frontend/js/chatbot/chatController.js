@@ -36,6 +36,7 @@ import { createGuidedInteractionController } from "./controllers/guidedInteracti
 import { createChatSessionListRenderer } from "./controllers/chatSessionListController.js";
 import {
   HISTORY_APP_NAV_KEY,
+  HISTORY_CAN_BACK_TO_CHAT_KEY,
   HISTORY_CHAT_PHASE,
   HISTORY_EXPERIENCE_PHASE,
 } from "./services/historyService.js";
@@ -103,9 +104,17 @@ export function init() {
     };
   }
 
-  function writeAppNavigationState(mode = "replace", phase = resolveCurrentPhase()) {
+  function writeAppNavigationState(mode = "replace", phase = resolveCurrentPhase(), opts = {}) {
     if (suppressNavigationSnapshotWrite) return;
     const current = history.state && typeof history.state === "object" ? history.state : {};
+    const explicitCanBack =
+      opts && typeof opts === "object" && Object.prototype.hasOwnProperty.call(opts, "canBackToChat")
+        ? Boolean(opts.canBackToChat)
+        : null;
+    const canBackToChat =
+      phase === HISTORY_EXPERIENCE_PHASE
+        ? explicitCanBack ?? current[HISTORY_CAN_BACK_TO_CHAT_KEY] === true
+        : false;
     const nextNavSeq =
       mode === "push"
         ? currentHistoryNavSeq + 1
@@ -115,6 +124,7 @@ export function init() {
     const next = {
       ...current,
       phase,
+      [HISTORY_CAN_BACK_TO_CHAT_KEY]: canBackToChat,
       [HISTORY_NAV_SEQ_KEY]: nextNavSeq,
       [HISTORY_SESSION_ID_KEY]: getCurrentSessionId(),
       [HISTORY_APP_NAV_KEY]: buildAppNavigationSnapshot(),
@@ -128,7 +138,9 @@ export function init() {
   commitNavigationSnapshot = writeAppNavigationState;
   const ensureExperienceHistoryEntry = (opts = {}) => {
     const mode = opts?.mode === "replace" ? "replace" : "push";
-    writeAppNavigationState(mode, HISTORY_EXPERIENCE_PHASE);
+    writeAppNavigationState(mode, HISTORY_EXPERIENCE_PHASE, {
+      canBackToChat: opts?.canBackToChat !== false,
+    });
   };
 
   const layerView = createExperienceLayerView({
@@ -182,6 +194,7 @@ export function init() {
     mountThptqgFullTestExperience,
     experienceHooks,
     pushBot,
+    onExperienceStateChange: () => writeAppNavigationState("replace", HISTORY_EXPERIENCE_PHASE),
   });
 
   function setStartupUiState(active) {
@@ -543,7 +556,10 @@ export function init() {
     updateThreadLabel,
     setGuided: setGuidedState,
     resetResumeState: () => experienceController.resetResumeState(),
-    hideLayer: () => layerView.hide(),
+    hideLayer: () => {
+      layerView.hide();
+      writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
+    },
     commitNavigationSnapshot: (mode = "replace") => writeAppNavigationState(mode),
   });
 
@@ -584,7 +600,10 @@ export function init() {
     },
     hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
     isExperienceVisible: () => experienceLayer.classList.contains("visible"),
-    hideLayer: () => layerView.hide(),
+    hideLayer: () => {
+      layerView.hide();
+      writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
+    },
     persistActiveExperience,
     pushResumeDockFromLastOpened,
     restoreNavigationSnapshot: (snapshot, state) => restoreBrowserState(snapshot, state),
