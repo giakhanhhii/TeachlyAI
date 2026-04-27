@@ -118,6 +118,14 @@ function createButton(label, className, onClick) {
   return button;
 }
 
+function appendTextBlock(parent, tagName, className, text) {
+  const el = document.createElement(tagName);
+  if (className) el.className = className;
+  el.textContent = text;
+  parent.appendChild(el);
+  return el;
+}
+
 function isLongReadingGroup(group) {
   const context = Array.isArray(group?.context) ? group.context : [];
   const joined = context.join(" ").trim();
@@ -416,13 +424,16 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     stage.innerHTML = "";
     const head = document.createElement("div");
     head.className = "thptqg-catalog-head";
-    head.innerHTML = `
-      <div>
-        <h2 class="thptqg-title">${bundle.catalog.title}</h2>
-        <p class="thptqg-subtitle">${bundle.catalog.subtitle}</p>
-      </div>
-      <div class="thptqg-inline-note">Hiện có 1 đề thật từ <strong>${meta.source || "mockdata_40.md"}</strong>, các đề còn lại đang khóa.</div>
-    `;
+    const headCopy = document.createElement("div");
+    appendTextBlock(headCopy, "h2", "thptqg-title", bundle.catalog.title);
+    appendTextBlock(headCopy, "p", "thptqg-subtitle", bundle.catalog.subtitle);
+    head.appendChild(headCopy);
+    const note = document.createElement("div");
+    note.className = "thptqg-inline-note";
+    note.appendChild(document.createTextNode("Hiện có 1 đề thật từ "));
+    appendTextBlock(note, "strong", "", meta.source || "mockdata_40.md");
+    note.appendChild(document.createTextNode(", các đề còn lại đang khóa."));
+    head.appendChild(note);
     stage.appendChild(head);
 
     const grid = document.createElement("div");
@@ -435,16 +446,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       const buttonLabel = isLocked ? "Sắp có" : isSubmitted ? "Xem kết quả" : isInProgress ? "Tiếp tục làm" : "Làm đề";
       const card = document.createElement("article");
       card.className = `thptqg-test-card${isLocked ? " locked" : ""}${isSelected ? " active" : ""}`;
-      card.innerHTML = `
-        <div class="thptqg-test-badges">
-          <span class="thptqg-tag">${test.yearLabel || "Mock"}</span>
-          <span class="thptqg-tag">${test.status === "available" ? "Khả dụng" : "Sắp có"}</span>
-        </div>
-        <h3>${test.title}</h3>
-        <div class="thptqg-test-meta">⏱ ${formatMinutes(test.durationMinutes)} | ${test.questionCount} câu</div>
-        <div class="thptqg-test-meta">📚 4 part | 10 câu / part</div>
-        <div class="thptqg-test-meta">📄 Nguồn: ${test.source || "mockdata_40.md"}</div>
-      `;
+      const badges = document.createElement("div");
+      badges.className = "thptqg-test-badges";
+      appendTextBlock(badges, "span", "thptqg-tag", test.yearLabel || "Mock");
+      appendTextBlock(badges, "span", "thptqg-tag", test.status === "available" ? "Khả dụng" : "Sắp có");
+      card.appendChild(badges);
+      appendTextBlock(card, "h3", "", test.title);
+      appendTextBlock(card, "div", "thptqg-test-meta", `⏱ ${formatMinutes(test.durationMinutes)} | ${test.questionCount} câu`);
+      appendTextBlock(card, "div", "thptqg-test-meta", "📚 4 part | 10 câu / part");
+      appendTextBlock(card, "div", "thptqg-test-meta", `📄 Nguồn: ${test.source || "mockdata_40.md"}`);
       const action = createButton(buttonLabel, `thptqg-test-btn${isLocked ? " disabled" : ""}`, () => {
         if (isLocked) return;
         if (isSubmitted) {
@@ -474,12 +484,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const examHead = document.createElement("div");
     examHead.className = "thptqg-exam-head";
-    examHead.innerHTML = `
-      <div>
-        <h2 class="thptqg-exam-title">${test.title}</h2>
-        <p class="thptqg-exam-subtitle">Mỗi part gồm 10 câu. Chọn part để chuyển nhanh giữa các phần của đề.</p>
-      </div>
-    `;
+    const examHeadCopy = document.createElement("div");
+    appendTextBlock(examHeadCopy, "h2", "thptqg-exam-title", test.title);
+    appendTextBlock(
+      examHeadCopy,
+      "p",
+      "thptqg-exam-subtitle",
+      "Mỗi part gồm 10 câu. Chọn part để chuyển nhanh giữa các phần của đề.",
+    );
+    examHead.appendChild(examHeadCopy);
     examHead.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog("replace")));
     stage.appendChild(examHead);
 
@@ -492,12 +505,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const workspaceTop = document.createElement("div");
     workspaceTop.className = "thptqg-exam-workspace-top";
-    workspaceTop.innerHTML = `
-      <div class="thptqg-exam-workspace-copy">
-        <div class="thptqg-part-label">${activePart?.label || "Part"}</div>
-        <h3>${activePart?.title || "Làm đề"}</h3>
-      </div>
-    `;
+    const workspaceCopy = document.createElement("div");
+    workspaceCopy.className = "thptqg-exam-workspace-copy";
+    appendTextBlock(workspaceCopy, "div", "thptqg-part-label", activePart?.label || "Part");
+    appendTextBlock(workspaceCopy, "h3", "", activePart?.title || "Làm đề");
+    workspaceTop.appendChild(workspaceCopy);
     const topPartTabs = document.createElement("div");
     topPartTabs.className = "thptqg-exam-part-tabs";
     parts.forEach((part) => {
@@ -724,12 +736,12 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     layout.appendChild(sidebar);
     stage.appendChild(layout);
 
-    restoreAttemptScrollState(previousScrollState);
-
     if (pendingScrollQuestionId) {
       const target = stage.querySelector(`[data-question-id="${pendingScrollQuestionId}"]`);
       if (target instanceof HTMLElement) target.scrollIntoView({ block: "nearest", behavior: "smooth" });
       pendingScrollQuestionId = "";
+    } else {
+      restoreAttemptScrollState(previousScrollState);
     }
   }
 
@@ -772,11 +784,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const summaryCard = document.createElement("div");
     summaryCard.className = "thptqg-summary-card";
-    summaryCard.innerHTML = `
-      <div><strong>${test.title}</strong></div>
-      <div>Thời gian hoàn thành: ${formatElapsed(elapsedSeconds)}</div>
-      <div>Trạng thái: Đã nộp bài</div>
-    `;
+    const summaryTitle = document.createElement("div");
+    appendTextBlock(summaryTitle, "strong", "", test.title);
+    summaryCard.appendChild(summaryTitle);
+    appendTextBlock(summaryCard, "div", "", `Thời gian hoàn thành: ${formatElapsed(elapsedSeconds)}`);
+    appendTextBlock(summaryCard, "div", "", "Trạng thái: Đã nộp bài");
     stage.appendChild(summaryCard);
 
     const filterRow = document.createElement("div");
@@ -1000,10 +1012,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   }
 
   timer = setInterval(() => {
-    if (!document.body.contains(shell)) {
-      disposeExperience();
-      return;
-    }
     updateTimer();
   }, 1000);
 
