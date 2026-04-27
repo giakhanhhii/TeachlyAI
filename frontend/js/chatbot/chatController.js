@@ -61,7 +61,6 @@ function setGuidedState(next) {
 let isSwitchingSession = false;
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
-const BROWSER_BACK_BRIDGE_KEY = "__teachlyBrowserBackBridge";
 const HISTORY_NAV_SEQ_KEY = "__teachlyNavSeq";
 const HISTORY_SESSION_ID_KEY = "__teachlySessionId";
 
@@ -74,60 +73,8 @@ function getBrowserHistoryIndex() {
   }
 }
 
-function sameOriginReferrerHref() {
-  try {
-    if (!document.referrer) return "";
-    const refUrl = new URL(document.referrer, location.href);
-    if (refUrl.origin !== location.origin) return "";
-    return refUrl.href;
-  } catch {
-    return "";
-  }
-}
-
-function fallbackPreviousPageHref() {
-  return new URL("main_hub.html", location.href).href;
-}
-
-function isSameAppPageHref(a, b) {
-  try {
-    const left = new URL(a, location.href);
-    const right = new URL(b, location.href);
-    return (
-      left.origin === right.origin &&
-      left.pathname === right.pathname &&
-      left.search === right.search &&
-      left.hash === right.hash
-    );
-  } catch {
-    return false;
-  }
-}
-
 function initializeBrowserBackBridge() {
-  const state = history.state && typeof history.state === "object" ? history.state : {};
-  if (state[BROWSER_BACK_BRIDGE_KEY]) return;
-  if (history.length > 1) return;
-
-  const referrerHref = sameOriginReferrerHref();
-  const previousHref =
-    referrerHref && !isSameAppPageHref(referrerHref, location.href)
-      ? referrerHref
-      : fallbackPreviousPageHref();
-  if (!previousHref || previousHref === location.href) return;
-
-  const currentHref = location.href;
-  history.replaceState({ [BROWSER_BACK_BRIDGE_KEY]: "previous" }, "", previousHref);
-  history.pushState({ [BROWSER_BACK_BRIDGE_KEY]: "current" }, "", currentHref);
-
-  window.addEventListener("popstate", (event) => {
-    const nextState = event.state && typeof event.state === "object" ? event.state : {};
-    if (nextState[BROWSER_BACK_BRIDGE_KEY] !== "previous") return;
-    const targetHref = location.href;
-    setTimeout(() => {
-      location.assign(targetHref);
-    }, 0);
-  });
+  // Disabled: this bridge rewrote browser history and could trap Back/Forward.
 }
 
 export function init() {
@@ -154,17 +101,6 @@ export function init() {
       activeSessionId: getCurrentSessionId(),
       guided,
     };
-  }
-
-  function resolveHistoryDirection(targetNavSeq) {
-    const targetBrowserHistoryIndex = getBrowserHistoryIndex();
-    if (targetBrowserHistoryIndex !== null && currentBrowserHistoryIndex !== null) {
-      const delta = targetBrowserHistoryIndex - currentBrowserHistoryIndex;
-      if (delta < 0) return -1;
-      if (delta > 0) return 1;
-    }
-    const safeTargetNavSeq = Number.isFinite(Number(targetNavSeq)) ? Math.floor(Number(targetNavSeq)) : currentHistoryNavSeq - 1;
-    return safeTargetNavSeq <= currentHistoryNavSeq ? -1 : 1;
   }
 
   function writeAppNavigationState(mode = "replace", phase = resolveCurrentPhase()) {
@@ -407,7 +343,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       saveSessions();
-      writeAppNavigationState("replace");
+      writeAppNavigationState("push");
     }
     input.focus();
   }
@@ -510,15 +446,7 @@ export function init() {
   }
 
   async function restoreBrowserState(snapshot, state) {
-    const targetSessionId = typeof snapshot?.activeSessionId === "string" ? snapshot.activeSessionId : "";
-    const currentSessionId = getCurrentSessionId();
     const targetNavSeq = Number(state?.[HISTORY_NAV_SEQ_KEY]);
-    if (targetSessionId && currentSessionId && targetSessionId !== currentSessionId) {
-      const direction = resolveHistoryDirection(targetNavSeq);
-      if (direction < 0) history.back();
-      else history.forward();
-      return true;
-    }
     if (!restoreNavigationSnapshot(snapshot)) return false;
     currentHistoryNavSeq = Number.isFinite(targetNavSeq) ? Math.floor(targetNavSeq) : currentHistoryNavSeq;
     currentBrowserHistoryIndex = getBrowserHistoryIndex();
@@ -527,8 +455,6 @@ export function init() {
       return true;
     }
     layerView.hide();
-    pushResumeDockFromLastOpened();
-    scrollToResumeDock();
     return true;
   }
 
@@ -565,7 +491,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       await restoreCurrentSessionExperience();
-      writeAppNavigationState("replace", resolveCurrentPhase());
+      writeAppNavigationState("push", resolveCurrentPhase());
     } finally {
       isSwitchingSession = false;
     }
@@ -653,7 +579,7 @@ export function init() {
       renderChatListUI();
       renderMessages();
       saveSessions();
-      writeAppNavigationState("replace", resolveCurrentPhase());
+      writeAppNavigationState("push", resolveCurrentPhase());
       input.focus();
     },
     hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),

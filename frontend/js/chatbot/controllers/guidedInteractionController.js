@@ -111,20 +111,20 @@ export function createGuidedInteractionController(deps) {
       else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
       else if (e.type === "showQuiz") {
         const scoped = ensureMetaExperienceId(e.meta || {});
-        await openSingleExperience("quiz", scoped.meta, "fresh", scoped.experienceId);
         pushQuickResumeDock("quiz", scoped.meta, scoped.experienceId);
+        await openSingleExperience("quiz", scoped.meta, "fresh", scoped.experienceId);
       } else if (e.type === "showFlash") {
         const scoped = ensureMetaExperienceId(e.meta || {});
-        await openSingleExperience("flash", scoped.meta, "fresh", scoped.experienceId);
         pushQuickResumeDock("flash", scoped.meta, scoped.experienceId);
+        await openSingleExperience("flash", scoped.meta, "fresh", scoped.experienceId);
       } else if (e.type === "showSlide") {
         const scoped = ensureMetaExperienceId(e.meta || {});
-        await openSingleExperience("slide", scoped.meta, "fresh", scoped.experienceId);
         pushQuickResumeDock("slide", scoped.meta, scoped.experienceId);
+        await openSingleExperience("slide", scoped.meta, "fresh", scoped.experienceId);
       } else if (e.type === "showThptqgFullTest") {
         const scoped = ensureMetaExperienceId(e.meta || {});
-        await openSingleExperience("thptqg_fulltest", scoped.meta, "fresh", scoped.experienceId);
         pushQuickResumeDock("thptqg_fulltest", scoped.meta, scoped.experienceId);
+        await openSingleExperience("thptqg_fulltest", scoped.meta, "fresh", scoped.experienceId);
       }
     }
   }
