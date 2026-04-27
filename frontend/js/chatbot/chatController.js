@@ -503,7 +503,6 @@ export function init() {
       }
       renderChatListUI();
       renderMessages();
-      await restoreCurrentSessionExperience();
       writeAppNavigationState("push", resolveCurrentPhase());
     } finally {
       isSwitchingSession = false;

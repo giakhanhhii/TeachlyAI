@@ -142,3 +142,89 @@ test("restored THPTQG result can return to chat without browser history", async 
   await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
   await expect(page.getByRole("button", { name: "Tạo quiz" })).toBeVisible();
 });
+
+test("selecting a chat with saved THPTQG result stays in chat phase", async ({ page }) => {
+  const resumeState = {
+    kind: "thptqg_fulltest",
+    view: "result",
+    testId: "thptqg-simulation-test-1",
+    answersByQuestion: { q1: 0, q2: 1 },
+    flaggedQuestions: [],
+    currentPartId: "part-1",
+    currentQuestion: "q1",
+    startedAt: "2026-04-27T10:00:00.000Z",
+    elapsedSeconds: 120,
+    submittedAt: "2026-04-27T10:02:00.000Z",
+    reviewMode: true,
+    activeResultPartId: "overview",
+    detailQuestionId: "",
+  };
+  const resume = {
+    kind: "thptqg_fulltest",
+    meta: {
+      catalogTitle: "THPTQG simulation tests",
+      testId: "thptqg-simulation-test-1",
+      testTitle: "THPTQG simulation test 1",
+      source: "mockdata_40.md",
+      __experienceId: "exp-thptqg-sidebar",
+    },
+    experienceId: "exp-thptqg-sidebar",
+    title: "Full đề THPTQG — THPTQG simulation test 1",
+    openedAt: "2026-04-27T10:02:00.000Z",
+    resumeState,
+  };
+
+  await page.addInitScript(({ resume, resumeState }) => {
+    window.localStorage.setItem("teachly_active_session", "0");
+    window.localStorage.setItem("teachly_sessions", JSON.stringify([
+      {
+        sessionId: "session-chat",
+        title: "Đoạn chat thường",
+        thread_id: "",
+        messages: [{ role: "bot", text: "Chat đang mở" }],
+        messagesLoaded: true,
+        hasMoreRemote: false,
+        remoteOffset: 1,
+        pinned: false,
+        experienceState: null,
+      },
+      {
+        sessionId: "session-thptqg-sidebar",
+        title: "Quiz đã nộp",
+        thread_id: "",
+        messages: [],
+        messagesLoaded: true,
+        hasMoreRemote: false,
+        remoteOffset: 0,
+        pinned: false,
+        experienceState: {
+          kind: "thptqg_fulltest",
+          meta: resume.meta,
+          progress: resumeState,
+          completed: true,
+          activeExperienceId: resume.experienceId,
+          historyById: {
+            [resume.experienceId]: {
+              experienceId: resume.experienceId,
+              kind: "thptqg_fulltest",
+              meta: resume.meta,
+              progress: resumeState,
+              completed: true,
+              updatedAt: "2026-04-27T10:02:00.000Z",
+            },
+          },
+          resume,
+        },
+      },
+    ]));
+  }, { resume, resumeState });
+
+  await page.goto("/chatbot_ui.html");
+  await expect(page.getByText("Chat đang mở")).toBeVisible();
+
+  await page.getByRole("button", { name: "Quiz đã nộp", exact: true }).click();
+
+  await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
+  await expect(page.getByText("Trạng thái: Đã nộp bài")).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Mở" })).toBeVisible();
+});
