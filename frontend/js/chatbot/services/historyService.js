@@ -3,6 +3,11 @@ export const HISTORY_EXPERIENCE_PHASE = "experience";
 export const HISTORY_APP_NAV_KEY = "__appNav";
 export const HISTORY_CAN_BACK_TO_CHAT_KEY = "__canBackToChat";
 
+export function canBackToChatFromHistoryState() {
+  const state = history.state && typeof history.state === "object" ? history.state : {};
+  return state.phase === HISTORY_EXPERIENCE_PHASE && state[HISTORY_CAN_BACK_TO_CHAT_KEY] === true;
+}
+
 export function ensureHistoryBaseState() {
   // Base state is managed by the caller via replaceState.
 }

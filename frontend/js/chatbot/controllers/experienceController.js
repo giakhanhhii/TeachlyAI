@@ -27,6 +27,7 @@ import { resumeDockSignature } from "../utils/serialization.js";
  *   mountThptqgFullTestExperience: (layerView: any, meta: Record<string, string>, hooks: any, opts: any) => Promise<void>,
  *   experienceHooks: any,
  *   pushBot: (text: string, opts?: any) => void,
+ *   onExperienceStateChange?: () => void,
  * }} deps
  */
 export function createExperienceController(deps) {
@@ -45,6 +46,7 @@ export function createExperienceController(deps) {
     mountThptqgFullTestExperience,
     experienceHooks,
     pushBot,
+    onExperienceStateChange,
   } = deps;
 
   const historyService = createExperienceHistoryService({
@@ -92,6 +94,30 @@ export function createExperienceController(deps) {
     };
   }
 
+  function estimateInitialStateRichness(state) {
+    if (!state || typeof state !== "object") return -1;
+    let score = 0;
+    if (typeof state.view === "string" && state.view) score += 2;
+    if (typeof state.startedAt === "string" && state.startedAt) score += 2;
+    if (typeof state.submittedAt === "string" && state.submittedAt) score += 4;
+    if (typeof state.currentQuestion === "string" && state.currentQuestion) score += 1;
+    if (typeof state.currentPartId === "string" && state.currentPartId) score += 1;
+    if (typeof state.detailQuestionId === "string" && state.detailQuestionId) score += 1;
+    if (typeof state.activeResultPartId === "string" && state.activeResultPartId) score += 1;
+    if (typeof state.elapsedSeconds === "number" && Number.isFinite(state.elapsedSeconds)) score += 1;
+    if (state.reviewMode) score += 2;
+    score += Object.keys(state.answersByQuestion && typeof state.answersByQuestion === "object" ? state.answersByQuestion : {}).length;
+    score += Array.isArray(state.flaggedQuestions) ? state.flaggedQuestions.length : 0;
+    return score;
+  }
+
+  function pickBetterInitialState(primary, secondary) {
+    const primaryScore = estimateInitialStateRichness(primary);
+    const secondaryScore = estimateInitialStateRichness(secondary);
+    if (secondaryScore > primaryScore) return secondary;
+    return primary;
+  }
+
   /**
    * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
    * @param {Record<string, string>} meta
@@ -108,9 +134,10 @@ export function createExperienceController(deps) {
     resumeService.rememberOpenExperience(kind, scopedMeta, experienceId);
     persistActiveExperience();
     ensureExperienceHistoryEntry(resolveHistoryOpts(historyOpts));
-    const initialState =
-      resolveSingleInitialState(getCurrentExperienceState() || {}, kind, scopedMeta, mode, experienceId)
-      || (fallbackInitialState && typeof fallbackInitialState === "object" ? fallbackInitialState : null);
+    const initialState = pickBetterInitialState(
+      resolveSingleInitialState(getCurrentExperienceState() || {}, kind, scopedMeta, mode, experienceId),
+      fallbackInitialState && typeof fallbackInitialState === "object" ? fallbackInitialState : null,
+    );
     const mountOpts = {
       initialState,
       onStateChange: (state) => {
@@ -131,6 +158,7 @@ export function createExperienceController(deps) {
           progress: state,
         });
         persistActiveExperience();
+        onExperienceStateChange?.();
       },
     };
     if (mode === "fresh") {
@@ -244,6 +272,7 @@ export function createExperienceController(deps) {
             completed,
             resume: resumeService.getLastOpenedExperience(),
           });
+          onExperienceStateChange?.();
         },
       },
     );
