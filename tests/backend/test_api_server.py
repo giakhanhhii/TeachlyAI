@@ -18,10 +18,11 @@ def client_with_temp_db(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     monkeypatch.setattr(api_server, "_get_client", lambda: object())
     monkeypatch.setattr(api_server, "_run_reply", lambda _client, _history: "Mocked assistant reply")
 
-    with TestClient(api_server.app) as client:
-        yield client, temp_db, monkeypatch
-
-    temp_db._conn.close()
+    try:
+        with TestClient(api_server.app) as client:
+            yield client, temp_db, monkeypatch
+    finally:
+        temp_db._conn.close()
 
 
 def test_health_reports_expected_shape(client_with_temp_db):
