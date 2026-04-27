@@ -1,4 +1,4 @@
-/** @typedef {{ kind: "quiz"|"slide"|"flash", meta: Record<string, string>, title?: string, openedAt?: string, experienceId?: string }} ResumeDockItem */
+/** @typedef {{ kind: "quiz"|"slide"|"flash"|"thptqg_fulltest", meta: Record<string, string>, title?: string, openedAt?: string, experienceId?: string, resumeState?: any }} ResumeDockItem */
 
 /**
  * @param {string} [iso]
