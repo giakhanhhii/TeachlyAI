@@ -432,6 +432,53 @@ export function init() {
     messageHistoryService.renderMessages();
   }
 
+  function estimateExperienceProgressRichness(progress) {
+    if (!progress || typeof progress !== "object") return -1;
+    let score = 0;
+    if (typeof progress.view === "string" && progress.view) score += 2;
+    if (typeof progress.startedAt === "string" && progress.startedAt) score += 2;
+    if (typeof progress.submittedAt === "string" && progress.submittedAt) score += 6;
+    if (progress.view === "result") score += 4;
+    if (progress.reviewMode) score += 2;
+    if (typeof progress.currentQuestion === "string" && progress.currentQuestion) score += 1;
+    if (typeof progress.currentPartId === "string" && progress.currentPartId) score += 1;
+    if (typeof progress.activeResultPartId === "string" && progress.activeResultPartId) score += 1;
+    if (typeof progress.detailQuestionId === "string" && progress.detailQuestionId) score += 1;
+    if (Number.isFinite(Number(progress.elapsedSeconds))) score += 1;
+    score += Object.keys(progress.answersByQuestion && typeof progress.answersByQuestion === "object" ? progress.answersByQuestion : {}).length;
+    score += Array.isArray(progress.flaggedQuestions) ? progress.flaggedQuestions.length : 0;
+    return score;
+  }
+
+  function estimateExperienceStateRichness(experienceState) {
+    if (!experienceState || typeof experienceState !== "object") return -1;
+    let score = 0;
+    if (experienceState.completed) score += 4;
+    score = Math.max(score, estimateExperienceProgressRichness(experienceState.progress));
+    score = Math.max(score, estimateExperienceProgressRichness(experienceState.resume?.resumeState));
+    const historyById = experienceState.historyById && typeof experienceState.historyById === "object"
+      ? experienceState.historyById
+      : {};
+    Object.values(historyById).forEach((entry) => {
+      score = Math.max(score, estimateExperienceProgressRichness(entry?.progress));
+    });
+    return score;
+  }
+
+  function mergeWithCurrentExperienceState(snapshotSession, targetSessionId) {
+    if (!snapshotSession || typeof snapshotSession !== "object") return snapshotSession;
+    const currentSession = getSessionsSnapshot().find((session) => session?.sessionId === targetSessionId);
+    const currentExperienceState = currentSession?.experienceState;
+    if (!currentExperienceState || typeof currentExperienceState !== "object") return snapshotSession;
+    const snapshotScore = estimateExperienceStateRichness(snapshotSession.experienceState);
+    const currentScore = estimateExperienceStateRichness(currentExperienceState);
+    if (currentScore < snapshotScore) return snapshotSession;
+    return {
+      ...snapshotSession,
+      experienceState: currentExperienceState,
+    };
+  }
+
   function restoreNavigationSnapshot(snapshot) {
     if (!snapshot || typeof snapshot !== "object") return false;
     suppressNavigationSnapshotWrite = true;
@@ -439,7 +486,7 @@ export function init() {
       const targetSessionId =
         typeof snapshot.activeSessionId === "string" ? snapshot.activeSessionId.trim() : "";
       if (targetSessionId && snapshot.session && typeof snapshot.session === "object") {
-        restoreSessionStateById(targetSessionId, snapshot.session);
+        restoreSessionStateById(targetSessionId, mergeWithCurrentExperienceState(snapshot.session, targetSessionId));
       } else {
         const sessions = Array.isArray(snapshot.sessions) ? snapshot.sessions : [];
         const fallbackActiveIndex = Number.isInteger(snapshot.activeSessionIndex) ? snapshot.activeSessionIndex : 0;

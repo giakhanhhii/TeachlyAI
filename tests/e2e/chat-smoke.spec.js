@@ -228,3 +228,60 @@ test("selecting a chat with saved THPTQG result stays in chat phase", async ({ p
   await expect(page.getByText("Trạng thái: Đã nộp bài")).not.toBeVisible();
   await expect(page.getByRole("button", { name: "Mở" })).toBeVisible();
 });
+
+test("browser back preserves THPTQG result when reopening resume card", async ({ page }) => {
+  const resumeDock = {
+    kind: "thptqg_fulltest",
+    meta: {
+      catalogTitle: "THPTQG simulation tests",
+      source: "mockdata_40.md",
+      __experienceId: "exp-thptqg-browser-back",
+    },
+    experienceId: "exp-thptqg-browser-back",
+    title: "Full đề THPTQG — THPTQG simulation tests",
+    openedAt: "2026-04-27T10:00:00.000Z",
+    resumeState: null,
+  };
+
+  await page.addInitScript(({ resumeDock }) => {
+    window.localStorage.setItem("teachly_active_session", "0");
+    window.localStorage.setItem("teachly_sessions", JSON.stringify([
+      {
+        sessionId: "session-thptqg-browser-back",
+        title: "Full đề THPTQG",
+        thread_id: "",
+        messages: [
+          {
+            role: "bot",
+            text: "Bạn muốn tiếp tục theo cách nào?",
+            resumeDock,
+          },
+        ],
+        messagesLoaded: true,
+        hasMoreRemote: false,
+        remoteOffset: 1,
+        pinned: false,
+        experienceState: null,
+      },
+    ]));
+  }, { resumeDock });
+
+  await page.goto("/chatbot_ui.html");
+  await page.getByRole("button", { name: "Mở", exact: true }).click();
+
+  await expect(page.locator("#experienceLayer")).toHaveClass(/visible/);
+  await expect(page.getByRole("button", { name: "Làm đề" })).toBeVisible();
+  await page.getByRole("button", { name: "Làm đề" }).click();
+
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Nộp bài" }).click();
+  await expect(page.getByText("Trạng thái: Đã nộp bài")).toBeVisible();
+
+  await page.goBack();
+  await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
+  await expect(page.getByRole("button", { name: "Mở", exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Mở", exact: true }).click();
+  await expect(page.getByText("Trạng thái: Đã nộp bài")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Danh sách đề" })).toBeVisible();
+});
