@@ -105,3 +105,9 @@ Install Chromium only for the lightest setup:
 npx playwright install chromium
 npm run test:e2e
 ```
+
+If port `8011` is already in use on your machine or CI runner, override it for the Playwright run:
+
+```bash
+PLAYWRIGHT_PORT=8021 npm run test:e2e
+```
