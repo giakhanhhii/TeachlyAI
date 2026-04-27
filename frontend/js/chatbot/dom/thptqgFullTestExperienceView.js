@@ -109,6 +109,12 @@ function computeResultSummary(test, answersByQuestion) {
   return summary;
 }
 
+function getQuestionAnswerState(question, answersByQuestion) {
+  const picked = answersByQuestion[String(question?.id || "")];
+  if (!Number.isFinite(Number(picked))) return "unanswered";
+  return Number(picked) === Number(question?.correctIndex) ? "correct" : "wrong";
+}
+
 function createButton(label, className, onClick) {
   const button = document.createElement("button");
   button.type = "button";
@@ -834,7 +840,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       questionsCell.className = "thptqg-cell-questions";
       stat.questionIds.forEach((questionId) => {
         const question = questionMap.get(questionId);
-        const chip = createButton(String(question?.number || ""), "thptqg-chip-btn", () => {
+        const chipState = question ? getQuestionAnswerState(question, answersByQuestion) : "unanswered";
+        const chip = createButton(String(question?.number || ""), `thptqg-chip-btn ${chipState}`, () => {
           activeResultPartId = stat.partId;
           detailQuestionId = questionId;
           emitState();
@@ -883,8 +890,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         questions.forEach((question) => {
           const questionId = String(question.id || "");
           const picked = answersByQuestion[questionId];
-          const answered = Number.isFinite(Number(picked));
-          const isCorrect = answered && Number(picked) === Number(question.correctIndex);
+          const answerState = getQuestionAnswerState(question, answersByQuestion);
+          const answered = answerState !== "unanswered";
+          const isCorrect = answerState === "correct";
           const statusText = !answered ? "Bỏ qua" : isCorrect ? "Trả lời đúng" : "Trả lời sai";
           const item = document.createElement("div");
           item.className = `thptqg-detail-item${detailQuestionId === questionId ? " active" : ""}`;
@@ -894,7 +902,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           itemNumber.className = "thptqg-detail-item-number";
           itemNumber.textContent = `Câu ${question.number}`;
           const itemStatus = document.createElement("div");
-          itemStatus.className = "thptqg-detail-item-status";
+          itemStatus.className = `thptqg-detail-item-status ${answerState}`;
           itemStatus.textContent = statusText;
           const itemAnswer = document.createElement("div");
           itemAnswer.className = "thptqg-detail-item-answer";
