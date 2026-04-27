@@ -98,8 +98,9 @@ export function createExperienceController(deps) {
    * @param {"fresh"|"resume"} mode
    * @param {string} [forcedExperienceId]
    * @param {{ mode?: "push" | "replace", canBackToChat?: boolean }} [historyOpts]
+   * @param {any} [fallbackInitialState]
    */
-  async function openSingleExperience(kind, meta, mode, forcedExperienceId = "", historyOpts) {
+  async function openSingleExperience(kind, meta, mode, forcedExperienceId = "", historyOpts, fallbackInitialState = null) {
     const seedMeta = meta && typeof meta === "object" ? meta : {};
     const experienceId =
       forcedExperienceId || resumeService.readExperienceIdFromMeta(seedMeta) || resumeService.generateExperienceId();
@@ -107,7 +108,9 @@ export function createExperienceController(deps) {
     resumeService.rememberOpenExperience(kind, scopedMeta, experienceId);
     persistActiveExperience();
     ensureExperienceHistoryEntry(resolveHistoryOpts(historyOpts));
-    const initialState = resolveSingleInitialState(getCurrentExperienceState() || {}, kind, scopedMeta, mode, experienceId);
+    const initialState =
+      resolveSingleInitialState(getCurrentExperienceState() || {}, kind, scopedMeta, mode, experienceId)
+      || (fallbackInitialState && typeof fallbackInitialState === "object" ? fallbackInitialState : null);
     const mountOpts = {
       initialState,
       onStateChange: (state) => {
@@ -120,6 +123,14 @@ export function createExperienceController(deps) {
           completed,
           resume: resumeService.getLastOpenedExperience(),
         });
+        resumeService.syncLastOpenedExperience({
+          kind,
+          meta: scopedMeta,
+          experienceId,
+          title: typeof state?.title === "string" ? state.title : buildResumeTitle(kind, scopedMeta),
+          progress: state,
+        });
+        persistActiveExperience();
       },
     };
     if (mode === "fresh") {
@@ -151,12 +162,16 @@ export function createExperienceController(deps) {
       const experienceId =
         (item && typeof item.experienceId === "string" ? item.experienceId : "") ||
         resumeService.readExperienceIdFromMeta(resumeMeta);
+      const fallbackInitialState = item && typeof item === "object" && item.resumeState && typeof item.resumeState === "object"
+        ? item.resumeState
+        : null;
       await openSingleExperience(
         /** @type {"quiz"|"slide"|"flash"|"thptqg_fulltest"} */ (kind),
         resumeMeta,
         "resume",
         experienceId,
         historyOpts,
+        fallbackInitialState,
       );
     } catch {
       layerView.hide();

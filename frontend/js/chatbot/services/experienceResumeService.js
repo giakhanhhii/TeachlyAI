@@ -71,6 +71,7 @@ export function createExperienceResumeService(deps) {
       meta: { ...meta },
       experienceId: experienceId || "",
       title: buildResumeTitle(kind, meta),
+      resumeState: null,
     };
     resumeDockAlreadyPosted = false;
   }
@@ -125,6 +126,7 @@ export function createExperienceResumeService(deps) {
       experienceId,
       title: buildResumeTitle(kind, scopedMeta || {}),
       openedAt: now,
+      resumeState: lastOpenedExperience?.experienceId === experienceId ? lastOpenedExperience?.resumeState || null : null,
     };
     if (hasResumeDockInCurrentSession(resumeDock)) {
       resumeDockAlreadyPosted = true;
@@ -173,6 +175,7 @@ export function createExperienceResumeService(deps) {
         experienceId: lastOpenedExperience.experienceId || "",
         title: lastOpenedExperience.title,
         openedAt: now,
+        resumeState: lastOpenedExperience.resumeState || null,
       };
       if (hasResumeDockInCurrentSession(resumeDock)) {
         lastOpenedExperience = null;
@@ -202,6 +205,28 @@ export function createExperienceResumeService(deps) {
     return lastOpenedExperience;
   }
 
+  /**
+   * @param {{
+   *  kind: "quiz"|"slide"|"flash"|"thptqg_fulltest",
+   *  meta: Record<string, any>,
+   *  experienceId: string,
+   *  title?: string,
+   *  progress: any,
+   * }} params
+   */
+  function syncLastOpenedExperience(params) {
+    const { kind, meta, experienceId, title, progress } = params || {};
+    if (!lastOpenedExperience || lastOpenedExperience.bundleBack || lastOpenedExperience.fullsetMixedBack) return;
+    if (lastOpenedExperience.kind !== kind) return;
+    if ((lastOpenedExperience.experienceId || "") !== (experienceId || "")) return;
+    lastOpenedExperience = {
+      ...lastOpenedExperience,
+      meta: meta && typeof meta === "object" ? { ...meta } : { ...(lastOpenedExperience.meta || {}) },
+      title: typeof title === "string" && title.trim() ? title.trim() : lastOpenedExperience.title,
+      resumeState: progress && typeof progress === "object" ? progress : lastOpenedExperience.resumeState || null,
+    };
+  }
+
   function resetResumeState() {
     lastOpenedExperience = null;
     resumeDockAlreadyPosted = false;
@@ -223,6 +248,7 @@ export function createExperienceResumeService(deps) {
     persistCurrentActiveExperience,
     setLastOpenedExperience,
     getLastOpenedExperience,
+    syncLastOpenedExperience,
     resetResumeState,
     hasLastOpenedExperience,
   };
