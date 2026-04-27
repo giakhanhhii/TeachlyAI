@@ -1102,6 +1102,16 @@
   color: #102a43;
 }
 
+.thptqg-detail-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.thptqg-detail-empty {
+  margin: 0;
+}
+
 .thptqg-detail-list {
   display: flex;
   flex-direction: column;
@@ -1158,6 +1168,11 @@
 
 .thptqg-answer-detail-card {
   padding: 18px;
+}
+
+.thptqg-answer-detail-card.active {
+  border-color: #93c5fd;
+  background: #eff6ff;
 }
 
 .thptqg-answer-detail-head h4 {
