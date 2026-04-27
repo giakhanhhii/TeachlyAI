@@ -958,6 +958,13 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         });
         if (!visibleQuestions.length) return;
         hasVisibleQuestions = true;
+        const orderedQuestions =
+          detailQuestionId && visibleQuestions.some((question) => String(question?.id || "") === detailQuestionId)
+            ? [
+                visibleQuestions.find((question) => String(question?.id || "") === detailQuestionId),
+                ...visibleQuestions.filter((question) => String(question?.id || "") !== detailQuestionId),
+              ].filter(Boolean)
+            : visibleQuestions;
 
         const block = document.createElement("div");
         block.className = "thptqg-detail-block";
@@ -966,7 +973,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         block.appendChild(blockTitle);
         const list = document.createElement("div");
         list.className = "thptqg-detail-cards";
-        visibleQuestions.forEach((question) => {
+        orderedQuestions.forEach((question) => {
           const questionId = String(question.id || "");
           const picked = answersByQuestion[questionId];
           const answerState = getQuestionAnswerState(question, answersByQuestion);
