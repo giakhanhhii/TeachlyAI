@@ -358,6 +358,10 @@
   color: #b71c1c;
 }
 
+.quiz-review-result.invalid {
+  color: #92400e;
+}
+
 .quiz-review-explain {
   margin-top: 6px;
   border-left: 3px solid #ef4444;
@@ -1079,6 +1083,12 @@
   background: #fee2e2;
   border-color: #ef4444;
   color: #991b1b;
+}
+
+.thptqg-chip-btn.invalid {
+  background: #fff7ed;
+  border-color: #f59e0b;
+  color: #92400e;
 }
 
 .thptqg-detail-section {
