@@ -375,6 +375,7 @@
   min-height: 100%;
   margin: 0;
   padding-bottom: 0;
+  font-family: "Segoe UI", Inter, Arial, sans-serif;
 }
 
 .exp-shell-thptqg .exp-stage {
@@ -472,6 +473,9 @@
   font-size: 12px;
   font-weight: 700;
   padding: 6px 10px;
+  font-family: "Segoe UI", Inter, Arial, sans-serif;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .thptqg-test-btn,
@@ -486,6 +490,9 @@
   border: 1px solid transparent;
   border-radius: 12px;
   cursor: pointer;
+  font-family: "Segoe UI", Inter, Arial, sans-serif;
+  letter-spacing: normal;
+  text-transform: none;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
 }
 
@@ -508,6 +515,7 @@
   color: #fff;
   font-weight: 800;
   font-size: 16px;
+  line-height: 1.2;
 }
 
 .thptqg-test-btn.disabled {
@@ -880,6 +888,7 @@
   color: #fff;
   font-size: 15px;
   font-weight: 800;
+  line-height: 1.2;
 }
 
 .thptqg-part-switches {

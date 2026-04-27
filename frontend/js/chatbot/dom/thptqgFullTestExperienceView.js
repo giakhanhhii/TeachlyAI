@@ -460,7 +460,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       appendTextBlock(card, "h3", "", test.title);
       appendTextBlock(card, "div", "thptqg-test-meta", `⏱ ${formatMinutes(test.durationMinutes)} | ${test.questionCount} câu`);
       appendTextBlock(card, "div", "thptqg-test-meta", "📚 4 part | 10 câu / part");
-      appendTextBlock(card, "div", "thptqg-test-meta", `📄 Nguồn: ${test.source || "mockdata_40.md"}`);
       const action = createButton(buttonLabel, `thptqg-test-btn${isLocked ? " disabled" : ""}`, () => {
         if (isLocked) return;
         if (isSubmitted) {
@@ -684,7 +683,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     timerValueEl.className = "thptqg-timer";
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
     timerCard.appendChild(timerValueEl);
-    timerCard.appendChild(createButton("NỘP BÀI", "thptqg-submit-btn", () => submitTest(test, "replace")));
+    timerCard.appendChild(createButton("Nộp bài", "thptqg-submit-btn", () => submitTest(test, "replace")));
     sidebar.appendChild(timerCard);
 
     const partsCard = document.createElement("div");
