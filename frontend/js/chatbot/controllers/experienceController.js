@@ -158,13 +158,25 @@ export function createExperienceController(deps) {
       return;
     }
     try {
-      const resumeMeta = item && typeof item === "object" && item.meta && typeof item.meta === "object" ? item.meta : {};
+      const itemMeta = item && typeof item === "object" && item.meta && typeof item.meta === "object" ? item.meta : {};
       const experienceId =
         (item && typeof item.experienceId === "string" ? item.experienceId : "") ||
-        resumeService.readExperienceIdFromMeta(resumeMeta);
-      const fallbackInitialState = item && typeof item === "object" && item.resumeState && typeof item.resumeState === "object"
-        ? item.resumeState
-        : null;
+        resumeService.readExperienceIdFromMeta(itemMeta);
+      const persistedResume = readPersistedActiveExperience();
+      const canUsePersistedResume =
+        persistedResume
+        && typeof persistedResume === "object"
+        && persistedResume.kind === kind
+        && (persistedResume.experienceId || "") === experienceId;
+      const resumeMeta = canUsePersistedResume && persistedResume.meta && typeof persistedResume.meta === "object"
+        ? persistedResume.meta
+        : itemMeta;
+      const fallbackInitialState =
+        canUsePersistedResume && persistedResume.resumeState && typeof persistedResume.resumeState === "object"
+          ? persistedResume.resumeState
+          : item && typeof item === "object" && item.resumeState && typeof item.resumeState === "object"
+            ? item.resumeState
+            : null;
       await openSingleExperience(
         /** @type {"quiz"|"slide"|"flash"|"thptqg_fulltest"} */ (kind),
         resumeMeta,
