@@ -1050,6 +1050,24 @@
   font-weight: 700;
 }
 
+.thptqg-chip-btn.unanswered {
+  background: #fff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.thptqg-chip-btn.correct {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #166534;
+}
+
+.thptqg-chip-btn.wrong {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
 .thptqg-detail-section {
   display: flex;
   flex-direction: column;
@@ -1108,6 +1126,21 @@
 .thptqg-detail-item-answer {
   color: #52667a;
   font-size: 14px;
+}
+
+.thptqg-detail-item-status.correct {
+  color: #166534;
+  font-weight: 700;
+}
+
+.thptqg-detail-item-status.wrong {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.thptqg-detail-item-status.unanswered {
+  color: #475569;
+  font-weight: 700;
 }
 
 .thptqg-answer-detail-card {
