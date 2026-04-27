@@ -275,6 +275,26 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     }
   }
 
+  function clearTimerSchedule() {
+    if (timer) {
+      clearTimeout(timer);
+      timer = 0;
+    }
+  }
+
+  function scheduleTimerTick() {
+    clearTimerSchedule();
+    if (disposed) return;
+    updateTimer();
+    if (!startedAt || submittedAt || view !== "attempt") return;
+    const elapsedMs = Math.max(0, Date.now() - elapsedBaseTick);
+    const remainderMs = elapsedMs % 1000;
+    const msUntilNextSecond = remainderMs === 0 ? 1000 : 1000 - remainderMs;
+    timer = setTimeout(() => {
+      scheduleTimerTick();
+    }, Math.max(32, msUntilNextSecond));
+  }
+
   function persistLiveProgress() {
     if (disposed) return;
     if (!startedAt || submittedAt || view !== "attempt") return;
@@ -286,10 +306,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (disposed) return;
     persistLiveProgress();
     disposed = true;
-    if (timer) {
-      clearInterval(timer);
-      timer = 0;
-    }
+    clearTimerSchedule();
     removalObserver?.disconnect();
     removalObserver = null;
     historyAbort.abort();
@@ -386,6 +403,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     emitState();
     render();
     refreshTimerImmediately();
+    scheduleTimerTick();
     writeHistory(historyMode);
   }
 
@@ -1037,9 +1055,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     updateTimer();
   }
 
-  timer = setInterval(() => {
-    updateTimer();
-  }, 250);
+  scheduleTimerTick();
 
   removalObserver = new MutationObserver(() => {
     if (!root.contains(shell)) {
