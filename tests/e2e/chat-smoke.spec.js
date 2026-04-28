@@ -381,6 +381,82 @@ test("clicking a later THPTQG result question chip brings that part block to the
   await expect(page.locator(".thptqg-answer-detail-card.active h4")).toHaveText("Đáp án chi tiết câu 21");
 });
 
+test("THPTQG result can restart the same test from scratch", async ({ page }) => {
+  const resumeState = {
+    kind: "thptqg_fulltest",
+    view: "result",
+    testId: "thptqg-simulation-test-1",
+    answersByQuestion: { q1: 0, q2: 2, q3: 2 },
+    flaggedQuestions: ["q2"],
+    currentPartId: "part-1",
+    currentQuestion: "q1",
+    startedAt: "2026-04-27T10:00:00.000Z",
+    elapsedSeconds: 120,
+    submittedAt: "2026-04-27T10:02:00.000Z",
+    reviewMode: true,
+    activeResultPartId: "overview",
+    detailQuestionId: "",
+  };
+  const resume = {
+    kind: "thptqg_fulltest",
+    meta: {
+      catalogTitle: "THPTQG simulation tests",
+      testId: "thptqg-simulation-test-1",
+      testTitle: "THPTQG simulation test 1",
+      source: "mockdata_40.md",
+      __experienceId: "exp-thptqg-restart",
+    },
+    experienceId: "exp-thptqg-restart",
+    title: "Full đề THPTQG — THPTQG simulation test 1",
+    openedAt: "2026-04-27T10:02:00.000Z",
+    resumeState,
+  };
+
+  await page.addInitScript(({ resume, resumeState }) => {
+    window.localStorage.setItem("teachly_active_session", "0");
+    window.localStorage.setItem("teachly_sessions", JSON.stringify([
+      {
+        sessionId: "session-thptqg-restart",
+        title: "Full đề THPTQG",
+        thread_id: "",
+        messages: [],
+        messagesLoaded: true,
+        hasMoreRemote: false,
+        remoteOffset: 0,
+        pinned: false,
+        experienceState: {
+          kind: "thptqg_fulltest",
+          meta: resume.meta,
+          progress: resumeState,
+          completed: true,
+          activeExperienceId: resume.experienceId,
+          historyById: {
+            [resume.experienceId]: {
+              experienceId: resume.experienceId,
+              kind: "thptqg_fulltest",
+              meta: resume.meta,
+              progress: resumeState,
+              completed: true,
+              updatedAt: "2026-04-27T10:02:00.000Z",
+            },
+          },
+          resume,
+        },
+      },
+    ]));
+  }, { resume, resumeState });
+
+  await page.goto("/chatbot_ui.html");
+
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Làm lại đề" }).click();
+
+  await expect(page.getByRole("button", { name: "Nộp bài" })).toBeVisible();
+  await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
+  await expect(page.locator(".exp-opt-btn.selected")).toHaveCount(0);
+  await expect(page.locator(".thptqg-flag-btn.active")).toHaveCount(0);
+});
+
 test("browser back preserves THPTQG result when reopening resume card", async ({ page }) => {
   const resumeDock = {
     kind: "thptqg_fulltest",
