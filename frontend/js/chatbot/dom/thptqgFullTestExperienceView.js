@@ -558,6 +558,24 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     writeHistory(historyMode);
   }
 
+  function restartTest(test, historyMode = "replace") {
+    if (!test || test.status !== "available") return;
+    if (!window.confirm("Làm lại đề này từ đầu? Các đáp án và đánh dấu hiện tại sẽ bị xóa.")) return;
+    selectedTestId = test.id;
+    answersByQuestion = {};
+    flaggedQuestions = new Set();
+    startedAt = "";
+    elapsedSeconds = 0;
+    elapsedBaseSeconds = 0;
+    elapsedBaseTick = Date.now();
+    submittedAt = "";
+    reviewMode = false;
+    activeResultPartId = "overview";
+    resultReviewFilter = "all";
+    detailQuestionId = "";
+    startOrResumeTest(test, historyMode);
+  }
+
   function jumpToQuestion(test, questionId) {
     const questionMap = getQuestionMap(test);
     const question = questionMap.get(questionId);
@@ -958,6 +976,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       emitState();
       writeHistory("replace");
     }));
+    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => restartTest(test, "replace")));
     stage.appendChild(actionRow);
 
     const scoreRow = document.createElement("div");
