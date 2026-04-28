@@ -329,15 +329,10 @@
 }
 
 .quiz-review-option {
-  display: inline-block;
-  align-self: flex-start;
   border: 1px solid #e5e7eb;
   background: #f8fafc;
   border-radius: 10px;
   padding: 10px 12px;
-  width: fit-content;
-  min-width: 50%;
-  max-width: 100%;
 }
 
 .quiz-review-option.correct {
@@ -1212,9 +1207,6 @@
   background: #eff6ff;
   color: #1e3a8a;
   line-height: 1.5;
-  width: fit-content;
-  min-width: 50%;
-  max-width: 100%;
 }
 
 .thptqg-explanation-details {
@@ -1224,9 +1216,6 @@
   border: 1px solid #dbeafe;
   background: #f8fbff;
   padding: 12px 14px;
-  width: fit-content;
-  min-width: 50%;
-  max-width: 100%;
 }
 
 .thptqg-explanation-details summary {
