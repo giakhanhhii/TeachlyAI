@@ -1118,8 +1118,8 @@
 }
 
 .thptqg-detail-cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -1243,6 +1243,10 @@
 
 @media (max-width: 1080px) {
   .thptqg-exam-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .thptqg-detail-cards {
     grid-template-columns: 1fr;
   }
 
