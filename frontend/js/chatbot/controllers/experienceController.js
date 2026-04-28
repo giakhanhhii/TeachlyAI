@@ -95,9 +95,28 @@ export function createExperienceController(deps) {
   }
 
   function pickBetterInitialState(primary, secondary) {
-    if (primary && typeof primary === "object") return primary;
-    if (secondary && typeof secondary === "object") return secondary;
-    return null;
+    const primaryScore = estimateInitialStateRichness(primary);
+    const secondaryScore = estimateInitialStateRichness(secondary);
+    if (secondaryScore > primaryScore) return secondary;
+    return primaryScore >= 0 ? primary : secondaryScore >= 0 ? secondary : null;
+  }
+
+  function estimateInitialStateRichness(state) {
+    if (!state || typeof state !== "object") return -1;
+    let score = 0;
+    if (typeof state.view === "string" && state.view) score += 2;
+    if (typeof state.startedAt === "string" && state.startedAt) score += 2;
+    if (typeof state.submittedAt === "string" && state.submittedAt) score += 6;
+    if (state.view === "result") score += 4;
+    if (state.reviewMode) score += 2;
+    if (typeof state.currentQuestion === "string" && state.currentQuestion) score += 1;
+    if (typeof state.currentPartId === "string" && state.currentPartId) score += 1;
+    if (typeof state.activeResultPartId === "string" && state.activeResultPartId) score += 1;
+    if (typeof state.detailQuestionId === "string" && state.detailQuestionId) score += 1;
+    if (Number.isFinite(Number(state.elapsedSeconds))) score += 1;
+    score += Object.keys(state.answersByQuestion && typeof state.answersByQuestion === "object" ? state.answersByQuestion : {}).length;
+    score += Array.isArray(state.flaggedQuestions) ? state.flaggedQuestions.length : 0;
+    return score;
   }
 
   /**
