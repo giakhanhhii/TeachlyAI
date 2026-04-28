@@ -996,8 +996,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     });
     filterRow.appendChild(overviewBtn);
     parts.forEach((part) => {
-      const button = createButton(String(part?.label || ""), `thptqg-result-tab${activeResultPartId === part.id ? " active" : ""}`, () => {
-        activeResultPartId = String(part.id || "overview");
+      const partId = String(part?.id || "");
+      const button = createButton(String(part?.label || ""), `thptqg-result-tab${activeResultPartId === partId ? " active" : ""}`, () => {
+        activeResultPartId = partId || "overview";
         emitState();
         render();
         writeHistory("replace");
@@ -1032,7 +1033,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         const question = questionMap.get(questionId);
         const chipState = question ? getQuestionAnswerState(question, answersByQuestion) : "unanswered";
         const chip = createButton(String(question?.number || ""), `thptqg-chip-btn ${chipState}`, () => {
-          activeResultPartId = stat.partId;
           resultReviewFilter = "all";
           detailQuestionId = questionId;
           emitState();
