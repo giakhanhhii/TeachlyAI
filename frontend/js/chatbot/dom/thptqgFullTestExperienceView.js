@@ -1098,8 +1098,16 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const partFilter = activeResultPartId === "overview" ? null : activeResultPartId;
     ensureDetailCardCache(selectedTestId);
     const questionsByPart = buildQuestionsByPart(test);
+    const detailQuestion = detailQuestionId ? questionMap.get(detailQuestionId) || null : null;
+    const prioritizedPartId = !partFilter ? String(detailQuestion?.partId || "") : "";
+    const orderedParts = !prioritizedPartId
+      ? parts
+      : [
+          ...parts.filter((part) => String(part?.id || "") === prioritizedPartId),
+          ...parts.filter((part) => String(part?.id || "") !== prioritizedPartId),
+        ];
     let hasVisibleQuestions = false;
-    parts
+    orderedParts
       .filter((part) => !partFilter || String(part?.id || "") === partFilter)
       .forEach((part) => {
         const questions = questionsByPart.get(String(part?.id || "")) || [];
