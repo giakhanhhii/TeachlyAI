@@ -158,6 +158,16 @@ function stripQuestionLabel(prompt) {
   return String(prompt || "").replace(/^Question\s+\d+\.\s*/i, "");
 }
 
+function buildQuestionsByPart(test) {
+  const map = new Map();
+  (Array.isArray(test?.questions) ? test.questions : []).forEach((question) => {
+    const partId = String(question?.partId || "");
+    if (!map.has(partId)) map.set(partId, []);
+    map.get(partId).push(question);
+  });
+  return map;
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -195,6 +205,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   let timer = 0;
   let removalObserver = null;
   let disposed = false;
+  let detailCardCacheTestId = "";
+  /** @type {Map<string, { signature: string, element: HTMLDivElement }>} */
+  const detailCardCache = new Map();
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-thptqg";
@@ -220,6 +233,131 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       map.set(String(question?.id || ""), question);
     });
     return map;
+  }
+
+  function resetDetailCardCache() {
+    detailCardCacheTestId = "";
+    detailCardCache.clear();
+  }
+
+  function ensureDetailCardCache(testId) {
+    const safeTestId = String(testId || "");
+    if (detailCardCacheTestId === safeTestId) return;
+    detailCardCacheTestId = safeTestId;
+    detailCardCache.clear();
+  }
+
+  function buildDetailCardSignature(question, picked, answerState) {
+    return JSON.stringify({
+      picked: toValidAnswerIndex(picked),
+      answerState,
+      correctIndex: toValidAnswerIndex(question?.correctIndex),
+    });
+  }
+
+  function createDetailCard(question, state) {
+    const questionId = String(question?.id || "");
+    const picked = state.answersByQuestion[questionId];
+    const answerState = getQuestionAnswerState(question, state.answersByQuestion);
+    const isCorrect = answerState === "correct";
+    const isInvalid = answerState === "invalid";
+    const correctIndex = toValidAnswerIndex(question.correctIndex);
+    const statusText =
+      answerState === "correct"
+        ? "Bạn làm đúng câu này."
+        : answerState === "wrong"
+          ? "Bạn làm sai câu này."
+          : isInvalid
+            ? "Câu này chưa thể chấm do thiếu đáp án chuẩn."
+            : "Bạn chưa trả lời câu này.";
+    const detailCard = document.createElement("div");
+    detailCard.className = `thptqg-answer-detail-card quiz-review-card${state.detailQuestionId === questionId ? " active" : ""}`;
+    const detailHead = document.createElement("div");
+    detailHead.className = "thptqg-answer-detail-head";
+    const detailHeadInner = document.createElement("div");
+    const partLabel = document.createElement("div");
+    partLabel.className = "thptqg-part-label";
+    partLabel.textContent = String(question.partId || "").toUpperCase();
+    const detailHeading = document.createElement("h4");
+    detailHeading.textContent = `Đáp án chi tiết câu ${question.number}`;
+    detailHeadInner.appendChild(partLabel);
+    detailHeadInner.appendChild(detailHeading);
+    detailHead.appendChild(detailHeadInner);
+    detailCard.appendChild(detailHead);
+
+    const detailPrompt = document.createElement("p");
+    detailPrompt.className = "exp-q-text";
+    detailPrompt.innerHTML = quizStemToSafeHtml(stripQuestionLabel(question.prompt));
+    detailCard.appendChild(detailPrompt);
+
+    const answerRow = document.createElement("div");
+    answerRow.className = "thptqg-answer-row";
+    const pickedSpan = document.createElement("span");
+    pickedSpan.textContent = "Bạn chọn: ";
+    const pickedStrong = document.createElement("strong");
+    pickedStrong.textContent = answerLetter(picked);
+    pickedSpan.appendChild(pickedStrong);
+    const correctSpan = document.createElement("span");
+    correctSpan.textContent = "Đáp án đúng: ";
+    const correctStrong = document.createElement("strong");
+    correctStrong.textContent = answerLetter(question.correctIndex);
+    correctSpan.appendChild(correctStrong);
+    answerRow.appendChild(pickedSpan);
+    answerRow.appendChild(correctSpan);
+    detailCard.appendChild(answerRow);
+
+    const optionList = document.createElement("div");
+    optionList.className = "quiz-review-options";
+    (Array.isArray(question.options) ? question.options : []).forEach((option, index) => {
+      const line = document.createElement("div");
+      let className = "quiz-review-option";
+      if (correctIndex !== null && index === correctIndex) className += " correct";
+      if (correctIndex !== null && Number(picked) === index && Number(picked) !== correctIndex) className += " wrong";
+      line.className = className;
+      line.textContent = `${OPTION_LETTERS[index] || index}. ${option}`;
+      optionList.appendChild(line);
+    });
+    detailCard.appendChild(optionList);
+
+    const resultLine = document.createElement("div");
+    resultLine.className = `quiz-review-result ${isCorrect ? "ok" : answerState === "wrong" ? "bad" : isInvalid ? "invalid" : ""}`.trim();
+    resultLine.textContent = statusText;
+    detailCard.appendChild(resultLine);
+
+    const evidence = document.createElement("div");
+    evidence.className = "thptqg-evidence";
+    const evidenceLabel = document.createElement("strong");
+    evidenceLabel.textContent = "Trích đoạn chứa đáp án:";
+    evidence.appendChild(evidenceLabel);
+    evidence.appendChild(document.createTextNode(` ${question.explanationEvidence || "Không có."}`));
+    detailCard.appendChild(evidence);
+
+    const details = document.createElement("details");
+    details.className = "thptqg-explanation-details";
+    details.open = true;
+    const summary = document.createElement("summary");
+    summary.textContent = "Giải thích chi tiết đáp án";
+    const body = document.createElement("div");
+    body.className = "thptqg-explanation-body";
+    body.textContent = String(question.explanation || "");
+    details.appendChild(summary);
+    details.appendChild(body);
+    detailCard.appendChild(details);
+    return detailCard;
+  }
+
+  function getOrCreateDetailCard(question) {
+    const questionId = String(question?.id || "");
+    const answerState = getQuestionAnswerState(question, answersByQuestion);
+    const signature = buildDetailCardSignature(question, answersByQuestion[questionId], answerState);
+    const cached = detailCardCache.get(questionId);
+    if (!cached || cached.signature !== signature) {
+      const element = createDetailCard(question, { answersByQuestion, detailQuestionId });
+      detailCardCache.set(questionId, { signature, element });
+      return element;
+    }
+    cached.element.classList.toggle("active", detailQuestionId === questionId);
+    return cached.element;
   }
 
   function getCurrentElapsedSeconds() {
@@ -389,6 +527,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function openCatalog(historyMode = "replace") {
     snapshotElapsed();
     view = "catalog";
+    resetDetailCardCache();
     activeResultPartId = "overview";
     resultReviewFilter = "all";
     detailQuestionId = "";
@@ -400,6 +539,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     selectedTestId = test.id;
+    resetDetailCardCache();
     ensureSelectionForTest(test);
     if (!startedAt) {
       startedAt = new Date().toISOString();
@@ -956,13 +1096,13 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     detailSection.appendChild(detailFilterRow);
 
     const partFilter = activeResultPartId === "overview" ? null : activeResultPartId;
+    ensureDetailCardCache(selectedTestId);
+    const questionsByPart = buildQuestionsByPart(test);
     let hasVisibleQuestions = false;
     parts
       .filter((part) => !partFilter || String(part?.id || "") === partFilter)
       .forEach((part) => {
-        const questions = (Array.isArray(test.questions) ? test.questions : []).filter(
-          (question) => String(question?.partId || "") === String(part?.id || ""),
-        );
+        const questions = questionsByPart.get(String(part?.id || "")) || [];
         const visibleQuestions = questions.filter((question) => {
           if (resultReviewFilter !== "wrong") return true;
           return getQuestionAnswerState(question, answersByQuestion) === "wrong";
@@ -985,95 +1125,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         const list = document.createElement("div");
         list.className = "thptqg-detail-cards";
         orderedQuestions.forEach((question) => {
-          const questionId = String(question.id || "");
-          const picked = answersByQuestion[questionId];
-          const answerState = getQuestionAnswerState(question, answersByQuestion);
-          const isCorrect = answerState === "correct";
-          const isInvalid = answerState === "invalid";
-          const statusText =
-            answerState === "correct"
-              ? "Bạn làm đúng câu này."
-              : answerState === "wrong"
-                ? "Bạn làm sai câu này."
-                : isInvalid
-                  ? "Câu này chưa thể chấm do thiếu đáp án chuẩn."
-                  : "Bạn chưa trả lời câu này.";
-          const detailCard = document.createElement("div");
-          detailCard.className = `thptqg-answer-detail-card quiz-review-card${detailQuestionId === questionId ? " active" : ""}`;
-          const detailHead = document.createElement("div");
-          detailHead.className = "thptqg-answer-detail-head";
-          const detailHeadInner = document.createElement("div");
-          const partLabel = document.createElement("div");
-          partLabel.className = "thptqg-part-label";
-          partLabel.textContent = String(question.partId || "").toUpperCase();
-          const detailHeading = document.createElement("h4");
-          detailHeading.textContent = `Đáp án chi tiết câu ${question.number}`;
-          detailHeadInner.appendChild(partLabel);
-          detailHeadInner.appendChild(detailHeading);
-          detailHead.appendChild(detailHeadInner);
-          detailCard.appendChild(detailHead);
-
-          const detailPrompt = document.createElement("p");
-          detailPrompt.className = "exp-q-text";
-          detailPrompt.innerHTML = quizStemToSafeHtml(stripQuestionLabel(question.prompt));
-          detailCard.appendChild(detailPrompt);
-
-          const answerRow = document.createElement("div");
-          answerRow.className = "thptqg-answer-row";
-          const pickedSpan = document.createElement("span");
-          pickedSpan.textContent = "Bạn chọn: ";
-          const pickedStrong = document.createElement("strong");
-          pickedStrong.textContent = answerLetter(picked);
-          pickedSpan.appendChild(pickedStrong);
-          const correctSpan = document.createElement("span");
-          correctSpan.textContent = "Đáp án đúng: ";
-          const correctStrong = document.createElement("strong");
-          correctStrong.textContent = answerLetter(question.correctIndex);
-          correctSpan.appendChild(correctStrong);
-          answerRow.appendChild(pickedSpan);
-          answerRow.appendChild(correctSpan);
-          detailCard.appendChild(answerRow);
-
-          const optionList = document.createElement("div");
-          optionList.className = "quiz-review-options";
-          (Array.isArray(question.options) ? question.options : []).forEach((option, index) => {
-            const line = document.createElement("div");
-            let className = "quiz-review-option";
-            const correctIndex = toValidAnswerIndex(question.correctIndex);
-            if (correctIndex !== null && index === correctIndex) className += " correct";
-            if (Number(picked) === index && (correctIndex === null || Number(picked) !== correctIndex)) className += " wrong";
-            line.className = className;
-            line.textContent = `${OPTION_LETTERS[index] || index}. ${option}`;
-            optionList.appendChild(line);
-          });
-          detailCard.appendChild(optionList);
-
-          const resultLine = document.createElement("div");
-          resultLine.className = `quiz-review-result ${isCorrect ? "ok" : answerState === "wrong" ? "bad" : isInvalid ? "invalid" : ""}`.trim();
-          resultLine.textContent = statusText;
-          detailCard.appendChild(resultLine);
-
-          const evidence = document.createElement("div");
-          evidence.className = "thptqg-evidence";
-          const evidenceLabel = document.createElement("strong");
-          evidenceLabel.textContent = "Trích đoạn chứa đáp án:";
-          evidence.appendChild(evidenceLabel);
-          evidence.appendChild(document.createTextNode(` ${question.explanationEvidence || "Không có."}`));
-          detailCard.appendChild(evidence);
-
-          const details = document.createElement("details");
-          details.className = "thptqg-explanation-details";
-          details.open = true;
-          const summary = document.createElement("summary");
-          summary.textContent = "Giải thích chi tiết đáp án";
-          const body = document.createElement("div");
-          body.className = "thptqg-explanation-body";
-          body.textContent = String(question.explanation || "");
-          details.appendChild(summary);
-          details.appendChild(body);
-          detailCard.appendChild(details);
-
-          list.appendChild(detailCard);
+          list.appendChild(getOrCreateDetailCard(question));
         });
         block.appendChild(list);
         detailSection.appendChild(block);

@@ -143,7 +143,7 @@ test("restored THPTQG result can return to chat without browser history", async 
   await expect(page.getByRole("button", { name: "Tạo quiz" })).toBeVisible();
 });
 
-test("selecting a chat with saved THPTQG result stays in chat phase", async ({ page }) => {
+test("selecting a chat with saved THPTQG result reopens the saved experience", async ({ page }) => {
   const resumeState = {
     kind: "thptqg_fulltest",
     view: "result",
@@ -224,9 +224,9 @@ test("selecting a chat with saved THPTQG result stays in chat phase", async ({ p
 
   await page.getByRole("button", { name: "Quiz đã nộp", exact: true }).click();
 
-  await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
-  await expect(page.getByText("Trạng thái: Đã nộp bài")).not.toBeVisible();
-  await expect(page.getByRole("button", { name: "Mở" })).toBeVisible();
+  await expect(page.locator("#experienceLayer")).toHaveClass(/visible/);
+  await expect(page.getByText("Trạng thái: Đã nộp bài")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Quay lại chat" })).toBeVisible();
 });
 
 test("browser back preserves THPTQG result when reopening resume card", async ({ page }) => {
