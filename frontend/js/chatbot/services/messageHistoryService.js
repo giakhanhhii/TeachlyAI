@@ -197,30 +197,35 @@ export function createMessageHistoryService(deps) {
       });
     } else {
       setStartupUiState(false);
-      const lastResumeIndexBySignature = new Map();
+      const lastResumeIndexByKey = new Map();
       const lastContinuePromptIndexByGroup = new Map();
       messagesToRender.forEach((m, index) => {
         if (m?.role !== "bot" || !m?.resumeDock) return;
-        const signature = resumeDockSignature(m.resumeDock);
-        if (signature) lastResumeIndexBySignature.set(signature, index);
         const groupKey = resumeDockGroupKey(m.resumeDock);
-        if (groupKey && String(m.text || "") === MSG_CONTINUE_SOURCE) {
-          lastContinuePromptIndexByGroup.set(groupKey, index);
+        const signature = resumeDockSignature(m.resumeDock);
+        const dedupeKey = groupKey.includes("thptqg_fulltest") ? groupKey : signature;
+        if (dedupeKey) lastResumeIndexByKey.set(dedupeKey, index);
+        const promptGroupKey = groupKey.includes("thptqg_fulltest") ? "group:single:thptqg_fulltest:prompt" : groupKey;
+        if (promptGroupKey && String(m.text || "") === MSG_CONTINUE_SOURCE) {
+          lastContinuePromptIndexByGroup.set(promptGroupKey, index);
         }
       });
       messagesToRender.forEach((m, index) => {
         if (m?.role === "bot" && m?.resumeDock) {
+          const groupKey = resumeDockGroupKey(m.resumeDock);
           const signature = resumeDockSignature(m.resumeDock);
-          if (signature && lastResumeIndexBySignature.get(signature) !== index) {
+          const dedupeKey = groupKey.includes("thptqg_fulltest") ? groupKey : signature;
+          if (dedupeKey && lastResumeIndexByKey.get(dedupeKey) !== index) {
             return;
           }
         }
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
           const groupKey = m?.resumeDock ? resumeDockGroupKey(m.resumeDock) : "";
+          const promptGroupKey = groupKey.includes("thptqg_fulltest") ? "group:single:thptqg_fulltest:prompt" : groupKey;
           const shouldCollapsePrompt =
-            Boolean(groupKey)
+            Boolean(promptGroupKey)
             && String(m.text || "") === MSG_CONTINUE_SOURCE
-            && lastContinuePromptIndexByGroup.get(groupKey) !== index;
+            && lastContinuePromptIndexByGroup.get(promptGroupKey) !== index;
           msgView.addMessage("bot", shouldCollapsePrompt ? "" : m.text || "", {
             actions: shouldCollapsePrompt ? [] : m.actions || [],
             cardType: m.cardType,
