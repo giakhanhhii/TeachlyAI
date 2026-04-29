@@ -166,3 +166,39 @@
 .msg-row-startup-hub .chat-startup-hub {
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  .chat-startup-hub .forest-page--embedded {
+    min-height: auto;
+    padding-bottom: 40px;
+  }
+
+  .chat-startup-hub .hero-area {
+    margin-top: 20px;
+  }
+
+  .chat-startup-hub .startup-hub-instruction {
+    font-size: 16px;
+    max-width: 28ch;
+  }
+
+  .chat-startup-hub .cards-row {
+    gap: 14px;
+    padding: 22px 10px 6px;
+  }
+
+  .chat-startup-hub button.card {
+    width: min(100%, 420px);
+    flex-basis: min(100%, 420px);
+    border-radius: 20px;
+  }
+
+  .chat-startup-hub .card-img {
+    height: 144px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .chat-startup-hub .card-body {
+    padding: 18px 16px 0;
+  }
+}

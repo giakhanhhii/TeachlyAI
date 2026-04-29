@@ -74,3 +74,61 @@ body {
   background: #e8f5e9;
   box-shadow: 0 2px 8px rgba(46, 125, 50, 0.12);
 }
+
+@media (max-width: 768px) {
+  body,
+  .app {
+    min-height: 100dvh;
+    height: 100dvh;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .top {
+    min-height: 64px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    padding: 10px 14px 12px 78px;
+  }
+
+  .top-brand,
+  .top-title,
+  .top-home-btn {
+    position: static;
+  }
+
+  .top-brand,
+  .top-title {
+    display: block;
+    width: 100%;
+  }
+
+  .top-brand {
+    font-size: 11px;
+  }
+
+  .top-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .top-home-btn {
+    margin-top: 2px;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .top {
+    padding-right: 10px;
+  }
+
+  .top-home-btn {
+    gap: 4px;
+    padding: 6px 10px;
+  }
+}

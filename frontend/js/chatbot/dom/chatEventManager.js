@@ -145,6 +145,11 @@ export function setupChatEventManager(deps) {
     onInitCompleted,
   } = deps;
 
+  const sidebar = document.getElementById("sidebar");
+  if (sidebar && window.matchMedia("(max-width: 768px)").matches) {
+    sidebar.classList.add("collapsed");
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (getIsSending()) return;
@@ -185,7 +190,7 @@ export function setupChatEventManager(deps) {
   });
 
   toggleSidebarBtn?.addEventListener("click", () => {
-    document.getElementById("sidebar")?.classList.toggle("collapsed");
+    sidebar?.classList.toggle("collapsed");
   });
 
   topHomeBtn?.addEventListener("click", () => {
