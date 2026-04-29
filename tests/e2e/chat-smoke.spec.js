@@ -140,7 +140,6 @@ test("restored THPTQG result can return to chat without browser history", async 
   await page.getByRole("button", { name: "Quay lại chat" }).click();
 
   await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
-  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toBeVisible();
   await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
   await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
 });
@@ -463,24 +462,25 @@ test("chat only renders the latest THPTQG continue prompt when duplicate resume 
   const olderResumeDock = {
     kind: "thptqg_fulltest",
     meta: {
-      catalogTitle: "THPTQG simulation tests",
+      testId: "thptqg-simulation-test-1",
+      testTitle: "THPTQG simulation test 1",
       source: "mockdata_40.md",
       __experienceId: "exp-thptqg-old",
     },
     experienceId: "exp-thptqg-old",
-    title: "Full đề THPTQG — THPTQG simulation tests",
+    title: "THPTQG simulation test 1",
     openedAt: "2026-04-28T16:06:00.000Z",
   };
   const newerResumeDock = {
     kind: "thptqg_fulltest",
     meta: {
-      testId: "thptqg-simulation-test-1",
-      testTitle: "THPTQG simulation test 1",
+      testId: "thptqg-simulation-test-2",
+      testTitle: "THPTQG simulation test 2",
       source: "mockdata_40.md",
       __experienceId: "exp-thptqg-new",
     },
     experienceId: "exp-thptqg-new",
-    title: "THPTQG simulation test 1",
+    title: "THPTQG simulation test 2",
     openedAt: "2026-04-28T16:25:00.000Z",
   };
 
@@ -525,21 +525,22 @@ test("chat only renders the latest THPTQG continue prompt when duplicate resume 
   await page.goto("/chatbot_ui.html");
 
   await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
-  await expect(page.locator(".resume-dock-open-btn")).toHaveCount(2);
-  await expect(page.getByText("THPTQG simulation test 1")).toHaveCount(1);
-  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toHaveCount(1);
+  await expect(page.locator(".resume-dock-open-btn")).toHaveCount(1);
+  await expect(page.getByText("THPTQG simulation test 1")).toHaveCount(0);
+  await expect(page.getByText("THPTQG simulation test 2")).toHaveCount(1);
 });
 
 test("browser back preserves THPTQG result when reopening resume card", async ({ page }) => {
   const resumeDock = {
     kind: "thptqg_fulltest",
     meta: {
-      catalogTitle: "THPTQG simulation tests",
+      testId: "thptqg-simulation-test-1",
+      testTitle: "THPTQG simulation test 1",
       source: "mockdata_40.md",
       __experienceId: "exp-thptqg-browser-back",
     },
     experienceId: "exp-thptqg-browser-back",
-    title: "Full đề THPTQG — THPTQG simulation tests",
+    title: "THPTQG simulation test 1",
     openedAt: "2026-04-27T10:00:00.000Z",
     resumeState: null,
   };
@@ -580,10 +581,9 @@ test("browser back preserves THPTQG result when reopening resume card", async ({
 
   await page.goBack();
   await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
-  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toHaveCount(1);
   await expect(page.getByText("THPTQG simulation test 1")).toHaveCount(1);
   await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Mở", exact: true })).toHaveCount(2);
+  await expect(page.locator(".resume-dock-open-btn")).toHaveCount(1);
 
   await page.locator(".resume-dock-line").filter({ hasText: "THPTQG simulation test 1" }).getByRole("button", { name: "Mở", exact: true }).click();
   await expect(page.getByText("Trạng thái: Đã nộp bài")).toBeVisible();
