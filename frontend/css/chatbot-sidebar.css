@@ -291,15 +291,18 @@
   .sidebar.collapsed {
     width: min(82vw, 320px);
     padding: 14px 12px calc(14px + env(safe-area-inset-bottom, 0px));
-    transform: translateX(calc(-100% + 56px));
+    transform: translateX(calc(-100% - 12px));
     box-shadow: none;
   }
 
   .sidebar.collapsed .sidebar-top {
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .sidebar.collapsed .toggle-btn {
+    position: absolute;
+    top: 14px;
+    right: -56px;
     width: 40px;
     height: 40px;
     margin: 0;
