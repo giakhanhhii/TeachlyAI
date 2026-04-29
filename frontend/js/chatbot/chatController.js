@@ -508,6 +508,7 @@ export function init() {
 
   async function restoreBrowserState(snapshot, state) {
     const targetNavSeq = Number(state?.[HISTORY_NAV_SEQ_KEY]);
+    const wasExperienceVisible = experienceLayer.classList.contains("visible");
     if (!restoreNavigationSnapshot(snapshot)) return false;
     currentHistoryNavSeq = Number.isFinite(targetNavSeq) ? Math.floor(targetNavSeq) : currentHistoryNavSeq;
     currentBrowserHistoryIndex = getBrowserHistoryIndex();
@@ -516,6 +517,10 @@ export function init() {
       return true;
     }
     layerView.hide();
+    if (wasExperienceVisible) {
+      pushResumeDockFromLastOpened();
+      scrollToResumeDock();
+    }
     return true;
   }
 

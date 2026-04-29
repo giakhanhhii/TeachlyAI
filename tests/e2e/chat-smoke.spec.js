@@ -580,9 +580,12 @@ test("browser back preserves THPTQG result when reopening resume card", async ({
 
   await page.goBack();
   await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
-  await expect(page.getByRole("button", { name: "Mở", exact: true })).toBeVisible();
+  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toBeVisible();
+  await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
+  await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Mở", exact: true })).toHaveCount(2);
 
-  await page.getByRole("button", { name: "Mở", exact: true }).click();
+  await page.locator(".resume-dock-line").filter({ hasText: "THPTQG simulation test 1" }).getByRole("button", { name: "Mở", exact: true }).click();
   await expect(page.getByText("Trạng thái: Đã nộp bài")).toBeVisible();
   await expect(page.getByRole("button", { name: "Danh sách đề" })).toBeVisible();
 });
