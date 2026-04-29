@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { quizStemToSafeHtml } from "../services/quizService.js";
+import { renderQuizStemRichText } from "../services/quizService.js";
 import { createExperienceTopBar } from "./experienceChrome.js";
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
@@ -287,7 +287,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const detailPrompt = document.createElement("p");
     detailPrompt.className = "exp-q-text";
-    detailPrompt.innerHTML = quizStemToSafeHtml(stripQuestionLabel(question.prompt));
+    renderQuizStemRichText(detailPrompt, stripQuestionLabel(question.prompt));
     detailCard.appendChild(detailPrompt);
 
     const answerRow = document.createElement("div");
@@ -453,6 +453,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     persistLiveProgress();
     disposed = true;
     clearTimerSchedule();
+    resetDetailCardCache();
     removalObserver?.disconnect();
     removalObserver = null;
     historyAbort.abort();
@@ -775,7 +776,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
         const prompt = document.createElement("p");
         prompt.className = `exp-q-text${variant === "compact" ? " compact" : ""}`;
-        prompt.innerHTML = quizStemToSafeHtml(stripQuestionLabel(question.prompt));
+        renderQuizStemRichText(prompt, stripQuestionLabel(question.prompt));
         card.appendChild(prompt);
 
         const optionsWrap = document.createElement("div");

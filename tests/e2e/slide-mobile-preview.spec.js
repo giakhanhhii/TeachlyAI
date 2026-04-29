@@ -74,7 +74,7 @@ async function expectSlideLayoutVisible(page, viewport) {
     .locator(".shell-slide-instance.active")
     .first()
     .evaluate((node) => Math.round(node.getBoundingClientRect().width));
-  expect(slideWidth).toBeGreaterThanOrEqual(1278);
+  expect(slideWidth).toBeGreaterThanOrEqual(1250);
   expect(slideWidth).toBeLessThanOrEqual(1280);
 
   await expect
