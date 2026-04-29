@@ -53,6 +53,12 @@ export function createStartupHubElement(onPick) {
         <div class="card-body">
           <div class="card-title">Tạo flashcard</div>
           <div class="card-desc">Tạo flashcard từ vựng và phát âm chuẩn cho bài giảng của bạn</div>
+          <div class="badge badge-recommend">
+            <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+              <polygon points="6,1 7.5,4.5 11,4.8 8.5,7.2 9.2,11 6,9 2.8,11 3.5,7.2 1,4.8 4.5,4.5" fill="#2e7d32" />
+            </svg>
+            KHUYẾN KHÍCH
+          </div>
         </div>
       </button>
       <button type="button" class="card" data-flow="quiz" aria-label="Tạo quiz">
@@ -137,13 +143,7 @@ export function createStartupHubElement(onPick) {
         </svg>
         <div class="card-body">
           <div class="card-title">Tạo Full Set</div>
-          <div class="card-desc">Tạo bộ 3 slide, quiz, hình ảnh</div>
-          <div class="badge badge-recommend">
-            <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
-              <polygon points="6,1 7.5,4.5 11,4.8 8.5,7.2 9.2,11 6,9 2.8,11 3.5,7.2 1,4.8 4.5,4.5" fill="#2e7d32" />
-            </svg>
-            KHUYẾN KHÍCH
-          </div>
+          <div class="card-desc">Tạo bộ 3 quiz, slide, flashcard</div>
         </div>
       </button>
     </div>
