@@ -146,9 +146,11 @@ export function setupChatEventManager(deps) {
   } = deps;
 
   const sidebar = document.getElementById("sidebar");
-  if (sidebar && window.matchMedia("(max-width: 768px)").matches) {
-    sidebar.classList.add("collapsed");
+  if (sidebar) {
+    if (window.matchMedia("(max-width: 768px)").matches) sidebar.classList.add("collapsed");
+    else sidebar.classList.remove("collapsed");
   }
+  sidebar?.classList.add("sidebar-ready");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
