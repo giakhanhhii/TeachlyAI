@@ -489,3 +489,34 @@
   }
 }
 
+@media (max-width: 640px) and (max-height: 760px) {
+  .experience-body {
+    padding-top: 10px;
+    padding-bottom: 12px;
+  }
+
+  .exp-meta-line {
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .exp-progress-wrap {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .exp-stage {
+    margin-bottom: 12px;
+  }
+
+  .exp-footer-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    padding-top: 6px;
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.96) 28%, #ffffff 100%);
+  }
+}
+
