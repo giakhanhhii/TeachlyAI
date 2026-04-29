@@ -404,3 +404,56 @@
   background: #f1f5f9;
 }
 
+@media (max-width: 768px) {
+  .experience-toolbar {
+    padding: 10px 12px;
+  }
+
+  #experienceLayer.experience-variant-thptqg-fullpage .experience-toolbar {
+    padding: 12px 14px 10px;
+  }
+
+  .experience-body {
+    padding: 14px 12px 18px;
+  }
+
+  .exp-topbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .exp-topbar-left,
+  .exp-topbar-right {
+    width: 100%;
+  }
+
+  .exp-topbar-right {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .exp-topbar-title {
+    white-space: normal;
+  }
+
+  .exp-progress-wrap {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .exp-progress-track {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .exp-footer-bar {
+    flex-wrap: wrap;
+  }
+
+  .exp-footer-bar .exp-next-btn,
+  .exp-footer-bar .exp-back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
