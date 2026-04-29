@@ -3,6 +3,12 @@ import { SLIDE_VISUAL_EDITOR_CSS, SLIDE_VISUAL_EDITOR_JS } from "./slideVisualEd
 
 const slideShellScrollViewportSyncJobs = new WeakMap();
 const slideShellActiveViewportSyncJobs = new WeakMap();
+const SLIDE_SHELL_DESKTOP_VIEWPORT_WIDTH_PX = 1280;
+const SLIDE_SHELL_MOBILE_VIEWPORT_WIDTH_PX = 1600;
+const SLIDE_SHELL_STAGE_WIDTH_PX = 1280;
+const SLIDE_SHELL_MOBILE_INLINE_GUTTER_PX = 16;
+const SLIDE_SHELL_MOBILE_BLOCK_GUTTER_PX = 20;
+const SLIDE_SHELL_MOBILE_FRAME_FOOTER_GAP_PX = 12;
 
 /**
  * @param {Document} doc
@@ -30,6 +36,40 @@ function applyShellYear(doc, year) {
   if (t && /20\d{2}/.test(t.textContent)) {
     t.textContent = t.textContent.replace(/20\d{2}/, year);
   }
+}
+
+/**
+ * Force the slide shell to keep a desktop-sized viewport even when the host device
+ * is a phone, so theme templates render exactly like their original PC layout.
+ *
+ * @param {Document} doc
+ */
+function enforceSlideShellDesktopViewport(doc) {
+  const viewportContent = `width=${SLIDE_SHELL_DESKTOP_VIEWPORT_WIDTH_PX}, initial-scale=1.0`;
+  let viewportMeta = doc.querySelector('meta[name="viewport"]');
+  if (!(viewportMeta instanceof HTMLMetaElement)) {
+    viewportMeta = doc.createElement("meta");
+    viewportMeta.setAttribute("name", "viewport");
+    doc.head?.prepend(viewportMeta);
+  }
+  viewportMeta.setAttribute("content", viewportContent);
+}
+
+/**
+ * @param {Document} doc
+ * @param {number} viewportWidth
+ */
+function setSlideShellViewportWidth(doc, viewportWidth) {
+  const safeViewportWidth = Math.max(1, Math.round(Number(viewportWidth) || SLIDE_SHELL_DESKTOP_VIEWPORT_WIDTH_PX));
+  let viewportMeta = doc.querySelector('meta[name="viewport"]');
+  if (!(viewportMeta instanceof HTMLMetaElement)) {
+    viewportMeta = doc.createElement("meta");
+    viewportMeta.setAttribute("name", "viewport");
+    doc.head?.prepend(viewportMeta);
+  }
+  viewportMeta.setAttribute("content", `width=${safeViewportWidth}, initial-scale=1.0`);
+  doc.documentElement?.style.setProperty("--slide-shell-preview-viewport-width", `${safeViewportWidth}px`);
+  doc.documentElement?.style.setProperty("--slide-shell-preview-stage-width", `${SLIDE_SHELL_STAGE_WIDTH_PX}px`);
 }
 
 /** @param {Document} doc */
@@ -391,9 +431,21 @@ function injectShellPreviewFit(doc) {
   const style = doc.createElement("style");
   style.setAttribute("data-slide-shell-fit", "1");
   style.textContent = `
-    html { overflow-x: hidden; }
+    :root {
+      --slide-shell-preview-viewport-width: ${SLIDE_SHELL_DESKTOP_VIEWPORT_WIDTH_PX}px;
+      --slide-shell-preview-stage-width: ${SLIDE_SHELL_STAGE_WIDTH_PX}px;
+    }
+    html {
+      width: var(--slide-shell-preview-viewport-width) !important;
+      min-width: var(--slide-shell-preview-viewport-width) !important;
+      max-width: var(--slide-shell-preview-viewport-width) !important;
+      overflow-x: hidden;
+    }
     /* Override theme body { display: grid } so sibling <template> nodes do not shift slides sideways */
     body {
+      width: var(--slide-shell-preview-viewport-width) !important;
+      min-width: var(--slide-shell-preview-viewport-width) !important;
+      max-width: var(--slide-shell-preview-viewport-width) !important;
       overflow-x: hidden !important;
       display: flex !important;
       flex-direction: column !important;
@@ -408,8 +460,9 @@ function injectShellPreviewFit(doc) {
       display: none !important;
     }
     #presentation-area {
-      max-width: 100% !important;
-      width: 100% !important;
+      width: var(--slide-shell-preview-viewport-width) !important;
+      min-width: var(--slide-shell-preview-viewport-width) !important;
+      max-width: var(--slide-shell-preview-viewport-width) !important;
       overflow-x: hidden;
       box-sizing: border-box;
       display: flex !important;
@@ -419,8 +472,9 @@ function injectShellPreviewFit(doc) {
       margin-right: auto !important;
     }
     #slides-master-container {
-      width: 100% !important;
-      max-width: 100% !important;
+      width: var(--slide-shell-preview-viewport-width) !important;
+      min-width: var(--slide-shell-preview-viewport-width) !important;
+      max-width: var(--slide-shell-preview-viewport-width) !important;
       box-sizing: border-box;
       display: flex !important;
       flex-direction: column !important;
@@ -436,8 +490,9 @@ function injectShellPreviewFit(doc) {
     }
     .shell-slide-instance.slide-container,
     .shell-slide-instance.slide {
-      width: 100% !important;
-      max-width: 1280px !important;
+      width: var(--slide-shell-preview-stage-width) !important;
+      min-width: var(--slide-shell-preview-stage-width) !important;
+      max-width: var(--slide-shell-preview-stage-width) !important;
       margin-left: auto !important;
       margin-right: auto !important;
       height: auto !important;
@@ -1125,6 +1180,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   let doc = parser.parseFromString(shellHtml, "text/html");
   const year = String(meta?.shellYear || new Date().getFullYear());
   applyShellYear(doc, year);
+  enforceSlideShellDesktopViewport(doc);
   stripIframeScripts(doc);
   /** Comic template: đảm bảo class theme dù file chưa cập nhật tay */
   if (doc.querySelector('link[href*="Bangers"]') && doc.body && !doc.body.classList.contains("shell-theme-comic")) {
@@ -1141,6 +1197,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     if (!ensureShellFromFullDeck(doc)) {
       doc = parser.parseFromString(minimalShellDocument(year), "text/html");
       applyShellYear(doc, year);
+      enforceSlideShellDesktopViewport(doc);
     }
   }
 
@@ -1279,6 +1336,131 @@ function measureSlideShellDeckHeight(iframe) {
 }
 
 /**
+ * @param {HTMLIFrameElement} iframe
+ * @returns {HTMLElement | null}
+ */
+function getSlideShellFrame(iframe) {
+  const parent = iframe.parentElement;
+  if (parent instanceof HTMLElement && parent.classList.contains("exp-slide-shell-frame")) return parent;
+  return null;
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ * @returns {number}
+ */
+function measureSlideShellAvailableMobileHeight(iframe) {
+  const frame = getSlideShellFrame(iframe);
+  const frameRect =
+    frame?.getBoundingClientRect?.() ||
+    iframe.getBoundingClientRect?.() || {
+      top: 0,
+      bottom: 0,
+      height: 0,
+    };
+  const shell = frame?.closest(".exp-shell") || iframe.closest(".exp-shell");
+  const experienceBody =
+    shell?.closest(".experience-body") ||
+    iframe.closest(".experience-body") ||
+    iframe.ownerDocument?.querySelector(".experience-body");
+  const footer = shell?.querySelector(".exp-footer-bar");
+  const bodyRect =
+    experienceBody instanceof HTMLElement
+      ? experienceBody.getBoundingClientRect()
+      : iframe.ownerDocument?.documentElement?.getBoundingClientRect?.() || {
+          top: 0,
+          bottom: iframe.ownerDocument?.defaultView?.innerHeight || 0,
+        };
+  const footerHeight = footer instanceof HTMLElement ? Math.max(footer.offsetHeight, footer.getBoundingClientRect().height) : 0;
+  const bodyPaddingBottom =
+    experienceBody instanceof HTMLElement
+      ? parseFloat((iframe.ownerDocument?.defaultView || window).getComputedStyle(experienceBody).paddingBottom || "0") || 0
+      : 0;
+  const availableHeight =
+    Number(bodyRect.bottom || 0) -
+    Number(frameRect.top || 0) -
+    footerHeight -
+    bodyPaddingBottom -
+    SLIDE_SHELL_MOBILE_FRAME_FOOTER_GAP_PX;
+
+  return Math.max(1, Math.floor(availableHeight));
+}
+
+/**
+ * Keep mobile slide preview visually identical to the desktop template:
+ * render the iframe at the original desktop width, then scale the full slide down
+ * to the available phone width instead of letting the template reflow for a narrow viewport.
+ *
+ * @param {HTMLIFrameElement} iframe
+ * @param {number} contentHeight
+ * @param {{ fitHeight?: boolean }} [opts]
+ */
+function applySlideShellDesktopScale(iframe, contentHeight, opts = {}) {
+  const frame = getSlideShellFrame(iframe);
+  const doc = iframe.contentDocument;
+  if (doc) setSlideShellViewportWidth(doc, SLIDE_SHELL_MOBILE_VIEWPORT_WIDTH_PX);
+  /* Use the frame / viewport container width — NOT iframe.clientWidth which is
+     set to baseWidth (1600) by this very function and would poison subsequent
+     recalculations, producing scale ≈ 1 instead of the correct ~0.2 on phones. */
+  const viewport = frame?.closest(".exp-slide-viewport") || null;
+  const hostWidth = Math.max(
+    Number(frame?.clientWidth) || 0,
+    Number(viewport?.clientWidth) || 0,
+    1,
+  );
+  const baseWidth = SLIDE_SHELL_MOBILE_VIEWPORT_WIDTH_PX;
+  const safeHeight = Math.max(1, Math.ceil(Number(contentHeight) || 0));
+  const innerGutter = SLIDE_SHELL_MOBILE_INLINE_GUTTER_PX * 2;
+  const widthScale = Math.min(1, Math.max(1, hostWidth - innerGutter) / baseWidth);
+  let scale = widthScale;
+  if (opts.fitHeight) {
+    const availableHeight = measureSlideShellAvailableMobileHeight(iframe);
+    const heightScale = Math.min(1, availableHeight / safeHeight);
+    scale = Math.min(scale, heightScale);
+  }
+  const scaledHeight = Math.max(1, Math.ceil(safeHeight * scale));
+
+  if (frame) {
+    frame.style.height = `${scaledHeight}px`;
+    frame.style.overflow = "hidden";
+  }
+
+  iframe.style.width = `${baseWidth}px`;
+  iframe.style.maxWidth = "none";
+  iframe.style.height = `${safeHeight}px`;
+  iframe.style.position = "absolute";
+  iframe.style.top = "0";
+  iframe.style.left = "50%";
+  iframe.style.margin = "0";
+  iframe.style.transform = `translateX(-50%) scale(${scale})`;
+  iframe.style.transformOrigin = "top center";
+  iframe.style.aspectRatio = "auto";
+  iframe.style.overflow = "hidden";
+}
+
+/**
+ * @param {HTMLIFrameElement} iframe
+ */
+function clearSlideShellDesktopScale(iframe) {
+  const frame = getSlideShellFrame(iframe);
+  const doc = iframe.contentDocument;
+  if (doc) setSlideShellViewportWidth(doc, SLIDE_SHELL_DESKTOP_VIEWPORT_WIDTH_PX);
+  if (frame) {
+    frame.style.removeProperty("height");
+    frame.style.removeProperty("overflow");
+  }
+  iframe.style.removeProperty("width");
+  iframe.style.removeProperty("max-width");
+  iframe.style.removeProperty("height");
+  iframe.style.removeProperty("position");
+  iframe.style.removeProperty("top");
+  iframe.style.removeProperty("left");
+  iframe.style.removeProperty("margin");
+  iframe.style.removeProperty("transform");
+  iframe.style.removeProperty("transform-origin");
+}
+
+/**
  * @param {Document} doc
  * @param {"active" | "scroll"} mode
  */
@@ -1290,7 +1472,7 @@ function setSlideShellDocumentViewportMode(doc, mode) {
     if (!node) return;
     if (mode === "active") {
       node.style.overflowX = "hidden";
-      node.style.removeProperty("overflow-y");
+      node.style.overflowY = "hidden";
     } else {
       node.style.removeProperty("overflow");
       node.style.removeProperty("overflow-x");
@@ -1396,13 +1578,12 @@ function syncSlideShellScrollViewport(iframe) {
   setSlideShellDocumentViewportMode(doc, "scroll");
   const hostWin = iframe.ownerDocument?.defaultView || window;
   const isMobileViewport = Boolean(hostWin?.matchMedia?.("(max-width: 640px)")?.matches);
+  const height = measureSlideShellDeckHeight(iframe);
   if (isMobileViewport) {
-    iframe.style.removeProperty("height");
-    iframe.style.aspectRatio = "16 / 9";
-    iframe.style.overflow = "hidden";
+    applySlideShellDesktopScale(iframe, height || 720);
     return;
   }
-  const height = measureSlideShellDeckHeight(iframe);
+  clearSlideShellDesktopScale(iframe);
   if (height > 0) {
     iframe.style.height = `${height}px`;
   }
@@ -1500,17 +1681,16 @@ function syncSlideShellActiveViewport(iframe, scrollState) {
   setSlideShellDocumentViewportMode(doc, "active");
   const hostWin = iframe.ownerDocument?.defaultView || window;
   const isMobileViewport = Boolean(hostWin?.matchMedia?.("(max-width: 640px)")?.matches);
-  if (isMobileViewport) {
-    iframe.style.removeProperty("height");
-    iframe.style.aspectRatio = "16 / 9";
-    iframe.style.overflow = "hidden";
-    setSlideShellDocumentScroll(doc, 0);
-    return;
-  }
   const activeSlide =
     doc.querySelector(".shell-slide-instance.active") ||
     doc.querySelector(".shell-slide-instance");
   const height = activeSlide ? measureSlideShellActiveHeight(activeSlide) : 0;
+  if (isMobileViewport) {
+    applySlideShellDesktopScale(iframe, height || 720, { fitHeight: true });
+    setSlideShellDocumentScroll(doc, 0);
+    return;
+  }
+  clearSlideShellDesktopScale(iframe);
   if (height > 0) {
     iframe.style.height = `${height}px`;
   } else {

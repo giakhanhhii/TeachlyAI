@@ -177,6 +177,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   iframe.className = "exp-slide-shell-iframe";
   iframe.setAttribute("title", "Slide deck");
   iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
+  const iframeFrame = document.createElement("div");
+  iframeFrame.className = "exp-slide-shell-frame";
   let shellReady = false;
   let focusViewportRaf = 0;
   let boundIframeWindow = null;
@@ -323,6 +325,16 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       viewMode === "presentation" ? readDeckScrollState() : undefined,
     );
   }
+
+  window.addEventListener(
+    "resize",
+    () => {
+      if (!shellReady) return;
+      syncViewModeToIframe();
+      paintSlideChrome();
+    },
+    { passive: true, signal: uiSignal },
+  );
 
   function isKeyboardEditingTarget(target) {
     return !!(
@@ -563,7 +575,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       stage.innerHTML = "";
       iframe.style.border = "0";
       iframe.style.display = "none";
-      viewport.append(iframe, visualEditBtn, prevArrow, nextArrow, fsBtn);
+      iframeFrame.appendChild(iframe);
+      viewport.append(iframeFrame, visualEditBtn, prevArrow, nextArrow, fsBtn);
       stage.append(modeBar, viewport);
       const loadPromise = new Promise((resolve) => {
         iframe.addEventListener("load", resolve, { once: true, signal: uiSignal });

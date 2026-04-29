@@ -462,8 +462,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
         iframe.style.border = "0";
         iframe.style.display = "none";
+        const iframeFrame = document.createElement("div");
+        iframeFrame.className = "exp-slide-shell-frame";
 
-        viewport.append(iframe, prevArrow, nextArrow, fsBtn);
+        iframeFrame.appendChild(iframe);
+        viewport.append(iframeFrame, prevArrow, nextArrow, fsBtn);
         host.append(loading, deckHint, modeBar, viewport);
         stage.appendChild(host);
 
@@ -529,6 +532,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
             viewMode === "presentation" ? readDeckScrollState() : undefined,
           );
         }
+
+        window.addEventListener(
+          "resize",
+          () => {
+            if (!shellReady) return;
+            syncViewModeToIframe();
+            paintSlideChrome();
+          },
+          { passive: true, signal: uiSignal },
+        );
 
         function paintSlideChrome() {
           const pres = viewMode === "presentation";
