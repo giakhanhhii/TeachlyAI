@@ -213,6 +213,70 @@
   border: 0;
 }
 
+@media (max-width: 640px) {
+  .exp-shell-slide {
+    max-width: 100%;
+  }
+
+  .exp-slide-mode-bar {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .exp-slide-mode-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 8px 12px;
+  }
+
+  .exp-slide-viewport {
+    overflow: hidden;
+    border-radius: 14px;
+  }
+
+  .exp-slide-shell-iframe {
+    min-height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+  }
+
+  .exp-slide-visual-edit-btn {
+    top: 8px;
+    right: 46px;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .exp-slide-fs-btn {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+
+  .exp-slide-arrow {
+    top: auto;
+    bottom: 10px;
+    transform: none;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .exp-slide-arrow--prev {
+    left: 10px;
+  }
+
+  .exp-slide-arrow--next {
+    right: 10px;
+  }
+}
+
 /* Chọn ảnh từ máy (chỉnh slide) */
 .exp-slide-img-picker-backdrop {
   position: fixed;

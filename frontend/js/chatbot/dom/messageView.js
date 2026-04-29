@@ -5,6 +5,7 @@ import { createResumeDockCard } from "./resumeDockCard.js";
 /** Form slide / quiz / flash (+ meta PDF): giãn ngang gần full cột chat, không áp dụng full set. */
 function isWideFlowFormCardType(cardType) {
   return (
+    cardType === "fullset_topic" ||
     cardType === "slide_form" ||
     cardType === "quiz_form" ||
     cardType === "flash_form" ||

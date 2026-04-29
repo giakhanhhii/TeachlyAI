@@ -1394,6 +1394,14 @@ function syncSlideShellScrollViewport(iframe) {
   const master = doc.querySelector("#slides-master-container");
   if (!master || master.getAttribute("data-nav-mode") !== "scroll") return;
   setSlideShellDocumentViewportMode(doc, "scroll");
+  const hostWin = iframe.ownerDocument?.defaultView || window;
+  const isMobileViewport = Boolean(hostWin?.matchMedia?.("(max-width: 640px)")?.matches);
+  if (isMobileViewport) {
+    iframe.style.removeProperty("height");
+    iframe.style.aspectRatio = "16 / 9";
+    iframe.style.overflow = "hidden";
+    return;
+  }
   const height = measureSlideShellDeckHeight(iframe);
   if (height > 0) {
     iframe.style.height = `${height}px`;
@@ -1490,6 +1498,15 @@ function syncSlideShellActiveViewport(iframe, scrollState) {
   const master = doc.querySelector("#slides-master-container");
   if (!master || master.getAttribute("data-nav-mode") !== "active") return;
   setSlideShellDocumentViewportMode(doc, "active");
+  const hostWin = iframe.ownerDocument?.defaultView || window;
+  const isMobileViewport = Boolean(hostWin?.matchMedia?.("(max-width: 640px)")?.matches);
+  if (isMobileViewport) {
+    iframe.style.removeProperty("height");
+    iframe.style.aspectRatio = "16 / 9";
+    iframe.style.overflow = "hidden";
+    setSlideShellDocumentScroll(doc, 0);
+    return;
+  }
   const activeSlide =
     doc.querySelector(".shell-slide-instance.active") ||
     doc.querySelector(".shell-slide-instance");
