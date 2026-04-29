@@ -286,6 +286,11 @@
     transition:
       transform 0.28s ease,
       box-shadow 0.28s ease;
+    visibility: hidden;
+  }
+
+  .sidebar.sidebar-ready {
+    visibility: visible;
   }
 
   .sidebar.collapsed {
