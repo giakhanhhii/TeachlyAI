@@ -20,9 +20,11 @@ import {
   wrapField,
   wrapMini,
 } from "./flowCardShared.js";
+import { mountFlowMobileSelect } from "./flowMobileSelect.js";
+import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 
 export function createFullsetTopicCard(deps) {
-  const root = el("div", "flow-card");
+  const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
   const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
@@ -36,17 +38,19 @@ export function createFullsetTopicCard(deps) {
     o.textContent = v;
     level.appendChild(o);
   });
-  root.appendChild(wrapField("Trình độ", level));
+  const levelMobileSelect = mountFlowMobileSelect(level);
+  root.appendChild(wrapField("Trình độ", levelMobileSelect.control));
 
   const slideTemplate = el("select", "flow-select");
-  appendSelectPlaceholder(slideTemplate, "Chọn mẫu…");
-  SLIDE_TEMPLATE_OPTIONS.forEach((v) => {
-    const o = document.createElement("option");
-    o.value = v;
-    o.textContent = v;
-    slideTemplate.appendChild(o);
-  });
-  root.appendChild(wrapField("Mẫu slide", slideTemplate, "Chọn mẫu giao diện slide (giống form tạo slide)."));
+  populateSlideTemplateSelect(slideTemplate);
+  const slideTemplateMobileSelect = mountFlowMobileSelect(slideTemplate);
+  root.appendChild(
+    wrapField(
+      "Mẫu slide",
+      slideTemplateMobileSelect.control,
+      "Chọn mẫu giao diện slide (giống form tạo slide).",
+    ),
+  );
 
   const slides = el("input", "flow-input");
   slides.type = "number";
@@ -81,7 +85,9 @@ export function createFullsetTopicCard(deps) {
     const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
     topic.value = String(s.t ?? "");
     level.value = normalizeFullsetLevelAutofill(s.l);
+    levelMobileSelect.sync();
     slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
+    slideTemplateMobileSelect.sync();
     slides.value = String(sn);
     quiz.value = String(qn);
     flash.value = String(fn);

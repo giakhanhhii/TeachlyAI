@@ -13,6 +13,7 @@ import {
   appendSelectPlaceholder,
   wrapField,
 } from "./flowCardShared.js";
+import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 
 export function createQuizFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -42,7 +43,8 @@ export function createQuizFormCard(deps) {
     o.textContent = v;
     level.appendChild(o);
   });
-  root.appendChild(wrapField("Trình độ", level));
+  const levelMobileSelect = mountFlowMobileSelect(level);
+  root.appendChild(wrapField("Trình độ", levelMobileSelect.control));
 
   const notes = flowTextarea("Ghi chú thêm cho bộ đề…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -53,6 +55,7 @@ export function createQuizFormCard(deps) {
     kind.value = String(item.k ?? "");
     qn.value = String(toPositiveInt(item.q, 20));
     level.value = normalizeFullsetLevelAutofill(item.d);
+    levelMobileSelect.sync();
     notes.value = String(item.n ?? "");
   });
 

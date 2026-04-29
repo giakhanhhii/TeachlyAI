@@ -7,13 +7,14 @@ import {
   clamp,
   el,
   flowTextarea,
-  appendSelectPlaceholder,
   coerceSelectThemeValue,
   removeSkipConfirm,
   showPartialFillConfirm,
   toPositiveInt,
   wrapField,
 } from "./flowCardShared.js";
+import { mountFlowMobileSelect } from "./flowMobileSelect.js";
+import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 
 export function createSlideFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -37,14 +38,9 @@ export function createSlideFormCard(deps) {
   root.appendChild(wrapField("Cấu trúc mong muốn", structure));
 
   const style = el("select", "flow-select");
-  appendSelectPlaceholder(style, "Chọn mẫu…");
-  SLIDE_TEMPLATE_OPTIONS.forEach((v) => {
-    const o = document.createElement("option");
-    o.value = v;
-    o.textContent = v;
-    style.appendChild(o);
-  });
-  root.appendChild(wrapField("Mẫu", style, "Chọn mẫu giao diện slide."));
+  populateSlideTemplateSelect(style);
+  const styleMobileSelect = mountFlowMobileSelect(style);
+  root.appendChild(wrapField("Mẫu", styleMobileSelect.control, "Chọn mẫu giao diện slide."));
 
   const notes = flowTextarea("VD: Minigame, Thảo luận nhóm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -55,6 +51,7 @@ export function createSlideFormCard(deps) {
     count.value = String(clamp(toPositiveInt(s.c, 10), 1, 30));
     structure.value = String(s.s ?? "");
     style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
+    styleMobileSelect.sync();
     notes.value = String(s.n ?? "");
   });
 
