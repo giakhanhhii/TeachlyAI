@@ -88,47 +88,49 @@ body {
 
   .top {
     min-height: 64px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 4px 10px;
-    padding: 10px 14px 12px 78px;
-  }
-
-  .top-brand,
-  .top-title,
-  .top-home-btn {
-    position: static;
-  }
-
-  .top-brand,
-  .top-title {
-    display: block;
-    width: 100%;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 10px 56px 12px 78px;
   }
 
   .top-brand {
-    font-size: 11px;
+    position: static;
+    display: block;
+    width: auto;
+    font-size: 15px;
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(16, 35, 58, 0.65);
+    text-align: center;
   }
 
   .top-title {
-    font-size: 15px;
-    font-weight: 700;
+    display: none;
   }
 
   .top-home-btn {
-    margin-top: 2px;
-    padding: 7px 12px;
-    font-size: 12px;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    margin-top: 0;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 0;
   }
 }
 
 @media (max-width: 520px) {
   .top {
-    padding-right: 10px;
+    padding-right: 52px;
   }
 
   .top-home-btn {
-    gap: 4px;
-    padding: 6px 10px;
+    right: 10px;
+    gap: 0;
   }
 }
