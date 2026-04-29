@@ -53,3 +53,15 @@ export function resumeDockSignature(dock) {
     meta: dock.meta || {},
   })}`;
 }
+
+/**
+ * Nhóm resume dock theo "loại tương tác" để tránh nhân đôi prompt khi back nhiều lần.
+ * Với single dock, chủ động gom theo kind để luôn chỉ giữ lại lời nhắc gần nhất.
+ * @param {any} dock
+ */
+export function resumeDockGroupKey(dock) {
+  if (!dock || typeof dock !== "object") return "";
+  if (dock.fullsetMixed) return "group:fullset-mixed";
+  if (Array.isArray(dock.items)) return "group:fullset-bundle";
+  return `group:single:${dock.kind || ""}`;
+}

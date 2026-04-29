@@ -36,6 +36,27 @@ export function createExperienceResumeService(deps) {
   }
 
   /**
+   * @param {any} resume
+   */
+  function buildThptqgCatalogResumeDock(resume) {
+    const meta = resume?.meta && typeof resume.meta === "object" ? resume.meta : {};
+    const baseExperienceId = typeof resume?.experienceId === "string" ? resume.experienceId.trim() : "";
+    const catalogExperienceId = baseExperienceId ? `${baseExperienceId}:catalog` : "thptqg-fulltest-catalog";
+    return {
+      kind: "thptqg_fulltest",
+      meta: {
+        catalogTitle: meta.catalogTitle || "THPTQG simulation tests",
+        source: meta.source || "",
+        __experienceId: catalogExperienceId,
+      },
+      experienceId: catalogExperienceId,
+      title: `Full đề THPTQG — ${meta.catalogTitle || "THPTQG simulation tests"}`,
+      openedAt: resume?.openedAt || new Date().toISOString(),
+      resumeState: null,
+    };
+  }
+
+  /**
    * @param {Record<string, any>} meta
    */
   function readExperienceIdFromMeta(meta) {
@@ -177,6 +198,12 @@ export function createExperienceResumeService(deps) {
         openedAt: now,
         resumeState: lastOpenedExperience.resumeState || null,
       };
+      if (lastOpenedExperience.kind === "thptqg_fulltest") {
+        const catalogDock = buildThptqgCatalogResumeDock(lastOpenedExperience);
+        if (!hasResumeDockInCurrentSession(catalogDock)) {
+          pushBot("", { resumeDock: catalogDock });
+        }
+      }
       if (hasResumeDockInCurrentSession(resumeDock)) {
         lastOpenedExperience = null;
         resumeDockAlreadyPosted = false;

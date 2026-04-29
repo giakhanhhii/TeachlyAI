@@ -1,3 +1,6 @@
+import { MSG_CONTINUE_SOURCE } from "../guidedFlow/shared.js";
+import { resumeDockGroupKey, resumeDockSignature } from "../utils/serialization.js";
+
 /**
  * @param {{
  *   getCurrentSession: () => any,
@@ -8,10 +11,11 @@
  *   sendBtn: HTMLButtonElement,
  *   inputEl: HTMLInputElement | HTMLTextAreaElement,
  *   onConversationMutation?: (mode?: "push"|"replace") => void,
+ *   rerenderMessages?: () => void,
  * }} deps
  */
 export function createMessageController(deps) {
-  const { getCurrentSession, saveSessions, getMessageView, postChat, apiUrl, sendBtn, inputEl, onConversationMutation } = deps;
+  const { getCurrentSession, saveSessions, getMessageView, postChat, apiUrl, sendBtn, inputEl, onConversationMutation, rerenderMessages } = deps;
 
   /**
    * @param {boolean} next
@@ -57,6 +61,42 @@ export function createMessageController(deps) {
       if (Array.isArray(opts.actions)) actions = opts.actions;
       if (typeof opts.cardType === "string") cardType = opts.cardType;
       if (opts.resumeDock) resumeDock = opts.resumeDock;
+    }
+    let removedDuplicateResume = false;
+    const resumeGroupKey = resumeDockGroupKey(resumeDock);
+    const resumeSignature = resumeDockSignature(resumeDock);
+    if (resumeGroupKey) {
+      const prevMessages = Array.isArray(current.messages) ? current.messages : [];
+      const nextMessages = [];
+      prevMessages.forEach((message) => {
+        if (!message || typeof message !== "object" || message.role !== "bot" || !message.resumeDock) {
+          nextMessages.push(message);
+          return;
+        }
+        const messageSignature = resumeDockSignature(message.resumeDock);
+        if (resumeSignature && messageSignature === resumeSignature) {
+          removedDuplicateResume = true;
+          return;
+        }
+        if (resumeDockGroupKey(message.resumeDock) !== resumeGroupKey) {
+          nextMessages.push(message);
+          return;
+        }
+        if (String(message.text || "") !== MSG_CONTINUE_SOURCE) {
+          nextMessages.push(message);
+          return;
+        }
+        removedDuplicateResume = true;
+        nextMessages.push({
+          ...message,
+          text: "",
+          actions: [],
+        });
+      });
+      current.messages = nextMessages;
+      if (removedDuplicateResume) {
+        rerenderMessages?.();
+      }
     }
     getMessageView().addMessage("bot", text, { actions, cardType, resumeDock });
     const entry = { role: "bot", text };
