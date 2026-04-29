@@ -391,33 +391,7 @@
 
 @media (max-width: 640px) {
   .exp-topbar-flash {
-    gap: 8px;
     padding: 8px 10px;
-    border-radius: 16px;
-    align-items: flex-start;
-  }
-
-  .exp-topbar-flash .exp-topbar-left {
-    gap: 8px;
-  }
-
-  .exp-topbar-flash .exp-icon-svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .exp-topbar-flash .exp-topbar-title {
-    white-space: normal;
-    font-size: 0.88rem;
-    line-height: 1.22;
-  }
-
-  .exp-topbar-flash .exp-topbar-right {
-    display: none;
-  }
-
-  .exp-topbar-flash .exp-icon-btn {
-    display: none;
   }
 
   .flash-bookmark-filter-btn {
