@@ -110,7 +110,8 @@
 
 /* Slide deck: use more horizontal space so 16:9 preview matches the shell layout */
 .exp-shell-slide {
-  max-width: min(1200px, calc(100vw - 40px));
+  width: 100%;
+  max-width: min(1400px, calc(100vw - 48px));
 }
 
 .exp-mixed-pick-hint {

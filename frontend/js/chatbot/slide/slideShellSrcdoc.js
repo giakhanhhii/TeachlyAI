@@ -452,8 +452,7 @@ function injectShellPreviewFit(doc) {
       align-items: center !important;
       justify-content: flex-start !important;
       margin: 0 !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
+      padding: 0 !important;
       box-sizing: border-box !important;
     }
     body > template {

@@ -30,6 +30,45 @@ export function quizStemToSafeHtml(s) {
 }
 
 /**
+ * Render quiz stem formatting without relying on innerHTML.
+ * Supports the same lightweight formatting as quizStemToSafeHtml:
+ * - markdown-style bold (**...**)
+ * - line breaks
+ *
+ * @param {HTMLElement} target
+ * @param {string} s
+ */
+export function renderQuizStemRichText(target, s) {
+  if (!(target instanceof HTMLElement)) return;
+  const text = String(insertInlineMcLineBreaks(s) || "");
+  target.replaceChildren();
+  const lines = text.split("\n");
+  lines.forEach((line, lineIndex) => {
+    let lastIndex = 0;
+    const boldRe = /\*\*(.+?)\*\*/g;
+    let match = boldRe.exec(line);
+    while (match) {
+      const [token, boldText] = match;
+      const tokenIndex = match.index;
+      if (tokenIndex > lastIndex) {
+        target.appendChild(document.createTextNode(line.slice(lastIndex, tokenIndex)));
+      }
+      const strong = document.createElement("strong");
+      strong.textContent = boldText;
+      target.appendChild(strong);
+      lastIndex = tokenIndex + token.length;
+      match = boldRe.exec(line);
+    }
+    if (lastIndex < line.length) {
+      target.appendChild(document.createTextNode(line.slice(lastIndex)));
+    }
+    if (lineIndex < lines.length - 1) {
+      target.appendChild(document.createElement("br"));
+    }
+  });
+}
+
+/**
  * @param {Record<string, string>} meta
  * @param {number} qIndex
  * @param {{ text?: string, options?: string[] }} question
