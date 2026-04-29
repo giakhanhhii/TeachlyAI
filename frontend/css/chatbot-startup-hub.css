@@ -240,7 +240,9 @@
     min-width: 0;
     flex: none;
     border-radius: 18px;
-    padding-bottom: 18px;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .chat-startup-hub .card-img {
@@ -249,7 +251,10 @@
   }
 
   .chat-startup-hub .card-body {
-    padding: 16px 14px 0;
+    padding: 16px 14px 14px;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
   }
 
   .chat-startup-hub .card-title {
@@ -260,10 +265,12 @@
   .chat-startup-hub .card-desc {
     font-size: 13px;
     line-height: 1.5;
+    margin-bottom: 8px;
   }
 
   .chat-startup-hub .badge {
-    margin-top: 10px;
+    margin-top: auto;
+    align-self: flex-start;
     padding: 4px 10px;
     font-size: 10px;
     letter-spacing: 0.02em;
