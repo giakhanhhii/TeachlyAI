@@ -83,6 +83,8 @@ export function init() {
   const domEls = resolveChatDomElements();
   if (!domEls) return;
   const { messages, messagesInner, form, input, sendBtn, threadLabel, chatList, newChatBtn, chatPhase, experienceLayer, experienceBody, backToChatBtn, toggleSidebarBtn, topHomeBtn } = domEls;
+  const topBar = /** @type {HTMLElement | null} */ (document.querySelector(".top"));
+  const topTitleEl = /** @type {HTMLElement | null} */ (document.querySelector(".top-title"));
   const messageScroller = /** @type {HTMLElement} */ (messages);
 
   const apiUrl = getChatApiUrl();
@@ -202,6 +204,19 @@ export function init() {
     const isActive = Boolean(active);
     chatPhase.classList.toggle("startup-mode", isActive);
     messages.classList.toggle("startup-mode", isActive);
+    topBar?.classList.toggle("startup-header", isActive);
+    updateTopBarTitle(isActive);
+  }
+
+  function updateTopBarTitle(isStartup = false) {
+    if (!topTitleEl) return;
+    if (isStartup) {
+      topTitleEl.textContent = "";
+      return;
+    }
+    const current = getCurrentSession();
+    const nextTitle = typeof current?.title === "string" && current.title.trim() ? current.title.trim() : "Đoạn hội thoại";
+    topTitleEl.textContent = nextTitle;
   }
 
   function reattachStartupActionHandlers() {
@@ -423,6 +438,7 @@ export function init() {
   function updateThreadLabel() {
     const current = getCurrentSession();
     threadLabel.textContent = current?.thread_id ? `Thread: ${current.thread_id}` : "";
+    updateTopBarTitle(Boolean(chatPhase.classList.contains("startup-mode")));
   }
 
   function ensureSessionMessagesLoaded(force = false) {
