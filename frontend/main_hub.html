@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teachly</title>
+
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
@@ -169,7 +176,87 @@
     position: relative;
     z-index: 1;
   }
+
+  @media (max-width: 768px) {
+    .hero-area {
+      margin-top: 32px;
+      padding: 0 16px;
+    }
+
+    .headline-area h1 {
+      font-size: 44px;
+      margin-bottom: 10px;
+    }
+
+    .headline-area p {
+      font-size: 25px;
+      line-height: 1.35;
+    }
+
+    .cards-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      padding: 28px 16px 40px;
+    }
+
+    .card {
+      width: min(100%, 440px);
+      flex: 0 1 100%;
+      border-radius: 22px;
+    }
+
+    .card-img {
+      height: 184px;
+      border-radius: 22px 22px 0 0;
+    }
+
+    .card-body {
+      padding: 22px 20px 0;
+    }
+
+    .card-title {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .badge {
+      margin-top: 12px;
+      padding: 5px 13px;
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .headline-area h1 {
+      font-size: 40px;
+    }
+
+    .headline-area p {
+      font-size: 22px;
+    }
+
+    .cards-row {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+
+    .card-title {
+      font-size: 24px;
+    }
+
+    .card-desc {
+      font-size: 16px;
+    }
+  }
 </style>
+</head>
+<body>
 
 <div class="forest-page">
   <img class="trees-bg" src="svg/trees-bg.svg" alt="" />
@@ -228,3 +315,5 @@
     </a>
   </div>
 </div>
+</body>
+</html>
