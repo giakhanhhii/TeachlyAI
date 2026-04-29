@@ -63,5 +63,9 @@ export function resumeDockGroupKey(dock) {
   if (!dock || typeof dock !== "object") return "";
   if (dock.fullsetMixed) return "group:fullset-mixed";
   if (Array.isArray(dock.items)) return "group:fullset-bundle";
+  if (dock.kind === "thptqg_fulltest") {
+    const meta = dock.meta && typeof dock.meta === "object" ? dock.meta : {};
+    return meta.testId ? "group:single:thptqg_fulltest:test" : "group:single:thptqg_fulltest:catalog";
+  }
   return `group:single:${dock.kind || ""}`;
 }

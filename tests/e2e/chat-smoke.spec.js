@@ -525,9 +525,9 @@ test("chat only renders the latest THPTQG continue prompt when duplicate resume 
   await page.goto("/chatbot_ui.html");
 
   await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Mở" })).toHaveCount(2);
-  await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
-  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toBeVisible();
+  await expect(page.locator(".resume-dock-open-btn")).toHaveCount(2);
+  await expect(page.getByText("THPTQG simulation test 1")).toHaveCount(1);
+  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toHaveCount(1);
 });
 
 test("browser back preserves THPTQG result when reopening resume card", async ({ page }) => {
@@ -580,8 +580,8 @@ test("browser back preserves THPTQG result when reopening resume card", async ({
 
   await page.goBack();
   await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
-  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toBeVisible();
-  await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
+  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toHaveCount(1);
+  await expect(page.getByText("THPTQG simulation test 1")).toHaveCount(1);
   await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
   await expect(page.getByRole("button", { name: "Mở", exact: true })).toHaveCount(2);
 

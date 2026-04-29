@@ -143,9 +143,13 @@ export function createExperienceController(deps) {
       initialState,
       onStateChange: (state) => {
         const completed = computeCompleted(kind, state);
+        const effectiveMeta =
+          state?.meta && typeof state.meta === "object"
+            ? { ...scopedMeta, ...state.meta }
+            : scopedMeta;
         historyService.updateSingleExperienceProgress({
           kind,
-          meta: scopedMeta,
+          meta: effectiveMeta,
           experienceId,
           progress: state,
           completed,
@@ -153,9 +157,9 @@ export function createExperienceController(deps) {
         });
         resumeService.syncLastOpenedExperience({
           kind,
-          meta: scopedMeta,
+          meta: effectiveMeta,
           experienceId,
-          title: typeof state?.title === "string" ? state.title : buildResumeTitle(kind, scopedMeta),
+          title: typeof state?.title === "string" ? state.title : buildResumeTitle(kind, effectiveMeta),
           progress: state,
         });
         persistActiveExperience();

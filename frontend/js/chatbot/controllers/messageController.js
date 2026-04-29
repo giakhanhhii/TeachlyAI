@@ -78,20 +78,20 @@ export function createMessageController(deps) {
           removedDuplicateResume = true;
           return;
         }
-        if (resumeDockGroupKey(message.resumeDock) !== resumeGroupKey) {
-          nextMessages.push(message);
+        const messageGroupKey = resumeDockGroupKey(message.resumeDock);
+        if (
+          resumeGroupKey.includes("thptqg_fulltest")
+          && messageGroupKey.includes("thptqg_fulltest")
+          && String(message.text || "") === MSG_CONTINUE_SOURCE
+        ) {
+          removedDuplicateResume = true;
           return;
         }
-        if (String(message.text || "") !== MSG_CONTINUE_SOURCE) {
-          nextMessages.push(message);
+        if (messageGroupKey === resumeGroupKey) {
+          removedDuplicateResume = true;
           return;
         }
-        removedDuplicateResume = true;
-        nextMessages.push({
-          ...message,
-          text: "",
-          actions: [],
-        });
+        nextMessages.push(message);
       });
       current.messages = nextMessages;
       if (removedDuplicateResume) {
