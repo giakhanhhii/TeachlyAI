@@ -237,6 +237,38 @@
   line-height: 1.45;
 }
 
+@media (max-width: 640px) {
+  .exp-topbar {
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 16px;
+    align-items: flex-start;
+  }
+
+  .exp-topbar-left {
+    gap: 8px;
+  }
+
+  .exp-icon-svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .exp-topbar-title {
+    white-space: normal;
+    font-size: 0.88rem;
+    line-height: 1.22;
+  }
+
+  .exp-topbar-right {
+    display: none;
+  }
+
+  .exp-icon-btn {
+    display: none;
+  }
+}
+
 .exp-progress-wrap {
   display: flex;
   align-items: center;
