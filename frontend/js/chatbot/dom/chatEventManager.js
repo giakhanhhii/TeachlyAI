@@ -177,6 +177,10 @@ export function setupChatEventManager(deps) {
   bindNewChatButton({
     newChatBtn,
     onCreateNewChat,
+    onAfterCreateNewChat: () => {
+      if (!sidebar || !window.matchMedia("(max-width: 768px)").matches) return;
+      sidebar.classList.add("collapsed");
+    },
   });
 
   backToChatBtn?.addEventListener("click", () => {

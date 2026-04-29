@@ -138,18 +138,23 @@ export function renderSessionListUI(deps) {
  * @param {{
  *   newChatBtn: HTMLButtonElement,
  *   onCreateNewChat: () => void | Promise<void>,
+ *   onAfterCreateNewChat?: () => void,
  * }} deps
  */
 export function bindNewChatButton(deps) {
-  const { newChatBtn, onCreateNewChat } = deps;
+  const { newChatBtn, onCreateNewChat, onAfterCreateNewChat } = deps;
   let creating = false;
   newChatBtn.addEventListener("click", () => {
     if (creating) return;
     creating = true;
     newChatBtn.disabled = true;
-    void Promise.resolve(onCreateNewChat()).finally(() => {
-      creating = false;
-      newChatBtn.disabled = false;
-    });
+    void Promise.resolve(onCreateNewChat())
+      .then(() => {
+        onAfterCreateNewChat?.();
+      })
+      .finally(() => {
+        creating = false;
+        newChatBtn.disabled = false;
+      });
   });
 }
