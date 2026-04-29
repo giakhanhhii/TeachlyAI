@@ -96,9 +96,8 @@ body {
 
   .top-brand {
     position: static;
-    display: block;
+    display: none;
     width: auto;
-    font-size: 15px;
     font-size: 15px;
     font-weight: 700;
     color: rgba(16, 35, 58, 0.65);
@@ -106,6 +105,20 @@ body {
   }
 
   .top-title {
+    display: block;
+    position: static;
+    width: auto;
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(16, 35, 58, 0.65);
+    text-align: center;
+  }
+
+  .top.startup-header .top-brand {
+    display: block;
+  }
+
+  .top.startup-header .top-title {
     display: none;
   }
 
