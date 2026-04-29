@@ -178,27 +178,64 @@
   }
 
   .chat-startup-hub .startup-hub-instruction {
-    font-size: 16px;
+    font-size: 22px;
     max-width: 28ch;
   }
 
   .chat-startup-hub .cards-row {
-    gap: 14px;
-    padding: 22px 10px 6px;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 24px 14px 8px;
   }
 
   .chat-startup-hub button.card {
-    width: min(100%, 420px);
-    flex-basis: min(100%, 420px);
-    border-radius: 20px;
+    width: min(100%, 440px);
+    flex: 0 1 100%;
+    border-radius: 22px;
   }
 
   .chat-startup-hub .card-img {
-    height: 144px;
-    border-radius: 20px 20px 0 0;
+    height: 184px;
+    border-radius: 22px 22px 0 0;
   }
 
   .chat-startup-hub .card-body {
-    padding: 18px 16px 0;
+    padding: 22px 20px 0;
+  }
+
+  .chat-startup-hub .card-title {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+
+  .chat-startup-hub .card-desc {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .chat-startup-hub .badge {
+    margin-top: 12px;
+    padding: 5px 13px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .chat-startup-hub .startup-hub-instruction {
+    font-size: 20px;
+  }
+
+  .chat-startup-hub .cards-row {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .chat-startup-hub .card-title {
+    font-size: 24px;
+  }
+
+  .chat-startup-hub .card-desc {
+    font-size: 16px;
   }
 }
