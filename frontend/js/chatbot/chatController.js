@@ -176,6 +176,7 @@ export function init() {
     sendBtn,
     inputEl: input,
     onConversationMutation: (mode = "push") => writeAppNavigationState(mode),
+    rerenderMessages: () => renderMessages(),
   });
 
   const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };

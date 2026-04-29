@@ -1,4 +1,5 @@
-import { resumeDockSignature } from "../utils/serialization.js";
+import { MSG_CONTINUE_SOURCE } from "../guidedFlow/shared.js";
+import { resumeDockGroupKey, resumeDockSignature } from "../utils/serialization.js";
 
 /**
  * @param {{
@@ -196,18 +197,32 @@ export function createMessageHistoryService(deps) {
       });
     } else {
       setStartupUiState(false);
-      const seenResumeDocks = new Set();
-      messagesToRender.forEach((m) => {
+      const lastResumeIndexBySignature = new Map();
+      const lastContinuePromptIndexByGroup = new Map();
+      messagesToRender.forEach((m, index) => {
+        if (m?.role !== "bot" || !m?.resumeDock) return;
+        const signature = resumeDockSignature(m.resumeDock);
+        if (signature) lastResumeIndexBySignature.set(signature, index);
+        const groupKey = resumeDockGroupKey(m.resumeDock);
+        if (groupKey && String(m.text || "") === MSG_CONTINUE_SOURCE) {
+          lastContinuePromptIndexByGroup.set(groupKey, index);
+        }
+      });
+      messagesToRender.forEach((m, index) => {
         if (m?.role === "bot" && m?.resumeDock) {
           const signature = resumeDockSignature(m.resumeDock);
-          if (signature && seenResumeDocks.has(signature)) {
+          if (signature && lastResumeIndexBySignature.get(signature) !== index) {
             return;
           }
-          if (signature) seenResumeDocks.add(signature);
         }
         if (m.role === "bot" && (m.cardType || (m.actions && m.actions.length) || m.resumeDock)) {
-          msgView.addMessage("bot", m.text || "", {
-            actions: m.actions || [],
+          const groupKey = m?.resumeDock ? resumeDockGroupKey(m.resumeDock) : "";
+          const shouldCollapsePrompt =
+            Boolean(groupKey)
+            && String(m.text || "") === MSG_CONTINUE_SOURCE
+            && lastContinuePromptIndexByGroup.get(groupKey) !== index;
+          msgView.addMessage("bot", shouldCollapsePrompt ? "" : m.text || "", {
+            actions: shouldCollapsePrompt ? [] : m.actions || [],
             cardType: m.cardType,
             resumeDock: m.resumeDock,
           });

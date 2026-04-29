@@ -140,7 +140,9 @@ test("restored THPTQG result can return to chat without browser history", async 
   await page.getByRole("button", { name: "Quay lại chat" }).click();
 
   await expect(page.locator("#experienceLayer")).not.toHaveClass(/visible/);
-  await expect(page.getByRole("button", { name: "Tạo quiz" })).toBeVisible();
+  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toBeVisible();
+  await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
+  await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
 });
 
 test("selecting a chat with saved THPTQG result reopens the saved experience", async ({ page }) => {
@@ -455,6 +457,77 @@ test("THPTQG result can restart the same test from scratch", async ({ page }) =>
   await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
   await expect(page.locator(".exp-opt-btn.selected")).toHaveCount(0);
   await expect(page.locator(".thptqg-flag-btn.active")).toHaveCount(0);
+});
+
+test("chat only renders the latest THPTQG continue prompt when duplicate resume docks exist", async ({ page }) => {
+  const olderResumeDock = {
+    kind: "thptqg_fulltest",
+    meta: {
+      catalogTitle: "THPTQG simulation tests",
+      source: "mockdata_40.md",
+      __experienceId: "exp-thptqg-old",
+    },
+    experienceId: "exp-thptqg-old",
+    title: "Full đề THPTQG — THPTQG simulation tests",
+    openedAt: "2026-04-28T16:06:00.000Z",
+  };
+  const newerResumeDock = {
+    kind: "thptqg_fulltest",
+    meta: {
+      testId: "thptqg-simulation-test-1",
+      testTitle: "THPTQG simulation test 1",
+      source: "mockdata_40.md",
+      __experienceId: "exp-thptqg-new",
+    },
+    experienceId: "exp-thptqg-new",
+    title: "THPTQG simulation test 1",
+    openedAt: "2026-04-28T16:25:00.000Z",
+  };
+
+  await page.addInitScript(({ olderResumeDock, newerResumeDock }) => {
+    window.localStorage.setItem("teachly_active_session", "0");
+    window.localStorage.setItem("teachly_sessions", JSON.stringify([
+      {
+        sessionId: "session-thptqg-dup-resume",
+        title: "Full đề THPTQG",
+        thread_id: "",
+        messages: [
+          {
+            role: "bot",
+            text: "Bạn muốn tiếp tục theo cách nào?",
+            actions: [
+              { label: "Tải lên PDF", value: "pdf" },
+              { label: "Nhập chủ đề trực tiếp", value: "topic" },
+              { label: "Làm full đề THPTQG", value: "thptqg_fulltest" },
+            ],
+            resumeDock: olderResumeDock,
+          },
+          {
+            role: "bot",
+            text: "Bạn muốn tiếp tục theo cách nào?",
+            actions: [
+              { label: "Tải lên PDF", value: "pdf" },
+              { label: "Nhập chủ đề trực tiếp", value: "topic" },
+              { label: "Làm full đề THPTQG", value: "thptqg_fulltest" },
+            ],
+            resumeDock: newerResumeDock,
+          },
+        ],
+        messagesLoaded: true,
+        hasMoreRemote: false,
+        remoteOffset: 2,
+        pinned: false,
+        experienceState: null,
+      },
+    ]));
+  }, { olderResumeDock, newerResumeDock });
+
+  await page.goto("/chatbot_ui.html");
+
+  await expect(page.getByText("Bạn muốn tiếp tục theo cách nào?")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Mở" })).toHaveCount(2);
+  await expect(page.getByText("THPTQG simulation test 1")).toBeVisible();
+  await expect(page.getByText("Full đề THPTQG — THPTQG simulation tests")).toBeVisible();
 });
 
 test("browser back preserves THPTQG result when reopening resume card", async ({ page }) => {
