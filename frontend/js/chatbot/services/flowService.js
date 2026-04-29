@@ -183,9 +183,12 @@ export function createFlowService(deps) {
     renderChatListUI();
     clearMessages();
     try {
-      await startWithGuidedEffects(flowKind);
       current.title = stagedTitle;
       setCurrentExperienceState(stagedExperienceState);
+      saveSessions();
+      renderChatListUI();
+      updateThreadLabel();
+      await startWithGuidedEffects(flowKind);
       saveSessions();
       renderChatListUI();
       commitNavigationSnapshot?.("replace");
@@ -237,6 +240,13 @@ export function createFlowService(deps) {
     renderChatListUI();
     clearMessages();
     try {
+      if (targetSession && typeof targetSession === "object") {
+        targetSession.title = stagedTitle;
+      }
+      setCurrentExperienceState(stagedExperienceState);
+      saveSessions();
+      renderChatListUI();
+      updateThreadLabel();
       commitNavigationSnapshot?.("replace");
       try {
         await ensureSessionMessagesLoaded();
@@ -244,10 +254,6 @@ export function createFlowService(deps) {
         // Keep local cache if remote loading fails.
       }
       await startWithGuidedEffects(flowKind);
-      if (targetSession && typeof targetSession === "object") {
-        targetSession.title = stagedTitle;
-      }
-      setCurrentExperienceState(stagedExperienceState);
       saveSessions();
       renderChatListUI();
       commitNavigationSnapshot?.("replace");
