@@ -63,6 +63,13 @@
   max-width: 100%;
 }
 
+.exp-slide-viewport:focus,
+.exp-slide-viewport:focus-visible,
+.exp-slide-shell-iframe:focus,
+.exp-slide-shell-iframe:focus-visible {
+  outline: none;
+}
+
 .exp-slide-shell-frame {
   position: relative;
   width: 100%;
