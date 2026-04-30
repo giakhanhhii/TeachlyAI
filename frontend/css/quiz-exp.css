@@ -437,6 +437,120 @@
   display: none;
 }
 
+.thptqg-config-card {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 26px;
+  border: 1px solid #dbeafe;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+}
+
+.thptqg-config-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 14px;
+}
+
+.thptqg-config-tab {
+  border: 1px solid #dbeafe;
+  background: #fff;
+  color: #334155;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.thptqg-config-tab.active {
+  background: #e8f0ff;
+  color: #1d4ed8;
+}
+
+.thptqg-config-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.thptqg-config-note {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  line-height: 1.6;
+}
+
+.thptqg-config-section-title {
+  margin: 22px 0 12px;
+  color: #102a43;
+  font-size: 1.1rem;
+}
+
+.thptqg-config-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thptqg-config-part-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  background: #fff;
+  cursor: pointer;
+}
+
+.thptqg-config-part-row input {
+  margin-top: 4px;
+}
+
+.thptqg-config-part-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.thptqg-config-part-title {
+  color: #102a43;
+  font-weight: 800;
+}
+
+.thptqg-config-duration {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid #bfdbfe;
+  background: #fff;
+  color: #334155;
+  padding: 0 14px;
+  font-size: 15px;
+}
+
+.thptqg-config-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  color: #334155;
+}
+
+.thptqg-config-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
 .thptqg-title {
   margin: 0;
   font-size: 1.9rem;
