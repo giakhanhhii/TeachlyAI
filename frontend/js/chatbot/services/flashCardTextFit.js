@@ -2,9 +2,28 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function hasVisibleOverflow(element, boundsElement) {
-  if (!element || !boundsElement) return false;
-  return element.scrollWidth > boundsElement.clientWidth + 1 || element.scrollHeight > boundsElement.clientHeight + 1;
+const MAX_FIT_ITERATIONS = 8;
+
+function getBoundsSize(boundsElement) {
+  if (!boundsElement) return null;
+  const width = boundsElement.clientWidth;
+  const height = boundsElement.clientHeight;
+  if (width <= 0 || height <= 0) return null;
+  return { width, height };
+}
+
+function hasVisibleOverflow(element, boundsSize) {
+  if (!element || !boundsSize) return false;
+  return element.scrollWidth > boundsSize.width + 1 || element.scrollHeight > boundsSize.height + 1;
+}
+
+function estimateFontSizeToFit(textEl, boundsSize, baseSize, minSize) {
+  if (!textEl || !boundsSize) return minSize;
+  const widthRatio = boundsSize.width / Math.max(textEl.scrollWidth, 1);
+  const heightRatio = boundsSize.height / Math.max(textEl.scrollHeight, 1);
+  const estimatedRatio = Math.min(widthRatio, heightRatio);
+  if (!Number.isFinite(estimatedRatio) || estimatedRatio <= 0) return minSize;
+  return clamp(baseSize * estimatedRatio, minSize, baseSize);
 }
 
 function fitTextToBounds(textEl, boundsEl, opts = {}) {
@@ -14,22 +33,32 @@ function fitTextToBounds(textEl, boundsEl, opts = {}) {
     Number.parseFloat(textEl.dataset.baseFontSize || "") || Number.parseFloat(window.getComputedStyle(textEl).fontSize) || 16;
   const minSize = clamp(opts.minFontSize || Math.round(baseSize * 0.58), 12, baseSize);
   const isSingleToken = text.length > 0 && !/\s/.test(text);
+  const boundsSize = getBoundsSize(boundsEl);
+
+  if (!boundsSize) return;
 
   textEl.dataset.baseFontSize = String(baseSize);
   textEl.classList.toggle("flash-fit-wrap", !isSingleToken);
   textEl.classList.toggle("flash-fit-nowrap", isSingleToken);
   textEl.style.fontSize = `${baseSize}px`;
 
-  if (!hasVisibleOverflow(textEl, boundsEl)) return;
+  if (!hasVisibleOverflow(textEl, boundsSize)) return;
 
   let low = minSize;
   let high = baseSize;
-  let best = minSize;
+  let best = estimateFontSizeToFit(textEl, boundsSize, baseSize, minSize);
 
-  while (high - low > 0.5) {
+  textEl.style.fontSize = `${best}px`;
+  if (hasVisibleOverflow(textEl, boundsSize)) {
+    high = best;
+  } else {
+    low = best;
+  }
+
+  for (let i = 0; i < MAX_FIT_ITERATIONS; i += 1) {
     const mid = (low + high) / 2;
     textEl.style.fontSize = `${mid}px`;
-    if (hasVisibleOverflow(textEl, boundsEl)) {
+    if (hasVisibleOverflow(textEl, boundsSize)) {
       high = mid;
     } else {
       best = mid;
