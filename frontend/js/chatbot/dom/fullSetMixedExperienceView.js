@@ -75,7 +75,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
   const topic = spec.topic || "—";
-  const notesLine = spec.extra ? ` | Yêu cầu thêm: ${spec.extra}` : "";
   const slideNotes =
     spec.slideTemplate
       ? `Mẫu slide: ${spec.slideTemplate} | Full set (demo mock)`
@@ -175,11 +174,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   bookmarkControl.appendChild(bookmarkFilterBtn);
   topBarRight?.insertBefore(bookmarkControl, topBarRight.firstChild || null);
   shell.appendChild(topBar);
-  const summary = document.createElement("p");
-  summary.className = "exp-meta-line";
-  const sum = slides.length + questions.length + cards.length;
-  const templateSeg = spec.slideTemplate ? ` | Mẫu slide: ${spec.slideTemplate}` : "";
-  summary.textContent = `Full set — ${topic} | Trình độ: ${spec.level || "—"}${templateSeg} | Slide ${spec.slides} + Quiz ${spec.quiz} + Flash ${spec.flash} = ${sum} mục (trộn lẫn)${notesLine}`;
   const total = Math.max(1, steps.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   const stage = document.createElement("div");
@@ -870,7 +864,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     index -= 1;
     renderStep();
   });
-  shell.appendChild(summary);
   shell.appendChild(progress.wrap);
   shell.appendChild(stage);
   shell.appendChild(footer);
