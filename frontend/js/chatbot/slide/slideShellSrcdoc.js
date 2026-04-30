@@ -1718,6 +1718,10 @@ function measureSlideShellActiveHeight(slide) {
   if (!slide || typeof slide.getBoundingClientRect !== "function") return 0;
   const slideRect = slide.getBoundingClientRect();
   if (slide instanceof Element && slide.matches('[data-shell-authored-slide="1"]')) {
+    // Authored shell slides are fixed 1280x720 canvases. Do not let scrollHeight
+    // enlarge the iframe, or the preview reintroduces the black/white bars we
+    // just removed. If content visually overflows, the slide layout itself should
+    // be corrected inside the template rather than expanding the viewer height.
     const authoredBaseHeight = Math.max(
       Number(slideRect.height) || 0,
       Number(slide.offsetHeight) || 0,
