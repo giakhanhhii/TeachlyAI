@@ -614,6 +614,25 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     writeHistory(historyMode);
   }
 
+  function resetAttemptProgress(test) {
+    if (!test || test.status !== "available") return;
+    selectedTestId = test.id;
+    answersByQuestion = {};
+    flaggedQuestions = new Set();
+    startedAt = "";
+    elapsedSeconds = 0;
+    elapsedBaseSeconds = 0;
+    elapsedBaseTick = Date.now();
+    submittedAt = "";
+    reviewMode = false;
+    activeResultPartId = "overview";
+    resultReviewFilter = "all";
+    detailQuestionId = "";
+    ensureSelectedPartsForTest(test);
+    ensureSelectionForTest(test);
+    resetDetailCardCache();
+  }
+
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     selectedTestId = test.id;
@@ -640,19 +659,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function restartTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     if (!window.confirm("Làm lại đề này từ đầu? Các đáp án và đánh dấu hiện tại sẽ bị xóa.")) return;
-    selectedTestId = test.id;
-    answersByQuestion = {};
-    flaggedQuestions = new Set();
-    startedAt = "";
-    elapsedSeconds = 0;
-    elapsedBaseSeconds = 0;
-    elapsedBaseTick = Date.now();
-    submittedAt = "";
-    reviewMode = false;
-    activeResultPartId = "overview";
-    resultReviewFilter = "all";
-    detailQuestionId = "";
-    startOrResumeTest(test, historyMode);
+    resetAttemptProgress(test);
+    openTestConfig(test, historyMode);
   }
 
   function jumpToQuestion(test, questionId) {
@@ -764,18 +772,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const wrap = document.createElement("section");
     wrap.className = "thptqg-config-card";
 
-    const badges = document.createElement("div");
-    badges.className = "thptqg-test-badges";
-    appendTextBlock(badges, "span", "thptqg-tag", test.yearLabel || "Mock");
-    appendTextBlock(badges, "span", "thptqg-tag", "Listening");
-    wrap.appendChild(badges);
-
     appendTextBlock(wrap, "h2", "thptqg-title", test.title);
 
     const tabs = document.createElement("div");
     tabs.className = "thptqg-config-tabs";
     appendTextBlock(tabs, "button", "thptqg-config-tab active", "Thông tin đề thi");
-    appendTextBlock(tabs, "button", "thptqg-config-tab", "Đáp án/transcript");
     wrap.appendChild(tabs);
 
     const metaBlock = document.createElement("div");
@@ -786,7 +787,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       "thptqg-test-meta",
       `⏱ Thời gian làm bài: ${formatMinutes(test.durationMinutes)} | ${test.parts.length} phần thi | ${test.questionCount} câu`,
     );
-    appendTextBlock(metaBlock, "div", "thptqg-test-meta", `👥 Dữ liệu mock: ${test.source || meta.source || "mockdata_40.md"}`);
     wrap.appendChild(metaBlock);
 
     const note = document.createElement("p");
@@ -835,7 +835,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     placeholder.textContent = "-- Chọn thời gian --";
     placeholder.selected = configuredDurationMinutes == null;
     select.appendChild(placeholder);
-    [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 75, 90].forEach((minutes) => {
+    [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].forEach((minutes) => {
       const option = document.createElement("option");
       option.value = String(minutes);
       option.textContent = formatMinutes(minutes);
@@ -1177,7 +1177,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       emitState();
       writeHistory("replace");
     }));
-    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => openTestConfig(test, "replace")));
+    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => {
+      resetAttemptProgress(test);
+      openTestConfig(test, "replace");
+    }));
     stage.appendChild(actionRow);
 
     const scoreRow = document.createElement("div");
