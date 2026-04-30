@@ -2,7 +2,7 @@ import {
   FLASH_VOCAB_TEXTAREA_PLACEHOLDER,
   parseDirectFlashVocabLines,
 } from "../../guidedFlow/flashVocabParse.js";
-import { collectFlashCardLengthViolations, MAX_FLASH_CARD_SIDE_CHARS } from "../../services/flashCardLimits.js";
+import { MAX_FLASH_CARD_SIDE_CHARS } from "../../services/flashCardLimits.js";
 import { el } from "./flowCardShared.js";
 import { renderFlashVocabHighlightLines } from "./flashVocabHighlightLayer.js";
 import { createFlashVocabOpenAiTranslate } from "./flashVocabOpenAiTranslate.js";
@@ -218,22 +218,6 @@ export function createFlashVocabFormCard(deps) {
     }
     if (parsed.cards.length > MAX_PAIRS) {
       err.textContent = `Tối đa ${MAX_PAIRS} thẻ mỗi lần (bạn có ${parsed.cards.length} dòng hợp lệ). Hãy xóa bớt hoặc chia nhỏ.`;
-      err.style.display = "block";
-      return;
-    }
-    const overlongCards = collectFlashCardLengthViolations(parsed.cards);
-    if (overlongCards.length) {
-      const preview = overlongCards
-        .slice(0, 2)
-        .map(({ card, overFront, overBack }) => {
-          const text = overFront ? card.front : card.back;
-          return `"${text.slice(0, 40)}${text.length > 40 ? "..." : ""}"`;
-        })
-        .join(", ");
-      err.textContent =
-        overlongCards.length === 1
-          ? `Mỗi mặt của flashcard chỉ được tối đa ${MAX_FLASH_CARD_SIDE_CHARS} ký tự. Hãy rút gọn lại ${preview}.`
-          : `Có ${overlongCards.length} thẻ có ít nhất một mặt vượt ${MAX_FLASH_CARD_SIDE_CHARS} ký tự. Hãy rút gọn lại, ví dụ: ${preview}.`;
       err.style.display = "block";
       return;
     }

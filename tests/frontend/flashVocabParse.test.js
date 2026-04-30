@@ -19,4 +19,14 @@ describe("flashVocabParse", () => {
     expect(parsed.overLimitLines).toHaveLength(1);
     expect(parsed.invalidLines).toEqual([]);
   });
+
+  it("treats auto-translated backs longer than the limit as over-limit lines", () => {
+    const raw = "obstacle";
+    const parsed = parseDirectFlashVocabLines(raw, {
+      obstacle: "x".repeat(MAX_FLASH_CARD_SIDE_CHARS + 1),
+    });
+
+    expect(parsed.cards).toEqual([]);
+    expect(parsed.overLimitLines).toEqual(["obstacle"]);
+  });
 });
