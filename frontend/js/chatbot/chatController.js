@@ -261,11 +261,136 @@ export function init() {
     input.focus();
   }
 
+  function cloneWithoutExperienceId(meta) {
+    const safeMeta = meta && typeof meta === "object" ? { ...meta } : {};
+    delete safeMeta.__experienceId;
+    return safeMeta;
+  }
+
+  function toPositiveCountString(value, fallback) {
+    const n = Number(value);
+    if (Number.isFinite(n) && n > 0) return String(Math.floor(n));
+    return String(fallback);
+  }
+
+  function getContinueCreateLabels(kind) {
+    if (kind === "fullset") {
+      return {
+        other: "Tạo full set khác",
+        intro: "Điền thông tin để Teachly tạo Full Set mới:",
+        cardType: "fullset_topic",
+      };
+    }
+    if (kind === "quiz") {
+      return {
+        other: "Tạo quiz khác",
+        intro: "Thiết lập thông số cho bộ quiz mới tại đây:",
+        cardType: "quiz_form",
+      };
+    }
+    if (kind === "slide") {
+      return {
+        other: "Tạo slide khác",
+        intro: "Điền thông tin để Teachly thiết kế bộ slide mới:",
+        cardType: "slide_form",
+      };
+    }
+    return {
+      other: "Tạo flashcard khác",
+      intro: "Cung cấp thông tin để Teachly tạo bộ Flashcard mới:",
+      cardType: "flash_form",
+    };
+  }
+
+  function parseQuizTopicParts(topic) {
+    const parts = String(topic || "")
+      .split("—")
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (parts.length >= 2) {
+      return {
+        source: parts.slice(0, -1).join(" — "),
+        kind: parts[parts.length - 1],
+      };
+    }
+    return { source: String(topic || "").trim(), kind: "" };
+  }
+
+  function readContinueCreateContext(kind) {
+    const state = getCurrentExperienceState() || {};
+    if (kind === "fullset") {
+      const spec = state?.progress?.spec && typeof state.progress.spec === "object"
+        ? state.progress.spec
+        : state?.meta && typeof state.meta === "object"
+          ? state.meta
+          : {};
+      return {
+        kind,
+        title: typeof state?.title === "string" && state.title.trim() ? state.title.trim() : "Full set",
+        topic: String(spec.topic || "").trim(),
+        spec: cloneWithoutExperienceId(spec),
+        prefill: {
+          slides: toPositiveCountString(spec.slides, 10),
+          quiz: toPositiveCountString(spec.quiz, 20),
+          flash: toPositiveCountString(spec.flash, 10),
+        },
+      };
+    }
+    if (kind === "slide") {
+      const meta = state?.progress?.meta && typeof state.progress.meta === "object"
+        ? state.progress.meta
+        : state?.meta && typeof state.meta === "object"
+          ? state.meta
+          : {};
+      return {
+        kind,
+        topic: String(meta.topic || "").trim(),
+        meta: cloneWithoutExperienceId(meta),
+        prefill: {
+          count: toPositiveCountString(meta.count, 20),
+        },
+      };
+    }
+    if (kind === "quiz") {
+      const meta = state?.progress?.meta && typeof state.progress.meta === "object"
+        ? state.progress.meta
+        : state?.meta && typeof state.meta === "object"
+          ? state.meta
+          : {};
+      const parsed = parseQuizTopicParts(meta.topic);
+      return {
+        kind,
+        topic: String(meta.topic || "").trim(),
+        meta: cloneWithoutExperienceId(meta),
+        prefill: {
+          source: parsed.source,
+          kind: parsed.kind,
+          count: toPositiveCountString(meta.count, 20),
+        },
+      };
+    }
+    const meta = state?.progress?.meta && typeof state.progress.meta === "object"
+      ? state.progress.meta
+      : state?.meta && typeof state.meta === "object"
+        ? state.meta
+        : {};
+    return {
+      kind: "flash",
+      topic: String(meta.source || "").trim(),
+      meta: cloneWithoutExperienceId(meta),
+      prefill: {
+        list: "",
+        count: toPositiveCountString(meta.count, 20),
+      },
+    };
+  }
+
   /**
    * @param {"fullset"|"quiz"|"slide"|"flash"} kind
-   * @returns {Promise<"same"|"other"|null>}
+   * @returns {Promise<Record<string, string> | null>}
    */
   function openContinueCreateDialog(kind) {
+    const context = readContinueCreateContext(kind);
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.className = "continue-create-overlay";
@@ -274,32 +399,70 @@ export function init() {
       dialog.setAttribute("role", "dialog");
       dialog.setAttribute("aria-modal", "true");
 
-      const kindLabel =
-        kind === "fullset"
-          ? "full set"
-          : kind === "quiz"
-            ? "quiz"
-            : kind === "slide"
-              ? "slide"
-              : "flashcard";
+      const kindLabel = kind === "fullset" ? "full set" : kind === "quiz" ? "quiz" : kind === "slide" ? "slide" : "flashcard";
       const title = document.createElement("h3");
       title.className = "continue-create-title";
-      title.textContent = `Bạn có chắc chắn muốn tiếp tục tạo ${kindLabel}?`;
+      title.textContent = `Bạn muốn tiếp tục tạo ${kindLabel} cùng 1 chủ đề?`;
+
+      const body = document.createElement("div");
+      if (context?.topic) {
+        const prompt = document.createElement("p");
+        prompt.className = "flow-hint";
+        prompt.textContent = `Chủ đề hiện tại: ${context.topic}`;
+        body.appendChild(prompt);
+      }
+
+      /** @type {Record<string, HTMLInputElement>} */
+      const inputs = {};
+      const addNumberField = (labelText, key, value, hint = "") => {
+        const field = document.createElement("div");
+        field.className = "flow-field";
+        const label = document.createElement("label");
+        label.className = "flow-label";
+        label.textContent = labelText;
+        const inputEl = document.createElement("input");
+        inputEl.type = "number";
+        inputEl.min = "1";
+        inputEl.className = "flow-input";
+        inputEl.value = value;
+        field.append(label, inputEl);
+        if (hint) {
+          const hintEl = document.createElement("p");
+          hintEl.className = "flow-hint";
+          hintEl.textContent = hint;
+          field.appendChild(hintEl);
+        }
+        body.appendChild(field);
+        inputs[key] = inputEl;
+      };
+
+      if (kind === "fullset") {
+        addNumberField("Số slide muốn tạo tiếp", "slides", context.prefill.slides);
+        addNumberField("Số câu quiz muốn tạo tiếp", "quiz", context.prefill.quiz);
+        addNumberField("Số flashcard muốn tạo tiếp", "flash", context.prefill.flash);
+      } else if (kind === "slide") {
+        addNumberField("Số slide muốn tạo tiếp", "count", context.prefill.count);
+      } else if (kind === "quiz") {
+        addNumberField("Số câu muốn tạo tiếp", "count", context.prefill.count);
+      } else {
+        addNumberField("Số thẻ muốn tạo tiếp", "count", context.prefill.count);
+      }
 
       const actions = document.createElement("div");
       actions.className = "continue-create-actions";
-      const otherBtn = document.createElement("button");
-      otherBtn.type = "button";
-      otherBtn.className = "continue-create-btn continue-create-btn-secondary";
-      otherBtn.textContent = "Tạo thẻ khác";
-      const sameBtn = document.createElement("button");
-      sameBtn.type = "button";
-      sameBtn.className = "continue-create-btn continue-create-btn-primary";
-      sameBtn.textContent = `Tiếp tục tạo ${kindLabel}`;
-      actions.appendChild(otherBtn);
-      actions.appendChild(sameBtn);
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "continue-create-btn continue-create-btn-secondary";
+      cancelBtn.textContent = "Hủy";
+      const confirmBtn = document.createElement("button");
+      confirmBtn.type = "button";
+      confirmBtn.className = "continue-create-btn continue-create-btn-primary";
+      confirmBtn.textContent = `Tiếp tục tạo ${kindLabel}`;
+      actions.appendChild(cancelBtn);
+      actions.appendChild(confirmBtn);
 
       dialog.appendChild(title);
+      dialog.appendChild(body);
       dialog.appendChild(actions);
       overlay.appendChild(dialog);
       document.body.appendChild(overlay);
@@ -316,64 +479,90 @@ export function init() {
         if (e.key === "Escape") close(null);
       };
       document.addEventListener("keydown", onKeyDown, { signal: keydownAbort.signal });
-      otherBtn.addEventListener("click", () => close("other"));
-      sameBtn.addEventListener("click", () => close("same"));
+      cancelBtn.addEventListener("click", () => close(null));
+      confirmBtn.addEventListener("click", () => {
+        /** @type {Record<string, string>} */
+        const payload = {};
+        const keys = Object.keys(inputs);
+        for (let i = 0; i < keys.length; i += 1) {
+          const key = keys[i];
+          const raw = inputs[key].value.trim();
+          const n = Number(raw);
+          if (!raw || !Number.isFinite(n) || n < 1) {
+            inputs[key].focus();
+            return;
+          }
+          payload[key] = String(Math.floor(n));
+        }
+        close(payload);
+      });
       overlay.addEventListener("click", (e) => {
         if (e.target === overlay) close(null);
       });
     });
   }
 
+  function openOtherTopicForm(kind) {
+    const labels = getContinueCreateLabels(kind);
+    const context = readContinueCreateContext(kind);
+    const prefill =
+      kind === "fullset"
+        ? {
+            slides: context?.prefill?.slides || "10",
+            quiz: context?.prefill?.quiz || "20",
+            flash: context?.prefill?.flash || "10",
+          }
+        : {
+            count: context?.prefill?.count || "20",
+          };
+    layerView.hide();
+    writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
+    experienceController.resetResumeState();
+    experienceController.persistActiveExperience();
+    setGuidedState({ kind, step: "await_topic_form", data: { prefill } });
+    pushBot(labels.intro, {
+      cardType: labels.cardType,
+      cardProps: { prefill },
+    });
+    input.focus();
+  }
+
   /**
    * @param {"fullset"|"quiz"|"slide"|"flash"} kind
    * @param {{ preset?: "same"|"other" }} [opts]
-   *   Khi có `preset`, bỏ qua hộp thoại và áp dụng luôn (dùng cho nút inline trên màn hình kết quả).
    */
   async function continueCreateFromExperience(kind, opts) {
     const validKind =
       kind === "fullset" || kind === "quiz" || kind === "slide" || kind === "flash" ? kind : null;
     if (!validKind) return;
     const preset = opts && typeof opts === "object" ? opts.preset : undefined;
-    const selected =
-      preset === "same" || preset === "other" ? preset : await openContinueCreateDialog(validKind);
-    if (!selected) {
+    if (preset === "other") {
+      openOtherTopicForm(validKind);
+      return;
+    }
+    const nextCounts = await openContinueCreateDialog(validKind);
+    if (!nextCounts) {
       input.focus();
       return;
     }
-    layerView.hide();
-    writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
-    if (selected === "same") {
-      experienceController.resetResumeState();
-      experienceController.persistActiveExperience();
-      setGuidedState({ kind: validKind, step: "await_topic_form", data: {} });
-      const cardType =
-        validKind === "fullset"
-          ? "fullset_topic"
-          : validKind === "quiz"
-            ? "quiz_form"
-            : validKind === "slide"
-              ? "slide_form"
-              : "flash_form";
-      const intro =
-        validKind === "fullset"
-          ? "Tuyệt vời! Điền nhanh thông tin để Teachly tạo Full Set mới:"
-          : validKind === "quiz"
-          ? "Tuyệt vời! Thiết lập thông số cho bộ câu hỏi mới tại đây:"
-          : validKind === "slide"
-            ? "Tuyệt vời! Điền thông tin để Teachly thiết kế bộ slide mới:"
-            : "Tuyệt vời! Cung cấp thông tin để Teachly tạo bộ Flashcard mới:";
-      pushBot(intro, { cardType });
-    } else {
-      persistActiveExperience();
-      createSession();
-      setGuidedState(null);
-      experienceController.resetResumeState();
-      layerView.hide();
-      renderChatListUI();
-      renderMessages();
-      saveSessions();
-      writeAppNavigationState("push");
+    const context = readContinueCreateContext(validKind);
+    if (validKind === "fullset") {
+      const nextSpec = {
+        ...(context?.spec && typeof context.spec === "object" ? context.spec : {}),
+        slides: nextCounts.slides || context?.prefill?.slides || "10",
+        quiz: nextCounts.quiz || context?.prefill?.quiz || "20",
+        flash: nextCounts.flash || context?.prefill?.flash || "10",
+      };
+      delete nextSpec.__experienceId;
+      await openResumeFullSetMixed(nextSpec, context?.title || "Full set");
+      return;
     }
+    const nextMeta = {
+      ...(context?.meta && typeof context.meta === "object" ? context.meta : {}),
+      count: nextCounts.count || context?.prefill?.count || "20",
+    };
+    delete nextMeta.__experienceId;
+    await openSingleExperience(validKind, nextMeta, "fresh");
     input.focus();
   }
 

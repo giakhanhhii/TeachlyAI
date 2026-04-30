@@ -45,6 +45,16 @@ export function createSlideFormCard(deps) {
   const notes = flowTextarea("VD: Minigame, Thảo luận nhóm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
+  const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
+  if (typeof prefill.topic === "string") docText.value = prefill.topic;
+  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
+  if (typeof prefill.structure === "string") structure.value = prefill.structure;
+  if (typeof prefill.style === "string") {
+    style.value = prefill.style;
+    styleMobileSelect.sync();
+  }
+  if (typeof prefill.notes === "string") notes.value = prefill.notes;
+
   addAutofillBtn(root, () => {
     const s = SAMPLES_SLIDE[autofillCounters.slide++ % SAMPLES_SLIDE.length];
     docText.value = String(s.t ?? "");

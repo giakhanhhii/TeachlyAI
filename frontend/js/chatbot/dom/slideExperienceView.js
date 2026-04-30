@@ -484,8 +484,12 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const otherBtn = createPrimaryNavButton({ label: "Tạo slide khác", disabled: false });
+  otherBtn.classList.add("exp-back-btn");
+  otherBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: slides.length === 0 });
   footer.appendChild(backBtn);
+  footer.appendChild(otherBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
@@ -504,6 +508,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     const s = slides[index];
     progress.paint({ total, index, correct: 0, wrong: 0 });
     backBtn.disabled = index <= 0;
+    otherBtn.hidden = index < total - 1;
+    footer.classList.toggle("exp-footer-bar--continue-actions", !otherBtn.hidden);
     nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     nextBtn.disabled = !s;
     if (shellReady) {
@@ -542,6 +548,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     }
     index += 1;
     renderSlide();
+  });
+
+  otherBtn.addEventListener("click", () => {
+    deps?.onContinueCreate?.("slide", { preset: "other" });
   });
 
   if (slides.length > 0) {

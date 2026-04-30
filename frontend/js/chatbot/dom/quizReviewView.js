@@ -73,7 +73,7 @@ export function renderQuizReviewView(params) {
   const otherBtnInline = document.createElement("button");
   otherBtnInline.type = "button";
   otherBtnInline.className = "continue-create-btn continue-create-btn-secondary";
-  otherBtnInline.textContent = "Tạo thẻ khác";
+  otherBtnInline.textContent = "Tạo quiz khác";
   otherBtnInline.addEventListener("click", onCreateOther);
 
   const nextBtnInline = document.createElement("button");

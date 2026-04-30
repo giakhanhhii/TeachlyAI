@@ -149,10 +149,13 @@ export function createMessageView(opts) {
     let actions = [];
     /** @type {string | null} */
     let cardType = null;
+    /** @type {Record<string, any> | undefined} */
+    let cardProps;
     if (Array.isArray(third)) actions = third;
     else if (third && typeof third === "object") {
       if (Array.isArray(third.actions)) actions = third.actions;
       if (typeof third.cardType === "string") cardType = third.cardType;
+      if (third.cardProps && typeof third.cardProps === "object") cardProps = third.cardProps;
     }
 
     /** @type {any} */
@@ -212,6 +215,7 @@ export function createMessageView(opts) {
       if (isWideFlowFormCardType(cardType)) shell.classList.add("msg-flow-card-shell-wide");
       const cardRoot = createFlowCard(cardType, {
         onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
+        ...cardProps,
       });
       shell.appendChild(cardRoot);
       appendBotRow(shell, "msg-row-flow-card");
@@ -226,6 +230,7 @@ export function createMessageView(opts) {
       if (isWideFlowFormCardType(cardType)) shell.classList.add("msg-flow-card-shell-wide");
       const cardRoot = createFlowCard(cardType, {
         onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
+        ...cardProps,
       });
       shell.appendChild(cardRoot);
       appendBotRow(shell);
@@ -276,6 +281,7 @@ export function createMessageView(opts) {
         if (isWideFlowFormCardType(cardType)) bubble.classList.add("bubble-has-flow-card-wide");
         const cardRoot = createFlowCard(cardType, {
           onSubmit: (payload) => onFlowCardSubmit(cardType, payload, cardRoot),
+          ...cardProps,
         });
         bubble.appendChild(cardRoot);
       }

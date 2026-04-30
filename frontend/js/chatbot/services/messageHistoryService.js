@@ -230,6 +230,7 @@ export function createMessageHistoryService(deps) {
             actions: shouldCollapsePrompt ? [] : m.actions || [],
             cardType: m.cardType,
             resumeDock: m.resumeDock,
+            cardProps: m.cardProps,
           });
         } else {
           msgView.addMessage(m.role, m.text, m.actions);

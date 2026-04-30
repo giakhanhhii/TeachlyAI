@@ -56,11 +56,14 @@ export function createMessageController(deps) {
     let cardType;
     /** @type {any} */
     let resumeDock;
+    /** @type {Record<string, any> | undefined} */
+    let cardProps;
     if (Array.isArray(opts)) actions = opts;
     else if (opts && typeof opts === "object") {
       if (Array.isArray(opts.actions)) actions = opts.actions;
       if (typeof opts.cardType === "string") cardType = opts.cardType;
       if (opts.resumeDock) resumeDock = opts.resumeDock;
+      if (opts.cardProps && typeof opts.cardProps === "object") cardProps = opts.cardProps;
     }
     let removedDuplicateResume = false;
     const resumeGroupKey = resumeDockGroupKey(resumeDock);
@@ -98,11 +101,12 @@ export function createMessageController(deps) {
         rerenderMessages?.();
       }
     }
-    getMessageView().addMessage("bot", text, { actions, cardType, resumeDock });
+    getMessageView().addMessage("bot", text, { actions, cardType, resumeDock, cardProps });
     const entry = { role: "bot", text };
     if (actions.length) entry.actions = actions;
     if (cardType) entry.cardType = cardType;
     if (resumeDock) entry.resumeDock = resumeDock;
+    if (cardProps) entry.cardProps = cardProps;
     current.messages.push(entry);
     saveSessions();
     onConversationMutation?.("replace");
