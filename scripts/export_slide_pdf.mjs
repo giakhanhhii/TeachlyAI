@@ -107,6 +107,8 @@ try {
         padding: 0 !important;
         gap: 0 !important;
         overflow: visible !important;
+        break-after: avoid !important;
+        page-break-after: auto !important;
       }
       .shell-slide-instance {
         display: flex !important;
@@ -124,15 +126,17 @@ try {
         min-height: 720px !important;
         max-height: 720px !important;
         margin: 0 !important;
-        break-after: page !important;
-        page-break-after: always !important;
+        break-after: avoid-page !important;
+        page-break-after: auto !important;
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
         overflow: hidden !important;
         box-shadow: none !important;
         border-radius: 0 !important;
       }
-      .shell-slide-instance:last-child {
-        break-after: auto !important;
-        page-break-after: auto !important;
+      .shell-slide-instance:not(:last-child) {
+        break-after: page !important;
+        page-break-after: always !important;
       }
     `;
     document.head.appendChild(style);
