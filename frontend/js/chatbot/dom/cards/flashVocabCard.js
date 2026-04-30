@@ -7,7 +7,7 @@ import { el } from "./flowCardShared.js";
 import { renderFlashVocabHighlightLines } from "./flashVocabHighlightLayer.js";
 import { createFlashVocabOpenAiTranslate } from "./flashVocabOpenAiTranslate.js";
 
-const MAX_PAIRS = 200;
+const MAX_PAIRS = 50;
 
 /**
  * @param {{ onSubmit: (p: Record<string, string>) => void }} deps
@@ -140,7 +140,7 @@ export function createFlashVocabFormCard(deps) {
     el(
       "p",
       "flow-hint",
-      `Công tắc bên phải: bật (xanh) thì dòng tiếng Anh không «:» tô vàng và dịch; tắt (xám) thì tô đỏ và không tạo thẻ. Đỏ khác: sai form / bỏ qua. Mỗi mặt thẻ tối đa ${MAX_FLASH_CARD_SIDE_CHARS} ký tự. Bấm «Tạo flashcard» một lần — nếu còn dịch, Teachly chờ dịch xong. Tối đa 200 thẻ.`,
+      `Công tắc bên phải: bật (xanh) thì dòng tiếng Anh không «:» tô vàng và dịch; tắt (xám) thì tô đỏ và không tạo thẻ. Đỏ khác: sai form / bỏ qua. Mỗi mặt thẻ tối đa ${MAX_FLASH_CARD_SIDE_CHARS} ký tự. Bấm «Tạo flashcard» một lần — nếu còn dịch, Teachly chờ dịch xong. Tối đa ${MAX_PAIRS} thẻ.`,
     ),
   );
   root.appendChild(listField);

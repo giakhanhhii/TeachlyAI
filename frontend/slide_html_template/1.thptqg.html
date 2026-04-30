@@ -171,6 +171,55 @@
             margin-bottom: 54px;
         }
 
+        .content-card.centered-pack {
+            height: auto;
+            justify-content: center;
+            margin-top: auto;
+            margin-bottom: auto;
+            max-height: calc(100% - 28px);
+            min-height: 0;
+        }
+
+        .content-card.centered-pack .slide-title {
+            margin-bottom: 24px;
+        }
+
+        .content-card.centered-pack .content-area {
+            flex: 0 1 auto;
+        }
+
+        .content-card:has(.doughnut-chart-container),
+        .content-card:has(.tiled-content),
+        .content-card:has(.styled-list),
+        .content-card:has(.mini-grid),
+        .content-card:has(.strategy-table),
+        .content-card:has(.process-steps),
+        .content-card:has(.flashcard-row),
+        .content-card:has(.question-box),
+        .content-card:has(.formula-strip),
+        .content-card:has(.dos-donts),
+        .content-card:has(.quote-block),
+        .content-card:has(.score-bars),
+        .content-card:has(.radar-grid) {
+            justify-content: center;
+        }
+
+        .content-card:has(.doughnut-chart-container) .content-area,
+        .content-card:has(.tiled-content) .content-area,
+        .content-card:has(.styled-list) .content-area,
+        .content-card:has(.mini-grid) .content-area,
+        .content-card:has(.strategy-table) .content-area,
+        .content-card:has(.process-steps) .content-area,
+        .content-card:has(.flashcard-row) .content-area,
+        .content-card:has(.question-box) .content-area,
+        .content-card:has(.formula-strip) .content-area,
+        .content-card:has(.dos-donts) .content-area,
+        .content-card:has(.quote-block) .content-area,
+        .content-card:has(.score-bars) .content-area,
+        .content-card:has(.radar-grid) .content-area {
+            flex: 0 1 auto;
+        }
+
         .content-area {
             flex-grow: 1;
             display: flex;
@@ -688,7 +737,7 @@
 
 <!-- Slide 8: Mistakes (Theme 3: Emerald, Layout: Circle) -->
 <div class="slide-container theme-3 layout-circle" id="slide8">
-    <div class="content-card">
+    <div class="content-card centered-pack">
         <h2 class="slide-title">CÁC LỖI SAI ĐIỂN HÌNH</h2>
         <div class="content-area">
             <ul class="styled-list">
@@ -854,7 +903,7 @@
 
 <!-- Slide 15: Relative Clauses (Theme 5, Layout: Circle) -->
 <div class="slide-container theme-5 layout-circle" id="slide15">
-    <div class="content-card">
+    <div class="content-card centered-pack">
         <h2 class="slide-title">MỆNH ĐỀ QUAN HỆ: SƠ ĐỒ CHỌN TỪ</h2>
         <div class="content-area">
             <div class="formula-strip">
@@ -956,7 +1005,7 @@
 
 <!-- Slide 21: Synonyms Antonyms (Theme 1, Layout: Triangle) -->
 <div class="slide-container theme-1 layout-triangle" id="slide21">
-    <div class="content-card">
+    <div class="content-card centered-pack">
         <h2 class="slide-title">ĐỒNG NGHĨA - TRÁI NGHĨA: TRÁNH BẪY</h2>
         <div class="content-area">
             <div class="dos-donts">
@@ -998,7 +1047,7 @@
 
 <!-- Slide 23: Reading Inference (Theme 3, Layout: Circle) -->
 <div class="slide-container theme-3 layout-circle" id="slide23">
-    <div class="content-card">
+    <div class="content-card centered-pack">
         <h2 class="slide-title">ĐỌC HIỂU: XỬ LÝ CÂU SUY LUẬN</h2>
         <div class="content-area">
             <div class="quote-block">
@@ -1063,7 +1112,7 @@
 
 <!-- Slide 27: Weekly Plan (Theme 2, Layout: Circle) -->
 <div class="slide-container theme-2 layout-circle" id="slide27">
-    <div class="content-card">
+    <div class="content-card centered-pack">
         <h2 class="slide-title">KẾ HOẠCH 7 NGÀY ÔN TẬP MẪU</h2>
         <div class="content-area">
             <table class="strategy-table">
@@ -1098,7 +1147,7 @@
 
 <!-- Slide 29: Skill Radar (Theme 4, Layout: Circle) -->
 <div class="slide-container theme-4 layout-circle" id="slide29">
-    <div class="content-card">
+    <div class="content-card centered-pack">
         <h2 class="slide-title">BẢN ĐỒ NĂNG LỰC CÁ NHÂN</h2>
         <div class="content-area">
             <div class="radar-grid">
