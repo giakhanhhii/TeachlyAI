@@ -80,6 +80,21 @@ export function createFullsetTopicCard(deps) {
   const extra = flowTextarea("VD: Tông giọng hài hước, có minigame…", 3);
   root.appendChild(wrapField("Yêu cầu thêm", extra, ""));
 
+  const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
+  if (typeof prefill.topic === "string") topic.value = prefill.topic;
+  if (typeof prefill.level === "string") {
+    level.value = prefill.level;
+    levelMobileSelect.sync();
+  }
+  if (typeof prefill.slideTemplate === "string") {
+    slideTemplate.value = prefill.slideTemplate;
+    slideTemplateMobileSelect.sync();
+  }
+  if (typeof prefill.slides === "string" || Number.isFinite(Number(prefill.slides))) slides.value = String(prefill.slides);
+  if (typeof prefill.quiz === "string" || Number.isFinite(Number(prefill.quiz))) quiz.value = String(prefill.quiz);
+  if (typeof prefill.flash === "string" || Number.isFinite(Number(prefill.flash))) flash.value = String(prefill.flash);
+  if (typeof prefill.extra === "string") extra.value = prefill.extra;
+
   addAutofillBtn(root, () => {
     const s = SAMPLES_FULLSET[autofillCounters.fullset++ % SAMPLES_FULLSET.length];
     const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);

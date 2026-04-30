@@ -162,8 +162,12 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const otherBtn = createPrimaryNavButton({ label: "Tạo flashcard khác", disabled: false });
+  otherBtn.classList.add("exp-back-btn");
+  otherBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: cards.length === 0 });
   footer.appendChild(backBtn);
+  footer.appendChild(otherBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
@@ -394,6 +398,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       ? "Đang xem các flashcard đã bookmark. Chạm bookmark lần nữa để bỏ khỏi danh sách này."
       : "Nhấn vào thẻ để lật. Dùng Tiếp theo để sang thẻ khác.";
     backBtn.disabled = safeVisibleIndex <= 0;
+    otherBtn.hidden = bookmarkFilter || safeVisibleIndex < visibleTotal - 1;
+    footer.classList.toggle("exp-footer-bar--continue-actions", !otherBtn.hidden);
     nextBtn.textContent = bookmarkFilter
       ? safeVisibleIndex >= visibleTotal - 1
         ? "Xem tất cả"
@@ -427,6 +433,10 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     if (visibleIndex <= 0) return;
     index = visibleIndices[visibleIndex - 1];
     renderCard();
+  });
+
+  otherBtn.addEventListener("click", () => {
+    deps?.onContinueCreate?.("flash", { preset: "other" });
   });
 
   nextBtn.addEventListener("click", () => {

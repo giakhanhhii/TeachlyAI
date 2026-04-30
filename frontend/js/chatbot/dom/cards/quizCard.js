@@ -49,6 +49,16 @@ export function createQuizFormCard(deps) {
   const notes = flowTextarea("Ghi chú thêm cho bộ đề…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
+  const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
+  if (typeof prefill.source === "string") srcText.value = prefill.source;
+  if (typeof prefill.kind === "string") kind.value = prefill.kind;
+  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) qn.value = String(prefill.count);
+  if (typeof prefill.difficulty === "string") {
+    level.value = prefill.difficulty;
+    levelMobileSelect.sync();
+  }
+  if (typeof prefill.notes === "string") notes.value = prefill.notes;
+
   addAutofillBtn(root, () => {
     const item = SAMPLES_QUIZ[autofillCounters.quiz++ % SAMPLES_QUIZ.length];
     srcText.value = String(item.s ?? "");

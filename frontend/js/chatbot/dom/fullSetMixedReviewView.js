@@ -64,7 +64,7 @@ export function renderFullSetMixedReviewView(params) {
   const otherInline = document.createElement("button");
   otherInline.type = "button";
   otherInline.className = "continue-create-btn continue-create-btn-secondary";
-  otherInline.textContent = "Tạo thẻ khác";
+  otherInline.textContent = "Tạo full set khác";
   otherInline.addEventListener("click", () => {
     void Promise.resolve(onCreateOther());
   });

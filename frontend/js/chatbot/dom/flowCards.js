@@ -19,7 +19,7 @@ export {
 
 /**
  * @param {string} cardType
- * @param {{ onSubmit: (p: Record<string, string>) => void }} deps
+ * @param {{ onSubmit: (p: Record<string, string>) => void, prefill?: Record<string, any> }} deps
  */
 export function createFlowCard(cardType, deps) {
   switch (cardType) {
