@@ -1,4 +1,4 @@
-import { getSourceActions } from "../guidedFlow/shared.js";
+import { CONTINUE_SOURCE_PROMPT_KEY, getSourceActions } from "../guidedFlow/shared.js";
 
 /**
  * @param {{
@@ -31,6 +31,7 @@ export function createExperienceResumeService(deps) {
     const actionKind = kind === "thptqg_fulltest" ? "thptqg_fulltest" : kind;
     pushBot("Bạn muốn tiếp tục theo cách nào?", {
       actions: getSourceActions(actionKind),
+      messageKey: CONTINUE_SOURCE_PROMPT_KEY,
       resumeDock,
     });
   }

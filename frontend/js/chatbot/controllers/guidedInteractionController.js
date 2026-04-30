@@ -108,7 +108,12 @@ export function createGuidedInteractionController(deps) {
   async function applyEffects(effects) {
     for (const e of effects) {
       if (e.type === "pushUser") pushUser(e.text);
-      else if (e.type === "pushBot") pushBot(e.text, { actions: e.actions, cardType: e.cardType, resumeDock: e.resumeDock });
+      else if (e.type === "pushBot") pushBot(e.text, {
+        actions: e.actions,
+        cardType: e.cardType,
+        resumeDock: e.resumeDock,
+        messageKey: e.messageKey,
+      });
       else if (e.type === "showQuiz") {
         const scoped = ensureMetaExperienceId(e.meta || {});
         pushQuickResumeDock("quiz", scoped.meta, scoped.experienceId);

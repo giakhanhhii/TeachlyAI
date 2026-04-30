@@ -146,11 +146,18 @@ export function setupChatEventManager(deps) {
   } = deps;
 
   const sidebar = document.getElementById("sidebar");
-  if (sidebar) {
-    if (window.matchMedia("(max-width: 768px)").matches) sidebar.classList.add("collapsed");
-    else sidebar.classList.remove("collapsed");
+  /**
+   * @param {"add"|"remove"|"toggle"} method
+   * @param {string} className
+   */
+  function updateSidebarClass(method, className) {
+    if (!(sidebar instanceof HTMLElement)) return false;
+    sidebar.classList[method](className);
+    return true;
   }
-  sidebar?.classList.add("sidebar-ready");
+  if (window.matchMedia("(max-width: 768px)").matches) updateSidebarClass("add", "collapsed");
+  else updateSidebarClass("remove", "collapsed");
+  updateSidebarClass("add", "sidebar-ready");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -180,8 +187,8 @@ export function setupChatEventManager(deps) {
     newChatBtn,
     onCreateNewChat,
     onAfterCreateNewChat: () => {
-      if (!sidebar || !window.matchMedia("(max-width: 768px)").matches) return;
-      sidebar.classList.add("collapsed");
+      if (!window.matchMedia("(max-width: 768px)").matches) return;
+      updateSidebarClass("add", "collapsed");
     },
   });
 
@@ -196,7 +203,7 @@ export function setupChatEventManager(deps) {
   });
 
   toggleSidebarBtn?.addEventListener("click", () => {
-    sidebar?.classList.toggle("collapsed");
+    updateSidebarClass("toggle", "collapsed");
   });
 
   topHomeBtn?.addEventListener("click", () => {

@@ -1150,6 +1150,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     stage.appendChild(layout);
 
     if (pendingScrollQuestionId) {
+      restoreAttemptScrollState(previousScrollState);
       const target = stage.querySelector(`[data-question-id="${pendingScrollQuestionId}"]`);
       if (target instanceof HTMLElement) target.scrollIntoView({ block: "nearest", behavior: "smooth" });
       pendingScrollQuestionId = "";
@@ -1323,7 +1324,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const questionsByPart = buildQuestionsByPart(test);
     const detailQuestion = detailQuestionId ? questionMap.get(detailQuestionId) || null : null;
     const prioritizedPartId = !partFilter ? String(detailQuestion?.partId || "") : "";
-    const orderedParts = !prioritizedPartId
+    const hasPrioritizedPart = prioritizedPartId && parts.some((part) => String(part?.id || "") === prioritizedPartId);
+    const orderedParts = !hasPrioritizedPart
       ? parts
       : [
           ...parts.filter((part) => String(part?.id || "") === prioritizedPartId),
