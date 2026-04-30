@@ -675,6 +675,21 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     writeHistory("replace");
   }
 
+  function jumpToPartStart(test, part) {
+    const nextPartId = String(part?.id || "");
+    if (!nextPartId) return;
+    const firstQuestionNumber = Number(part?.questionStart || 0);
+    const firstQuestion = getConfiguredQuestions(test).find((question) => Number(question?.number) === firstQuestionNumber);
+    currentPartId = nextPartId;
+    if (firstQuestion?.id) {
+      currentQuestion = String(firstQuestion.id);
+      pendingScrollQuestionId = currentQuestion;
+    }
+    emitState();
+    render();
+    writeHistory("replace");
+  }
+
   function toggleFlag(questionId) {
     if (flaggedQuestions.has(questionId)) flaggedQuestions.delete(questionId);
     else flaggedQuestions.add(questionId);
@@ -908,15 +923,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const topPartTabs = document.createElement("div");
     topPartTabs.className = "thptqg-exam-part-tabs";
     parts.forEach((part) => {
-      const button = createButton(String(part?.label || ""), `thptqg-part-btn${currentPartId === part.id ? " active" : ""}`, () => {
-        currentPartId = String(part.id || "");
-        const firstQuestionNumber = Number(part?.questionStart || 0);
-        const firstQuestion = getConfiguredQuestions(test).find((question) => Number(question?.number) === firstQuestionNumber);
-        currentQuestion = String(firstQuestion?.id || currentQuestion);
-        emitState();
-        render();
-        writeHistory("replace");
-      });
+      const button = createButton(String(part?.label || ""), `thptqg-part-btn${currentPartId === part.id ? " active" : ""}`, () => jumpToPartStart(test, part));
       topPartTabs.appendChild(button);
     });
     workspaceTop.appendChild(topPartTabs);
@@ -1100,15 +1107,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const partList = document.createElement("div");
     partList.className = "thptqg-part-switches";
     parts.forEach((part) => {
-      const button = createButton(String(part?.label || ""), `thptqg-part-btn${currentPartId === part.id ? " active" : ""}`, () => {
-        currentPartId = String(part.id || "");
-        const firstQuestionNumber = Number(part?.questionStart || 0);
-        const firstQuestion = (Array.isArray(test.questions) ? test.questions : []).find((question) => Number(question?.number) === firstQuestionNumber);
-        currentQuestion = String(firstQuestion?.id || currentQuestion);
-        emitState();
-        render();
-        writeHistory("replace");
-      });
+      const button = createButton(String(part?.label || ""), `thptqg-part-btn${currentPartId === part.id ? " active" : ""}`, () => jumpToPartStart(test, part));
       partList.appendChild(button);
     });
     partsCard.appendChild(partList);
