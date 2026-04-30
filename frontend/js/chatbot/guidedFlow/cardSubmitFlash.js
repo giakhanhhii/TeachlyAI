@@ -1,4 +1,5 @@
 import { parseDirectFlashVocabLines } from "./flashVocabParse.js";
+import { filterFlashCardsWithinLimit } from "../services/flashCardLimits.js";
 
 /**
  * @param {any} guided
@@ -68,15 +69,16 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
     const autoT = payload.__autoTranslateEnLines;
     const autoTranslateEnLines = autoT !== "0" && autoT !== "false";
     const { cards } = parseDirectFlashVocabLines(raw, apiBack, { autoTranslateEnLines });
-    if (!cards.length) {
+    const safeCards = filterFlashCardsWithinLimit(cards);
+    if (!safeCards.length) {
       return { handled: false, guided, effects: [] };
     }
-    const countStr = String(cards.length);
+    const countStr = String(safeCards.length);
     const meta = {
       source: "Nhập từ vựng trực tiếp",
       count: countStr,
       extra: `${countStr} thẻ từ nhập tay`,
-      __directCardsJson: JSON.stringify(cards),
+      __directCardsJson: JSON.stringify(safeCards),
     };
     return {
       handled: true,
@@ -90,4 +92,3 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
 
   return null;
 }
-

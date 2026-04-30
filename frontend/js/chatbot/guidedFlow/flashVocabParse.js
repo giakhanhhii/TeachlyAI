@@ -1,4 +1,5 @@
 import { lookupEnToVi } from "./flashVocabLookup.js";
+import { MAX_FLASH_CARD_SIDE_CHARS, isFlashCardSideWithinLimit } from "../services/flashCardLimits.js";
 
 const EN_VOCAB_TOKEN_RE = /^(?=.*[A-Za-z])[A-Za-z0-9'()/-]+$/;
 
@@ -43,7 +44,7 @@ export function firstTokenIsEnglishAscii(front) {
 }
 
 /**
- * @typedef {"empty"|"comment"|"incomplete"|"invalid"|"skipped_en"|"bare_en_auto_off"|"auto_en"|"pending_api"|"ok"} FlashVocabLineKind
+ * @typedef {"empty"|"comment"|"incomplete"|"invalid"|"too_long"|"skipped_en"|"bare_en_auto_off"|"auto_en"|"pending_api"|"ok"} FlashVocabLineKind
  */
 
 /**
@@ -58,6 +59,7 @@ export function classifyFlashVocabLine(trimmed, apiBackByLine = {}, opts = {}) {
   if (trimmed.startsWith("#")) return "comment";
   const idx = trimmed.indexOf(":");
   if (idx < 0) {
+    if (!isFlashCardSideWithinLimit(trimmed)) return "too_long";
     const englishBare = isEnglishOnlyVocabLine(trimmed);
     if (!autoEn && englishBare) return "bare_en_auto_off";
     if (lookupEnToVi(trimmed)) return "auto_en";
@@ -69,6 +71,7 @@ export function classifyFlashVocabLine(trimmed, apiBackByLine = {}, opts = {}) {
   const front = trimmed.slice(0, idx).trim();
   const back = trimmed.slice(idx + 1).trim();
   if (!front || !back) return "invalid";
+  if (!isFlashCardSideWithinLimit(front) || !isFlashCardSideWithinLimit(back)) return "too_long";
   if (!firstTokenIsEnglishAscii(front)) return "skipped_en";
   return "ok";
 }
@@ -82,7 +85,7 @@ export function classifyFlashVocabLine(trimmed, apiBackByLine = {}, opts = {}) {
  */
 export function getFlashVocabEditorLineHighlight(trimmed, apiBackByLine = {}, opts = {}) {
   const kind = classifyFlashVocabLine(trimmed, apiBackByLine, opts);
-  if (kind === "invalid" || kind === "skipped_en" || kind === "incomplete" || kind === "bare_en_auto_off")
+  if (kind === "invalid" || kind === "too_long" || kind === "skipped_en" || kind === "incomplete" || kind === "bare_en_auto_off")
     return "reject";
   if (kind === "auto_en") return "auto";
   if (kind === "pending_api") return "pending";
@@ -93,7 +96,7 @@ export function getFlashVocabEditorLineHighlight(trimmed, apiBackByLine = {}, op
  * @param {string} raw
  * @param {Record<string, string>} [apiBackByLine]
  * @param {{ autoTranslateEnLines?: boolean }} [opts]
- * @returns {{ cards: { front: string, back: string }[], invalidLines: string[], skippedNonEnglish: number, pendingApiCount: number, skippedBareEnglishNoAuto: number }}
+ * @returns {{ cards: { front: string, back: string }[], invalidLines: string[], overLimitLines: string[], skippedNonEnglish: number, pendingApiCount: number, skippedBareEnglishNoAuto: number }}
  */
 export function parseDirectFlashVocabLines(raw, apiBackByLine = {}, opts = {}) {
   const text = String(raw ?? "");
@@ -102,6 +105,8 @@ export function parseDirectFlashVocabLines(raw, apiBackByLine = {}, opts = {}) {
   const cards = [];
   /** @type {string[]} */
   const invalidLines = [];
+  /** @type {string[]} */
+  const overLimitLines = [];
   let skippedNonEnglish = 0;
   let pendingApiCount = 0;
   let skippedBareEnglishNoAuto = 0;
@@ -138,11 +143,15 @@ export function parseDirectFlashVocabLines(raw, apiBackByLine = {}, opts = {}) {
       }
       continue;
     }
+    if (kind === "too_long") {
+      overLimitLines.push(trimmed);
+      continue;
+    }
     if (kind === "skipped_en") {
       skippedNonEnglish += 1;
       continue;
     }
     invalidLines.push(trimmed);
   }
-  return { cards, invalidLines, skippedNonEnglish, pendingApiCount, skippedBareEnglishNoAuto };
+  return { cards, invalidLines, overLimitLines, skippedNonEnglish, pendingApiCount, skippedBareEnglishNoAuto };
 }

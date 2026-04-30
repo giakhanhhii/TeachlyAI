@@ -1,6 +1,7 @@
 /**
  * Chuẩn hóa pool mock: xáo trộn, loại trùng theo khóa, cắt đúng số lượng phiên.
  */
+import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
 
 /**
  * @param {number} min
@@ -146,12 +147,14 @@ export function prepareFlashSessionData(data, meta) {
     try {
       const parsed = JSON.parse(directRaw);
       if (Array.isArray(parsed) && parsed.length) {
-        const direct = parsed
+        const direct = filterFlashCardsWithinLimit(
+          parsed
           .map((c) => ({
             front: String(c?.front ?? "").trim(),
             back: String(c?.back ?? "").trim(),
           }))
-          .filter((c) => c.front && c.back);
+          .filter((c) => c.front && c.back),
+        );
         if (direct.length) {
           const want = parseCountInRange(meta?.count, 1, 500, direct.length);
           return {
@@ -167,7 +170,7 @@ export function prepareFlashSessionData(data, meta) {
   }
 
   const want = parseCountInRange(meta?.count, 1, 500, 20);
-  const pool = Array.isArray(data?.cards) ? data.cards : [];
+  const pool = filterFlashCardsWithinLimit(Array.isArray(data?.cards) ? data.cards : []);
   const cards = pickUniqueShuffled(pool, flashDedupeKey, want);
   return { ...data, cards };
 }
