@@ -483,6 +483,12 @@ function injectShellPreviewFit(doc) {
       gap: 28px !important;
       padding-bottom: 24px !important;
     }
+    #slides-master-container[data-nav-mode="active"] {
+      min-height: 100vh !important;
+      justify-content: center !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
     /* Trình chiếu: một slide (themes comic / color không có sẵn rule .active) */
     #slides-master-container[data-nav-mode="active"] .shell-slide-instance:not(.active) {
       display: none !important;
@@ -746,6 +752,53 @@ function injectShellPreviewFit(doc) {
       min-height: auto !important;
       max-height: none !important;
       height: auto !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card.centered-pack {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: calc(100% - 28px) !important;
+      margin-top: auto !important;
+      margin-bottom: auto !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card.centered-pack .slide-title {
+      margin-bottom: 24px !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card.centered-pack .content-area {
+      flex: 0 1 auto !important;
+      justify-content: center !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.doughnut-chart-container),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.tiled-content),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.styled-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.mini-grid),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.strategy-table),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.process-steps),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.flashcard-row),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.question-box),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.formula-strip),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.dos-donts),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.quote-block),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.score-bars),
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.radar-grid) {
+      justify-content: center !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.doughnut-chart-container) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.tiled-content) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.styled-list) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.mini-grid) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.strategy-table) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.process-steps) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.flashcard-row) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.question-box) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.formula-strip) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.dos-donts) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.quote-block) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.score-bars) .content-area,
+    .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.radar-grid) .content-area {
+      flex: 0 1 auto !important;
     }
     .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-sizer,
     .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-outer,
@@ -1469,15 +1522,37 @@ function setSlideShellDocumentViewportMode(doc, mode) {
   const master = doc.querySelector("#slides-master-container");
   [root, body, master].forEach((node) => {
     if (!node) return;
-    if (mode === "active") {
-      node.style.overflowX = "hidden";
-      node.style.overflowY = "hidden";
-    } else {
-      node.style.removeProperty("overflow");
+      if (mode === "active") {
+        node.style.overflowX = "hidden";
+        node.style.overflowY = "hidden";
+      } else {
+        node.style.removeProperty("overflow");
       node.style.removeProperty("overflow-x");
-      node.style.removeProperty("overflow-y");
+        node.style.removeProperty("overflow-y");
+      }
+    });
+  if (body) {
+    if (mode === "active") {
+      body.style.minHeight = "100vh";
+      body.style.justifyContent = "center";
+    } else {
+      body.style.removeProperty("min-height");
+      body.style.removeProperty("justify-content");
     }
-  });
+  }
+  if (master instanceof HTMLElement) {
+    if (mode === "active") {
+      master.style.minHeight = "100vh";
+      master.style.justifyContent = "center";
+      master.style.paddingTop = "0";
+      master.style.paddingBottom = "0";
+    } else {
+      master.style.removeProperty("min-height");
+      master.style.removeProperty("justify-content");
+      master.style.removeProperty("padding-top");
+      master.style.removeProperty("padding-bottom");
+    }
+  }
 }
 
 /**
