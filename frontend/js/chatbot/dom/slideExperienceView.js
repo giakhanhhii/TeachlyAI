@@ -73,7 +73,7 @@ function serializeSlideExportDocument(doc) {
   if (master) {
     master.setAttribute("data-nav-mode", "scroll");
   }
-  exportDoc.querySelectorAll(".shell-slide-instance").forEach((node) => node.classList.remove("active"));
+  exportDoc.querySelectorAll(".shell-slide-instance").forEach((node) => node.classList.add("active"));
   return `<!DOCTYPE html>\n${exportDoc.documentElement.outerHTML}`;
 }
 
