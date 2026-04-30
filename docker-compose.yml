@@ -4,7 +4,7 @@ services:
       context: .
       target: dev
     container_name: teachly-app-dev
-    command: uvicorn src.api_server:app --host 0.0.0.0 --port 8000
+    command: uvicorn src.api_server:app --host 0.0.0.0 --port 8000 --reload
     env_file:
       - .env
     ports:
@@ -15,6 +15,7 @@ services:
       - ./src:/app/src
       - ./frontend:/app/frontend
       - ./backend:/app/backend
+      - ./scripts:/app/scripts
       - teachly_data:/app/data
       - teachly_output:/app/output
     restart: unless-stopped
