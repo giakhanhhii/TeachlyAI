@@ -15,24 +15,6 @@ import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } fro
 import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
 
 /**
- * @param {Record<string, string>} meta
- * @param {number} sIndex
- * @param {{ title: string, bullets?: string[] }} slide
- */
-function buildAiDraftSlide(meta, sIndex, slide) {
-  const topic = meta.topic || "—";
-  const count = meta.count || "—";
-  const notes = meta.notes || "—";
-  const bullets = (slide.bullets || []).map((b) => `• ${b}`).join("\n");
-  return (
-    `[Sửa slide — nhờ AI]\n` +
-    `Ngữ cảnh — Chủ đề: ${topic}; Số slide (yêu cầu): ${count}; Ghi chú: ${notes}\n` +
-    `Slide hiện tại (${sIndex + 1}) — Tiêu đề: ${slide.title}\n${bullets}\n\n` +
-    `Hãy đề xuất lại tiêu đề và gạch đầu dòng rõ ràng hơn cho học sinh ôn THPT. Trả về JSON: {"title":"...","bullets":["..."]}.`
-  );
-}
-
-/**
  * @param {HTMLElement} stage
  * @param {{ title: string, bullets?: string[] }[]} slides
  */
@@ -136,12 +118,6 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     },
     { once: true },
   );
-
-  const onAi = () => {
-    const s = slides[index];
-    if (!s || !deps?.onAiEdit) return;
-    deps.onAiEdit(buildAiDraftSlide(meta, index, s));
-  };
 
   let visualEditOn = false;
   let exportInFlight = false;
