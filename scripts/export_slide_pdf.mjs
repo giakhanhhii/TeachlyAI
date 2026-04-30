@@ -110,6 +110,15 @@ try {
         break-after: avoid !important;
         page-break-after: auto !important;
       }
+      #slides-master-container[data-nav-mode="scroll"],
+      #slides-master-container[data-nav-mode="active"] {
+        margin: 0 !important;
+        padding: 0 !important;
+        padding-bottom: 0 !important;
+        gap: 0 !important;
+        min-height: 0 !important;
+        justify-content: flex-start !important;
+      }
       .shell-slide-instance {
         display: flex !important;
         position: relative !important;
