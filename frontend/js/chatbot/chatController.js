@@ -405,9 +405,10 @@ export function init() {
       title.textContent = `Bạn muốn tiếp tục tạo ${kindLabel} cùng 1 chủ đề?`;
 
       const body = document.createElement("div");
+      body.className = "continue-create-body";
       if (context?.topic) {
         const prompt = document.createElement("p");
-        prompt.className = "flow-hint";
+        prompt.className = "flow-hint continue-create-topic";
         prompt.textContent = `Chủ đề hiện tại: ${context.topic}`;
         body.appendChild(prompt);
       }

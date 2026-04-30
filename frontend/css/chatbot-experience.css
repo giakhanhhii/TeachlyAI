@@ -390,14 +390,41 @@
   border-radius: 14px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
-  padding: 18px 18px 16px;
+  padding: 18px 18px 14px;
 }
 
 .continue-create-title {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: 17px;
   line-height: 1.35;
   color: #1e293b;
+}
+
+.continue-create-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.continue-create-body .flow-field {
+  margin-bottom: 0;
+}
+
+.continue-create-topic {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.continue-create-body .flow-label {
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.continue-create-body .flow-input {
+  height: 44px;
 }
 
 .continue-create-actions {
@@ -405,6 +432,7 @@
   gap: 10px;
   justify-content: flex-end;
   flex-wrap: wrap;
+  padding-top: 2px;
 }
 
 .continue-create-btn {
