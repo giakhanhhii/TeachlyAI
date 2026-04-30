@@ -6,6 +6,10 @@ export function createStartupHubElement(onPick) {
   const handlePick = typeof onPick === "function" ? onPick : null;
   const wrap = document.createElement("div");
   wrap.className = "chat-startup-hub";
+  const svgIdPrefix =
+    globalThis.crypto && typeof globalThis.crypto.randomUUID === "function"
+      ? `startup-${globalThis.crypto.randomUUID()}`
+      : `startup-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   wrap.innerHTML = `
   <div class="forest-page forest-page--embedded">
     <svg class="trees-bg" viewBox="0 0 900 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:120px;" aria-hidden="true">
@@ -26,21 +30,21 @@ export function createStartupHubElement(onPick) {
       <button type="button" class="card" data-flow="flashcard" aria-label="Tạo flashcard">
         <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <linearGradient id="startupForestGrad4" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="${svgIdPrefix}-forest-grad-4" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#fff9c4" />
               <stop offset="35%" stop-color="#aed581" />
               <stop offset="100%" stop-color="#2e7d32" />
             </linearGradient>
-            <linearGradient id="startupFrameSky" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="${svgIdPrefix}-frame-sky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#b3e5fc" />
               <stop offset="100%" stop-color="#81c784" />
             </linearGradient>
           </defs>
-          <rect width="200" height="116" fill="url(#startupForestGrad4)" />
+          <rect width="200" height="116" fill="url(#${svgIdPrefix}-forest-grad-4)" />
           <polygon points="0,116 35,72 68,116" fill="#1b5e20" opacity="0.25" />
           <polygon points="140,116 170,68 200,116" fill="#1b5e20" opacity="0.28" />
           <rect x="54" y="18" width="92" height="82" rx="10" fill="#5d4037" />
-          <rect x="58" y="22" width="84" height="70" rx="6" fill="url(#startupFrameSky)" stroke="#33691e" stroke-width="1" />
+          <rect x="58" y="22" width="84" height="70" rx="6" fill="url(#${svgIdPrefix}-frame-sky)" stroke="#33691e" stroke-width="1" />
           <polygon points="58,88 78,58 98,88" fill="#388e3c" />
           <polygon points="88,92 110,52 132,92" fill="#2e7d32" />
           <polygon points="118,90 138,62 158,90" fill="#43a047" />
@@ -64,13 +68,13 @@ export function createStartupHubElement(onPick) {
       <button type="button" class="card" data-flow="quiz" aria-label="Tạo quiz">
         <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <linearGradient id="startupForestGrad3" x1="0" y1="0" x2="1" y2="1">
+            <linearGradient id="${svgIdPrefix}-forest-grad-3" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#33691e" />
               <stop offset="50%" stop-color="#2e7d32" />
               <stop offset="100%" stop-color="#1b5e20" />
             </linearGradient>
           </defs>
-          <rect width="200" height="116" fill="url(#startupForestGrad3)" />
+          <rect width="200" height="116" fill="url(#${svgIdPrefix}-forest-grad-3)" />
           <ellipse cx="100" cy="128" rx="95" ry="48" fill="#1b5e20" opacity="0.5" />
           <rect x="44" y="22" width="112" height="78" rx="8" fill="#f1f8e9" stroke="#558b2f" stroke-width="2" />
           <text x="100" y="44" font-size="13" font-weight="800" text-anchor="middle" fill="#33691e" font-family="Nunito, sans-serif">?</text>
@@ -96,13 +100,13 @@ export function createStartupHubElement(onPick) {
       <button type="button" class="card" data-flow="slide" aria-label="Tạo slide">
         <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <linearGradient id="startupForestGrad2" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="${svgIdPrefix}-forest-grad-2" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#a5d6a7" />
               <stop offset="55%" stop-color="#388e3c" />
               <stop offset="100%" stop-color="#1b5e20" />
             </linearGradient>
           </defs>
-          <rect width="200" height="116" fill="url(#startupForestGrad2)" />
+          <rect width="200" height="116" fill="url(#${svgIdPrefix}-forest-grad-2)" />
           <polygon points="0,116 28,62 52,116" fill="#0d3b0d" opacity="0.35" />
           <polygon points="168,116 188,58 200,116" fill="#0d3b0d" opacity="0.4" />
           <rect x="58" y="34" width="84" height="56" rx="6" fill="#e8f5e9" opacity="0.45" transform="rotate(-4 100 62)" />
@@ -122,12 +126,12 @@ export function createStartupHubElement(onPick) {
       <button type="button" class="card" data-flow="fullset" aria-label="Tạo Full Set">
         <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <linearGradient id="startupForestGrad1" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="${svgIdPrefix}-forest-grad-1" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#1a237e" />
               <stop offset="100%" stop-color="#1b5e20" />
             </linearGradient>
           </defs>
-          <rect width="200" height="116" fill="url(#startupForestGrad1)" />
+          <rect width="200" height="116" fill="url(#${svgIdPrefix}-forest-grad-1)" />
           <circle cx="155" cy="30" r="18" fill="#fff9c4" opacity="0.9" />
           <circle cx="163" cy="25" r="13" fill="#1a237e" />
           <polygon points="0,116 20,70 40,116" fill="#0d3b0d" />
