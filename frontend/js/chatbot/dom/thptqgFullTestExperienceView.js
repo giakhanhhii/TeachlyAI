@@ -208,6 +208,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   let elapsedBaseTick = Date.now();
   let timerValueEl = null;
   let pendingScrollQuestionId = "";
+  let pendingRestartTestId = "";
   const historyAbort = new AbortController();
   let timer = 0;
   let removalObserver = null;
@@ -480,6 +481,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       const limitSeconds = Number(configuredDurationMinutes) * 60;
       if (getCurrentElapsedSeconds() >= limitSeconds) {
         elapsedSeconds = limitSeconds;
+        elapsedBaseSeconds = limitSeconds;
+        elapsedBaseTick = Date.now();
         submittedAt = new Date().toISOString();
         reviewMode = true;
         view = "result";
@@ -614,6 +617,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     writeHistory(historyMode);
   }
 
+  function queueRestartAttempt(test) {
+    pendingRestartTestId = test && test.status === "available" ? String(test.id || "") : "";
+  }
+
   function resetAttemptProgress(test) {
     if (!test || test.status !== "available") return;
     selectedTestId = test.id;
@@ -635,6 +642,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
+    if (pendingRestartTestId && pendingRestartTestId === String(test.id || "")) {
+      resetAttemptProgress(test);
+      pendingRestartTestId = "";
+    }
     selectedTestId = test.id;
     ensureSelectedPartsForTest(test);
     resetDetailCardCache();
@@ -659,7 +670,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function restartTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     if (!window.confirm("Làm lại đề này từ đầu? Các đáp án và đánh dấu hiện tại sẽ bị xóa.")) return;
-    resetAttemptProgress(test);
+    queueRestartAttempt(test);
     openTestConfig(test, historyMode);
   }
 
@@ -679,7 +690,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const nextPartId = String(part?.id || "");
     if (!nextPartId) return;
     const firstQuestionNumber = Number(part?.questionStart || 0);
-    const firstQuestion = getConfiguredQuestions(test).find((question) => Number(question?.number) === firstQuestionNumber);
+    const configuredQuestions = getConfiguredQuestions(test);
+    const firstQuestion =
+      configuredQuestions.find((question) => Number(question?.number) === firstQuestionNumber)
+      || configuredQuestions.find((question) => String(question?.partId || "") === nextPartId)
+      || null;
     currentPartId = nextPartId;
     if (firstQuestion?.id) {
       currentQuestion = String(firstQuestion.id);
@@ -1178,7 +1193,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       writeHistory("replace");
     }));
     actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => {
-      resetAttemptProgress(test);
+      queueRestartAttempt(test);
       openTestConfig(test, "replace");
     }));
     stage.appendChild(actionRow);

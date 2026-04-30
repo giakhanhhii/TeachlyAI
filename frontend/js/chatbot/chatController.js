@@ -411,6 +411,10 @@ export function init() {
         prompt.textContent = `Chủ đề hiện tại: ${context.topic}`;
         body.appendChild(prompt);
       }
+      const error = document.createElement("p");
+      error.className = "flow-err";
+      error.style.display = "none";
+      body.appendChild(error);
 
       /** @type {Record<string, HTMLInputElement>} */
       const inputs = {};
@@ -481,6 +485,7 @@ export function init() {
       document.addEventListener("keydown", onKeyDown, { signal: keydownAbort.signal });
       cancelBtn.addEventListener("click", () => close(null));
       confirmBtn.addEventListener("click", () => {
+        error.style.display = "none";
         /** @type {Record<string, string>} */
         const payload = {};
         const keys = Object.keys(inputs);
@@ -489,6 +494,8 @@ export function init() {
           const raw = inputs[key].value.trim();
           const n = Number(raw);
           if (!raw || !Number.isFinite(n) || n < 1) {
+            error.textContent = "Vui lòng nhập số hợp lệ lớn hơn hoặc bằng 1.";
+            error.style.display = "block";
             inputs[key].focus();
             return;
           }
