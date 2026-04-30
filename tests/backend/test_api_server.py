@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from types import SimpleNamespace
 from pathlib import Path
 
 import pytest
@@ -129,3 +130,54 @@ def test_session_messages_returns_role_mapping_and_pagination(client_with_temp_d
             "created_at": payload["messages"][0]["created_at"],
         }
     ]
+
+
+def test_export_slide_pdf_returns_file_response(client_with_temp_db, tmp_path: Path):
+    client, _, monkeypatch = client_with_temp_db
+
+    def fake_run(cmd, cwd, capture_output, text, timeout, check):
+        del cmd, cwd, capture_output, text, timeout, check
+        output_path = Path(fake_run.output_path)
+        output_path.write_bytes(b"%PDF-1.4 mock pdf")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    fake_run.output_path = ""
+
+    original_mkdtemp = api_server.tempfile.mkdtemp
+
+    def fake_mkdtemp(prefix: str):
+        return original_mkdtemp(prefix=prefix, dir=tmp_path)
+
+    def run_with_output_path(cmd, cwd, capture_output, text, timeout, check):
+        fake_run.output_path = cmd[-1]
+        return fake_run(cmd, cwd, capture_output, text, timeout, check)
+
+    monkeypatch.setattr(api_server.tempfile, "mkdtemp", fake_mkdtemp)
+    monkeypatch.setattr(api_server.subprocess, "run", run_with_output_path)
+
+    response = client.post(
+        "/api/slides/export-pdf",
+        json={"title": "Bo slide 2026", "srcdoc": "<!DOCTYPE html><html><body>deck</body></html>"},
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert response.content.startswith(b"%PDF-1.4")
+
+
+def test_export_slide_pdf_surfaces_script_failure(client_with_temp_db):
+    client, _, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(
+        api_server.subprocess,
+        "run",
+        lambda *args, **kwargs: SimpleNamespace(returncode=1, stdout="", stderr="render failed"),
+    )
+
+    response = client.post(
+        "/api/slides/export-pdf",
+        json={"title": "Bo slide 2026", "srcdoc": "<!DOCTYPE html><html><body>deck</body></html>"},
+    )
+
+    assert response.status_code == 500
+    assert response.json()["detail"] == "render failed"
