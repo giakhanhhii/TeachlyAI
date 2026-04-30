@@ -471,18 +471,10 @@ export function init() {
       overlay.appendChild(dialog);
       document.body.appendChild(overlay);
 
-      const keydownAbort = new AbortController();
-
       const close = (result) => {
-        keydownAbort.abort();
         overlay.remove();
         resolve(result);
       };
-
-      const onKeyDown = (e) => {
-        if (e.key === "Escape") close(null);
-      };
-      document.addEventListener("keydown", onKeyDown, { signal: keydownAbort.signal });
       cancelBtn.addEventListener("click", () => close(null));
       confirmBtn.addEventListener("click", () => {
         error.style.display = "none";
@@ -502,9 +494,6 @@ export function init() {
           payload[key] = String(Math.floor(n));
         }
         close(payload);
-      });
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) close(null);
       });
     });
   }

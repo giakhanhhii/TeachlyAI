@@ -691,9 +691,14 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (!nextPartId) return;
     const firstQuestionNumber = Number(part?.questionStart || 0);
     const configuredQuestions = getConfiguredQuestions(test);
+    const partQuestions = configuredQuestions
+      .filter((question) => String(question?.partId || "") === nextPartId)
+      .sort((a, b) => Number(a?.number || 0) - Number(b?.number || 0));
     const firstQuestion =
-      configuredQuestions.find((question) => Number(question?.number) === firstQuestionNumber)
-      || configuredQuestions.find((question) => String(question?.partId || "") === nextPartId)
+      (firstQuestionNumber > 0
+        ? configuredQuestions.find((question) => Number(question?.number) === firstQuestionNumber)
+        : null)
+      || partQuestions[0]
       || null;
     currentPartId = nextPartId;
     if (firstQuestion?.id) {
@@ -1192,10 +1197,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       emitState();
       writeHistory("replace");
     }));
-    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => {
-      queueRestartAttempt(test);
-      openTestConfig(test, "replace");
-    }));
+    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => restartTest(test, "replace")));
     stage.appendChild(actionRow);
 
     const scoreRow = document.createElement("div");
