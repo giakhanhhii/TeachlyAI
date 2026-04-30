@@ -614,6 +614,25 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     writeHistory(historyMode);
   }
 
+  function resetAttemptProgress(test) {
+    if (!test || test.status !== "available") return;
+    selectedTestId = test.id;
+    answersByQuestion = {};
+    flaggedQuestions = new Set();
+    startedAt = "";
+    elapsedSeconds = 0;
+    elapsedBaseSeconds = 0;
+    elapsedBaseTick = Date.now();
+    submittedAt = "";
+    reviewMode = false;
+    activeResultPartId = "overview";
+    resultReviewFilter = "all";
+    detailQuestionId = "";
+    ensureSelectedPartsForTest(test);
+    ensureSelectionForTest(test);
+    resetDetailCardCache();
+  }
+
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     selectedTestId = test.id;
@@ -640,19 +659,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function restartTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     if (!window.confirm("Làm lại đề này từ đầu? Các đáp án và đánh dấu hiện tại sẽ bị xóa.")) return;
-    selectedTestId = test.id;
-    answersByQuestion = {};
-    flaggedQuestions = new Set();
-    startedAt = "";
-    elapsedSeconds = 0;
-    elapsedBaseSeconds = 0;
-    elapsedBaseTick = Date.now();
-    submittedAt = "";
-    reviewMode = false;
-    activeResultPartId = "overview";
-    resultReviewFilter = "all";
-    detailQuestionId = "";
-    startOrResumeTest(test, historyMode);
+    resetAttemptProgress(test);
+    openTestConfig(test, historyMode);
   }
 
   function jumpToQuestion(test, questionId) {
@@ -1169,7 +1177,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       emitState();
       writeHistory("replace");
     }));
-    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => openTestConfig(test, "replace")));
+    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => {
+      resetAttemptProgress(test);
+      openTestConfig(test, "replace");
+    }));
     stage.appendChild(actionRow);
 
     const scoreRow = document.createElement("div");
