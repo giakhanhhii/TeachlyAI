@@ -146,12 +146,19 @@ export function setupChatEventManager(deps) {
   } = deps;
 
   const sidebar = document.getElementById("sidebar");
+  let sidebarMissingWarned = false;
   /**
    * @param {"add"|"remove"|"toggle"} method
    * @param {string} className
    */
   function updateSidebarClass(method, className) {
-    if (!(sidebar instanceof HTMLElement)) return false;
+    if (!(sidebar instanceof HTMLElement)) {
+      if (!sidebarMissingWarned) {
+        console.warn("[chat] sidebar element not found; skip sidebar class updates.");
+        sidebarMissingWarned = true;
+      }
+      return false;
+    }
     sidebar.classList[method](className);
     return true;
   }
