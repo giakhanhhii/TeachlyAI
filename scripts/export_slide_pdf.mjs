@@ -69,7 +69,7 @@ try {
     if (master) {
       master.setAttribute("data-nav-mode", "scroll");
     }
-    document.querySelectorAll(".shell-slide-instance").forEach((node) => node.classList.remove("active"));
+    document.querySelectorAll(".shell-slide-instance").forEach((node) => node.classList.add("active"));
 
     const style = document.createElement("style");
     style.setAttribute("data-slide-pdf-export", "1");
@@ -90,6 +90,16 @@ try {
         display: block !important;
         min-height: auto !important;
       }
+      #presentation-area {
+        position: static !important;
+        width: 1280px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        transform: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
       #slides-master-container {
         display: block !important;
         width: 1280px !important;
@@ -99,6 +109,14 @@ try {
         overflow: visible !important;
       }
       .shell-slide-instance {
+        display: flex !important;
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        opacity: 1 !important;
+        visibility: visible !important;
         width: 1280px !important;
         min-width: 1280px !important;
         max-width: 1280px !important;
