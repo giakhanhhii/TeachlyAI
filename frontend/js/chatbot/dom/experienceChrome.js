@@ -5,9 +5,10 @@
 const BOOK_SVG = `<svg class="exp-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
 
 const AI_SVG = `<svg class="exp-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2l1.09 3.26L16 6.18l-2.91 1.82L12 11l-1.09-3L8 6.18l2.91-1.82L12 2z"/><path d="M5 14l.84 2.53L8 17.3l-2.16 1.35L5 21l-.84-2.35L2 17.3l2.16-1.35L5 14z"/><path d="M19 14l.84 2.53L22 17.3l-2.16 1.35L19 21l-.84-2.35L16 17.3l2.16-1.35L19 14z"/></svg>`;
+const DOWNLOAD_SVG = `<svg class="exp-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>`;
 
 /**
- * @param {{ title: string, onAiEdit?: () => void }} p
+ * @param {{ title: string, onAiEdit?: () => void, actionButton?: { label: string, title?: string, ariaLabel?: string, onClick?: () => void, icon?: "ai"|"download", className?: string } }} p
  * @returns {{ bar: HTMLDivElement }}
  */
 export function createExperienceTopBar(p) {
@@ -22,15 +23,22 @@ export function createExperienceTopBar(p) {
   const right = document.createElement("div");
   right.className = "exp-topbar-right";
 
-  if (p.onAiEdit) {
-    const aiBtn = document.createElement("button");
-    aiBtn.type = "button";
-    aiBtn.className = "exp-ai-btn";
-    aiBtn.title = "Nhờ AI chỉnh sửa nội dung";
-    aiBtn.setAttribute("aria-label", "Nhờ AI chỉnh sửa nội dung");
-    aiBtn.innerHTML = `${AI_SVG}<span> AI sửa</span>`;
-    aiBtn.addEventListener("click", () => p.onAiEdit?.());
-    right.appendChild(aiBtn);
+  if (p.actionButton || p.onAiEdit) {
+    const cfg = p.actionButton || {
+      label: "AI sửa",
+      title: "Nhờ AI chỉnh sửa nội dung",
+      ariaLabel: "Nhờ AI chỉnh sửa nội dung",
+      onClick: p.onAiEdit,
+      icon: "ai",
+    };
+    const actionBtn = document.createElement("button");
+    actionBtn.type = "button";
+    actionBtn.className = cfg.className || "exp-ai-btn";
+    actionBtn.title = cfg.title || cfg.label;
+    actionBtn.setAttribute("aria-label", cfg.ariaLabel || cfg.label);
+    actionBtn.innerHTML = `${cfg.icon === "download" ? DOWNLOAD_SVG : AI_SVG}<span> ${cfg.label}</span>`;
+    actionBtn.addEventListener("click", () => cfg.onClick?.());
+    right.appendChild(actionBtn);
   }
 
   const share = document.createElement("button");
