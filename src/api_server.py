@@ -13,14 +13,19 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 from anthropic import Anthropic
 from openai import OpenAI
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from starlette.background import BackgroundTask
 
 from .config import (
     ANTHROPIC_API_KEY,
@@ -110,6 +115,11 @@ class FlashTranslateBatchIn(BaseModel):
 
 class FlashTranslateBatchOut(BaseModel):
     translations: dict[str, str]
+
+
+class SlideExportIn(BaseModel):
+    title: str = Field(default="teachly-slides", max_length=240)
+    srcdoc: str = Field(..., min_length=1, max_length=2_000_000)
 
 
 def _flash_translate_config_ok() -> bool:
@@ -224,6 +234,18 @@ def _cors_allow_origins() -> list[str]:
     return out
 
 
+def _safe_export_filename(title: str, suffix: str) -> str:
+    stem = re.sub(r"[^\w\- ]+", "", (title or "").strip(), flags=re.UNICODE).strip()
+    stem = re.sub(r"\s+", " ", stem).strip().replace(" ", "-")
+    if not stem:
+        stem = "teachly-slides"
+    return f"{stem}{suffix}"
+
+
+def _cleanup_export_dir(path: Path) -> None:
+    shutil.rmtree(path, ignore_errors=True)
+
+
 app = FastAPI(title="Teachly Local", version="0.1.0")
 db = DatabaseManager(REPO_ROOT / "data" / "teachly.sqlite3")
 
@@ -319,6 +341,72 @@ def mock_bundle(name: str):
     except json.JSONDecodeError as e:
         logger.exception("Invalid mock JSON: %s", path)
         raise HTTPException(status_code=500, detail=f"Invalid JSON: {e}") from e
+
+
+@app.post("/api/slides/export-pdf")
+def export_slide_pdf(body: SlideExportIn):
+    srcdoc = body.srcdoc.strip()
+    if not srcdoc:
+        raise HTTPException(status_code=400, detail="Nội dung slide để export đang trống.")
+
+    title = body.title.strip() or "teachly-slides"
+    file_name = _safe_export_filename(title, ".pdf")
+    temp_dir = Path(tempfile.mkdtemp(prefix="teachly-slide-pdf-"))
+    payload_path = temp_dir / "payload.json"
+    output_path = temp_dir / file_name
+    script_path = REPO_ROOT / "scripts" / "export_slide_pdf.mjs"
+
+    try:
+        payload_path.write_text(
+            json.dumps({"title": title, "srcdoc": srcdoc}, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        result = subprocess.run(
+            ["node", str(script_path), str(payload_path), str(output_path)],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+    except FileNotFoundError as exc:
+        _cleanup_export_dir(temp_dir)
+        raise HTTPException(
+            status_code=503,
+            detail="Không tìm thấy Node.js để tạo PDF slide.",
+        ) from exc
+    except subprocess.TimeoutExpired as exc:
+        _cleanup_export_dir(temp_dir)
+        raise HTTPException(
+            status_code=504,
+            detail="Tạo PDF slide quá lâu, vui lòng thử lại với bộ slide nhỏ hơn.",
+        ) from exc
+    except Exception as exc:
+        _cleanup_export_dir(temp_dir)
+        logger.exception("Unexpected slide PDF export failure")
+        raise HTTPException(status_code=500, detail="Không thể khởi chạy export PDF slide.") from exc
+
+    if result.returncode != 0 or not output_path.is_file():
+        stderr = (result.stderr or "").strip()
+        stdout = (result.stdout or "").strip()
+        logger.error(
+            "Slide PDF export failed (code=%s)\nstdout=%s\nstderr=%s",
+            result.returncode,
+            stdout[:2000],
+            stderr[:2000],
+        )
+        _cleanup_export_dir(temp_dir)
+        raise HTTPException(
+            status_code=500,
+            detail=stderr or stdout or "Không thể tạo PDF từ bộ slide hiện tại.",
+        )
+
+    return FileResponse(
+        path=output_path,
+        media_type="application/pdf",
+        filename=file_name,
+        background=BackgroundTask(_cleanup_export_dir, temp_dir),
+    )
 
 
 @app.post("/api/chat", response_model=ChatOut)
