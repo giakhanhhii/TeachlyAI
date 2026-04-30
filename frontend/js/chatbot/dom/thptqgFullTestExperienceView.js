@@ -14,6 +14,11 @@ function formatMinutes(minutes) {
   return `${safe} phút`;
 }
 
+function toValidMinutes(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric >= 0 ? Math.floor(numeric) : null;
+}
+
 function formatElapsed(seconds) {
   const safe = Number.isFinite(Number(seconds)) ? Math.max(0, Math.floor(Number(seconds))) : 0;
   const hh = String(Math.floor(safe / 3600)).padStart(2, "0");
@@ -184,10 +189,12 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   const bundle = normalizeCatalog(await fetchMockResource("thptqg_fulltest"));
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : {};
 
-  let view = initial?.view === "attempt" || initial?.view === "result" ? initial.view : "catalog";
+  let view = initial?.view === "config" || initial?.view === "attempt" || initial?.view === "result" ? initial.view : "catalog";
   let selectedTestId = typeof initial?.testId === "string" ? initial.testId : "";
   let answersByQuestion = cloneRecord(initial?.answersByQuestion);
   let flaggedQuestions = new Set(Array.isArray(initial?.flaggedQuestions) ? initial.flaggedQuestions.map(String) : []);
+  let selectedPartIds = Array.isArray(initial?.selectedPartIds) ? initial.selectedPartIds.map(String) : [];
+  let configuredDurationMinutes = toValidMinutes(initial?.configuredDurationMinutes);
   let currentPartId = typeof initial?.currentPartId === "string" ? initial.currentPartId : "";
   let currentQuestion = typeof initial?.currentQuestion === "string" ? initial.currentQuestion : "";
   let startedAt = typeof initial?.startedAt === "string" ? initial.startedAt : "";
@@ -220,6 +227,38 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function getActiveTest() {
     return bundle.tests.find((test) => test.id === selectedTestId) || null;
+  }
+
+  function getSelectedPartIdsForTest(test) {
+    const availableIds = (Array.isArray(test?.parts) ? test.parts : []).map((part) => String(part?.id || "")).filter(Boolean);
+    const nextSelected = selectedPartIds.filter((partId) => availableIds.includes(partId));
+    if (nextSelected.length) return nextSelected;
+    return availableIds;
+  }
+
+  function ensureSelectedPartsForTest(test) {
+    selectedPartIds = getSelectedPartIdsForTest(test);
+  }
+
+  function getConfiguredParts(test) {
+    const selectedIds = getSelectedPartIdsForTest(test);
+    return (Array.isArray(test?.parts) ? test.parts : []).filter((part) => selectedIds.includes(String(part?.id || "")));
+  }
+
+  function getConfiguredQuestions(test) {
+    const selectedIds = new Set(getSelectedPartIdsForTest(test));
+    return (Array.isArray(test?.questions) ? test.questions : []).filter((question) => selectedIds.has(String(question?.partId || "")));
+  }
+
+  function getConfiguredTest(test) {
+    if (!test) return null;
+    const questions = getConfiguredQuestions(test);
+    return {
+      ...test,
+      parts: getConfiguredParts(test),
+      questions,
+      questionCount: questions.length,
+    };
   }
 
   function getQuestionMap(test) {
@@ -370,11 +409,12 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function ensureSelectionForTest(test) {
     if (!test) return;
-    const parts = Array.isArray(test.parts) ? test.parts : [];
+    ensureSelectedPartsForTest(test);
+    const parts = getConfiguredParts(test);
     if (!currentPartId || !parts.some((part) => String(part?.id || "") === currentPartId)) {
       currentPartId = String(parts[0]?.id || "");
     }
-    const questions = Array.isArray(test.questions) ? test.questions : [];
+    const questions = getConfiguredQuestions(test);
     if (!currentQuestion || !questions.some((question) => String(question?.id || "") === currentQuestion)) {
       currentQuestion = String(questions[0]?.id || "");
     }
@@ -384,7 +424,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (typeof opts.onStateChange !== "function") return;
     const activeTest = getActiveTest();
     ensureSelectionForTest(activeTest);
-    const questions = Array.isArray(activeTest?.questions) ? activeTest.questions : [];
+    const questions = Array.isArray(activeTest?.questions) ? getConfiguredQuestions(activeTest) : [];
     const questionIndex = questions.findIndex((question) => String(question?.id || "") === currentQuestion);
     opts.onStateChange({
       kind: "thptqg_fulltest",
@@ -393,12 +433,14 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         ...(activeTest ? { testId: activeTest.id, testTitle: activeTest.title } : {}),
       },
       title: activeTest?.title || meta.catalogTitle || bundle.catalog.title,
-      total: activeTest?.questionCount || bundle.tests.length || 1,
+      total: activeTest ? getConfiguredQuestions(activeTest).length || 1 : bundle.tests.length || 1,
       index: questionIndex >= 0 ? questionIndex : 0,
       view,
       testId: selectedTestId,
       answersByQuestion: { ...answersByQuestion },
       flaggedQuestions: [...flaggedQuestions],
+      selectedPartIds: [...selectedPartIds],
+      configuredDurationMinutes,
       currentPartId,
       currentQuestion,
       startedAt,
@@ -413,7 +455,13 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function updateTimer() {
     if (!timerValueEl) return;
-    timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
+    const currentElapsed = getCurrentElapsedSeconds();
+    if (view === "attempt" && !submittedAt && Number.isFinite(Number(configuredDurationMinutes)) && Number(configuredDurationMinutes) > 0) {
+      const remainingSeconds = Math.max(0, Number(configuredDurationMinutes) * 60 - currentElapsed);
+      timerValueEl.textContent = formatElapsed(remainingSeconds);
+      return;
+    }
+    timerValueEl.textContent = formatElapsed(currentElapsed);
   }
 
   function clearTimerSchedule() {
@@ -428,6 +476,21 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (disposed) return;
     updateTimer();
     if (!startedAt || submittedAt || view !== "attempt") return;
+    if (Number.isFinite(Number(configuredDurationMinutes)) && Number(configuredDurationMinutes) > 0) {
+      const limitSeconds = Number(configuredDurationMinutes) * 60;
+      if (getCurrentElapsedSeconds() >= limitSeconds) {
+        elapsedSeconds = limitSeconds;
+        submittedAt = new Date().toISOString();
+        reviewMode = true;
+        view = "result";
+        activeResultPartId = "overview";
+        resultReviewFilter = "all";
+        detailQuestionId = "";
+        emitState();
+        render();
+        return;
+      }
+    }
     const elapsedMs = Math.max(0, Date.now() - elapsedBaseTick);
     const remainderMs = elapsedMs % 1000;
     const msUntilNextSecond = remainderMs === 0 ? 1000 : 1000 - remainderMs;
@@ -489,6 +552,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     return {
       view,
       testId: selectedTestId,
+      selectedPartIds: [...selectedPartIds],
+      configuredDurationMinutes,
       currentPartId,
       currentQuestion,
       startedAt,
@@ -507,8 +572,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function restoreFromHistorySnapshot(snapshot) {
     if (!snapshot || typeof snapshot !== "object") return false;
-    view = snapshot.view === "attempt" || snapshot.view === "result" ? snapshot.view : "catalog";
+    view = snapshot.view === "config" || snapshot.view === "attempt" || snapshot.view === "result" ? snapshot.view : "catalog";
     selectedTestId = typeof snapshot.testId === "string" ? snapshot.testId : "";
+    selectedPartIds = Array.isArray(snapshot.selectedPartIds) ? snapshot.selectedPartIds.map(String) : selectedPartIds;
+    configuredDurationMinutes = toValidMinutes(snapshot.configuredDurationMinutes);
     currentPartId = typeof snapshot.currentPartId === "string" ? snapshot.currentPartId : "";
     currentQuestion = typeof snapshot.currentQuestion === "string" ? snapshot.currentQuestion : "";
     startedAt = typeof snapshot.startedAt === "string" ? snapshot.startedAt : startedAt;
@@ -532,9 +599,25 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     writeHistory(historyMode);
   }
 
+  function openTestConfig(test, historyMode = "replace") {
+    if (!test || test.status !== "available") return;
+    selectedTestId = test.id;
+    ensureSelectedPartsForTest(test);
+    resetDetailCardCache();
+    view = "config";
+    activeResultPartId = "overview";
+    resultReviewFilter = "all";
+    detailQuestionId = "";
+    ensureSelectionForTest(test);
+    emitState();
+    render();
+    writeHistory(historyMode);
+  }
+
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
     selectedTestId = test.id;
+    ensureSelectedPartsForTest(test);
     resetDetailCardCache();
     ensureSelectionForTest(test);
     if (!startedAt) {
@@ -665,7 +748,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           writeHistory("replace");
           return;
         }
-        startOrResumeTest(test);
+        openTestConfig(test);
       });
       action.disabled = isLocked;
       card.appendChild(action);
@@ -674,10 +757,123 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     stage.appendChild(grid);
   }
 
+  function renderTestConfig(test) {
+    stage.innerHTML = "";
+    const configuredParts = getConfiguredParts(test);
+
+    const wrap = document.createElement("section");
+    wrap.className = "thptqg-config-card";
+
+    const badges = document.createElement("div");
+    badges.className = "thptqg-test-badges";
+    appendTextBlock(badges, "span", "thptqg-tag", test.yearLabel || "Mock");
+    appendTextBlock(badges, "span", "thptqg-tag", "Listening");
+    wrap.appendChild(badges);
+
+    appendTextBlock(wrap, "h2", "thptqg-title", test.title);
+
+    const tabs = document.createElement("div");
+    tabs.className = "thptqg-config-tabs";
+    appendTextBlock(tabs, "button", "thptqg-config-tab active", "Thông tin đề thi");
+    appendTextBlock(tabs, "button", "thptqg-config-tab", "Đáp án/transcript");
+    wrap.appendChild(tabs);
+
+    const metaBlock = document.createElement("div");
+    metaBlock.className = "thptqg-config-meta";
+    appendTextBlock(
+      metaBlock,
+      "div",
+      "thptqg-test-meta",
+      `⏱ Thời gian làm bài: ${formatMinutes(test.durationMinutes)} | ${test.parts.length} phần thi | ${test.questionCount} câu`,
+    );
+    appendTextBlock(metaBlock, "div", "thptqg-test-meta", `👥 Dữ liệu mock: ${test.source || meta.source || "mockdata_40.md"}`);
+    wrap.appendChild(metaBlock);
+
+    const note = document.createElement("p");
+    note.className = "thptqg-config-note";
+    note.textContent = "Pro tips: Hình thức luyện tập từng phần và chọn thời gian phù hợp sẽ giúp bạn tập trung hơn khi làm bài.";
+    wrap.appendChild(note);
+
+    appendTextBlock(wrap, "h3", "thptqg-config-section-title", "Chọn part thi bạn muốn làm");
+    const partList = document.createElement("div");
+    partList.className = "thptqg-config-parts";
+    (Array.isArray(test.parts) ? test.parts : []).forEach((part) => {
+      const partId = String(part?.id || "");
+      const row = document.createElement("label");
+      row.className = "thptqg-config-part-row";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = selectedPartIds.includes(partId);
+      checkbox.addEventListener("change", () => {
+        const nextSet = new Set(selectedPartIds);
+        if (checkbox.checked) nextSet.add(partId);
+        else nextSet.delete(partId);
+        if (!nextSet.size) {
+          checkbox.checked = true;
+          return;
+        }
+        selectedPartIds = Array.from(nextSet);
+        ensureSelectionForTest(test);
+        emitState();
+        render();
+        writeHistory("replace");
+      });
+      const copy = document.createElement("div");
+      copy.className = "thptqg-config-part-copy";
+      appendTextBlock(copy, "div", "thptqg-config-part-title", `${part.label} (10 câu hỏi)`);
+      appendTextBlock(copy, "div", "thptqg-inline-note", part.title || "Phần luyện đề");
+      row.append(checkbox, copy);
+      partList.appendChild(row);
+    });
+    wrap.appendChild(partList);
+
+    appendTextBlock(wrap, "h3", "thptqg-config-section-title", "Giới hạn thời gian (Để trống để làm bài không giới hạn)");
+    const select = document.createElement("select");
+    select.className = "thptqg-config-duration";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "-- Chọn thời gian --";
+    placeholder.selected = configuredDurationMinutes == null;
+    select.appendChild(placeholder);
+    [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 75, 90].forEach((minutes) => {
+      const option = document.createElement("option");
+      option.value = String(minutes);
+      option.textContent = formatMinutes(minutes);
+      if (configuredDurationMinutes === minutes) option.selected = true;
+      select.appendChild(option);
+    });
+    select.addEventListener("change", () => {
+      configuredDurationMinutes = toValidMinutes(select.value);
+      emitState();
+      writeHistory("replace");
+    });
+    wrap.appendChild(select);
+
+    const summary = document.createElement("div");
+    summary.className = "thptqg-config-summary";
+    appendTextBlock(summary, "strong", "", `Bạn đang chọn ${configuredParts.length}/${test.parts.length} part`);
+    appendTextBlock(summary, "span", "", `${getConfiguredQuestions(test).length} câu sẽ hiển thị trong bài làm.`);
+    wrap.appendChild(summary);
+
+    const footer = document.createElement("div");
+    footer.className = "thptqg-config-actions";
+    footer.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog("replace")));
+    footer.appendChild(
+      createButton(
+        startedAt && !submittedAt ? "Tiếp tục làm bài" : bundle.catalog.ctaLabel,
+        "thptqg-test-btn",
+        () => startOrResumeTest(test, "replace"),
+      ),
+    );
+    wrap.appendChild(footer);
+
+    stage.appendChild(wrap);
+  }
+
   function renderAttempt(test) {
     const previousScrollState = captureAttemptScrollState();
     stage.innerHTML = "";
-    const parts = Array.isArray(test.parts) ? test.parts : [];
+    const parts = getConfiguredParts(test);
     const activePart = parts.find((part) => String(part?.id || "") === currentPartId) || parts[0] || null;
     ensureSelectionForTest(test);
 
@@ -715,7 +911,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       const button = createButton(String(part?.label || ""), `thptqg-part-btn${currentPartId === part.id ? " active" : ""}`, () => {
         currentPartId = String(part.id || "");
         const firstQuestionNumber = Number(part?.questionStart || 0);
-        const firstQuestion = (Array.isArray(test.questions) ? test.questions : []).find((question) => Number(question?.number) === firstQuestionNumber);
+        const firstQuestion = getConfiguredQuestions(test).find((question) => Number(question?.number) === firstQuestionNumber);
         currentQuestion = String(firstQuestion?.id || currentQuestion);
         emitState();
         render();
@@ -824,7 +1020,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         const questionScroll = document.createElement("div");
         questionScroll.className = "thptqg-question-scroll";
         questionNumbers.forEach((questionNumber) => {
-          const question = (Array.isArray(test.questions) ? test.questions : []).find((item) => Number(item?.number) === Number(questionNumber));
+          const question = getConfiguredQuestions(test).find((item) => Number(item?.number) === Number(questionNumber));
           if (!question) return;
           appendQuestionCard(question, questionScroll);
         });
@@ -860,7 +1056,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         const compactList = document.createElement("div");
         compactList.className = "thptqg-compact-list";
         questionNumbers.forEach((questionNumber) => {
-          const question = (Array.isArray(test.questions) ? test.questions : []).find((item) => Number(item?.number) === Number(questionNumber));
+          const question = getConfiguredQuestions(test).find((item) => Number(item?.number) === Number(questionNumber));
           if (!question) return;
           appendQuestionCard(question, compactList, "compact");
         });
@@ -872,11 +1068,20 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
     const timerCard = document.createElement("div");
     timerCard.className = "thptqg-side-card";
-    timerCard.innerHTML = `<div class="thptqg-side-title">${reviewMode && submittedAt ? "Thời gian làm bài tổng" : "Thời gian làm bài"}</div>`;
+    timerCard.innerHTML = `<div class="thptqg-side-title">${
+      reviewMode && submittedAt
+        ? "Thời gian làm bài tổng"
+        : Number.isFinite(Number(configuredDurationMinutes)) && Number(configuredDurationMinutes) > 0
+          ? "Thời gian còn lại"
+          : "Thời gian làm bài"
+    }</div>`;
     timerValueEl = document.createElement("div");
     timerValueEl.className = "thptqg-timer";
     timerValueEl.textContent = formatElapsed(getCurrentElapsedSeconds());
     timerCard.appendChild(timerValueEl);
+    if (Number.isFinite(Number(configuredDurationMinutes)) && Number(configuredDurationMinutes) > 0 && !submittedAt) {
+      appendTextBlock(timerCard, "div", "thptqg-inline-note", `Giới hạn: ${formatMinutes(configuredDurationMinutes)}`);
+    }
     timerCard.appendChild(
       reviewMode && submittedAt
         ? createButton("Xem kết quả", "thptqg-submit-btn", () => {
@@ -955,8 +1160,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function renderResult(test) {
     stage.innerHTML = "";
-    const result = computeResultSummary(test, answersByQuestion);
-    const parts = Array.isArray(test.parts) ? test.parts : [];
+    const result = computeResultSummary(getConfiguredTest(test), answersByQuestion);
+    const parts = getConfiguredParts(test);
     const questionMap = getQuestionMap(test);
     const visiblePartStats =
       activeResultPartId === "overview"
@@ -972,7 +1177,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       emitState();
       writeHistory("replace");
     }));
-    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => restartTest(test, "replace")));
+    actionRow.appendChild(createButton("Làm lại đề", "thptqg-secondary-btn", () => openTestConfig(test, "replace")));
     stage.appendChild(actionRow);
 
     const scoreRow = document.createElement("div");
@@ -1170,6 +1375,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function render() {
     const activeTest = getActiveTest();
     shell.classList.toggle("thptqg-attempt-screen", view === "attempt" && Boolean(activeTest));
+    shell.classList.toggle("thptqg-config-screen", view === "config" && Boolean(activeTest));
     shell.classList.toggle("thptqg-result-screen", view === "result" && Boolean(activeTest));
     shell.classList.toggle("thptqg-catalog-screen", view === "catalog" || !activeTest);
     if (view === "catalog" || !activeTest) {
@@ -1178,6 +1384,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       return;
     }
     ensureSelectionForTest(activeTest);
+    if (view === "config") {
+      renderTestConfig(activeTest);
+      timerValueEl = null;
+      return;
+    }
     if (view === "result") renderResult(activeTest);
     else renderAttempt(activeTest);
     updateTimer();

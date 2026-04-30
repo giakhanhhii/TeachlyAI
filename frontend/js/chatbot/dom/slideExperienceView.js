@@ -509,7 +509,6 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     progress.paint({ total, index, correct: 0, wrong: 0 });
     backBtn.disabled = index <= 0;
     otherBtn.hidden = index < total - 1;
-    footer.classList.toggle("exp-footer-bar--continue-actions", !otherBtn.hidden);
     nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     nextBtn.disabled = !s;
     if (shellReady) {

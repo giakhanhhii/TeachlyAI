@@ -337,10 +337,6 @@
   border-top: 1px solid var(--line);
 }
 
-.exp-footer-bar.exp-footer-bar--continue-actions {
-  justify-content: space-between;
-}
-
 .exp-next-btn {
   padding: 12px 28px;
   border-radius: 12px;
