@@ -5,7 +5,8 @@ FROM python:3.11-slim AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 WORKDIR /app
 
@@ -26,10 +27,10 @@ COPY backend ./backend
 COPY scripts ./scripts
 COPY .env.example ./.env.example
 
-RUN mkdir -p /app/data /app/output && \
+RUN mkdir -p /app/data /app/output /ms-playwright && \
     useradd --create-home --shell /bin/bash appuser && \
     chown -R appuser:appuser /app && \
-    chown -R appuser:appuser /app/data /app/output
+    chown -R appuser:appuser /app/data /app/output /ms-playwright
 
 EXPOSE 8000
 
