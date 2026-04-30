@@ -1535,15 +1535,6 @@ function setSlideShellDocumentViewportMode(doc, mode) {
         node.style.removeProperty("overflow-y");
       }
     });
-  if (body) {
-    if (mode === "active") {
-      body.style.minHeight = "100vh";
-      body.style.justifyContent = "center";
-    } else {
-      body.style.removeProperty("min-height");
-      body.style.removeProperty("justify-content");
-    }
-  }
   if (master instanceof HTMLElement) {
     if (mode === "active") {
       master.style.minHeight = "100vh";
@@ -1727,14 +1718,13 @@ function measureSlideShellActiveHeight(slide) {
   if (!slide || typeof slide.getBoundingClientRect !== "function") return 0;
   const slideRect = slide.getBoundingClientRect();
   if (slide instanceof Element && slide.matches('[data-shell-authored-slide="1"]')) {
-    const authoredHeights = [
-      slide.clientHeight || 0,
-      slide.offsetHeight || 0,
-      slide.scrollHeight || 0,
-      slideRect.height || 0,
+    const authoredBaseHeight = Math.max(
+      Number(slideRect.height) || 0,
+      Number(slide.offsetHeight) || 0,
+      Number(slide.clientHeight) || 0,
       SLIDE_SHELL_STAGE_WIDTH_PX * 9 / 16,
-    ];
-    return Math.max(...authoredHeights.map((n) => Math.ceil(Number(n) || 0)), 0);
+    );
+    return Math.max(0, Math.ceil(authoredBaseHeight));
   }
   const win = slide.ownerDocument?.defaultView || window;
   let maxBottom = slideRect.bottom;
