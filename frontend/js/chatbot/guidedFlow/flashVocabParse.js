@@ -128,7 +128,11 @@ export function parseDirectFlashVocabLines(raw, apiBackByLine = {}, opts = {}) {
     if (kind === "auto_en") {
       const back = lookupEnToVi(trimmed) || apiBackFor(apiBackByLine, trimmed);
       if (back) {
-        cards.push({ front: trimmed, back });
+        if (!isFlashCardSideWithinLimit(back)) {
+          overLimitLines.push(trimmed);
+        } else {
+          cards.push({ front: trimmed, back });
+        }
       } else {
         invalidLines.push(trimmed);
       }
@@ -137,7 +141,11 @@ export function parseDirectFlashVocabLines(raw, apiBackByLine = {}, opts = {}) {
     if (kind === "pending_api") {
       const back = apiBackFor(apiBackByLine, trimmed);
       if (back) {
-        cards.push({ front: trimmed, back });
+        if (!isFlashCardSideWithinLimit(back)) {
+          overLimitLines.push(trimmed);
+        } else {
+          cards.push({ front: trimmed, back });
+        }
       } else {
         pendingApiCount += 1;
       }
