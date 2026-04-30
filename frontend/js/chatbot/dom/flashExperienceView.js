@@ -399,7 +399,6 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       : "Nhấn vào thẻ để lật. Dùng Tiếp theo để sang thẻ khác.";
     backBtn.disabled = safeVisibleIndex <= 0;
     otherBtn.hidden = bookmarkFilter || safeVisibleIndex < visibleTotal - 1;
-    footer.classList.toggle("exp-footer-bar--continue-actions", !otherBtn.hidden);
     nextBtn.textContent = bookmarkFilter
       ? safeVisibleIndex >= visibleTotal - 1
         ? "Xem tất cả"
