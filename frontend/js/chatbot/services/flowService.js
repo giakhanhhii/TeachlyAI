@@ -189,8 +189,6 @@ export function createFlowService(deps) {
       renderChatListUI();
       updateThreadLabel();
       await startWithGuidedEffects(flowKind);
-      saveSessions();
-      renderChatListUI();
       commitNavigationSnapshot?.("replace");
     } catch (err) {
       if (current && typeof current === "object") {
@@ -247,15 +245,12 @@ export function createFlowService(deps) {
       saveSessions();
       renderChatListUI();
       updateThreadLabel();
-      commitNavigationSnapshot?.("replace");
       try {
         await ensureSessionMessagesLoaded();
       } catch {
         // Keep local cache if remote loading fails.
       }
       await startWithGuidedEffects(flowKind);
-      saveSessions();
-      renderChatListUI();
       commitNavigationSnapshot?.("replace");
     } catch (err) {
       if (createdSessionIndex !== null) {
