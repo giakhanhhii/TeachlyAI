@@ -1,4 +1,4 @@
-import { MSG_CONTINUE_SOURCE } from "../guidedFlow/shared.js";
+import { isContinueSourcePromptMessage } from "../guidedFlow/shared.js";
 import { resumeDockGroupKey, resumeDockSignature } from "../utils/serialization.js";
 
 /**
@@ -206,7 +206,7 @@ export function createMessageHistoryService(deps) {
         const dedupeKey = groupKey.includes("thptqg_fulltest") ? groupKey : signature;
         if (dedupeKey) lastResumeIndexByKey.set(dedupeKey, index);
         const promptGroupKey = groupKey.includes("thptqg_fulltest") ? "group:single:thptqg_fulltest:prompt" : groupKey;
-        if (promptGroupKey && String(m.text || "") === MSG_CONTINUE_SOURCE) {
+        if (promptGroupKey && isContinueSourcePromptMessage(m)) {
           lastContinuePromptIndexByGroup.set(promptGroupKey, index);
         }
       });
@@ -224,7 +224,7 @@ export function createMessageHistoryService(deps) {
           const promptGroupKey = groupKey.includes("thptqg_fulltest") ? "group:single:thptqg_fulltest:prompt" : groupKey;
           const shouldCollapsePrompt =
             Boolean(promptGroupKey)
-            && String(m.text || "") === MSG_CONTINUE_SOURCE
+            && isContinueSourcePromptMessage(m)
             && lastContinuePromptIndexByGroup.get(promptGroupKey) !== index;
           msgView.addMessage("bot", shouldCollapsePrompt ? "" : m.text || "", {
             actions: shouldCollapsePrompt ? [] : m.actions || [],

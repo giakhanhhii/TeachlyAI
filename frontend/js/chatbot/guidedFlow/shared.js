@@ -1,6 +1,7 @@
 export const MSG_START_SOURCE =
   "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
 export const MSG_CONTINUE_SOURCE = "Bạn muốn tiếp tục theo cách nào?";
+export const CONTINUE_SOURCE_PROMPT_KEY = "continue_source_prompt";
 
 /** Các nút “Tải lên PDF” ở bước chọn nguồn — cần chọn file trước khi vào form. */
 export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "quiz_pdf", "flash_pdf"]);
@@ -47,7 +48,16 @@ export function getSourceActions(kind) {
 export function createSourceChoiceEffect(kind, text = MSG_CONTINUE_SOURCE) {
   const actions = getSourceActions(kind);
   if (!actions.length) return null;
-  return { type: "pushBot", text, actions };
+  return { type: "pushBot", text, actions, messageKey: CONTINUE_SOURCE_PROMPT_KEY };
+}
+
+/**
+ * @param {any} message
+ */
+export function isContinueSourcePromptMessage(message) {
+  if (!message || typeof message !== "object") return false;
+  if (message.messageKey === CONTINUE_SOURCE_PROMPT_KEY) return true;
+  return String(message.text || "") === MSG_CONTINUE_SOURCE && Array.isArray(message.actions) && message.actions.length > 0;
 }
 
 /** Tin nhắn bot trước form meta PDF (slide / quiz / flash). */

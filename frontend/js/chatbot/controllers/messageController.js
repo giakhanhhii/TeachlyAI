@@ -1,4 +1,4 @@
-import { MSG_CONTINUE_SOURCE } from "../guidedFlow/shared.js";
+import { isContinueSourcePromptMessage } from "../guidedFlow/shared.js";
 import { resumeDockGroupKey, resumeDockSignature } from "../utils/serialization.js";
 
 /**
@@ -58,12 +58,15 @@ export function createMessageController(deps) {
     let resumeDock;
     /** @type {Record<string, any> | undefined} */
     let cardProps;
+    /** @type {string | undefined} */
+    let messageKey;
     if (Array.isArray(opts)) actions = opts;
     else if (opts && typeof opts === "object") {
       if (Array.isArray(opts.actions)) actions = opts.actions;
       if (typeof opts.cardType === "string") cardType = opts.cardType;
       if (opts.resumeDock) resumeDock = opts.resumeDock;
       if (opts.cardProps && typeof opts.cardProps === "object") cardProps = opts.cardProps;
+      if (typeof opts.messageKey === "string") messageKey = opts.messageKey;
     }
     let removedDuplicateResume = false;
     const resumeGroupKey = resumeDockGroupKey(resumeDock);
@@ -85,7 +88,7 @@ export function createMessageController(deps) {
         if (
           resumeGroupKey.includes("thptqg_fulltest")
           && messageGroupKey.includes("thptqg_fulltest")
-          && String(message.text || "") === MSG_CONTINUE_SOURCE
+          && isContinueSourcePromptMessage(message)
         ) {
           removedDuplicateResume = true;
           return;
@@ -107,7 +110,9 @@ export function createMessageController(deps) {
     if (cardType) entry.cardType = cardType;
     if (resumeDock) entry.resumeDock = resumeDock;
     if (cardProps) entry.cardProps = cardProps;
-    current.messages.push(entry);
+    if (messageKey) entry.messageKey = messageKey;
+    const prevStoredMessages = Array.isArray(current.messages) ? current.messages : [];
+    current.messages = [...prevStoredMessages, entry];
     saveSessions();
     onConversationMutation?.("replace");
   }
