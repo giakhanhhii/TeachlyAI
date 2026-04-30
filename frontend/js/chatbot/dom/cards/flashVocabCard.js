@@ -7,6 +7,7 @@ import { renderFlashVocabHighlightLines } from "./flashVocabHighlightLayer.js";
 import { createFlashVocabOpenAiTranslate } from "./flashVocabOpenAiTranslate.js";
 
 const MAX_PAIRS = 200;
+const MAX_FLASH_FRONT_CHARS = 100;
 
 /**
  * @param {{ onSubmit: (p: Record<string, string>) => void }} deps
@@ -205,6 +206,19 @@ export function createFlashVocabFormCard(deps) {
     }
     if (parsed.cards.length > MAX_PAIRS) {
       err.textContent = `Tối đa ${MAX_PAIRS} thẻ mỗi lần (bạn có ${parsed.cards.length} dòng hợp lệ). Hãy xóa bớt hoặc chia nhỏ.`;
+      err.style.display = "block";
+      return;
+    }
+    const overlongFrontCards = parsed.cards.filter((card) => String(card?.front || "").trim().length > MAX_FLASH_FRONT_CHARS);
+    if (overlongFrontCards.length) {
+      const preview = overlongFrontCards
+        .slice(0, 2)
+        .map((card) => `"${String(card.front || "").trim().slice(0, 40)}${String(card.front || "").trim().length > 40 ? "..." : ""}"`)
+        .join(", ");
+      err.textContent =
+        overlongFrontCards.length === 1
+          ? `Mỗi từ ở mặt trước chỉ được tối đa ${MAX_FLASH_FRONT_CHARS} ký tự. Hãy rút gọn lại ${preview}.`
+          : `Có ${overlongFrontCards.length} thẻ có mặt trước vượt ${MAX_FLASH_FRONT_CHARS} ký tự. Hãy rút gọn lại, ví dụ: ${preview}.`;
       err.style.display = "block";
       return;
     }
