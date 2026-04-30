@@ -15,6 +15,7 @@ services:
       - ./src:/app/src
       - ./frontend:/app/frontend
       - ./backend:/app/backend
+      - ./scripts:/app/scripts
       - teachly_data:/app/data
       - teachly_output:/app/output
     restart: unless-stopped
