@@ -764,18 +764,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const wrap = document.createElement("section");
     wrap.className = "thptqg-config-card";
 
-    const badges = document.createElement("div");
-    badges.className = "thptqg-test-badges";
-    appendTextBlock(badges, "span", "thptqg-tag", test.yearLabel || "Mock");
-    appendTextBlock(badges, "span", "thptqg-tag", "Listening");
-    wrap.appendChild(badges);
-
     appendTextBlock(wrap, "h2", "thptqg-title", test.title);
 
     const tabs = document.createElement("div");
     tabs.className = "thptqg-config-tabs";
     appendTextBlock(tabs, "button", "thptqg-config-tab active", "Thông tin đề thi");
-    appendTextBlock(tabs, "button", "thptqg-config-tab", "Đáp án/transcript");
     wrap.appendChild(tabs);
 
     const metaBlock = document.createElement("div");
@@ -786,7 +779,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       "thptqg-test-meta",
       `⏱ Thời gian làm bài: ${formatMinutes(test.durationMinutes)} | ${test.parts.length} phần thi | ${test.questionCount} câu`,
     );
-    appendTextBlock(metaBlock, "div", "thptqg-test-meta", `👥 Dữ liệu mock: ${test.source || meta.source || "mockdata_40.md"}`);
     wrap.appendChild(metaBlock);
 
     const note = document.createElement("p");
@@ -835,7 +827,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     placeholder.textContent = "-- Chọn thời gian --";
     placeholder.selected = configuredDurationMinutes == null;
     select.appendChild(placeholder);
-    [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 75, 90].forEach((minutes) => {
+    [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].forEach((minutes) => {
       const option = document.createElement("option");
       option.value = String(minutes);
       option.textContent = formatMinutes(minutes);
