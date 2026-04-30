@@ -2,7 +2,8 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-const MAX_FIT_ITERATIONS = 8;
+const FIT_FONT_PRECISION_PX = 0.5;
+const MAX_FIT_ITERATIONS = 12;
 
 function getBoundsSize(boundsElement) {
   if (!boundsElement) return null;
@@ -24,6 +25,13 @@ function estimateFontSizeToFit(textEl, boundsSize, baseSize, minSize) {
   const estimatedRatio = Math.min(widthRatio, heightRatio);
   if (!Number.isFinite(estimatedRatio) || estimatedRatio <= 0) return minSize;
   return clamp(baseSize * estimatedRatio, minSize, baseSize);
+}
+
+function resolveFitIterationCount(low, high) {
+  const range = Math.max(0, high - low);
+  if (range <= FIT_FONT_PRECISION_PX) return 1;
+  const needed = Math.ceil(Math.log2(range / FIT_FONT_PRECISION_PX));
+  return clamp(needed, 1, MAX_FIT_ITERATIONS);
 }
 
 function fitTextToBounds(textEl, boundsEl, opts = {}) {
@@ -55,7 +63,8 @@ function fitTextToBounds(textEl, boundsEl, opts = {}) {
     low = best;
   }
 
-  for (let i = 0; i < MAX_FIT_ITERATIONS; i += 1) {
+  const iterationCount = resolveFitIterationCount(low, high);
+  for (let i = 0; i < iterationCount; i += 1) {
     const mid = (low + high) / 2;
     textEl.style.fontSize = `${mid}px`;
     if (hasVisibleOverflow(textEl, boundsSize)) {
