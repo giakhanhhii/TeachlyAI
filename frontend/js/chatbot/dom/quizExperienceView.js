@@ -32,11 +32,6 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   shell.className = "exp-shell exp-shell-quiz";
   shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
 
-  const summary = document.createElement("p");
-  summary.className = "exp-meta-line";
-  summary.textContent = `Đã ghi nhận — Chủ đề: ${meta.topic || "—"} | Số câu (yêu cầu): ${meta.count || "—"} | Ghi chú: ${meta.notes || "—"}`;
-  shell.appendChild(summary);
-
   const total = Math.max(1, questions.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   shell.appendChild(progress.wrap);

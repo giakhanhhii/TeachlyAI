@@ -213,11 +213,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   shell.className = "exp-shell exp-shell-thptqg";
   shell.appendChild(createExperienceTopBar({ title: meta.catalogTitle || bundle.catalog.title }).bar);
 
-  const summaryLine = document.createElement("p");
-  summaryLine.className = "exp-meta-line";
-  summaryLine.textContent = `Mode mới: ${bundle.catalog.ctaLabel} | Dữ liệu mock: ${meta.source || "mockdata_40.md"} | Bản v1: 4 part, mỗi part 10 câu.`;
-  shell.appendChild(summaryLine);
-
   const stage = document.createElement("div");
   stage.className = "exp-stage";
   shell.appendChild(stage);

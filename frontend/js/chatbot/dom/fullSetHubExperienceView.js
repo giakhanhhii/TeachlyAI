@@ -17,11 +17,6 @@ export async function mountFullSetHubExperience(layerView, bundle, openChild) {
     }).bar,
   );
 
-  const intro = document.createElement("p");
-  intro.className = "exp-meta-line";
-  intro.textContent =
-    "Bộ demo gồm slide, trắc nghiệm và flashcard (mock). Chọn từng phần bên dưới — có thể quay lại chat bất cứ lúc nào.";
-
   const grid = document.createElement("div");
   grid.className = "exp-fullset-hub-grid";
 
@@ -37,7 +32,6 @@ export async function mountFullSetHubExperience(layerView, bundle, openChild) {
     grid.appendChild(b);
   });
 
-  shell.appendChild(intro);
   shell.appendChild(grid);
   root.appendChild(shell);
 }

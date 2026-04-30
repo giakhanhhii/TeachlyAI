@@ -159,14 +159,6 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     }).bar,
   );
 
-  const tplLabel = meta.slideTemplate ? String(meta.slideTemplate) : "";
-  const summary = document.createElement("p");
-  summary.className = "exp-meta-line";
-  summary.textContent = `Đã ghi nhận — Chủ đề: ${meta.topic || "—"} | Số slide (yêu cầu): ${meta.count || "—"} | Ghi chú: ${meta.notes || "—"}${
-    tplLabel ? ` | Mẫu: ${tplLabel}` : ""
-  }`;
-  shell.appendChild(summary);
-
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   shell.appendChild(progress.wrap);
 
@@ -598,7 +590,6 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     } catch (err) {
       console.warn("[slide-shell] fallback to plain slide view", err);
       shellReady = false;
-      summary.textContent = `${summary.textContent} | Cảnh báo: không tải được giao diện mẫu, đang hiển thị dạng đơn giản.`;
       renderSlide();
     }
   })();

@@ -146,11 +146,6 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   topBarRight?.insertBefore(bookmarkControl, topBarRight.firstChild || null);
   shell.appendChild(topBar);
 
-  const metaEl = document.createElement("p");
-  metaEl.className = "exp-meta-line";
-  metaEl.textContent = `Đã ghi nhận — Nguồn: ${meta.source || "—"} | Số thẻ (yêu cầu): ${meta.count || "—"} | Ghi chú: ${meta.extra || "—"}`;
-  shell.appendChild(metaEl);
-
   const progress = createProgressRow({ total: Math.max(1, totalCards), index: 0, correct: 0, wrong: 0 });
   shell.appendChild(progress.wrap);
 
