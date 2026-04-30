@@ -2,6 +2,7 @@ import { fetchMockResource } from "../services/mockContentApi.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
+import { fitFlashCardText } from "../services/flashCardTextFit.js";
 
 const BOOKMARK_SVG = `
   <svg class="flash-bookmark-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -306,7 +307,6 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     const backText = escapeHtml(capitalizeFirst(c.back));
     const phoneticBlock = c.phonetic ? `<div class="flash-phonetic">${escapeHtml(c.phonetic)}</div>` : "";
     const hintBlock = c.hint ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>` : "";
-
     inner.innerHTML = `
       <div class="flash-face flash-front">
         <div class="flash-front-stack">
@@ -389,6 +389,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     frame.appendChild(inner);
     wrap.appendChild(frame);
     cardSlot.appendChild(wrap);
+    requestAnimationFrame(() => fitFlashCardText(inner));
 
     const visibleTotal = Math.max(1, visibleIndices.length);
     const safeVisibleIndex = Math.max(0, visibleIndex);

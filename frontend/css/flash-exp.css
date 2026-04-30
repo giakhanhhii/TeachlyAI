@@ -339,10 +339,28 @@
 }
 
 .flash-front-term {
+  display: block;
+  width: 100%;
   font-size: clamp(1.45rem, 4.5vw, 2rem);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 0.01em;
+  max-width: 100%;
+  text-align: center;
+}
+
+.flash-front-term.flash-fit-wrap,
+.flash-back-text.flash-fit-wrap {
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.flash-front-term.flash-fit-nowrap,
+.flash-back-text.flash-fit-nowrap {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 .flash-back {
@@ -352,9 +370,13 @@
 }
 
 .flash-back-text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   font-size: clamp(1.2rem, 3.8vw, 1.55rem);
   font-weight: 600;
   line-height: 1.35;
+  text-align: center;
 }
 
 .flash-hint {

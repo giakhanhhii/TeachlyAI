@@ -1,4 +1,5 @@
 import { FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce, speakFlashcard } from "../services/speechService.js";
+import { fitFlashCardText } from "../services/flashCardTextFit.js";
 import {
   capitalizeFirst,
   escapeHtml,
@@ -126,6 +127,7 @@ export function renderFlashStep(stage, card, opts = {}) {
   frame.appendChild(inner);
   wrap.appendChild(frame);
   stage.appendChild(wrap);
+  requestAnimationFrame(() => fitFlashCardText(inner));
 }
 
 /**
