@@ -237,7 +237,7 @@
   width: 100%;
   max-width: 100%;
   aspect-ratio: 16 / 9;
-  min-height: min(85vh, 920px);
+  min-height: 0;
   margin-left: auto;
   margin-right: auto;
   background: #111;

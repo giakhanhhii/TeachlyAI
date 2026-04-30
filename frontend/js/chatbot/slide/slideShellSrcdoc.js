@@ -753,6 +753,10 @@ function injectShellPreviewFit(doc) {
       max-height: none !important;
       height: auto !important;
     }
+    .shell-slide-instance.slide-container[data-shell-authored-slide="1"],
+    .shell-slide-instance.slide[data-shell-authored-slide="1"] {
+      overflow: hidden !important;
+    }
     .shell-slide-instance[data-shell-authored-slide="1"] .content-card.centered-pack {
       display: flex !important;
       flex-direction: column !important;
@@ -1722,6 +1726,16 @@ function scheduleSlideShellScrollViewportSync(iframe) {
 function measureSlideShellActiveHeight(slide) {
   if (!slide || typeof slide.getBoundingClientRect !== "function") return 0;
   const slideRect = slide.getBoundingClientRect();
+  if (slide instanceof Element && slide.matches('[data-shell-authored-slide="1"]')) {
+    const authoredHeights = [
+      slide.clientHeight || 0,
+      slide.offsetHeight || 0,
+      slide.scrollHeight || 0,
+      slideRect.height || 0,
+      SLIDE_SHELL_STAGE_WIDTH_PX * 9 / 16,
+    ];
+    return Math.max(...authoredHeights.map((n) => Math.ceil(Number(n) || 0)), 0);
+  }
   const win = slide.ownerDocument?.defaultView || window;
   let maxBottom = slideRect.bottom;
   const nodes = slide.querySelectorAll("*");
