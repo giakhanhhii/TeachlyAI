@@ -9,7 +9,7 @@ const DOWNLOAD_SVG = `<svg class="exp-icon-svg" width="18" height="18" viewBox="
 
 /**
  * @param {{ title: string, onAiEdit?: () => void, actionButton?: { label: string, title?: string, ariaLabel?: string, onClick?: () => void, icon?: "ai"|"download", className?: string } }} p
- * @returns {{ bar: HTMLDivElement }}
+ * @returns {{ bar: HTMLDivElement, actionButton: HTMLButtonElement | null }}
  */
 export function createExperienceTopBar(p) {
   const bar = document.createElement("div");
@@ -22,6 +22,7 @@ export function createExperienceTopBar(p) {
 
   const right = document.createElement("div");
   right.className = "exp-topbar-right";
+  let actionButton = null;
 
   if (p.actionButton || p.onAiEdit) {
     const cfg = p.actionButton || {
@@ -39,6 +40,7 @@ export function createExperienceTopBar(p) {
     actionBtn.innerHTML = `${cfg.icon === "download" ? DOWNLOAD_SVG : AI_SVG}<span> ${cfg.label}</span>`;
     actionBtn.addEventListener("click", () => cfg.onClick?.());
     right.appendChild(actionBtn);
+    actionButton = actionBtn;
   }
 
   const share = document.createElement("button");
@@ -52,7 +54,7 @@ export function createExperienceTopBar(p) {
 
   bar.appendChild(left);
   bar.appendChild(right);
-  return { bar };
+  return { bar, actionButton };
 }
 
 /**

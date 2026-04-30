@@ -10,26 +10,9 @@ import {
   syncShellSlideNav,
   setSlideVisualEditMode,
 } from "../slide/slideShellSrcdoc.js";
+import { exportSlideDeckToPdf, triggerPdfDownload } from "../services/slideExportApi.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
-
-/**
- * @param {Record<string, string>} meta
- * @param {number} sIndex
- * @param {{ title: string, bullets?: string[] }} slide
- */
-function buildAiDraftSlide(meta, sIndex, slide) {
-  const topic = meta.topic || "—";
-  const count = meta.count || "—";
-  const notes = meta.notes || "—";
-  const bullets = (slide.bullets || []).map((b) => `• ${b}`).join("\n");
-  return (
-    `[Sửa slide — nhờ AI]\n` +
-    `Ngữ cảnh — Chủ đề: ${topic}; Số slide (yêu cầu): ${count}; Ghi chú: ${notes}\n` +
-    `Slide hiện tại (${sIndex + 1}) — Tiêu đề: ${slide.title}\n${bullets}\n\n` +
-    `Hãy đề xuất lại tiêu đề và gạch đầu dòng rõ ràng hơn cho học sinh ôn THPT. Trả về JSON: {"title":"...","bullets":["..."]}.`
-  );
-}
 
 /**
  * @param {HTMLElement} stage
@@ -54,6 +37,44 @@ function renderSlidesPlain(stage, slides, index) {
   });
   stage.appendChild(h);
   stage.appendChild(ul);
+}
+
+/**
+ * @param {string} title
+ */
+function buildPdfDownloadLabel(title) {
+  return title && String(title).trim() ? `${String(title).trim()}.pdf` : "teachly-slides.pdf";
+}
+
+/**
+ * @param {Document} doc
+ * @returns {string}
+ */
+function serializeSlideExportDocument(doc) {
+  const exportDoc = doc.cloneNode(true);
+  if (!(exportDoc instanceof Document) || !exportDoc.documentElement) return "";
+
+  exportDoc.body?.classList.remove("slide-visual-edit-on");
+  exportDoc
+    .querySelectorAll(
+      'style[data-slide-visual-editor], script[data-slide-visual-editor], .slide-visual-edit-toolbar, .slide-visual-edit-handles, [data-edit-flow-spacer="1"]',
+    )
+    .forEach((node) => node.remove());
+  exportDoc.querySelectorAll("[contenteditable]").forEach((node) => node.removeAttribute("contenteditable"));
+  exportDoc
+    .querySelectorAll("[data-edit-selected], [data-edit-text-active], [data-edit-flow-spacer], [spellcheck]")
+    .forEach((node) => {
+      node.removeAttribute("data-edit-selected");
+      node.removeAttribute("data-edit-text-active");
+      node.removeAttribute("data-edit-flow-spacer");
+      node.removeAttribute("spellcheck");
+    });
+  const master = exportDoc.querySelector("#slides-master-container");
+  if (master) {
+    master.setAttribute("data-nav-mode", "scroll");
+  }
+  exportDoc.querySelectorAll(".shell-slide-instance").forEach((node) => node.classList.remove("active"));
+  return `<!DOCTYPE html>\n${exportDoc.documentElement.outerHTML}`;
 }
 
 /**
@@ -98,13 +119,9 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     { once: true },
   );
 
-  const onAi = () => {
-    const s = slides[index];
-    if (!s || !deps?.onAiEdit) return;
-    deps.onAiEdit(buildAiDraftSlide(meta, index, s));
-  };
-
   let visualEditOn = false;
+  let exportInFlight = false;
+  let lastRenderedSrcdoc = "";
   let sharedOuterScrollTop = 0;
   let sharedDeckScrollTop = 0;
   let sharedDeckScrollRatio = 0;
@@ -152,12 +169,63 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   root.addEventListener("scroll", syncSharedOuterScroll, { passive: true, signal: uiSignal });
 
-  shell.appendChild(
-    createExperienceTopBar({
-      title: deckTitle,
-      onAiEdit: deps?.onAiEdit ? onAi : undefined,
-    }).bar,
-  );
+  const topBar = createExperienceTopBar({
+    title: deckTitle,
+    actionButton: {
+      label: "Tải xuống PDF",
+      title: "Tải toàn bộ bộ slide dưới dạng PDF",
+      ariaLabel: "Tải toàn bộ bộ slide dưới dạng PDF",
+      icon: "download",
+      onClick: () => {
+        void handlePdfDownload();
+      },
+    },
+  });
+  shell.appendChild(topBar.bar);
+  const exportBtn = topBar.actionButton;
+
+  function setExportButtonBusy(busy) {
+    if (!exportBtn) return;
+    exportBtn.disabled = busy;
+    exportBtn.setAttribute("aria-busy", busy ? "true" : "false");
+    const label = exportBtn.querySelector("span");
+    if (label) {
+      label.textContent = busy ? " Đang tạo PDF..." : " Tải xuống PDF";
+    }
+  }
+
+  function getExportSrcdoc() {
+    if (iframe.contentDocument?.documentElement) {
+      const current = serializeSlideExportDocument(iframe.contentDocument);
+      if (current) return current;
+    }
+    return lastRenderedSrcdoc;
+  }
+
+  async function handlePdfDownload() {
+    if (exportInFlight) return;
+    const srcdoc = getExportSrcdoc();
+    if (!srcdoc) {
+      window.alert("Chưa sẵn sàng để tải PDF. Hãy đợi slide tải xong rồi thử lại.");
+      return;
+    }
+
+    exportInFlight = true;
+    setExportButtonBusy(true);
+    try {
+      const { blob, fileName } = await exportSlideDeckToPdf({
+        title: deckTitle,
+        srcdoc,
+      });
+      triggerPdfDownload(blob, fileName || buildPdfDownloadLabel(deckTitle));
+    } catch (err) {
+      console.error("[slide-export] pdf export failed", err);
+      window.alert(err instanceof Error ? err.message : "Không thể tạo PDF lúc này.");
+    } finally {
+      exportInFlight = false;
+      setExportButtonBusy(false);
+    }
+  }
 
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   shell.appendChild(progress.wrap);
@@ -573,6 +641,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         shellYear: String(meta.shellYear || new Date().getFullYear()),
         slideNavMode: "active",
       });
+      lastRenderedSrcdoc = srcdoc;
       stage.innerHTML = "";
       iframe.style.border = "0";
       iframe.style.display = "none";
