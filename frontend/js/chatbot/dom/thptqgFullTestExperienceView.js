@@ -269,33 +269,91 @@ function emphasizePromptReferences(prompt) {
   return next.replace(termPattern, `**${focus.term}**`);
 }
 
-function appendHighlightedPassageLine(target, line, focus) {
+function appendHighlightedText(target, text, focus, forceUnderline = false) {
   if (!(target instanceof HTMLElement)) return;
-  const text = String(line || "");
+  const content = String(text || "");
+  if (!content) return;
   if (!focus?.term) {
-    target.appendChild(document.createTextNode(text));
+    if (forceUnderline) {
+      const underline = document.createElement("span");
+      underline.className = "thptqg-inline-underline";
+      underline.textContent = content;
+      target.appendChild(underline);
+    } else {
+      target.appendChild(document.createTextNode(content));
+    }
     return;
   }
+
   const pattern = focus.term.includes(" ")
     ? new RegExp(escapeRegExp(focus.term), "ig")
     : new RegExp(`\\b${escapeRegExp(focus.term)}\\b`, "ig");
   let lastIndex = 0;
-  let match = pattern.exec(text);
+  let matched = false;
+  let match = pattern.exec(content);
   while (match) {
     const [token] = match;
     const tokenIndex = match.index;
     if (tokenIndex > lastIndex) {
-      target.appendChild(document.createTextNode(text.slice(lastIndex, tokenIndex)));
+      const plain = content.slice(lastIndex, tokenIndex);
+      if (forceUnderline) {
+        const underline = document.createElement("span");
+        underline.className = "thptqg-inline-underline";
+        underline.textContent = plain;
+        target.appendChild(underline);
+      } else {
+        target.appendChild(document.createTextNode(plain));
+      }
     }
     const mark = document.createElement("mark");
-    mark.className = `thptqg-focus-term${focus.underline ? " underline" : ""}`;
+    mark.className = `thptqg-focus-term${focus.underline || forceUnderline ? " underline" : ""}`;
     mark.textContent = token;
     target.appendChild(mark);
     lastIndex = tokenIndex + token.length;
-    match = pattern.exec(text);
+    matched = true;
+    match = pattern.exec(content);
+  }
+  if (lastIndex < content.length) {
+    const tail = content.slice(lastIndex);
+    if (forceUnderline) {
+      const underline = document.createElement("span");
+      underline.className = "thptqg-inline-underline";
+      underline.textContent = tail;
+      target.appendChild(underline);
+    } else {
+      target.appendChild(document.createTextNode(tail));
+    }
+  }
+  if (!matched && forceUnderline) {
+    // `forceUnderline` may be used to underline a full sentence rather than a searched term.
+    const lastChild = target.lastChild;
+    if (lastChild && lastChild.nodeType === Node.TEXT_NODE) {
+      const underline = document.createElement("span");
+      underline.className = "thptqg-inline-underline";
+      underline.textContent = content;
+      target.replaceChild(underline, lastChild);
+    }
+  }
+}
+
+function appendHighlightedPassageLine(target, line, focus) {
+  if (!(target instanceof HTMLElement)) return;
+  const text = String(line || "");
+  const markerPattern = /\[\[u\]\](.*?)\[\[\/u\]\]/gis;
+  let lastIndex = 0;
+  let match = markerPattern.exec(text);
+  while (match) {
+    const [token, underlinedText] = match;
+    const tokenIndex = match.index;
+    if (tokenIndex > lastIndex) {
+      appendHighlightedText(target, text.slice(lastIndex, tokenIndex), focus, false);
+    }
+    appendHighlightedText(target, underlinedText, focus, true);
+    lastIndex = tokenIndex + token.length;
+    match = markerPattern.exec(text);
   }
   if (lastIndex < text.length) {
-    target.appendChild(document.createTextNode(text.slice(lastIndex)));
+    appendHighlightedText(target, text.slice(lastIndex), focus, false);
   }
 }
 
