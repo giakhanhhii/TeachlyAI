@@ -659,7 +659,12 @@ test("opening a different THPTQG test from the catalog starts fresh instead of j
 
   await expect(page.getByText("Trạng thái: Đã nộp bài")).toBeVisible();
   await page.getByRole("button", { name: "Danh sách đề" }).click();
-  await page.getByRole("heading", { name: "THPTQG simulation test 2" }).locator("..").getByRole("button", { name: "Làm đề" }).click();
+  await page
+    .locator("#experienceLayer .thptqg-test-card")
+    .filter({ hasText: "THPTQG simulation test 2" })
+    .first()
+    .getByRole("button", { name: "Làm đề" })
+    .click();
   await page.getByRole("button", { name: "Làm đề" }).click();
 
   await expect(page.getByRole("button", { name: "Nộp bài" })).toBeVisible();
