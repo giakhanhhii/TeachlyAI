@@ -7596,7 +7596,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21. Which of the following best paraphrases the underlined sentence in paragraph 3?",
+          "prompt": "Question 21. Which of the following best paraphrases the underlined sentence in paragraph 4?",
           "options": [
             "Without the joint efforts of all contributors, cutting down carbon emissions, handling waste, and developing durable urban infrastructure that can endure climate change would be easy.",
             "Without collaboration, increasing emissions, poor waste management, and weak infrastructure would be simpler",
@@ -7605,22 +7605,22 @@
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 21. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
+          "explanationEvidence": "66_Full. md#pair-19 -> 21. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=prompt-paragraph-4+C"
         },
         {
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22. The word \"its\" in paragraph 4 refers to _.",
+          "prompt": "Question 22. The word \"its\" in paragraph 5 refers to _.",
           "options": [
             "opportunity",
             "urbanization",
             "challenge",
             "relationship"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 22. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng đại từ tham chiếu trong passage.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 22. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=paragraph-5+B"
         },
         {
           "id": "q23",
@@ -7648,24 +7648,24 @@
             "Paragraph 1",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 24. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng paragraph chứa vai trò của local governments.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 24. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=D"
         },
         {
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. In which paragraph does the writer mention the necessary suggestions for ensuring environmental sustainability in cities?",
+          "prompt": "Question 25. In which paragraph does the writer mention green technologies and eco-conscious practices for environmental sustainability in cities?",
           "options": [
             "Paragraph 1",
             "Paragraph 4",
             "Paragraph 3",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 25. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng paragraph về giải pháp môi trường.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 25. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q26",
@@ -7678,9 +7678,9 @@
             "wants to do something about this",
             "that wants to do something about this"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 26. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng cấu trúc ngữ pháp của mệnh đề chính.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 26. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q27",
@@ -7693,9 +7693,9 @@
             "Children played there, and adults walk to work or to stores",
             "While children played there, adults walks to work or to stores"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 27. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng thì và mạch câu trong passage.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 27. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q28",
@@ -7708,9 +7708,9 @@
             "whose historic city streets only allow cars and buses with special permits",
             "of whom historic city streets only allow cars and buses with special permits"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 28. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng mệnh đề quan hệ không xác định.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 28. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q29",
@@ -7723,9 +7723,9 @@
             "Engwicht helps people think differently about pedestrians, streets, and neighborhoods",
             "The view of people on pedestrians, streets, and neighborhoods is changed with the help of Engwicht"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 29. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để chọn câu hoàn chỉnh và tự nhiên nhất về nghĩa.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 29. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q30",
@@ -7738,9 +7738,9 @@
             "walking will be an even better form of transportation than it is now",
             "walking will not be as good a form of transportation as it is now"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 30. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng ý nghĩa tích cực của câu kết.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 30. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q31",
@@ -7780,7 +7780,7 @@
           "options": [
             "The initiatives to minimize wage disparities between genders",
             "The importance of diversity and inclusion policies in the workplace",
-            "The impact of automation on workers' wages",
+            "The impact of automation on workers' ability to adapt",
             "The benefits of high wages for workers in higher-income countries"
           ],
           "correctIndex": 3,
@@ -7791,7 +7791,7 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34. The word \"critical\" in paragraph 3 is OPPOSITE in meaning to _.",
+          "prompt": "Question 34. The word \"critical\" in paragraph 2 is OPPOSITE in meaning to _.",
           "options": [
             "significant",
             "crucial",
@@ -7873,9 +7873,9 @@
             "The pace of technological change is likely to be slow, allowing workers to adjust gradually to automation and AI.",
             "Workers in low-skilled sectors will transition smoothly to automation, as the demand for higher-skilled jobs continues to grow."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 39. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng suy luận từ đoạn về automation và policymaking.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 39. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q40",
