@@ -762,7 +762,8 @@ def import_fulltests(
 
     bundle["tests"] = final_tests
     bundle["_replace_note"] = (
-        f"THPTQG full-test bundle. Seed giữ từ mockdata_40.md; thêm {limit} đề import tự động từ {source_path.name}."
+        f"THPTQG full-test bundle. Seed giữ từ mockdata_40.md; thêm {limit} đề import tự động từ {source_path.name}. "
+        "Ưu tiên answer key gốc, phần còn thiếu được bổ sung heuristic/fallback-A; xem tmp/thptqg_import_report.json để rà soát."
     )
     current_bundle_path.write_text(json.dumps(bundle, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     embedded_out_path.write_text(generate_embedded_module(bundle), encoding="utf-8")

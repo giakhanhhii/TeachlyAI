@@ -1,5 +1,5 @@
 {
-  "_replace_note": "THPTQG full-test bundle. Seed giữ từ mockdata_40.md; thêm 20 đề import tự động từ 66_Full.md.",
+  "_replace_note": "THPTQG full-test bundle. Seed giữ từ mockdata_40.md; thêm 20 đề import tự động từ 66_Full.md. Ưu tiên answer key gốc, phần còn thiếu được bổ sung heuristic/fallback-A; xem tmp/thptqg_import_report.json để rà soát.",
   "catalog": {
     "title": "THPTQG simulation tests",
     "subtitle": "Thư viện đề giả lập THPTQG Tiếng Anh",
