@@ -32,6 +32,22 @@ CONTEXT_STARTERS = (
     "TaiLieuOnThi",
     "TailieuOnThi",
 )
+ANSWER_LEAK_MARKERS = (
+    "đáp án",
+    "dap an",
+    "lời giải",
+    "loi giai",
+    "hướng dẫn giải",
+    "huong dan giai",
+    "bảng đáp án",
+    "bang dap an",
+    "tạm dịch",
+    "tam dich",
+    "kiến thức",
+    "kien thuc",
+    "chọn đáp án",
+    "chon dap an",
+)
 
 CLEAR_ANSWER_OVERRIDES: dict[str, dict[int, str]] = {
     "pair-13": {1: "D", 5: "B", 8: "B", 10: "C", 11: "C"},
@@ -111,6 +127,8 @@ NOISY_LINE_PATTERNS = (
     re.compile(r"^\s*A small, stylized illustration.*$", re.I),
     re.compile(r"^\s*-+\s*$"),
 )
+ANSWER_KEY_LINE_RE = re.compile(r"^\s*(?:[1-9]|[1-3]\d|40)\s*[-.:]\s*[ABCD]\s*$", re.I)
+ANSWER_REVIEW_LINE_RE = re.compile(r"^\s*[ABCD]\.\s+.*(?:tạm dịch|tam dich|kiến thức|kien thuc|chọn đáp án|chon dap an).*$", re.I)
 
 
 @dataclass
@@ -177,6 +195,33 @@ def clean_lines(text: str) -> str:
     cleaned = "\n".join(lines)
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
     return cleaned.strip()
+
+
+def strip_answer_leakage(text: str) -> str:
+    raw = str(text or "")
+    if not raw.strip():
+        return ""
+
+    cutoff = len(raw)
+    folded = ascii_fold(raw)
+    for marker in ANSWER_LEAK_MARKERS:
+        idx = folded.find(ascii_fold(marker))
+        if idx >= 0:
+            cutoff = min(cutoff, idx)
+
+    kept_lines: list[str] = []
+    for line in raw[:cutoff].splitlines():
+        if ANSWER_KEY_LINE_RE.match(line):
+            break
+        if ANSWER_REVIEW_LINE_RE.match(line):
+            break
+        kept_lines.append(line)
+
+    cleaned = clean_lines("\n".join(kept_lines))
+    cleaned_folded = ascii_fold(cleaned)
+    if any(ascii_fold(marker) in cleaned_folded for marker in ANSWER_LEAK_MARKERS):
+        return ""
+    return cleaned
 
 
 def meaningful(text: str) -> bool:
@@ -295,7 +340,7 @@ def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
         raise ValueError("Không tìm thấy chuỗi 40 câu liên tục.")
     picked = runs[0]
 
-    prefix_before_first = block[: picked[0].start()].strip()
+    prefix_before_first = strip_answer_leakage(block[: picked[0].start()].strip())
     parsed: list[QuestionParse] = []
     for idx, match in enumerate(picked):
         question_no = int(match.group(1))
@@ -311,7 +356,7 @@ def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
         if letters != ["A", "B", "C", "D"]:
             raise ValueError(f"Câu {question_no} có thứ tự lựa chọn không chuẩn: {letters}.")
 
-        prompt_prefix = question_body[: ordered[0].start()].strip()
+        prompt_prefix = strip_answer_leakage(question_body[: ordered[0].start()].strip())
         options: list[str] = []
         trailing_context = ""
         for option_idx, option_match in enumerate(ordered):
@@ -319,7 +364,8 @@ def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
             raw_option_text = question_body[option_match.end(): next_option_start].strip()
             if option_idx == 3:
                 raw_option_text, trailing_context = split_last_option_and_tail(raw_option_text)
-            option_text = re.sub(r"\s+", " ", raw_option_text).strip(" -")
+            option_text = strip_answer_leakage(raw_option_text)
+            option_text = re.sub(r"\s+", " ", option_text).strip(" -")
             if not option_text:
                 raise ValueError(f"Câu {question_no} có lựa chọn trống.")
             options.append(option_text)
@@ -329,7 +375,7 @@ def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
                 number=question_no,
                 prompt=normalize_prompt(prompt_prefix, question_no),
                 options=options,
-                trailing_context=clean_lines(trailing_context),
+                trailing_context=strip_answer_leakage(trailing_context),
             )
         )
     return parsed, clean_lines(prefix_before_first)
@@ -464,7 +510,8 @@ def infer_group_meta(prefix_text: str, start_question: int, fallback_title: str)
     if not title:
         title = fallback_title or f"Question set {start_question}"
 
-    context = paragraphs
+    context = [strip_answer_leakage(paragraph) for paragraph in paragraphs]
+    context = [paragraph for paragraph in context if paragraph]
     return title, instruction, context
 
 

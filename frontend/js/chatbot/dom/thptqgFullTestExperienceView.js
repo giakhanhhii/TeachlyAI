@@ -190,7 +190,12 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : {};
 
   let view = initial?.view === "config" || initial?.view === "attempt" || initial?.view === "result" ? initial.view : "catalog";
-  let selectedTestId = typeof initial?.testId === "string" ? initial.testId : "";
+  let selectedTestId =
+    typeof initial?.testId === "string" && initial.testId
+      ? initial.testId
+      : typeof meta?.testId === "string" && meta.testId
+        ? meta.testId
+        : "";
   let answersByQuestion = cloneRecord(initial?.answersByQuestion);
   let flaggedQuestions = new Set(Array.isArray(initial?.flaggedQuestions) ? initial.flaggedQuestions.map(String) : []);
   let selectedPartIds = Array.isArray(initial?.selectedPartIds) ? initial.selectedPartIds.map(String) : [];
@@ -671,7 +676,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (!test || test.status !== "available") return;
     if (!window.confirm("Làm lại đề này từ đầu? Các đáp án và đánh dấu hiện tại sẽ bị xóa.")) return;
     queueRestartAttempt(test);
-    openTestConfig(test, historyMode);
+    startOrResumeTest(test, historyMode);
   }
 
   function jumpToQuestion(test, questionId) {
@@ -895,7 +900,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     footer.appendChild(createButton("Danh sách đề", "thptqg-secondary-btn", () => openCatalog("replace")));
     footer.appendChild(
       createButton(
-        startedAt && !submittedAt ? "Tiếp tục làm bài" : bundle.catalog.ctaLabel,
+        startedAt && !submittedAt ? "Tiếp tục làm bài" : "Làm đề",
         "thptqg-test-btn",
         () => startOrResumeTest(test, "replace"),
       ),
@@ -1425,6 +1430,16 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   removalObserver.observe(root, { childList: true });
 
   const restoredTest = getActiveTest();
+  if (
+    restoredTest
+    && view === "catalog"
+    && !reviewMode
+    && !submittedAt
+    && !startedAt
+    && !Object.keys(answersByQuestion).length
+  ) {
+    view = "config";
+  }
   if (restoredTest && !reviewMode && submittedAt) {
     view = "result";
   }
