@@ -234,6 +234,93 @@ function splitEmbeddedInstructionContext(group) {
   };
 }
 
+function escapeRegExp(text) {
+  return String(text || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function extractPromptFocus(prompt) {
+  const text = String(prompt || "");
+  const paragraphMatch = text.match(/\bparagraph\s+(\d+)/i);
+  const quotedMatch = text.match(/["“]([^"”]{1,80})["”]/) || text.match(/'([^']{1,80})'/);
+  const explicitWordMatch =
+    text.match(/\b(?:word|pronoun|phrase)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,4})\s+in\s+paragraph\b/i)
+    || text.match(/\b(?:word|pronoun|phrase)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,4})\s+refers?\b/i);
+  const term = quotedMatch?.[1] || explicitWordMatch?.[1] || "";
+  return {
+    paragraphNumber: paragraphMatch ? Number(paragraphMatch[1]) : null,
+    term: String(term || "").trim(),
+    underline: /\bunderlined\b/i.test(text),
+  };
+}
+
+function emphasizePromptReferences(prompt) {
+  let next = String(prompt || "");
+  next = next.replace(/\bparagraph\s+(\d+)/gi, "**paragraph $1**");
+  const focus = extractPromptFocus(next);
+  if (!focus.term) return next;
+
+  if (next.includes(`"${focus.term}"`)) {
+    return next.replace(`"${focus.term}"`, `"**${focus.term}**"`);
+  }
+  if (next.includes(`'${focus.term}'`)) {
+    return next.replace(`'${focus.term}'`, `'**${focus.term}**'`);
+  }
+  const termPattern = new RegExp(`\\b${escapeRegExp(focus.term)}\\b`, "i");
+  return next.replace(termPattern, `**${focus.term}**`);
+}
+
+function appendHighlightedPassageLine(target, line, focus) {
+  if (!(target instanceof HTMLElement)) return;
+  const text = String(line || "");
+  if (!focus?.term) {
+    target.appendChild(document.createTextNode(text));
+    return;
+  }
+  const pattern = focus.term.includes(" ")
+    ? new RegExp(escapeRegExp(focus.term), "ig")
+    : new RegExp(`\\b${escapeRegExp(focus.term)}\\b`, "ig");
+  let lastIndex = 0;
+  let match = pattern.exec(text);
+  while (match) {
+    const [token] = match;
+    const tokenIndex = match.index;
+    if (tokenIndex > lastIndex) {
+      target.appendChild(document.createTextNode(text.slice(lastIndex, tokenIndex)));
+    }
+    const mark = document.createElement("mark");
+    mark.className = `thptqg-focus-term${focus.underline ? " underline" : ""}`;
+    mark.textContent = token;
+    target.appendChild(mark);
+    lastIndex = tokenIndex + token.length;
+    match = pattern.exec(text);
+  }
+  if (lastIndex < text.length) {
+    target.appendChild(document.createTextNode(text.slice(lastIndex)));
+  }
+}
+
+function renderPassageParagraph(target, text, focus, paragraphIndex, paragraphCount) {
+  if (!(target instanceof HTMLElement)) return;
+  target.replaceChildren();
+  if (paragraphCount > 1) {
+    const label = document.createElement("span");
+    label.className = "thptqg-paragraph-label";
+    label.textContent = `Paragraph ${paragraphIndex + 1}`;
+    target.appendChild(label);
+  }
+  const effectiveFocus =
+    focus?.paragraphNumber && focus.paragraphNumber !== paragraphIndex + 1
+      ? null
+      : focus;
+  const lines = String(text || "").split("\n");
+  lines.forEach((line, lineIndex) => {
+    appendHighlightedPassageLine(target, line, effectiveFocus);
+    if (lineIndex < lines.length - 1) {
+      target.appendChild(document.createElement("br"));
+    }
+  });
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -1098,6 +1185,11 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     (Array.isArray(activePart?.groups) ? activePart.groups : []).forEach((group) => {
       const questionNumbers = Array.isArray(group?.questionNumbers) ? group.questionNumbers : [];
       const groupCopy = splitEmbeddedInstructionContext(group);
+      const currentGroupQuestion = getConfiguredQuestions(test).find((question) => (
+        String(question?.id || "") === currentQuestion
+        && questionNumbers.includes(Number(question?.number || 0))
+      )) || null;
+      const promptFocus = currentGroupQuestion ? extractPromptFocus(currentGroupQuestion.prompt) : null;
       const longReading = isLongReadingGroup(group);
       const section = document.createElement("section");
       section.className = longReading ? "thptqg-exam-group-layout" : "thptqg-compact-group";
@@ -1139,7 +1231,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
         const prompt = document.createElement("p");
         prompt.className = `exp-q-text${variant === "compact" ? " compact" : ""}`;
-        renderQuizStemRichText(prompt, stripQuestionLabel(question.prompt));
+        renderQuizStemRichText(prompt, emphasizePromptReferences(stripQuestionLabel(question.prompt)));
         card.appendChild(prompt);
 
         const optionsWrap = document.createElement("div");
@@ -1169,9 +1261,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         if (groupCopy.context.length) {
           const contextWrap = document.createElement("div");
           contextWrap.className = "thptqg-context thptqg-passage-scroll";
-          groupCopy.context.forEach((line) => {
+          groupCopy.context.forEach((line, index) => {
             const paragraph = document.createElement("p");
-            renderQuizStemRichText(paragraph, String(line));
+            renderPassageParagraph(paragraph, String(line), promptFocus, index, groupCopy.context.length);
             contextWrap.appendChild(paragraph);
           });
           passagePane.appendChild(contextWrap);
@@ -1211,9 +1303,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         if (groupCopy.context.length) {
           const compactContext = document.createElement("div");
           compactContext.className = "thptqg-compact-context";
-          groupCopy.context.forEach((line) => {
+          groupCopy.context.forEach((line, index) => {
             const paragraph = document.createElement("p");
-            renderQuizStemRichText(paragraph, String(line));
+            renderPassageParagraph(paragraph, String(line), promptFocus, index, groupCopy.context.length);
             compactContext.appendChild(paragraph);
           });
           section.appendChild(compactContext);
