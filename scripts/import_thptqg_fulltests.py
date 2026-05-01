@@ -62,7 +62,8 @@ class ParsedTest:
 
 def ascii_fold(text: str) -> str:
     normalized = unicodedata.normalize("NFD", text)
-    return "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn").lower()
+    folded = "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn")
+    return folded.replace("đ", "d").replace("Đ", "D").lower()
 
 
 def slurp(path: Path) -> str:
