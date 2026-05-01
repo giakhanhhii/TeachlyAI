@@ -510,6 +510,8 @@ def infer_group_meta(prefix_text: str, start_question: int, fallback_title: str)
     if not title:
         title = fallback_title or f"Question set {start_question}"
 
+    title = strip_answer_leakage(title) or (fallback_title or f"Question set {start_question}")
+    instruction = strip_answer_leakage(instruction)
     context = [strip_answer_leakage(paragraph) for paragraph in paragraphs]
     context = [paragraph for paragraph in context if paragraph]
     return title, instruction, context
@@ -664,6 +666,31 @@ def validate_questions(questions: list[dict]) -> None:
         correct_index = int(item["correctIndex"])
         if correct_index < 0 or correct_index > 3:
             raise ValueError(f"Câu {item['number']} có correctIndex ngoài phạm vi.")
+
+
+def validate_display_content(parts: list[dict], questions: list[dict]) -> None:
+    leak_markers = tuple(ascii_fold(marker) for marker in ANSWER_LEAK_MARKERS)
+
+    def has_leak(text: str) -> bool:
+        folded = ascii_fold(str(text or ""))
+        return any(marker in folded for marker in leak_markers) or bool(ANSWER_KEY_LINE_RE.search(str(text or "")))
+
+    for part in parts:
+        for group in part.get("groups") or []:
+            for field in ("title", "instruction"):
+                value = str(group.get(field) or "")
+                if value and has_leak(value):
+                    raise ValueError(f"Group {group.get('id')} bị lẫn nội dung đáp án trong {field}.")
+            for paragraph in group.get("context") or []:
+                if paragraph and has_leak(str(paragraph)):
+                    raise ValueError(f"Group {group.get('id')} bị lẫn nội dung đáp án trong context.")
+
+    for question in questions:
+        if has_leak(question.get("prompt")):
+            raise ValueError(f"Câu {question['number']} bị lẫn nội dung đáp án trong prompt.")
+        for option in question.get("options") or []:
+            if has_leak(option):
+                raise ValueError(f"Câu {question['number']} bị lẫn nội dung đáp án trong options.")
 
 
 def resolve_answers(
