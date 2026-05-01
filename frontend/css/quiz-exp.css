@@ -957,6 +957,11 @@
   text-decoration-skip-ink: none;
 }
 
+.thptqg-inline-underline {
+  text-decoration: underline 2px #1d4ed8;
+  text-decoration-skip-ink: none;
+}
+
 .thptqg-context .quiz-rich-heading,
 .exp-q-text .quiz-rich-heading {
   color: #0f172a;

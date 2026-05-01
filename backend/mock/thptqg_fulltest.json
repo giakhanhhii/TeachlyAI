@@ -7198,7 +7198,7 @@
                 "Urbanization, the migration of people from rural areas to urban centers, is a global phenomenon reshaping landscapes and societies. As cities expand, they face an array of complex challenges, including overcrowding, resource depletion, environmental degradation, and traffic gridlock. In this context, collaboration between governments, private enterprises, and local communities is indispensable to ensure sustainable urban growth.",
                 "One of the foremost areas where cooperation is crucial is urban planning. Local governments are responsible for setting regulatory frameworks, but the active involvement of private corporations is essential to address challenges like transportation, housing shortages, and waste management. Through public-private partnerships, significant infrastructure projects can be financed and implemented, such as the construction of efficient public transit systems or the creation of eco-friendly buildings.",
                 "Moreover, community engagement is key to creating cities that are inclusive and reflective of diverse needs. Local citizens offer invaluable perspectives, ensuring that development projects are not only feasible but also equitable. Environmental sustainability is another vital aspect that demands collective effort.",
-                "The overwhelming impact of urbanization on the environment necessitates the implementation of green technologies and eco-conscious practices. Without the cooperative efforts of all stakeholders, it would be difficult to reduce carbon emissions, manage waste, and build resilient urban infrastructure that can withstand climate change.",
+                "The overwhelming impact of urbanization on the environment necessitates the implementation of green technologies and eco-conscious practices. [[u]]Without the cooperative efforts of all stakeholders, it would be difficult to reduce carbon emissions, manage waste, and build resilient urban infrastructure that can withstand climate change.[[/u]]",
                 "In conclusion, urbanization presents both challenges and opportunities, but its success hinges on collaboration. By fostering relationships between governments, businesses, and communities, cities can evolve into thriving, sustainable, and inclusive hubs of innovation. Only through cooperation can we ensure that urbanization benefits everyone and contributes to a better future for all."
               ],
               "questionNumbers": [
@@ -7224,7 +7224,7 @@
                 "Urbanization, the migration of people from rural areas to urban centers, is a global phenomenon reshaping landscapes and societies. As cities expand, they face an array of complex challenges, including overcrowding, resource depletion, environmental degradation, and traffic gridlock. In this context, collaboration between governments, private enterprises, and local communities is indispensable to ensure sustainable urban growth.",
                 "One of the foremost areas where cooperation is crucial is urban planning. Local governments are responsible for setting regulatory frameworks, but the active involvement of private corporations is essential to address challenges like transportation, housing shortages, and waste management. Through public-private partnerships, significant infrastructure projects can be financed and implemented, such as the construction of efficient public transit systems or the creation of eco-friendly buildings.",
                 "Moreover, community engagement is key to creating cities that are inclusive and reflective of diverse needs. Local citizens offer invaluable perspectives, ensuring that development projects are not only feasible but also equitable. Environmental sustainability is another vital aspect that demands collective effort.",
-                "The overwhelming impact of urbanization on the environment necessitates the implementation of green technologies and eco-conscious practices. Without the cooperative efforts of all stakeholders, it would be difficult to reduce carbon emissions, manage waste, and build resilient urban infrastructure that can withstand climate change.",
+                "The overwhelming impact of urbanization on the environment necessitates the implementation of green technologies and eco-conscious practices. [[u]]Without the cooperative efforts of all stakeholders, it would be difficult to reduce carbon emissions, manage waste, and build resilient urban infrastructure that can withstand climate change.[[/u]]",
                 "In conclusion, urbanization presents both challenges and opportunities, but its success hinges on collaboration. By fostering relationships between governments, businesses, and communities, cities can evolve into thriving, sustainable, and inclusive hubs of innovation. Only through cooperation can we ensure that urbanization benefits everyone and contributes to a better future for all."
               ],
               "questionNumbers": [
@@ -7270,14 +7270,10 @@
               "title": "Câu 31",
               "instruction": "Read the following passage about fairness in the workplace and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 31 to 40.",
               "context": [
-                "Fairness in the workplace is a growing issue in today's globalized economy, as businesses expand and the labor market becomes more interconnected, Employees are increasingly concerned about wage inequality, job security, and equal access to opportunities. While some progress has been made, many challenges still loom large, and fairness in the workplace continues to be hard to work out. One of the most significant challenges is wage inequality.",
-                "Despite efforts to reduce the gender pay gap and improve overall wage fairness, significant disparities persist. Women, ethnic minorities, and workers in lower-income countries often earn less than their counterparts in higher-income economies, even when performing similar work. Workplace diversity and inclusion are also critical aspects of fairness.",
-                "Many organizations have implemented policies to ensure equal opportunities for all employees.",
-                "However, discrimination still exists in many workplaces, hindering the advancement of women and minorities. Studies show that individuals from underrepresented groups are often passed over for leadership roles or career advancement opportunities in their career route. Overcoming these barriers requires not just policy changes, but a cultural shift towards greater inclusion and respect for diversity at all organizational levels.",
-                "(I) The rise of automation and artificial intelligence (AI) presents a new challenge to fairness in the workplace.",
-                "(II) While some argue that automation will create new, higher-skilled jobs, others fear that the pace of technological change may outstrip workers' ability to adapt, especially in sectors like manufacturing, retail, and customer service:",
-                "(III) In this context, policymakers must ensure that workers are equipped with the skills necessary to thrive in an increasingly automated economy.",
-                "(IV) In conclusion, while significant progress has been made in advancing fairness in the workplace, many challenges remain. Achieving true fairness requires addressing age equality, diversity, and workers' ability to adapt to the modern economy. Employers, workers, and governments must collaborate to ensure equal access to opportunities, fair pay, and resources for success."
+                "Fairness in the workplace is a growing issue in today's globalized economy. As businesses expand and the labor market becomes more interconnected, employees are increasingly concerned about wage inequality, job security, and equal access to opportunities. While some progress has been made, many challenges still loom large, and fairness in the workplace continues to be hard to work out. One of the most significant challenges is wage inequality.",
+                "Despite efforts to reduce the gender pay gap and improve overall wage fairness, significant disparities persist. [[u]]Women, ethnic minorities, and workers in lower-income countries often earn less than their counterparts in higher-income economies, even when performing similar work.[[/u]] Workplace diversity and inclusion are also critical aspects of fairness.",
+                "Many organizations have implemented policies to ensure equal opportunities for all employees. However, discrimination still exists in many workplaces, hindering the advancement of women and minorities. Studies show that individuals from underrepresented groups are often passed over for leadership roles or career advancement opportunities in their careers. Overcoming these barriers requires not just policy changes, but a cultural shift towards greater inclusion and respect for diversity at all organizational levels.",
+                "(I) The rise of automation and artificial intelligence (AI) presents a new challenge to fairness in the workplace. (II) While some argue that automation will create new, higher-skilled jobs, others fear that the pace of technological change may outstrip workers' ability to adapt, especially in sectors like manufacturing, retail, and customer service. (III) In this context, policymakers must ensure that workers are equipped with the skills necessary to thrive in an increasingly automated economy. (IV) In conclusion, while significant progress has been made in advancing fairness in the workplace, many challenges remain. Achieving true fairness requires addressing wage equality, diversity, and workers' ability to adapt to the modern economy. Employers, workers, and governments must collaborate to ensure equal access to opportunities, fair pay, and resources for success."
               ],
               "questionNumbers": [
                 31,
@@ -7600,7 +7596,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21. Which of the following best paraphrases the underlined sentence in paragraph 3?",
+          "prompt": "Question 21. Which of the following best paraphrases the underlined sentence in paragraph 4?",
           "options": [
             "Without the joint efforts of all contributors, cutting down carbon emissions, handling waste, and developing durable urban infrastructure that can endure climate change would be easy.",
             "Without collaboration, increasing emissions, poor waste management, and weak infrastructure would be simpler",
@@ -7609,22 +7605,22 @@
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 21. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
+          "explanationEvidence": "66_Full. md#pair-19 -> 21. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=prompt-paragraph-4+C"
         },
         {
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22. The word \"its\" in paragraph 4 refers to _.",
+          "prompt": "Question 22. The word \"its\" in paragraph 5 refers to _.",
           "options": [
             "opportunity",
             "urbanization",
             "challenge",
             "relationship"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 22. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng đại từ tham chiếu trong passage.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 22. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=paragraph-5+B"
         },
         {
           "id": "q23",
@@ -7652,24 +7648,24 @@
             "Paragraph 1",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 24. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng paragraph chứa vai trò của local governments.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 24. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=D"
         },
         {
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. In which paragraph does the writer mention the necessary suggestions for ensuring environmental sustainability in cities?",
+          "prompt": "Question 25. In which paragraph does the writer mention green technologies and eco-conscious practices for environmental sustainability in cities?",
           "options": [
             "Paragraph 1",
             "Paragraph 4",
             "Paragraph 3",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 25. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng paragraph về giải pháp môi trường.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 25. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q26",
@@ -7682,9 +7678,9 @@
             "wants to do something about this",
             "that wants to do something about this"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 26. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng cấu trúc ngữ pháp của mệnh đề chính.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 26. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q27",
@@ -7697,9 +7693,9 @@
             "Children played there, and adults walk to work or to stores",
             "While children played there, adults walks to work or to stores"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 27. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng thì và mạch câu trong passage.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 27. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q28",
@@ -7712,9 +7708,9 @@
             "whose historic city streets only allow cars and buses with special permits",
             "of whom historic city streets only allow cars and buses with special permits"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 28. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng mệnh đề quan hệ không xác định.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 28. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q29",
@@ -7727,9 +7723,9 @@
             "Engwicht helps people think differently about pedestrians, streets, and neighborhoods",
             "The view of people on pedestrians, streets, and neighborhoods is changed with the help of Engwicht"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 29. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để chọn câu hoàn chỉnh và tự nhiên nhất về nghĩa.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 29. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q30",
@@ -7742,9 +7738,9 @@
             "walking will be an even better form of transportation than it is now",
             "walking will not be as good a form of transportation as it is now"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 30. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng ý nghĩa tích cực của câu kết.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 30. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q31",
@@ -7784,7 +7780,7 @@
           "options": [
             "The initiatives to minimize wage disparities between genders",
             "The importance of diversity and inclusion policies in the workplace",
-            "The impact of automation on workers' wages",
+            "The impact of automation on workers' ability to adapt",
             "The benefits of high wages for workers in higher-income countries"
           ],
           "correctIndex": 3,
@@ -7795,7 +7791,7 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34. The word \"critical\" in paragraph 3 is OPPOSITE in meaning to _.",
+          "prompt": "Question 34. The word \"critical\" in paragraph 2 is OPPOSITE in meaning to _.",
           "options": [
             "significant",
             "crucial",
@@ -7877,9 +7873,9 @@
             "The pace of technological change is likely to be slow, allowing workers to adjust gradually to automation and AI.",
             "Workers in low-skilled sectors will transition smoothly to automation, as the demand for higher-skilled jobs continues to grow."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-19 -> 39. A | strategy=global-phrase+fallback-A | fallback=20"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công để khớp đúng suy luận từ đoạn về automation và policymaking.",
+          "explanationEvidence": "66_Full. md#pair-19 -> 39. A | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q40",
