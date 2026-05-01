@@ -10,6 +10,7 @@ from scripts.import_thptqg_fulltests import (
     apply_clear_answer_overrides,
     find_question_runs,
     slurp,
+    strip_answer_leakage,
 )
 
 
@@ -82,3 +83,20 @@ def test_apply_clear_answer_overrides_can_handle_uppercase_mapping(monkeypatch: 
 
     assert questions[0]["correctIndex"] == 1
     assert "manual-override=B" in questions[0]["explanationEvidence"]
+
+
+def test_strip_answer_leakage_removes_answer_table_and_explanations():
+    contaminated = (
+        "D. useful option Tạm dịch: Đây là bản dịch.\n"
+        "1-A\n"
+        "2-C\n"
+        "HƯỚNG DẪN GIẢI CHI TIẾT BẢNG ĐÁP ÁN"
+    )
+
+    assert strip_answer_leakage(contaminated) == "D. useful option"
+
+
+def test_strip_answer_leakage_keeps_normal_question_text():
+    clean = "Read the following passage and choose the best answer."
+
+    assert strip_answer_leakage(clean) == clean

@@ -774,6 +774,7 @@ def parse_candidate(
         answer_resolution.fallback_count,
     )
     validate_questions(questions)
+    validate_display_content(parts, questions)
     return ParsedTest(
         pair_index=pair_index,
         source_ref=source_ref,
