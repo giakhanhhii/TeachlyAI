@@ -617,6 +617,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function openTestConfig(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
+    if (String(test.id || "") !== String(selectedTestId || "")) {
+      resetAttemptProgress(test);
+    }
     selectedTestId = test.id;
     ensureSelectedPartsForTest(test);
     resetDetailCardCache();
@@ -655,6 +658,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
+    if (String(test.id || "") !== String(selectedTestId || "")) {
+      resetAttemptProgress(test);
+    }
     if (pendingRestartTestId && pendingRestartTestId === String(test.id || "")) {
       resetAttemptProgress(test);
       pendingRestartTestId = "";
