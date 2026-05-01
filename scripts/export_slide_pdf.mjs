@@ -25,6 +25,40 @@ async function launchBrowser() {
   }
 }
 
+/**
+ * Wait until the rendered document is stable enough for PDF capture without
+ * relying on a fixed delay that may be too short on slower machines.
+ * @param {import("@playwright/test").Page} page
+ */
+async function waitForRenderReady(page) {
+  await page.waitForLoadState("load");
+  await page.evaluate(async () => {
+    const pendingImages = Array.from(document.images || []).filter((img) => !img.complete);
+    const imageReady = pendingImages.map(
+      (img) =>
+        new Promise((resolve) => {
+          const done = () => resolve();
+          img.addEventListener("load", done, { once: true });
+          img.addEventListener("error", done, { once: true });
+        }),
+    );
+
+    await Promise.race([
+      Promise.allSettled(imageReady),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]);
+
+    try {
+      await document.fonts?.ready;
+    } catch {
+      /* ignore font loading failures */
+    }
+
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+  });
+}
+
 const payload = JSON.parse(await readFile(payloadPath, "utf8"));
 const srcdoc = String(payload?.srcdoc || "");
 
@@ -107,6 +141,17 @@ try {
         padding: 0 !important;
         gap: 0 !important;
         overflow: visible !important;
+        break-after: avoid !important;
+        page-break-after: auto !important;
+      }
+      #slides-master-container[data-nav-mode="scroll"],
+      #slides-master-container[data-nav-mode="active"] {
+        margin: 0 !important;
+        padding: 0 !important;
+        padding-bottom: 0 !important;
+        gap: 0 !important;
+        min-height: 0 !important;
+        justify-content: flex-start !important;
       }
       .shell-slide-instance {
         display: flex !important;
@@ -124,22 +169,24 @@ try {
         min-height: 720px !important;
         max-height: 720px !important;
         margin: 0 !important;
-        break-after: page !important;
-        page-break-after: always !important;
+        break-after: avoid-page !important;
+        page-break-after: auto !important;
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
         overflow: hidden !important;
         box-shadow: none !important;
         border-radius: 0 !important;
       }
-      .shell-slide-instance:last-child {
-        break-after: auto !important;
-        page-break-after: auto !important;
+      .shell-slide-instance:not(:last-child) {
+        break-after: page !important;
+        page-break-after: always !important;
       }
     `;
     document.head.appendChild(style);
   });
 
   await page.emulateMedia({ media: "print" });
-  await page.waitForTimeout(150);
+  await waitForRenderReady(page);
   await page.pdf({
     path: outputPath,
     printBackground: true,
