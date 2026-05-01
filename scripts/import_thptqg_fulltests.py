@@ -32,6 +32,23 @@ CONTEXT_STARTERS = (
     "TaiLieuOnThi",
     "TailieuOnThi",
 )
+
+CLEAR_ANSWER_OVERRIDES: dict[str, dict[int, str]] = {
+    "pair-13": {1: "D", 5: "B", 8: "B", 10: "C", 11: "C"},
+    "pair-16": {1: "D", 2: "D", 3: "C", 4: "D", 5: "D"},
+    "pair-17": {6: "C", 8: "B", 12: "C"},
+    "pair-18": {2: "B", 3: "C", 7: "B", 8: "B", 9: "C"},
+    "pair-19": {2: "D", 3: "D", 4: "B", 11: "C"},
+    "pair-21": {3: "C", 5: "D", 11: "B"},
+    "solution-only-3": {2: "B", 3: "C", 4: "D", 5: "C", 6: "B", 10: "D", 12: "D"},
+    "solution-only-5": {1: "D", 2: "C", 3: "D", 4: "B", 5: "B", 7: "D", 8: "B", 10: "D", 12: "B"},
+    "solution-only-7": {1: "D", 3: "D", 5: "D", 6: "B", 7: "C", 8: "D", 10: "D", 11: "C", 12: "B"},
+    "solution-only-11": {1: "C", 2: "B", 3: "D", 4: "C", 7: "D", 8: "B", 9: "C"},
+    "solution-only-14": {1: "B", 3: "B", 4: "C", 5: "D", 9: "B", 10: "C", 11: "D", 12: "D"},
+    "solution-only-15": {1: "D", 2: "D", 3: "C", 5: "D", 7: "B", 8: "B", 9: "D"},
+    "solution-only-16": {2: "B", 6: "C", 8: "B", 9: "B"},
+    "solution-only-18": {2: "C", 7: "D", 9: "C", 10: "B", 11: "C"},
+}
 NOISY_LINE_PATTERNS = (
     re.compile(r"^\s*Họ,\s*tên thí sinh.*$", re.I),
     re.compile(r"^\s*Số báo danh.*$", re.I),
@@ -505,6 +522,25 @@ def build_questions_with_resolution(
     return questions
 
 
+def apply_clear_answer_overrides(questions: list[dict], candidate_key: str) -> None:
+    overrides = CLEAR_ANSWER_OVERRIDES.get(candidate_key) or {}
+    if not overrides:
+        return
+    for question in questions:
+        number = int(question.get("number") or 0)
+        letter = overrides.get(number)
+        if letter not in {"A", "B", "C", "D"}:
+            continue
+        question["correctIndex"] = "ABCD".index(letter)
+        evidence = str(question.get("explanationEvidence") or "")
+        marker = f"manual-override={letter}"
+        if marker not in evidence:
+            question["explanationEvidence"] = f"{evidence} | {marker}".strip(" |")
+        explanation = str(question.get("explanation") or "")
+        if "Rà lại thủ công" not in explanation:
+            question["explanation"] = f"{explanation} Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.".strip()
+
+
 def validate_questions(questions: list[dict]) -> None:
     numbers = [int(item["number"]) for item in questions]
     if numbers != list(range(1, 41)):
@@ -694,13 +730,15 @@ def import_fulltests(
                 }
             )
             continue
+        candidate_key = f"pair-{candidate_index}"
+        apply_clear_answer_overrides(parsed.questions, candidate_key)
         signature = test_signature(
             [QuestionParse(item["number"], item["prompt"], item["options"], "") for item in parsed.questions]
         )
         maybe_store_candidate(
             parsed=parsed,
             answer_resolution=answer_resolution,
-            candidate_key=f"pair-{candidate_index}",
+            candidate_key=candidate_key,
             signature=signature,
         )
         if len(imported_tests) >= limit:
@@ -727,13 +765,15 @@ def import_fulltests(
                     }
                 )
                 continue
+            candidate_key = f"solution-only-{solution_only_index}"
+            apply_clear_answer_overrides(parsed.questions, candidate_key)
             signature = test_signature(
                 [QuestionParse(item["number"], item["prompt"], item["options"], "") for item in parsed.questions]
             )
             stored = maybe_store_candidate(
                 parsed=parsed,
                 answer_resolution=answer_resolution,
-                candidate_key=f"solution-only-{solution_only_index}",
+                candidate_key=candidate_key,
                 signature=signature,
             )
             if stored and len(imported_tests) >= limit:
