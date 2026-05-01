@@ -161,7 +161,8 @@ function appendRichTextBlock(parent, tagName, className, text) {
 }
 
 function isLongReadingGroup(group) {
-  const context = Array.isArray(group?.context) ? group.context : [];
+  const normalizedGroup = splitEmbeddedInstructionContext(group);
+  const context = normalizedGroup.context;
   const joined = context.join(" ").trim();
   const questionCount = Array.isArray(group?.questionNumbers) ? group.questionNumbers.length : 0;
   return context.length >= 3 || joined.length >= 850 || (context.length >= 2 && questionCount >= 6);
@@ -181,6 +182,58 @@ function buildQuestionsByPart(test) {
   return map;
 }
 
+function normalizeTestProgressEntry(input) {
+  const safe = input && typeof input === "object" ? input : {};
+  return {
+    answersByQuestion: cloneRecord(safe.answersByQuestion),
+    flaggedQuestions: Array.isArray(safe.flaggedQuestions) ? safe.flaggedQuestions.map(String) : [],
+    selectedPartIds: Array.isArray(safe.selectedPartIds) ? safe.selectedPartIds.map(String) : [],
+    configuredDurationMinutes: toValidMinutes(safe.configuredDurationMinutes),
+    currentPartId: typeof safe.currentPartId === "string" ? safe.currentPartId : "",
+    currentQuestion: typeof safe.currentQuestion === "string" ? safe.currentQuestion : "",
+    startedAt: typeof safe.startedAt === "string" ? safe.startedAt : "",
+    elapsedSeconds: Number.isFinite(Number(safe.elapsedSeconds)) ? Math.max(0, Math.floor(Number(safe.elapsedSeconds))) : 0,
+    submittedAt: typeof safe.submittedAt === "string" ? safe.submittedAt : "",
+    reviewMode: Boolean(safe.reviewMode),
+    activeResultPartId: typeof safe.activeResultPartId === "string" ? safe.activeResultPartId : "overview",
+    resultReviewFilter: safe.resultReviewFilter === "wrong" ? "wrong" : "all",
+    detailQuestionId: typeof safe.detailQuestionId === "string" ? safe.detailQuestionId : "",
+  };
+}
+
+function normalizeTestProgressById(input) {
+  if (!input || typeof input !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(input)
+      .filter(([testId]) => typeof testId === "string" && testId)
+      .map(([testId, value]) => [testId, normalizeTestProgressEntry(value)]),
+  );
+}
+
+function splitEmbeddedInstructionContext(group) {
+  const rawInstruction = String(group?.instruction || "").trim();
+  const rawContext = Array.isArray(group?.context) ? group.context.map((line) => String(line || "").trim()).filter(Boolean) : [];
+  if (rawContext.length || !rawInstruction) {
+    return {
+      instruction: rawInstruction,
+      context: rawContext,
+    };
+  }
+
+  const embeddedPassageMatch = rawInstruction.match(/^(.*?\bfrom\s+\d+\s+to\s+\d+\.\s*)(.+)$/i);
+  if (!embeddedPassageMatch) {
+    return {
+      instruction: rawInstruction,
+      context: rawContext,
+    };
+  }
+
+  return {
+    instruction: embeddedPassageMatch[1].trim(),
+    context: [embeddedPassageMatch[2].trim()],
+  };
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -196,6 +249,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   const bundle = normalizeCatalog(await fetchMockResource("thptqg_fulltest"));
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : {};
+  let testProgressById = normalizeTestProgressById(initial?.testProgressById);
 
   let view = initial?.view === "config" || initial?.view === "attempt" || initial?.view === "result" ? initial.view : "catalog";
   let selectedTestId =
@@ -229,6 +283,24 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   let detailCardCacheTestId = "";
   /** @type {Map<string, { signature: string, element: HTMLDivElement }>} */
   const detailCardCache = new Map();
+
+  if (selectedTestId && !testProgressById[selectedTestId]) {
+    testProgressById[selectedTestId] = normalizeTestProgressEntry({
+      answersByQuestion,
+      flaggedQuestions: [...flaggedQuestions],
+      selectedPartIds,
+      configuredDurationMinutes,
+      currentPartId,
+      currentQuestion,
+      startedAt,
+      elapsedSeconds,
+      submittedAt,
+      reviewMode,
+      activeResultPartId,
+      resultReviewFilter,
+      detailQuestionId,
+    });
+  }
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-thptqg";
@@ -281,6 +353,66 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       map.set(String(question?.id || ""), question);
     });
     return map;
+  }
+
+  function buildCurrentTestProgressSnapshot() {
+    return normalizeTestProgressEntry({
+      answersByQuestion,
+      flaggedQuestions: [...flaggedQuestions],
+      selectedPartIds,
+      configuredDurationMinutes,
+      currentPartId,
+      currentQuestion,
+      startedAt,
+      elapsedSeconds: getCurrentElapsedSeconds(),
+      submittedAt,
+      reviewMode,
+      activeResultPartId,
+      resultReviewFilter,
+      detailQuestionId,
+    });
+  }
+
+  function syncCurrentTestProgress() {
+    if (!selectedTestId) return;
+    testProgressById = {
+      ...testProgressById,
+      [selectedTestId]: buildCurrentTestProgressSnapshot(),
+    };
+  }
+
+  function applyTestProgress(test, snapshot) {
+    const progress = normalizeTestProgressEntry(snapshot);
+    selectedTestId = String(test?.id || "");
+    answersByQuestion = cloneRecord(progress.answersByQuestion);
+    flaggedQuestions = new Set(progress.flaggedQuestions);
+    selectedPartIds = progress.selectedPartIds;
+    configuredDurationMinutes = progress.configuredDurationMinutes;
+    currentPartId = progress.currentPartId;
+    currentQuestion = progress.currentQuestion;
+    startedAt = progress.startedAt;
+    elapsedSeconds = progress.elapsedSeconds;
+    submittedAt = progress.submittedAt;
+    reviewMode = progress.reviewMode;
+    activeResultPartId = progress.activeResultPartId;
+    resultReviewFilter = progress.resultReviewFilter;
+    detailQuestionId = progress.detailQuestionId;
+    elapsedBaseSeconds = elapsedSeconds;
+    elapsedBaseTick = Date.now();
+    ensureSelectedPartsForTest(test);
+    ensureSelectionForTest(test);
+  }
+
+  function loadTestProgress(test) {
+    if (!test) return;
+    const saved = testProgressById[String(test.id || "")];
+    if (saved) {
+      applyTestProgress(test, saved);
+      return;
+    }
+    applyTestProgress(test, {
+      selectedPartIds: (Array.isArray(test?.parts) ? test.parts : []).map((part) => String(part?.id || "")).filter(Boolean),
+    });
   }
 
   function resetDetailCardCache() {
@@ -438,6 +570,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (typeof opts.onStateChange !== "function") return;
     const activeTest = getActiveTest();
     ensureSelectionForTest(activeTest);
+    syncCurrentTestProgress();
     const questions = Array.isArray(activeTest?.questions) ? getConfiguredQuestions(activeTest) : [];
     const questionIndex = questions.findIndex((question) => String(question?.id || "") === currentQuestion);
     opts.onStateChange({
@@ -464,6 +597,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       activeResultPartId,
       resultReviewFilter,
       detailQuestionId,
+      testProgressById,
     });
   }
 
@@ -605,6 +739,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function openCatalog(historyMode = "replace") {
     snapshotElapsed();
+    syncCurrentTestProgress();
     view = "catalog";
     resetDetailCardCache();
     activeResultPartId = "overview";
@@ -617,11 +752,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function openTestConfig(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
-    if (String(test.id || "") !== String(selectedTestId || "")) {
-      resetAttemptProgress(test);
-    }
-    selectedTestId = test.id;
-    ensureSelectedPartsForTest(test);
+    if (String(test.id || "") !== String(selectedTestId || "")) syncCurrentTestProgress();
+    loadTestProgress(test);
     resetDetailCardCache();
     view = "config";
     activeResultPartId = "overview";
@@ -639,34 +771,21 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   function resetAttemptProgress(test) {
     if (!test || test.status !== "available") return;
-    selectedTestId = test.id;
-    answersByQuestion = {};
-    flaggedQuestions = new Set();
-    startedAt = "";
-    elapsedSeconds = 0;
-    elapsedBaseSeconds = 0;
-    elapsedBaseTick = Date.now();
-    submittedAt = "";
-    reviewMode = false;
-    activeResultPartId = "overview";
-    resultReviewFilter = "all";
-    detailQuestionId = "";
-    ensureSelectedPartsForTest(test);
-    ensureSelectionForTest(test);
+    applyTestProgress(test, {
+      selectedPartIds: (Array.isArray(test?.parts) ? test.parts : []).map((part) => String(part?.id || "")).filter(Boolean),
+    });
+    syncCurrentTestProgress();
     resetDetailCardCache();
   }
 
   function startOrResumeTest(test, historyMode = "replace") {
     if (!test || test.status !== "available") return;
-    if (String(test.id || "") !== String(selectedTestId || "")) {
-      resetAttemptProgress(test);
-    }
+    if (String(test.id || "") !== String(selectedTestId || "")) syncCurrentTestProgress();
+    loadTestProgress(test);
     if (pendingRestartTestId && pendingRestartTestId === String(test.id || "")) {
       resetAttemptProgress(test);
       pendingRestartTestId = "";
     }
-    selectedTestId = test.id;
-    ensureSelectedPartsForTest(test);
     resetDetailCardCache();
     ensureSelectionForTest(test);
     if (!startedAt) {
@@ -784,10 +903,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     const grid = document.createElement("div");
     grid.className = "thptqg-test-grid";
     bundle.tests.forEach((test) => {
+      const testProgress = testProgressById[String(test.id || "")] || null;
       const isSelected = test.id === selectedTestId;
       const isLocked = test.status !== "available";
-      const isSubmitted = Boolean(isSelected && submittedAt);
-      const isInProgress = Boolean(isSelected && !submittedAt && Object.keys(answersByQuestion).length > 0);
+      const isSubmitted = Boolean(testProgress?.submittedAt);
+      const isInProgress = Boolean(
+        testProgress
+        && !testProgress.submittedAt
+        && (testProgress.startedAt || Object.keys(testProgress.answersByQuestion || {}).length > 0),
+      );
       const buttonLabel = isLocked ? "Sắp có" : isSubmitted ? "Xem kết quả" : isInProgress ? "Tiếp tục làm" : "Làm đề";
       const card = document.createElement("article");
       card.className = `thptqg-test-card${isLocked ? " locked" : ""}${isSelected ? " active" : ""}`;
@@ -802,8 +926,9 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       const action = createButton(buttonLabel, `thptqg-test-btn${isLocked ? " disabled" : ""}`, () => {
         if (isLocked) return;
         if (isSubmitted) {
+          syncCurrentTestProgress();
+          loadTestProgress(test);
           view = "result";
-          selectedTestId = test.id;
           reviewMode = true;
           render();
           emitState();
@@ -972,6 +1097,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     groupsWrap.className = "thptqg-exam-groups";
     (Array.isArray(activePart?.groups) ? activePart.groups : []).forEach((group) => {
       const questionNumbers = Array.isArray(group?.questionNumbers) ? group.questionNumbers : [];
+      const groupCopy = splitEmbeddedInstructionContext(group);
       const longReading = isLongReadingGroup(group);
       const section = document.createElement("section");
       section.className = longReading ? "thptqg-exam-group-layout" : "thptqg-compact-group";
@@ -1037,13 +1163,13 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         title.className = "thptqg-group-title";
         title.textContent = String(group?.title || "");
         passagePane.appendChild(title);
-        if (group?.instruction) {
-          appendRichTextBlock(passagePane, "p", "thptqg-group-instruction", String(group.instruction));
+        if (groupCopy.instruction) {
+          appendRichTextBlock(passagePane, "p", "thptqg-group-instruction", groupCopy.instruction);
         }
-        if (Array.isArray(group?.context) && group.context.length) {
+        if (groupCopy.context.length) {
           const contextWrap = document.createElement("div");
           contextWrap.className = "thptqg-context thptqg-passage-scroll";
-          group.context.forEach((line) => {
+          groupCopy.context.forEach((line) => {
             const paragraph = document.createElement("p");
             renderQuizStemRichText(paragraph, String(line));
             contextWrap.appendChild(paragraph);
@@ -1077,15 +1203,15 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         compactTitle.className = "thptqg-group-title";
         compactTitle.textContent = String(group?.title || "");
         compactHead.appendChild(compactTitle);
-        if (group?.instruction) {
-          appendRichTextBlock(compactHead, "p", "thptqg-group-instruction", String(group.instruction));
+        if (groupCopy.instruction) {
+          appendRichTextBlock(compactHead, "p", "thptqg-group-instruction", groupCopy.instruction);
         }
         section.appendChild(compactHead);
 
-        if (Array.isArray(group?.context) && group.context.length) {
+        if (groupCopy.context.length) {
           const compactContext = document.createElement("div");
           compactContext.className = "thptqg-compact-context";
-          group.context.forEach((line) => {
+          groupCopy.context.forEach((line) => {
             const paragraph = document.createElement("p");
             renderQuizStemRichText(paragraph, String(line));
             compactContext.appendChild(paragraph);
@@ -1438,6 +1564,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   removalObserver.observe(root, { childList: true });
 
   const restoredTest = getActiveTest();
+  if (restoredTest) loadTestProgress(restoredTest);
   if (
     restoredTest
     && view === "catalog"
