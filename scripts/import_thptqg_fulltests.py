@@ -171,29 +171,35 @@ def normalize_prompt(prefix: str, number: int) -> str:
     return re.sub(r"\s+", " ", prompt).strip()
 
 
+def find_question_runs(matches: list[re.Match[str]]) -> list[list[re.Match[str]]]:
+    runs: list[list[re.Match[str]]] = []
+    for start_index, match in enumerate(matches):
+        if int(match.group(1)) != 1:
+            continue
+        run = [match]
+        expected = 2
+        for next_match in matches[start_index + 1:]:
+            number = int(next_match.group(1))
+            if number == expected:
+                run.append(next_match)
+                expected += 1
+                if expected == 41:
+                    runs.append(run)
+                    break
+            elif number == 1:
+                break
+        if len(run) == 40:
+            continue
+    return runs
+
+
 def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
     block = clean_lines(normalize_block(raw_block))
     matches = list(QUESTION_RE.finditer(block))
-    picked: list[re.Match[str]] = []
-    expected = 1
-    for match in matches:
-        number = int(match.group(1))
-        if not picked:
-            if number != 1:
-                continue
-            picked.append(match)
-            expected = 2
-            continue
-        if number == expected:
-            picked.append(match)
-            expected += 1
-            if len(picked) == 40:
-                break
-        elif number == 1:
-            picked = [match]
-            expected = 2
-    if len(picked) != 40:
-        raise ValueError(f"Không tìm thấy chuỗi 40 câu liên tục, chỉ parse được {len(picked)} câu.")
+    runs = find_question_runs(matches)
+    if not runs:
+        raise ValueError("Không tìm thấy chuỗi 40 câu liên tục.")
+    picked = runs[0]
 
     prefix_before_first = block[: picked[0].start()].strip()
     parsed: list[QuestionParse] = []
@@ -251,26 +257,10 @@ def parse_answer_table(raw_solution_block: str) -> dict[int, str]:
 def parse_answer_phrases(raw_solution_block: str) -> dict[int, str]:
     block = clean_lines(normalize_block(raw_solution_block))
     matches = list(QUESTION_RE.finditer(block))
-    picked: list[re.Match[str]] = []
-    expected = 1
-    for match in matches:
-        number = int(match.group(1))
-        if not picked:
-            if number != 1:
-                continue
-            picked.append(match)
-            expected = 2
-            continue
-        if number == expected:
-            picked.append(match)
-            expected += 1
-            if len(picked) == 40:
-                break
-        elif number == 1:
-            picked = [match]
-            expected = 2
-    if len(picked) != 40:
+    runs = find_question_runs(matches)
+    if not runs:
         return {}
+    picked = runs[-1]
 
     answer_map: dict[int, str] = {}
     patterns = (
