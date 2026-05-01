@@ -172,6 +172,40 @@ function stripQuestionLabel(prompt) {
   return String(prompt || "").replace(/^Question\s+\d+\.\s*/i, "");
 }
 
+function isWeakQuestionPrompt(prompt) {
+  return /^Question\s+\d+\.?$/i.test(String(prompt || "").trim());
+}
+
+function buildDisplayPrompt(question, group = null) {
+  const rawPrompt = String(question?.prompt || "").trim();
+  if (!isWeakQuestionPrompt(rawPrompt)) {
+    return stripQuestionLabel(rawPrompt);
+  }
+  const questionNumber = Number(question?.number || 0) || "";
+  const instruction = String(group?.instruction || "").trim();
+  if (/numbered blanks|best fits each of the numbered blanks|best fits each of the blanks|best fits the numbered blanks/i.test(instruction)) {
+    return `Choose the option that best fits blank (${questionNumber}).`;
+  }
+  if (/best arrangement|meaningful exchange|make a meaningful exchange|make a meaningful text/i.test(instruction)) {
+    return `Choose the best arrangement for question ${questionNumber}.`;
+  }
+  if (/best answer to each of the following questions|indicate the best answer/i.test(instruction)) {
+    return `Choose the best answer for question ${questionNumber}.`;
+  }
+  if (/passage|advertisement|leaflet/i.test(instruction)) {
+    return `Answer question ${questionNumber} based on the text above.`;
+  }
+  return `Answer question ${questionNumber}.`;
+}
+
+function groupExpectsReadingContext(group, questions) {
+  const instruction = String(group?.instruction || "");
+  if (/read the following|passage|advertisement|leaflet/i.test(instruction)) return true;
+  return (Array.isArray(questions) ? questions : []).some((question) => (
+    /paragraph|passage|underlined|refers to|best summarises|best summarizes|according to/i.test(String(question?.prompt || ""))
+  ));
+}
+
 function buildQuestionsByPart(test) {
   const map = new Map();
   (Array.isArray(test?.questions) ? test.questions : []).forEach((question) => {
@@ -1272,6 +1306,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
       const groupCopy = splitEmbeddedInstructionContext(group);
       const groupQuestions = getConfiguredQuestions(test).filter((question) => questionNumbers.includes(Number(question?.number || 0)));
       const promptFocus = collectPromptFocuses(groupQuestions);
+      const expectsReadingContext = groupExpectsReadingContext(group, groupQuestions);
       const longReading = isLongReadingGroup(group);
       const section = document.createElement("section");
       section.className = longReading ? "thptqg-exam-group-layout" : "thptqg-compact-group";
@@ -1280,6 +1315,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         const questionId = String(question.id || "");
         const pickedIndex = answersByQuestion[questionId];
         const answered = Number.isFinite(Number(pickedIndex));
+        const displayPrompt = buildDisplayPrompt(question, group);
         const card = document.createElement("article");
         card.className = `thptqg-question-card${currentQuestion === questionId ? " current" : ""}${variant === "compact" ? " compact" : ""}`;
         card.dataset.questionId = questionId;
@@ -1313,7 +1349,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
         const prompt = document.createElement("p");
         prompt.className = `exp-q-text${variant === "compact" ? " compact" : ""}`;
-        renderQuizStemRichText(prompt, emphasizePromptReferences(stripQuestionLabel(question.prompt)));
+        renderQuizStemRichText(prompt, emphasizePromptReferences(displayPrompt));
         card.appendChild(prompt);
 
         const optionsWrap = document.createElement("div");
@@ -1349,6 +1385,13 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
             contextWrap.appendChild(paragraph);
           });
           passagePane.appendChild(contextWrap);
+        } else if (expectsReadingContext) {
+          appendTextBlock(
+            passagePane,
+            "p",
+            "thptqg-missing-context-note",
+            "Passage này đang thiếu dữ liệu trong bundle hiện tại.",
+          );
         }
 
         const questionPane = document.createElement("div");
@@ -1391,6 +1434,13 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
             compactContext.appendChild(paragraph);
           });
           section.appendChild(compactContext);
+        } else if (expectsReadingContext) {
+          appendTextBlock(
+            section,
+            "p",
+            "thptqg-missing-context-note",
+            "Passage này đang thiếu dữ liệu trong bundle hiện tại.",
+          );
         }
 
         const compactList = document.createElement("div");

@@ -971,6 +971,17 @@
   margin-bottom: 0;
 }
 
+.thptqg-missing-context-note {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px dashed #f59e0b;
+  border-radius: 12px;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .thptqg-passage-scroll,
 .thptqg-question-scroll {
   max-height: calc(100vh - 230px);

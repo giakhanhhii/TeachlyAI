@@ -3138,14 +3138,18 @@
           "questionStart": 1,
           "questionEnd": 10,
           "groups": [
-            {
-              "id": "part-1-group-1",
-              "title": "Câu 1",
-              "instruction": "",
-              "context": [],
-              "questionNumbers": [
-                1,
-                2,
+      {
+        "id": "part-1-group-1",
+        "title": "Câu 1",
+        "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
+        "context": [
+          "Emotional intelligence is one of the key qualities that makes humans (1) _. It is often described as a unique (2) _ that allows people to recognize, understand, and manage emotions effectively. Instead of (3) _ upset when problems arise, emotionally aware people stay calm and think carefully.",
+          "People (4) _ develop emotional intelligence usually communicate better, show empathy, and build stronger relationships. They also have respect (5) _ the feelings of others, which helps create a positive environment at school and at work.",
+          "In the digital age, emotional intelligence remains essential because it helps us (6) _ with others in meaningful ways."
+        ],
+        "questionNumbers": [
+          1,
+          2,
                 3,
                 4,
                 5,
@@ -3284,16 +3288,12 @@
               "id": "part-4-group-6",
               "title": "A SHORT HISTORY OF THE SELFIE",
               "instruction": "Read the following passage about the urban shift and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 31 to 40.",
-              "context": [
-                "They're everywhere - people posing with their phones held out in front of them or on a selfie-stick. And it's not just young people - social media users of all ages take selfies, including space-walking astronauts and the Pope.",
-                "So when did this selfie mania begin? I. Most people would guess that it was around the beginning of this century or perhaps a bit later when smartphones became mainstream.",
-                "But most people would be wrong, just as Britney Spears and Paris Hilton were wrong when they declared on Twitter in 2017 that they had invented the selfie eleven years previously. In fact, they were around 167 years too late to make that claim. II.",
-                "The oldest existing selfie dates back to 1839 when photographer Robert Cornelius took a self-portrait photograph of himself. III. Cornelius couldn't take a dozen shots and choose the best one-his selfie had to be just one photo.",
-                "Half a century later, in 1914, thirteen-year-old Grand Duchess Anastasia of Russia took a picture of herself in a mirror and became the first teenager to take a selfie. IV.",
-                "And what about the origin of the word itself? It is thought to come from Australia where people have a habit of putting -ieon the end of words - barbie for barbecue, postie for postal worker and even Aussie for Australian. In 2002, an Australian man took a photo of an injury to his lip and put it up on a public forum to ask for advice on how to treat it.",
-                "He referred to the photo as a selfie, and the term was born. Selfie became Oxford Dictionaries' word of the year in 2013.",
-                "So, why do we take so many photos of ourselves? A 2017 study into 'selfitis', as the obsessive taking of selfies has been called, found a range of motivations, from seeking to feel more part of a group to shaking off depressive thoughts and of course - capturing a memorable moment. Since we live so much of our lives online, there is pressure to present good quality images, and so it is no surprise that airbrushing apps that enable people to retouch images and present an idealised version of themselves are gaining popularity."
-              ],
+        "context": [
+          "They're everywhere - people posing with their phones held out in front of them or on a selfie-stick. And it's not just young people - social media users of all ages take selfies, including space-walking astronauts and the Pope.",
+          "So when did this selfie mania begin? I. Most people would guess that it was around the beginning of this century or perhaps a bit later when smartphones became mainstream. But most people would be wrong, just as Britney Spears and Paris Hilton were wrong when they declared on Twitter in 2017 that they had invented the selfie eleven years previously. In fact, they were around 167 years too late to make that claim. II. The oldest existing selfie dates back to 1839 when photographer Robert Cornelius took a self-portrait photograph of himself. III. Cornelius couldn't take a dozen shots and choose the best one-his selfie had to be just one photo. Half a century later, in 1914, thirteen-year-old Grand Duchess Anastasia of Russia took a picture of herself in a mirror and became the first teenager to take a selfie. IV.",
+          "And what about the origin of the word itself? It is thought to come from Australia where people have a habit of putting -ieon the end of words - barbie for barbecue, postie for postal worker and even Aussie for Australian. In 2002, an Australian man took a photo of an injury to his lip and put it up on a public forum to ask for advice on how to treat it. He referred to the photo as a selfie, and the term was born. Selfie became Oxford Dictionaries' word of the year in 2013.",
+          "So, why do we take so many photos of ourselves? A 2017 study into 'selfitis', as the obsessive taking of selfies has been called, found a range of motivations, from seeking to feel more part of a group to shaking off depressive thoughts and of course - capturing a memorable moment. Since we live so much of our lives online, there is pressure to present good quality images, and so it is no surprise that airbrushing apps that enable people to retouch images and present an idealised version of themselves are gaining popularity."
+        ],
               "questionNumbers": [
                 31,
                 32,
