@@ -1,0 +1,386 @@
+# TEST 2: THPTQG simulation test 2
+
+## Part 1 - Câu 1-10
+### Câu 1
+Instruction: Read the following advertisement and mark the letter A, B, C and D on your answer sheet to indicate the option that best fit each of the numbered blanks from 1 to 6. Healthy mind, healthy body
+Context 1: “A healthy mind lives in a healthy body” is a saying (1) _ to have often been used by the ancient Greeks. Thousands of years later, the same idea still applies. According to health experts, it's advisable (2) _ eight to ten glasses of water every day.
+Context 2: However, water itself is not enough; a balanced diet is essential, too. A healthy body naturally is the result of doing exercise. Many people, however, do not like gyms and object to going there for different reasons.
+Context 3: Some, for instance, say that aerobic sessions are too difficult to follow while others say that gyms are just too expensive. Many people also say that they have (3) _ in finding time to exercise due to their busy lifestyle, but the truth is that everyone can make a little time every now and then. Regardless of the way people choose to exercise, it is important to remember that there's no point (4) _ doing it only for a short period of time.
+Context 4: Last but not least, (5) _ a positive attitude and doing away with negative thoughts contribute to one's good health. In short, following (6) _ surely helps in having a healthy mind and body.
+Questions: 1, 2, 3, 4, 5, 6
+
+### Câu 7
+Instruction: Read the following leaflet and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 7 to 12.
+Context 1: PROMOTE MENTAL WELL-BEING AT HOME! Nurturing Your Mind and Spirit Taking care of our mental health is just as important as our physical health, which helps us (7) _ stress, build resilience, and lead fulfilling lives. Facts and Figures - ➤ Nature's Impact: Studies show that spending time outdoors can significantly reduce stress (8) _.
+Context 2: However, many people feel they lack access to green spaces. - ➤ Screen Time Concerns: Excessive daily screen time is linked to increased anxiety and depression. (9) _ spending too much time on the phone screen, why don't we go outside and get some fresh air? Positive Actions You Can Take - • Designate a cozy corner in your home for reading, meditation, or simply unwinding. Make it inviting with soft lighting, plants, and comfortable seating. - • Start a gratitude journal!
+Context 3: Write down three things you're thankful for each day to cultivate a positive mindset. - • Make time for meaningful (10) _ with family and friends. Connect with (11) _ regularly help (12) _ your support network and combats feelings of isolation.
+Questions: 7, 8, 9, 10
+
+## Part 2 - Câu 11-20
+### Câu 7
+Instruction: Read the following leaflet and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 7 to 12.
+Context 1: PROMOTE MENTAL WELL-BEING AT HOME! Nurturing Your Mind and Spirit Taking care of our mental health is just as important as our physical health, which helps us (7) _ stress, build resilience, and lead fulfilling lives. Facts and Figures - ➤ Nature's Impact: Studies show that spending time outdoors can significantly reduce stress (8) _.
+Context 2: However, many people feel they lack access to green spaces. - ➤ Screen Time Concerns: Excessive daily screen time is linked to increased anxiety and depression. (9) _ spending too much time on the phone screen, why don't we go outside and get some fresh air? Positive Actions You Can Take - • Designate a cozy corner in your home for reading, meditation, or simply unwinding. Make it inviting with soft lighting, plants, and comfortable seating. - • Start a gratitude journal!
+Context 3: Write down three things you're thankful for each day to cultivate a positive mindset. - • Make time for meaningful (10) _ with family and friends. Connect with (11) _ regularly help (12) _ your support network and combats feelings of isolation.
+Questions: 11, 12
+
+### Câu 13
+Instruction: Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions
+Questions: 13, 14, 15, 16, 17
+
+### Câu 18
+Instruction: Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 18 to 22.
+Context 1: The development of humanoid robots has captured the imagination of many. One such creation is Apollo, a highly advanced robot designed for social interaction, (18) _. Apollo made her first public appearance in 2020, showcasing her ability to converse and express emotions.
+Context 2: Since then, she has participated in numerous tech conferences across the globe. Apollo was developed by a team of engineers and psychologists (19) _. This collaboration aimed to create a robot that could effectively understand and respond to human emotions, making her a unique presence in the field of artificial intelligence.
+Context 3: Apollo's design is sleek and modern, (20) _. His facial expressions and gestures are crafted to resemble those of a human, enhancing her ability to connect with people on a deeper level. Equipped with advanced speech recognition technology, Apollo (21) _.
+Context 4: This allows him to engage in meaningful conversations and adapt her responses based on the emotional tone of the discussion. As humanoid robots like Apollo become more integrated into society, (22) _. They hold the potential to transform the way we interact with technology and each other.
+Questions: 18, 19, 20
+
+## Part 3 - Câu 21-30
+### Câu 18
+Instruction: Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 18 to 22.
+Context 1: The development of humanoid robots has captured the imagination of many. One such creation is Apollo, a highly advanced robot designed for social interaction, (18) _. Apollo made her first public appearance in 2020, showcasing her ability to converse and express emotions.
+Context 2: Since then, she has participated in numerous tech conferences across the globe. Apollo was developed by a team of engineers and psychologists (19) _. This collaboration aimed to create a robot that could effectively understand and respond to human emotions, making her a unique presence in the field of artificial intelligence.
+Context 3: Apollo's design is sleek and modern, (20) _. His facial expressions and gestures are crafted to resemble those of a human, enhancing her ability to connect with people on a deeper level. Equipped with advanced speech recognition technology, Apollo (21) _.
+Context 4: This allows him to engage in meaningful conversations and adapt her responses based on the emotional tone of the discussion. As humanoid robots like Apollo become more integrated into society, (22) _. They hold the potential to transform the way we interact with technology and each other.
+Questions: 21, 22
+
+### AVICII'S LIFE AFTER REHAB
+Instruction: Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.
+Context 1: Once he completed his month in rehab, Avicii seemed to have a new outlook on life. He was meditating regularly, reading about the collective unconscious, and got a puppy. After not performing for a long period of time, he returned to the stage in 2016 at Miami's Ultra Music Festival.
+Context 2: It was announced a few days after this gig that he would not be performing live anymore. Avicii chose to not perform so that he could focus on bettering his mental health.
+Context 3: Despite appearing to have new-found stability, Avicii still struggled to deal with his mental health issues. While continuing to suppress the anxiety and depression that he frequently felt, Avicii also started to become disinterested in his music career. During this time, he was smoking and drinking on occasion which may have resulted in a resurgence of his disassociation feelings.
+Context 4: He told Tereza Kacerova, his girlfriend at the time, "What if everyone around me is just a projection in my mind? Sometimes I just think these things. About how nothing really matters. " Avicii started to focus heavily on meditation which he found to be helpful in clearing the "nonsense" from his mind.
+Context 5: He believed that a deep form of meditation taught by Maharishi Mahesh Yogi was a way to exercise his brain which he had decided would lead to his happiness.
+Context 6: Despite this form of meditation typically being done in 20 minute increments, Avicii would sometimes spend full days meditating in an attempt to reach enlightenment faster.
+Questions: 23, 24, 25, 26, 27, 28, 29, 30
+
+## Part 4 - Câu 31-40
+### DEPENDENCE ON TECHNOLOGY: TIME FOR CHANGE!
+Instruction: Read the following passage about the urban shift and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 31 to 40.
+Context 1: (I) Los Angeles dancer, Brian Perez, was eating out with his friends one evening when suddenly everyone went quiet. (II) To his horror, he saw that the reason for this was that people were checking their phones. (III) What if they all put their gadgets in a pile in the middle of the table until they had finished the meal?
+Context 2: (IV) If anyone picked up their phone, that person would have to pay the whole bill. And so, it is said, the game of 'phone stacking' was born. The necessity for action like this highlights a major problem in today's society: our inability to disconnect from technology.
+Context 3: But while Brian's idea deals with the obsession in a social context, measures also need to be taken at home. Some people drop their smartphones into a box the moment they arrive home, which gives them the chance to interact with the people they live with. The fact that the phone cannot be heard - it is on silent - nor seen - the flashing lights are hidden by the box - means that they are no longer tempted to use it. A less drastic solution is to ban electronic devices at certain times of day when the whole family is likely to be together, for example at meal times. This can be hard for everyone, from teenagers desperate to text friends to parents unable to switch off from work. On a normal day, however, dinner takes less than an hour, and the benefits of exchanging opinions and anecdotes with the rest of the family certainly makes up for the time spent offline.
+Context 4: Taking a break from technology is one thing, but knowing when to turn off a device is another. Time seems to stand still in the virtual world, and before you know it, you find that it is three o'clock in the morning. This is where a digital curfew comes in handy, a set time when all devices must be put away. Evenings without technology are usually nice and peaceful and make a more agreeable end to the day. And then it's time for bed. One of the best ways of ensuring you can sleep at night is to ban electronic devices altogether from the bedroom. Lying next to a machine bursting with information is far from relaxing, and the sounds it emits during the night can easily wake you up. With technology out of the room, a line has been drawn between daytime and sleep time, which enables us to switch off ourselves and drift off to sleep.
+Questions: 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+
+## QUESTIONS
+Q1. Question 1.
+  A. believed
+  B. believe
+  C. believing
+  D. which believed
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q2. Question 2.
+  A. drinking
+  B. drink
+  C. to drink
+  D. to drinking
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q3. Question 3.
+  A. difficulty
+  B. difficult
+  C. difficulty
+  D. difficulties
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q4. Question 4.
+  A. on
+  B. in
+  C. of
+  D. about
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q5. Question 5.
+  A. taking
+  B. getting
+  C. having
+  D. doing
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q6. Question 6.
+  A. simple advice this
+  B. this advice simple
+  C. simple this advice
+  D. this simple advice
+  Current: D
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q7. Question 7.
+  A. cope with
+  B. put up with
+  C. agree with
+  D. begin with
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q8. Question 8.
+  A. extents
+  B. levels
+  C. quantities
+  D. proportions
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q9. Question 9.
+  A. Although
+  B. Instead of
+  C. On account of
+  D. Irrespective of
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q10. Question 10.
+  A. conversations
+  B. stories
+  C. talks
+  D. sayings
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q11. Question 11.
+  A. another
+  B. other
+  C. others
+  D. the other
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q12. Question 12.
+  A. weaken
+  B. worsen
+  C. lengthen
+  D. strengthen
+  Current: D
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q13. Question 13. a. Linda: They all sound fun. I'll try to join all of them if I can. b. Nam: I can see it on the map. It's an open booth and it looks huge! Visitors can play Vietnamese traditional games such as tug of war and bamboo dancing. c. Linda: But where's the Vietnamese booth?
+  A. a-b-c
+  B. b-c-a
+  C. c-b-a
+  D. a-c-b
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q14. Question 14. a. B: No. I wouldn't I think it would be a boring job. I wouldn't like working alone. b. A: Do you think you'd be a good receptionist? c. B: I think I'd be OK. I'm confident but not organized. d. A: Would you like to be a receptionist?
+  A. c-a-b-d
+  B. b-a-b-c
+  C. c-a-d-b
+  D. a-c-b-d
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q15. Question 15. Hi Gemma, a. But it was interesting to watch these videos. b. Thanks so much for the guitar lesson videos you sent me last week. c. You know, we ought to practise together for some time. What do you think? d. Thanks also for the tip about the free websites with musical lesson videos — they are much better than the sites I've been following. e. It's really nice to learn how to play a new instrument like the guitar, but I am too busy at the moment, so I'm focusing on my violin lessons for now. Write back soon. Billy
+  A. d-b-a-c-e
+  B. b-e-a-d-c
+  C. a-d-b-c-e
+  D. a-c-d-b-e
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q16. Question 16. a. For example, here in Viet Nam, we can enjoy Italian pizza or Japanese sushi, in addition to our traditional food. b. On the other hand, Vietnamese specialties, such as pho and banh mi, are also gaining popularity worldwide. c. Fast food chains and international restaurants have become popular, offering a wide range of dishes and more food choices to local people. d. Moreover, some international dishes use local ingredients, which make them unique and more suitable to local tastes. e. In short, you can explore the flavorful world of traditional Vietnamese food or enjoy dishes from other countries around the world in Viet Nam.
+  A. d-c-a-b-e
+  B. c-a-d-b-e
+  C. d-b-c-e-a
+  D. e-b-a-c-d
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q17. Question 17. - a. As a result, globalization has made the world of music more diverse and inclusive, bringing people together through the universal language of music. - b. With the internet and digital technology, musicians can easily distribute their music to fans in different countries. - c. In conclusion, the ability to share music globally is a significant benefit of globalization that has enriched the music industry and brought joy to people everywhere. - d. Globalization has many benefits for music, one of which is the ability to share music with people all around the world. - e. For example, a musician from Africa can now share their music with fans in Europe or Asia with just a few clicks.
+  A. b-d-a-e-c
+  B. d-b-e-a-c
+  C. d-b-a-e-c
+  D. b-a-e-c-d
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q18. Question 18.
+  A. that was created to bridge the gap between humans and machines
+  B. who aims to redefine human-robot relationships
+  C. that first stepped into the spotlight in early 2020
+  D. which was designed to enhance social communication
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q19. Question 19.
+  A. whose goal was to merge technology with emotional intelligence
+  B. combining expertise in robotics and behavioral science
+  C. that collaborated to bring a human touch to robotics
+  D. whose members specialized in AI and human interaction
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q20. Question 20.
+  A. inspired by contemporary art and human anatomy
+  B. combining elements of both futuristic and classic designs
+  C. designed to be visually appealing while functional
+  D. reflecting the aesthetics of modern robotics and human likeness
+  Current: D
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q21. Question 21.
+  A. can comprehend and respond to a variety of human languages
+  B. uses sophisticated algorithms to interact with users
+  C. understands context and nuance in human conversations
+  D. is programmed to facilitate discussions on various topics
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q22. Question 22.
+  A. they could lead to more personalized user experiences
+  B. their integration could enhance daily life for many people
+  C. their development raises questions about ethics and empathy
+  D. they may change the landscape of communication in the future
+  Current: D
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q23. Question 23. Which of the following activities did Avicii NOT engage in after rehab?
+  A. Performing live
+  B. Meditating regularly
+  C. Reading about the collective unconscious
+  D. Getting a puppy
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q24. Question 24. The phrase "new-found stability" in paragraph 2 suggests that Avicii felt
+  A. completely free of mental health issues
+  B. more balanced than before
+  C. indifferent to his music career
+  D. ready to return to performing
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q25. Question 25. The word suppress in paragraph 2 is closest in meaning to
+  A. express
+  B. ignore
+  C. hold back
+  D. confront
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q26. Question 26. The statement "he would sometimes spend full days meditating" indicates that Avicii
+  A. was not following typical meditation practices.
+  B. preferred group meditation sessions.
+  C. found it difficult to meditate.
+  D. wanted to rush his meditation progress.
+  Current: D
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q27. Question 27. According to the passage, what was one reason Avicii chose not to perform live anymore?
+  A. He wanted to pursue a different career.
+  B. He was focusing on his mental health.
+  C. He was not interested in music anymore.
+  D. He had lost his passion for performing.
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q28. Question 28. In which paragraph does the author mention Avicii's struggle with his mental health?
+  A. Paragraph 1
+  B. Paragraph 2
+  C. Paragraph 3
+  D. Paragraph 4
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q29. Question 29. Which of the following statements is TRUE according to the passage?
+  A. Avicii found meditation to be unhelpful.
+  B. He frequently questioned his perception of reality.
+  C. He stopped smoking and drinking entirely.
+  D. Avicii returned to performing at multiple festivals.
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q30. Question 30. What can be inferred about Avicii's mental state after rehab?
+  A. He was completely cured of his anxiety and depression.
+  B. He still faced challenges despite some improvements.
+  C. He became more socially active and engaged.
+  D. He lost interest in meditation and wellness practices.
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q31. Question 31. Where in paragraph 1 does the following sentence best fit? Realising he had to do something to stop this, Brian made a rather daring suggestion.
+  A. (I)
+  B. (II)
+  C. (III)
+  D. (IV)
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q32. Question 32. The phrase "the necessity for action" in paragraph 2 could be best replaced by
+  A. the requirement for change
+  B. the importance of communication
+  C. the need for technology
+  D. the demand for connection
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q33. Question 33. The word "it" in paragraph 2 refers to
+  A. fact
+  B. phone
+  C. light
+  D. box
+  Current: B
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q34. Question 34. According to paragraph 1, Brian Perez was shocked to find that _.
+  A. people were willing to remove all their gadgets
+  B. the prices for food were too expensive
+  C. people were glued to their phones
+  D. everyone seemed quiet by nature
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q35. Question 35. Which of the following best summarises the paragraph 3?
+  A. Banning electronic devices during family meals helps improve communication and connection.
+  B. Parents find it easy to disconnect from work during meal times.
+  C. Family meals should be brief to accommodate everyone's schedules.
+  D. Teenagers resist limits on device use but benefit from family interaction.
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q36. Question 36. The word “ban” in paragraph 3 is OPPOSITE in meaning to _.
+  A. allow
+  B. forbid
+  C. prohibit
+  D. prevent
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q37. Question 37. Which of the following statements is TRUE, according to the passage?
+  A. People choose not to use their phones at home so that they can talk to other members.
+  B. Meal times are the most suitable for the whole family to use phones together.
+  C. Teenagers can find it easier to turn off their phones compared to their parents.
+  D. Brian's idea is not new in terms of making people less dependent on technology.
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q38. Question 38. The word “highlights” in paragraph 2 is closest in meaning to _.
+  A. tackles
+  B. expects
+  C. proposes
+  D. emphasizes
+  Current: D
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q39. Question 39. Which of the following best paraphrases the sentence “With technology out of the room, a line has been drawn between daytime and sleep time”?
+  A. Removing devices from the bedroom helps distinguish between waking hours and rest.
+  B. Keeping technology in the bedroom allows for better sleep quality.
+  C. Limiting device usage at night makes it easier to stay awake.
+  D. Having devices in the bedroom is beneficial for sleep routines.
+  Current: A
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.
+
+Q40. Question 40. Which of the following best summarises the passage?
+  A. Frequent technology use can enhance family communication, but it often leads to disconnection during important moments.
+  B. Setting boundaries on device usage is essential for fostering meaningful interactions among family members.
+  C. While technology offers benefits, it can disrupt family life, necessitating limits on its use during shared times.
+  D. Families should embrace technology fully, as it provides more opportunities for communication and connection.
+  Current: C
+  Explanation: Đáp án được lấy từ lời giải gốc trong bộ 66 đề.

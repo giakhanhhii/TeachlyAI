@@ -1,0 +1,384 @@
+# TEST 7: THPTQG simulation test 7
+
+## Part 1 - Câu 1-10
+### Câu 1
+Questions: 1, 2, 3, 4, 5, 6
+
+### WHY SHOULD WE SUPPORT CHARITY?
+Instruction: Read the following leaflet and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.
+Context 1: Together, even small acts can lead to meaningful change! Reasons: Helping those in need is (7) _, but there's more to it. Every day, many people struggle with issues like poverty or lack of resources.
+Context 2: By supporting charities, you can build empathy and be part of a solution. (8) _ your contributions to charity work, communities become closer, which creates a positive impact on everyone involved. How You Can Make a Difference: (9) _ clothes, food, or other essentials to those in need. Donate a (10) _ of your income to trusted charity organisations.
+Context 3: Volunteer your time and offer assistance that could benefit (11) _. Join local charity events that promote (12) _ and raise funds.
+Questions: 7, 8, 9, 10
+
+## Part 2 - Câu 11-20
+### WHY SHOULD WE SUPPORT CHARITY?
+Instruction: Read the following leaflet and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.
+Context 1: Together, even small acts can lead to meaningful change! Reasons: Helping those in need is (7) _, but there's more to it. Every day, many people struggle with issues like poverty or lack of resources.
+Context 2: By supporting charities, you can build empathy and be part of a solution. (8) _ your contributions to charity work, communities become closer, which creates a positive impact on everyone involved. How You Can Make a Difference: (9) _ clothes, food, or other essentials to those in need. Donate a (10) _ of your income to trusted charity organisations.
+Context 3: Volunteer your time and offer assistance that could benefit (11) _. Join local charity events that promote (12) _ and raise funds.
+Questions: 11, 12
+
+### Câu 13
+Instruction: Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions.
+Questions: 13, 14, 15, 16, 17
+
+### Câu 18
+Instruction: Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.
+Context 1: In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.
+Context 2: One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_.
+Context 3: This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material. Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.
+Context 4: Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_.
+Questions: 18, 19, 20
+
+## Part 3 - Câu 21-30
+### Câu 18
+Instruction: Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.
+Context 1: In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.
+Context 2: One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_.
+Context 3: This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material. Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.
+Context 4: Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_.
+Questions: 21, 22
+
+### Câu 23
+Instruction: Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.
+Context 1: In an era marked by climate change and environmental degradation, adopting green living habits has become increasingly vital. Green living refers to a lifestyle that seeks to minimize one's ecological footprint through conscious choices in daily activities. This can include everything from reducing waste to conserving energy and using sustainable products.
+Context 2: More individuals recognize the importance of preserving our planet, and the movement toward greener practices continues to gain momentum. One of the most significant aspects of green living is its focus on sustainability. By choosing products that are eco-friendly, consumers can support businesses that prioritize environmental responsibility.
+Context 3: For instance, using reusable bags, bottles, and containers reduces plastic waste and promotes a circular economy. Furthermore, opting for locally sourced foods not only supports local farmers but also decreases the carbon emissions associated with transportation. When green living habits are adopted, they can lead to profound changes in our environment.
+Context 4: By reducing their energy consumption through the use of energy-efficient appliances, individuals help lower greenhouse gas emissions. Consequently, this contributes to cleaner air and mitigates the effects of climate change.
+Context 5: Moreover, by practicing water conservation methods, such as fixing leaks and using low-flow fixtures, households can significantly reduce water waste, promoting the sustainable use of this precious resource.
+Context 6: Therefore, educating individuals about green living habits is crucial for promoting a more sustainable future. Schools and community organizations can offer workshops and resources that highlight the benefits of eco-friendly practices.
+Context 7: Additionally, social media campaigns can raise awareness and encourage people to share their experiences with sustainable living. By empowering individuals to make informed choices, we can collectively work towards a healthier planet for generations to come.
+Questions: 23, 24, 25, 26, 27, 28, 29, 30
+
+## Part 4 - Câu 31-40
+### Câu 31
+Instruction: Read the following passage about Consumer Electronics Show and mark the letter A, B, C, D on your answer sheet to indicate the best answer to each of the following questions.
+Context 1: The Consumer Electronics Show in Las Vegas is always a spectacle of innovation. Imagine walking into the convention halls and being greeted by the next generation of artificial intelligence not just as digital assistants, but as deeply integrated companions that anticipate our needs in ways we've only dreamed of. AI could be woven into every fabric of our daily lives, from personalized health monitoring to enhancing our creative endeavors.
+Context 2: Virtual and augmented reality have been making leaps and bounds, and by 2025, we might finally see the lines between the digital and physical worlds blur in profoundly immersive ways. Envision slipping on a pair of sleek AR glasses and instantly transforming your surroundings into a customized workspace or an interactive learning environment. This could make remote interactions feel as natural as face-to-face conversations.
+Context 3: (I) Sustainability is another trend that's been gaining momentum. (II) Tech companies are increasingly conscious of their environmental footprint, and at CES 2025, I wouldn't be surprised to see a plethora of eco-friendly gadgets. (III) Imagine homes equipped with smart systems that optimize energy use, reducing waste and promoting a greener lifestyle without sacrificing comfort or convenience.
+Context 4: (IV) The Internet of Things (IoT) is likely to become even more interconnected and intuitive. Smart homes could evolve into empathetic environments that adjust lighting, temperature, and ambiance based on our moods or health metrics. Perhaps we'll see refrigerators that not only keep track of groceries but also suggest recipes to reduce food waste, or closets that recommend outfits based on the weather forecast and your calendar.
+Context 5: Transportation technology is on the cusp of a revolution. Electric vehicles are just the beginning. By 2025, CES might showcase advancements in autonomous driving systems becoming mainstream, or even personal air transportation like flying cars or drones. It's thrilling to think about commuting not just on roads but through the skies, potentially reshaping urban planning and our daily lives. Biotechnology could also take center stage. Wearables may transition from fitness trackers to health guardians, capable of monitoring municipal signs with medical-grade accuracy, predicting health issues before they arise, and seamlessly communicating with healthcare providers.
+Context 6: This integration of tech and wellness could empower us to lead healthier, more informed lives. While these are educated speculations based on current trends, the magic of CES lies in its ability to introduce the unexpected innovations that challenge our perceptions and expand the boundaries of what's possible. The 2025 show is bound to unveil something that will make us all stop and marvel.
+Questions: 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+
+## QUESTIONS
+Q1. Question 1.
+  A. which designed
+  B. designing
+  C. was designed
+  D. designed
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.
+
+Q2. Question 2.
+  A. to promote
+  B. promoted
+  C. promoting
+  D. promote
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q3. Question 3.
+  A. green energy option
+  B. green option energy
+  C. energy green option
+  D. option green energy
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q4. Question 4.
+  A. do
+  B. take
+  C. have
+  D. make
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q5. Question 5.
+  A. into
+  B. for
+  C. to
+  D. of
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.
+
+Q6. Question 6.
+  A. act
+  B. action
+  C. actively
+  D. active
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q7. Question 7.
+  A. deliberate
+  B. accessible
+  C. rewarding
+  D. ambitious
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q8. Question 8.
+  A. Thanks to
+  B. Regardless of
+  C. With regard to
+  D. In addition to
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.
+
+Q9. Question 9.
+  A. Turn up
+  B. Take out
+  C. Put on
+  D. Give away
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q10. Question 10.
+  A. variety
+  B. portion
+  C. range
+  D. number
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.
+
+Q11. Question 11.
+  A. other
+  B. the others
+  C. others
+  D. another
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.
+
+Q12. Question 12.
+  A. achievement
+  B. diversity
+  C. experience
+  D. awareness Question 12 and above the footer.
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q13. Question 13. a. Salesperson: Sure! This model has a great camera, a fast processor, and a very reasonable price. b. Salesperson: We have some excellent models with high-resolution cameras and batteries that last more than a day. c. Alex: That sounds great! Can you recommend a phone that is not too expensive but works well? d. Alex: Excuse me. I'm looking for a new smartphone with a good camera and long battery life. e. Alex: Perfect! I'll take it, but can you also help me transfer my data?
+  A. d-b-a-e-c
+  B. b-d-e-c-a
+  C. b-c-a-e-d
+  D. d-b-c-a-e
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q14. Question 14. a. The rise of the internet and smartphones has connected people globally, enabling instant communication and access to information. b. Technology and innovation have revolutionized the way we live, work, and communicate. c. However, rapid technological changes also pose challenges, such as job displacement and privacy concerns. d. Balancing the benefits and risks of technology is crucial for sustainable development. e. Advances in artificial intelligence, robotics, and biotechnology are transforming industries and creating new opportunities.
+  A. c-d-b-a-e
+  B. e-c-a-b-d
+  C. b-a-e-c-d
+  D. a-b-d-e-c
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q15. Question 15. a. Shop assistant: Welcome! We have beautiful jewelry, stylish handbags, and unique handmade candles in different scents. b. Julia: Those sound great! I think she would love a candle with a relaxing lavender fragrance. c. Julia: Hello! Can you help me find a nice gift for my best friend's birthday?
+  A. b - a - c
+  B. c - a - b
+  C. c - b - a
+  D. a - c - b
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q16. Question 16. a. However, once the foundation is laid, the real work begins as they start building more complex systems of thought and understanding. b. Learning a new language is challenging, especially at the beginning when students are overwhelmed by grammar rules and unfamiliar vocabulary. c. With continuous practice, learners gradually develop confidence in their speaking, listening, and writing skills, although progress may seem slow at first. d. Many language learners experience frustration early on, but it's important to remember that fluency comes with time and dedication. e. In the end, the sense of accomplishment that comes from mastering a language makes the effort worthwhile, opening doors to new cultures and opportunities.
+  A. b-d-a-c-e
+  B. a-d-c-b-e
+  C. b-a-c-d-e
+  D. d-b-a-c-e
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q17. Question 17. John, - a. Thank you for all the hard work in setting up the activities for the event next week. - b. We need the text for a leaflet to be handed out to the kids, around 250 words in total. - c. We've really got to persuade them that it's going to be enjoyable - not just more lessons! - d. We need to tell them what's on offer but, most of all, we need to phrase it in such a way that it looks like fun! - e. There's just one more thing that needs to be done and I think you're just the person for the job! Thanks, Sandra
+  A. b-c-e-d-a
+  B. a-e-b-d-c
+  C. a-b-e-c-d
+  D. d-a-c-e-b
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q18. Question 18.
+  A. that have been introduced by technology recently
+  B. having have been introduced by technology recently
+  C. have been introduced by technology recently
+  D. by which they have been introduced by technology recently
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q19. Question 19.
+  A. uses artificial intelligence adjustment to educational content to suit individual strengths and weaknesses
+  B. in which artificial intelligence tailors educational content to individual strengths and weaknesses
+  C. where the use of artificial intelligence in adapting content to individual strengths and weaknesses
+  D. tailors educational content to individual strengths and weaknesses with the help of artificial intelligence
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q20. Question 20.
+  A. Many learning apps now use point systems and leaderboards to encourage users to complete daily lessons.
+  B. International companies developed many kinds of programs to help learners complete daily lessons.
+  C. Point systems and leaderboards in learning apps resulted from the completion of daily lessons for many users.
+  D. Encouraged users to complete daily lessons, point systems and leaderboards were added to some learning apps.
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q21. Question 21.
+  A. Interracial students share ideas and experiences so that they can use platforms like Zoom or Google Docs in their learning.
+  B. Students from different countries can now use platforms like Zoom or Google Docs, allowing them to share ideas and experiences.
+  C. But for the use of platforms like Zoom or Google Docs, students from different countries could share ideas and experiences.
+  D. Using platforms like Zoom or Google Docs, ideas and experiences can be shared with students from different countries.
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q22. Question 22.
+  A. learners can now meet the demands and challenges of the modern era
+  B. the demands and challenges of the modern era are addressed by learners
+  C. the modern era no longer presents demands and challenges to learners
+  D. learners' solution to the challenges of the modern era is now achieved
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q23. Question 23. Which of the following is NOT mentioned as one of the green living practices?
+  A. Conserving energy
+  B. Reducing waste
+  C. Using sustainable products
+  D. Composting organic waste
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q24. Question 24. The word vital in paragraph 1 is OPPOSITE in meaning to _.
+  A. imperfect
+  B. inessential
+  C. important
+  D. popular
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q25. Question 25. The word they in paragraph 3 refers to _.
+  A. carbon emissions
+  B. individuals
+  C. green living habits
+  D. local farmers
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q26. Question 26. The word empowering in paragraph 4 could be best replaced by _.
+  A. enabling
+  B. maintaining
+  C. prohibiting
+  D. abandoning
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q27. Question 27. Which of the following best paraphrases the underlined sentence in paragraph 2?
+  A. Opting for eco-friendly products might make consumers overlook irresponsible businesses.
+  B. Buying non-eco-friendly products harms eco-conscious companies.
+  C. Choosing eco-friendly products supports businesses focusing on environmental responsibility.
+  D. Purchasing harmful products supports businesses ignoring environmental issues.
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q28. Question 28. Which of the following is TRUE according to the passage?
+  A. Green living only targets energy reduction and ignores waste management entirely.
+  B. Educating people about green practices is unnecessary for promoting a sustainable future.
+  C. The movement for greener habits has slowed as fewer people value protecting the environment.
+  D. Using reusable products can contribute to a decrease in plastic waste and promote sustainability.
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q29. Question 29. In which paragraph does the writer mention a present causal relationship?
+  A. Paragraph 3
+  B. Paragraph 2
+  C. Paragraph 1
+  D. Paragraph 4
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q30. Question 30. In which paragraph does the writer discuss methods for teaching people about eco-friendly living practices?
+  A. Paragraph 1
+  B. Paragraph 3
+  C. Paragraph 2
+  D. Paragraph 4
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q31. Question 31. According to the passage, which technological advancement might make remote interactions feel as natural as face-to-face conversations?
+  A. Empathetic smart homes
+  B. Artificial intelligence companions
+  C. Advanced virtual and augmented reality
+  D. Autonomous transportation systems
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q32. Question 32. The phrase woven into every fabric of our daily lives in paragraph 1 could best be replaced by _.
+  A. totally separated from all of our regular activities
+  B. integrated thoroughly throughout our everyday routines
+  C. hidden away in selected aspects of everyday life
+  D. entirely neglected in most parts of our day-to-day existence
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q33. Question 33. The word conscious in paragraph 3 is OPPOSITE in meaning to _.
+  A. aware
+  B. mindful
+  C. distressing
+  D. oblivious
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q34. Question 34. Where in paragraph 3 does the following sentence best fit? Think biodegradable wearables or devices powered entirely by renewable energy sources.
+  A. (I)
+  B. (II)
+  C. (IV)
+  D. (III)
+  Current: D
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q35. Question 35. Which of the following best summarizes paragraph 4?
+  A. Biotechnology is about to seamlessly integrate in personal health monitoring.
+  B. The rise of sustainable technologies could help reduce negative environmental impacts.
+  C. The IoT being more intuitive and interconnected may enhance everyday conveniences.
+  D. Our daily life is likely to undergo a transformation with the help of smart companions.
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q36. Question 36. All of the following are mentioned as potential advancements showcased at CES 2025 EXCEPT _.
+  A. smart homes adjusting to our health metrics
+  B. confirmed updates about specific products
+  C. personal air transportation like flying cars
+  D. biodegradable wearables or devices
+  Current: C
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q37. Question 37. What potential feature of future refrigerators is discussed in the passage?
+  A. Automatic restocking of groceries via drones
+  B. Suggesting recipes to reduce food waste
+  C. Voice-activated access
+  D. Enhanced cooling efficiency
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q38. Question 38. Which of the following best paraphrases the underlined sentence in paragraph 6?
+  A. The fusion of technology with health may enable us to live better and more knowledgeable lives.
+  B. Using technology in wellness is unnecessary for remarkably improving ordinary people's lifestyles.
+  C. Combining technology and health might completely mystify us about our well-being.
+  D. Technology and wellness merging could make health services more and more expensive.
+  Current: A
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q39. Question 39. What can be inferred about the author's attitude toward technological advancements at CES?
+  A. Indifferent to the considerable changes they may bring
+  B. Concerned about technological overreach
+  C. Optimistic and enthusiastic about their potential impact
+  D. Skeptical about their practical applications
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
+
+Q40. Question 40. Which of the following best summarizes the passage?
+  A. There are speculated to be transformative technological innovations at CES 2025, impacting various aspects of life.
+  B. Current technological advancements are being widely criticised because of their shortcomings.
+  C. A report on confirmed technologies is to be presented at CES 2025, highlighting potential impacts on various aspects of life.
+  D. A detailed analysis of past CES events led to some profound changes in current technology.
+  Current: B
+  Explanation: Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.
