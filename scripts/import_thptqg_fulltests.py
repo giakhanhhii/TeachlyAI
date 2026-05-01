@@ -11,7 +11,7 @@ from typing import Iterable
 
 
 QUESTION_RE = re.compile(r"(?im)(?:^|\n)\s*Question\s+(\d{1,2})\s*[\.:]?\s*")
-OPTION_RE = re.compile(r"(?m)(?:^|\n|\s)\s*[-*]?\s*([ABCD])\.\s*")
+OPTION_RE = re.compile(r"(?m)^\s*[-*]?\s*([ABCD])\.\s*")
 ANSWER_PAIR_RE = re.compile(r"\b([1-9]|[1-3]\d|40)[\.-]([A-D])\b")
 
 QUESTION_HEADER = "Họ, tên thí sinh"
@@ -145,7 +145,7 @@ def ascii_fold(text: str) -> str:
 
 
 def slurp(path: Path) -> str:
-    return path.read_text(encoding="utf-8", errors="ignore")
+    return path.read_text(encoding="utf-8")
 
 
 def normalize_block(raw: str) -> str:

@@ -169,7 +169,7 @@ try {
         min-height: 720px !important;
         max-height: 720px !important;
         margin: 0 !important;
-        break-after: avoid-page !important;
+        break-after: auto !important;
         page-break-after: auto !important;
         break-inside: avoid-page !important;
         page-break-inside: avoid !important;
