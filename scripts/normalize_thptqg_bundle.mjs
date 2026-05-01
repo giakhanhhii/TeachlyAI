@@ -93,6 +93,14 @@ function stripNoiseLines(text) {
 
 function cleanText(text, { keepNewlines = true } = {}) {
   let next = String(text || "");
+  next = next.replace(/\bTaiLieuOnThi\b/gi, " ");
+  next = next.replace(/\bTailieuOnThi\b/gi, " ");
+  next = next.replace(/\bTailieuonthi\b/gi, " ");
+  next = next.replace(/Tài\s+tài\s+liệu\s+free\s+tại\s+Tailieuonthi\.\s*org/gi, " ");
+  next = next.replace(/Tài\s+liệu\s+free\s+tại\s+Tailieuonthi\.\s*org/gi, " ");
+  next = next.replace(/Tailieuonthi\.\s*org/gi, " ");
+  next = next.replace(/Họ,\s*tên\s*th[íi]\s*sinh:?\.*\s*/gi, " ");
+  next = next.replace(/Question\s+\d+'\s*section\./gi, " ");
   next = next.replace(/\\([*_#])/g, "$1");
   next = next.replace(/^#{1,6}\s+/gm, "");
   next = next.replace(/\*{1,2}([^*]+)\*{1,2}/g, "$1");
@@ -244,11 +252,14 @@ function normalizeGroup(group) {
   const { instruction, body } = splitDirectiveAndBody(group?.instruction || "", sourceContext);
   const paragraphs = splitBodyIntoParagraphs(body);
   const promoted = promoteHeading(group?.title || "", paragraphs);
+  const cleanedContext = promoted.paragraphs
+    .map((paragraph) => cleanText(paragraph, { keepNewlines: false }))
+    .filter((paragraph) => paragraph && !/^from\s+\d+\s+to\s+\d+[.:]?$/i.test(paragraph));
   return {
     ...group,
     title: cleanText(promoted.title || group?.title || "", { keepNewlines: false }),
     instruction: cleanText(instruction, { keepNewlines: false }),
-    context: promoted.paragraphs.map((paragraph) => cleanText(paragraph, { keepNewlines: false })).filter(Boolean),
+    context: cleanedContext,
   };
 }
 
