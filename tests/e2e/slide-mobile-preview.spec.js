@@ -32,15 +32,17 @@ async function openSlideExperience(page) {
   await page.getByRole("button", { name: "Tự động điền dữ liệu mẫu (AI)" }).click();
   await page.getByRole("button", { name: "Gửi thông tin", exact: true }).click();
 
-  await expect(page.locator("#experienceLayer")).toHaveClass(/visible/);
-  await expect(page.locator(".exp-slide-shell-frame")).toBeVisible();
-  await expect(page.locator('iframe[title="Slide deck"]')).toBeVisible();
+  const experienceLayer = page.locator("#experienceLayer");
+  await expect(experienceLayer).toHaveClass(/visible/);
+  await expect(experienceLayer.locator(".exp-slide-shell-frame").first()).toBeVisible();
+  await expect(experienceLayer.locator('iframe[title="Slide deck"]').first()).toBeVisible();
 }
 
 async function expectSlideLayoutVisible(page, viewport) {
-  const frame = page.locator(".exp-slide-shell-frame");
-  const iframe = page.locator('iframe[title="Slide deck"]');
-  const footer = page.locator(".exp-footer-bar");
+  const experienceLayer = page.locator("#experienceLayer");
+  const frame = experienceLayer.locator(".exp-slide-shell-frame").first();
+  const iframe = experienceLayer.locator('iframe[title="Slide deck"]').first();
+  const footer = experienceLayer.locator(".exp-footer-bar").first();
 
   await expect
     .poll(async () =>
@@ -70,6 +72,7 @@ async function expectSlideLayoutVisible(page, viewport) {
   expect(shellMetrics.masterWidth).toBeGreaterThanOrEqual(1598);
 
   const slideWidth = await page
+    .locator("#experienceLayer")
     .frameLocator('iframe[title="Slide deck"]')
     .locator(".shell-slide-instance.active")
     .first()
