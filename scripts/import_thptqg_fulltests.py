@@ -715,11 +715,8 @@ def load_existing_bundle(path: Path) -> dict:
 
 def generate_embedded_module(bundle: dict) -> str:
     raw = json.dumps(bundle, ensure_ascii=False, indent=2)
-    return (
-        "export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`"
-        + raw
-        + "`);\n"
-    )
+    encoded = json.dumps(raw, ensure_ascii=False)
+    return f"export const EMBEDDED_THPTQG_FULLTEST = JSON.parse({encoded});\n"
 
 
 def import_fulltests(
