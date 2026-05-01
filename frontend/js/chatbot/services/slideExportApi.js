@@ -47,14 +47,5 @@ export function triggerPdfDownload(blob, fileName) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  let revoked = false;
-  const revoke = () => {
-    if (revoked) return;
-    revoked = true;
-    URL.revokeObjectURL(url);
-  };
-  if (typeof requestAnimationFrame === "function") {
-    requestAnimationFrame(revoke);
-  }
-  setTimeout(revoke, 30000);
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
