@@ -47,121 +47,121 @@
       "candidate": "pair-13",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-13",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase",
       "heuristicCount": 3,
-      "fallbackCount": 36
+      "fallbackCount": 0
     },
     {
       "candidate": "pair-16",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-16",
-      "answerStrategy": "fallback-A",
+      "answerStrategy": "global-phrase+fallback-A",
       "heuristicCount": 0,
-      "fallbackCount": 40
+      "fallbackCount": 9
     },
     {
       "candidate": "pair-17",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-17",
-      "answerStrategy": "fallback-A",
+      "answerStrategy": "global-phrase+fallback-A",
       "heuristicCount": 0,
-      "fallbackCount": 40
+      "fallbackCount": 13
     },
     {
       "candidate": "pair-18",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-18",
-      "answerStrategy": "fallback-A",
+      "answerStrategy": "global-phrase+fallback-A",
       "heuristicCount": 0,
-      "fallbackCount": 40
+      "fallbackCount": 17
     },
     {
       "candidate": "pair-19",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-19",
-      "answerStrategy": "fallback-A",
+      "answerStrategy": "global-phrase+fallback-A",
       "heuristicCount": 0,
-      "fallbackCount": 40
+      "fallbackCount": 20
     },
     {
       "candidate": "pair-21",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-21",
-      "answerStrategy": "fallback-A",
+      "answerStrategy": "global-phrase+fallback-A",
       "heuristicCount": 0,
-      "fallbackCount": 40
+      "fallbackCount": 8
     },
     {
       "candidate": "solution-only-3",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-3",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 2,
-      "fallbackCount": 38
+      "fallbackCount": 24
     },
     {
       "candidate": "solution-only-5",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-5",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 2,
-      "fallbackCount": 38
+      "fallbackCount": 12
     },
     {
       "candidate": "solution-only-6",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-6",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
-      "fallbackCount": 39
+      "fallbackCount": 10
     },
     {
       "candidate": "solution-only-7",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-7",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 2,
-      "fallbackCount": 38
+      "fallbackCount": 15
     },
     {
       "candidate": "solution-only-11",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-11",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
-      "fallbackCount": 39
+      "fallbackCount": 17
     },
     {
       "candidate": "solution-only-14",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-14",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
-      "fallbackCount": 39
+      "fallbackCount": 15
     },
     {
       "candidate": "solution-only-15",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-15",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
-      "fallbackCount": 39
+      "fallbackCount": 22
     },
     {
       "candidate": "solution-only-16",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-16",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
-      "fallbackCount": 39
+      "fallbackCount": 10
     },
     {
       "candidate": "solution-only-18",
       "questionCount": 40,
       "sourceRef": "66_Full.md#solution-only-18",
-      "answerStrategy": "phrase+heuristic+fallback-A",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
-      "fallbackCount": 39
+      "fallbackCount": 15
     }
   ],
   "skipped": [

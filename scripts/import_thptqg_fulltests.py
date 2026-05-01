@@ -370,6 +370,18 @@ def parse_answer_phrases(raw_solution_block: str, parsed_questions: list[Questio
     return best_resolution
 
 
+def parse_answer_global_sequence(raw_solution_block: str) -> dict[int, str]:
+    block = ascii_fold(clean_lines(normalize_block(raw_solution_block)))
+    pattern = re.compile(r"question\s+(\d{1,2}).{0,2500}?chon dap an\s*([abcd])\b", re.I | re.S)
+    answer_map: dict[int, str] = {}
+    for match in pattern.finditer(block):
+        question_no = int(match.group(1))
+        if not 1 <= question_no <= 40:
+            continue
+        answer_map.setdefault(question_no, match.group(2).upper())
+    return answer_map
+
+
 def infer_group_meta(prefix_text: str, start_question: int, fallback_title: str) -> tuple[str, str, list[str]]:
     cleaned = clean_lines(prefix_text)
     if not cleaned:
@@ -566,10 +578,30 @@ def resolve_answers(
         return AnswerResolution(table_answers, "table", 40, 0, 0)
 
     phrase_resolution = parse_answer_phrases(answer_source_block, parsed_questions=parsed_questions)
-    if phrase_resolution.resolved_count == 40:
-        return phrase_resolution
+    merged_answers = dict(phrase_resolution.answer_map)
+    strategy_parts: list[str] = []
+    if phrase_resolution.resolved_count:
+        strategy_parts.append(phrase_resolution.strategy)
 
-    completed = dict(phrase_resolution.answer_map)
+    global_answers = parse_answer_global_sequence(answer_source_block)
+    global_fill_count = 0
+    for question_no, letter in global_answers.items():
+        if question_no not in merged_answers and letter in {"A", "B", "C", "D"}:
+            merged_answers[question_no] = letter
+            global_fill_count += 1
+    if global_fill_count:
+        strategy_parts.append("global-phrase")
+
+    if sorted(merged_answers) == list(range(1, 41)):
+        return AnswerResolution(
+            merged_answers,
+            "+".join(strategy_parts) or "global-phrase",
+            40,
+            phrase_resolution.heuristic_count,
+            0,
+        )
+
+    completed = dict(merged_answers)
     fallback_count = 0
     for item in parsed_questions:
         if item.number in completed:
@@ -578,7 +610,11 @@ def resolve_answers(
         fallback_count += 1
     return AnswerResolution(
         answer_map=completed,
-        strategy="fallback-A" if not phrase_resolution.resolved_count else f"{phrase_resolution.strategy}+fallback-A",
+        strategy=(
+            "fallback-A"
+            if not strategy_parts
+            else f"{'+'.join(strategy_parts)}+fallback-A"
+        ),
         resolved_count=len(completed),
         heuristic_count=phrase_resolution.heuristic_count,
         fallback_count=fallback_count,
