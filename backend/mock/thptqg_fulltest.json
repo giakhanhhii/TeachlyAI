@@ -918,7 +918,7 @@
             {
               "id": "part-3-group-5",
               "title": "AVICII'S LIFE AFTER REHAB",
-              "instruction": "Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
+        "instruction": "Read the following passage about Avicii's life after rehab and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
               "context": [
                 "Once he completed his month in rehab, Avicii seemed to have a new outlook on life. He was meditating regularly, reading about the collective unconscious, and got a puppy. After not performing for a long period of time, he returned to the stage in 2016 at Miami's Ultra Music Festival.",
                 "It was announced a few days after this gig that he would not be performing live anymore. Avicii chose to not perform so that he could focus on bettering his mental health.",
@@ -1322,7 +1322,7 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The phrase \"new-found stability\" in paragraph 2 suggests that Avicii felt",
+          "prompt": "Question 24. The phrase \"new-found stability\" in paragraph 3 suggests that Avicii felt",
           "options": [
             "completely free of mental health issues",
             "more balanced than before",
@@ -1337,7 +1337,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word suppress in paragraph 2 is closest in meaning to",
+          "prompt": "Question 25. The word \"suppress\" in paragraph 3 is closest in meaning to",
           "options": [
             "express",
             "ignore",
@@ -1389,7 +1389,7 @@
             "Paragraph 3",
             "Paragraph 4"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-6 -> 28. B"
         },
