@@ -11,7 +11,7 @@ from typing import Iterable
 
 
 QUESTION_RE = re.compile(r"(?im)(?:^|\n)\s*Question\s+(\d{1,2})\s*[\.:]?\s*")
-OPTION_RE = re.compile(r"(?im)(?:^|\n|\s)\s*[-*]?\s*([ABCD])\.\s*")
+OPTION_RE = re.compile(r"(?m)(?:^|\n|\s)\s*[-*]?\s*([ABCD])\.\s*")
 ANSWER_PAIR_RE = re.compile(r"\b([1-9]|[1-3]\d|40)[\.-]([A-D])\b")
 
 QUESTION_HEADER = "Họ, tên thí sinh"
