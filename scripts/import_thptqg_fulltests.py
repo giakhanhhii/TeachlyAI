@@ -569,9 +569,11 @@ def import_fulltests(
 
 
 def validate_sample(sample_path: Path) -> None:
-    parsed_questions, _ = parse_question_sequence(slurp(sample_path))
-    if len(parsed_questions) != 40:
-        raise ValueError(f"Sample {sample_path} không parse được đủ 40 câu.")
+    block = clean_lines(normalize_block(slurp(sample_path)))
+    numbers = [int(match.group(1)) for match in QUESTION_RE.finditer(block)]
+    unique = sorted(set(number for number in numbers if 1 <= number <= 40))
+    if unique != list(range(1, 41)):
+        raise ValueError(f"Sample {sample_path} không có đủ heading Question 1-40 theo form chuẩn.")
 
 
 def parse_args(argv: Iterable[str]) -> argparse.Namespace:
