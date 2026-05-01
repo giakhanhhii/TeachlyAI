@@ -1,13 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
 const ROOT = process.cwd();
 const JSON_PATH = path.join(ROOT, "backend", "mock", "thptqg_fulltest.json");
 
 const data = JSON.parse(fs.readFileSync(JSON_PATH, "utf8"));
+const baseline = JSON.parse(execSync("git show HEAD:backend/mock/thptqg_fulltest.json", {
+  cwd: ROOT,
+  encoding: "utf8",
+}));
 
-function getTest(testId) {
-  const test = data.tests.find((item) => item.id === testId);
+function getTest(bundle, testId) {
+  const test = bundle.tests.find((item) => item.id === testId);
   if (!test) {
     throw new Error(`Missing test: ${testId}`);
   }
@@ -41,13 +46,15 @@ function joinParagraphs(context, segments) {
 }
 
 function overrideGroup(testId, groupId, segments) {
-  const test = getTest(testId);
+  const test = getTest(data, testId);
   const group = getGroup(test, groupId);
-  group.context = joinParagraphs(group.context || [], segments);
+  const baselineTest = getTest(baseline, testId);
+  const baselineGroup = getGroup(baselineTest, groupId);
+  group.context = joinParagraphs(baselineGroup.context || group.context || [], segments);
 }
 
 function overridePrompt(testId, number, prompt) {
-  const test = getTest(testId);
+  const test = getTest(data, testId);
   getQuestion(test, number).prompt = prompt;
 }
 
