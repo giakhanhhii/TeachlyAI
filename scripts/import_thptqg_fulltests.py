@@ -284,8 +284,6 @@ def find_question_runs(matches: list[re.Match[str]]) -> list[list[re.Match[str]]
                     break
             elif number == 1:
                 break
-        if len(run) == 40:
-            continue
     return runs
 
 
@@ -593,11 +591,12 @@ def apply_clear_answer_overrides(questions: list[dict], candidate_key: str) -> N
     for question in questions:
         number = int(question.get("number") or 0)
         letter = overrides.get(number)
-        if letter not in {"A", "B", "C", "D"}:
+        normalized_letter = str(letter or "").strip().upper()
+        if normalized_letter not in {"A", "B", "C", "D"}:
             continue
-        question["correctIndex"] = "ABCD".index(letter)
+        question["correctIndex"] = "ABCD".index(normalized_letter)
         evidence = str(question.get("explanationEvidence") or "")
-        marker = f"manual-override={letter}"
+        marker = f"manual-override={normalized_letter}"
         if marker not in evidence:
             question["explanationEvidence"] = f"{evidence} | {marker}".strip(" |")
         explanation = str(question.get("explanation") or "")
