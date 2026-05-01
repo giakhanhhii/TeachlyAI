@@ -8,7 +8,9 @@ from scripts.import_thptqg_fulltests import (
     OPTION_RE,
     QUESTION_RE,
     apply_clear_answer_overrides,
+    find_option_run,
     find_question_runs,
+    parse_question_sequence,
     slurp,
     strip_answer_leakage,
 )
@@ -100,3 +102,24 @@ def test_strip_answer_leakage_keeps_normal_question_text():
     clean = "Read the following passage and choose the best answer."
 
     assert strip_answer_leakage(clean) == clean
+
+
+def test_find_option_run_supports_inline_options_without_grabbing_prompt_initials():
+    text = "We met A. Smith yesterday. A. First option B. Second option C. Third option D. Fourth option"
+
+    matches = find_option_run(text)
+
+    assert [match.group(1) for match in matches] == ["A", "B", "C", "D"]
+    assert text[matches[0].end(): matches[1].start()].strip() == "First option"
+
+
+def test_parse_question_sequence_accepts_inline_option_layout():
+    lines = []
+    for idx in range(1, 41):
+        lines.append(f"Question {idx}. Stem {idx} A. optA{idx} B. optB{idx} C. optC{idx} D. optD{idx}")
+
+    parsed, prefix = parse_question_sequence("\n".join(lines))
+
+    assert prefix == ""
+    assert len(parsed) == 40
+    assert parsed[0].options == ["optA1", "optB1", "optC1", "optD1"]

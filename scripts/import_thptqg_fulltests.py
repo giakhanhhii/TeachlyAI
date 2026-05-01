@@ -12,6 +12,7 @@ from typing import Iterable
 
 QUESTION_RE = re.compile(r"(?im)(?:^|\n)\s*Question\s+(\d{1,2})\s*[\.:]?\s*")
 OPTION_RE = re.compile(r"(?m)^\s*[-*]?\s*([ABCD])\.\s*")
+INLINE_OPTION_RE = re.compile(r"(?:^|(?<=\s))([ABCD])\.\s*")
 ANSWER_PAIR_RE = re.compile(r"\b([1-9]|[1-3]\d|40)[\.-]([A-D])\b")
 
 QUESTION_HEADER = "Họ, tên thí sinh"
@@ -332,6 +333,30 @@ def find_question_runs(matches: list[re.Match[str]]) -> list[list[re.Match[str]]
     return runs
 
 
+def find_option_run(question_body: str) -> list[re.Match[str]]:
+    anchored_matches = list(OPTION_RE.finditer(question_body))
+    if len(anchored_matches) >= 4:
+        letters = [match.group(1) for match in anchored_matches[:4]]
+        if letters == ["A", "B", "C", "D"]:
+            return anchored_matches[:4]
+
+    inline_matches = list(INLINE_OPTION_RE.finditer(question_body))
+    for start_index, match in enumerate(inline_matches):
+        if match.group(1) != "A":
+            continue
+        run = [match]
+        expected_letters = ["B", "C", "D"]
+        for next_match in inline_matches[start_index + 1:]:
+            next_letter = next_match.group(1)
+            if next_letter == expected_letters[len(run) - 1]:
+                run.append(next_match)
+                if len(run) == 4:
+                    return run
+            elif next_letter == "A":
+                break
+    return []
+
+
 def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
     block = clean_lines(normalize_block(raw_block))
     matches = list(QUESTION_RE.finditer(block))
@@ -347,11 +372,9 @@ def parse_question_sequence(raw_block: str) -> tuple[list[QuestionParse], str]:
         next_start = picked[idx + 1].start() if idx + 1 < len(picked) else len(block)
         segment = block[match.end(): next_start].strip()
         question_body, _ = split_explanation(segment)
-        option_matches = list(OPTION_RE.finditer(question_body))
-        if len(option_matches) < 4:
+        ordered = find_option_run(question_body)
+        if len(ordered) < 4:
             raise ValueError(f"Câu {question_no} không đủ 4 lựa chọn.")
-
-        ordered = option_matches[:4]
         letters = [m.group(1) for m in ordered]
         if letters != ["A", "B", "C", "D"]:
             raise ValueError(f"Câu {question_no} có thứ tự lựa chọn không chuẩn: {letters}.")
