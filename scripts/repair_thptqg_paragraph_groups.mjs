@@ -52,7 +52,7 @@ function overridePrompt(testId, number, prompt) {
 }
 
 const GROUP_OVERRIDES = [
-  ["thptqg-simulation-test-2", "part-4-group-6", [[0, 2], 3, [4, 5], [6, 8]]],
+  ["thptqg-simulation-test-2", "part-4-group-6", [[0, 3], [4, 5], [6, 8]]],
   ["thptqg-simulation-test-4", "part-4-group-4", [[0, 2], [3, 4], [5, 7], 8, 9]],
   ["thptqg-simulation-test-7", "part-4-group-6", [0, 1, [2, 4], 5, [6, 7], 8]],
   ["thptqg-simulation-test-8", "part-2-group-3", [[0, 2], [3, 5], [6, 8], 9]],
@@ -74,6 +74,31 @@ const GROUP_OVERRIDES = [
 ];
 
 const PROMPT_OVERRIDES = [
+  [
+    "thptqg-simulation-test-2",
+    32,
+    'Question 32. The phrase "the necessity for action" in paragraph 1 could be best replaced by',
+  ],
+  [
+    "thptqg-simulation-test-2",
+    33,
+    'Question 33. The word "it" in paragraph 2 refers to',
+  ],
+  [
+    "thptqg-simulation-test-2",
+    35,
+    "Question 35. Which of the following best summarises paragraph 2?",
+  ],
+  [
+    "thptqg-simulation-test-2",
+    36,
+    'Question 36. The word “ban” in paragraph 2 is OPPOSITE in meaning to _.',
+  ],
+  [
+    "thptqg-simulation-test-2",
+    38,
+    'Question 38. The word “highlights” in paragraph 1 is closest in meaning to _.',
+  ],
   [
     "thptqg-simulation-test-4",
     38,
