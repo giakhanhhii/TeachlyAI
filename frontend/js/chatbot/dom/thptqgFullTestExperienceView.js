@@ -152,6 +152,14 @@ function appendTextBlock(parent, tagName, className, text) {
   return el;
 }
 
+function appendRichTextBlock(parent, tagName, className, text) {
+  const el = document.createElement(tagName);
+  if (className) el.className = className;
+  renderQuizStemRichText(el, text);
+  parent.appendChild(el);
+  return el;
+}
+
 function isLongReadingGroup(group) {
   const context = Array.isArray(group?.context) ? group.context : [];
   const joined = context.join(" ").trim();
@@ -1024,17 +1032,14 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         title.textContent = String(group?.title || "");
         passagePane.appendChild(title);
         if (group?.instruction) {
-          const instruction = document.createElement("p");
-          instruction.className = "thptqg-group-instruction";
-          instruction.textContent = String(group.instruction);
-          passagePane.appendChild(instruction);
+          appendRichTextBlock(passagePane, "p", "thptqg-group-instruction", String(group.instruction));
         }
         if (Array.isArray(group?.context) && group.context.length) {
           const contextWrap = document.createElement("div");
           contextWrap.className = "thptqg-context thptqg-passage-scroll";
           group.context.forEach((line) => {
             const paragraph = document.createElement("p");
-            paragraph.textContent = String(line);
+            renderQuizStemRichText(paragraph, String(line));
             contextWrap.appendChild(paragraph);
           });
           passagePane.appendChild(contextWrap);
@@ -1067,10 +1072,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
         compactTitle.textContent = String(group?.title || "");
         compactHead.appendChild(compactTitle);
         if (group?.instruction) {
-          const compactInstruction = document.createElement("p");
-          compactInstruction.className = "thptqg-group-instruction";
-          compactInstruction.textContent = String(group.instruction);
-          compactHead.appendChild(compactInstruction);
+          appendRichTextBlock(compactHead, "p", "thptqg-group-instruction", String(group.instruction));
         }
         section.appendChild(compactHead);
 
@@ -1079,7 +1081,7 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
           compactContext.className = "thptqg-compact-context";
           group.context.forEach((line) => {
             const paragraph = document.createElement("p");
-            paragraph.textContent = String(line);
+            renderQuizStemRichText(paragraph, String(line));
             compactContext.appendChild(paragraph);
           });
           section.appendChild(compactContext);
