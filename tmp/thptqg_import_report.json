@@ -60,14 +60,6 @@
       "fallbackCount": 9
     },
     {
-      "candidate": "pair-17",
-      "questionCount": 40,
-      "sourceRef": "66_Full.md#pair-17",
-      "answerStrategy": "global-phrase+fallback-A",
-      "heuristicCount": 0,
-      "fallbackCount": 13
-    },
-    {
       "candidate": "pair-18",
       "questionCount": 40,
       "sourceRef": "66_Full.md#pair-18",
@@ -130,6 +122,14 @@
       "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
       "heuristicCount": 1,
       "fallbackCount": 17
+    },
+    {
+      "candidate": "solution-only-13",
+      "questionCount": 40,
+      "sourceRef": "66_Full.md#solution-only-13",
+      "answerStrategy": "phrase+heuristic+global-phrase+fallback-A",
+      "heuristicCount": 1,
+      "fallbackCount": 16
     },
     {
       "candidate": "solution-only-14",
@@ -211,6 +211,11 @@
       "source_ref": "66_Full.md#pair-15"
     },
     {
+      "candidate": "pair-17",
+      "reason": "Không tìm thấy chuỗi 40 câu liên tục.",
+      "source_ref": "66_Full.md#pair-17"
+    },
+    {
       "candidate": "pair-20",
       "reason": "Không tìm thấy chuỗi 40 câu liên tục.",
       "source_ref": "66_Full.md#pair-20"
@@ -249,11 +254,6 @@
       "candidate": "solution-only-12",
       "reason": "Không tìm thấy chuỗi 40 câu liên tục.",
       "source_ref": "66_Full.md#solution-only-12"
-    },
-    {
-      "candidate": "solution-only-13",
-      "reason": "Câu 5 có thứ tự lựa chọn không chuẩn: ['A', 'B', 'D', 'C'].",
-      "source_ref": "66_Full.md#solution-only-13"
     },
     {
       "candidate": "solution-only-17",
