@@ -14,7 +14,7 @@ function escapeHtml(s) {
 export function insertInlineMcLineBreaks(s) {
   if (!s) return s;
   let t = String(s);
-  t = t.replace(/([:;?!])\s+([Aa])\.\s/g, "$1\n$2. ");
+  t = t.replace(/([.:;?!])\s+(?:-\s+)?([A-Fa-f])\.\s/g, "$1\n$2. ");
   t = t.replace(/\s+(?=[B-Fb-f]\.\s)/g, "\n");
   return t;
 }
