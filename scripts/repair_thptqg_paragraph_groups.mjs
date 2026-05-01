@@ -1,15 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
-import { execSync } from "node:child_process";
 
 const ROOT = process.cwd();
 const JSON_PATH = path.join(ROOT, "backend", "mock", "thptqg_fulltest.json");
+const BASELINE_JSON_PATH = path.join(ROOT, "tmp", "thptqg_fulltest.baseline.json");
 
 const data = JSON.parse(fs.readFileSync(JSON_PATH, "utf8"));
-const baseline = JSON.parse(execSync("git show HEAD:backend/mock/thptqg_fulltest.json", {
-  cwd: ROOT,
-  encoding: "utf8",
-}));
+const baseline = fs.existsSync(BASELINE_JSON_PATH)
+  ? JSON.parse(fs.readFileSync(BASELINE_JSON_PATH, "utf8"))
+  : data;
 
 function getTest(bundle, testId) {
   const test = bundle.tests.find((item) => item.id === testId);

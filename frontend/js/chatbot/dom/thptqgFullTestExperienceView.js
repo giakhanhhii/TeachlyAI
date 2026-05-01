@@ -253,6 +253,23 @@ function extractPromptFocus(prompt) {
   };
 }
 
+function collectPromptFocuses(questions) {
+  const seen = new Set();
+  return (Array.isArray(questions) ? questions : [])
+    .map((question) => extractPromptFocus(question?.prompt))
+    .filter((focus) => focus.paragraphNumber || focus.term || focus.underline)
+    .filter((focus) => {
+      const key = JSON.stringify([
+        focus.paragraphNumber || 0,
+        String(focus.term || "").toLowerCase(),
+        Boolean(focus.underline),
+      ]);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
 function emphasizePromptReferences(prompt) {
   let next = String(prompt || "");
   next = next.replace(/\bparagraph\s+(\d+)/gi, "**paragraph $1**");
@@ -273,7 +290,9 @@ function appendHighlightedText(target, text, focus, forceUnderline = false) {
   if (!(target instanceof HTMLElement)) return;
   const content = String(text || "");
   if (!content) return;
-  if (!focus?.term) {
+  const focusList = Array.isArray(focus) ? focus.filter(Boolean) : focus ? [focus] : [];
+  const termFocuses = focusList.filter((item) => item?.term);
+  if (!termFocuses.length) {
     if (forceUnderline) {
       const underline = document.createElement("span");
       underline.className = "thptqg-inline-underline";
@@ -285,15 +304,26 @@ function appendHighlightedText(target, text, focus, forceUnderline = false) {
     return;
   }
 
-  const pattern = focus.term.includes(" ")
-    ? new RegExp(escapeRegExp(focus.term), "ig")
-    : new RegExp(`\\b${escapeRegExp(focus.term)}\\b`, "ig");
   let lastIndex = 0;
   let matched = false;
-  let match = pattern.exec(content);
-  while (match) {
-    const [token] = match;
-    const tokenIndex = match.index;
+  while (lastIndex < content.length) {
+    let nextMatch = null;
+    let nextFocus = null;
+    termFocuses.forEach((candidate) => {
+      const pattern = candidate.term.includes(" ")
+        ? new RegExp(escapeRegExp(candidate.term), "ig")
+        : new RegExp(`\\b${escapeRegExp(candidate.term)}\\b`, "ig");
+      pattern.lastIndex = lastIndex;
+      const match = pattern.exec(content);
+      if (!match) return;
+      if (!nextMatch || match.index < nextMatch.index || (match.index === nextMatch.index && match[0].length > nextMatch[0].length)) {
+        nextMatch = match;
+        nextFocus = candidate;
+      }
+    });
+    if (!nextMatch || !nextFocus) break;
+    const [token] = nextMatch;
+    const tokenIndex = nextMatch.index;
     if (tokenIndex > lastIndex) {
       const plain = content.slice(lastIndex, tokenIndex);
       if (forceUnderline) {
@@ -306,12 +336,11 @@ function appendHighlightedText(target, text, focus, forceUnderline = false) {
       }
     }
     const mark = document.createElement("mark");
-    mark.className = `thptqg-focus-term${focus.underline || forceUnderline ? " underline" : ""}`;
+    mark.className = `thptqg-focus-term${nextFocus.underline || forceUnderline ? " underline" : ""}`;
     mark.textContent = token;
     target.appendChild(mark);
     lastIndex = tokenIndex + token.length;
     matched = true;
-    match = pattern.exec(content);
   }
   if (lastIndex < content.length) {
     const tail = content.slice(lastIndex);
@@ -366,10 +395,8 @@ function renderPassageParagraph(target, text, focus, paragraphIndex, paragraphCo
     label.textContent = `Paragraph ${paragraphIndex + 1}`;
     target.appendChild(label);
   }
-  const effectiveFocus =
-    focus?.paragraphNumber && focus.paragraphNumber !== paragraphIndex + 1
-      ? null
-      : focus;
+  const focusList = Array.isArray(focus) ? focus : focus ? [focus] : [];
+  const effectiveFocus = focusList.filter((item) => !item?.paragraphNumber || item.paragraphNumber === paragraphIndex + 1);
   const lines = String(text || "").split("\n");
   lines.forEach((line, lineIndex) => {
     appendHighlightedPassageLine(target, line, effectiveFocus);
@@ -1243,11 +1270,8 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     (Array.isArray(activePart?.groups) ? activePart.groups : []).forEach((group) => {
       const questionNumbers = Array.isArray(group?.questionNumbers) ? group.questionNumbers : [];
       const groupCopy = splitEmbeddedInstructionContext(group);
-      const currentGroupQuestion = getConfiguredQuestions(test).find((question) => (
-        String(question?.id || "") === currentQuestion
-        && questionNumbers.includes(Number(question?.number || 0))
-      )) || null;
-      const promptFocus = currentGroupQuestion ? extractPromptFocus(currentGroupQuestion.prompt) : null;
+      const groupQuestions = getConfiguredQuestions(test).filter((question) => questionNumbers.includes(Number(question?.number || 0)));
+      const promptFocus = collectPromptFocuses(groupQuestions);
       const longReading = isLongReadingGroup(group);
       const section = document.createElement("section");
       section.className = longReading ? "thptqg-exam-group-layout" : "thptqg-compact-group";
