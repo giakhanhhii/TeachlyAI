@@ -25,12 +25,16 @@ export function createExperienceTopBar(p) {
   let actionButton = null;
 
   if (p.actionButton || p.onAiEdit) {
-    const cfg = p.actionButton || {
+    const defaultActionButton = {
       label: "AI sửa",
       title: "Nhờ AI chỉnh sửa nội dung",
       ariaLabel: "Nhờ AI chỉnh sửa nội dung",
       onClick: p.onAiEdit,
       icon: "ai",
+    };
+    const cfg = {
+      ...defaultActionButton,
+      ...(p.actionButton || {}),
     };
     const actionBtn = document.createElement("button");
     actionBtn.type = "button";

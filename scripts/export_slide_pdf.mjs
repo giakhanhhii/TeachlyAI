@@ -25,6 +25,40 @@ async function launchBrowser() {
   }
 }
 
+/**
+ * Wait until the rendered document is stable enough for PDF capture without
+ * relying on a fixed delay that may be too short on slower machines.
+ * @param {import("@playwright/test").Page} page
+ */
+async function waitForRenderReady(page) {
+  await page.waitForLoadState("load");
+  await page.evaluate(async () => {
+    const pendingImages = Array.from(document.images || []).filter((img) => !img.complete);
+    const imageReady = pendingImages.map(
+      (img) =>
+        new Promise((resolve) => {
+          const done = () => resolve();
+          img.addEventListener("load", done, { once: true });
+          img.addEventListener("error", done, { once: true });
+        }),
+    );
+
+    await Promise.race([
+      Promise.allSettled(imageReady),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]);
+
+    try {
+      await document.fonts?.ready;
+    } catch {
+      /* ignore font loading failures */
+    }
+
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+  });
+}
+
 const payload = JSON.parse(await readFile(payloadPath, "utf8"));
 const srcdoc = String(payload?.srcdoc || "");
 
@@ -152,7 +186,7 @@ try {
   });
 
   await page.emulateMedia({ media: "print" });
-  await page.waitForTimeout(150);
+  await waitForRenderReady(page);
   await page.pdf({
     path: outputPath,
     printBackground: true,
