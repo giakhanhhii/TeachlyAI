@@ -5458,9 +5458,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "was designed",
             "designed"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-13 -> 1.D | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=D"
         },
         {
           "id": "q2",
@@ -5473,9 +5473,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "promoting",
             "promote"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 2.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q3",
@@ -5488,9 +5488,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "energy green option",
             "option green energy"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 3.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q4",
@@ -5505,7 +5505,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 4.D | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 4.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q5",
@@ -5518,9 +5518,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "to",
             "of"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-13 -> 5.D | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=B"
         },
         {
           "id": "q6",
@@ -5535,7 +5535,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 6.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q7",
@@ -5548,9 +5548,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "rewarding",
             "ambitious ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 7.C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q8",
@@ -5563,9 +5563,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "With regard to",
             "In addition to ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-13 -> 8.B | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=B"
         },
         {
           "id": "q9",
@@ -5578,9 +5578,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Put on",
             "Give away ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 9.C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q10",
@@ -5593,9 +5593,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "range",
             "number ####"
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 10.D | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-13 -> 10.D | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=C"
         },
         {
           "id": "q11",
@@ -5608,9 +5608,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "others",
             "another ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-13 -> 11.C | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=C"
         },
         {
           "id": "q12",
@@ -5623,9 +5623,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "experience",
             "awareness Question 12 and above the footer."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 12.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q13",
@@ -5638,9 +5638,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-c-a-e-d",
             "d-b-c-a-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 13.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q14",
@@ -5653,9 +5653,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-a-e-c-d",
             "a-b-d-e-c"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 14.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q15",
@@ -5668,9 +5668,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c - b - a",
             "a - c - b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 15.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q16",
@@ -5683,9 +5683,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-a-c-d-e",
             "d-b-a-c-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 16.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q17",
@@ -5700,7 +5700,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 17.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q18",
@@ -5715,7 +5715,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 18.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q19",
@@ -5730,7 +5730,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 19.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q20",
@@ -5743,9 +5743,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Point systems and leaderboards in learning apps resulted from the completion of daily lessons for many users.",
             "Encouraged users to complete daily lessons, point systems and leaderboards were added to some learning apps."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 20.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q21",
@@ -5760,7 +5760,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 21.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q22",
@@ -5773,9 +5773,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "the modern era no longer presents demands and challenges to learners",
             "learners' solution to the challenges of the modern era is now achieved *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 22.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q23",
@@ -5788,9 +5788,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Using sustainable products",
             "Composting organic waste"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 23.C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q24",
@@ -5803,9 +5803,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "important",
             "popular"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 24.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q25",
@@ -5820,7 +5820,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 25.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q26",
@@ -5833,9 +5833,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "prohibiting",
             "abandoning"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 26.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q27",
@@ -5850,7 +5850,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 27.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q28",
@@ -5863,9 +5863,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The movement for greener habits has slowed as fewer people value protecting the environment.",
             "Using reusable products can contribute to a decrease in plastic waste and promote sustainability."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 28.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q29",
@@ -5878,9 +5878,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 1",
             "Paragraph 4"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 29.C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q30",
@@ -5893,9 +5893,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 2",
             "Paragraph 4"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 30.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q31",
@@ -5908,9 +5908,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Advanced virtual and augmented reality",
             "Autonomous transportation systems"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 31.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q32",
@@ -5925,7 +5925,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 32.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q33",
@@ -5938,9 +5938,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "distressing",
             "oblivious"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 33.C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q34",
@@ -5953,9 +5953,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "(IV)",
             "(III)"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 34.D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q35",
@@ -5970,7 +5970,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 35.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q36",
@@ -5983,9 +5983,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "personal air transportation like flying cars",
             "biodegradable wearables or devices"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 36.C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q37",
@@ -5998,9 +5998,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Voice-activated access",
             "Enhanced cooling efficiency"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 37.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q38",
@@ -6015,7 +6015,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 38.A | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q39",
@@ -6028,9 +6028,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Optimistic and enthusiastic about their potential impact",
             "Skeptical about their practical applications"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 39.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
         {
           "id": "q40",
@@ -6045,7 +6045,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-13 -> 40.B | strategy=phrase+heuristic+fallback-A | heuristic=3 | fallback=36"
+          "explanationEvidence": "66_Full.md#pair-13 -> 40.B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         }
       ]
     },
@@ -6252,9 +6252,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d - b - c - e - a",
             "d - e - b - c - a"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 1.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-16 -> 1.D | strategy=global-phrase+fallback-A | fallback=9 | manual-override=D"
         },
         {
           "id": "q2",
@@ -6267,9 +6267,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b - a - c - d",
             "b - a - d - c"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 2.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-16 -> 2.D | strategy=global-phrase+fallback-A | fallback=9 | manual-override=D"
         },
         {
           "id": "q3",
@@ -6282,9 +6282,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d - a - e - c - b",
             "a - b - c - d - e ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 3.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-16 -> 3.C | strategy=global-phrase+fallback-A | fallback=9 | manual-override=C"
         },
         {
           "id": "q4",
@@ -6297,9 +6297,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b - c - a",
             "b - a - c ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 4.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-16 -> 4.D | strategy=global-phrase+fallback-A | fallback=9 | manual-override=D"
         },
         {
           "id": "q5",
@@ -6312,9 +6312,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a - b - c - d - e",
             "c - b - d - a - e *"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 5.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-16 -> 5.D | strategy=global-phrase+fallback-A | fallback=9 | manual-override=D"
         },
         {
           "id": "q6",
@@ -6329,7 +6329,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 6.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 6.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q7",
@@ -6342,9 +6342,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "spend",
             "waste"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 7.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 7.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q8",
@@ -6359,7 +6359,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 8.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 8.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q9",
@@ -6374,7 +6374,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 9.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 9.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q10",
@@ -6387,9 +6387,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Due to",
             "On account of"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 10.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 10.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q11",
@@ -6402,9 +6402,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "others",
             "the others *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 11.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 11.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q12",
@@ -6419,7 +6419,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 12.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 12.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q13",
@@ -6432,9 +6432,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "(I)",
             "(II)"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 13.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 13.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q14",
@@ -6447,9 +6447,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "political issues",
             "bots"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 14.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 14.D | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q15",
@@ -6462,9 +6462,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "started a discussion on",
             "settled disagreement over"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 15.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 15.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q16",
@@ -6477,9 +6477,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Monitoring people at public places without consent",
             "Gaining attention towards the application of AI"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 16.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 16.D | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q17",
@@ -6494,7 +6494,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 17.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 17.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q18",
@@ -6509,7 +6509,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 18.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 18.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q19",
@@ -6524,7 +6524,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 19.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 19.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q20",
@@ -6539,7 +6539,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 20.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 20.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q21",
@@ -6554,7 +6554,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 21.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 21.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q22",
@@ -6567,9 +6567,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "out",
             "off ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 22.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 22.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q23",
@@ -6582,9 +6582,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "connecting",
             "connected ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 23.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 23.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q24",
@@ -6599,7 +6599,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 24.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 24.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q25",
@@ -6614,7 +6614,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 25.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 25.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q26",
@@ -6627,9 +6627,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "put",
             "do ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 26.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 26.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q27",
@@ -6644,7 +6644,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 27.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 27.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q28",
@@ -6659,7 +6659,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 28.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 28.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q29",
@@ -6672,9 +6672,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "rebuild",
             "remain"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 29.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 29.D | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q30",
@@ -6687,9 +6687,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "monitoring systems",
             "emergency workers"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 30.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 30.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q31",
@@ -6702,9 +6702,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Scientists are able to predict volcanic activity long before it occurs.",
             "Scientists can quickly detect and analyze volcanic activity in real time."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 31.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 31.D | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q32",
@@ -6719,7 +6719,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 32.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 32.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q33",
@@ -6732,9 +6732,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "If a volcanic eruption is predicted, governments can prepare emergency supplies like food and water to reduce the disaster's impact.",
             "Scientists are unable to predict natural hazards, so people and governments always face disasters without any warning."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 33.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 33.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q34",
@@ -6747,9 +6747,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 4",
             "Paragraph 3"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 34.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 34.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q35",
@@ -6762,9 +6762,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 4",
             "Paragraph 3"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 35.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 35.B | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q36",
@@ -6779,7 +6779,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 36.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 36.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q37",
@@ -6792,9 +6792,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "When it was displayed at the Ferus Gallery",
             "Displayed for the first time at the Ferus Gallery"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 37.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 37.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q38",
@@ -6809,7 +6809,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 38.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 38.A | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q39",
@@ -6822,9 +6822,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a famous gallery in London",
             "where is a famous gallery in London"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 39.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 39.C | strategy=global-phrase+fallback-A | fallback=9"
         },
         {
           "id": "q40",
@@ -6839,7 +6839,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-16 -> 40.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-16 -> 40.A | strategy=global-phrase+fallback-A | fallback=9"
         }
       ]
     },
@@ -7028,9 +7028,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a majority of",
             "a small number of"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 1.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 1.D | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q2",
@@ -7045,7 +7045,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 2.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 2.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q3",
@@ -7058,9 +7058,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "turn to",
             "put away"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 3.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 3.C | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q4",
@@ -7073,9 +7073,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Instead of",
             "In spite of"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 4.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 4.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q5",
@@ -7090,7 +7090,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 5.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 5.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q6",
@@ -7103,9 +7103,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "accomplishment",
             "progress *"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 6.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-17 -> 6.D | strategy=global-phrase+fallback-A | fallback=13 | manual-override=C"
         },
         {
           "id": "q7",
@@ -7118,9 +7118,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "dully",
             "dull"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 7.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 7.D | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q8",
@@ -7133,9 +7133,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "which calls",
             "was called"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 8.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-17 -> 8.B | strategy=global-phrase+fallback-A | fallback=13 | manual-override=B"
         },
         {
           "id": "q9",
@@ -7148,9 +7148,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "for",
             "with"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 9.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 9.D | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q10",
@@ -7163,9 +7163,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "like",
             "alike"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 10.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 10.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q11",
@@ -7180,7 +7180,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 11.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 11.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q12",
@@ -7193,9 +7193,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "innovative efficient design",
             "innovative design efficient"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 12.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-17 -> 12.C | strategy=global-phrase+fallback-A | fallback=13 | manual-override=C"
         },
         {
           "id": "q13",
@@ -7208,9 +7208,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-c-b",
             "b-a-c"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 13.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 13.D | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q14",
@@ -7223,9 +7223,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-e-d-b-a",
             "d-b-a-e-c"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 14.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 14.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q15",
@@ -7240,7 +7240,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 15.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 15.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q16",
@@ -7253,9 +7253,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-d-a-e-b",
             "c-a-e-d-b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 16.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 16.C | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q17",
@@ -7268,9 +7268,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d-b-a-e-c",
             "a-d-e-c-b *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 17.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 17.C | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q18",
@@ -7285,7 +7285,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 18.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 18.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q19",
@@ -7298,9 +7298,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "have been promoted worldwide thanks to significant government subsidies",
             "of which the expansion to renewable energy solutions"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 19.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 19.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q20",
@@ -7313,9 +7313,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "This marks a turning point in the fight against climate change",
             "This is due to the decline in renewable energy costs"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 20.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 20.C | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q21",
@@ -7330,7 +7330,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 21.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 21.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q22",
@@ -7343,9 +7343,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "engineers are developing more efficient energy storage systems.",
             "renewable energy sources are easily integrated into the grid *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 22.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 22.C | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q23",
@@ -7360,7 +7360,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 23.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 23.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q24",
@@ -7373,9 +7373,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "hypothesis",
             "fiction"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 24.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 24.C | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q25",
@@ -7390,7 +7390,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 25.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 25.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q26",
@@ -7405,7 +7405,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 26.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 26.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q27",
@@ -7420,7 +7420,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 27.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 27.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q28",
@@ -7435,7 +7435,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 28.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 28.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q29",
@@ -7450,7 +7450,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 29.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 29.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q30",
@@ -7465,7 +7465,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 30.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 30.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q31",
@@ -7480,7 +7480,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 31.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 31.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q32",
@@ -7495,7 +7495,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 32.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 32.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q33",
@@ -7508,9 +7508,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Environmental threats to health are dominated by traffic noise, which is listed as number one.",
             "Among all environmental risks, traffic noise is regarded as the second most dangerous for public health."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 33.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 33.D | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q34",
@@ -7523,9 +7523,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The European Environment Agency estimates that noise pollution causes a lot of premature deaths each year.",
             "Noise pollution poses a greater threat to public health during the day compared to nighttime."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 34.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 34.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q35",
@@ -7538,9 +7538,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "sound",
             "side effect"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 35.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 35.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q36",
@@ -7555,7 +7555,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 36.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 36.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q37",
@@ -7570,7 +7570,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 37.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 37.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q38",
@@ -7585,7 +7585,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 38.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 38.A | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q39",
@@ -7598,9 +7598,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The human ear becomes less sensitive while sleeping.",
             "Noise pollution is the leading environmental threat to health in Western Europe."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 39.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 39.B | strategy=global-phrase+fallback-A | fallback=13"
         },
         {
           "id": "q40",
@@ -7613,9 +7613,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Noise pollution is the least recognized environmental threat but has severe impacts on health.",
             "Noise pollution seriously impacts public health, causing stress, heart diseases, and premature deaths."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-17 -> 40.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-17 -> 40.D | strategy=global-phrase+fallback-A | fallback=13"
         }
       ]
     },
@@ -7802,7 +7802,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 1.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 1.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q2",
@@ -7815,9 +7815,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "carpenters",
             "consultants"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 2.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-18 -> 2.B | strategy=global-phrase+fallback-A | fallback=17 | manual-override=B"
         },
         {
           "id": "q3",
@@ -7830,9 +7830,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "preserve",
             "reserve"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 3.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-18 -> 3.C | strategy=global-phrase+fallback-A | fallback=17 | manual-override=C"
         },
         {
           "id": "q4",
@@ -7845,9 +7845,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "others",
             "other"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 4.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 4.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q5",
@@ -7862,7 +7862,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 5.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 5.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q6",
@@ -7875,9 +7875,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "after",
             "before *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 6.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 6.B | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q7",
@@ -7890,9 +7890,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "change direction",
             "solve problems"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 7.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-18 -> 7.A | strategy=global-phrase+fallback-A | fallback=17 | manual-override=B"
         },
         {
           "id": "q8",
@@ -7905,9 +7905,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Within the harmonious environment emerges a shifting pattern of community structures.",
             "Beyond the picturesque surroundings develops an intricate web of cultural transitions."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 8.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-18 -> 8.B | strategy=global-phrase+fallback-A | fallback=17 | manual-override=B"
         },
         {
           "id": "q9",
@@ -7920,9 +7920,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Simplified craft sessions affect both workshop income and skill preservation",
             "Rising volunteer participation has disrupted traditional teaching models"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 9.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-18 -> 9.A | strategy=global-phrase+fallback-A | fallback=17 | manual-override=C"
         },
         {
           "id": "q10",
@@ -7935,9 +7935,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "(I)",
             "(II)"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 10.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 10.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q11",
@@ -7950,9 +7950,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "operators",
             "positions"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 11.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 11.C | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q12",
@@ -7967,7 +7967,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 12.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 12.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q13",
@@ -7982,7 +7982,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 13.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 13.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q14",
@@ -7997,7 +7997,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 14.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 14.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q15",
@@ -8012,7 +8012,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 15.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 15.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q16",
@@ -8025,9 +8025,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "inevitable",
             "permanent *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 16.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 16.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q17",
@@ -8042,7 +8042,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 17.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 17.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q18",
@@ -8057,7 +8057,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 18.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 18.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q19",
@@ -8072,7 +8072,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 19.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 19.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q20",
@@ -8087,7 +8087,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 20.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 20.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q21",
@@ -8102,7 +8102,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 21.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 21.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q22",
@@ -8117,7 +8117,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 22.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 22.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q23",
@@ -8132,7 +8132,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 23.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 23.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q24",
@@ -8147,7 +8147,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 24.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 24.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q25",
@@ -8162,7 +8162,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 25.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 25.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q26",
@@ -8175,9 +8175,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "complete",
             "to complete"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 26.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 26.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q27",
@@ -8190,9 +8190,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "of long hours typing",
             "long hours of typing"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 27.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 27.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q28",
@@ -8205,9 +8205,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "In preloading",
             "Preloading"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 28.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 28.B | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q29",
@@ -8220,9 +8220,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "academically",
             "academical"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 29.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 29.C | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q30",
@@ -8235,9 +8235,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "peace",
             "hope *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 30.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 30.C | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q31",
@@ -8250,9 +8250,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "e-d-b-a-c",
             "d-a-b-e-c"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 31.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 31.B | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q32",
@@ -8265,9 +8265,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-a-c",
             "b-c-a"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 32.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 32.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q33",
@@ -8280,9 +8280,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-a-c-e-d",
             "a-b-c-d-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 33.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 33.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q34",
@@ -8295,9 +8295,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-d-c-a",
             "c-a-b-d"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 34.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 34.C | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q35",
@@ -8310,9 +8310,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-d-c-e-a",
             "b-c-a-e-d *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 35.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 35.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q36",
@@ -8327,7 +8327,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 36.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 36.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q37",
@@ -8342,7 +8342,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 37.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 37.A | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q38",
@@ -8355,9 +8355,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Residents who live in more slums in marginalized groups due to poverty and social frustration",
             "The issue adversely gives rise to poverty, frustration, and aggravates social unrest in many marginalized groups"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 38.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 38.D | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q39",
@@ -8370,9 +8370,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Having equitable access to resources, cities will have sustainable infrastructure and affordable housing",
             "Sustainable infrastructure and affordable housing allow cities to have equitable access with resources"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 39.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 39.B | strategy=global-phrase+fallback-A | fallback=17"
         },
         {
           "id": "q40",
@@ -8387,7 +8387,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-18 -> 40.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-18 -> 40.A | strategy=global-phrase+fallback-A | fallback=17"
         }
       ]
     },
@@ -8570,7 +8570,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 1.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 1.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q2",
@@ -8583,9 +8583,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "make",
             "made"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 2.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-19 -> 2.D | strategy=global-phrase+fallback-A | fallback=20 | manual-override=D"
         },
         {
           "id": "q3",
@@ -8598,9 +8598,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "tasted",
             "tasty"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 3.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-19 -> 3.D | strategy=global-phrase+fallback-A | fallback=20 | manual-override=D"
         },
         {
           "id": "q4",
@@ -8613,9 +8613,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "sauce good tomato",
             "good sauce tomato"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 4.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-19 -> 4.B | strategy=global-phrase+fallback-A | fallback=20 | manual-override=B"
         },
         {
           "id": "q5",
@@ -8628,9 +8628,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "prepare",
             "to prepare"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 5.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 5.D | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q6",
@@ -8643,9 +8643,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "on",
             "at"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 6.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 6.B | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q7",
@@ -8660,7 +8660,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 7.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 7.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q8",
@@ -8675,7 +8675,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 8.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 8.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q9",
@@ -8690,7 +8690,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 9.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 9.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q10",
@@ -8705,7 +8705,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 10.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 10.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q11",
@@ -8718,9 +8718,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d-b-c-e-a",
             "d-a-e-b-c *"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 11.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-19 -> 11.C | strategy=global-phrase+fallback-A | fallback=20 | manual-override=C"
         },
         {
           "id": "q12",
@@ -8733,9 +8733,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "fit",
             "sense"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 12.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 12.C | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q13",
@@ -8748,9 +8748,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "In addition",
             "In particular"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 13.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 13.C | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q14",
@@ -8763,9 +8763,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Go",
             "Engage"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 14.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 14.D | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q15",
@@ -8780,7 +8780,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 15.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 15.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q16",
@@ -8793,9 +8793,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "breath",
             "stop"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 16.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 16.B | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q17",
@@ -8808,9 +8808,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "bring about",
             "bring up *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 17.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 17.C | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q18",
@@ -8825,7 +8825,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 18.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 18.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q19",
@@ -8838,9 +8838,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "fundamental",
             "unnecessary"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 19.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 19.C | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q20",
@@ -8855,7 +8855,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 20.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 20.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q21",
@@ -8870,7 +8870,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 21.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 21.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q22",
@@ -8885,7 +8885,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 22.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 22.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q23",
@@ -8900,7 +8900,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 23.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 23.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q24",
@@ -8915,7 +8915,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 24.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 24.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q25",
@@ -8930,7 +8930,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 25.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 25.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q26",
@@ -8945,7 +8945,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 26.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 26.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q27",
@@ -8960,7 +8960,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 27.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 27.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q28",
@@ -8975,7 +8975,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 28.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 28.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q29",
@@ -8990,7 +8990,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 29.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 29.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q30",
@@ -9005,7 +9005,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 30.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 30.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q31",
@@ -9020,7 +9020,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 31.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 31.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q32",
@@ -9035,7 +9035,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 32.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 32.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q33",
@@ -9050,7 +9050,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 33.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 33.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q34",
@@ -9065,7 +9065,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 34.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 34.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q35",
@@ -9078,9 +9078,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "advancement of women and minorities",
             "career advancement opportunities"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 35.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 35.B | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q36",
@@ -9095,7 +9095,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 36.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 36.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q37",
@@ -9110,7 +9110,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 37.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 37.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q38",
@@ -9125,7 +9125,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 38.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 38.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q39",
@@ -9140,7 +9140,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 39.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 39.A | strategy=global-phrase+fallback-A | fallback=20"
         },
         {
           "id": "q40",
@@ -9155,7 +9155,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-19 -> 40.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-19 -> 40.A | strategy=global-phrase+fallback-A | fallback=20"
         }
       ]
     },
@@ -9354,7 +9354,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 1.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 1.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q2",
@@ -9369,7 +9369,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 2.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 2.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q3",
@@ -9382,9 +9382,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "easy booking system",
             "system easy booking"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 3.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-21 -> 3.C | strategy=global-phrase+fallback-A | fallback=8 | manual-override=C"
         },
         {
           "id": "q4",
@@ -9399,7 +9399,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 4.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 4.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q5",
@@ -9412,9 +9412,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "lose",
             "get"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 5.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-21 -> 5.D | strategy=global-phrase+fallback-A | fallback=8 | manual-override=D"
         },
         {
           "id": "q6",
@@ -9427,9 +9427,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "exploring",
             "explored"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 6.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 6.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q7",
@@ -9444,7 +9444,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 7.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 7.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q8",
@@ -9457,9 +9457,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "number",
             "amount ###"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 8.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 8.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q9",
@@ -9472,9 +9472,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "others",
             "other ###"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 9.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 9.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q10",
@@ -9487,9 +9487,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "broken up",
             "taken away ###"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 10.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 10.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q11",
@@ -9502,9 +9502,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Get hold of",
             "Make use of ###"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 11.A | strategy=fallback-A | fallback=40"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#pair-21 -> 11.B | strategy=global-phrase+fallback-A | fallback=8 | manual-override=B"
         },
         {
           "id": "q12",
@@ -9517,9 +9517,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "mind",
             "mentality"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 12.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 12.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q13",
@@ -9532,9 +9532,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-d-c-b-e",
             "a-d-b-c-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 13.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 13.D | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q14",
@@ -9547,9 +9547,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-e-a-d-c",
             "b-e-d-a-c"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 14.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 14.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q15",
@@ -9562,9 +9562,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-b-c-d-e",
             "c-a-b-e-d"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 15.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 15.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q16",
@@ -9579,7 +9579,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 16.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 16.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q17",
@@ -9592,9 +9592,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-d-c-e-a",
             "d-e-b-a-c *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 17.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 17.D | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q18",
@@ -9607,9 +9607,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "People are using social media less frequently now than before",
             "Social media is reshaping communication in the digital age"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 18.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 18.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q19",
@@ -9624,7 +9624,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 19.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 19.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q20",
@@ -9637,9 +9637,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "developing immediate virtual relationships",
             "narrowing down targeted digital outreach"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 20.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 20.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q21",
@@ -9652,9 +9652,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "despite concerns about its effects on personal relationships",
             "although users are becoming more and more aware of its risks"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 21.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 21.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q22",
@@ -9667,9 +9667,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Social media will likely become less influential in the coming years",
             "The future of social media remains highly uncertain due to privacy concerns *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 22.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 22.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q23",
@@ -9684,7 +9684,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 23.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 23.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q24",
@@ -9699,7 +9699,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 24.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 24.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q25",
@@ -9712,9 +9712,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "sustainable development policies",
             "governments and urban planners"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 25.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 25.D | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q26",
@@ -9729,7 +9729,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 26.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 26.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q27",
@@ -9744,7 +9744,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 27.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 27.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q28",
@@ -9757,9 +9757,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Urbanization solely benefits the economy.",
             "Rapid urbanization does not affect land use."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 28.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 28.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q29",
@@ -9772,9 +9772,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 2",
             "Paragraph 1"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 29.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 29.B | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q30",
@@ -9787,9 +9787,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 5",
             "Paragraph 2 *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 30.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 30.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q31",
@@ -9804,7 +9804,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 31.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 31.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q32",
@@ -9817,9 +9817,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "lets out warmth",
             "absorbs energy"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 32.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 32.D | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q33",
@@ -9834,7 +9834,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 33.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 33.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q34",
@@ -9849,7 +9849,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 34.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 34.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q35",
@@ -9862,9 +9862,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "noticeable",
             "unforgettable"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 35.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 35.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q36",
@@ -9879,7 +9879,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 36.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 36.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q37",
@@ -9892,9 +9892,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "An effective solution to climate change must involve collective efforts.",
             "Limiting global warming will require individuals to take immediate action."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 37.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 37.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q38",
@@ -9907,9 +9907,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "individuals and businesses",
             "greenhouse gases"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 38.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 38.C | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q39",
@@ -9924,7 +9924,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 39.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 39.A | strategy=global-phrase+fallback-A | fallback=8"
         },
         {
           "id": "q40",
@@ -9939,7 +9939,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#pair-21 -> 40.A | strategy=fallback-A | fallback=40"
+          "explanationEvidence": "66_Full.md#pair-21 -> 40.A | strategy=global-phrase+fallback-A | fallback=8"
         }
       ]
     },
@@ -10316,7 +10316,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 1.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q2",
@@ -10329,9 +10329,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Economic growth",
             "Job opportunities"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 2.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=B"
         },
         {
           "id": "q3",
@@ -10344,9 +10344,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Urbanization creates a range of challenges, including overcrowding and insufficient public services.",
             "Rapid urbanization has no impact on crime rates or health issues."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 3.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=C"
         },
         {
           "id": "q4",
@@ -10359,9 +10359,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "public services",
             "people"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 4.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=D"
         },
         {
           "id": "q5",
@@ -10374,9 +10374,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "abundant job opportunities",
             "limited job options"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 5.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=C"
         },
         {
           "id": "q6",
@@ -10389,9 +10389,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Urbanization is a recent phenomenon that has minimal global impact.",
             "Slums are a direct result of effective urban planning."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 6.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=B"
         },
         {
           "id": "q7",
@@ -10406,7 +10406,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 7.C | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 7.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q8",
@@ -10421,7 +10421,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 8.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q9",
@@ -10436,7 +10436,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 9.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q10",
@@ -10449,9 +10449,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Cities provide the best quality of life without the need for any planning or development.",
             "Urbanization leads to job creation and economic growth, but also results in challenges such as overcrowding and social inequality that require sustainable urban planning to address."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 10.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=D"
         },
         {
           "id": "q11",
@@ -10466,7 +10466,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 11.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q12",
@@ -10479,9 +10479,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "gives up",
             "cuts down"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24 | manual-override=D"
         },
         {
           "id": "q13",
@@ -10496,7 +10496,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 13.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q14",
@@ -10511,7 +10511,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 14.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q15",
@@ -10526,7 +10526,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 15.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q16",
@@ -10541,7 +10541,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 16.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q17",
@@ -10556,7 +10556,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 17.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q18",
@@ -10571,7 +10571,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q19",
@@ -10586,7 +10586,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q20",
@@ -10601,7 +10601,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 20.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q21",
@@ -10616,7 +10616,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 21.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q22",
@@ -10631,7 +10631,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q23",
@@ -10646,7 +10646,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 23.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q24",
@@ -10661,7 +10661,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 24.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q25",
@@ -10676,7 +10676,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 25.B | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 25.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q26",
@@ -10691,7 +10691,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q27",
@@ -10704,9 +10704,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "accession",
             "accessible *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 27.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q28",
@@ -10719,9 +10719,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "separates",
             "excludes"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 28.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q29",
@@ -10734,9 +10734,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "enrich",
             "simplify"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 29.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q30",
@@ -10749,9 +10749,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Language",
             "Beliefs"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 30.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q31",
@@ -10764,9 +10764,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "unique experiences",
             "interaction"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 31.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q32",
@@ -10779,9 +10779,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 2",
             "Paragraph 4"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 32.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q33",
@@ -10794,9 +10794,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Cultural diversity is irrelevant in the workplace.",
             "Cultural diversity always leads to misunderstandings."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 33.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q34",
@@ -10809,9 +10809,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Education plays no role in promoting cultural diversity.",
             "Educational institutions should focus solely on local cultures."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 34.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q35",
@@ -10826,7 +10826,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 35.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q36",
@@ -10839,9 +10839,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-a-b",
             "a-c-b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 36.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q37",
@@ -10854,9 +10854,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "e-d-a-b-c",
             "b-a-e-d-c"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 37.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q38",
@@ -10869,9 +10869,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-d-b-e-c",
             "b-d-a-c-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 38.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q39",
@@ -10884,9 +10884,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d-b-a-c-e",
             "b-c-a-d-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 39.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         },
         {
           "id": "q40",
@@ -10899,9 +10899,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-c-d-a-e",
             "b-c-e-d-a"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-3 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-3 -> 40.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=24"
         }
       ]
     },
@@ -11473,9 +11473,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "do",
             "meet ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 1.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=D"
         },
         {
           "id": "q2",
@@ -11488,9 +11488,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "other",
             "another ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 2.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=C"
         },
         {
           "id": "q3",
@@ -11503,9 +11503,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a little",
             "many ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 3.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=D"
         },
         {
           "id": "q4",
@@ -11518,9 +11518,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Instead of",
             "Irrespective of ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 4.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=B"
         },
         {
           "id": "q5",
@@ -11533,9 +11533,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "call for",
             "put out ####"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 5.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=B"
         },
         {
           "id": "q6",
@@ -11548,9 +11548,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "misused",
             "incorrect"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 6.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q7",
@@ -11563,9 +11563,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Adopting plant-based diets",
             "Practices that minimize harm to the environment"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 7.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=D"
         },
         {
           "id": "q8",
@@ -11578,9 +11578,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "decline",
             "pollution"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 8.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=B"
         },
         {
           "id": "q9",
@@ -11593,9 +11593,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 4",
             "Paragraph 3"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 9.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q10",
@@ -11608,9 +11608,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Food production is unaffected by plant-based diets.",
             "Eating more plants can reduce harm caused by food production."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 10.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=D"
         },
         {
           "id": "q11",
@@ -11623,9 +11623,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 1",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 11.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q12",
@@ -11638,9 +11638,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Energy-efficient appliances increase electricity use.",
             "Cycling does not help decrease carbon emissions."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12 | manual-override=B"
         },
         {
           "id": "q13",
@@ -11653,9 +11653,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "installing solar panels",
             "buying luxury cars"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 13.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q14",
@@ -11668,9 +11668,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Substitutes",
             "Problems *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 14.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q15",
@@ -11683,9 +11683,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Diversity can enhance creativity in workplaces.",
             "Multiculturalism has no economic benefits."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 15.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q16",
@@ -11698,9 +11698,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Multicultural societies are immune to prejudice.",
             "Economic benefits are the main reason to embrace multiculturalism."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 16.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q17",
@@ -11715,7 +11715,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 17.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q18",
@@ -11730,7 +11730,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q19",
@@ -11745,7 +11745,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q20",
@@ -11760,7 +11760,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 20.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q21",
@@ -11775,7 +11775,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 21.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q22",
@@ -11790,7 +11790,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q23",
@@ -11805,7 +11805,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 23.D | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 23.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q24",
@@ -11818,9 +11818,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "separation of ethnic groups",
             "living together peacefully"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 24.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q25",
@@ -11833,9 +11833,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-c-a-d-e",
             "b-c-d-e-a"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 25.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q26",
@@ -11850,7 +11850,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q27",
@@ -11865,7 +11865,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 27.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q28",
@@ -11880,7 +11880,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 28.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q29",
@@ -11895,7 +11895,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 29.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q30",
@@ -11908,9 +11908,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "imaginative",
             "imagination"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 30.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q31",
@@ -11925,7 +11925,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 31.B | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 31.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q32",
@@ -11940,7 +11940,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 32.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q33",
@@ -11955,7 +11955,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 33.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q34",
@@ -11968,9 +11968,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "who wears",
             "who wearing"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 34.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q35",
@@ -11983,9 +11983,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "T-shirt clean white",
             "white clean T-shirt"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 35.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q36",
@@ -12000,7 +12000,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 36.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q37",
@@ -12013,9 +12013,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "is wrapped in a golden silk veil",
             "that has it wrapped in a golden silk veil"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 37.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q38",
@@ -12028,9 +12028,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Cultural practices are thriving but need more awareness",
             "Certain cultural practices face challenges such as globalization but are actively promoted"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 38.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q39",
@@ -12043,9 +12043,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Today, Al Sadu is mostly practiced by older women whose numbers are declining.",
             "The tradition is carried on by a big group of dedicated women who want to keep the art form alive."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 39.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         },
         {
           "id": "q40",
@@ -12058,9 +12058,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "UNESCO believes that by focusing completely on those modern technological devices, cultural traditions will naturally become more prominent.",
             "UNESCO believes that fostering global awareness through violent programs will protect these traditions."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-5 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-5 -> 40.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=12"
         }
       ]
     },
@@ -12675,9 +12675,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "health",
             "spirit"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 1.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q2",
@@ -12690,9 +12690,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "with",
             "in"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 2.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q3",
@@ -12705,9 +12705,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "In wonder",
             "Little wonder"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 3.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q4",
@@ -12720,9 +12720,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "sustained",
             "to sustain"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 4.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q5",
@@ -12735,9 +12735,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "nutritious",
             "nutrition"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 5.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q6",
@@ -12752,7 +12752,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 6.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q7",
@@ -12767,7 +12767,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 7.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q8",
@@ -12780,9 +12780,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "However",
             "Whereas"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 8.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q9",
@@ -12797,7 +12797,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 9.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q10",
@@ -12812,7 +12812,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 10.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q11",
@@ -12827,7 +12827,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 11.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q12",
@@ -12840,9 +12840,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "burnt down",
             "made up"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 12.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q13",
@@ -12855,9 +12855,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-a-b-d-e-f",
             "d-c-a-b-f-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 13.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q14",
@@ -12870,9 +12870,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-a-f-d-e-b",
             "c-d-a-b-e-f"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 14.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q15",
@@ -12887,7 +12887,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 15.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q16",
@@ -12902,7 +12902,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 16.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q17",
@@ -12915,9 +12915,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a - b - f - c - e - d",
             "c - e - d - a - b - f"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 17.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q18",
@@ -12932,7 +12932,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q19",
@@ -12947,7 +12947,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q20",
@@ -12960,9 +12960,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "receive",
             "manage"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 20.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q21",
@@ -12975,9 +12975,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 1",
             "Paragraph 4"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 21.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q22",
@@ -12992,7 +12992,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q23",
@@ -13005,9 +13005,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 4",
             "paragraph 2"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 23.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q24",
@@ -13020,9 +13020,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "It enabled Gebbie and Chesky to accommodate the guests at a Denver convention.",
             "It made it easier to put travelers in touch with hosts abroad."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 24.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q25",
@@ -13035,9 +13035,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Airbnb has become more and more successful ever since.",
             "From that moment on Airbnb has been supposed to be smooth sailing."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 25.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q26",
@@ -13052,7 +13052,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q27",
@@ -13065,9 +13065,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "People don't appreciate both technology and relationships at home and at work",
             "Technology enhances relationships at home and at work"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 27.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q28",
@@ -13080,9 +13080,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Although we choose to stay technologically or socially connected",
             "While we choose to stay technologically or socially connected"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 28.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q29",
@@ -13095,9 +13095,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "We tried everything to make the relationships work within our family",
             "We can start by nurturing the relationships within our family"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 29.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q30",
@@ -13112,7 +13112,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 30.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q31",
@@ -13127,7 +13127,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 31.D | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 31.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q32",
@@ -13140,9 +13140,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "zero emissions",
             "solar panels"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 32.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q33",
@@ -13155,9 +13155,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "They aren't well suited to personal use. Tài Liệu On Thi",
             "They create fewer emissions."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 33.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q34",
@@ -13172,7 +13172,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 34.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q35",
@@ -13185,9 +13185,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "They help combat climate change.",
             "They create new jobs for people."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 35.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q36",
@@ -13202,7 +13202,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 36.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q37",
@@ -13215,9 +13215,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "defeat",
             "captivate"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 37.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q38",
@@ -13232,7 +13232,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 38.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q39",
@@ -13245,9 +13245,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The downsides of green energy could soon outweigh the benefits.",
             "Green energy will enhance green living. Tài Liệu On Thi"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 39.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q40",
@@ -13262,7 +13262,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-6 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-6 -> 40.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         }
       ]
     },
@@ -13733,9 +13733,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "things",
             "global warming"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 1.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=D"
         },
         {
           "id": "q2",
@@ -13748,9 +13748,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "include",
             "acquire"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 2.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q3",
@@ -13763,9 +13763,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Weather could become more extreme",
             "Plants and animals could adapt easily"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 3.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=D"
         },
         {
           "id": "q4",
@@ -13778,9 +13778,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Climate change occurring at a moderate pace could help plants and animals develop.",
             "If the climate changes too slowly, plants and animals could benefit."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 4.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q5",
@@ -13793,9 +13793,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Climate change would cause forest fires everywhere.",
             "As the levels of these gases grow, they absorb more heat."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 5.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=D"
         },
         {
           "id": "q6",
@@ -13808,9 +13808,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "gentle",
             "quiet"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 6.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=B"
         },
         {
           "id": "q7",
@@ -13823,9 +13823,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 3",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 7.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=C"
         },
         {
           "id": "q8",
@@ -13838,9 +13838,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 3",
             "Paragraph 2"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 8.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=D"
         },
         {
           "id": "q9",
@@ -13853,9 +13853,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-d-e-b-a",
             "c-a-e-d-b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 9.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q10",
@@ -13868,9 +13868,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-d-e-c-b",
             "d-b-a-e-c"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 10.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=D"
         },
         {
           "id": "q11",
@@ -13883,9 +13883,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-e-c-d-b",
             "b-e-d-c-a"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 11.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=C"
         },
         {
           "id": "q12",
@@ -13898,9 +13898,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "a-c-e-b-d",
             "a-b-c-d-e"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15 | manual-override=B"
         },
         {
           "id": "q13",
@@ -13913,9 +13913,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-a-b",
             "b-c-a"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 13.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q14",
@@ -13928,9 +13928,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "was dedicated",
             "dedicated"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 14.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q15",
@@ -13945,7 +13945,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 15.C | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 15.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q16",
@@ -13960,7 +13960,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 16.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q17",
@@ -13975,7 +13975,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 17.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q18",
@@ -13990,7 +13990,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q19",
@@ -14005,7 +14005,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q20",
@@ -14020,7 +14020,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 20.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q21",
@@ -14035,7 +14035,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 21.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q22",
@@ -14050,7 +14050,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q23",
@@ -14065,7 +14065,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 23.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q24",
@@ -14080,7 +14080,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 24.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q25",
@@ -14095,7 +14095,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 25.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q26",
@@ -14110,7 +14110,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q27",
@@ -14123,9 +14123,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The number of premature deaths from noise pollution is likely higher than reported.",
             "People living in rural areas are unaffected by traffic noise."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 27.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q28",
@@ -14140,7 +14140,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 28.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q29",
@@ -14153,9 +14153,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Noise pollution has serious effects on public health, including stress, cardiovascular diseases, and premature deaths.",
             "Noise pollution is the least recognized environmental threat but has severe impacts on health."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 29.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q30",
@@ -14170,7 +14170,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 30.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q31",
@@ -14185,7 +14185,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 31.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q32",
@@ -14198,9 +14198,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Telemedicine provides healthcare access to patients in urban areas",
             "Virtual consultations give patients access to specialists without travel or waiting time"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 32.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q33",
@@ -14213,9 +14213,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Patients who rely on telemedicine underestimate its effectiveness in treatment accessibility",
             "Telemedicine has ensured healthcare access, especially during high-demand time"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 33.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q34",
@@ -14228,9 +14228,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "the role of technology must be carefully balanced with personal patient interactions",
             "healthcare workers believe in maintaining either technological or personal care elements *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 34.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q35",
@@ -14243,9 +14243,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "level",
             "quality"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 35.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q36",
@@ -14260,7 +14260,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 36.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q37",
@@ -14273,9 +14273,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "reports",
             "lessons"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 37.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q38",
@@ -14290,7 +14290,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 38.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q39",
@@ -14303,9 +14303,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "conversation",
             "observation"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 39.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         },
         {
           "id": "q40",
@@ -14320,7 +14320,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-7 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=2 | fallback=38"
+          "explanationEvidence": "66_Full.md#solution-only-7 -> 40.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=2 | fallback=15"
         }
       ]
     },
@@ -14801,9 +14801,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "was first launched in March 2021",
             "having been initially activated in March 2021"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 1.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=C"
         },
         {
           "id": "q2",
@@ -14816,9 +14816,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "which has achieved success in creating self-driving cars through breakthroughs in AI, engineering, and design",
             "of which the joint efforts in AI research, engineering, and design in building self-driving cars"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 2.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=B"
         },
         {
           "id": "q3",
@@ -14831,9 +14831,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The autonomy of transportation led to the creation of Vera",
             "Vera was developed to revolutionize transportation with a focus on safety and efficiency"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 3.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=D"
         },
         {
           "id": "q4",
@@ -14846,9 +14846,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Vera uses sensors and cameras as its eyes and ears, enabling it to navigate without human intervention",
             "Without cameras and sensors working as its eyes and ears, Vera would not be able to navigate autonomously"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 4.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=C"
         },
         {
           "id": "q5",
@@ -14861,9 +14861,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Real-time decision-making and data processing are becoming easier for Vera",
             "Decision-making through real-time data processing takes place in Vera *"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 5.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q6",
@@ -14878,7 +14878,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 6.D | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 6.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q7",
@@ -14891,9 +14891,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "lose",
             "keep"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 7.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=D"
         },
         {
           "id": "q8",
@@ -14906,9 +14906,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "carbon dioxide",
             "factories"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 8.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=B"
         },
         {
           "id": "q9",
@@ -14921,9 +14921,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "releasing carbon dioxide",
             "maintaining factories Tài Liệu On Thi Tài tài liệu free tại Tailieuonthi.org"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 9.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17 | manual-override=C"
         },
         {
           "id": "q10",
@@ -14936,9 +14936,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The scientific community acknowledges the potential for severe weather events linked to global warming, but the precise consequences for individual regions and localities are difficult to forecast with certainty.",
             "The potential impacts of global warming, such as increased hurricane intensity, are known, but the exact magnitude and timing of these effects remain unclear due to the complex nature of climate systems."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 10.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q11",
@@ -14951,9 +14951,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "particular",
             "definite"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 11.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q12",
@@ -14968,7 +14968,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q13",
@@ -14981,9 +14981,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Only expensive scientific research can eliminate the problem and poor nations are unable to fund such research efforts.",
             "The future impact can only be predicted with uncertainty while present consequences of global"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 13.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q14",
@@ -14996,9 +14996,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Individuals can take steps to reduce their carbon footprint and mitigate the effects of climate change.",
             "The effects of global warming are the same and predictable, but may include rising sea levels, more extreme weather events, and changes in agricultural patterns."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 14.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q15",
@@ -15011,9 +15011,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Global warming is a worldwide problem which can be resolved by effective atmospheric control by nation with the financial means to do so.",
             "Global warming is a concern to all people because it affects the earth's surface by warming it to temperatures greater than necessary while failing to absorb the harmful gases."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 15.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q16",
@@ -15028,7 +15028,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 16.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q17",
@@ -15043,7 +15043,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 17.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q18",
@@ -15058,7 +15058,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q19",
@@ -15073,7 +15073,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q20",
@@ -15088,7 +15088,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 20.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q21",
@@ -15103,7 +15103,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 21.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q22",
@@ -15118,7 +15118,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q23",
@@ -15133,7 +15133,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 23.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q24",
@@ -15148,7 +15148,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 24.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q25",
@@ -15163,7 +15163,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 25.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q26",
@@ -15178,7 +15178,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q27",
@@ -15193,7 +15193,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 27.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q28",
@@ -15208,7 +15208,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 28.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q29",
@@ -15221,9 +15221,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "visit",
             "destroy ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 29.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q30",
@@ -15238,7 +15238,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 30.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q31",
@@ -15251,9 +15251,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "create",
             "avoid ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 31.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q32",
@@ -15266,9 +15266,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "stop",
             "cause ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 32.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q33",
@@ -15281,9 +15281,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "carry out",
             "look after ####"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 33.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q34",
@@ -15296,9 +15296,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "another",
             "the other"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 34.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q35",
@@ -15313,7 +15313,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 35.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q36",
@@ -15328,7 +15328,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 36.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q37",
@@ -15341,9 +15341,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "satisfying",
             "satisfied"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 37.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q38",
@@ -15356,9 +15356,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "to",
             "from"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 38.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q39",
@@ -15373,7 +15373,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 39.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         },
         {
           "id": "q40",
@@ -15386,9 +15386,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "enjoyed",
             "enjoying"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-11 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-11 -> 40.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=17"
         }
       ]
     },
@@ -15937,9 +15937,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Technological advancements are irrelevant to conservation.",
             "Only national parks can protect endangered species."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 1.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=B"
         },
         {
           "id": "q2",
@@ -15952,9 +15952,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "species",
             "natural habitats"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 2.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q3",
@@ -15967,9 +15967,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 3",
             "Paragraph 1"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 3.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=B"
         },
         {
           "id": "q4",
@@ -15982,9 +15982,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "hinder",
             "advantage"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 4.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=C"
         },
         {
           "id": "q5",
@@ -15997,9 +15997,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Deforestation",
             "Urbanization"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 5.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=D"
         },
         {
           "id": "q6",
@@ -16014,7 +16014,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 6.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q7",
@@ -16029,7 +16029,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 7.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q8",
@@ -16042,9 +16042,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "irrelevant",
             "secondary"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 8.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q9",
@@ -16057,9 +16057,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d-b-a-c-e",
             "d-e-b-c-a ###"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 9.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=B"
         },
         {
           "id": "q10",
@@ -16072,9 +16072,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "d-b-a-c-e",
             "b-e-a-d-c ###"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 10.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=C"
         },
         {
           "id": "q11",
@@ -16087,9 +16087,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-e-d-a-b",
             "c-e-a-b-d ###"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 11.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=D"
         },
         {
           "id": "q12",
@@ -16102,9 +16102,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-c-d-a-e",
             "d-b-c-e-a"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=D"
         },
         {
           "id": "q13",
@@ -16117,9 +16117,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-b-a",
             "c-a-b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 13.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q14",
@@ -16132,9 +16132,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "aim of satisfaction",
             "worry of exclusion"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 14.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q15",
@@ -16149,7 +16149,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 15.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q16",
@@ -16162,9 +16162,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "users",
             "professionals"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 16.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q17",
@@ -16179,7 +16179,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 17.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q18",
@@ -16194,7 +16194,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q19",
@@ -16207,9 +16207,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "increased anxiety",
             "improved self-esteem"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 19.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q20",
@@ -16224,7 +16224,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 20.D | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 20.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q21",
@@ -16237,9 +16237,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Social media contributes to concentration issues that affect users' academic achievements.",
             "Notifications and app-switching harm the focus needed in professional environments."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 21.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q22",
@@ -16252,9 +16252,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Social media, despite its benefits, presents mental health risks like anxiety and distraction, particularly among young users, and managing screen time can mitigate these effects.",
             "Social media is harmful to all users, causing loneliness and detachment, and must be restricted in all settings."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 22.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q23",
@@ -16269,7 +16269,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 23.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q24",
@@ -16282,9 +16282,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Showcasing",
             "Having showcased"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 24.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q25",
@@ -16299,7 +16299,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 25.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q26",
@@ -16314,7 +16314,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q27",
@@ -16329,7 +16329,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 27.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q28",
@@ -16344,7 +16344,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 28.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q29",
@@ -16359,7 +16359,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 29.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q30",
@@ -16374,7 +16374,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 30.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q31",
@@ -16389,7 +16389,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 31.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q32",
@@ -16404,7 +16404,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 32.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q33",
@@ -16419,7 +16419,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 33.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q34",
@@ -16434,7 +16434,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 34.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q35",
@@ -16447,9 +16447,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "give away",
             "come across"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 35.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q36",
@@ -16462,9 +16462,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "strong work ethics",
             "strong ethics work"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 36.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q37",
@@ -16477,9 +16477,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "concerns",
             "influences"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 37.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q38",
@@ -16494,7 +16494,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 38.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q39",
@@ -16509,7 +16509,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 39.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q40",
@@ -16522,9 +16522,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Eventually",
             "Henceforth"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-14 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-14 -> 40.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         }
       ]
     },
@@ -16856,9 +16856,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "individuals with the knowledge is provided",
             "provides individuals with the knowledge"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 1.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=D"
         },
         {
           "id": "q2",
@@ -16871,9 +16871,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "adding complexity to family and societal relationships",
             "add complexity to family and societal relationships"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 2.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=D"
         },
         {
           "id": "q3",
@@ -16886,9 +16886,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "education promotes understanding",
             "understanding education promotes"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 3.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=C"
         },
         {
           "id": "q4",
@@ -16903,7 +16903,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 4.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q5",
@@ -16916,9 +16916,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "of knowing",
             "of knowledge"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 5.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=D"
         },
         {
           "id": "q6",
@@ -16933,7 +16933,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 6.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q7",
@@ -16946,9 +16946,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Mining fossil fuel can bring harm to the environment.",
             "It can pollute the air."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 7.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=B"
         },
         {
           "id": "q8",
@@ -16961,9 +16961,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "there were serious nuclear accidents in Ukraine in 1986 and in Japan in 2011",
             "they have been very serious"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 8.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=B"
         },
         {
           "id": "q9",
@@ -16976,9 +16976,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "emergencies",
             "drawbacks"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 9.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22 | manual-override=D"
         },
         {
           "id": "q10",
@@ -16993,7 +16993,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 10.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q11",
@@ -17008,7 +17008,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 11.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q12",
@@ -17023,7 +17023,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q13",
@@ -17038,7 +17038,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 13.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q14",
@@ -17053,7 +17053,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 14.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q15",
@@ -17068,7 +17068,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 15.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q16",
@@ -17083,7 +17083,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 16.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q17",
@@ -17098,7 +17098,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 17.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q18",
@@ -17113,7 +17113,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q19",
@@ -17128,7 +17128,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q20",
@@ -17143,7 +17143,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 20.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q21",
@@ -17158,7 +17158,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 21.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q22",
@@ -17173,7 +17173,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q23",
@@ -17188,7 +17188,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 23.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q24",
@@ -17201,9 +17201,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "gives back",
             "breaks down"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 24.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q25",
@@ -17216,9 +17216,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "deliver",
             "provide"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 25.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q26",
@@ -17233,7 +17233,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q27",
@@ -17246,9 +17246,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "smart",
             "casual"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 27.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q28",
@@ -17263,7 +17263,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 28.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q29",
@@ -17278,7 +17278,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 29.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q30",
@@ -17293,7 +17293,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 30.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q31",
@@ -17306,9 +17306,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "numeracy",
             "numerous"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 31.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q32",
@@ -17323,7 +17323,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 32.C | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 32.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q33",
@@ -17336,9 +17336,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Face-to-face communication is a thing of the past for teens.",
             "Teens have few friends outside of their school community."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 33.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q34",
@@ -17351,9 +17351,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "their teammates",
             "friends"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 34.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q35",
@@ -17368,7 +17368,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 35.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q36",
@@ -17381,9 +17381,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Social media causes more harm than good to teens.",
             "A large percentage of teens avoid social media due to its negative impact."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 36.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q37",
@@ -17396,9 +17396,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "reconciliation",
             "separation"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 37.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q38",
@@ -17411,9 +17411,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Most teens meet their online friends in person eventually.",
             "Social media has helped teens feel supported during difficult times."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 38.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q39",
@@ -17426,9 +17426,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Social media connect friendship.",
             "Social media affect friendship too much."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 39.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         },
         {
           "id": "q40",
@@ -17441,9 +17441,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Thanks to social media, more than two thirds of teens are supported when they face with challenges in their lives.",
             "Most teens are not easy to give others their usernames when making new friends. Tài tài liệu free tại Tailieuonthi.org"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-15 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-15 -> 40.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=22"
         }
       ]
     },
@@ -17982,7 +17982,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 1.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q2",
@@ -17995,9 +17995,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "annual reasonable fees",
             "reasonable fees annual"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 2.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10 | manual-override=B"
         },
         {
           "id": "q3",
@@ -18010,9 +18010,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "for",
             "with"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 3.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q4",
@@ -18027,7 +18027,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 4.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q5",
@@ -18040,9 +18040,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "increase",
             "supply"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 5.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q6",
@@ -18055,9 +18055,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "to aid",
             "aid"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 6.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10 | manual-override=C"
         },
         {
           "id": "q7",
@@ -18070,9 +18070,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "amount",
             "number"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 7.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q8",
@@ -18085,9 +18085,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "allergies",
             "treatments"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 8.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10 | manual-override=B"
         },
         {
           "id": "q9",
@@ -18100,9 +18100,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "bringing up",
             "taking after"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 9.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10 | manual-override=B"
         },
         {
           "id": "q10",
@@ -18117,7 +18117,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 10.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q11",
@@ -18132,7 +18132,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 11.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q12",
@@ -18147,7 +18147,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q13",
@@ -18162,7 +18162,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 13.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q14",
@@ -18177,7 +18177,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 14.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q15",
@@ -18190,9 +18190,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "e - b - a - d - c",
             "c - a - d - e - b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 15.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q16",
@@ -18205,9 +18205,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "e - b - c - a - d",
             "e - a - d - c - b"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 16.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q17",
@@ -18220,9 +18220,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c-e-a-b-d",
             "c-b-d-e-a"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 17.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q18",
@@ -18235,9 +18235,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Family Day is not an official national holiday, making it very popular and widely celebrated throughout the country",
             "Although Family Day is not an official national holiday, it is very popular and widely celebrated throughout the country"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 18.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q19",
@@ -18250,9 +18250,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "that prides itself on preserving its core cultural ideals",
             "with pride in preserving its core cultural ideals"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 19.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q20",
@@ -18265,9 +18265,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "they are reminded of these values on Family Day",
             "family can assist in reminding these day values"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 20.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q21",
@@ -18282,7 +18282,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 21.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 21.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q22",
@@ -18297,7 +18297,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 22.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q23",
@@ -18310,9 +18310,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Communication",
             "Entertainment"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 23.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q24",
@@ -18325,9 +18325,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "emotional",
             "careless"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 24.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q25",
@@ -18342,7 +18342,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 25.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q26",
@@ -18357,7 +18357,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q27",
@@ -18370,9 +18370,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "The Internet will never be secure unless digital citizens report scams.",
             "All digital citizens must make the Internet a safer place to report scams."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 27.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q28",
@@ -18385,9 +18385,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Social media accounts or bank accounts are likely to be hacked into.",
             "Irresponsible digital citizens cannot gain the benefit of being online."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 28.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q29",
@@ -18402,7 +18402,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 29.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q30",
@@ -18415,9 +18415,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 3",
             "Paragraph 4"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 30.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q31",
@@ -18432,7 +18432,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 31.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q32",
@@ -18447,7 +18447,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 32.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q33",
@@ -18462,7 +18462,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 33.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q34",
@@ -18475,9 +18475,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "intentionally",
             "dramatically"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 34.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q35",
@@ -18490,9 +18490,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Both tourists and tour guides teach people about environmental protection.",
             "CST program is the most popular among Latin American citizens."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 35.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q36",
@@ -18507,7 +18507,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 36.C | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 36.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q37",
@@ -18520,9 +18520,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "realistically",
             "originally"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 37.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q38",
@@ -18535,9 +18535,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Criticizing the ecotourism industry is unexpected.",
             "Staying positive about ecotourism is vital."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 38.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q39",
@@ -18552,7 +18552,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 39.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         },
         {
           "id": "q40",
@@ -18567,7 +18567,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-16 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-16 -> 40.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=10"
         }
       ]
     },
@@ -18957,9 +18957,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "recycle",
             "unrecyclable"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 1.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 1.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q2",
@@ -18972,9 +18972,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "reusable shopping bag",
             "bag shopping reusable"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 2.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 2.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=C"
         },
         {
           "id": "q3",
@@ -18987,9 +18987,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "suggesting",
             "suggested"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 3.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 3.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q4",
@@ -19002,9 +19002,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "by",
             "with"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 4.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 4.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q5",
@@ -19017,9 +19017,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "put",
             "take"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 5.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 5.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q6",
@@ -19034,7 +19034,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 6.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 6.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q7",
@@ -19047,9 +19047,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Food containers",
             "Plastic bags"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 7.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 3,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 7.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=D"
         },
         {
           "id": "q8",
@@ -19062,9 +19062,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "people",
             "oceans"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 8.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 8.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q9",
@@ -19077,9 +19077,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "reused",
             "dumped"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 9.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 9.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=C"
         },
         {
           "id": "q10",
@@ -19092,9 +19092,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "disappear",
             "emerge"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 10.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 1,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 10.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=B"
         },
         {
           "id": "q11",
@@ -19107,9 +19107,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Companies are looking for more eco-friendly plastic options.",
             "Sustainable products have replaced single-use plastics."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 11.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "correctIndex": 2,
+          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 11.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15 | manual-override=C"
         },
         {
           "id": "q12",
@@ -19124,7 +19124,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 12.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 12.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q13",
@@ -19137,9 +19137,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 4",
             "Paragraph 1"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 13.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 13.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q14",
@@ -19152,9 +19152,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Paragraph 2",
             "Paragraph 3"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 14.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 14.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q15",
@@ -19167,9 +19167,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "other",
             "another"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 15.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 15.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q16",
@@ -19182,9 +19182,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "take on",
             "take in"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 16.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 16.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q17",
@@ -19197,9 +19197,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "supplies",
             "developments"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 17.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 17.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q18",
@@ -19214,7 +19214,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 18.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 18.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q19",
@@ -19229,7 +19229,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 19.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 19.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q20",
@@ -19242,9 +19242,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "experiments",
             "conditions"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 20.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 20.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q21",
@@ -19259,7 +19259,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 21.B | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 21.B | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q22",
@@ -19272,9 +19272,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "simplify",
             "ignore"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 22.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 22.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q23",
@@ -19289,7 +19289,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 23.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 23.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q24",
@@ -19304,7 +19304,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 24.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 24.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q25",
@@ -19317,9 +19317,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "Technology eliminates the need for traditional classroom attendance.",
             "Technology simplifies teachers' workloads and enhances communication."
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 25.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 25.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q26",
@@ -19334,7 +19334,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 26.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 26.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q27",
@@ -19349,7 +19349,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 27.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 27.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q28",
@@ -19364,7 +19364,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 28.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 28.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q29",
@@ -19379,7 +19379,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 29.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 29.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q30",
@@ -19394,7 +19394,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 30.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 30.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q31",
@@ -19409,7 +19409,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 31.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 31.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q32",
@@ -19424,7 +19424,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 32.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 32.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q33",
@@ -19439,7 +19439,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 33.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 33.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q34",
@@ -19454,7 +19454,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 34.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 34.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q35",
@@ -19469,7 +19469,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 35.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 35.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q36",
@@ -19484,7 +19484,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 36.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 36.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q37",
@@ -19499,7 +19499,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 37.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 37.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q38",
@@ -19514,7 +19514,7 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 38.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 38.A | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q39",
@@ -19527,9 +19527,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "c- d- a- b-e",
             "b-d-a-c-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 39.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 39.C | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         },
         {
           "id": "q40",
@@ -19542,9 +19542,9 @@ export const EMBEDDED_THPTQG_FULLTEST = JSON.parse(String.raw`{
             "b-e-d-a-c",
             "b-d-c-a-e"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full.md#solution-only-18 -> 40.A | strategy=phrase+heuristic+fallback-A | heuristic=1 | fallback=39"
+          "explanationEvidence": "66_Full.md#solution-only-18 -> 40.D | strategy=phrase+heuristic+global-phrase+fallback-A | heuristic=1 | fallback=15"
         }
       ]
     }
