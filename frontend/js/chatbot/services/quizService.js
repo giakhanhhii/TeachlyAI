@@ -13,8 +13,9 @@ function escapeHtml(s) {
  */
 export function insertInlineMcLineBreaks(s) {
   if (!s) return s;
-  let t = s.replace(/([:;?])\s+A\.\s/g, "$1\nA. ");
-  t = t.replace(/\s+(?=[B-F]\.\s)/g, "\n");
+  let t = String(s);
+  t = t.replace(/([:;?!])\s+([Aa])\.\s/g, "$1\n$2. ");
+  t = t.replace(/\s+(?=[B-Fb-f]\.\s)/g, "\n");
   return t;
 }
 
@@ -44,6 +45,19 @@ export function renderQuizStemRichText(target, s) {
   target.replaceChildren();
   const lines = text.split("\n");
   lines.forEach((line, lineIndex) => {
+    const headingMatch = line.trim().match(/^(#{1,6})\s+(.+)$/);
+    if (headingMatch) {
+      const [, hashes, headingText] = headingMatch;
+      const heading = document.createElement("span");
+      heading.className = `quiz-rich-heading quiz-rich-heading-${hashes.length}`;
+      heading.textContent = headingText;
+      target.appendChild(heading);
+      if (lineIndex < lines.length - 1) {
+        target.appendChild(document.createElement("br"));
+      }
+      return;
+    }
+
     let lastIndex = 0;
     const boldRe = /\*\*(.+?)\*\*/g;
     let match = boldRe.exec(line);
