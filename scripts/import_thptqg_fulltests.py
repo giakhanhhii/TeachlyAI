@@ -60,6 +60,15 @@ class ParsedTest:
     parts: list[dict]
 
 
+@dataclass
+class AnswerResolution:
+    answer_map: dict[int, str]
+    strategy: str
+    resolved_count: int
+    heuristic_count: int
+    fallback_count: int
+
+
 def ascii_fold(text: str) -> str:
     normalized = unicodedata.normalize("NFD", text)
     folded = "".join(ch for ch in normalized if unicodedata.category(ch) != "Mn")
@@ -172,6 +181,23 @@ def normalize_prompt(prefix: str, number: int) -> str:
     return re.sub(r"\s+", " ", prompt).strip()
 
 
+def normalize_inline_text(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def normalize_signature(text: str) -> str:
+    folded = ascii_fold(text)
+    return re.sub(r"[^a-z0-9]+", " ", folded).strip()
+
+
+def test_signature(parsed_questions: list[QuestionParse]) -> str:
+    focus = []
+    for item in parsed_questions[:3]:
+        focus.append(item.prompt)
+        focus.extend(item.options[:2])
+    return normalize_signature(" | ".join(focus))
+
+
 def find_question_runs(matches: list[re.Match[str]]) -> list[list[re.Match[str]]]:
     runs: list[list[re.Match[str]]] = []
     for start_index, match in enumerate(matches):
@@ -255,34 +281,76 @@ def parse_answer_table(raw_solution_block: str) -> dict[int, str]:
     return {}
 
 
-def parse_answer_phrases(raw_solution_block: str) -> dict[int, str]:
+def match_answer_from_tail(segment_tail: str, options: list[str]) -> tuple[str | None, bool]:
+    normalized_tail = normalize_signature(segment_tail)
+    if not normalized_tail:
+        return None, False
+
+    exact_hits: list[int] = []
+    for option_index, option_text in enumerate(options):
+        option_signature = normalize_signature(option_text)
+        if len(option_signature) < 3:
+            continue
+        if option_signature in normalized_tail:
+            exact_hits.append(option_index)
+    if len(exact_hits) == 1:
+        return "ABCD"[exact_hits[0]], True
+    return None, False
+
+
+def parse_answer_phrases(raw_solution_block: str, parsed_questions: list[QuestionParse] | None = None) -> AnswerResolution:
     block = clean_lines(normalize_block(raw_solution_block))
     matches = list(QUESTION_RE.finditer(block))
     runs = find_question_runs(matches)
     if not runs:
-        return {}
-    picked = runs[-1]
+        return AnswerResolution({}, "none", 0, 0, 0)
 
-    answer_map: dict[int, str] = {}
     patterns = (
         re.compile(r"chon dap an\s*([abcd])\b"),
         re.compile(r"\b([abcd])\s+la dap an\b"),
         re.compile(r"dap an\s*[: ]\s*([abcd])\b"),
     )
-    for idx, match in enumerate(picked):
-        question_no = int(match.group(1))
-        next_start = picked[idx + 1].start() if idx + 1 < len(picked) else len(block)
-        segment = ascii_fold(block[match.end(): next_start])
-        answer_letter = None
-        for pattern in patterns:
-            found = pattern.search(segment)
-            if found:
-                answer_letter = found.group(1).upper()
-                break
-        if answer_letter is None:
-            return {}
-        answer_map[question_no] = answer_letter
-    return answer_map
+
+    best_resolution = AnswerResolution({}, "none", 0, 0, 0)
+    for run in runs:
+        run_resolution: dict[int, str] = {}
+        heuristic_count = 0
+        if parsed_questions and len(parsed_questions) == 40:
+            option_lookup = {item.number: item.options for item in parsed_questions}
+        else:
+            option_lookup = None
+
+        for idx, match in enumerate(run):
+            question_no = int(match.group(1))
+            next_start = run[idx + 1].start() if idx + 1 < len(run) else len(block)
+            segment_raw = block[match.end(): next_start]
+            segment_folded = ascii_fold(segment_raw)
+            answer_letter = None
+            for pattern in patterns:
+                found = pattern.search(segment_folded)
+                if found:
+                    answer_letter = found.group(1).upper()
+                    break
+            if answer_letter is None and option_lookup and question_no in option_lookup:
+                answer_letter, used_heuristic = match_answer_from_tail(segment_raw, option_lookup[question_no])
+                if answer_letter and used_heuristic:
+                    heuristic_count += 1
+            if answer_letter is None:
+                continue
+            run_resolution[question_no] = answer_letter
+
+        resolution = AnswerResolution(
+            answer_map=run_resolution,
+            strategy="phrase+heuristic" if heuristic_count else "phrase",
+            resolved_count=len(run_resolution),
+            heuristic_count=heuristic_count,
+            fallback_count=0,
+        )
+        if resolution.resolved_count > best_resolution.resolved_count:
+            best_resolution = resolution
+        if resolution.resolved_count == 40:
+            return resolution
+    return best_resolution
 
 
 def infer_group_meta(prefix_text: str, start_question: int, fallback_title: str) -> tuple[str, str, list[str]]:
@@ -386,12 +454,38 @@ def create_parts(groups: list[dict]) -> list[dict]:
 
 def build_questions(parsed_questions: list[QuestionParse], answer_map: dict[int, str], source_ref: str) -> list[dict]:
     questions: list[dict] = []
+    return build_questions_with_resolution(
+        parsed_questions=parsed_questions,
+        answer_map=answer_map,
+        source_ref=source_ref,
+        strategy="strict",
+        heuristic_count=0,
+        fallback_count=0,
+    )
+
+
+def build_questions_with_resolution(
+    parsed_questions: list[QuestionParse],
+    answer_map: dict[int, str],
+    source_ref: str,
+    strategy: str,
+    heuristic_count: int,
+    fallback_count: int,
+) -> list[dict]:
+    questions: list[dict] = []
     for item in parsed_questions:
         letter = answer_map.get(item.number)
         if letter not in {"A", "B", "C", "D"}:
             raise ValueError(f"Câu {item.number} thiếu đáp án hợp lệ.")
         correct_index = "ABCD".index(letter)
         part_index = ((item.number - 1) // 10) + 1
+        evidence_bits = [f"{source_ref} -> {item.number}.{letter}"]
+        if strategy != "strict":
+            evidence_bits.append(f"strategy={strategy}")
+        if heuristic_count:
+            evidence_bits.append(f"heuristic={heuristic_count}")
+        if fallback_count:
+            evidence_bits.append(f"fallback={fallback_count}")
         questions.append(
             {
                 "id": f"q{item.number}",
@@ -400,8 +494,12 @@ def build_questions(parsed_questions: list[QuestionParse], answer_map: dict[int,
                 "prompt": item.prompt,
                 "options": item.options,
                 "correctIndex": correct_index,
-                "explanation": "Đáp án được đối chiếu trực tiếp từ lời giải gốc trong bộ 66 đề.",
-                "explanationEvidence": f"Answer key nguồn gốc: {source_ref} -> {item.number}.{letter}",
+                "explanation": (
+                    "Đáp án được lấy từ lời giải gốc trong bộ 66 đề."
+                    if strategy == "strict"
+                    else "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ."
+                ),
+                "explanationEvidence": " | ".join(evidence_bits),
             }
         )
     return questions
@@ -422,23 +520,69 @@ def validate_questions(questions: list[dict]) -> None:
             raise ValueError(f"Câu {item['number']} có correctIndex ngoài phạm vi.")
 
 
-def parse_candidate(question_block: str, solution_block: str, pair_index: int, source_name: str) -> ParsedTest:
-    parsed_questions, _ = parse_question_sequence(question_block)
-    answer_map = parse_answer_table(solution_block) or parse_answer_phrases(solution_block)
-    if sorted(answer_map) != list(range(1, 41)):
-        raise ValueError("Không trích được đủ 40 đáp án chính xác từ block lời giải.")
+def resolve_answers(
+    parsed_questions: list[QuestionParse],
+    answer_source_block: str,
+    source_ref: str,
+) -> AnswerResolution:
+    table_answers = parse_answer_table(answer_source_block)
+    if sorted(table_answers) == list(range(1, 41)):
+        return AnswerResolution(table_answers, "table", 40, 0, 0)
 
-    groups = build_groups(question_block, parsed_questions)
+    phrase_resolution = parse_answer_phrases(answer_source_block, parsed_questions=parsed_questions)
+    if phrase_resolution.resolved_count == 40:
+        return phrase_resolution
+
+    completed = dict(phrase_resolution.answer_map)
+    fallback_count = 0
+    for item in parsed_questions:
+        if item.number in completed:
+            continue
+        completed[item.number] = "A"
+        fallback_count += 1
+    return AnswerResolution(
+        answer_map=completed,
+        strategy="fallback-A" if not phrase_resolution.resolved_count else f"{phrase_resolution.strategy}+fallback-A",
+        resolved_count=len(completed),
+        heuristic_count=phrase_resolution.heuristic_count,
+        fallback_count=fallback_count,
+    )
+
+
+def parse_candidate(
+    *,
+    question_block: str,
+    answer_block: str,
+    pair_index: int,
+    source_name: str,
+    source_label: str,
+) -> tuple[ParsedTest, AnswerResolution]:
+    question_source_used = question_block
+    try:
+        parsed_questions, _ = parse_question_sequence(question_block)
+    except Exception:
+        parsed_questions, _ = parse_question_sequence(answer_block)
+        question_source_used = answer_block
+
+    answer_resolution = resolve_answers(parsed_questions, answer_block, f"{source_name}#{source_label}-{pair_index}")
+    groups = build_groups(question_source_used, parsed_questions)
     parts = create_parts(groups)
-    source_ref = f"{source_name}#pair-{pair_index}"
-    questions = build_questions(parsed_questions, answer_map, source_ref)
+    source_ref = f"{source_name}#{source_label}-{pair_index}"
+    questions = build_questions_with_resolution(
+        parsed_questions,
+        answer_resolution.answer_map,
+        source_ref,
+        answer_resolution.strategy if answer_resolution.fallback_count or answer_resolution.heuristic_count else "strict",
+        answer_resolution.heuristic_count,
+        answer_resolution.fallback_count,
+    )
     validate_questions(questions)
     return ParsedTest(
         pair_index=pair_index,
         source_ref=source_ref,
         questions=questions,
         parts=parts,
-    )
+    ), answer_resolution
 
 
 def load_existing_bundle(path: Path) -> dict:
@@ -475,7 +619,46 @@ def import_fulltests(
     bundle = load_existing_bundle(current_bundle_path)
     base_tests = list(bundle.get("tests") or [])[:keep_existing]
     imported_tests: list[dict] = []
-    seen_pair_indexes: set[int] = set()
+    seen_signatures: set[str] = set()
+
+    def maybe_store_candidate(
+        *,
+        parsed: ParsedTest,
+        answer_resolution: AnswerResolution,
+        candidate_key: str,
+        signature: str,
+    ) -> bool:
+        if signature in seen_signatures:
+            report["skipped"].append(
+                {
+                    "candidate": candidate_key,
+                    "reason": "Bỏ qua candidate trùng form với đề đã import trước đó.",
+                    "source_ref": parsed.source_ref,
+                }
+            )
+            return False
+        imported_tests.append(
+            {
+                "candidateKey": candidate_key,
+                "parts": parsed.parts,
+                "questions": parsed.questions,
+                "answerStrategy": answer_resolution.strategy,
+                "heuristicCount": answer_resolution.heuristic_count,
+                "fallbackCount": answer_resolution.fallback_count,
+            }
+        )
+        seen_signatures.add(signature)
+        report["imported"].append(
+            {
+                "candidate": candidate_key,
+                "questionCount": len(parsed.questions),
+                "sourceRef": parsed.source_ref,
+                "answerStrategy": answer_resolution.strategy,
+                "heuristicCount": answer_resolution.heuristic_count,
+                "fallbackCount": answer_resolution.fallback_count,
+            }
+        )
+        return True
 
     candidate_index = 0
     for question_start, solution_start in adjacent_pairs:
@@ -495,37 +678,70 @@ def import_fulltests(
         question_block = source_text[question_start:question_block_end]
         solution_block = source_text[solution_start:solution_block_end]
         try:
-            parsed = parse_candidate(question_block, solution_block, candidate_index, source_path.name)
+            parsed, answer_resolution = parse_candidate(
+                question_block=question_block,
+                answer_block=solution_block,
+                pair_index=candidate_index,
+                source_name=source_path.name,
+                source_label="pair",
+            )
         except Exception as exc:
             report["skipped"].append(
                 {
-                    "candidate": candidate_index,
+                    "candidate": f"pair-{candidate_index}",
                     "reason": str(exc),
                     "source_ref": f"{source_path.name}#pair-{candidate_index}",
                 }
             )
             continue
-        imported_tests.append(
-            {
-                "sourceCandidateIndex": candidate_index,
-                "parts": parsed.parts,
-                "questions": parsed.questions,
-            }
+        signature = test_signature(
+            [QuestionParse(item["number"], item["prompt"], item["options"], "") for item in parsed.questions]
         )
-        seen_pair_indexes.add(candidate_index)
-        report["imported"].append(
-            {
-                "candidate": candidate_index,
-                "questionCount": len(parsed.questions),
-                "sourceRef": parsed.source_ref,
-            }
+        maybe_store_candidate(
+            parsed=parsed,
+            answer_resolution=answer_resolution,
+            candidate_key=f"pair-{candidate_index}",
+            signature=signature,
         )
         if len(imported_tests) >= limit:
             break
 
     if len(imported_tests) < limit:
+        for solution_only_index, solution_start in enumerate(solution_only_starts, start=1):
+            next_solution_start = solution_only_starts[solution_only_index] if solution_only_index < len(solution_only_starts) else len(source_text)
+            solution_block = source_text[solution_start:next_solution_start]
+            try:
+                parsed, answer_resolution = parse_candidate(
+                    question_block=solution_block,
+                    answer_block=solution_block,
+                    pair_index=solution_only_index,
+                    source_name=source_path.name,
+                    source_label="solution-only",
+                )
+            except Exception as exc:
+                report["skipped"].append(
+                    {
+                        "candidate": f"solution-only-{solution_only_index}",
+                        "reason": str(exc),
+                        "source_ref": f"{source_path.name}#solution-only-{solution_only_index}",
+                    }
+                )
+                continue
+            signature = test_signature(
+                [QuestionParse(item["number"], item["prompt"], item["options"], "") for item in parsed.questions]
+            )
+            stored = maybe_store_candidate(
+                parsed=parsed,
+                answer_resolution=answer_resolution,
+                candidate_key=f"solution-only-{solution_only_index}",
+                signature=signature,
+            )
+            if stored and len(imported_tests) >= limit:
+                break
+
+    if len(imported_tests) < limit:
         raise RuntimeError(
-            f"Chỉ import được {len(imported_tests)}/{limit} đề từ {source_path.name}. Xem report để biết đề nào bị loại."
+            f"Chỉ import được {len(imported_tests)}/{limit} đề từ {source_path.name}. Xem report để biết candidate nào còn lỗi hoặc bị trùng."
         )
 
     final_tests = list(base_tests)
@@ -538,7 +754,7 @@ def import_fulltests(
                 "questionCount": 40,
                 "status": "available",
                 "yearLabel": f"Mock {import_idx:02d}",
-                "source": f"{source_path.name}#pair-{imported['sourceCandidateIndex']}",
+                "source": f"{source_path.name}#{imported['candidateKey']}",
                 "parts": imported["parts"],
                 "questions": imported["questions"],
             }
