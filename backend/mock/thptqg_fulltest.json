@@ -6119,9 +6119,9 @@
             "Monitoring gases released by a volcano",
             "Studying animal behavior before an eruption"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 28. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 28. D | animal behavior not in passage"
         },
         {
           "id": "q29",
@@ -6142,7 +6142,7 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30. The word They in paragraph 3 refers to.",
+          "prompt": "Question 30. The word They in paragraph 5 refers to.",
           "options": [
             "radio transmission",
             "scientists",
@@ -6151,7 +6151,7 @@
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 30. B | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 30. B | they scientists paragraph 5"
         },
         {
           "id": "q31",
@@ -6172,7 +6172,7 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32. The word comprehensive in paragraph 4 could best be replaced by.",
+          "prompt": "Question 32. The word comprehensive in paragraph 6 could best be replaced by.",
           "options": [
             "detailed",
             "inaccurate",
@@ -6181,7 +6181,7 @@
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 32. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 32. A | comprehensive final paragraph"
         },
         {
           "id": "q33",
