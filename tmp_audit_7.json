@@ -1,0 +1,781 @@
+{
+  "parts": [
+    {
+      "id": "part-1",
+      "label": "Part 1",
+      "title": "Câu 1-10",
+      "questionStart": 1,
+      "questionEnd": 10,
+      "groups": [
+        {
+          "id": "part-1-group-1",
+          "title": "GREEN ENERGY IN THE CITY",
+          "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+          "context": [
+            "The new visitor centre at the riverside park, (1) _, uses solar panels and recycled materials throughout. City planners hope the building will inspire residents to consider cleaner lifestyles.",
+            "To encourage uptake, the municipal budget includes grants (2) _ household installation of rooftop panels and heat pumps. Applicants must show that the equipment meets national efficiency standards.",
+            "Households may also switch tariffs and pick the (3) _ from their electricity supplier when contract renewal is due. Independent advisers publish comparisons so consumers can judge costs and carbon savings fairly.",
+            "Officials stress that even modest habits—such as shorter showers or fewer single-use plastics—can (4) _ a lasting difference to local emissions over time.",
+            "Separate funding was reserved (5) _ neighbourhood groups planting trees and restoring pocket parks. Partnerships with schools ensure younger residents join litter picks and recycling drives.",
+            "The mayor argues that every voluntary (6) _, however small, signals commitment to the city's net-zero roadmap and encourages others to follow suit."
+          ],
+          "questionNumbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "id": "part-1-group-2",
+          "title": "WHY SHOULD WE SUPPORT CHARITY?",
+          "instruction": "Read the following leaflet and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+          "context": [
+            "Together, even small acts can lead to meaningful change! Reasons: Helping those in need is (7) _, but there's more to it. Every day, many people struggle with issues like poverty or lack of resources.",
+            "By supporting charities, you can build empathy and be part of a solution. (8) _ your contributions to charity work, communities become closer, which creates a positive impact on everyone involved. How You Can Make a Difference: (9) _ clothes, food, or other essentials to those in need. Donate a (10) _ of your income to trusted charity organisations.",
+            "Volunteer your time and offer assistance that could benefit (11) _. Join local charity events that promote (12) _ and raise funds."
+          ],
+          "questionNumbers": [
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ]
+    },
+    {
+      "id": "part-2",
+      "label": "Part 2",
+      "title": "Câu 11-20",
+      "questionStart": 11,
+      "questionEnd": 20,
+      "groups": [
+        {
+          "id": "part-2-group-2",
+          "title": "WHY SHOULD WE SUPPORT CHARITY?",
+          "instruction": "Read the following leaflet and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+          "context": [
+            "Together, even small acts can lead to meaningful change! Reasons: Helping those in need is (7) _, but there's more to it. Every day, many people struggle with issues like poverty or lack of resources.",
+            "By supporting charities, you can build empathy and be part of a solution. (8) _ your contributions to charity work, communities become closer, which creates a positive impact on everyone involved. How You Can Make a Difference: (9) _ clothes, food, or other essentials to those in need. Donate a (10) _ of your income to trusted charity organisations.",
+            "Volunteer your time and offer assistance that could benefit (11) _. Join local charity events that promote (12) _ and raise funds."
+          ],
+          "questionNumbers": [
+            11,
+            12
+          ]
+        },
+        {
+          "id": "part-2-group-3",
+          "title": "Câu 13",
+          "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions.",
+          "context": [],
+          "questionNumbers": [
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        },
+        {
+          "id": "part-2-group-4",
+          "title": "Câu 18",
+          "instruction": "Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+          "context": [
+            "In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.",
+            "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_. This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material.",
+            "Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
+            "Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_."
+          ],
+          "questionNumbers": [
+            18,
+            19,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "part-3",
+      "label": "Part 3",
+      "title": "Câu 21-30",
+      "questionStart": 21,
+      "questionEnd": 30,
+      "groups": [
+        {
+          "id": "part-3-group-4",
+          "title": "NEW WAYS OF LEARNING",
+          "instruction": "Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+          "context": [
+            "In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.",
+            "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_. This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material.",
+            "Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
+            "Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_."
+          ],
+          "questionNumbers": [
+            21,
+            22
+          ]
+        },
+        {
+          "id": "part-3-group-5",
+          "title": "GREEN LIVING",
+          "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
+          "context": [
+            "In an era marked by climate change and environmental degradation, adopting green living habits has become increasingly vital. Green living refers to a lifestyle that seeks to minimize one's ecological footprint through conscious choices in daily activities. This can include everything from reducing waste to conserving energy and using sustainable products. More individuals recognize the importance of preserving our planet, and the movement toward greener practices continues to gain momentum. One of the most significant aspects of green living is its focus on sustainability.",
+            "By choosing products that are eco-friendly, consumers can support businesses that prioritize environmental responsibility. For instance, using reusable bags, bottles, and containers reduces plastic waste and promotes a circular economy. Furthermore, opting for locally sourced foods not only supports local farmers but also decreases the carbon emissions associated with transportation. When green living habits are adopted, they can lead to profound changes in our environment.",
+            "By reducing their energy consumption through the use of energy-efficient appliances, individuals help lower greenhouse gas emissions. Consequently, this contributes to cleaner air and mitigates the effects of climate change. Moreover, by practicing water conservation methods, such as fixing leaks and using low-flow fixtures, households can significantly reduce water waste, promoting the sustainable use of this precious resource.",
+            "Therefore, educating individuals about green living habits is crucial for promoting a more sustainable future. Schools and community organizations can offer workshops and resources that highlight the benefits of eco-friendly practices. Additionally, social media campaigns can raise awareness and encourage people to share their experiences with sustainable living. By empowering individuals to make informed choices, we can collectively work towards a healthier planet for generations to come."
+          ],
+          "questionNumbers": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "id": "part-4",
+      "label": "Part 4",
+      "title": "Câu 31-40",
+      "questionStart": 31,
+      "questionEnd": 40,
+      "groups": [
+        {
+          "id": "part-4-group-6",
+          "title": "THE CONSUMER ELECTRONICS SHOW",
+          "instruction": "Read the following passage about Consumer Electronics Show and mark the letter A, B, C, D on your answer sheet to indicate the best answer to each of the following questions.",
+          "context": [
+            "The Consumer Electronics Show in Las Vegas is always a spectacle of innovation. Imagine walking into the convention halls and being greeted by the next generation of artificial intelligence not just as digital assistants, but as deeply integrated companions that anticipate our needs in ways we've only dreamed of. AI could be woven into every fabric of our daily lives, from personalized health monitoring to enhancing our creative endeavors.",
+            "Virtual and augmented reality have been making leaps and bounds, and by 2025, we might finally see the lines between the digital and physical worlds blur in profoundly immersive ways. Envision slipping on a pair of sleek AR glasses and instantly transforming your surroundings into a customized workspace or an interactive learning environment. This could make remote interactions feel as natural as face-to-face conversations.",
+            "(I) Sustainability is another trend that's been gaining momentum. (II) Tech companies are increasingly conscious of their environmental footprint, and at CES 2025, I wouldn't be surprised to see a plethora of eco-friendly gadgets. (III) Imagine homes equipped with smart systems that optimize energy use, reducing waste and promoting a greener lifestyle without sacrificing comfort or convenience. (IV) The Internet of Things (IoT) is likely to become even more interconnected and intuitive. Smart homes could evolve into empathetic environments that adjust lighting, temperature, and ambiance based on our moods or health metrics. Perhaps we'll see refrigerators that not only keep track of groceries but also suggest recipes to reduce food waste, or closets that recommend outfits based on the weather forecast and your calendar.",
+            "Transportation technology is on the cusp of a revolution. Electric vehicles are just the beginning. By 2025, CES might showcase advancements in autonomous driving systems becoming mainstream, or even personal air transportation like flying cars or drones. It's thrilling to think about commuting not just on roads but through the skies, potentially reshaping urban planning and our daily lives. Biotechnology could also take center stage. Wearables may transition from fitness trackers to health guardians, capable of monitoring vital signs with medical-grade accuracy, predicting health issues before they arise, and seamlessly communicating with healthcare providers. This integration of tech and wellness could empower us to lead healthier, more informed lives. While these are educated speculations based on current trends, the magic of CES lies in its ability to introduce the unexpected innovations that challenge our perceptions and expand the boundaries of what's possible. The 2025 show is bound to unveil something that will make us all stop and marvel."
+          ],
+          "questionNumbers": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "partId": "part-1",
+      "prompt": "Question 1. Choose the best word or phrase that fills blank (1).",
+      "options": [
+        "which designed",
+        "designing",
+        "was designed",
+        "designed"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 1. D | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=D"
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "partId": "part-1",
+      "prompt": "Question 2. Choose the best word or phrase that fills blank (2).",
+      "options": [
+        "to promote",
+        "promoted",
+        "promoting",
+        "promote"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 2. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "partId": "part-1",
+      "prompt": "Question 3. Choose the best word or phrase that fills blank (3).",
+      "options": [
+        "green energy option",
+        "green option energy",
+        "energy green option",
+        "option green energy"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 3. A | manual=green-energy-option"
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "partId": "part-1",
+      "prompt": "Question 4. Choose the best word or phrase that fills blank (4).",
+      "options": [
+        "do",
+        "take",
+        "have",
+        "make"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 4. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "partId": "part-1",
+      "prompt": "Question 5. Choose the best word or phrase that fills blank (5).",
+      "options": [
+        "into",
+        "for",
+        "to",
+        "of"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 5. D | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=B"
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "partId": "part-1",
+      "prompt": "Question 6. Choose the best word or phrase that fills blank (6).",
+      "options": [
+        "act",
+        "action",
+        "actively",
+        "active"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 6. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "partId": "part-1",
+      "prompt": "Question 7.",
+      "options": [
+        "deliberate",
+        "accessible",
+        "rewarding",
+        "ambitious"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 7. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "partId": "part-1",
+      "prompt": "Question 8.",
+      "options": [
+        "Thanks to",
+        "Regardless of",
+        "With regard to",
+        "In addition to"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 8. B | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=B"
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "partId": "part-1",
+      "prompt": "Question 9.",
+      "options": [
+        "Turn up",
+        "Take out",
+        "Put on",
+        "Give away"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 9. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "partId": "part-1",
+      "prompt": "Question 10.",
+      "options": [
+        "variety",
+        "portion",
+        "range",
+        "number"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 10. D | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=C"
+    },
+    {
+      "id": "q11",
+      "number": 11,
+      "partId": "part-2",
+      "prompt": "Question 11.",
+      "options": [
+        "other",
+        "the others",
+        "others",
+        "another"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 11. C | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=C"
+    },
+    {
+      "id": "q12",
+      "number": 12,
+      "partId": "part-2",
+      "prompt": "Question 12.",
+      "options": [
+        "achievement",
+        "diversity",
+        "experience",
+        "awareness"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 12. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q13",
+      "number": 13,
+      "partId": "part-2",
+      "prompt": "Question 13. a. Salesperson: Sure! This model has a great camera, a fast processor, and a very reasonable price. b. Salesperson: We have some excellent models with high-resolution cameras and batteries that last more than a day. c. Alex: That sounds great! Can you recommend a phone that is not too expensive but works well? d. Alex: Excuse me. I'm looking for a new smartphone with a good camera and long battery life. e. Alex: Perfect! I'll take it, but can you also help me transfer my data?",
+      "options": [
+        "d-b-a-e-c",
+        "b-d-e-c-a",
+        "b-c-a-e-d",
+        "d-b-c-a-e"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 13. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q14",
+      "number": 14,
+      "partId": "part-2",
+      "prompt": "Question 14. a. The rise of the internet and smartphones has connected people globally, enabling instant communication and access to information. b. Technology and innovation have revolutionized the way we live, work, and communicate. c. However, rapid technological changes also pose challenges, such as job displacement and privacy concerns. d. Balancing the benefits and risks of technology is crucial for sustainable development. e. Advances in artificial intelligence, robotics, and biotechnology are transforming industries and creating new opportunities.",
+      "options": [
+        "c-d-b-a-e",
+        "e-c-a-b-d",
+        "b-a-e-c-d",
+        "a-b-d-e-c"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 14. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q15",
+      "number": 15,
+      "partId": "part-2",
+      "prompt": "Question 15. a. Shop assistant: Welcome! We have beautiful jewelry, stylish handbags, and unique handmade candles in different scents. b. Julia: Those sound great! I think she would love a candle with a relaxing lavender fragrance. c. Julia: Hello! Can you help me find a nice gift for my best friend's birthday?",
+      "options": [
+        "b - a - c",
+        "c - a - b",
+        "c - b - a",
+        "a - c - b"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 15. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q16",
+      "number": 16,
+      "partId": "part-2",
+      "prompt": "Question 16. a. However, once the foundation is laid, the real work begins as they start building more complex systems of thought and understanding. b. Learning a new language is challenging, especially at the beginning when students are overwhelmed by grammar rules and unfamiliar vocabulary. c. With continuous practice, learners gradually develop confidence in their speaking, listening, and writing skills, although progress may seem slow at first. d. Many language learners experience frustration early on, but it's important to remember that fluency comes with time and dedication. e. In the end, the sense of accomplishment that comes from mastering a language makes the effort worthwhile, opening doors to new cultures and opportunities.",
+      "options": [
+        "b-d-a-c-e",
+        "a-d-c-b-e",
+        "b-a-c-d-e",
+        "d-b-a-c-e"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 16. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q17",
+      "number": 17,
+      "partId": "part-2",
+      "prompt": "Question 17. John, - a. Thank you for all the hard work in setting up the activities for the event next week. - b. We need the text for a leaflet to be handed out to the kids, around 250 words in total. - c. We've really got to persuade them that it's going to be enjoyable - not just more lessons! - d. We need to tell them what's on offer but, most of all, we need to phrase it in such a way that it looks like fun! - e. There's just one more thing that needs to be done and I think you're just the person for the job! Thanks, Sandra",
+      "options": [
+        "b-c-e-d-a",
+        "a-e-b-d-c",
+        "a-b-e-c-d",
+        "d-a-c-e-b"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 17. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q18",
+      "number": 18,
+      "partId": "part-2",
+      "prompt": "Question 18.",
+      "options": [
+        "that have been introduced by technology recently",
+        "having have been introduced by technology recently",
+        "have been introduced by technology recently",
+        "by which they have been introduced by technology recently"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 18. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q19",
+      "number": 19,
+      "partId": "part-2",
+      "prompt": "Question 19.",
+      "options": [
+        "uses artificial intelligence adjustment to educational content to suit individual strengths and weaknesses",
+        "in which artificial intelligence tailors educational content to individual strengths and weaknesses",
+        "where the use of artificial intelligence in adapting content to individual strengths and weaknesses",
+        "tailors educational content to individual strengths and weaknesses with the help of artificial intelligence"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 19. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q20",
+      "number": 20,
+      "partId": "part-2",
+      "prompt": "Question 20.",
+      "options": [
+        "Many learning apps now use point systems and leaderboards to encourage users to complete daily lessons.",
+        "International companies developed many kinds of programs to help learners complete daily lessons.",
+        "Point systems and leaderboards in learning apps resulted from the completion of daily lessons for many users.",
+        "Encouraged users to complete daily lessons, point systems and leaderboards were added to some learning apps."
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 20. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q21",
+      "number": 21,
+      "partId": "part-3",
+      "prompt": "Question 21. Choose the sentence that best fits blank (21).",
+      "options": [
+        "International students share ideas and experiences so that they can use platforms like Zoom or Google Docs in their learning.",
+        "Students from different countries can now use platforms like Zoom or Google Docs, allowing them to share ideas and experiences.",
+        "But for the use of platforms like Zoom or Google Docs, students from different countries could share ideas and experiences.",
+        "Using platforms like Zoom or Google Docs, ideas and experiences can be shared with students from different countries."
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 21. B | collaborative tools blank (21)"
+    },
+    {
+      "id": "q22",
+      "number": 22,
+      "partId": "part-3",
+      "prompt": "Question 22. Choose the sentence that best fits blank (22).",
+      "options": [
+        "learners can now meet the demands and challenges of the modern era",
+        "the demands and challenges of the modern era are addressed by learners",
+        "the modern era no longer presents demands and challenges to learners",
+        "learners' solution to the challenges of the modern era is now achieved"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 22. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q23",
+      "number": 23,
+      "partId": "part-3",
+      "prompt": "Question 23. Which of the following is NOT mentioned as one of the green living practices?",
+      "options": [
+        "Conserving energy",
+        "Reducing waste",
+        "Using sustainable products",
+        "Composting organic waste"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 23. D | composting-not-in-passage"
+    },
+    {
+      "id": "q24",
+      "number": 24,
+      "partId": "part-3",
+      "prompt": "Question 24. The word vital in paragraph 1 is OPPOSITE in meaning to _.",
+      "options": [
+        "imperfect",
+        "inessential",
+        "important",
+        "popular"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 24. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q25",
+      "number": 25,
+      "partId": "part-3",
+      "prompt": "Question 25. The word they in paragraph 2 refers to _.",
+      "options": [
+        "carbon emissions",
+        "individuals",
+        "green living habits",
+        "local farmers"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 25. C | they=green-living-habits"
+    },
+    {
+      "id": "q26",
+      "number": 26,
+      "partId": "part-3",
+      "prompt": "Question 26. The word empowering in paragraph 4 could be best replaced by _.",
+      "options": [
+        "enabling",
+        "maintaining",
+        "prohibiting",
+        "abandoning"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 26. A | enabling"
+    },
+    {
+      "id": "q27",
+      "number": 27,
+      "partId": "part-3",
+      "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in paragraph 2?",
+      "options": [
+        "Opting for eco-friendly products might make consumers overlook irresponsible businesses.",
+        "Buying non-eco-friendly products harms eco-conscious companies.",
+        "Choosing eco-friendly products supports businesses focusing on environmental responsibility.",
+        "Purchasing harmful products supports businesses ignoring environmental issues."
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 27. C | paraphrase eco-friendly support"
+    },
+    {
+      "id": "q28",
+      "number": 28,
+      "partId": "part-3",
+      "prompt": "Question 28. Which of the following is TRUE according to the passage?",
+      "options": [
+        "Green living only targets energy reduction and ignores waste management entirely.",
+        "Educating people about green practices is unnecessary for promoting a sustainable future.",
+        "The movement for greener habits has slowed as fewer people value protecting the environment.",
+        "Using reusable products can contribute to a decrease in plastic waste and promote sustainability."
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 28. D | reusable bags passage"
+    },
+    {
+      "id": "q29",
+      "number": 29,
+      "partId": "part-3",
+      "prompt": "Question 29. In which paragraph does the writer mention a present causal relationship?",
+      "options": [
+        "Paragraph 3",
+        "Paragraph 2",
+        "Paragraph 1",
+        "Paragraph 4"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 29. A | Consequently paragraph 3"
+    },
+    {
+      "id": "q30",
+      "number": 30,
+      "partId": "part-3",
+      "prompt": "Question 30. In which paragraph does the writer discuss methods for teaching people about eco-friendly living practices?",
+      "options": [
+        "Paragraph 1",
+        "Paragraph 3",
+        "Paragraph 2",
+        "Paragraph 4"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 30. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q31",
+      "number": 31,
+      "partId": "part-4",
+      "prompt": "Question 31. According to the passage, which technological advancement might make remote interactions feel as natural as face-to-face conversations?",
+      "options": [
+        "Empathetic smart homes",
+        "Artificial intelligence companions",
+        "Advanced virtual and augmented reality",
+        "Autonomous transportation systems"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 31. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q32",
+      "number": 32,
+      "partId": "part-4",
+      "prompt": "Question 32. The phrase woven into every fabric of our daily lives in paragraph 1 could best be replaced by _.",
+      "options": [
+        "totally separated from all of our regular activities",
+        "integrated thoroughly throughout our everyday routines",
+        "hidden away in selected aspects of everyday life",
+        "entirely neglected in most parts of our day-to-day existence"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 32. B | integrated"
+    },
+    {
+      "id": "q33",
+      "number": 33,
+      "partId": "part-4",
+      "prompt": "Question 33. The word conscious in paragraph 3 is OPPOSITE in meaning to _.",
+      "options": [
+        "aware",
+        "mindful",
+        "distressing",
+        "oblivious"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 33. D | oblivious"
+    },
+    {
+      "id": "q34",
+      "number": 34,
+      "partId": "part-4",
+      "prompt": "Question 34. Where in paragraph 3 does the following sentence best fit? Think biodegradable wearables or devices powered entirely by renewable energy sources.",
+      "options": [
+        "(I)",
+        "(II)",
+        "(IV)",
+        "(III)"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 34. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q35",
+      "number": 35,
+      "partId": "part-4",
+      "prompt": "Question 35. Which of the following best summarizes paragraph 3?",
+      "options": [
+        "Biotechnology is about to seamlessly integrate in personal health monitoring.",
+        "The rise of sustainable technologies could help reduce negative environmental impacts.",
+        "The IoT being more intuitive and interconnected may enhance everyday conveniences.",
+        "Our daily life is likely to undergo a transformation with the help of smart companions."
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 35. C | IoT smart homes paragraph 3"
+    },
+    {
+      "id": "q36",
+      "number": 36,
+      "partId": "part-4",
+      "prompt": "Question 36. All of the following are mentioned as potential advancements showcased at CES 2025 EXCEPT _.",
+      "options": [
+        "smart homes adjusting to our health metrics",
+        "confirmed updates about specific products",
+        "personal air transportation like flying cars",
+        "biodegradable wearables or devices"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 36. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q37",
+      "number": 37,
+      "partId": "part-4",
+      "prompt": "Question 37. What potential feature of future refrigerators is discussed in the passage?",
+      "options": [
+        "Automatic restocking of groceries via drones",
+        "Suggesting recipes to reduce food waste",
+        "Voice-activated access",
+        "Enhanced cooling efficiency"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 37. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+    },
+    {
+      "id": "q38",
+      "number": 38,
+      "partId": "part-4",
+      "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 4?",
+      "options": [
+        "The fusion of technology with health may enable us to live better and more knowledgeable lives.",
+        "Using technology in wellness is unnecessary for remarkably improving ordinary people's lifestyles.",
+        "Combining technology and health might completely mystify us about our well-being.",
+        "Technology and wellness merging could make health services more and more expensive."
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 38. A | tech wellness paragraph 4"
+    },
+    {
+      "id": "q39",
+      "number": 39,
+      "partId": "part-4",
+      "prompt": "Question 39. What can be inferred about the author's attitude toward technological advancements at CES?",
+      "options": [
+        "Indifferent to the considerable changes they may bring",
+        "Concerned about technological overreach",
+        "Optimistic and enthusiastic about their potential impact",
+        "Skeptical about their practical applications"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 39. C | optimistic tone"
+    },
+    {
+      "id": "q40",
+      "number": 40,
+      "partId": "part-4",
+      "prompt": "Question 40. Which of the following best summarizes the passage?",
+      "options": [
+        "There are speculated to be transformative technological innovations at CES 2025, impacting various aspects of life.",
+        "Current technological advancements are being widely criticised because of their shortcomings.",
+        "A report on confirmed technologies is to be presented at CES 2025, highlighting potential impacts on various aspects of life.",
+        "A detailed analysis of past CES events led to some profound changes in current technology."
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
+      "explanationEvidence": "66_Full. md#pair-13 -> 40. A | educated speculations"
+    }
+  ]
+}

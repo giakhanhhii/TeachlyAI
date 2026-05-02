@@ -2625,8 +2625,8 @@
           "options": [
             "authentic culture local",
             "authentic local culture",
-            "about",
-            "meeting C. local authentic culture D. culture authentic local"
+            "culture local authentic",
+            "local culture authentic"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4392,7 +4392,7 @@
             "allowed him to become a formidable opponent on the pitch",
             "of which the success in passing opponents and scoring"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 19. C"
         },
@@ -5015,7 +5015,7 @@
             "With regard to",
             "In addition to"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ. Rà lại thủ công cho câu này vì đáp án cũ nhìn sai rõ ràng.",
           "explanationEvidence": "66_Full. md#pair-13 -> 8. B | strategy=phrase+heuristic+global-phrase | heuristic=3 | manual-override=B"
         },
@@ -5030,7 +5030,7 @@
             "Put on",
             "Give away"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
           "explanationEvidence": "66_Full. md#pair-13 -> 9. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
@@ -5195,7 +5195,7 @@
             "Point systems and leaderboards in learning apps resulted from the completion of daily lessons for many users.",
             "Encouraged users to complete daily lessons, point systems and leaderboards were added to some learning apps."
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
           "explanationEvidence": "66_Full. md#pair-13 -> 20. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
@@ -5360,7 +5360,7 @@
             "Advanced virtual and augmented reality",
             "Autonomous transportation systems"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
           "explanationEvidence": "66_Full. md#pair-13 -> 31. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
@@ -5435,7 +5435,7 @@
             "personal air transportation like flying cars",
             "biodegradable wearables or devices"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
           "explanationEvidence": "66_Full. md#pair-13 -> 36. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
@@ -6313,6 +6313,7 @@
       "status": "available",
       "yearLabel": "Mock 09",
       "source": "66_Full. md#pair-18",
+      "_answerReviewNote": "Mock09 q1 hand-verified: trying out local food",
       "parts": [
         {
           "id": "part-1",

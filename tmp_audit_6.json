@@ -1,0 +1,771 @@
+{
+  "parts": [
+    {
+      "id": "part-1",
+      "label": "Part 1",
+      "title": "Câu 1-10",
+      "questionStart": 1,
+      "questionEnd": 10,
+      "groups": [
+        {
+          "id": "part-1-group-1",
+          "title": "Câu 1",
+          "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 1 to 6.",
+          "context": [
+            "DISCOVER NEW TRAVEL BUDDIES WITH TRAVELMATE",
+            "\"Who will you explore your next destination with? Will they share the same (1)_____ for adventure, or will they prefer a more relaxing trip?\" If you often wonder (2)_____ your travel companions before your next vacation, we have exciting news for you! TravelMate, a (3)_____, allows you to select your future travel buddies before your trip.",
+            "This service is designed to give you a more enjoyable and personalized experience. All you need to do is share your travel preferences with the platform, and you'll be matched with others (4)_____ similar tastes. Whether you're looking to (5)_____ new friends or reconnect with previous ones, TravelMate makes it easy.",
+            "If you're seeking adventure or simply want (6)_____ a relaxing getaway, there's a perfect match waiting for you!",
+            "(Adapted from Global Travel)"
+          ],
+          "questionNumbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "id": "part-1-group-2",
+          "title": "Câu 7",
+          "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 7 to 10.",
+          "context": [
+            "Sustainable Living: Every Action Matters! Adopting sustainable practices in our daily lives can have a significant impact on the environment. Here are (7)_____ insights to help you make a difference!",
+            "Statistics to Consider: Each year, billions of plastic items are discarded, a large portion of our waste. This not only fills landfills but also (8)_____ aquatic ecosystems, harming marine wildlife.",
+            "Action Steps You Can Take: Start by minimizing your consumption. For example, (9)_____ reusable cutlery and plates instead of disposable ones. If you have items that are still functional but no longer needed, repurpose them through local swap events or community programs (10)_____ discarding them.",
+            "(Adapted from Green Living Initiatives)"
+          ],
+          "questionNumbers": [
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ]
+    },
+    {
+      "id": "part-2",
+      "label": "Part 2",
+      "title": "Câu 11-20",
+      "questionStart": 11,
+      "questionEnd": 20,
+      "groups": [
+        {
+          "id": "part-2-group-2",
+          "title": "Câu 11",
+          "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 11 to 12.",
+          "context": [
+            "When shopping, (11)_____ brands that use sustainable materials, helping reduce your carbon footprint. Lastly, (12)_____ waste properly by separating recyclables from general waste, aiding the recycling process.",
+            "(Adapted from Green Living Initiatives)"
+          ],
+          "questionNumbers": [
+            11,
+            12
+          ]
+        },
+        {
+          "id": "part-2-group-3",
+          "title": "Câu 13",
+          "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
+          "context": [],
+          "questionNumbers": [
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        },
+        {
+          "id": "part-2-group-4",
+          "title": "Câu 18",
+          "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 18 to 22.",
+          "context": [
+            "Cristiano Ronaldo, one of the greatest football players of all time, (18)_____. Born on February 5, 1985, in Funchal, Madeira, Portugal, he showed exceptional talent from a young age. His journey began at Sporting Lisbon, where he honed his skills before moving to Manchester United in 2003. There, he developed into a formidable player, winning multiple Premier League titles and the coveted UEFA Champions League.",
+            "During his time at Manchester United, Ronaldo developed into a world-class player, winning three Premier League titles and the UEFA Champions League. He became well known for his incredible speed and powerful shots (19)_____. In 2009, he transferred to Real Madrid, where he broke numerous records, including becoming the club's all-time leading scorer. (20)_____.",
+            "Possessing remarkable athleticism and a keen sense of strategy, (21)_____. His training regimen, which includes intense workouts and a strict diet, ensures that he remains at peak performance. This dedication has allowed him to adapt his playing style over the years, maintaining his relevance in an ever-evolving sport. Additionally, Ronaldo's ability to lead his teammates has earned him respect both on and off the field.",
+            "Beyond his football career, Ronaldo is a philanthropist who uses his platform to give back to the community. (22)_____. His influence extends far beyond the pitch, making him a global icon and a role model for aspiring athletes. Ultimately, Cristiano Ronaldo's legacy is defined not only by his records but also by his commitment to making a positive impact in the world.",
+            "(Adapted from https://www.sport.org)"
+          ],
+          "questionNumbers": [
+            18,
+            19,
+            20,
+            21,
+            22
+          ]
+        }
+      ]
+    },
+    {
+      "id": "part-3",
+      "label": "Part 3",
+      "title": "Câu 21-30",
+      "questionStart": 21,
+      "questionEnd": 30,
+      "groups": [
+        {
+          "id": "part-3-group-5",
+          "title": "Câu 23",
+          "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
+          "context": [
+            "Vietnamese cultural identity is a rich and intricate tapestry that reflects the nation's long and storied history. Rooted in over a thousand years of civilization, Vietnam's cultural identity is a fusion of **indigenous** traditions and external influences, shaped by its geographical location and historical interactions.",
+            "First and foremost, at the heart of Vietnamese culture is a deep **reverence** for family and community. Confucian values emphasizing respect for elders, filial piety, and social harmony have played a pivotal role in shaping Vietnamese society. These values are reflected in the close-knit family structures, hierarchical relationships, and communal rituals that are integral to daily life.",
+            "Secondly, Vietnamese cuisine is celebrated worldwide for its exquisite flavors and diversity. With its emphasis on fresh ingredients, fragrant herbs, and balanced flavors, Vietnamese food tells a story of the country's agricultural heritage and regional variations. Iconic dishes like pho, banh mi, and spring rolls have become global favorites, representing the culinary artistry deeply ingrained in Vietnamese culture. Also, Vietnam's artistic expressions are equally captivating. Traditional art forms like water puppetry, silk painting, and folk music continue to thrive alongside contemporary artistic movements. [[u]]**Ao dai, a graceful traditional dress, exemplifies the fusion of elegance and modesty in Vietnamese fashion, symbolizing cultural pride and identity.**[[/u]]",
+            "Today, in the face of modernization and globalization, Vietnamese cultural identity remains resilient. While adapting to the challenges of the 21st century, the Vietnamese people continue to honor **their** traditions, celebrate their unique cultural expressions, and pass on their heritage to future generations, ensuring that their cultural identity remains vibrant and enduring.",
+            "(Adapted from Saigoneer)"
+          ],
+          "questionNumbers": [
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "id": "part-4",
+      "label": "Part 4",
+      "title": "Câu 31-40",
+      "questionStart": 31,
+      "questionEnd": 40,
+      "groups": [
+        {
+          "id": "part-4-group-6",
+          "title": "Câu 31",
+          "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the questions from 31 to 40.",
+          "context": [
+            "Keeping up with what is happening in the world is generally seen as an essential part of being a well-informed and educated citizen. Watching, listening to or reading the news can satisfy our curiosity, make us think, help us make choices and even avoid danger. However, people are increasingly wondering if staying up to date with what is going on is good for us.",
+            "The frequency, speed and way we access news has completely changed over the past few decades. Whereas previously most newspapers were published daily and TV and radio news broadcasts were **limited**, now we are constantly bombarded with news from all sides, and we have 24-hour news channels.",
+            "The content of news reports is almost always negative. **I** Throughout history, our survival has depended on noticing threats and avoiding danger, so the human brain is hard-wired to seek out information that is frightening or alarming. **II** It is about humans paying more attention to negative things because that kept us alive in the past and this is reflected in the news we consume. **III** In addition, because people now use smartphones to record events live, the news we see has become far more graphic and shocking. **IV**",
+            "Recent studies have shown that our news habits have disadvantages for our physical and emotional health. In one survey, over 50 percent of Americans reported that the news caused them stress and anxiety, often causing tiredness or poor sleep. Research by psychology expert Graham Davey has also proved that watching terrible or sad news on TV can worsen people's moods and make **them** worry more about their own lives. Exposure to this ever-increasing bad news can **take a toll on** our positivity and affect our health.",
+            "[[u]]While it is true that staying aware and informed is not a bad thing, we should not forget that we have a choice, not only about how much news we consume, but equally importantly about the kind of news we want to see.[[/u]]",
+            "(Adapted from English Workbook 12-English Discovery)"
+          ],
+          "questionNumbers": [
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "partId": "part-1",
+      "prompt": "Question 1.",
+      "options": [
+        "enthusiastically",
+        "enthusiast",
+        "enthusiasm",
+        "enthusiastic"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 1. A"
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "partId": "part-1",
+      "prompt": "Question 2.",
+      "options": [
+        "about",
+        "for",
+        "over",
+        "with"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 2. D"
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "partId": "part-1",
+      "prompt": "Question 3.",
+      "options": [
+        "travel platform new",
+        "new travel platform",
+        "travel new platform",
+        "new platform travel"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 3. D"
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "partId": "part-1",
+      "prompt": "Question 4.",
+      "options": [
+        "who has",
+        "had",
+        "to have",
+        "having"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 4. D"
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "partId": "part-1",
+      "prompt": "Question 5.",
+      "options": [
+        "take",
+        "make",
+        "give",
+        "do"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 5. C"
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "partId": "part-1",
+      "prompt": "Question 6.",
+      "options": [
+        "have",
+        "to having",
+        "to have",
+        "having"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 6. C"
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "partId": "part-1",
+      "prompt": "Question 7.",
+      "options": [
+        "another",
+        "others",
+        "each",
+        "some"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 7. A"
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "partId": "part-1",
+      "prompt": "Question 8.",
+      "options": [
+        "devastates",
+        "nourishes",
+        "conserves",
+        "enhances"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 8. C"
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "partId": "part-1",
+      "prompt": "Question 9.",
+      "options": [
+        "turn up",
+        "opt for",
+        "rely on",
+        "throw away"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 9. D"
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "partId": "part-1",
+      "prompt": "Question 10.",
+      "options": [
+        "because of",
+        "thanks to",
+        "according to",
+        "instead of"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 10. B"
+    },
+    {
+      "id": "q11",
+      "number": 11,
+      "partId": "part-2",
+      "prompt": "Question 11.",
+      "options": [
+        "inquire",
+        "seek",
+        "verify",
+        "demand"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 11. A"
+    },
+    {
+      "id": "q12",
+      "number": 12,
+      "partId": "part-2",
+      "prompt": "Question 12.",
+      "options": [
+        "manage",
+        "accumulate",
+        "distribute",
+        "utilize"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 12. D"
+    },
+    {
+      "id": "q13",
+      "number": 13,
+      "partId": "part-2",
+      "prompt": "Question 13. - a. Jim: Hmm... We should make people ride bicycles. - b. Peter: Good idea! And we shouldn't let them drive cars. - c. Peter: Hi, Jim. How can we reduce air pollution in our city? (Adapted from I learn smart world 12)",
+      "options": [
+        "a-b-c",
+        "c-a-b",
+        "c-b-a",
+        "b-c-a"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 13. B"
+    },
+    {
+      "id": "q14",
+      "number": 14,
+      "partId": "part-2",
+      "prompt": "Question 14. - a. Alice: People can be anonymous online and say bad things. - b. Alice: I couldn't agree with you more. - c. Susan: I think there's more cyberbullying than before. - d. Susan: Why do you think that? - e. Alice: What impact has social media had on people's lives? (Adapted from I learn smart world 12)",
+      "options": [
+        "d-c-a-b-e",
+        "e-a-d-c-b",
+        "e-c-b-d-a",
+        "b-c-e-a-d"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 14. D"
+    },
+    {
+      "id": "q15",
+      "number": 15,
+      "partId": "part-2",
+      "prompt": "Question 15. - a. I came back to Bangkok but I still remember your school spring fair. - b. Dear Xuan, - c. Thank you for having invited me to the fair. I'll never forget the event in my life. - d. I liked the songs and games, but the dish called \"Cha Gio\" made a deep impression on me. - e. I am now staying on a farm to help my uncle collect grapes.",
+      "options": [
+        "a-b-e-d-c",
+        "b-e-a-c-d",
+        "b-e-a-d-c",
+        "a-c-e-d-b"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 15. D"
+    },
+    {
+      "id": "q16",
+      "number": 16,
+      "partId": "part-2",
+      "prompt": "Question 16. - a. More than 300 students attended the fair and enjoyed Vietnamese dishes, songs and games. - b. In my view, the day was a great success. All the attendees felt happy. - c. There were 30 stalls where various activities were offered. - d. Yesterday, our school organized the Spring Fair in the playground. - e. However, it would be better if we could make Bánh Chưng during the night.",
+      "options": [
+        "d-a-c-b-e",
+        "d-b-a-c-e",
+        "b-d-a-e-c",
+        "b-c-d-e-a"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 16. D"
+    },
+    {
+      "id": "q17",
+      "number": 17,
+      "partId": "part-2",
+      "prompt": "Question 17. - a. Lifelong learning also helps your social life. You will likely become more confident in yourself, which can lead to greater satisfaction and happiness. - b. Overall, lifelong learning is an important part of personal and professional development. - c. Another benefit is personal development, like taking a yoga class or learning how to cook a new dish you like. Lifelong learning can help you find new passions and hobbies. - d. \"Lifelong learning\" means continuing to acquire new knowledge and skills throughout your life. - e. First of all, lifelong learning can offer benefits for your professional development. It will also help you be more competitive in the job market.",
+      "options": [
+        "d-e-c-a-b",
+        "c-d-e-a-b",
+        "d-b-e-c-a",
+        "a-d-b-e-c"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 17. B"
+    },
+    {
+      "id": "q18",
+      "number": 18,
+      "partId": "part-2",
+      "prompt": "Question 18.",
+      "options": [
+        "has made a significant impact on the sport",
+        "impacting significantly on the sport",
+        "whose significant impact on the sport",
+        "have a significant impact on the sport recognized"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 18. A"
+    },
+    {
+      "id": "q19",
+      "number": 19,
+      "partId": "part-2",
+      "prompt": "Question 19.",
+      "options": [
+        "gave a lot of fear to his opponent on the pitch",
+        "which made him a formidable opponent on the pitch",
+        "allowed him to become a formidable opponent on the pitch",
+        "of which the success in passing opponents and scoring"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 19. C"
+    },
+    {
+      "id": "q20",
+      "number": 20,
+      "partId": "part-2",
+      "prompt": "Question 20.",
+      "options": [
+        "Young athletes have inspired Ronaldo to strengthen his relentless drive and work ethic",
+        "The relentless drive and work ethic of Ronaldo have forced many young fans to become footballers",
+        "Ronaldo's relentless drive and work ethic have inspired many young athletes who aspire to follow his footsteps",
+        "Aiming to encourage young athletes to become footballers, Ronaldo trained hard and shared his experiences with them"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 20. C"
+    },
+    {
+      "id": "q21",
+      "number": 21,
+      "partId": "part-2",
+      "prompt": "Question 21.",
+      "options": [
+        "The label of one of the all-time best players is attributed to Ronaldo",
+        "Experts consistently regard Ronaldo as one of the greatest players of all time",
+        "Achieving the title of the best player of all time is a simple feat for Ronaldo",
+        "Ronaldo consistently demonstrates why he is considered one of the best players of all time"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 21. D"
+    },
+    {
+      "id": "q22",
+      "number": 22,
+      "partId": "part-2",
+      "prompt": "Question 22.",
+      "options": [
+        "Various charities would definitely struggle to support causes like children's hospitals and disaster relief efforts without Ronaldo's contributions",
+        "His millions of dollars serve as an aid to causes like children's hospitals and disaster relief efforts",
+        "Spending millions of dollars, various charities can support causes such as children's hospitals and disaster relief efforts on behalf of Ronaldo",
+        "He has donated millions of dollars to various charities, supporting causes such as children's hospitals and disaster relief efforts"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 22. C"
+    },
+    {
+      "id": "q23",
+      "number": 23,
+      "partId": "part-3",
+      "prompt": "Question 23. The word **indigenous** in paragraph 1 is **OPPOSITE** in meaning to _.",
+      "options": [
+        "local",
+        "foreign",
+        "native",
+        "traditional"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 23. B"
+    },
+    {
+      "id": "q24",
+      "number": 24,
+      "partId": "part-3",
+      "prompt": "Question 24. Which of the following is NOT mentioned as Confucian values emphasizing respect for?",
+      "options": [
+        "filial piety",
+        "social harmony",
+        "individualism",
+        "elders"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 24. C"
+    },
+    {
+      "id": "q25",
+      "number": 25,
+      "partId": "part-3",
+      "prompt": "Question 25. The word **reverence** in paragraph 2 could be best replaced by _.",
+      "options": [
+        "disrespect",
+        "admiration",
+        "indifference",
+        "criticism"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 25. A"
+    },
+    {
+      "id": "q26",
+      "number": 26,
+      "partId": "part-3",
+      "prompt": "Question 26. Which of the following best paraphrases the underlined sentence in paragraph 3?",
+      "options": [
+        "The ao dai, known for its elegance and modesty, represents a blend of Vietnamese fashion that embodies cultural identity and pride.",
+        "As a traditional dress, the ao dai reflects the combination of sophistication and simplicity in Vietnamese fashion, representing the nation's cultural values.",
+        "The graceful ao dai, a traditional Vietnamese attire, signifies the blend of elegance and restraint, illustrating the pride and identity of Vietnamese culture.",
+        "Known as a traditional dress, the ao dai beautifully combines elegance with symbol of Vietnam's cultural identity and pride."
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 26. C"
+    },
+    {
+      "id": "q27",
+      "number": 27,
+      "partId": "part-3",
+      "prompt": "Question 27. The word **their** in paragraph 4 refers to _.",
+      "options": [
+        "Vietnamese cuisine",
+        "Vietnamese people",
+        "Traditional art forms",
+        "Agricultural heritage"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 27. B"
+    },
+    {
+      "id": "q28",
+      "number": 28,
+      "partId": "part-3",
+      "prompt": "Question 28. According to the passage, which of the following is TRUE?",
+      "options": [
+        "Vietnamese cultural identity is static and unchanging.",
+        "Modernization has completely erased Vietnamese traditions.",
+        "Vietnamese cuisine has gained international recognition.",
+        "Water puppetry is no longer practiced in Vietnam."
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 28. C"
+    },
+    {
+      "id": "q29",
+      "number": 29,
+      "partId": "part-3",
+      "prompt": "Question 29. In which paragraph does the writer mention a present concession relationship?",
+      "options": [
+        "Paragraph 1",
+        "Paragraph 2",
+        "Paragraph 3",
+        "Paragraph 4"
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 29. D"
+    },
+    {
+      "id": "q30",
+      "number": 30,
+      "partId": "part-3",
+      "prompt": "Question 30. In which paragraph does the writer state that Vietnamese cultural identity is influenced by both internal and external factors?",
+      "options": [
+        "Paragraph 1",
+        "Paragraph 2",
+        "Paragraph 3",
+        "Paragraph 4"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 30. B"
+    },
+    {
+      "id": "q31",
+      "number": 31,
+      "partId": "part-4",
+      "prompt": "Question 31. The word **limited** in paragraph 2 is **OPPOSITE** in meaning to _.",
+      "options": [
+        "infinite",
+        "restricted",
+        "reliable",
+        "harmonious"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 31. D"
+    },
+    {
+      "id": "q32",
+      "number": 32,
+      "partId": "part-4",
+      "prompt": "Question 32. Where in paragraph 3 does the following sentence best fit? **There is a concept known as \"negativity bias\".**",
+      "options": [
+        "I",
+        "II",
+        "III",
+        "IV"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 32. D"
+    },
+    {
+      "id": "q33",
+      "number": 33,
+      "partId": "part-4",
+      "prompt": "Question 33. Which of the following best summarizes paragraph 3?",
+      "options": [
+        "The news focuses mostly on positive events, which helps people feel better.",
+        "Humans tend to pay more attention to negative news because it has helped us survive in the past.",
+        "News reports today are less shocking and more focused on personal stories.",
+        "The news today is about entertaining content rather than alarming or frightening events."
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 33. C"
+    },
+    {
+      "id": "q34",
+      "number": 34,
+      "partId": "part-4",
+      "prompt": "Question 34. The word **them** in paragraph 4 refers to _.",
+      "options": [
+        "people",
+        "moods",
+        "news",
+        "lives"
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 34. C"
+    },
+    {
+      "id": "q35",
+      "number": 35,
+      "partId": "part-4",
+      "prompt": "Question 35. The phrase **take a toll on** in paragraph 4 could be best replaced by _.",
+      "options": [
+        "pay attention to",
+        "cause harm to",
+        "bring benefits to",
+        "lend support to"
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 35. A"
+    },
+    {
+      "id": "q36",
+      "number": 36,
+      "partId": "part-4",
+      "prompt": "Question 36. Which of the following is NOT mentioned as one of the effects that news can have on humans according to recent studies?",
+      "options": [
+        "worry",
+        "tiredness",
+        "sadness",
+        "poor sleep"
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 36. B"
+    },
+    {
+      "id": "q37",
+      "number": 37,
+      "partId": "part-4",
+      "prompt": "Question 37. Which of the following is TRUE according to the passage?",
+      "options": [
+        "Watching negative news regularly has no real impact on people's mental or physical health.",
+        "We can control both the amount and type of news we consume, which helps reduce its harmful effects.",
+        "The news today focuses mainly on positive stories that make people feel less stressed and more relaxed.",
+        "News consumption has decreased because many people no longer find it relevant or interesting to keep up with."
+      ],
+      "correctIndex": 1,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 37. B"
+    },
+    {
+      "id": "q38",
+      "number": 38,
+      "partId": "part-4",
+      "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 5?",
+      "options": [
+        "We should stop watching the news entirely to avoid its harmful effects.",
+        "The news should be controlled by the government to limit negative impacts.",
+        "It is important to be mindful of both how much and what kind of news we consume.",
+        "It doesn't matter what kind of news we watch as long as we stay informed."
+      ],
+      "correctIndex": 2,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 38. D"
+    },
+    {
+      "id": "q39",
+      "number": 39,
+      "partId": "part-4",
+      "prompt": "Question 39. Which of the following can be inferred from the passage?",
+      "options": [
+        "The rise of 24-hour news channels has led to a significant increase in news consumption.",
+        "People are generally more interested in positive news stories than negative ones.",
+        "Exposure to bad news has no noticeable impact on people's mental or physical health.",
+        "Modern technology has made it more difficult for people to avoid news altogether."
+      ],
+      "correctIndex": 0,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 39. D"
+    },
+    {
+      "id": "q40",
+      "number": 40,
+      "partId": "part-4",
+      "prompt": "Question 40. Which of the following best summarizes the passage?",
+      "options": [
+        "People are generally unaffected by the news, and it has no significant impact on their emotional or physical well-being.",
+        "Watching the news can harm our well-being, and it's better to stop watching it altogether to protect our health.",
+        "Negative news contributes to stress and anxiety, but the problem lies in how it's presented, not the news itself.",
+        "Staying informed is important, but excessive negative news can harm our health, so we must choose carefully."
+      ],
+      "correctIndex": 3,
+      "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
+      "explanationEvidence": "66_Full. md#pair-12 -> 40. C"
+    }
+  ]
+}
