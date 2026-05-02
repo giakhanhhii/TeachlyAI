@@ -6157,7 +6157,7 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31. Which of the following best paraphrases the underlined sentence in paragraph 3?",
+          "prompt": "Question 31. Which of the following best paraphrases the underlined sentence in paragraph 4?",
           "options": [
             "Scientists can predict exactly when and where a volcano will erupt.",
             "Scientists can foretell volcanic activity by staying near the volcano.",
@@ -6166,7 +6166,7 @@
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 31. D | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 31. D | almost as soon as it happens"
         },
         {
           "id": "q32",
@@ -6204,14 +6204,14 @@
           "partId": "part-4",
           "prompt": "Question 34. In which paragraph does the writer discuss monitoring various natural factors to predict a volcanic eruption?",
           "options": [
-            "Paragraph 1",
-            "Paragraph 2",
+            "Paragraph 5",
             "Paragraph 4",
-            "Paragraph 3"
+            "Paragraph 3",
+            "Paragraph 6"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 34. C | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 34. A | gases temperature water monitoring"
         },
         {
           "id": "q35",
