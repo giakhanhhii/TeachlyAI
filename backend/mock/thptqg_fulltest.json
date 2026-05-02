@@ -10272,8 +10272,10 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
+              "context": [
+                "Viewers leave every episode with a renewed sense of (1) _ and respect for how fragile life on our planet can be. Working (2) _ classmates on a sustainability project helps them notice details they once ignored. (3) _ teachers now link science clips to writing tasks. Long documentaries show how (4) _ effort can protect species, while fast food adverts rarely mention (5) _ balance. The series (6) _ persuaded thousands of teenagers to recycle more carefully."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -10286,8 +10288,10 @@
             {
               "id": "part-1-group-2",
               "title": "Câu 7",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 7 to 10.",
+              "context": [
+                "(7) _ increasing number of secondary schools now subscribe to the wildlife channel, (8) _ older programmes only showed predators, this season follows rangers in five countries. Volunteers know that (9) _ may prefer studio clips, yet classroom discussion still focuses on the (10) _ of rehabilitated animals back into the wild."
+              ],
               "questionNumbers": [
                 7,
                 8,
@@ -10306,9 +10310,11 @@
           "groups": [
             {
               "id": "part-2-group-2",
-              "title": "Câu 7",
-              "instruction": "",
-              "context": [],
+              "title": "Câu 11",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 11 to 12.",
+              "context": [
+                "Urban smog contains many chemicals, but the main (11) _ is still exhaust from diesel traffic that has (12) _ for decades near busy ports."
+              ],
               "questionNumbers": [
                 11,
                 12
@@ -10317,8 +10323,10 @@
             {
               "id": "part-2-group-3",
               "title": "Câu 13",
-              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
-              "context": [],
+              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 13 to 17.",
+              "context": [
+                "Arrangement items: each question lists lettered parts in the stem; choose the order that forms a natural dialogue or coherent paragraph."
+              ],
               "questionNumbers": [
                 13,
                 14,
@@ -10330,8 +10338,10 @@
             {
               "id": "part-2-group-4",
               "title": "Câu 18",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 18 to 20.",
+              "context": [
+                "(I) In 2007, roommates Joe Gebbia and Brian Chesky struggled to pay the rent on their San Francisco apartment when they learned that a major design conference was coming to town and local hotels were fully booked. To cover costs, they inflated air mattresses on the floor, advertised \"Air Bed & Breakfast\" online, and hosted their first paying guests who checked out through a simple payment page.\n\n(II) The trial convinced them that travellers wanted affordable stays and that hosts needed an easy way to publish availability. As similar conferences returned to the city, early users asked for clearer pricing, verified profiles, and faster booking confirmations.\n\n(III) With **state-of-the-art** engineering from co-founder Nathan Blecharczyk, the team relaunched a secure site that could **handle** heavy traffic and process card payments so that hosts abroad could list rooms and travellers could book instantly.\n\n(IV) Media attention followed each milestone, and [[u]]Airbnb went from strength to strength as listings multiplied across continents[[/u]]. What began as a rent-making experiment grew into a global marketplace for short-term lodging."
+              ],
               "questionNumbers": [
                 18,
                 19,
@@ -10349,9 +10359,11 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 18",
-              "instruction": "",
-              "context": [],
+              "title": "Câu 21",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 21 to 25.",
+              "context": [
+                "(I) In 2007, roommates Joe Gebbia and Brian Chesky struggled to pay the rent on their San Francisco apartment when they learned that a major design conference was coming to town and local hotels were fully booked. To cover costs, they inflated air mattresses on the floor, advertised \"Air Bed & Breakfast\" online, and hosted their first paying guests who checked out through a simple payment page.\n\n(II) The trial convinced them that travellers wanted affordable stays and that hosts needed an easy way to publish availability. As similar conferences returned to the city, early users asked for clearer pricing, verified profiles, and faster booking confirmations.\n\n(III) With **state-of-the-art** engineering from co-founder Nathan Blecharczyk, the team relaunched a secure site that could **handle** heavy traffic and process card payments so that hosts abroad could list rooms and travellers could book instantly.\n\n(IV) Media attention followed each milestone, and [[u]]Airbnb went from strength to strength as listings multiplied across continents[[/u]]. What began as a rent-making experiment grew into a global marketplace for short-term lodging."
+              ],
               "questionNumbers": [
                 21,
                 22,
