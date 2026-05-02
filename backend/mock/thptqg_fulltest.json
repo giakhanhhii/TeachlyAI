@@ -5399,16 +5399,16 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35. Which of the following best summarizes paragraph 4?",
+          "prompt": "Question 35. Which of the following best summarizes paragraph 3?",
           "options": [
             "Biotechnology is about to seamlessly integrate in personal health monitoring.",
             "The rise of sustainable technologies could help reduce negative environmental impacts.",
             "The IoT being more intuitive and interconnected may enhance everyday conveniences.",
             "Our daily life is likely to undergo a transformation with the help of smart companions."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 35. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 35. C | IoT smart homes paragraph 3"
         },
         {
           "id": "q36",
@@ -5444,7 +5444,7 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 6?",
+          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 4?",
           "options": [
             "The fusion of technology with health may enable us to live better and more knowledgeable lives.",
             "Using technology in wellness is unnecessary for remarkably improving ordinary people's lifestyles.",
@@ -5453,7 +5453,7 @@
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 38. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 38. A | tech wellness paragraph 4"
         },
         {
           "id": "q39",
@@ -5466,9 +5466,9 @@
             "Optimistic and enthusiastic about their potential impact",
             "Skeptical about their practical applications"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 39. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 39. C | optimistic tone"
         },
         {
           "id": "q40",
@@ -5481,9 +5481,9 @@
             "A report on confirmed technologies is to be presented at CES 2025, highlighting potential impacts on various aspects of life.",
             "A detailed analysis of past CES events led to some profound changes in current technology."
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 40. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 40. A | educated speculations"
         }
       ]
     },
