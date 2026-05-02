@@ -6313,7 +6313,6 @@
       "status": "available",
       "yearLabel": "Mock 09",
       "source": "66_Full. md#pair-18",
-      "_answerReviewNote": "Mock09 q1 hand-verified: trying out local food",
       "parts": [
         {
           "id": "part-1",
@@ -6503,9 +6502,9 @@
             "taking on",
             "getting after"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 1. A | strategy=global-phrase+fallback-A | fallback=17"
+          "correctIndex": 1,
+          "explanation": "Collocation với local food: trying out (thử) đồ ăn địa phương; calling off (hủy), taking on (đảm nhận), getting after (truy đuổi) không hợp ngữ cảnh.",
+          "explanationEvidence": "66_Full. md#pair-18 -> 1. A | strategy=global-phrase+fallback-A | fallback=17 | manual=B-trying-out"
         },
         {
           "id": "q2",
