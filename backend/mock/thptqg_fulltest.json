@@ -4111,7 +4111,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1. Choose the best option that completes blank (1) in the original item.",
+          "prompt": "Question 1. Choose the best option that best fits blank (1).",
           "options": [
             "searching",
             "seeking",
@@ -4126,7 +4126,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2. Choose the best option that completes blank (2) in the original item.",
+          "prompt": "Question 2. Choose the best option that best fits blank (2).",
           "options": [
             "At",
             "on",
@@ -4141,7 +4141,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3. Choose the best option that completes blank (3) in the original item.",
+          "prompt": "Question 3. Choose the best option that best fits blank (3).",
           "options": [
             "comprehensive training courses",
             "courses training comprehensive",
@@ -4156,7 +4156,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4. Choose the best option that completes blank (4) in the original item.",
+          "prompt": "Question 4. Choose the best option that best fits blank (4).",
           "options": [
             "which they needed",
             "needed",
@@ -4171,7 +4171,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5. Choose the best option that completes blank (5) in the original item.",
+          "prompt": "Question 5. Choose the best option that best fits blank (5).",
           "options": [
             "to travelling",
             "to travel",
@@ -4186,7 +4186,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6. Choose the best option that completes blank (6) in the original item.",
+          "prompt": "Question 6. Choose the best option that best fits blank (6).",
           "options": [
             "adventurous",
             "adventure",
@@ -4201,7 +4201,7 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7. Choose the best option that completes blank (7) in the original item.",
+          "prompt": "Question 7. Choose the best option that best fits blank (7).",
           "options": [
             "conversation",
             "preparation",
@@ -4216,7 +4216,7 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8. Choose the best option that completes blank (8) in the original item.",
+          "prompt": "Question 8. Choose the best option that best fits blank (8).",
           "options": [
             "set up",
             "put off",
@@ -4231,7 +4231,7 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9. Choose the best option that completes blank (9) in the original item.",
+          "prompt": "Question 9. Choose the best option that best fits blank (9).",
           "options": [
             "much",
             "few",
@@ -4246,7 +4246,7 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10. Choose the best option that completes blank (10) in the original item.",
+          "prompt": "Question 10. Choose the best option that best fits blank (10).",
           "options": [
             "In spite of",
             "In addition",
@@ -4261,7 +4261,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11. Choose the best option that completes blank (11) in the original item.",
+          "prompt": "Question 11. Choose the best option that best fits blank (11).",
           "options": [
             "others",
             "other",
@@ -4276,7 +4276,7 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12. Choose the best option that completes blank (12) in the original item.",
+          "prompt": "Question 12. Choose the best option that best fits blank (12).",
           "options": [
             "increased",
             "encouraged",
@@ -4366,7 +4366,7 @@
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18.",
+          "prompt": "Question 18. Choose the best option that best fits blank (18).",
           "options": [
             "Engaging in sports activities helps to develop strength",
             "When engaging in sports activities helps to develop strength",
@@ -4381,7 +4381,7 @@
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19.",
+          "prompt": "Question 19. Choose the best option that best fits blank (19).",
           "options": [
             "It additionally reduces the risk of obesity",
             "In addition to, it reduces the risk of obesity",
@@ -4396,7 +4396,7 @@
           "id": "q20",
           "number": 20,
           "partId": "part-2",
-          "prompt": "Question 20.",
+          "prompt": "Question 20. Choose the best option that best fits blank (20).",
           "options": [
             "they help to reduce stress and improve mood",
             "helps to reduce stress and improve mood",
