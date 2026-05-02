@@ -149,7 +149,7 @@ export function createStartupHubElement(onPick) {
           <defs>
             <linearGradient id="${svgIdPrefix}-forest-grad-2" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#fff59d" />
-              <stop offset="38%" stop-color="#80deea" />
+              <stop offset="38%" stop-color="#c5e1a5" />
               <stop offset="72%" stop-color="#43a047" />
               <stop offset="100%" stop-color="#1b5e20" />
             </linearGradient>
@@ -168,7 +168,7 @@ export function createStartupHubElement(onPick) {
           <rect x="32" y="18" width="136" height="80" rx="16" fill="#ffffff" opacity="0.22" />
           <rect x="38" y="24" width="124" height="72" rx="14" fill="url(#${svgIdPrefix}-slide-screen-glow)" stroke="#2e7d32" stroke-width="2.5" />
           <rect x="49" y="34" width="92" height="7" rx="3.5" fill="#43a047" opacity="0.92" />
-          <rect x="49" y="47" width="58" height="25" rx="6" fill="#90caf9" />
+          <rect x="49" y="47" width="58" height="25" rx="6" fill="#c8e6c9" />
           <polygon points="56,70 68,50 78,61 88,55 101,70" fill="#43a047" />
           <circle cx="91" cy="52" r="6" fill="#fff59d" />
           <rect x="115" y="48" width="24" height="24" rx="5" fill="#e8f5e9" />
