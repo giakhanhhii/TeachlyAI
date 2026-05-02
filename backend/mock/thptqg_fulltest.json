@@ -9188,7 +9188,7 @@
           "id": "q23",
           "number": 23,
           "partId": "part-3",
-          "prompt": "Question 23.",
+          "prompt": "Question 23. Choose the best word or phrase for blank (23).",
           "options": [
             "courses online learning",
             "learning online courses",
@@ -9203,7 +9203,7 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24.",
+          "prompt": "Question 24. Choose the best word or phrase for blank (24).",
           "options": [
             "select",
             "choose",
@@ -9218,7 +9218,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25.",
+          "prompt": "Question 25. Choose the best word or phrase for blank (25).",
           "options": [
             "in",
             "with",
