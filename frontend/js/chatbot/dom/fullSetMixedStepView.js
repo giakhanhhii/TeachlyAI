@@ -14,6 +14,10 @@ const BOOKMARK_SVG = `
   </svg>
 `;
 
+function formatFlashMultilineHtml(s) {
+  return escapeHtml(String(s || "")).replace(/\n/g, "<br>");
+}
+
 /**
  * @param {"slide"|"slide_deck"|"quiz"|"flash"} kind
  */
@@ -59,8 +63,8 @@ export function renderFlashStep(stage, card, opts = {}) {
   inner.className = "flash-card";
   inner.setAttribute("role", "button");
   inner.tabIndex = 0;
-  const frontTerm = escapeHtml(capitalizeFirst(card.front));
-  const backText = escapeHtml(capitalizeFirst(card.back));
+  const frontTerm = formatFlashMultilineHtml(capitalizeFirst(card.front));
+  const backText = formatFlashMultilineHtml(capitalizeFirst(card.back));
   const phoneticBlock = card.phonetic ? `<div class="flash-phonetic">${escapeHtml(card.phonetic)}</div>` : "";
   const hintBlock = card.hint ? `<div class="flash-mini-hint">${escapeHtml(card.hint)}</div>` : "";
   inner.innerHTML = `
