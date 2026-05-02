@@ -8013,13 +8013,12 @@
               "title": "Câu 23",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the correct answer to each of the questions from 23 to 30.",
               "context": [
-                "Urbanization refers to the increasing number of people that live in urban areas. It predominantly results from the movement of people from rural to urban areas, driven by the search for better employment opportunities, education, and living conditions. As cities grow, they often face challenges related to infrastructure, housing, and social services.",
-                "This rapid growth can lead to overcrowded cities, traffic congestion, and strain on public services. One of the most notable effects of urbanization is the change in land use. As Urban areas expand, agricultural land and natural habitats are often converted into residential and industrial areas.",
+                "Urbanization refers to the increasing number of people that live in urban areas. It predominantly results from the movement of people from rural to urban areas, driven by the search for better **employment opportunities**, **education**, and **living conditions**. As cities grow, they often face challenges related to infrastructure, housing, and social services.",
+                "This rapid growth can lead to overcrowded cities, traffic congestion, and strain on public services. One of the most **notable** effects of urbanization is the change in land use. As urban areas expand, agricultural land and natural habitats are often converted into residential and industrial areas.",
                 "This can lead to a decrease in local biodiversity and affect ecosystems.",
                 "Additionally, urbanization contributes to environmental issues such as pollution and increased carbon emissions due to higher energy consumption. Urbanization also has significant social and economic impacts. On one hand, there are more opportunities, higher salaries, and improved access to education and healthcare.",
-                "On the other hand, the rapid influx of people can lead to inadequate housing and increased cost of living. This disparity often results in the growth of informal settlements and slums, where living conditions are poor, and residents lack access to basic services. Governments and urban planners play a crucial role in managing urbanization effectively.",
-                "By implementing sustainable development policies and investing in infrastructure, they can mitigate some of the negative impacts of urbanization. Strategies such as developing public transportation, creating green spaces, and ensuring affordable housing are essential for creating livable and sustainable cities. Technology and innovation also contribute to addressing the challenges of urbanization.",
-                "Smart city initiatives, for example, leverage technology to improve the efficiency of urban services, enhance the quality of life for residents, and reduce environmental impact. These advancements can help cities become more resilient and adaptable to the needs of their growing populations."
+                "On the other hand, the rapid influx of people can lead to inadequate housing and increased cost of living. This **disparity** often results in the growth of informal settlements and slums, where living conditions are poor, and residents lack access to basic services. Governments and urban planners play a crucial role in managing urbanization effectively. By implementing sustainable development policies and investing in infrastructure, **they** can mitigate some of the negative impacts of urbanization.",
+                "Strategies such as developing public transportation, creating green spaces, and ensuring affordable housing are essential for creating livable and sustainable cities. [[u]]Technology and innovation also contribute to addressing the challenges of urbanization.[[/u]] Smart city initiatives, for example, leverage technology to improve the efficiency of urban services, enhance the quality of life for residents, and reduce environmental impact. These advancements can help cities become more resilient and adaptable to the needs of their growing populations."
               ],
               "questionNumbers": [
                 23,
@@ -8429,7 +8428,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word they in paragraph 3 refers to _.",
+          "prompt": "Question 25. The word they in paragraph 5 refers to _.",
           "options": [
             "settlements",
             "city-dwellers",
@@ -8444,7 +8443,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. The word disparity in paragraph 3 could be best replaced by _.",
+          "prompt": "Question 26. The word disparity in paragraph 5 could be best replaced by _.",
           "options": [
             "similarity",
             "improvement",
@@ -8459,7 +8458,7 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in paragraph 5?",
+          "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in paragraph 6?",
           "options": [
             "Innovations can help address the challenges posed by urbanization.",
             "Technology has no role in managing urbanization.",
@@ -8508,11 +8507,11 @@
           "options": [
             "Paragraph 1",
             "Paragraph 4",
-            "Paragraph 5",
+            "Paragraph 6",
             "Paragraph 2"
           ],
           "correctIndex": 2,
-          "explanation": "Đáp án C (Paragraph 5) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "explanation": "Đáp án C (Paragraph 6) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
           "explanationEvidence": "Cau 30: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
