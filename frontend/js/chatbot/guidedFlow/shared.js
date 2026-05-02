@@ -22,9 +22,9 @@ const SOURCE_ACTIONS_BY_KIND = {
     { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
   ],
   flash: [
-    { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
-    { label: "Nhập từ vựng trực tiếp", value: "flash_vocab" },
     { label: "Tải lên PDF", value: "flash_pdf" },
+    { label: "Nhập từ vựng trực tiếp", value: "flash_vocab" },
+    { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
   ],
   thptqg_fulltest: [
     { label: "Tải lên PDF", value: "quiz_pdf" },

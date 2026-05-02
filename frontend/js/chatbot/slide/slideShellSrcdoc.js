@@ -761,9 +761,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
     .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
-      padding-left: 0 !important;
-      margin: 0 auto !important;
-      max-width: 980px !important;
+      padding: 0 28px !important;
+      margin: 54px auto 0 !important;
+      width: min(1140px, calc(100% - 48px)) !important;
+      max-width: 1140px !important;
       display: flex !important;
       flex-direction: column !important;
       justify-content: center !important;
@@ -783,6 +784,8 @@ function injectShellPreviewFit(doc) {
       line-height: 1.35 !important;
       font-weight: 700 !important;
       text-align: center !important;
+      word-break: normal !important;
+      overflow-wrap: break-word !important;
     }
     .shell-slide-instance[data-shell-authored-slide="1"] .section-center,
     .shell-slide-instance[data-shell-authored-slide="1"] .title-group,
