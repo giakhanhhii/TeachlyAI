@@ -9559,7 +9559,7 @@
             {
               "id": "part-3-group-3",
               "title": "LIVING IN A MULTICULTURAL WORLD",
-              "instruction": "Read the following passage multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 21 to 24.",
               "context": [
                 "(I) In today's interconnected society, multiculturalism has become a defining feature of many countries. (II) It refers to the coexistence of diverse cultural, ethnic, and religious groups within a community. (III) This diversity enriches societies, fostering creativity, innovation, and global understanding. (IV) However, living in a multicultural world also presents challenges, such as the need to balance cultural preservation with social integration. One significant advantage of multiculturalism is the opportunity for cultural exchange. People from different backgrounds can share traditions, cuisine, art, and perspectives, broadening their understanding of the world. For example, international festivals and food markets often showcase the vibrant diversity of a community, promoting appreciation and respect for different cultures. Such exchanges contribute to a richer, more inclusive society. However, multiculturalism also requires individuals and societies to navigate potential challenges. Misunderstandings, cultural clashes, and prejudice can arise in multicultural settings. For instance, differing values or customs might lead to tensions or conflicts. To address these issues, [[u]]education and dialogue are essential to resolving cultural misunderstandings[[/u]]. Schools and workplaces can play a critical role by fostering inclusivity and teaching cultural awareness. Multiculturalism also brings economic benefits. Diverse teams in workplaces often bring unique skills and perspectives, leading to increased creativity and problem-solving abilities. Moreover, tourism thrives in multicultural areas, as visitors are drawn to the rich tapestry of cultures and traditions. Living in a multicultural world teaches us that diversity is not something to fear but to celebrate. By embracing and learning from our differences, we can build stronger, more harmonious communities. While challenges exist, the benefits of multiculturalism far outweigh the difficulties, making it a vital component of a thriving modern society."
               ],
@@ -9573,8 +9573,10 @@
             {
               "id": "part-3-group-4",
               "title": "Câu 25",
-              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following Questions.",
-              "context": [],
+              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 25 to 29.",
+              "context": [
+                "Arrangement items: each question below lists lettered parts a–e (or a–c) in the question stem. Put them in the order that makes a natural conversation or coherent paragraph."
+              ],
               "questionNumbers": [
                 25,
                 26,
@@ -9586,7 +9588,7 @@
             {
               "id": "part-3-group-5",
               "title": "SHORT ART COURSES",
-              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits blank (30). Continue with blanks (31)–(35) in Part 4.",
               "context": [
                 "Create!: This course is all about telling good stories in pictures. There'll be cartoon films to watch, and instruction in how to draw your favourite characters - but your (30)_ is much more important than your drawing skills here! The course includes a visit (31)_ a cartoon museum.",
                 "Art Attack: You'll work on (32)_ creative skills, like printing, photography, cartoons and movie-making, using the latest technology. This course is great for anyone wanting to (33)_ these subjects at college. Good drawing skills are helpful on this course, and students' work will be put into a book, where suitable, for everyone to buy.",
@@ -9608,8 +9610,8 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "SHORT ART COURSES",
-              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+              "title": "Câu 31",
+              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 31 to 35.",
               "context": [
                 "Create!: This course is all about telling good stories in pictures. There'll be cartoon films to watch, and instruction in how to draw your favourite characters - but your (30)_ is much more important than your drawing skills here! The course includes a visit (31)_ a cartoon museum.",
                 "Art Attack: You'll work on (32)_ creative skills, like printing, photography, cartoons and movie-making, using the latest technology. This course is great for anyone wanting to (33)_ these subjects at college. Good drawing skills are helpful on this course, and students' work will be put into a book, where suitable, for everyone to buy.",
@@ -9653,7 +9655,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best word or phrase for blank (1).",
           "options": [
             "encounter",
             "show",
@@ -9668,7 +9670,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best word or phrase for blank (2).",
           "options": [
             "the others",
             "others",
@@ -9683,7 +9685,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best word or phrase for blank (3).",
           "options": [
             "every",
             "much",
@@ -9698,7 +9700,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best word or phrase for blank (4).",
           "options": [
             "On account of",
             "In case of",
@@ -9713,7 +9715,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best word or phrase for blank (5).",
           "options": [
             "make up",
             "miss out",
@@ -9728,7 +9730,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best word or phrase for blank (6).",
           "options": [
             "unmatched",
             "unfamiliar",
