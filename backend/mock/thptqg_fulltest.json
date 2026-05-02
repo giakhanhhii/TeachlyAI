@@ -6387,7 +6387,7 @@
               "instruction": "Read the following passage about volunteering in Vietnam and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
                 "Volunteering in Vietnam offers a unique opportunity to immerse oneself in a rich culture while contributing to meaningful projects. The country boasts diverse landscapes, from bustling cities to serene countryside, providing volunteers with varied experiences. Engaging in volunteer work here allows individuals to make a positive impact on local communities and gain a deeper understanding of Vietnamese traditions and way of life.",
-                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.",
+                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. [[u]]By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.[[/u]]",
                 "Another significant field for volunteering is healthcare. Volunteers with medical backgrounds can participate in programs that support local clinics and hospitals, offering care to underserved populations. These initiatives often involve health education, basic medical services, and assistance in public health campaigns.",
                 "Such contributions are vital in enhancing the overall well-being of communities, especially in rural areas where access to healthcare may be limited. Environmental conservation is also a growing focus in Vietnam. Volunteers can engage in projects aimed at protecting the country's natural resources and biodiversity.",
                 "Activities may include reforestation efforts, wildlife conservation, and promoting sustainable practices among local populations. By participating in these programs, they play a crucial role in preserving Vietnam's environment for future generations.",
@@ -6415,7 +6415,7 @@
               "instruction": "Read the following passage about volunteering in Vietnam and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
                 "Volunteering in Vietnam offers a unique opportunity to immerse oneself in a rich culture while contributing to meaningful projects. The country boasts diverse landscapes, from bustling cities to serene countryside, providing volunteers with varied experiences. Engaging in volunteer work here allows individuals to make a positive impact on local communities and gain a deeper understanding of Vietnamese traditions and way of life.",
-                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.",
+                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. [[u]]By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.[[/u]]",
                 "Another significant field for volunteering is healthcare. Volunteers with medical backgrounds can participate in programs that support local clinics and hospitals, offering care to underserved populations. These initiatives often involve health education, basic medical services, and assistance in public health campaigns.",
                 "Such contributions are vital in enhancing the overall well-being of communities, especially in rural areas where access to healthcare may be limited. Environmental conservation is also a growing focus in Vietnam. Volunteers can engage in projects aimed at protecting the country's natural resources and biodiversity.",
                 "Activities may include reforestation efforts, wildlife conservation, and promoting sustainable practices among local populations. By participating in these programs, they play a crucial role in preserving Vietnam's environment for future generations.",
@@ -7283,7 +7283,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the option that best fits blank (1).",
           "options": [
             "serve",
             "seek",
@@ -7406,9 +7406,9 @@
           "prompt": "Question 9. Hi Gemma, a. The time and effort you dedicated to assisting me did not go unnoticed, and it has been incredibly valuable. b. I would like to express my sincere gratitude for the tremendous support you have given me. c. Once again, thank you so much for your unwavering support. d. I feel fortunate to have someone as thoughtful and generous as you in my life. e. Your kindness and willingness to help have truly made a positive impact, and I am deeply appreciative of everything you've done. Warm regards, Billy",
           "options": [
             "b-e-a-d-c",
-            "a-d -b-c-e",
+            "a-d-b-c-e",
             "b-d-a-c-e",
-            "c-a-d -b-e"
+            "c-a-d-b-e"
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
