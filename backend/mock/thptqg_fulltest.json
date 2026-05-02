@@ -5842,7 +5842,7 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10.",
+          "prompt": "Question 10. Choose the option that best fits blank (10).",
           "options": [
             "Regardless of",
             "In addition to",
@@ -5857,7 +5857,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the option that best fits blank (11).",
           "options": [
             "another",
             "other",
