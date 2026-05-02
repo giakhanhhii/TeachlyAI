@@ -9413,7 +9413,7 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Hi John, - a. It's fantastic that you've taken the time to recommend those cultural podcasts to me. - b. I listened to the first one on ancient civilizations, and it was truly insightful. - c. You know, maybe we could start a discussion group about these topics, what do you think? - d. Thanks also for introducing me to those documentaries—they've been an amazing supplement to the podcasts! - e. While I'm busy at the moment preparing for my exam, I'm eager to dive deeper into the content afterward. Write back soon, Emily",
+          "prompt": "Question 38.\nHi John,\na. It's fantastic that you've taken the time to recommend those cultural podcasts to me.\nb. I listened to the first one on ancient civilizations, and it was truly insightful.\nc. You know, maybe we could start a discussion group about these topics, what do you think?\nd. Thanks also for introducing me to those documentaries—they've been an amazing supplement to the podcasts!\ne. While I'm busy at the moment preparing for my exam, I'm eager to dive deeper into the content afterward.\nWrite back soon,\nEmily",
           "options": [
             "a-b-d-c-e",
             "b-e-a-d-c",
@@ -9428,7 +9428,7 @@
           "id": "q39",
           "number": 39,
           "partId": "part-4",
-          "prompt": "Question 39. - a. While managing large teams and coordinating multiple tasks can be challenging, the sense of accomplishment when a project is completed successfully is truly rewarding. - b. I started my journey in project management five years ago, where I quickly developed a passion for overseeing complex projects. A small cartoon illustration of a woman with long red hair, wearing a blue top, sitting and reading a book. Tài Liệu On Thi c. My ability to communicate clearly with clients and colleagues is one of my greatest strengths in this role. d. I have honed my skills through various leadership training programs and by handling diverse projects across industries. e. In conclusion, my experience in leading teams and delivering results under tight deadlines has shaped me into a well-rounded project manager.",
+          "prompt": "Question 39.\na. While managing large teams and coordinating multiple tasks can be challenging, the sense of accomplishment when a project is completed successfully is truly rewarding.\nb. I started my journey in project management five years ago, where I quickly developed a passion for overseeing complex projects.\nc. My ability to communicate clearly with clients and colleagues is one of my greatest strengths in this role.\nd. I have honed my skills through various leadership training programs and by handling diverse projects across industries.\ne. In conclusion, my experience in leading teams and delivering results under tight deadlines has shaped me into a well-rounded project manager.",
           "options": [
             "b-d-c-a-e",
             "c-a-d-b-e",
