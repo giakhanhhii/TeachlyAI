@@ -8688,8 +8688,13 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 1 to 10.",
+              "context": [
+                "(I) Urbanization is reshaping societies as millions of people move from rural areas to cities each year. (II) This movement is driven by the search for jobs, education, and improved living standards. (III) Cities have become engines of economic growth and innovation. (IV) At the same time, urban expansion presents planners with difficult choices about land use and infrastructure.",
+                "Urban areas typically provide a number of job opportunities across manufacturing, services, and technology sectors. Residents benefit from technological advancements, economic growth, and access to specialized healthcare and schools. These advantages explain why migration toward cities continues worldwide.",
+                "Rapid growth also produces serious stresses: overcrowding, traffic congestion, and strain on housing and utilities. The proliferation of informal settlements on city edges shows how demand can outpace formal construction; they often lack reliable water, sanitation, or transport links. Crime rates and health risks may rise where planning fails to keep pace.",
+                "[[u]]Governments and urban planners must prioritize creating inclusive, well-connected cities that provide access to essential services for all residents.[[/u]] Sustainable zoning, investment in transit, and equitable housing policy can reduce inequality while preserving environmental quality. International cooperation and community participation remain central to successful urban strategies."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -8734,8 +8739,13 @@
             {
               "id": "part-2-group-3",
               "title": "Câu 17",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 17 to 20.",
+              "context": [
+                "Plastic pollution has become one of the defining environmental crises of our time. Researchers estimate that millions of tonnes of plastic waste enter rivers and oceans annually, and much of it (17)_.",
+                "Scientists (18)_, drawing on field studies and satellite monitoring, agree that concentrations will keep rising unless production and disposal patterns change.",
+                "(19)_",
+                "National bans and recycling schemes have expanded across many regions, yet (20)_"
+              ],
               "questionNumbers": [
                 17,
                 18,
