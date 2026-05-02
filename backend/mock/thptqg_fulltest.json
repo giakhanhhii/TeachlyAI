@@ -3955,7 +3955,13 @@
               "id": "part-1-group-1",
               "title": "Câu 1",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 1 to 6.",
-              "context": [],
+              "context": [
+                "DISCOVER NEW TRAVEL BUDDIES WITH TRAVELMATE",
+                "\"Who will you explore your next destination with? Will they share the same (1)_____ for adventure, or will they prefer a more relaxing trip?\" If you often wonder (2)_____ your travel companions before your next vacation, we have exciting news for you! TravelMate, a (3)_____, allows you to select your future travel buddies before your trip.",
+                "This service is designed to give you a more enjoyable and personalized experience. All you need to do is share your travel preferences with the platform, and you'll be matched with others (4)_____ similar tastes. Whether you're looking to (5)_____ new friends or reconnect with previous ones, TravelMate makes it easy.",
+                "If you're seeking adventure or simply want (6)_____ a relaxing getaway, there's a perfect match waiting for you!",
+                "(Adapted from Global Travel)"
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -3969,7 +3975,12 @@
               "id": "part-1-group-2",
               "title": "Câu 7",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 7 to 10.",
-              "context": [],
+              "context": [
+                "Sustainable Living: Every Action Matters! Adopting sustainable practices in our daily lives can have a significant impact on the environment. Here are (7)_____ insights to help you make a difference!",
+                "Statistics to Consider: Each year, billions of plastic items are discarded, a large portion of our waste. This not only fills landfills but also (8)_____ aquatic ecosystems, harming marine wildlife.",
+                "Action Steps You Can Take: Start by minimizing your consumption. For example, (9)_____ reusable cutlery and plates instead of disposable ones. If you have items that are still functional but no longer needed, repurpose them through local swap events or community programs (10)_____ discarding them.",
+                "(Adapted from Green Living Initiatives)"
+              ],
               "questionNumbers": [
                 7,
                 8,
@@ -3990,7 +4001,10 @@
               "id": "part-2-group-2",
               "title": "Câu 11",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 11 to 12.",
-              "context": [],
+              "context": [
+                "When shopping, (11)_____ brands that use sustainable materials, helping reduce your carbon footprint. Lastly, (12)_____ waste properly by separating recyclables from general waste, aiding the recycling process.",
+                "(Adapted from Green Living Initiatives)"
+              ],
               "questionNumbers": [
                 11,
                 12
@@ -4358,10 +4372,10 @@
           "partId": "part-2",
           "prompt": "Question 18.",
           "options": [
-            "Engaging in sports activities helps to develop strength",
-            "When engaging in sports activities helps to develop strength",
-            "When we engaging in sports activities helps to develop strength",
-            "If engaging in sports activities helps to develop strength"
+            "has made a significant impact on the sport",
+            "impacting significantly on the sport",
+            "whose significant impact on the sport",
+            "have a significant impact on the sport recognized"
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4373,10 +4387,10 @@
           "partId": "part-2",
           "prompt": "Question 19.",
           "options": [
-            "It additionally reduces the risk of obesity",
-            "In addition to, it reduces the risk of obesity",
-            "Additionally, it reduces the risk of obesity",
-            "It reduces the risk of obesity, additionally"
+            "gave a lot of fear to his opponent on the pitch",
+            "which made him a formidable opponent on the pitch",
+            "allowed him to become a formidable opponent on the pitch",
+            "of which the success in passing opponents and scoring"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4388,10 +4402,10 @@
           "partId": "part-2",
           "prompt": "Question 20.",
           "options": [
-            "they help to reduce stress and improve mood",
-            "helps to reduce stress and improve mood",
-            "help to reduce stress and improve mood",
-            "that help to reduce stress and improve mood"
+            "Young athletes have inspired Ronaldo to strengthen his relentless drive and work ethic",
+            "The relentless drive and work ethic of Ronaldo have forced many young fans to become footballers",
+            "Ronaldo's relentless drive and work ethic have inspired many young athletes who aspire to follow his footsteps",
+            "Aiming to encourage young athletes to become footballers, Ronaldo trained hard and shared his experiences with them"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4403,10 +4417,10 @@
           "partId": "part-2",
           "prompt": "Question 21.",
           "options": [
-            "individual sports fosters a sense",
-            "sports individual fosters a sense",
-            "individual sports a sense is fostered",
-            "individual sports foster a sense"
+            "The label of one of the all-time best players is attributed to Ronaldo",
+            "Experts consistently regard Ronaldo as one of the greatest players of all time",
+            "Achieving the title of the best player of all time is a simple feat for Ronaldo",
+            "Ronaldo consistently demonstrates why he is considered one of the best players of all time"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4418,10 +4432,10 @@
           "partId": "part-2",
           "prompt": "Question 22.",
           "options": [
-            "it provides numerous benefits for both the body and mind",
-            "it provides for both the body and mind numerous benefits",
-            "numerous benefits are provided for both the body and mind",
-            "both the body and mind are provided numerous benefits"
+            "Various charities would definitely struggle to support causes like children's hospitals and disaster relief efforts without Ronaldo's contributions",
+            "His millions of dollars serve as an aid to causes like children's hospitals and disaster relief efforts",
+            "Spending millions of dollars, various charities can support causes such as children's hospitals and disaster relief efforts on behalf of Ronaldo",
+            "He has donated millions of dollars to various charities, supporting causes such as children's hospitals and disaster relief efforts"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4551,14 +4565,14 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31. Where in **paragraph 2** does the following sentence best fit? Others have claimed to be suffering mental illness or have put on so much weight that they are above the maximum limit for recruits.",
+          "prompt": "Question 31. The word **limited** in paragraph 2 is **OPPOSITE** in meaning to _.",
           "options": [
-            "(I)",
-            "(II)",
-            "(III)",
-            "(IV)"
+            "infinite",
+            "restricted",
+            "reliable",
+            "harmonious"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 31. D"
         },
@@ -4566,14 +4580,14 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32. The word **engineered** in the **final paragraph** can be best replaced by _.",
+          "prompt": "Question 32. Where in paragraph 3 does the following sentence best fit? **There is a concept known as \"negativity bias\".**",
           "options": [
-            "determined",
-            "decided",
-            "designed",
-            "defined"
+            "I",
+            "II",
+            "III",
+            "IV"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 32. D"
         },
@@ -4581,14 +4595,14 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33. The word **which** in **paragraph 2** refers to _.",
+          "prompt": "Question 33. Which of the following best summarizes paragraph 3?",
           "options": [
-            "birth rate",
-            "service",
-            "technology",
-            "nation"
+            "The news focuses mostly on positive events, which helps people feel better.",
+            "Humans tend to pay more attention to negative news because it has helped us survive in the past.",
+            "News reports today are less shocking and more focused on personal stories.",
+            "The news today is about entertaining content rather than alarming or frightening events."
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 33. C"
         },
@@ -4596,14 +4610,14 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34. Which of the following is NOT mentioned as mimicking the movements and capabilities of military robots?",
+          "prompt": "Question 34. The word **them** in paragraph 4 refers to _.",
           "options": [
-            "birds",
-            "marine creatures",
-            "insects",
-            "rabbits"
+            "people",
+            "moods",
+            "news",
+            "lives"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 34. C"
         },
@@ -4611,14 +4625,14 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35. Which of the following best summarizes **paragraph 3**?",
+          "prompt": "Question 35. The phrase **take a toll on** in paragraph 4 could be best replaced by _.",
           "options": [
-            "South Korea is developing the best military robots",
-            "Military robots can assist in military operations and natural disasters.",
-            "Military robots are the most advanced artificial intelligence in the world",
-            "Robots are designed based on real creatures"
+            "pay attention to",
+            "cause harm to",
+            "bring benefits to",
+            "lend support to"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 35. A"
         },
@@ -4626,14 +4640,14 @@
           "id": "q36",
           "number": 36,
           "partId": "part-4",
-          "prompt": "Question 36. The word **constricted** in **paragraph 3** is OPPOSITE in meaning to _.",
+          "prompt": "Question 36. Which of the following is NOT mentioned as one of the effects that news can have on humans according to recent studies?",
           "options": [
-            "narrow",
-            "massive",
-            "tiny",
-            "shallow"
+            "worry",
+            "tiredness",
+            "sadness",
+            "poor sleep"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 36. B"
         },
@@ -4641,12 +4655,12 @@
           "id": "q37",
           "number": 37,
           "partId": "part-4",
-          "prompt": "Question 37. Based on **paragraph 3**, which of the following is TRUE about the use of **\"biobots\"** in the future?",
+          "prompt": "Question 37. Which of the following is TRUE according to the passage?",
           "options": [
-            "Only snake robots are useful in areas affected by natural disasters.",
-            "Swimming robots must always be deployed along with flying ones.",
-            "Birdlike androids will only assist in reconnaissance operations.",
-            "Small flying robots can be used to gather information about enemy forces."
+            "Watching negative news regularly has no real impact on people's mental or physical health.",
+            "We can control both the amount and type of news we consume, which helps reduce its harmful effects.",
+            "The news today focuses mainly on positive stories that make people feel less stressed and more relaxed.",
+            "News consumption has decreased because many people no longer find it relevant or interesting to keep up with."
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4656,14 +4670,14 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in the **first paragraph**?",
+          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 5?",
           "options": [
-            "Modern military robots are created by South Korea can imitate the actions and characteristics of animals for future battlefields.",
-            "South Korea are created military robots which can imitate the actions and characteristics of animals for future battlefields.",
-            "Modern military robots will battle with birds, snakes, marine creatures and even insects in South Korea battlefields.",
-            "The actions and characteristics of animals will mimic modern military robots of South Korea for future battlefields."
+            "We should stop watching the news entirely to avoid its harmful effects.",
+            "The news should be controlled by the government to limit negative impacts.",
+            "It is important to be mindful of both how much and what kind of news we consume.",
+            "It doesn't matter what kind of news we watch as long as we stay informed."
           ],
-          "correctIndex": 3,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 38. D"
         },
@@ -4671,14 +4685,14 @@
           "id": "q39",
           "number": 39,
           "partId": "part-4",
-          "prompt": "Question 39. What can be inferred from the passage?",
+          "prompt": "Question 39. Which of the following can be inferred from the passage?",
           "options": [
-            "Military robots have been widely used by the South Korean army in various missions.",
-            "Future \"biobots\" will only be based on flying and swimming creatures.",
-            "The South Korean army may collaborate with other technology companies in the country.",
-            "The majority of Korean men does not want to join the army because of religious reason."
+            "The rise of 24-hour news channels has led to a significant increase in news consumption.",
+            "People are generally more interested in positive news stories than negative ones.",
+            "Exposure to bad news has no noticeable impact on people's mental or physical health.",
+            "Modern technology has made it more difficult for people to avoid news altogether."
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 39. D"
         },
@@ -4688,12 +4702,12 @@
           "partId": "part-4",
           "prompt": "Question 40. Which of the following best summarizes the passage?",
           "options": [
-            "Measures taken by the South Korean army to increase the country's birth rate.",
-            "The development of animal-based robots for military purposes in South Korea.",
-            "New technology being used in rescue operations in areas affected by disasters.",
-            "Reasons why real animals are perfect models for military robots in Korea. -- END"
+            "People are generally unaffected by the news, and it has no significant impact on their emotional or physical well-being.",
+            "Watching the news can harm our well-being, and it's better to stop watching it altogether to protect our health.",
+            "Negative news contributes to stress and anxiety, but the problem lies in how it's presented, not the news itself.",
+            "Staying informed is important, but excessive negative news can harm our health, so we must choose carefully."
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 40. C"
         }
