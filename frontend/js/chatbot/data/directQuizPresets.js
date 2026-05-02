@@ -1,4 +1,5 @@
 import { EXTRA_DIRECT_QUIZ_PRESETS } from "./directQuizExtraPresets.js";
+import { buildBalancedQuizAutofillSamples, buildQuizVariantPresets } from "./directQuizVariantPresets.js";
 
 function normalizeText(value) {
   return String(value || "")
@@ -603,7 +604,7 @@ function buildPrepositionsBank() {
   return buildBank("prepositions-fixed-expressions", rows);
 }
 
-const BASE_DIRECT_QUIZ_PRESETS = [
+export const BASE_DIRECT_QUIZ_PRESETS = [
   {
     id: "quiz-sentence-transformation",
     source: "Câu đồng nghĩa (Sentence Transformation)",
@@ -726,16 +727,15 @@ const BASE_DIRECT_QUIZ_PRESETS = [
   },
 ];
 
-export const DIRECT_QUIZ_PRESETS = [...BASE_DIRECT_QUIZ_PRESETS, ...EXTRA_DIRECT_QUIZ_PRESETS];
+export const QUIZ_VARIANT_PRESETS = buildQuizVariantPresets(BASE_DIRECT_QUIZ_PRESETS);
 
-export const DIRECT_QUIZ_AUTOFILL_SAMPLES = DIRECT_QUIZ_PRESETS.map((preset) => ({
-  id: preset.id,
-  s: preset.source,
-  k: preset.kind,
-  q: preset.count,
-  d: preset.difficulty,
-  n: preset.notes,
-}));
+export const DIRECT_QUIZ_PRESETS = [
+  ...BASE_DIRECT_QUIZ_PRESETS,
+  ...QUIZ_VARIANT_PRESETS,
+  ...EXTRA_DIRECT_QUIZ_PRESETS,
+];
+
+export const DIRECT_QUIZ_AUTOFILL_SAMPLES = buildBalancedQuizAutofillSamples(DIRECT_QUIZ_PRESETS);
 
 export function findDirectQuizPreset(meta) {
   const presetId = normalizeText(meta?.presetId);

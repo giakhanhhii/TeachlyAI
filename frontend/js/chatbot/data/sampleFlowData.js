@@ -32,7 +32,6 @@ function shuffle(arr) {
 
 shuffle(SAMPLES_FULLSET);
 shuffle(SAMPLES_SLIDE);
-shuffle(SAMPLES_QUIZ);
 shuffle(SAMPLES_FLASH);
 
 export { SAMPLES_FULLSET, SAMPLES_SLIDE, SAMPLES_QUIZ, SAMPLES_FLASH };
