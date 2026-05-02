@@ -9233,7 +9233,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26.",
+          "prompt": "Question 26. Choose the best word or phrase for blank (26).",
           "options": [
             "to advance",
             "advancing",
@@ -9248,15 +9248,15 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27.",
+          "prompt": "Question 27. Choose the best word or phrase for blank (27).",
           "options": [
             "accessing",
             "accessibility",
             "accession",
             "accessible"
           ],
-          "correctIndex": 1,
-          "explanation": "Đáp án B (accessibility) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (accessible) ghép song song với \"easy\" trong cụm \"easy and accessible\"; các lựa chọn khác không khớp dạng từ hoặc không phù hợp ngữ cảnh.",
           "explanationEvidence": "Cau 27: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9330,8 +9330,8 @@
             "Paragraph 2",
             "Paragraph 4"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C (Paragraph 2) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (Paragraph 4) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
           "explanationEvidence": "Cau 32: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9375,15 +9375,15 @@
             "Paragraph 3",
             "Paragraph 5"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (Paragraph 4) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (Paragraph 5) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
           "explanationEvidence": "Cau 35: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q36",
           "number": 36,
           "partId": "part-4",
-          "prompt": "Question 36. - a. Mike: Hi, Lisa! Did you do anything fun this weekend? - b. Mike: That sounds awesome! Where did you go? - c. Lisa: Yes! I went hiking with some friends. It was great to be outdoors.",
+          "prompt": "Question 36.\na. Mike: Hi, Lisa! Did you do anything fun this weekend?\nb. Mike: That sounds awesome! Where did you go?\nc. Lisa: Yes! I went hiking with some friends. It was great to be outdoors.",
           "options": [
             "a-b-c",
             "b-a-c",
@@ -9398,7 +9398,7 @@
           "id": "q37",
           "number": 37,
           "partId": "part-4",
-          "prompt": "Question 37. - a. Mia: I love how we turn off the lights for an hour to save energy. - b. Jake: Exactly! It's a simple way to remind everyone about climate change. - c. Mia: Let's invite some friends to join us and make it more fun! - d. Jake: Yes, I am! It's a great way to help the planet. - e. Mia: Are you going to participate in Earth Hour this year?",
+          "prompt": "Question 37.\na. Mia: I love how we turn off the lights for an hour to save energy.\nb. Jake: Exactly! It's a simple way to remind everyone about climate change.\nc. Mia: Let's invite some friends to join us and make it more fun!\nd. Jake: Yes, I am! It's a great way to help the planet.\ne. Mia: Are you going to participate in Earth Hour this year?",
           "options": [
             "c-e-a-b-d",
             "d-b-c-a-e",
