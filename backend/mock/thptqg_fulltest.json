@@ -5574,7 +5574,10 @@
               "title": "Câu 12",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
-                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike. (I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives. (IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI. To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change."
+                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. [[u]]AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike.[[/u]]",
+                "(I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives.",
+                "(IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI.",
+                "To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change."
               ],
               "questionNumbers": [
                 12,
@@ -5602,7 +5605,10 @@
               "title": "Câu 12",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
-                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike. (I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives. (IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI. To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change."
+                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. [[u]]AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike.[[/u]]",
+                "(I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives.",
+                "(IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI.",
+                "To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change."
               ],
               "questionNumbers": [
                 21
@@ -5633,7 +5639,7 @@
                 "Early Warning Systems People may take steps to reduce the impact of a natural hazard when they are aware that it is likely to occur. But how can people recognize they are in danger? Scientists use many methods to help predict when natural hazards are likely to happen.",
                 "Seismometers measure earthquake activity. An increase in small earthquakes can mean a larger earthquake is about to happen or a volcano is becoming more active. If a volcanic eruption is predicted, people can evacuate, or move to safer areas.",
                 "Governments can prepare emergency supplies, such as food and water. Emergency workers can be ready to help with injuries. All of these steps reduce the impact and help save lives.",
-                "Scientists use several devices and methods to constantly collect information about a volcano's activity. Radio transmissions allow the data to be sent instantly to a monitoring system. Scientists can tell what is happening with a volcano almost as soon as it happens.",
+                "Scientists use several devices and methods to constantly collect information about a volcano's activity. Radio transmissions allow the data to be sent instantly to a monitoring system. [[u]]Scientists can tell what is happening with a volcano almost as soon as it happens.[[/u]]",
                 "They can also use that information to predict what is likely to happen next. Besides tracking seismic activity, scientists also monitor gases, temperature, and water at a volcano site. A change in the amount of carbon dioxide and others given off by the volcano can be measured to forecast an upcoming eruption.",
                 "So can temperature changes in rocks at the surface or rocks underground. Scientists monitor water levels and look for changes in chemistry in water near volcanoes, too. A comprehensive analysis of these factors helps scientists improve eruption predictions and enhance public safety."
               ],
@@ -5660,7 +5666,7 @@
                 "Early Warning Systems People may take steps to reduce the impact of a natural hazard when they are aware that it is likely to occur. But how can people recognize they are in danger? Scientists use many methods to help predict when natural hazards are likely to happen.",
                 "Seismometers measure earthquake activity. An increase in small earthquakes can mean a larger earthquake is about to happen or a volcano is becoming more active. If a volcanic eruption is predicted, people can evacuate, or move to safer areas.",
                 "Governments can prepare emergency supplies, such as food and water. Emergency workers can be ready to help with injuries. All of these steps reduce the impact and help save lives.",
-                "Scientists use several devices and methods to constantly collect information about a volcano's activity. Radio transmissions allow the data to be sent instantly to a monitoring system. Scientists can tell what is happening with a volcano almost as soon as it happens.",
+                "Scientists use several devices and methods to constantly collect information about a volcano's activity. Radio transmissions allow the data to be sent instantly to a monitoring system. [[u]]Scientists can tell what is happening with a volcano almost as soon as it happens.[[/u]]",
                 "They can also use that information to predict what is likely to happen next. Besides tracking seismic activity, scientists also monitor gases, temperature, and water at a volcano site. A change in the amount of carbon dioxide and others given off by the volcano can be measured to forecast an upcoming eruption.",
                 "So can temperature changes in rocks at the surface or rocks underground. Scientists monitor water levels and look for changes in chemistry in water near volcanoes, too. A comprehensive analysis of these factors helps scientists improve eruption predictions and enhance public safety."
               ],
@@ -5776,7 +5782,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the option that best fits blank (6).",
           "options": [
             "makes up",
             "gives in",
@@ -5791,7 +5797,7 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7.",
+          "prompt": "Question 7. Choose the option that best fits blank (7).",
           "options": [
             "cancel",
             "maintain",
@@ -5806,7 +5812,7 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8.",
+          "prompt": "Question 8. Choose the option that best fits blank (8).",
           "options": [
             "number",
             "portion",
@@ -5821,7 +5827,7 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9.",
+          "prompt": "Question 9. Choose the option that best fits blank (9).",
           "options": [
             "goals",
             "successes",
@@ -5836,7 +5842,7 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10.",
+          "prompt": "Question 10. Choose the option that best fits blank (10).",
           "options": [
             "Regardless of",
             "In addition to",
@@ -5851,7 +5857,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the option that best fits blank (11).",
           "options": [
             "another",
             "other",
@@ -5948,9 +5954,9 @@
             "AI can be used responsibly to benefit society.",
             "AI abuse only affects specific industries."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 17. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 17. B | paragraph 3 privacy"
         },
         {
           "id": "q18",
@@ -5963,9 +5969,9 @@
             "encourage",
             "restrict"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 18. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 18. D | opposite empower"
         },
         {
           "id": "q19",
@@ -5978,9 +5984,9 @@
             "Facial recognition technology is only used by authorities for security.",
             "Social media bots can spread misinformation quickly."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 19. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 19. C | only authorities false"
         },
         {
           "id": "q20",
@@ -5993,9 +5999,9 @@
             "Regulating AI will completely stop AI abuse.",
             "Facial recognition is only a concern when used in public spaces."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 20. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 20. B | inference balanced"
         },
         {
           "id": "q21",
@@ -6008,9 +6014,9 @@
             "AI abuse, including misinformation and privacy invasion, is a growing issue but can be reduced through regulations and awareness.",
             "AI offers many benefits, but its misuse in spreading false information and violating privacy raises concerns."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 21. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 21. C | full summary"
         },
         {
           "id": "q22",
@@ -6113,9 +6119,9 @@
             "Monitoring gases released by a volcano",
             "Studying animal behavior before an eruption"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 28. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 28. D | animal behavior not in passage"
         },
         {
           "id": "q29",
@@ -6136,7 +6142,7 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30. The word They in paragraph 3 refers to.",
+          "prompt": "Question 30. The word They in paragraph 5 refers to.",
           "options": [
             "radio transmission",
             "scientists",
@@ -6145,13 +6151,13 @@
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 30. B | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 30. B | they scientists paragraph 5"
         },
         {
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31. Which of the following best paraphrases the underlined sentence in paragraph 3?",
+          "prompt": "Question 31. Which of the following best paraphrases the underlined sentence in paragraph 4?",
           "options": [
             "Scientists can predict exactly when and where a volcano will erupt.",
             "Scientists can foretell volcanic activity by staying near the volcano.",
@@ -6160,13 +6166,13 @@
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 31. D | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 31. D | almost as soon as it happens"
         },
         {
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32. The word comprehensive in paragraph 4 could best be replaced by.",
+          "prompt": "Question 32. The word comprehensive in paragraph 6 could best be replaced by.",
           "options": [
             "detailed",
             "inaccurate",
@@ -6175,7 +6181,7 @@
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 32. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 32. A | comprehensive final paragraph"
         },
         {
           "id": "q33",
@@ -6198,14 +6204,14 @@
           "partId": "part-4",
           "prompt": "Question 34. In which paragraph does the writer discuss monitoring various natural factors to predict a volcanic eruption?",
           "options": [
-            "Paragraph 1",
-            "Paragraph 2",
+            "Paragraph 5",
             "Paragraph 4",
-            "Paragraph 3"
+            "Paragraph 3",
+            "Paragraph 6"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 34. C | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 34. A | gases temperature water monitoring"
         },
         {
           "id": "q35",
@@ -6340,11 +6346,7 @@
               "instruction": "Read the following passage about volunteer tourism and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
               "context": [
                 "The beautiful beaches of Koh Rong have always attracted tourists who want to experience Cambodia's coastal life. Yet beneath the surface of this seeming paradise, a complex dynamic unfolds. Local businesses, who thrive on traditional tourism, now navigate the rising tide of volunteerism — a phenomenon reshaped by demand for more meaningful experiences.",
-                "In the narrow streets of the fishing village, 'volunteer houses' have proliferated at an unprecedented rate. (I) These establishments, charging participants substantial fees for the privilege of teaching English or conducting marine conservation work, generate revenue streams that bypass traditional community structures. (II) Market vendors, whose daily income previously averaged 75 dollars, now report earnings below 45 dollars as volunteers, housed in all-inclusive compounds, rarely venture into local establishments. (III) Local restaurants have adapted by offering international menus, though many struggle to attract volunteer residents who receive meals within their compounds. (IV) The marine conservation sector particularly exemplifies this shifting landscape. Professional dive operators previously employed 45 local guides, paying certification fees exceeding 2,000 dollars per person. Currently, they maintain only 15 positions as volunteer programs offer free diving services. These programs contribute valuable reef monitoring data, collecting over 1,000 marine species records annually. Local dive masters, having invested years in certification and training, find their expertise commanding lower wages - dropping from 60 dollars to 35 dollars per dive session in areas with high volunteer presence. Cultural preservation initiatives face similar patterns. Traditional craft workshops, which once hosted 200 weekly visitors at 25 dollars per session, now average 80 participants despite reducing fees to 15 dollars. While volunteer programs record 300 weekly participants in craft activities, their standardized sessions run 30 minutes compared to traditional three-hour workshops. Master craftsmen, whose techniques typically require two years to master, observe volunteers teaching simplified versions learned in two-week orientations. The education sector presents perhaps the most nuanced picture. Local schools receiving volunteer teachers report improved English test scores, rising 25% on average. However, student performance fluctuates by up to 40% with each teaching transition. Established language centers have reduced staff from twenty to twelve instructors, as enrollment declined by 35% following the introduction of free volunteer-taught classes. \"We're seeing repeated adjustments in teaching methods, \" notes headmaster Chan, highlighting monthly changes in classroom approaches. Local authorities aim to turn the tide through regulatory frameworks, requiring volunteer organizations to demonstrate measurable community benefits. Economic data shows 2 million dollars invested in volunteer facilities in 2023, while traditional business revenue dropped 28%. Community surveys indicate 60% of local enterprises have modified their business models, with 45% reporting reduced profitability despite these adaptations. Local leaders fear the shift may cause irrevocable damage to the traditional economy and cultural practices on the island.",
-                "",
-                "",
-                "",
-                ""
+                "In the narrow streets of the fishing village, 'volunteer houses' have proliferated at an unprecedented rate. (I) These establishments, charging participants substantial fees for the privilege of teaching English or conducting marine conservation work, generate revenue streams that bypass traditional community structures. (II) Market vendors, whose daily income previously averaged 75 dollars, now report earnings below 45 dollars as volunteers, housed in all-inclusive compounds, rarely venture into local establishments. (III) Local restaurants have adapted by offering international menus, though many struggle to attract volunteer residents who receive meals within their compounds. (IV) The marine conservation sector particularly exemplifies this shifting landscape. Professional dive operators previously employed 45 local guides, paying certification fees exceeding 2,000 dollars per person. Currently, they maintain only 15 positions as volunteer programs offer free diving services. These programs contribute valuable reef monitoring data, collecting over 1,000 marine species records annually. Local dive masters, having invested years in certification and training, find their expertise commanding lower wages - dropping from 60 dollars to 35 dollars per dive session in areas with high volunteer presence. Cultural preservation initiatives face similar patterns. Traditional craft workshops, which once hosted 200 weekly visitors at 25 dollars per session, now average 80 participants despite reducing fees to 15 dollars. While volunteer programs record 300 weekly participants in craft activities, their standardized sessions run 30 minutes compared to traditional three-hour workshops. Master craftsmen, whose techniques typically require two years to master, observe volunteers teaching simplified versions learned in two-week orientations. The education sector presents perhaps the most nuanced picture. Local schools receiving volunteer teachers report improved English test scores, rising 25% on average. However, student performance fluctuates by up to 40% with each teaching transition. Established language centers have reduced staff from twenty to twelve instructors, as enrollment declined by 35% following the introduction of free volunteer-taught classes. \"We're seeing repeated adjustments in teaching methods, \" notes headmaster Chan, highlighting monthly changes in classroom approaches. Local authorities aim to turn the tide through regulatory frameworks, requiring volunteer organizations to demonstrate measurable community benefits. Economic data shows 2 million dollars invested in volunteer facilities in 2023, while traditional business revenue dropped 28%. Community surveys indicate 60% of local enterprises have modified their business models, with 45% reporting reduced profitability despite these adaptations. Local leaders fear the shift may cause irrevocable damage to the traditional economy and cultural practices on the island."
               ],
               "questionNumbers": [
                 7,
@@ -6368,11 +6370,7 @@
               "instruction": "Read the following passage about volunteer tourism and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
               "context": [
                 "The beautiful beaches of Koh Rong have always attracted tourists who want to experience Cambodia's coastal life. Yet beneath the surface of this seeming paradise, a complex dynamic unfolds. Local businesses, who thrive on traditional tourism, now navigate the rising tide of volunteerism — a phenomenon reshaped by demand for more meaningful experiences.",
-                "In the narrow streets of the fishing village, 'volunteer houses' have proliferated at an unprecedented rate. (I) These establishments, charging participants substantial fees for the privilege of teaching English or conducting marine conservation work, generate revenue streams that bypass traditional community structures. (II) Market vendors, whose daily income previously averaged 75 dollars, now report earnings below 45 dollars as volunteers, housed in all-inclusive compounds, rarely venture into local establishments. (III) Local restaurants have adapted by offering international menus, though many struggle to attract volunteer residents who receive meals within their compounds. (IV) The marine conservation sector particularly exemplifies this shifting landscape. Professional dive operators previously employed 45 local guides, paying certification fees exceeding 2,000 dollars per person. Currently, they maintain only 15 positions as volunteer programs offer free diving services. These programs contribute valuable reef monitoring data, collecting over 1,000 marine species records annually. Local dive masters, having invested years in certification and training, find their expertise commanding lower wages - dropping from 60 dollars to 35 dollars per dive session in areas with high volunteer presence. Cultural preservation initiatives face similar patterns. Traditional craft workshops, which once hosted 200 weekly visitors at 25 dollars per session, now average 80 participants despite reducing fees to 15 dollars. While volunteer programs record 300 weekly participants in craft activities, their standardized sessions run 30 minutes compared to traditional three-hour workshops. Master craftsmen, whose techniques typically require two years to master, observe volunteers teaching simplified versions learned in two-week orientations. The education sector presents perhaps the most nuanced picture. Local schools receiving volunteer teachers report improved English test scores, rising 25% on average. However, student performance fluctuates by up to 40% with each teaching transition. Established language centers have reduced staff from twenty to twelve instructors, as enrollment declined by 35% following the introduction of free volunteer-taught classes. \"We're seeing repeated adjustments in teaching methods, \" notes headmaster Chan, highlighting monthly changes in classroom approaches. Local authorities aim to turn the tide through regulatory frameworks, requiring volunteer organizations to demonstrate measurable community benefits. Economic data shows 2 million dollars invested in volunteer facilities in 2023, while traditional business revenue dropped 28%. Community surveys indicate 60% of local enterprises have modified their business models, with 45% reporting reduced profitability despite these adaptations. Local leaders fear the shift may cause irrevocable damage to the traditional economy and cultural practices on the island.",
-                "",
-                "",
-                "",
-                ""
+                "In the narrow streets of the fishing village, 'volunteer houses' have proliferated at an unprecedented rate. (I) These establishments, charging participants substantial fees for the privilege of teaching English or conducting marine conservation work, generate revenue streams that bypass traditional community structures. (II) Market vendors, whose daily income previously averaged 75 dollars, now report earnings below 45 dollars as volunteers, housed in all-inclusive compounds, rarely venture into local establishments. (III) Local restaurants have adapted by offering international menus, though many struggle to attract volunteer residents who receive meals within their compounds. (IV) The marine conservation sector particularly exemplifies this shifting landscape. Professional dive operators previously employed 45 local guides, paying certification fees exceeding 2,000 dollars per person. Currently, they maintain only 15 positions as volunteer programs offer free diving services. These programs contribute valuable reef monitoring data, collecting over 1,000 marine species records annually. Local dive masters, having invested years in certification and training, find their expertise commanding lower wages - dropping from 60 dollars to 35 dollars per dive session in areas with high volunteer presence. Cultural preservation initiatives face similar patterns. Traditional craft workshops, which once hosted 200 weekly visitors at 25 dollars per session, now average 80 participants despite reducing fees to 15 dollars. While volunteer programs record 300 weekly participants in craft activities, their standardized sessions run 30 minutes compared to traditional three-hour workshops. Master craftsmen, whose techniques typically require two years to master, observe volunteers teaching simplified versions learned in two-week orientations. The education sector presents perhaps the most nuanced picture. Local schools receiving volunteer teachers report improved English test scores, rising 25% on average. However, student performance fluctuates by up to 40% with each teaching transition. Established language centers have reduced staff from twenty to twelve instructors, as enrollment declined by 35% following the introduction of free volunteer-taught classes. \"We're seeing repeated adjustments in teaching methods, \" notes headmaster Chan, highlighting monthly changes in classroom approaches. Local authorities aim to turn the tide through regulatory frameworks, requiring volunteer organizations to demonstrate measurable community benefits. Economic data shows 2 million dollars invested in volunteer facilities in 2023, while traditional business revenue dropped 28%. Community surveys indicate 60% of local enterprises have modified their business models, with 45% reporting reduced profitability despite these adaptations. Local leaders fear the shift may cause irrevocable damage to the traditional economy and cultural practices on the island."
               ],
               "questionNumbers": [
                 11,
@@ -6386,10 +6384,10 @@
             {
               "id": "part-2-group-3",
               "title": "Câu 17",
-              "instruction": "Read the following passage about coffee and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
+              "instruction": "Read the following passage about volunteering in Vietnam and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
                 "Volunteering in Vietnam offers a unique opportunity to immerse oneself in a rich culture while contributing to meaningful projects. The country boasts diverse landscapes, from bustling cities to serene countryside, providing volunteers with varied experiences. Engaging in volunteer work here allows individuals to make a positive impact on local communities and gain a deeper understanding of Vietnamese traditions and way of life.",
-                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.",
+                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. [[u]]By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.[[/u]]",
                 "Another significant field for volunteering is healthcare. Volunteers with medical backgrounds can participate in programs that support local clinics and hospitals, offering care to underserved populations. These initiatives often involve health education, basic medical services, and assistance in public health campaigns.",
                 "Such contributions are vital in enhancing the overall well-being of communities, especially in rural areas where access to healthcare may be limited. Environmental conservation is also a growing focus in Vietnam. Volunteers can engage in projects aimed at protecting the country's natural resources and biodiversity.",
                 "Activities may include reforestation efforts, wildlife conservation, and promoting sustainable practices among local populations. By participating in these programs, they play a crucial role in preserving Vietnam's environment for future generations.",
@@ -6414,10 +6412,10 @@
             {
               "id": "part-3-group-3",
               "title": "Câu 17",
-              "instruction": "Read the following passage about coffee and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
+              "instruction": "Read the following passage about volunteering in Vietnam and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
                 "Volunteering in Vietnam offers a unique opportunity to immerse oneself in a rich culture while contributing to meaningful projects. The country boasts diverse landscapes, from bustling cities to serene countryside, providing volunteers with varied experiences. Engaging in volunteer work here allows individuals to make a positive impact on local communities and gain a deeper understanding of Vietnamese traditions and way of life.",
-                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.",
+                "One of the primary areas where volunteers can contribute is education. Many programs focus on teaching English to children and young adults, aiming to enhance their language skills and future employment prospects. [[u]]By assisting in classrooms or offering extracurricular activities, volunteers help bridge educational gaps and provide students with valuable opportunities for personal growth.[[/u]]",
                 "Another significant field for volunteering is healthcare. Volunteers with medical backgrounds can participate in programs that support local clinics and hospitals, offering care to underserved populations. These initiatives often involve health education, basic medical services, and assistance in public health campaigns.",
                 "Such contributions are vital in enhancing the overall well-being of communities, especially in rural areas where access to healthcare may be limited. Environmental conservation is also a growing focus in Vietnam. Volunteers can engage in projects aimed at protecting the country's natural resources and biodiversity.",
                 "Activities may include reforestation efforts, wildlife conservation, and promoting sustainable practices among local populations. By participating in these programs, they play a crucial role in preserving Vietnam's environment for future generations.",
@@ -6744,9 +6742,9 @@
             "varied",
             "dynamic"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 17. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 17. B | opposite diverse"
         },
         {
           "id": "q18",
@@ -6804,9 +6802,9 @@
             "Healthcare initiatives only focus on offering advanced medical services.",
             "Environmental conservation is not a priority in Vietnam."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 21. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 21. B | healthcare passage"
         },
         {
           "id": "q22",
@@ -6819,9 +6817,9 @@
             "Teaching English to improve job prospects.",
             "Protecting the environment through conservation"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 22. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 22. B | urban infra not mentioned"
         },
         {
           "id": "q23",
@@ -6834,9 +6832,9 @@
             "volunteers",
             "local populations"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 23. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 23. C | they volunteers"
         },
         {
           "id": "q24",
@@ -6849,9 +6847,9 @@
             "Volunteers support students by teaching in schools and organizing additional activities.",
             "Students in Vietnam lack access to quality education due to limited extracurricular activities."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 24. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 24. C | paraphrase assist extracurricular"
         },
         {
           "id": "q25",
@@ -7285,7 +7283,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the option that best fits blank (1).",
           "options": [
             "serve",
             "seek",
@@ -7300,7 +7298,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the option that best fits blank (2).",
           "options": [
             "was made",
             "which made",
@@ -7315,7 +7313,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the option that best fits blank (3).",
           "options": [
             "taste",
             "tasting",
@@ -7330,7 +7328,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the option that best fits blank (4).",
           "options": [
             "tomato good sauce",
             "good tomato sauce",
@@ -7345,7 +7343,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the option that best fits blank (5).",
           "options": [
             "to preparing",
             "preparing",
@@ -7360,7 +7358,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the option that best fits blank (6).",
           "options": [
             "to",
             "with",
@@ -7408,9 +7406,9 @@
           "prompt": "Question 9. Hi Gemma, a. The time and effort you dedicated to assisting me did not go unnoticed, and it has been incredibly valuable. b. I would like to express my sincere gratitude for the tremendous support you have given me. c. Once again, thank you so much for your unwavering support. d. I feel fortunate to have someone as thoughtful and generous as you in my life. e. Your kindness and willingness to help have truly made a positive impact, and I am deeply appreciative of everything you've done. Warm regards, Billy",
           "options": [
             "b-e-a-d-c",
-            "a-d -b-c-e",
+            "a-d-b-c-e",
             "b-d-a-c-e",
-            "c-a-d -b-e"
+            "c-a-d-b-e"
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
