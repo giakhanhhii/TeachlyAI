@@ -400,6 +400,31 @@ function appendHighlightedText(target, text, focus, forceUnderline = false) {
   }
 }
 
+/**
+ * Plain passage fragments may use markdown-style **bold** (same as stems); split into
+ * `<strong>` nodes before applying question-term highlights.
+ * @param {HTMLElement} target
+ * @param {string} text
+ * @param {any} focus
+ * @param {boolean} forceUnderline
+ */
+function appendPassageFragmentWithBold(target, text, focus, forceUnderline = false) {
+  const content = String(text || "");
+  if (!content) return;
+  const parts = content.split(/(\*\*.+?\*\*)/g);
+  for (const part of parts) {
+    if (!part) continue;
+    const boldMatch = part.match(/^\*\*(.+?)\*\*$/s);
+    if (boldMatch) {
+      const strong = document.createElement("strong");
+      strong.textContent = boldMatch[1];
+      target.appendChild(strong);
+    } else {
+      appendHighlightedText(target, part, focus, forceUnderline);
+    }
+  }
+}
+
 function appendHighlightedPassageLine(target, line, focus) {
   if (!(target instanceof HTMLElement)) return;
   const text = String(line || "");
@@ -410,14 +435,14 @@ function appendHighlightedPassageLine(target, line, focus) {
     const [token, underlinedText] = match;
     const tokenIndex = match.index;
     if (tokenIndex > lastIndex) {
-      appendHighlightedText(target, text.slice(lastIndex, tokenIndex), focus, false);
+      appendPassageFragmentWithBold(target, text.slice(lastIndex, tokenIndex), focus, false);
     }
-    appendHighlightedText(target, underlinedText, focus, true);
+    appendPassageFragmentWithBold(target, underlinedText, focus, true);
     lastIndex = tokenIndex + token.length;
     match = markerPattern.exec(text);
   }
   if (lastIndex < text.length) {
-    appendHighlightedText(target, text.slice(lastIndex), focus, false);
+    appendPassageFragmentWithBold(target, text.slice(lastIndex), focus, false);
   }
 }
 
