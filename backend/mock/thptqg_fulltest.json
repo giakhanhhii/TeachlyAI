@@ -7298,7 +7298,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the option that best fits blank (2).",
           "options": [
             "was made",
             "which made",
@@ -7313,7 +7313,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the option that best fits blank (3).",
           "options": [
             "taste",
             "tasting",
@@ -7328,7 +7328,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the option that best fits blank (4).",
           "options": [
             "tomato good sauce",
             "good tomato sauce",
