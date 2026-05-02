@@ -7973,7 +7973,7 @@
               "title": "Câu 18",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the correct word or phrase that best fits each of the numbered blanks from 18 to 22.",
               "context": [
-                "**Social media** has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
+                "Social media has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
                 "**Social media** platforms enable users to share information instantly, making it easier to stay updated on global events, (19)_. This has also transformed the way businesses reach customers, allowing for more targeted marketing, (20)_.",
                 "However, there are concerns about the negative impact of **social media**, particularly on mental health. Studies have shown that excessive **social media** use can lead to feelings of isolation, anxiety, and depression.",
                 "Despite these concerns, **social media** continues to grow in popularity, with no signs of slowing down, (21)_. Finding a balance between its benefits and its risks is essential to ensure **social media** has a positive influence on our lives. (22)_."
@@ -7998,7 +7998,7 @@
               "title": "Câu 18",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the correct word or phrase that best fits each of the numbered blanks from 18 to 22.",
               "context": [
-                "**Social media** has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
+                "Social media has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
                 "**Social media** platforms enable users to share information instantly, making it easier to stay updated on global events, (19)_. This has also transformed the way businesses reach customers, allowing for more targeted marketing, (20)_.",
                 "However, there are concerns about the negative impact of **social media**, particularly on mental health. Studies have shown that excessive **social media** use can lead to feelings of isolation, anxiety, and depression.",
                 "Despite these concerns, **social media** continues to grow in popularity, with no signs of slowing down, (21)_. Finding a balance between its benefits and its risks is essential to ensure **social media** has a positive influence on our lives. (22)_."
@@ -8688,8 +8688,13 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 1 to 10.",
+              "context": [
+                "(I) Urbanization is reshaping societies as millions of people move from rural areas to cities each year. (II) This movement is driven by the search for jobs, education, and improved living standards. (III) Cities have become engines of economic growth and innovation. (IV) At the same time, urban expansion presents planners with difficult choices about land use and infrastructure.",
+                "Urban areas typically provide a number of job opportunities across manufacturing, services, and technology sectors. Residents benefit from technological advancements, economic growth, and access to specialized healthcare and schools. These advantages explain why migration toward cities continues worldwide.",
+                "Rapid growth also produces serious stresses: overcrowding, traffic congestion, and strain on housing and utilities. The proliferation of informal settlements on city edges shows how demand can outpace formal construction; many people settle before utilities arrive, and they often lack reliable water, sanitation, or transport links. Crime rates and health risks may rise where planning fails to keep pace.",
+                "[[u]]Governments and urban planners must prioritize creating inclusive, well-connected cities that provide access to essential services for all residents.[[/u]] Sustainable zoning, investment in transit, and equitable housing policy can reduce inequality while preserving environmental quality. International cooperation and community participation remain central to successful urban strategies."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -8734,8 +8739,13 @@
             {
               "id": "part-2-group-3",
               "title": "Câu 17",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 17 to 20.",
+              "context": [
+                "Plastic pollution has become one of the defining environmental crises of our time. Researchers estimate that millions of tonnes of plastic waste enter rivers and oceans annually, and much of it (17)_.",
+                "Scientists (18)_ agree that concentrations will keep rising unless production and disposal patterns change.",
+                "(19)_",
+                "National bans and recycling schemes have expanded across many regions, (20)_"
+              ],
               "questionNumbers": [
                 17,
                 18,
@@ -8754,24 +8764,27 @@
           "groups": [
             {
               "id": "part-3-group-3",
-              "title": "Câu 17",
-              "instruction": "",
-              "context": [],
+              "title": "Câu 21",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 21 to 22.",
+              "context": [
+                "Plastic debris threatens marine food chains on every coast. Pollution will worsen until (21) _.",
+                "Pilot programmes that (22) _ coastal retailers eliminate single-use plastics show how quickly behaviour can change when policy and enforcement align."
+              ],
               "questionNumbers": [
-                21
+                21,
+                22
               ]
             },
             {
               "id": "part-3-group-4",
-              "title": "Câu 22",
-              "instruction": "Read the following advertisement and mark the letter A, B, C or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 22 to 27.",
+              "title": "Câu 23",
+              "instruction": "Read the following advertisement and mark the letter A, B, C or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 23 to 27.",
               "context": [
-                "Udemy: Learn Anything, Anytime Udemy is an online learning platform (22) _ people learn new skills and improve their knowledge. With over 150,000 (23) _, students can (24) _ from a wide range of subjects. Whether you want to learn about topics like business, design, IT, and more.",
-                "Udemy offers flexible learning (25) _ your own pace, so you can fit courses around your schedule. Whether you're looking (26) _ in your career or learn something new, Udemy has something for everyone. You can access courses on your computer, tablet, or phone, making learning easy and (27) _.",
+                "Udemy: Learn Anything, Anytime. Udemy is an online learning platform that helps people learn new skills and improve their knowledge. With over 150,000 (23) _, students can (24) _ from a wide range of subjects, whether you want to learn about business, design, IT, and more.",
+                "Udemy offers flexible learning (25) _ your own pace, so you can fit courses around your schedule. Whether you're looking (26) _ in your career or to learn something new, Udemy has something for everyone. You can access courses on your computer, tablet, or phone, making learning easy and (27) _.",
                 "Start learning today and unlock your potential with Udemy."
               ],
               "questionNumbers": [
-                22,
                 23,
                 24,
                 25,
@@ -8782,17 +8795,13 @@
             {
               "id": "part-3-group-5",
               "title": "Câu 28",
-              "instruction": "Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 28 to 35.",
+              "instruction": "Read the following passage about cultural diversity and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 28 to 30.",
               "context": [
                 "Cultural diversity refers to the presence of multiple cultural groups and their practices within a society. It encompasses various aspects such as language, traditions, beliefs, and values. Embracing cultural diversity can lead to a more inclusive and harmonious society, where individuals appreciate and respect differences.",
-                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights.",
-                "This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business.",
-                "Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
-                "By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.",
-                "Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance. In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches.",
-                "This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
-                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence.",
-                "By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
+                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights. This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business. Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
+                "[[u]]By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.[[/u]] Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance.",
+                "In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches. This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
+                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence. By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
               ],
               "questionNumbers": [
                 28,
@@ -8811,18 +8820,14 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "Câu 28",
-              "instruction": "Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 28 to 35.",
+              "title": "Câu 31",
+              "instruction": "Read the following passage about cultural diversity and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 31 to 35.",
               "context": [
                 "Cultural diversity refers to the presence of multiple cultural groups and their practices within a society. It encompasses various aspects such as language, traditions, beliefs, and values. Embracing cultural diversity can lead to a more inclusive and harmonious society, where individuals appreciate and respect differences.",
-                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights.",
-                "This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business.",
-                "Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
-                "By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.",
-                "Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance. In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches.",
-                "This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
-                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence.",
-                "By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
+                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights. This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business. Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
+                "[[u]]By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.[[/u]] Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance.",
+                "In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches. This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
+                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence. By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
               ],
               "questionNumbers": [
                 31,
@@ -9003,7 +9008,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the best word or phrase for blank (11).",
           "options": [
             "other",
             "the others",
@@ -9018,7 +9023,7 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12.",
+          "prompt": "Question 12. Choose the best word or phrase for blank (12).",
           "options": [
             "puts off",
             "takes out",
@@ -9033,7 +9038,7 @@
           "id": "q13",
           "number": 13,
           "partId": "part-2",
-          "prompt": "Question 13.",
+          "prompt": "Question 13. Choose the best word or phrase for blank (13).",
           "options": [
             "distance",
             "passenger",
@@ -9048,7 +9053,7 @@
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14.",
+          "prompt": "Question 14. Choose the best word or phrase for blank (14).",
           "options": [
             "Instead of",
             "Due to",
@@ -9063,7 +9068,7 @@
           "id": "q15",
           "number": 15,
           "partId": "part-2",
-          "prompt": "Question 15.",
+          "prompt": "Question 15. Choose the best word or phrase for blank (15).",
           "options": [
             "level",
             "supply",
@@ -9078,7 +9083,7 @@
           "id": "q16",
           "number": 16,
           "partId": "part-2",
-          "prompt": "Question 16.",
+          "prompt": "Question 16. Choose the best word or phrase for blank (16).",
           "options": [
             "demand",
             "rate",
@@ -9093,7 +9098,7 @@
           "id": "q17",
           "number": 17,
           "partId": "part-2",
-          "prompt": "Question 17.",
+          "prompt": "Question 17. Choose the best phrase for blank (17).",
           "options": [
             "is disposed of without proper treatment each year",
             "is produced and mismanaged by humans annually",
@@ -9108,7 +9113,7 @@
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18.",
+          "prompt": "Question 18. Choose the best phrase for blank (18).",
           "options": [
             "whose researches conducted in multiple fields have shown concerning results",
             "warning the public about the hazards, use plastic reduction as a key solution",
@@ -9123,7 +9128,7 @@
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19.",
+          "prompt": "Question 19. Choose the best sentence for blank (19).",
           "options": [
             "Plastic in the sea harms not only fish but also other aquatic creatures",
             "To prevent harm to marine animals, various programs are proposed",
@@ -9138,7 +9143,7 @@
           "id": "q20",
           "number": 20,
           "partId": "part-2",
-          "prompt": "Question 20.",
+          "prompt": "Question 20. Choose the best sentence for blank (20).",
           "options": [
             "However, reducing plastic disposal is a complex task",
             "Thus, the persistence of plastics in nature poses a severe problem",
@@ -9153,7 +9158,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21.",
+          "prompt": "Question 21. Choose the best phrase for blank (21).",
           "options": [
             "governments worldwide take action on pollution reduction",
             "reducing plastic use could mitigate these environmental threats",
@@ -9168,7 +9173,7 @@
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22.",
+          "prompt": "Question 22. Choose the best word for blank (22).",
           "options": [
             "helped",
             "helping",
@@ -9183,7 +9188,7 @@
           "id": "q23",
           "number": 23,
           "partId": "part-3",
-          "prompt": "Question 23.",
+          "prompt": "Question 23. Choose the best word or phrase for blank (23).",
           "options": [
             "courses online learning",
             "learning online courses",
@@ -9198,7 +9203,7 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24.",
+          "prompt": "Question 24. Choose the best word or phrase for blank (24).",
           "options": [
             "select",
             "choose",
@@ -9213,7 +9218,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25.",
+          "prompt": "Question 25. Choose the best word or phrase for blank (25).",
           "options": [
             "in",
             "with",
@@ -9228,7 +9233,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26.",
+          "prompt": "Question 26. Choose the best word or phrase for blank (26).",
           "options": [
             "to advance",
             "advancing",
@@ -9243,15 +9248,15 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27.",
+          "prompt": "Question 27. Choose the best word or phrase for blank (27).",
           "options": [
             "accessing",
             "accessibility",
             "accession",
             "accessible"
           ],
-          "correctIndex": 1,
-          "explanation": "Đáp án B (accessibility) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (accessible) ghép song song với \"easy\" trong cụm \"easy and accessible\"; các lựa chọn khác không khớp dạng từ hoặc không phù hợp ngữ cảnh.",
           "explanationEvidence": "Cau 27: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9325,8 +9330,8 @@
             "Paragraph 2",
             "Paragraph 4"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C (Paragraph 2) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (Paragraph 4) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
           "explanationEvidence": "Cau 32: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9370,15 +9375,15 @@
             "Paragraph 3",
             "Paragraph 5"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (Paragraph 4) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (Paragraph 5) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
           "explanationEvidence": "Cau 35: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q36",
           "number": 36,
           "partId": "part-4",
-          "prompt": "Question 36. - a. Mike: Hi, Lisa! Did you do anything fun this weekend? - b. Mike: That sounds awesome! Where did you go? - c. Lisa: Yes! I went hiking with some friends. It was great to be outdoors.",
+          "prompt": "Question 36.\na. Mike: Hi, Lisa! Did you do anything fun this weekend?\nb. Mike: That sounds awesome! Where did you go?\nc. Lisa: Yes! I went hiking with some friends. It was great to be outdoors.",
           "options": [
             "a-b-c",
             "b-a-c",
@@ -9393,7 +9398,7 @@
           "id": "q37",
           "number": 37,
           "partId": "part-4",
-          "prompt": "Question 37. - a. Mia: I love how we turn off the lights for an hour to save energy. - b. Jake: Exactly! It's a simple way to remind everyone about climate change. - c. Mia: Let's invite some friends to join us and make it more fun! - d. Jake: Yes, I am! It's a great way to help the planet. - e. Mia: Are you going to participate in Earth Hour this year?",
+          "prompt": "Question 37.\na. Mia: I love how we turn off the lights for an hour to save energy.\nb. Jake: Exactly! It's a simple way to remind everyone about climate change.\nc. Mia: Let's invite some friends to join us and make it more fun!\nd. Jake: Yes, I am! It's a great way to help the planet.\ne. Mia: Are you going to participate in Earth Hour this year?",
           "options": [
             "c-e-a-b-d",
             "d-b-c-a-e",
@@ -9408,7 +9413,7 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Hi John, - a. It's fantastic that you've taken the time to recommend those cultural podcasts to me. - b. I listened to the first one on ancient civilizations, and it was truly insightful. - c. You know, maybe we could start a discussion group about these topics, what do you think? - d. Thanks also for introducing me to those documentaries—they've been an amazing supplement to the podcasts! - e. While I'm busy at the moment preparing for my exam, I'm eager to dive deeper into the content afterward. Write back soon, Emily",
+          "prompt": "Question 38.\nHi John,\na. It's fantastic that you've taken the time to recommend those cultural podcasts to me.\nb. I listened to the first one on ancient civilizations, and it was truly insightful.\nc. You know, maybe we could start a discussion group about these topics, what do you think?\nd. Thanks also for introducing me to those documentaries—they've been an amazing supplement to the podcasts!\ne. While I'm busy at the moment preparing for my exam, I'm eager to dive deeper into the content afterward.\nWrite back soon,\nEmily",
           "options": [
             "a-b-d-c-e",
             "b-e-a-d-c",
@@ -9423,7 +9428,7 @@
           "id": "q39",
           "number": 39,
           "partId": "part-4",
-          "prompt": "Question 39. - a. While managing large teams and coordinating multiple tasks can be challenging, the sense of accomplishment when a project is completed successfully is truly rewarding. - b. I started my journey in project management five years ago, where I quickly developed a passion for overseeing complex projects. A small cartoon illustration of a woman with long red hair, wearing a blue top, sitting and reading a book. Tài Liệu On Thi c. My ability to communicate clearly with clients and colleagues is one of my greatest strengths in this role. d. I have honed my skills through various leadership training programs and by handling diverse projects across industries. e. In conclusion, my experience in leading teams and delivering results under tight deadlines has shaped me into a well-rounded project manager.",
+          "prompt": "Question 39.\na. While managing large teams and coordinating multiple tasks can be challenging, the sense of accomplishment when a project is completed successfully is truly rewarding.\nb. I started my journey in project management five years ago, where I quickly developed a passion for overseeing complex projects.\nc. My ability to communicate clearly with clients and colleagues is one of my greatest strengths in this role.\nd. I have honed my skills through various leadership training programs and by handling diverse projects across industries.\ne. In conclusion, my experience in leading teams and delivering results under tight deadlines has shaped me into a well-rounded project manager.",
           "options": [
             "b-d-c-a-e",
             "c-a-d-b-e",
@@ -9470,8 +9475,10 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
+              "context": [
+                "Community centres run weekend programmes so residents can (1) _ neighbours and try new clubs before they commit. Unlike (2) _ networks that focus on popularity, these sessions welcome beginners. (3) _ workshops fill quickly, yet organisers repeat that (4) _ severe weather, outdoor events move indoors. Anyone who (5) _ on the spring intake may wait months for a slot, and never borrow tools that look (6) _ or damaged."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -9484,13 +9491,11 @@
             {
               "id": "part-1-group-2",
               "title": "GREEN LIVING: A PATH TO A SUSTAINABLE FUTURE",
-              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 7 to 10.",
               "context": [
                 "In a world grappling with climate change and environmental degradation, green living has emerged as a vital approach to ensure sustainability. Green living involves adopting practices that minimize harm to the environment while promoting a healthy lifestyle. These include reducing waste, conserving energy, and embracing renewable resources.",
-                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics.",
-                "For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems.",
-                "Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
-                "Additionally, adopting plant-based diets or reducing meat consumption can lessen the environmental impact of food production, which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
+                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics. For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems. Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
+                "Additionally, [[u]]adopting plant-based diets can lessen the environmental impact of food production[[/u]], which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
                 "For instance, cities are promoting cycling and public transport to decrease carbon emissions. Similarly, educational campaigns are raising awareness about sustainable practices. By making small, consistent changes, individuals and societies can contribute to a healthier planet and secure a better future for generations to come."
               ],
               "questionNumbers": [
@@ -9512,13 +9517,11 @@
             {
               "id": "part-2-group-2",
               "title": "GREEN LIVING: A PATH TO A SUSTAINABLE FUTURE",
-              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 11 to 14.",
               "context": [
                 "In a world grappling with climate change and environmental degradation, green living has emerged as a vital approach to ensure sustainability. Green living involves adopting practices that minimize harm to the environment while promoting a healthy lifestyle. These include reducing waste, conserving energy, and embracing renewable resources.",
-                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics.",
-                "For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems.",
-                "Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
-                "Additionally, adopting plant-based diets or reducing meat consumption can lessen the environmental impact of food production, which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
+                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics. For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems. Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
+                "Additionally, [[u]]adopting plant-based diets can lessen the environmental impact of food production[[/u]], which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
                 "For instance, cities are promoting cycling and public transport to decrease carbon emissions. Similarly, educational campaigns are raising awareness about sustainable practices. By making small, consistent changes, individuals and societies can contribute to a healthier planet and secure a better future for generations to come."
               ],
               "questionNumbers": [
@@ -9531,7 +9534,7 @@
             {
               "id": "part-2-group-3",
               "title": "LIVING IN A MULTICULTURAL WORLD",
-              "instruction": "Read the following passage multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 15 to 20.",
               "context": [
                 "(I) In today's interconnected society, multiculturalism has become a defining feature of many countries. (II) It refers to the coexistence of diverse cultural, ethnic, and religious groups within a community. (III) This diversity enriches societies, fostering creativity, innovation, and global understanding. (IV) However, living in a multicultural world also presents challenges, such as the need to balance cultural preservation with social integration. One significant advantage of multiculturalism is the opportunity for cultural exchange. People from different backgrounds can share traditions, cuisine, art, and perspectives, broadening their understanding of the world. For example, international festivals and food markets often showcase the vibrant diversity of a community, promoting appreciation and respect for different cultures. Such exchanges contribute to a richer, more inclusive society. However, multiculturalism also requires individuals and societies to navigate potential challenges. Misunderstandings, cultural clashes, and prejudice can arise in multicultural settings. For instance, differing values or customs might lead to tensions or conflicts. To address these issues, [[u]]education and dialogue are essential to resolving cultural misunderstandings[[/u]]. Schools and workplaces can play a critical role by fostering inclusivity and teaching cultural awareness. Multiculturalism also brings economic benefits. Diverse teams in workplaces often bring unique skills and perspectives, leading to increased creativity and problem-solving abilities. Moreover, tourism thrives in multicultural areas, as visitors are drawn to the rich tapestry of cultures and traditions. Living in a multicultural world teaches us that diversity is not something to fear but to celebrate. By embracing and learning from our differences, we can build stronger, more harmonious communities. While challenges exist, the benefits of multiculturalism far outweigh the difficulties, making it a vital component of a thriving modern society."
               ],
@@ -9556,7 +9559,7 @@
             {
               "id": "part-3-group-3",
               "title": "LIVING IN A MULTICULTURAL WORLD",
-              "instruction": "Read the following passage multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 21 to 24.",
               "context": [
                 "(I) In today's interconnected society, multiculturalism has become a defining feature of many countries. (II) It refers to the coexistence of diverse cultural, ethnic, and religious groups within a community. (III) This diversity enriches societies, fostering creativity, innovation, and global understanding. (IV) However, living in a multicultural world also presents challenges, such as the need to balance cultural preservation with social integration. One significant advantage of multiculturalism is the opportunity for cultural exchange. People from different backgrounds can share traditions, cuisine, art, and perspectives, broadening their understanding of the world. For example, international festivals and food markets often showcase the vibrant diversity of a community, promoting appreciation and respect for different cultures. Such exchanges contribute to a richer, more inclusive society. However, multiculturalism also requires individuals and societies to navigate potential challenges. Misunderstandings, cultural clashes, and prejudice can arise in multicultural settings. For instance, differing values or customs might lead to tensions or conflicts. To address these issues, [[u]]education and dialogue are essential to resolving cultural misunderstandings[[/u]]. Schools and workplaces can play a critical role by fostering inclusivity and teaching cultural awareness. Multiculturalism also brings economic benefits. Diverse teams in workplaces often bring unique skills and perspectives, leading to increased creativity and problem-solving abilities. Moreover, tourism thrives in multicultural areas, as visitors are drawn to the rich tapestry of cultures and traditions. Living in a multicultural world teaches us that diversity is not something to fear but to celebrate. By embracing and learning from our differences, we can build stronger, more harmonious communities. While challenges exist, the benefits of multiculturalism far outweigh the difficulties, making it a vital component of a thriving modern society."
               ],
@@ -9570,8 +9573,10 @@
             {
               "id": "part-3-group-4",
               "title": "Câu 25",
-              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following Questions.",
-              "context": [],
+              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 25 to 29.",
+              "context": [
+                "Arrangement items: each question below lists lettered parts a–e (or a–c) in the question stem. Put them in the order that makes a natural conversation or coherent paragraph."
+              ],
               "questionNumbers": [
                 25,
                 26,
@@ -9583,7 +9588,7 @@
             {
               "id": "part-3-group-5",
               "title": "SHORT ART COURSES",
-              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits blank (30). Continue with blanks (31)–(35) in Part 4.",
               "context": [
                 "Create!: This course is all about telling good stories in pictures. There'll be cartoon films to watch, and instruction in how to draw your favourite characters - but your (30)_ is much more important than your drawing skills here! The course includes a visit (31)_ a cartoon museum.",
                 "Art Attack: You'll work on (32)_ creative skills, like printing, photography, cartoons and movie-making, using the latest technology. This course is great for anyone wanting to (33)_ these subjects at college. Good drawing skills are helpful on this course, and students' work will be put into a book, where suitable, for everyone to buy.",
@@ -9605,8 +9610,8 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "SHORT ART COURSES",
-              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+              "title": "Câu 31",
+              "instruction": "Read the following advertisement and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 31 to 35.",
               "context": [
                 "Create!: This course is all about telling good stories in pictures. There'll be cartoon films to watch, and instruction in how to draw your favourite characters - but your (30)_ is much more important than your drawing skills here! The course includes a visit (31)_ a cartoon museum.",
                 "Art Attack: You'll work on (32)_ creative skills, like printing, photography, cartoons and movie-making, using the latest technology. This course is great for anyone wanting to (33)_ these subjects at college. Good drawing skills are helpful on this course, and students' work will be put into a book, where suitable, for everyone to buy.",
@@ -9650,7 +9655,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best word or phrase for blank (1).",
           "options": [
             "encounter",
             "show",
@@ -9665,7 +9670,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best word or phrase for blank (2).",
           "options": [
             "the others",
             "others",
@@ -9680,7 +9685,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best word or phrase for blank (3).",
           "options": [
             "every",
             "much",
@@ -9695,7 +9700,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best word or phrase for blank (4).",
           "options": [
             "On account of",
             "In case of",
@@ -9710,7 +9715,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best word or phrase for blank (5).",
           "options": [
             "make up",
             "miss out",
@@ -9725,7 +9730,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best word or phrase for blank (6).",
           "options": [
             "unmatched",
             "unfamiliar",
@@ -9837,15 +9842,15 @@
             "installing solar panels",
             "buying luxury cars"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (buying luxury cars) là hoạt động không được nhắc trong bài; các lựa chọn khác đều có căn cứ trong đoạn văn.",
           "explanationEvidence": "Cau 13: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14. The word \"alternatives\" in paragraph 3 could be best replaced by _.",
+          "prompt": "Question 14. The word \"alternatives\" in paragraph 2 could be best replaced by _.",
           "options": [
             "Challenges",
             "Opponents",
@@ -9938,12 +9943,12 @@
           "prompt": "Question 20. The word \"it\" in paragraph 5 refers to",
           "options": [
             "learning from differences",
-            "a thriving society The logo for 'Tài Liệu On Thi' features a cartoon character with brown hair and a red shirt, sitting and reading a green book. The text 'Tài Liệu On Thi' is written in a large, stylized font behind the character.",
+            "a thriving society",
             "building stronger communities",
             "multiculturalism"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (multiculturalism) khớp tham chiếu đại từ \"it\" trong đoạn kết; các lựa chọn khác không phù hợp ngữ cảnh.",
           "explanationEvidence": "Cau 20: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9957,8 +9962,8 @@
             "Cultural misunderstandings cannot be resolved through dialogue.",
             "Open communication and learning are key to overcoming cultural differences."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D khớp nghĩa với câu in đậm về đối thoại và học hỏi để xóa bỏ hiểu lầm văn hóa.",
           "explanationEvidence": "Cau 21: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10002,15 +10007,15 @@
             "separation of ethnic groups",
             "living together peacefully"
           ],
-          "correctIndex": 1,
-          "explanation": "Đáp án B khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (living together peacefully) gần nghĩa với sự chung sống hòa bình của nhiều nhóm văn hóa.",
           "explanationEvidence": "Cau 24: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. Dear Pat, a. Can I see you there? Please write to me soon. b. I am writing to tell you that I arrived here three weeks ago. c. I am studying at a language school in Brighton. The students come from many different countries. d. Also, I have made a lot of new friends. b. e. I want to visit London next week because I am going back to my country on Monday. With best wishes (Adapted from Ket 1)",
+          "prompt": "Question 25.\nDear Pat,\na. Can I see you there? Please write to me soon.\nb. I am writing to tell you that I arrived here three weeks ago.\nc. I am studying at a language school in Brighton. The students come from many different countries.\nd. Also, I have made a lot of new friends.\ne. I want to visit London next week because I am going back to my country on Monday.\nWith best wishes\n(Adapted from Ket 1)",
           "options": [
             "b-e-d-c-a",
             "a-e-b-c-d",
@@ -10025,7 +10030,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. a. Olivia: I really hope so. I'll check the weather now. If it's good, we can plan for Saturday. b. Noah: Perfect! I'm really looking forward to our upcoming trip. c. Olivia: Do you think they would join us? It'd be more fun with them. d. Olivia: Hey Noah, have you thought about hiking at Silver Peak this weekend? e. Noah: That sounds amazing! Let's invite Ava and Lucas to come along.",
+          "prompt": "Question 26.\na. Olivia: I really hope so. I'll check the weather now. If it's good, we can plan for Saturday.\nb. Noah: Perfect! I'm really looking forward to our upcoming trip.\nc. Olivia: Do you think they would join us? It'd be more fun with them.\nd. Olivia: Hey Noah, have you thought about hiking at Silver Peak this weekend?\ne. Noah: That sounds amazing! Let's invite Ava and Lucas to come along.",
           "options": [
             "d-e-c-a-b",
             "b-a-c-e-d",
@@ -10040,7 +10045,7 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27. a. To achieve this, I always set clear goals and create projects to accomplish each one at the beginning of each week. b. Time management has been one of the most valuable skills I've developed over the years. c. By breaking down larger projects into smaller tasks, I make steady progress without feeling overwhelmed. d. This practice has significantly improved my productivity and allowed me to balance work and personal commitments effectively. e. Moreover, I use tools like to-do lists and digital calendars to stay on track and avoid missing important deadlines.",
+          "prompt": "Question 27.\na. To achieve this, I always set clear goals and create projects to accomplish each one at the beginning of each week.\nb. Time management has been one of the most valuable skills I've developed over the years.\nc. By breaking down larger projects into smaller tasks, I make steady progress without feeling overwhelmed.\nd. This practice has significantly improved my productivity and allowed me to balance work and personal commitments effectively.\ne. Moreover, I use tools like to-do lists and digital calendars to stay on track and avoid missing important deadlines.",
           "options": [
             "b-c-a-d-e",
             "b-a-c-e-d",
@@ -10055,27 +10060,27 @@
           "id": "q28",
           "number": 28,
           "partId": "part-3",
-          "prompt": "Question 28. a. Nga: Oh, really? What was the argument about? b. Nga: Hey, Nam. You look sad. What happened? c. Nam: Yesterday, I argued with my parents. (Adapted from iLearn Smart World 12)",
+          "prompt": "Question 28.\na. Nga: Oh, really? What was the argument about?\nb. Nga: Hey, Nam. You look sad. What happened?\nc. Nam: Yesterday, I argued with my parents.\n(Adapted from iLearn Smart World 12)",
           "options": [
             "a-b-c",
             "c-b-a",
             "b-c-a",
             "c-a-b"
           ],
-          "correctIndex": 0,
-          "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 2,
+          "explanation": "Thứ tự b-c-a mở lời chào, phản hồi, rồi câu hỏi tiếp theo; các đáp án khác làm mất logic đáp–hỏi.",
           "explanationEvidence": "Cau 28: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q29",
           "number": 29,
           "partId": "part-3",
-          "prompt": "Question 29. a. By experiencing diverse cultures, they gain a broader perspective on global traditions. b. However, there's also a risk of focusing too much on external influences and neglecting their own cultural roots. Question 28 and Question 29. c. World festivals, such as Halloween and Christmas, have a significant impact on young Vietnamese people. d. These events not only promote cultural exchange but also encourage creativity and participation in global trends. e. Therefore, it is essential to balance the appreciation of international festivals with the preservation of Vietnamese traditions.",
+          "prompt": "Question 29.\na. By experiencing diverse cultures, they gain a broader perspective on global traditions.\nb. However, there's also a risk of focusing too much on external influences and neglecting their own cultural roots.\nc. World festivals, such as Halloween and Christmas, have a significant impact on young Vietnamese people.\nd. These events not only promote cultural exchange but also encourage creativity and participation in global trends.\ne. Therefore, it is essential to balance the appreciation of international festivals with the preservation of Vietnamese traditions.",
           "options": [
             "c-a-b-d-e",
             "d-c-b-a-e",
             "c-a-d-b-e",
-            "c-b-d-a-c"
+            "c-b-d-a-e"
           ],
           "correctIndex": 0,
           "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
@@ -10085,7 +10090,7 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30.",
+          "prompt": "Question 30. Choose the best word or phrase for blank (30).",
           "options": [
             "imaginatively",
             "imagine",
@@ -10100,7 +10105,7 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31.",
+          "prompt": "Question 31. Choose the best word or phrase for blank (31).",
           "options": [
             "in",
             "with",
@@ -10115,7 +10120,7 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32.",
+          "prompt": "Question 32. Choose the best word or phrase for blank (32).",
           "options": [
             "to developing",
             "developing",
@@ -10130,7 +10135,7 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33.",
+          "prompt": "Question 33. Choose the best word or phrase for blank (33).",
           "options": [
             "make",
             "get",
@@ -10145,7 +10150,7 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34.",
+          "prompt": "Question 34. Choose the best word or phrase for blank (34).",
           "options": [
             "wearing",
             "wear",
@@ -10160,7 +10165,7 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35.",
+          "prompt": "Question 35. Choose the best word or phrase for blank (35).",
           "options": [
             "white T-shirt clean",
             "clean white T-shirt",
@@ -10267,8 +10272,10 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
+              "context": [
+                "Viewers leave every episode with a renewed sense of (1) _ and respect for how fragile life on our planet can be. Working (2) _ classmates on a sustainability project helps them notice details they once ignored. (3) _ teachers now link science clips to writing tasks. Long documentaries show how (4) _ effort can protect species, while fast food adverts rarely mention (5) _ balance. The series (6) _ persuaded thousands of teenagers to recycle more carefully."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -10281,8 +10288,10 @@
             {
               "id": "part-1-group-2",
               "title": "Câu 7",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 7 to 10.",
+              "context": [
+                "(7) _ increasing number of secondary schools now subscribe to the wildlife channel, (8) _ older programmes only showed predators, this season follows rangers in five countries. Volunteers know that (9) _ may prefer studio clips, yet classroom discussion still focuses on the (10) _ of rehabilitated animals back into the wild."
+              ],
               "questionNumbers": [
                 7,
                 8,
@@ -10301,9 +10310,11 @@
           "groups": [
             {
               "id": "part-2-group-2",
-              "title": "Câu 7",
-              "instruction": "",
-              "context": [],
+              "title": "Câu 11",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 11 to 12.",
+              "context": [
+                "Urban smog contains many chemicals, but the main (11) _ is still exhaust from diesel traffic that has (12) _ for decades near busy ports."
+              ],
               "questionNumbers": [
                 11,
                 12
@@ -10312,8 +10323,10 @@
             {
               "id": "part-2-group-3",
               "title": "Câu 13",
-              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
-              "context": [],
+              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 13 to 17.",
+              "context": [
+                "Arrangement items: each question lists lettered parts in the stem; choose the order that forms a natural dialogue or coherent paragraph."
+              ],
               "questionNumbers": [
                 13,
                 14,
@@ -10325,8 +10338,10 @@
             {
               "id": "part-2-group-4",
               "title": "Câu 18",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 18 to 20.",
+              "context": [
+                "(I) In 2007, roommates Joe Gebbia and Brian Chesky struggled to pay the rent on their San Francisco apartment when they learned that a major design conference was coming to town and local hotels were fully booked. To cover costs, they inflated air mattresses on the floor, advertised \"Air Bed & Breakfast\" online, and hosted their first paying guests who checked out through a simple payment page.\n\n(II) The trial convinced them that travellers wanted affordable stays and that hosts needed an easy way to publish availability. As similar conferences returned to the city, early users asked for clearer pricing, verified profiles, and faster booking confirmations.\n\n(III) With **state-of-the-art** engineering from co-founder Nathan Blecharczyk, the team relaunched a secure site that could **handle** heavy traffic and process card payments so that hosts abroad could list rooms and travellers could book instantly.\n\n(IV) Media attention followed each milestone, and [[u]]Airbnb went from strength to strength as listings multiplied across continents[[/u]]. What began as a rent-making experiment grew into a global marketplace for short-term lodging."
+              ],
               "questionNumbers": [
                 18,
                 19,
@@ -10344,9 +10359,11 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 18",
-              "instruction": "",
-              "context": [],
+              "title": "Câu 21",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 21 to 25.",
+              "context": [
+                "(I) In 2007, roommates Joe Gebbia and Brian Chesky struggled to pay the rent on their San Francisco apartment when they learned that a major design conference was coming to town and local hotels were fully booked. To cover costs, they inflated air mattresses on the floor, advertised \"Air Bed & Breakfast\" online, and hosted their first paying guests who checked out through a simple payment page.\n\n(II) The trial convinced them that travellers wanted affordable stays and that hosts needed an easy way to publish availability. As similar conferences returned to the city, early users asked for clearer pricing, verified profiles, and faster booking confirmations.\n\n(III) With **state-of-the-art** engineering from co-founder Nathan Blecharczyk, the team relaunched a secure site that could **handle** heavy traffic and process card payments so that hosts abroad could list rooms and travellers could book instantly.\n\n(IV) Media attention followed each milestone, and [[u]]Airbnb went from strength to strength as listings multiplied across continents[[/u]]. What began as a rent-making experiment grew into a global marketplace for short-term lodging."
+              ],
               "questionNumbers": [
                 21,
                 22,
@@ -10411,7 +10428,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best word or phrase for blank (1).",
           "options": [
             "feeling",
             "energy",
@@ -10426,7 +10443,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best word or phrase for blank (2).",
           "options": [
             "under",
             "of",
@@ -10441,7 +10458,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best word or phrase for blank (3).",
           "options": [
             "A sense of wonder",
             "Great wonder",
@@ -10456,7 +10473,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best word or phrase for blank (4).",
           "options": [
             "sustaining",
             "to sustaining",
@@ -10471,7 +10488,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best word or phrase for blank (5).",
           "options": [
             "nutritional",
             "nutrient",
@@ -10486,7 +10503,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best word or phrase for blank (6).",
           "options": [
             "has",
             "makes",
@@ -10501,7 +10518,7 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7.",
+          "prompt": "Question 7. Choose the best word or phrase for blank (7).",
           "options": [
             "an",
             "the",
@@ -10516,7 +10533,7 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8.",
+          "prompt": "Question 8. Choose the best word or phrase for blank (8).",
           "options": [
             "Moreover",
             "Meanwhile",
@@ -10531,7 +10548,7 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9.",
+          "prompt": "Question 9. Choose the best word or phrase for blank (9).",
           "options": [
             "the others",
             "others",
@@ -10546,7 +10563,7 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10.",
+          "prompt": "Question 10. Choose the best word or phrase for blank (10).",
           "options": [
             "release",
             "releases",
@@ -10561,7 +10578,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the best word or phrase for blank (11).",
           "options": [
             "component",
             "substance",
@@ -10576,7 +10593,7 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12.",
+          "prompt": "Question 12. Choose the best word or phrase for blank (12).",
           "options": [
             "used up",
             "built up",
@@ -10786,7 +10803,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26.",
+          "prompt": "Question 26. Choose the best phrase for blank (26).",
           "options": [
             "staying more connected to people around us or even our loved ones",
             "less connected to the people around us or even our loved ones",
@@ -10801,7 +10818,7 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27.",
+          "prompt": "Question 27. Choose the best sentence for blank (27).",
           "options": [
             "Technology gives rise to a number of conflicts within the family",
             "Relationships at home and at work are not dependent on technology",
@@ -10816,7 +10833,7 @@
           "id": "q28",
           "number": 28,
           "partId": "part-3",
-          "prompt": "Question 28.",
+          "prompt": "Question 28. Choose the best phrase for blank (28).",
           "options": [
             "Whether we choose to stay technologically or socially connected",
             "Because we choose to stay technologically or socially connected",
@@ -10831,7 +10848,7 @@
           "id": "q29",
           "number": 29,
           "partId": "part-3",
-          "prompt": "Question 29.",
+          "prompt": "Question 29. Choose the best sentence for blank (29).",
           "options": [
             "We established a relationship of trust within our family",
             "Building strong relationships was essential within our family",
@@ -10846,12 +10863,12 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30.",
+          "prompt": "Question 30. Choose the best phrase for blank (30).",
           "options": [
             "and there is a danger that we will run out of time for connections",
             "but it is possible for us not to have enough time for connections",
             "so running short of time for connections is impossible",
-            "or connections is likely to be established in the long run Tài liệu On Thi"
+            "or lasting connections may take time to develop"
           ],
           "correctIndex": 0,
           "explanation": "Đáp án A (and there is a danger that we will run out of time for connections) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
@@ -10895,7 +10912,7 @@
           "options": [
             "They contribute to our carbon footprint.",
             "They can be used for long periods.",
-            "They aren't well suited to personal use. Tài Liệu On Thi",
+            "They aren't well suited to personal use.",
             "They create fewer emissions."
           ],
           "correctIndex": 2,
@@ -10913,8 +10930,8 @@
             "unworkable",
             "feasible"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (possible) tạo cặp trái nghĩa trực tiếp với từ/cụm gạch chân trong đoạn; các lựa chọn còn lại gần nghĩa hoặc không đối lập đúng ngữ cảnh.",
+          "correctIndex": 2,
+          "explanation": "Đáp án C (unworkable) trái nghĩa với viable (khả thi).",
           "explanationEvidence": "Cau 34: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10958,8 +10975,8 @@
             "defeat",
             "captivate"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 1,
+          "explanation": "Đáp án B (surpass) gần nghĩa với outweigh (vượt trội hơn).",
           "explanationEvidence": "Cau 37: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10986,7 +11003,7 @@
             "There exists little infrastructure for renewable energy at present.",
             "Green energy costs are rising.",
             "The downsides of green energy could soon outweigh the benefits.",
-            "Green energy will enhance green living. Tài Liệu On Thi"
+            "Green energy will enhance green living."
           ],
           "correctIndex": 2,
           "explanation": "Đáp án C (The downsides of green energy could soon outweigh the benefits.) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
@@ -11028,8 +11045,13 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 1 to 8.",
+              "context": [
+                "**Global warming** refers to the long-term rise in Earth's average surface temperature linked to human activities. **It** is driven mainly by higher concentrations of greenhouse gases in the atmosphere. **It** matters because even small shifts can disrupt weather patterns, ecosystems, and human livelihoods.",
+                "Carbon dioxide, methane, and other greenhouse gases allow sunlight to reach the ground but **absorb** much of the heat that would otherwise radiate back to space. As the levels of these gases grow, they trap more heat and push global temperatures upward.",
+                "Warmer temperatures melt ice sheets and make ocean water expand. Rising **sea levels** threaten low-lying **coastal** cities, farmland, and freshwater supplies for millions of residents.",
+                "Many plants and animals need stable conditions to survive. [[u]]If the climate changes rapidly and severely, it can cause significant harm to some plants and animals.[[/u]] **Extreme** heatwaves, droughts, and storms become more likely when climate patterns shift."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -11044,8 +11066,10 @@
             {
               "id": "part-1-group-2",
               "title": "Câu 9",
-              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
-              "context": [],
+              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 9 to 10.",
+              "context": [
+                "Arrangement items: each question lists lettered parts in the stem; choose the order that forms a natural monologue or coherent paragraph."
+              ],
               "questionNumbers": [
                 9,
                 10
@@ -11062,9 +11086,11 @@
           "groups": [
             {
               "id": "part-2-group-2",
-              "title": "Câu 9",
-              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
-              "context": [],
+              "title": "Câu 11",
+              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 11 to 13.",
+              "context": [
+                "Arrangement items: each question lists lettered parts in the stem; choose the order that forms a natural letter or dialogue."
+              ],
               "questionNumbers": [
                 11,
                 12,
@@ -11092,9 +11118,9 @@
             {
               "id": "part-2-group-4",
               "title": "Câu 20",
-              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 20 to 29.",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to question 20.",
               "context": [
-                "(I) The authors noted that while other forms of pollution are decreasing, noise pollution has been increasing. (II) This conclusion is reinforced by the fact that there has been an increase in the number of people who have been complaining about excessive noise in the WHO region. (III) Populations that are exposed to high noise levels can be afflicted by other symptoms such as: stress reactions, sleep-stage changes, and clinical symptoms like hypertension and cardiovascular diseases. (IV) All these impacts can contribute to premature mortality. It is important to note that these adverse health problems impact all age groups including children and adolescents. In fact, it has been reported that children who live and or study in an area afflicted with noise pollution tend to suffer from stress, impairments in memory and attention as well as difficulty reading. \"In Western Europe, the guidelines say, traffic noise results in an annual loss of at least one million healthy years\". Traffic noise is currently ranked second among environmental threats to public health. The danger of noise pollution is more present to us when we are asleep. Because the human ear is so sensitive, it never rests, it is always working, picking up and transmitting sounds for our brains to interpret. This always on working process is where the danger lies, though you may be sleeping, sounds are still being picked up and processed. The most common side effects of this phenomenon are sleep disturbance and tiredness, impaired memory, judgment, and psychomotor skills. The other more serious outcomes of this can be the triggering of the body's acute stress response, which raises blood pressure and heart rate as the body and brain go into a state of hyperarousal. According to the European Environment Agency, at least 10,000 cases of premature deaths from noise exposure occur each year, although incomplete data mean this number is significantly underestimated."
+                "(I) The authors noted that while other forms of pollution are decreasing, noise pollution has been increasing. (II) This conclusion is reinforced by the fact that there has been an increase in the number of people who have been complaining about excessive noise in the WHO region. (III) Populations that are exposed to high noise levels can be afflicted by other symptoms such as: stress reactions, sleep-stage changes, and clinical symptoms like hypertension and cardiovascular diseases. (IV) All these impacts can contribute to premature mortality. It is important to note that these adverse health problems impact all age groups including children and adolescents."
               ],
               "questionNumbers": [
                 20
@@ -11111,10 +11137,13 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 20",
-              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 20 to 29.",
+              "title": "Câu 21",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 21 to 29.",
               "context": [
-                "(I) The authors noted that while other forms of pollution are decreasing, noise pollution has been increasing. (II) This conclusion is reinforced by the fact that there has been an increase in the number of people who have been complaining about excessive noise in the WHO region. (III) Populations that are exposed to high noise levels can be afflicted by other symptoms such as: stress reactions, sleep-stage changes, and clinical symptoms like hypertension and cardiovascular diseases. (IV) All these impacts can contribute to premature mortality. It is important to note that these adverse health problems impact all age groups including children and adolescents. In fact, it has been reported that children who live and or study in an area afflicted with noise pollution tend to suffer from stress, impairments in memory and attention as well as difficulty reading. \"In Western Europe, the guidelines say, traffic noise results in an annual loss of at least one million healthy years\". Traffic noise is currently ranked second among environmental threats to public health. The danger of noise pollution is more present to us when we are asleep. Because the human ear is so sensitive, it never rests, it is always working, picking up and transmitting sounds for our brains to interpret. This always on working process is where the danger lies, though you may be sleeping, sounds are still being picked up and processed. The most common side effects of this phenomenon are sleep disturbance and tiredness, impaired memory, judgment, and psychomotor skills. The other more serious outcomes of this can be the triggering of the body's acute stress response, which raises blood pressure and heart rate as the body and brain go into a state of hyperarousal. According to the European Environment Agency, at least 10,000 cases of premature deaths from noise exposure occur each year, although incomplete data mean this number is significantly underestimated."
+                "(I) The authors noted that while other forms of pollution are decreasing, noise pollution has been increasing. (II) This conclusion is reinforced by the fact that there has been an increase in the number of people who have been complaining about excessive noise in the WHO region.",
+                "(III) Populations that are exposed to high noise levels can be **afflicted** by other symptoms such as: stress reactions, sleep-stage changes, and clinical symptoms like hypertension and cardiovascular diseases. (IV) All these impacts can contribute to premature mortality. It is important to note that these adverse health problems impact all age groups including children and adolescents. In fact, it has been reported that children who live and or study in an area afflicted with noise pollution tend to suffer from stress, impairments in memory and attention as well as difficulty reading. \"In Western Europe, the guidelines say, traffic noise results in an annual loss of at least one million healthy years\". [[u]]Traffic noise is currently ranked second among environmental threats to public health.[[/u]]",
+                "The danger of noise pollution is more present to us when we are asleep. Because the human ear is so sensitive, it never rests, it is always working, picking up and transmitting sounds for our brains to interpret. This always on working process is where the danger lies, though you may be sleeping, sounds are still being picked up and processed. The most common side effects of this phenomenon are sleep disturbance and tiredness, impaired memory, judgment, and psychomotor skills.",
+                "The other more serious outcomes of this can be the triggering of the body's acute stress response, which raises blood pressure and heart rate as the body and brain go into a state of **hyperarousal**. According to the European Environment Agency, at least 10,000 cases of premature deaths from noise exposure occur each year, although incomplete data mean this number is significantly underestimated."
               ],
               "questionNumbers": [
                 21,
@@ -11131,7 +11160,7 @@
             {
               "id": "part-3-group-5",
               "title": "Câu 30",
-              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 30 to 34.",
+              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits blank (30). Continue with blanks (31)–(34) in Part 4.",
               "context": [
                 "In recent years, technology has rapidly transformed the healthcare industry. Various devices and software systems, such as digital health records and diagnostic tools, (30) _. These advancements have enabled healthcare providers to store, retrieve, and analyze patient information more effectively.",
                 "For instance, artificial intelligence systems can scan thousands of medical records, (31) _.",
@@ -11154,8 +11183,8 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "Câu 30",
-              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 30 to 34.",
+              "title": "Câu 31",
+              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 31 to 34.",
               "context": [
                 "In recent years, technology has rapidly transformed the healthcare industry. Various devices and software systems, such as digital health records and diagnostic tools, (30) _. These advancements have enabled healthcare providers to store, retrieve, and analyze patient information more effectively.",
                 "For instance, artificial intelligence systems can scan thousands of medical records, (31) _.",
@@ -11218,8 +11247,8 @@
             "include",
             "acquire"
           ],
-          "correctIndex": 1,
-          "explanation": "Đáp án B (consume) tạo cặp trái nghĩa trực tiếp với từ/cụm gạch chân trong đoạn; các lựa chọn còn lại gần nghĩa hoặc không đối lập đúng ngữ cảnh.",
+          "correctIndex": 0,
+          "explanation": "Đáp án A (release) đối lập với absorb trong ngữ cảnh hấp thụ nhiệt.",
           "explanationEvidence": "Cau 2: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11248,8 +11277,8 @@
             "Climate change occurring at a moderate pace could help plants and animals develop.",
             "If the climate changes too slowly, plants and animals could benefit."
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 0,
+          "explanation": "Đáp án A diễn đạt lại ý biến đổi khí hậu nhanh và mạnh gây tổn hại cho sinh vật.",
           "explanationEvidence": "Cau 4: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11391,22 +11420,22 @@
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14.",
+          "prompt": "Question 14. Choose the best word or phrase for blank (14).",
           "options": [
             "dedicate",
-            "that dedicated",
+            "dedicated",
             "was dedicated",
-            "dedicated"
+            "dedicating"
           ],
           "correctIndex": 1,
-          "explanation": "Đáp án B (that dedicated) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "explanation": "Đáp án B (dedicated) tạo cụm \"organization dedicated to preserving\".",
           "explanationEvidence": "Cau 14: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q15",
           "number": 15,
           "partId": "part-2",
-          "prompt": "Question 15.",
+          "prompt": "Question 15. Choose the best word or phrase for blank (15).",
           "options": [
             "up",
             "on",
@@ -11421,7 +11450,7 @@
           "id": "q16",
           "number": 16,
           "partId": "part-2",
-          "prompt": "Question 16.",
+          "prompt": "Question 16. Choose the best word or phrase for blank (16).",
           "options": [
             "make",
             "making",
@@ -11436,45 +11465,45 @@
           "id": "q17",
           "number": 17,
           "partId": "part-2",
-          "prompt": "Question 17.",
+          "prompt": "Question 17. Choose the best word or phrase for blank (17).",
           "options": [
             "conservative",
             "conservatory",
             "conservation",
-            "conserve Question 15 and Question 16."
+            "conserving"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (conservative) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 2,
+          "explanation": "Đáp án C (conservation) phù hợp ngữ cảnh đào tạo bảo tồn thực địa.",
           "explanationEvidence": "Cau 17: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18.",
+          "prompt": "Question 18. Choose the best word or phrase for blank (18).",
           "options": [
             "assure",
             "secure",
             "ensure",
             "guarantee"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (assure) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 2,
+          "explanation": "Đáp án C (ensure) đi với mệnh đề \"volunteers are well-prepared\".",
           "explanationEvidence": "Cau 18: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19.",
+          "prompt": "Question 19. Choose the best word or phrase for blank (19).",
           "options": [
             "natural heritage unique",
             "natural unique heritage",
             "unique heritage natural",
             "unique natural heritage"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (natural heritage unique) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (unique natural heritage) đúng trật tự tính từ trong tiếng Anh.",
           "explanationEvidence": "Cau 19: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11631,7 +11660,7 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30.",
+          "prompt": "Question 30. Choose the best phrase for blank (30).",
           "options": [
             "having been implemented to enhance the storage and analysis of patient data",
             "are used by hospitals to monitor, store, and evaluate extensive medical information",
@@ -11646,7 +11675,7 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31.",
+          "prompt": "Question 31. Choose the best phrase for blank (31).",
           "options": [
             "and identify patterns that help diagnose diseases accurately and swiftly",
             "using AI to study health records for improved diagnostics and health strategies",
@@ -11661,7 +11690,7 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32.",
+          "prompt": "Question 32. Choose the best sentence for blank (32).",
           "options": [
             "Many patients benefit from virtual consultations that increase physical visits to clinics",
             "It allows patients to consult specialists offline, avoiding waiting time and commutes",
@@ -11676,7 +11705,7 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33.",
+          "prompt": "Question 33. Choose the best sentence for blank (33).",
           "options": [
             "Virtual consultations are a key component of healthcare despite reduced in-person visits",
             "It hasn't been integrated as an essential service to reduce in-person medical visits",
@@ -11691,7 +11720,7 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34.",
+          "prompt": "Question 34. Choose the best sentence for blank (34).",
           "options": [
             "combining high-tech tools with compassion is unnecessary to improve patient care experiences",
             "human touch isn't still crucial in healthcare, despite advancements in medical technology",
@@ -11706,7 +11735,7 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35.",
+          "prompt": "Question 35. Choose the best word or phrase for blank (35).",
           "options": [
             "amount",
             "number",

@@ -1,5 +1,7 @@
 # Full THPTQG mock — recurring defect patterns (AI repair checklist)
-Caution: MUST EDIT RIGHT INTO THE TEST DON"T WRITE ANY SCRIPT TO EDIT A BUNCH
+
+**Caution:** edit **`backend/mock/thptqg_fulltest.json` directly** for real fixes; do not rely on one-off batch scripts to rewrite many tests unless you are deliberately repairing the import pipeline.
+
 Use this as a **generic** log when auditing or fixing imports/heuristic-built entries in `backend/mock/thptqg_fulltest.json`. Patterns apply across mocks; verify against the answer key and original PDF/source when available.
 
 ---
@@ -65,6 +67,38 @@ Use this as a **generic** log when auditing or fixing imports/heuristic-built en
 **Cause:** Wrong group wiring after partial import.
 
 **Fix:** Replace `context` for that group and reconcile prompts/options with the restored passage.
+
+### Empty group (`instruction` + `context` missing)
+
+**Symptom:** Banner such as “Passage này đang thiếu dữ liệu trong bundle hiện tại.” while stems still mention paragraph numbers, underline targets, or cloze blanks.
+
+**Cause:** `solution-only` or broken import left `instruction: ""` and `context: []` for a range that still has live questions.
+
+**Fix:** Restore the full reading or cloze passage for that `groups[]` entry; align markers (`[[u]]`, `**term**`, `(N)_`) with prompts.
+
+### Instruction text disagrees with the passage topic
+
+**Symptom:** Group title/instruction says e.g. “endangered languages” but `context` is clearly another theme (cultural diversity, plastic waste, etc.).
+
+**Cause:** Copy-paste or partial merge after renumbering parts.
+
+**Fix:** Rewrite the instruction/title to match the stored passage; adjust question ranges in the instruction string (`from 28 to 30` vs `from 31 to 35`) to match `questionNumbers`.
+
+### Duplicate wiring for the same question number
+
+**Symptom:** One blank index appears in two groups (e.g. `(22)_` in both a marine cloze block and an advertisement), or `questionNumbers` lists overlap inconsistently.
+
+**Cause:** Import stitched unrelated fragments; answer keys were merged without resolving numbering.
+
+**Fix:** Reserve each question index for one group only; renumber advertisement blanks or split passages so blanks and `questions[]` entries line up.
+
+### Generic cloze fallback (“Answer question N”)
+
+**Symptom:** UI shows a meaningless stem like “Answer question 17.” though options look like sentence-completion fragments.
+
+**Cause:** Empty `prompt` / placeholder stem plus missing passage context for that blank.
+
+**Fix:** Fill `context` and use explicit prompts such as “Choose the best phrase for blank (17).” when the formal stem text was never imported.
 
 ---
 
