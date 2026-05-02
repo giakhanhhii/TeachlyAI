@@ -20,6 +20,9 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       count: payload.count || "—",
       notes: notes || "—",
       slideTemplate: String(payload.style || ""),
+      structure: String(payload.structure || ""),
+      style: String(payload.style || ""),
+      ...(payload.presetId ? { presetId: payload.presetId } : {}),
     };
     return {
       handled: true,
@@ -47,6 +50,9 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       count: payload.count || "—",
       notes: notes || "—",
       slideTemplate: String(payload.style || ""),
+      structure: String(payload.structure || ""),
+      style: String(payload.style || ""),
+      ...(payload.presetId ? { presetId: payload.presetId } : {}),
     };
     return {
       handled: true,

@@ -3,6 +3,7 @@
  */
 import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
 import { findDirectQuizPreset } from "../data/directQuizPresets.js";
+import { findDirectSlidePreset } from "../data/directSlidePresets.js";
 
 /**
  * @param {number} min
@@ -194,6 +195,20 @@ export function prepareFlashSessionData(data, meta) {
  * @param {Record<string, string>} meta */
 export function prepareSlideSessionData(data, meta) {
   const want = parseCountInRange(meta?.count, 1, 30, 10);
+  const directPreset = findDirectSlidePreset(meta);
+  if (directPreset) {
+    const presetDefault = Array.isArray(directPreset.defaultSlides) ? directPreset.defaultSlides : [];
+    const sourceSlides =
+      presetDefault.length && want <= presetDefault.length
+        ? presetDefault
+        : Array.isArray(directPreset.slides)
+          ? directPreset.slides
+          : [];
+    return {
+      title: `Slide bài giảng — ${directPreset.topic}`,
+      slides: sourceSlides.slice(0, want),
+    };
+  }
   const pool = Array.isArray(data?.slides) ? data.slides : [];
   const preferredEnding = pickPreferredEndingSlide(pool);
   const endingSlide = preferredEnding || pool[pool.length - 1] || null;
