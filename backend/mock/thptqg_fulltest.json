@@ -5782,7 +5782,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the option that best fits blank (6).",
           "options": [
             "makes up",
             "gives in",
@@ -5797,7 +5797,7 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7.",
+          "prompt": "Question 7. Choose the option that best fits blank (7).",
           "options": [
             "cancel",
             "maintain",
@@ -5812,7 +5812,7 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8.",
+          "prompt": "Question 8. Choose the option that best fits blank (8).",
           "options": [
             "number",
             "portion",
@@ -5827,7 +5827,7 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9.",
+          "prompt": "Question 9. Choose the option that best fits blank (9).",
           "options": [
             "goals",
             "successes",
