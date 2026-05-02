@@ -1,5 +1,5 @@
 # Full THPTQG mock — recurring defect patterns (AI repair checklist)
-
+Caution: MUST EDIT RIGHT INTO THE TEST DON"T WRITE ANY SCRIPT TO EDIT A BUNCH
 Use this as a **generic** log when auditing or fixing imports/heuristic-built entries in `backend/mock/thptqg_fulltest.json`. Patterns apply across mocks; verify against the answer key and original PDF/source when available.
 
 ---
