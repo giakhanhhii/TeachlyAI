@@ -4057,8 +4057,7 @@
                 "More and more young people are choosing to take a gap year between finishing school and starting university. Alternatively, they may decide to take a gap year between graduating from university and starting a career, feeling the need for some time out before joining the rat race. Most students see the time as an opportunity to travel.",
                 "The idea of travelling to as many foreign places as possible appeals greatly. A large percentage of gap-year students have wealthy parents who can easily subsidize their travel. [[u]]Others have to save up before they go, or look for some form of employment while travelling.[[/u]]",
                 "For example, they may work on local farms or in local hotels. By doing so, they not only earn some money, but they are likely to meet local people and acquire some understanding of their culture. There are some students who choose to work for the whole of their gap year.",
-                "A number may decide to get work experience, either at home or abroad, in an area which they hope to make their career, such as medicine or computers. A large proportion of students are now choosing to work with a charity which arranges voluntary work in various parts of the world. The projects provide hands-on experience of a very varied nature, from teaching to helping build roads or dams.",
-                "The gap year is not just an adventure. Young people can benefit greatly from encountering new and varied experiences and from communication with a wide range of people. Perhaps most importantly, gap-year students have to learn to stand on their own two feet."
+                "A number may decide to get work experience, either at home or abroad, in an area which they hope to make their career, such as medicine or computers. A large proportion of students are now choosing to work with a charity which arranges voluntary work in various parts of the world. The projects provide hands-on experience of a very varied nature, from teaching to helping build roads or dams. The gap year is not just an adventure. Young people can benefit greatly from encountering new and varied experiences and from communication with a wide range of people. Perhaps most importantly, gap-year students have to learn to stand on their own two feet."
               ],
               "questionNumbers": [
                 23,
@@ -4456,14 +4455,14 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The word **benefit** in **paragraph 1** is OPPOSITE in meaning to _.",
+          "prompt": "Question 24. The word **benefit** in **paragraph 4** is OPPOSITE in meaning to _.",
           "options": [
             "harm",
             "help",
             "promote",
             "profit"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 24. C"
         },
@@ -4478,7 +4477,7 @@
             "others'",
             "local people's"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 25. A"
         },
@@ -4493,7 +4492,7 @@
             "practical",
             "challenging"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 26. C"
         },
@@ -4508,7 +4507,7 @@
             "Gap-year students have an opportunity to travel and meet local people.",
             "Gap-year students earn money to support their family."
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 27. B"
         },
