@@ -985,8 +985,8 @@
             "which believed"
           ],
           "correctIndex": 0,
-          "explanation": "The fixed structure is \"is believed to have been used\"; \"believed\" is the past participle in a reduced passive pattern. Other options break verb form or clause structure.",
-          "explanationEvidence": "Structure: S + be believed to have + past participle."
+          "explanation": "Cấu trúc cố định là \"is believed to have been used\"; \"believed\" là quá khứ phân từ trong dạng bị động rút gọn.",
+          "explanationEvidence": "Cau 1: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q2",
@@ -1000,8 +1000,8 @@
             "to drinking"
           ],
           "correctIndex": 2,
-          "explanation": "After \"advisable\", we use infinitive with \"to\": \"it is advisable to drink...\". The other options misuse V-ing or bare infinitive.",
-          "explanationEvidence": "Pattern: it is advisable to do something."
+          "explanation": "Sau tính từ \"advisable\" ta dùng động từ nguyên mẫu có \"to\": \"it is advisable to drink...\".",
+          "explanationEvidence": "Cau 2: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q3",
@@ -1015,8 +1015,8 @@
             "difficulties"
           ],
           "correctIndex": 0,
-          "explanation": "The correct collocation is \"have difficulty in doing something\". So the noun \"difficulty\" is required after \"have\".",
-          "explanationEvidence": "Collocation: have difficulty in finding time."
+          "explanation": "Cụm đúng là \"have difficulty in doing something\" nên cần danh từ \"difficulty\" sau \"have\".",
+          "explanationEvidence": "Cau 3: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q4",
@@ -1030,8 +1030,8 @@
             "about"
           ],
           "correctIndex": 1,
-          "explanation": "The fixed pattern is \"there is no point in doing something\". Therefore \"in\" is the correct preposition.",
-          "explanationEvidence": "Pattern: there is no point in + V-ing."
+          "explanation": "Cấu trúc cố định là \"there is no point in doing something\" nên giới từ đúng là \"in\".",
+          "explanationEvidence": "Cau 4: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q5",
@@ -1045,8 +1045,8 @@
             "doing"
           ],
           "correctIndex": 2,
-          "explanation": "The natural collocation is \"have a positive attitude\". In this sentence it appears as \"having a positive attitude\".",
-          "explanationEvidence": "Natural collocation: have a positive attitude."
+          "explanation": "Collocation tự nhiên là \"have a positive attitude\"; trong câu này xuất hiện dạng \"having a positive attitude\".",
+          "explanationEvidence": "Cau 5: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q6",
@@ -1060,8 +1060,8 @@
             "this simple advice"
           ],
           "correctIndex": 3,
-          "explanation": "The correct word order is determiner + adjective + noun: \"this simple advice\".",
-          "explanationEvidence": "Word order: determiner + adjective + noun."
+          "explanation": "Thứ tự từ đúng là determiner + adjective + noun: \"this simple advice\".",
+          "explanationEvidence": "Cau 6: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q7",
@@ -1075,8 +1075,8 @@
             "begin with"
           ],
           "correctIndex": 0,
-          "explanation": "In this context, \"cope with stress\" is the correct and natural phrase.",
-          "explanationEvidence": "cope with stress, build resilience, and lead fulfilling lives."
+          "explanation": "Trong ngữ cảnh sức khỏe tinh thần, cụm đúng là \"cope with stress\".",
+          "explanationEvidence": "Cau 7: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q8",
@@ -1090,8 +1090,8 @@
             "proportions"
           ],
           "correctIndex": 1,
-          "explanation": "The standard collocation is \"reduce stress levels\".",
-          "explanationEvidence": "Common collocation: reduce stress levels."
+          "explanation": "Collocation chuẩn là \"reduce stress levels\".",
+          "explanationEvidence": "Cau 8: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q9",
@@ -1105,8 +1105,8 @@
             "Irrespective of"
           ],
           "correctIndex": 1,
-          "explanation": "The meaning needed is replacement: instead of spending too much screen time, go outside.",
-          "explanationEvidence": "Meaning needed: replacing one action with another."
+          "explanation": "Ý câu là thay vì dành quá nhiều thời gian cho màn hình thì nên ra ngoài, vì vậy \"Instead of\" là hợp lý nhất.",
+          "explanationEvidence": "Cau 9: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q10",
@@ -1120,8 +1120,8 @@
             "sayings"
           ],
           "correctIndex": 0,
-          "explanation": "The most natural phrase is \"meaningful conversations with family and friends\".",
-          "explanationEvidence": "Collocation: have meaningful conversations."
+          "explanation": "Cụm tự nhiên nhất là \"meaningful conversations with family and friends\".",
+          "explanationEvidence": "Cau 10: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q11",
@@ -1135,8 +1135,8 @@
             "the other"
           ],
           "correctIndex": 2,
-          "explanation": "After \"connect with\", the correct pronoun is \"others\" in a general sense.",
-          "explanationEvidence": "connect with others regularly."
+          "explanation": "Sau \"connect with\" khi nói chung, đại từ đúng là \"others\".",
+          "explanationEvidence": "Cau 11: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q12",
@@ -1150,8 +1150,8 @@
             "strengthen"
           ],
           "correctIndex": 3,
-          "explanation": "The intended meaning is to build a support network, so \"strengthen\" is the best fit.",
-          "explanationEvidence": "Meaning: build and strengthen your support network."
+          "explanation": "Ngữ nghĩa cần là củng cố mạng lưới hỗ trợ nên \"strengthen\" là phù hợp.",
+          "explanationEvidence": "Cau 12: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q13",
@@ -1165,8 +1165,8 @@
             "a-c-b"
           ],
           "correctIndex": 2,
-          "explanation": "The coherent order is c-b-a: question about location -> answer with details -> reaction.",
-          "explanationEvidence": "Natural flow: question about location -> answer with description -> reaction."
+          "explanation": "Trình tự hợp lý là c-b-a: hỏi vị trí -> trả lời mô tả -> phản hồi.",
+          "explanationEvidence": "Cau 13: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q14",
@@ -1180,8 +1180,8 @@
             "a-c-b-d"
           ],
           "correctIndex": 1,
-          "explanation": "The coherent order is d-a-b-c: preference question -> refusal/reason -> ability question -> self-assessment.",
-          "explanationEvidence": "Conversation logic: ask about preference -> refusal -> ask about ability -> self-assessment."
+          "explanation": "Trình tự đúng là d-a-b-c: hỏi mức độ muốn làm -> từ chối + lý do -> hỏi năng lực -> tự đánh giá.",
+          "explanationEvidence": "Cau 14: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q15",
@@ -1195,8 +1195,8 @@
             "a-c-d-b-e"
           ],
           "correctIndex": 1,
-          "explanation": "The best email flow is b-e-a-d-c: thanks -> personal update -> comment -> additional thanks -> closing suggestion.",
-          "explanationEvidence": "Email flow: thanks -> personal update -> comment on videos -> additional thanks -> closing suggestion."
+          "explanation": "Mạch email hợp lý là b-e-a-d-c: cảm ơn -> cập nhật cá nhân -> nhận xét -> cảm ơn bổ sung -> đề nghị kết.",
+          "explanationEvidence": "Cau 15: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q16",
@@ -1210,8 +1210,8 @@
             "e-b-a-c-d"
           ],
           "correctIndex": 1,
-          "explanation": "The most logical order is c-a-d-b-e: general statement -> example -> added detail -> contrast -> conclusion.",
-          "explanationEvidence": "General statement -> example -> further detail -> contrastive point -> conclusion."
+          "explanation": "Trình tự mạch lạc nhất là c-a-d-b-e: ý chung -> ví dụ -> bổ sung -> đối chiếu -> kết luận.",
+          "explanationEvidence": "Cau 16: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q17",
@@ -1225,8 +1225,8 @@
             "b-a-e-c-d"
           ],
           "correctIndex": 1,
-          "explanation": "The best sequence is d-b-e-a-c: claim -> mechanism -> example -> result -> conclusion.",
-          "explanationEvidence": "Main idea -> explanation -> example -> result -> conclusion."
+          "explanation": "Trình tự đúng là d-b-e-a-c: luận điểm -> cơ chế -> ví dụ -> kết quả -> kết luận.",
+          "explanationEvidence": "Cau 17: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q18",
@@ -1240,8 +1240,8 @@
             "which was designed to enhance social communication"
           ],
           "correctIndex": 1,
-          "explanation": "Option B best matches the personified portrayal of Apollo and fits the sentence naturally.",
-          "explanationEvidence": "The passage personifies Apollo with she/her and presents it as a social actor."
+          "explanation": "Phương án B hợp nhất với cách đoạn văn nhân hóa Apollo (she/her) và khớp ngữ nghĩa của câu.",
+          "explanationEvidence": "Cau 18: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q19",
@@ -1255,8 +1255,8 @@
             "whose members specialized in AI and human interaction"
           ],
           "correctIndex": 0,
-          "explanation": "Option A is grammatically complete and links directly to the next sentence about collaboration goals.",
-          "explanationEvidence": "Link with next sentence: This collaboration aimed to create a robot..."
+          "explanation": "Phương án A vừa đúng ngữ pháp vừa nối chặt với câu sau về mục tiêu hợp tác.",
+          "explanationEvidence": "Cau 19: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q20",
@@ -1270,8 +1270,8 @@
             "reflecting the aesthetics of modern robotics and human likeness"
           ],
           "correctIndex": 3,
-          "explanation": "Option D best continues \"design is sleek and modern\" and leads into human-like facial expressions.",
-          "explanationEvidence": "Context focus: sleek, modern, human-like appearance."
+          "explanation": "Phương án D nối tốt nhất với \"design is sleek and modern\" và dẫn vào ý giống người ở câu sau.",
+          "explanationEvidence": "Cau 20: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q21",
@@ -1285,8 +1285,8 @@
             "is programmed to facilitate discussions on various topics"
           ],
           "correctIndex": 2,
-          "explanation": "Option C links strongest with the next line about meaningful conversations and adaptive responses.",
-          "explanationEvidence": "understands context and nuance -> meaningful conversations and adaptive responses."
+          "explanation": "Phương án C khớp nhất với vế sau về \"meaningful conversations\" và phản hồi theo ngữ cảnh.",
+          "explanationEvidence": "Cau 21: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q22",
@@ -1300,8 +1300,8 @@
             "they may change the landscape of communication in the future"
           ],
           "correctIndex": 3,
-          "explanation": "Option D best bridges to the next sentence about transforming communication and interaction.",
-          "explanationEvidence": "change the landscape of communication -> transform the way we interact."
+          "explanation": "Phương án D là cầu nối hợp lý nhất tới câu kết về việc thay đổi cách giao tiếp trong tương lai.",
+          "explanationEvidence": "Cau 22: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q23",
@@ -1315,8 +1315,8 @@
             "Getting a puppy"
           ],
           "correctIndex": 0,
-          "explanation": "The passage says he meditated, read about the collective unconscious, and got a puppy. He returned to stage once, but did not continue performing live regularly.",
-          "explanationEvidence": "He returned to the stage in 2016 once, then it was announced that he would not be performing live anymore."
+          "explanation": "Đoạn văn nói anh ấy thiền, đọc, nuôi chó, và có quay lại sân khấu một lần; nhưng anh không duy trì biểu diễn live thường xuyên.",
+          "explanationEvidence": "Cau 23: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q24",
@@ -1330,8 +1330,8 @@
             "ready to return to performing"
           ],
           "correctIndex": 1,
-          "explanation": "\"New-found stability\" means relatively more balanced than before, not fully recovered.",
-          "explanationEvidence": "Despite appearing to have new-found stability, he still struggled..."
+          "explanation": "\"New-found stability\" cho thấy anh ấy cân bằng hơn trước, không có nghĩa là khỏi hoàn toàn.",
+          "explanationEvidence": "Cau 24: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q25",
@@ -1345,8 +1345,8 @@
             "confront"
           ],
           "correctIndex": 2,
-          "explanation": "In context, \"suppress\" means to hold back or restrain.",
-          "explanationEvidence": "suppress = restrain or keep under control."
+          "explanation": "Trong ngữ cảnh này, \"suppress\" gần nghĩa nhất với \"hold back\" (kìm nén).",
+          "explanationEvidence": "Cau 25: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q26",
@@ -1360,8 +1360,8 @@
             "wanted to rush his meditation progress."
           ],
           "correctIndex": 3,
-          "explanation": "The phrase \"to reach enlightenment faster\" implies he wanted to speed up meditation progress.",
-          "explanationEvidence": "Key phrase: in an attempt to reach enlightenment faster."
+          "explanation": "Cụm \"to reach enlightenment faster\" cho thấy anh ấy muốn đẩy nhanh tiến trình thiền định.",
+          "explanationEvidence": "Cau 26: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q27",
@@ -1375,8 +1375,8 @@
             "He had lost his passion for performing."
           ],
           "correctIndex": 1,
-          "explanation": "The passage explicitly states he stopped live performance to focus on mental health.",
-          "explanationEvidence": "Avicii chose to not perform so that he could focus on bettering his mental health."
+          "explanation": "Bài viết nói trực tiếp anh ấy dừng biểu diễn live để tập trung cho sức khỏe tinh thần.",
+          "explanationEvidence": "Cau 27: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q28",
@@ -1390,8 +1390,8 @@
             "Paragraph 4"
           ],
           "correctIndex": 2,
-          "explanation": "His struggle with mental health is explicitly mentioned in paragraph 3.",
-          "explanationEvidence": "Paragraph 3 explicitly mentions his ongoing struggle with mental health issues."
+          "explanation": "Chi tiết về việc vẫn vật lộn tâm lý nằm ở paragraph 3.",
+          "explanationEvidence": "Cau 28: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q29",
@@ -1405,8 +1405,8 @@
             "Avicii returned to performing at multiple festivals."
           ],
           "correctIndex": 1,
-          "explanation": "The quote about people being \"a projection\" shows repeated doubt about his perception of reality.",
-          "explanationEvidence": "He questions whether people around him are just a projection in his mind."
+          "explanation": "Phát biểu về \"projection in my mind\" cho thấy anh ấy thường xuyên nghi ngờ nhận thức thực tại.",
+          "explanationEvidence": "Cau 29: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q30",
@@ -1420,8 +1420,8 @@
             "He lost interest in meditation and wellness practices."
           ],
           "correctIndex": 1,
-          "explanation": "After rehab he showed some improvement, but still faced persistent anxiety/depression-related issues.",
-          "explanationEvidence": "He seemed to have a new outlook, yet still struggled with anxiety, depression, and disassociation."
+          "explanation": "Sau rehab có dấu hiệu cải thiện, nhưng anh ấy vẫn đối mặt khó khăn tâm lý dai dẳng.",
+          "explanationEvidence": "Cau 30: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q31",
@@ -1435,8 +1435,8 @@
             "(IV)"
           ],
           "correctIndex": 2,
-          "explanation": "The inserted sentence fits at (III): shock -> decision to act -> concrete suggestion.",
-          "explanationEvidence": "Shock at others checking phones -> decision to act -> suggestion to stack gadgets."
+          "explanation": "Câu chèn hợp lý nhất ở (III): bất ngờ -> quyết định hành động -> đề nghị cụ thể.",
+          "explanationEvidence": "Cau 31: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q32",
@@ -1450,8 +1450,8 @@
             "the demand for connection"
           ],
           "correctIndex": 0,
-          "explanation": "\"Necessity for action\" is closest to \"requirement for change\".",
-          "explanationEvidence": "necessity = need or requirement."
+          "explanation": "\"The necessity for action\" gần nghĩa nhất với \"the requirement for change\".",
+          "explanationEvidence": "Cau 32: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q33",
@@ -1465,8 +1465,8 @@
             "box"
           ],
           "correctIndex": 1,
-          "explanation": "\"It\" refers to \"the phone\" in \"they are no longer tempted to use it\".",
-          "explanationEvidence": "The phone cannot be heard or seen... they are no longer tempted to use it."
+          "explanation": "Đại từ \"it\" quay lại \"the phone\" trong cụm \"tempted to use it\".",
+          "explanationEvidence": "Cau 33: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q34",
@@ -1480,8 +1480,8 @@
             "everyone seemed quiet by nature"
           ],
           "correctIndex": 2,
-          "explanation": "He was shocked because people were constantly checking their phones.",
-          "explanationEvidence": "He saw that the reason for this was that people were checking their phones."
+          "explanation": "Brian bị sốc vì mọi người đều dán mắt vào điện thoại.",
+          "explanationEvidence": "Cau 34: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q35",
@@ -1495,8 +1495,8 @@
             "Teenagers resist limits on device use but benefit from family interaction."
           ],
           "correctIndex": 0,
-          "explanation": "Paragraph 2 mainly argues for device boundaries (especially at meals) to improve family interaction.",
-          "explanationEvidence": "Key ideas: putting phones away at home, banning devices at meal times, exchanging opinions and anecdotes."
+          "explanation": "Đoạn 2 nhấn mạnh đặt giới hạn thiết bị (nhất là giờ ăn) để tăng tương tác gia đình.",
+          "explanationEvidence": "Cau 35: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q36",
@@ -1510,8 +1510,8 @@
             "prevent"
           ],
           "correctIndex": 0,
-          "explanation": "The opposite of \"ban\" is \"allow\".",
-          "explanationEvidence": "ban >< allow."
+          "explanation": "Từ trái nghĩa của \"ban\" là \"allow\".",
+          "explanationEvidence": "Cau 36: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q37",
@@ -1525,8 +1525,8 @@
             "Brian's idea is not new in terms of making people less dependent on technology."
           ],
           "correctIndex": 0,
-          "explanation": "The passage says some people put phones away at home to interact with family members, so A is true.",
-          "explanationEvidence": "Some people drop their smartphones into a box... which gives them the chance to interact with the people they live with."
+          "explanation": "Bài nói rõ một số người cất điện thoại khi về nhà để nói chuyện với người thân.",
+          "explanationEvidence": "Cau 37: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q38",
@@ -1540,8 +1540,8 @@
             "emphasizes"
           ],
           "correctIndex": 3,
-          "explanation": "In context, \"highlights\" means \"emphasizes\".",
-          "explanationEvidence": "highlights a major problem = emphasizes a major problem."
+          "explanation": "Trong ngữ cảnh này, \"highlights\" = \"emphasizes\".",
+          "explanationEvidence": "Cau 38: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q39",
@@ -1555,8 +1555,8 @@
             "Having devices in the bedroom is beneficial for sleep routines."
           ],
           "correctIndex": 0,
-          "explanation": "The sentence means removing devices from the bedroom helps separate wake time and sleep time.",
-          "explanationEvidence": "Technology out of the room helps separate waking time from sleep time."
+          "explanation": "Ý câu là bỏ thiết bị khỏi phòng ngủ giúp tách rõ thời gian thức và thời gian ngủ.",
+          "explanationEvidence": "Cau 39: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q40",
@@ -1570,8 +1570,8 @@
             "Families should embrace technology fully, as it provides more opportunities for communication and connection."
           ],
           "correctIndex": 2,
-          "explanation": "The passage balances technology benefits with harm from overuse, and argues for practical boundaries.",
-          "explanationEvidence": "The passage acknowledges benefits of technology but argues for limits during meals, at home, and before sleep."
+          "explanation": "Toàn bài cân bằng hai ý: công nghệ có lợi ích, nhưng cần giới hạn hợp lý để tránh tác động xấu lên đời sống gia đình.",
+          "explanationEvidence": "Cau 40: doi chieu ngu phap, ngu nghia va van canh doan van."
         }
       ]
     },
@@ -3954,7 +3954,7 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
+              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 1 to 6.",
               "context": [],
               "questionNumbers": [
                 1,
@@ -3968,7 +3968,7 @@
             {
               "id": "part-1-group-2",
               "title": "Câu 7",
-              "instruction": "",
+              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 7 to 10.",
               "context": [],
               "questionNumbers": [
                 7,
@@ -3988,8 +3988,8 @@
           "groups": [
             {
               "id": "part-2-group-2",
-              "title": "Câu 7",
-              "instruction": "",
+              "title": "Câu 11",
+              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 11 to 12.",
               "context": [],
               "questionNumbers": [
                 11,
@@ -4055,7 +4055,7 @@
               "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
               "context": [
                 "More and more young people are choosing to take a gap year between finishing school and starting university. Alternatively, they may decide to take a gap year between graduating from university and starting a career, feeling the need for some time out before joining the rat race. Most students see the time as an opportunity to travel.",
-                "The idea of travelling to as many foreign places as possible appeals greatly. A large percentage of gap-year students have wealthy parents who can easily subsidize their travel. Others have to save up before they go, or look for some form of employment while travelling.",
+                "The idea of travelling to as many foreign places as possible appeals greatly. A large percentage of gap-year students have wealthy parents who can easily subsidize their travel. [[u]]Others have to save up before they go, or look for some form of employment while travelling.[[/u]]",
                 "For example, they may work on local farms or in local hotels. By doing so, they not only earn some money, but they are likely to meet local people and acquire some understanding of their culture. There are some students who choose to work for the whole of their gap year.",
                 "A number may decide to get work experience, either at home or abroad, in an area which they hope to make their career, such as medicine or computers. A large proportion of students are now choosing to work with a charity which arranges voluntary work in various parts of the world. The projects provide hands-on experience of a very varied nature, from teaching to helping build roads or dams.",
                 "The gap year is not just an adventure. Young people can benefit greatly from encountering new and varied experiences and from communication with a wide range of people. Perhaps most importantly, gap-year students have to learn to stand on their own two feet."
@@ -4083,8 +4083,13 @@
             {
               "id": "part-4-group-6",
               "title": "Câu 31",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the questions from 31 to 40.",
+              "context": [
+                "[[u]]South Korea is developing next-generation military robots that will mimic the movements and capabilities of birds, snakes, marine creatures and even insects on the battlefields of the future.[[/u]] The move comes as the country seeks to modernize its armed forces while tackling manpower shortages caused by demographic changes.",
+                "The military has long required almost all men to complete national service, but draft evasion has become a growing issue in recent years. (I) Some young men try to avoid enlistment by obtaining fake medical diagnoses. (II) Others seek exemptions through fabricated documents or other dishonest means, which has triggered public criticism. (III) Authorities say these practices undermine fairness and place greater pressure on those who do serve. (IV)",
+                "In response, defense planners are investing in robotic systems for surveillance, reconnaissance, and support operations in dangerous terrain. Some prototypes are designed to crawl like snakes through narrow spaces, while others can fly over difficult areas or move efficiently in water. Analysts say these technologies could help soldiers gather intelligence more quickly and reduce human risk in hazardous missions, especially during border incidents and natural-disaster response.",
+                "Engineers are also working with local firms and research institutes to build compact \"biobots\" inspired by animal movement. These machines are being engineered to operate in environments that are difficult for traditional vehicles, and officials argue that such systems could transform future military strategy."
+              ],
               "questionNumbers": [
                 31,
                 32,
@@ -4106,7 +4111,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best option that completes blank (1) in the original item.",
           "options": [
             "searching",
             "seeking",
@@ -4121,7 +4126,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best option that completes blank (2) in the original item.",
           "options": [
             "At",
             "on",
@@ -4136,7 +4141,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best option that completes blank (3) in the original item.",
           "options": [
             "comprehensive training courses",
             "courses training comprehensive",
@@ -4151,7 +4156,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best option that completes blank (4) in the original item.",
           "options": [
             "which they needed",
             "needed",
@@ -4166,7 +4171,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best option that completes blank (5) in the original item.",
           "options": [
             "to travelling",
             "to travel",
@@ -4181,7 +4186,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best option that completes blank (6) in the original item.",
           "options": [
             "adventurous",
             "adventure",
@@ -4196,7 +4201,7 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7.",
+          "prompt": "Question 7. Choose the best option that completes blank (7) in the original item.",
           "options": [
             "conversation",
             "preparation",
@@ -4211,7 +4216,7 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8.",
+          "prompt": "Question 8. Choose the best option that completes blank (8) in the original item.",
           "options": [
             "set up",
             "put off",
@@ -4226,7 +4231,7 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9.",
+          "prompt": "Question 9. Choose the best option that completes blank (9) in the original item.",
           "options": [
             "much",
             "few",
@@ -4241,7 +4246,7 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10.",
+          "prompt": "Question 10. Choose the best option that completes blank (10) in the original item.",
           "options": [
             "In spite of",
             "In addition",
@@ -4256,7 +4261,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the best option that completes blank (11) in the original item.",
           "options": [
             "others",
             "other",
@@ -4271,7 +4276,7 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12.",
+          "prompt": "Question 12. Choose the best option that completes blank (12) in the original item.",
           "options": [
             "increased",
             "encouraged",
@@ -4406,7 +4411,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21.",
+          "prompt": "Question 21. Choose the best option that completes **blank (21)**.",
           "options": [
             "individual sports fosters a sense",
             "sports individual fosters a sense",
@@ -4421,7 +4426,7 @@
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22.",
+          "prompt": "Question 22. Choose the best option that completes **blank (22)**.",
           "options": [
             "it provides numerous benefits for both the body and mind",
             "it provides for both the body and mind numerous benefits",
@@ -4451,7 +4456,7 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The word “benefit” in paragraph 1 is OPPOSITE in meaning to _.",
+          "prompt": "Question 24. The word **benefit** in **paragraph 1** is OPPOSITE in meaning to _.",
           "options": [
             "harm",
             "help",
@@ -4466,7 +4471,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word “their” in paragraph 2 refers to _.",
+          "prompt": "Question 25. The word **their** in **paragraph 2** refers to _.",
           "options": [
             "wealthy parents'",
             "gap-year students'",
@@ -4481,7 +4486,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. The word hands-on in paragraph 3 could be best replaced by _.",
+          "prompt": "Question 26. The word **hands-on** in **paragraph 4** could be best replaced by _.",
           "options": [
             "detailed",
             "theoretical",
@@ -4496,7 +4501,7 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in the second paragraph? Others have to save up before they go, or look for some form of employment while travelling.",
+          "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in the **second paragraph**?",
           "options": [
             "Gap-year students receive practical training for their future careers.",
             "Gap-year students must do some jobs to earn money for their travel.",
@@ -4556,7 +4561,7 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31. Where in paragraph 2 does the following sentence best fit? Others have claimed to be suffering mental illness or have put on so much weight that they are above the maximum limit for recruits.",
+          "prompt": "Question 31. Where in **paragraph 2** does the following sentence best fit? Others have claimed to be suffering mental illness or have put on so much weight that they are above the maximum limit for recruits.",
           "options": [
             "(I)",
             "(II)",
@@ -4571,7 +4576,7 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32. The word engineered in the final paragraph can be best replaced by _.",
+          "prompt": "Question 32. The word **engineered** in the **final paragraph** can be best replaced by _.",
           "options": [
             "determined",
             "decided",
@@ -4586,7 +4591,7 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33. The word which in paragraph 2 refers to _.",
+          "prompt": "Question 33. The word **which** in **paragraph 2** refers to _.",
           "options": [
             "birth rate",
             "service",
@@ -4616,7 +4621,7 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35. Which of the following best summarizes paragraph 3?",
+          "prompt": "Question 35. Which of the following best summarizes **paragraph 3**?",
           "options": [
             "South Korea is developing the best military robots",
             "Military robots can assist in military operations and natural disasters.",
@@ -4631,7 +4636,7 @@
           "id": "q36",
           "number": 36,
           "partId": "part-4",
-          "prompt": "Question 36. The word constricted in paragraph 3 is OPPOSITE in meaning to _.",
+          "prompt": "Question 36. The word **constricted** in **paragraph 3** is OPPOSITE in meaning to _.",
           "options": [
             "narrow",
             "massive",
@@ -4646,7 +4651,7 @@
           "id": "q37",
           "number": 37,
           "partId": "part-4",
-          "prompt": "Question 37. Based on paragraph 3, which of the following is TRUE about the use of \"biobots\" in the future?",
+          "prompt": "Question 37. Based on **paragraph 3**, which of the following is TRUE about the use of **\"biobots\"** in the future?",
           "options": [
             "Only snake robots are useful in areas affected by natural disasters.",
             "Swimming robots must always be deployed along with flying ones.",
@@ -4661,7 +4666,7 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in the first paragraph? South Korea is developing next-generation military robots that will mimic the movements and capabilities of birds, snakes, marine creatures and even insects on the battlefields of the future.",
+          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in the **first paragraph**?",
           "options": [
             "Modern military robots are created by South Korea can imitate the actions and characteristics of animals for future battlefields.",
             "South Korea are created military robots which can imitate the actions and characteristics of animals for future battlefields.",
