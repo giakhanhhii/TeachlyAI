@@ -559,13 +559,15 @@ export function findDirectFlashPreset(meta = {}) {
   const presetId = normalizeText(meta?.presetId);
   const source = normalizeText(meta?.source || meta?.list);
   const basis = normalizeText(meta?.basis || meta?.back);
+  const notes = normalizeText(meta?.notes);
 
   return (
     DIRECT_FLASH_PRESETS.find((preset) => normalizeText(preset.id) === presetId) ||
     DIRECT_FLASH_PRESETS.find(
       (preset) =>
         normalizeText(preset.topic) === source &&
-        (!basis || normalizeText(preset.basis) === basis),
+        (!basis || normalizeText(preset.basis) === basis) &&
+        (!notes || normalizeText(preset.notes) === notes),
     ) ||
     null
   );

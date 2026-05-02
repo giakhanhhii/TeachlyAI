@@ -35,12 +35,19 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
 
   if (guided.kind === "flash" && guided.step === "await_topic_form" && cardType === "flash_form") {
     const src = payload.list || "(Teachly gợi ý theo ghi chú)";
-    const extra = [payload.back ? `Mặt sau: ${payload.back}` : "", payload.aiImage ? `Hình AI: ${payload.aiImage}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : ""]
+    const extra = [
+      payload.back ? `Mặt sau: ${payload.back}` : "",
+      payload.aiImage ? `Hình AI: ${payload.aiImage}` : "",
+      payload.notes ? `Ghi chú: ${payload.notes}` : "",
+    ]
       .filter(Boolean)
       .join(" | ");
     const meta = {
       source: src,
       count: String(payload.count || "20").trim() || "20",
+      basis: payload.back || "",
+      notes: payload.notes || "",
+      presetId: payload.presetId || "",
       extra: extra || "—",
     };
     return {

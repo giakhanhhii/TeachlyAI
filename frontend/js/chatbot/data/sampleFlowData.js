@@ -1,5 +1,6 @@
 import { DIRECT_QUIZ_AUTOFILL_SAMPLES } from "./directQuizPresets.js";
 import { DIRECT_SLIDE_AUTOFILL_SAMPLES } from "./directSlidePresets.js";
+import { DIRECT_FLASH_AUTOFILL_SAMPLES } from "./directFlashPresets.js";
 
 const SAMPLES_FULLSET = [
   { t: "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia (Guided)", l: "Khá", m: "Chuyên nghiệp (đa sắc)", s: "10", q: "20", f: "10", e: "Tập trung vào phần Đọc hiểu và Điền từ." },
@@ -20,20 +21,7 @@ const SAMPLES_SLIDE = DIRECT_SLIDE_AUTOFILL_SAMPLES.slice();
 
 const SAMPLES_QUIZ = DIRECT_QUIZ_AUTOFILL_SAMPLES.slice();
 
-const SAMPLES_FLASH = [
-  { l: "Unit 1: Generational differences", b: "Nghĩa + Phiên âm + Ví dụ", c: "20", n: "SGK Tiếng Anh 12." },
-  { l: "Essential Phrasal Verbs list (Set A)", b: "Vietnamese + Collocation", c: "30", n: "Tập trung các từ: look for, give up, break down..." },
-  { l: "Word Forms: Noun/Verb suffixes", b: "Suffix meaning + Example", c: "15", n: "Quy tắc -tion, -ment, -ize, -ify." },
-  { l: "Common English Idioms about Study", b: "Definition + Context", c: "12", n: "Ví dụ: 'Pass with flying colors', 'Hit the books'." },
-  { l: "Unit 3: Social interaction vocabulary", b: "Meaning + Part of speech", c: "20", n: "Từ vựng về giao tiếp và nghi thức xã giao." },
-  { l: "Irregular Verbs (Most common 50)", b: "V1 - V2 - V3 + Meaning", c: "50", n: "Bảng động từ bất quy tắc trích lọc." },
-  { l: "Prefixes for Opposites (un-, im-, in-, dis-)", b: "Prefix + Root word", c: "20", n: "Dạng bài: 'Clear' -> 'Unclear'." },
-  { l: "Unit 6: Animals and Habitats", b: "Species name + Habitat description", c: "15", n: "Nghĩa các từ: poach, habitat, extinct." },
-  { l: "Synonyms & Antonyms (IELTS 5.5 level)", b: "Word - Syn - Ant", c: "20", n: "Phục vụ bài tìm từ đồng nghĩa/trái nghĩa trong đề." },
-  { l: "Prepositions of Time & Place", b: "Usage rule + Sample", c: "25", n: "In, On, At toàn tập." },
-  { l: "Connecting words (Linking words)", b: "Function + Example", c: "15", n: "Therefore, However, Moreover, Otherwise." },
-  { l: "Vocabulary for Job Interviews (Lớp 12)", b: "Job title + Requirements", c: "15", n: "Unit 6-7 sách giáo khoa cũ/mới." },
-];
+const SAMPLES_FLASH = DIRECT_FLASH_AUTOFILL_SAMPLES.slice();
 
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i -= 1) {

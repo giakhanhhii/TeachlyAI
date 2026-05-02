@@ -3,6 +3,7 @@
  */
 import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
 import { findDirectQuizPreset } from "../data/directQuizPresets.js";
+import { findDirectFlashPreset } from "../data/directFlashPresets.js";
 import { findDirectSlidePreset } from "../data/directSlidePresets.js";
 
 /**
@@ -183,6 +184,23 @@ export function prepareFlashSessionData(data, meta) {
     } catch {
       // fall through to mock pool
     }
+  }
+
+  const directPreset = findDirectFlashPreset(meta);
+  if (directPreset) {
+    const want = parseCountInRange(meta?.count, 1, 40, 20);
+    const presetDefault = Array.isArray(directPreset.defaultCards) ? directPreset.defaultCards : [];
+    const sourceCards =
+      presetDefault.length && want <= presetDefault.length
+        ? presetDefault
+        : Array.isArray(directPreset.cards)
+          ? directPreset.cards
+          : [];
+    return {
+      ...data,
+      title: `Flashcard — ${directPreset.topic}`,
+      cards: sourceCards.slice(0, want),
+    };
   }
 
   const want = parseCountInRange(meta?.count, 1, 500, 20);
