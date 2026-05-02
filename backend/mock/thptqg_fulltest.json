@@ -5954,9 +5954,9 @@
             "AI can be used responsibly to benefit society.",
             "AI abuse only affects specific industries."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 17. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 17. B | paragraph 3 privacy"
         },
         {
           "id": "q18",
@@ -5969,9 +5969,9 @@
             "encourage",
             "restrict"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 18. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 18. D | opposite empower"
         },
         {
           "id": "q19",
