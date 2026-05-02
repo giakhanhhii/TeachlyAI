@@ -115,6 +115,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       : prepareFlashSessionData(await fetchMockResource("flashcard"), meta);
   const titleText = data.title || "Flashcard";
   const cards = normalizeFlashCards(data.cards);
+  const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
   const totalCards = cards.length;
   const cardKeys = buildCardKeys(cards);
   const cardKeySet = new Set(cardKeys);
@@ -283,7 +284,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     if (typeof opts.onStateChange !== "function") return;
     opts.onStateChange({
       kind: "flash",
-      meta: { ...meta },
+      meta: { ...sessionMeta },
       title: titleText,
       total: cards.length,
       index,

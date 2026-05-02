@@ -18,6 +18,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
   const questions = Array.isArray(data.questions) ? data.questions : [];
+  const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
@@ -64,7 +65,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     if (typeof opts.onStateChange !== "function") return;
     opts.onStateChange({
       kind: "quiz",
-      meta: { ...meta },
+      meta: { ...sessionMeta },
       title: titleText,
       total: questions.length,
       index,

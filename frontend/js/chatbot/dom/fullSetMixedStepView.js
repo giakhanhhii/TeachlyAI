@@ -18,6 +18,22 @@ function formatFlashMultilineHtml(s) {
   return escapeHtml(String(s || "")).replace(/\n/g, "<br>");
 }
 
+function formatFlashFrontHtml(s) {
+  const lines = String(s || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length >= 2 && /^từ gốc:/i.test(lines[0])) {
+    const head = `<div class="flash-front-origin">${escapeHtml(lines[0])}</div>`;
+    const body = `<div class="flash-front-main">${lines
+      .slice(1)
+      .map((line) => escapeHtml(line))
+      .join("<br>")}</div>`;
+    return `${head}${body}`;
+  }
+  return formatFlashMultilineHtml(s);
+}
+
 /**
  * @param {"slide"|"slide_deck"|"quiz"|"flash"} kind
  */
@@ -63,7 +79,7 @@ export function renderFlashStep(stage, card, opts = {}) {
   inner.className = "flash-card";
   inner.setAttribute("role", "button");
   inner.tabIndex = 0;
-  const frontTerm = formatFlashMultilineHtml(capitalizeFirst(card.front));
+  const frontTerm = formatFlashFrontHtml(capitalizeFirst(card.front));
   const backText = formatFlashMultilineHtml(capitalizeFirst(card.back));
   const phoneticBlock = card.phonetic ? `<div class="flash-phonetic">${escapeHtml(card.phonetic)}</div>` : "";
   const hintBlock = card.hint ? `<div class="flash-mini-hint">${escapeHtml(card.hint)}</div>` : "";
@@ -119,6 +135,21 @@ export function renderFlashStep(stage, card, opts = {}) {
   addBookmarkBtn(backFace);
   addSoundBtn(frontFace);
   addSoundBtn(backFace);
+  const frontOrigin = inner.querySelector(".flash-front-origin");
+  if (frontOrigin instanceof HTMLElement) {
+    frontOrigin.style.display = "block";
+    frontOrigin.style.fontSize = "0.5em";
+    frontOrigin.style.lineHeight = "1.35";
+    frontOrigin.style.fontWeight = "600";
+    frontOrigin.style.opacity = "0.55";
+    frontOrigin.style.marginBottom = "0.45em";
+    frontOrigin.style.letterSpacing = "0.02em";
+  }
+  const frontMain = inner.querySelector(".flash-front-main");
+  if (frontMain instanceof HTMLElement) {
+    frontMain.style.display = "block";
+    frontMain.style.lineHeight = "1.25";
+  }
 
   inner.addEventListener("click", () => inner.classList.toggle("flipped"));
   inner.addEventListener("keydown", (e) => {

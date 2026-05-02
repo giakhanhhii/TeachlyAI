@@ -94,6 +94,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const data = prepareSlideSessionData(raw, meta);
   const deckTitle = data.title || "Bộ slide";
   let slides = Array.isArray(data.slides) ? data.slides : [];
+  const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
@@ -565,7 +566,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     if (typeof opts.onStateChange !== "function") return;
     opts.onStateChange({
       kind: "slide",
-      meta: { ...meta },
+      meta: { ...sessionMeta },
       title: deckTitle,
       total: slides.length,
       index,
