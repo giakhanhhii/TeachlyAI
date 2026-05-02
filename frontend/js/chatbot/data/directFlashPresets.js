@@ -1,3 +1,5 @@
+import { EXTRA_RAW_FLASH_PRESETS } from "./directFlashExtraPresets.js";
+
 function normalizeText(value) {
   return String(value || "")
     .toLowerCase()
@@ -52,7 +54,7 @@ function buildPreset(raw) {
   };
 }
 
-const RAW_FLASH_PRESETS = [
+const BASE_RAW_FLASH_PRESETS = [
   {
     id: "flash-academic-vocabulary",
     topic: "Từ vựng học thuật thông dụng",
@@ -544,6 +546,8 @@ const RAW_FLASH_PRESETS = [
     ],
   },
 ];
+
+const RAW_FLASH_PRESETS = [...BASE_RAW_FLASH_PRESETS, ...EXTRA_RAW_FLASH_PRESETS];
 
 export const DIRECT_FLASH_PRESETS = RAW_FLASH_PRESETS.map(buildPreset);
 

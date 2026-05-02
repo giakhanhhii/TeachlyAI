@@ -674,16 +674,18 @@
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
 }
 
-.thptqg-test-btn:hover:not(:disabled),
-.thptqg-secondary-btn:hover,
-.thptqg-submit-btn:hover,
-.thptqg-part-btn:hover,
-.thptqg-result-tab:hover,
-.thptqg-chip-btn:hover,
-.thptqg-flag-btn:hover,
-.thptqg-question-badge:hover,
-.thptqg-map-btn:hover {
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .thptqg-test-btn:hover:not(:disabled),
+  .thptqg-secondary-btn:hover,
+  .thptqg-submit-btn:hover,
+  .thptqg-part-btn:hover,
+  .thptqg-result-tab:hover,
+  .thptqg-chip-btn:hover,
+  .thptqg-flag-btn:hover,
+  .thptqg-question-badge:hover,
+  .thptqg-map-btn:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .thptqg-test-btn {

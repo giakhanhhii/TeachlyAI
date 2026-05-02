@@ -894,8 +894,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
   function captureAttemptScrollState() {
     const activeTest = getActiveTest();
     if (view !== "attempt" || !activeTest) return null;
+    const sidebar = stage.querySelector(".thptqg-side-panel");
     return {
       bodyScrollTop: root.scrollTop,
+      sidebarScrollTop: sidebar instanceof HTMLElement ? sidebar.scrollTop : 0,
       passageScrollTops: Array.from(stage.querySelectorAll(".thptqg-passage-scroll")).map((el) =>
         el instanceof HTMLElement ? el.scrollTop : 0,
       ),
@@ -909,6 +911,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     if (!scrollState || typeof scrollState !== "object") return;
     if (Number.isFinite(Number(scrollState.bodyScrollTop))) {
       root.scrollTop = Math.max(0, Number(scrollState.bodyScrollTop));
+    }
+    const sidebar = stage.querySelector(".thptqg-side-panel");
+    if (sidebar instanceof HTMLElement && Number.isFinite(Number(scrollState.sidebarScrollTop))) {
+      sidebar.scrollTop = Math.max(0, Number(scrollState.sidebarScrollTop));
     }
     Array.from(stage.querySelectorAll(".thptqg-passage-scroll")).forEach((el, index) => {
       if (!(el instanceof HTMLElement)) return;
