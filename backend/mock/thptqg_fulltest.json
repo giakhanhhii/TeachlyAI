@@ -4014,15 +4014,18 @@
               "title": "Câu 18",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 18 to 22.",
               "context": [
-                "Regular participation in sports offers numerous advantages to individuals of all ages.",
-                "Firstly, it promotes physical fitness and overall health. (18) _, flexibility, and endurance. (19) _ and related health issues such as diabetes and heart disease.",
-                "Secondly, sports play a vital role in enhancing mental well-being. When individuals participate in sports, their bodies release endorphins, which are chemicals (20) _. Furthermore, being part of a team or engaging in (21) _ of camaraderie and self-confidence.",
-                "In summary, participation in sports is not just about physical activity; (22) _. It promotes physical fitness, enhances mental well-being, and teaches valuable life skills."
+                "Cristiano Ronaldo, one of the greatest football players of all time, (18)_____. Born on February 5, 1985, in Funchal, Madeira, Portugal, he showed exceptional talent from a young age. His journey began at Sporting Lisbon, where he honed his skills before moving to Manchester United in 2003. There, he developed into a formidable player, winning multiple Premier League titles and the coveted UEFA Champions League.",
+                "During his time at Manchester United, Ronaldo developed into a world-class player, winning three Premier League titles and the UEFA Champions League. He became well known for his incredible speed and powerful shots (19)_____. In 2009, he transferred to Real Madrid, where he broke numerous records, including becoming the club's all-time leading scorer. (20)_____.",
+                "Possessing remarkable athleticism and a keen sense of strategy, (21)_____. His training regimen, which includes intense workouts and a strict diet, ensures that he remains at peak performance. This dedication has allowed him to adapt his playing style over the years, maintaining his relevance in an ever-evolving sport. Additionally, Ronaldo's ability to lead his teammates has earned him respect both on and off the field.",
+                "Beyond his football career, Ronaldo is a philanthropist who uses his platform to give back to the community. (22)_____. His influence extends far beyond the pitch, making him a global icon and a role model for aspiring athletes. Ultimately, Cristiano Ronaldo's legacy is defined not only by his records but also by his commitment to making a positive impact in the world.",
+                "(Adapted from https://www.sport.org)"
               ],
               "questionNumbers": [
                 18,
                 19,
-                20
+                20,
+                21,
+                22
               ]
             }
           ]
@@ -4035,29 +4038,15 @@
           "questionEnd": 30,
           "groups": [
             {
-              "id": "part-3-group-4",
-              "title": "Câu 18",
-              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 18 to 22.",
-              "context": [
-                "Regular participation in sports offers numerous advantages to individuals of all ages.",
-                "Firstly, it promotes physical fitness and overall health. (18) _, flexibility, and endurance. (19) _ and related health issues such as diabetes and heart disease.",
-                "Secondly, sports play a vital role in enhancing mental well-being. When individuals participate in sports, their bodies release endorphins, which are chemicals (20) _. Furthermore, being part of a team or engaging in (21) _ of camaraderie and self-confidence.",
-                "In summary, participation in sports is not just about physical activity; (22) _. It promotes physical fitness, enhances mental well-being, and teaches valuable life skills."
-              ],
-              "questionNumbers": [
-                21,
-                22
-              ]
-            },
-            {
               "id": "part-3-group-5",
               "title": "Câu 23",
               "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
               "context": [
-                "More and more young people are choosing to take a gap year between finishing school and starting university. Alternatively, they may decide to take a gap year between graduating from university and starting a career, feeling the need for some time out before joining the rat race. Most students see the time as an opportunity to travel.",
-                "The idea of travelling to as many foreign places as possible appeals greatly. A large percentage of gap-year students have wealthy parents who can easily subsidize their travel. [[u]]Others have to save up before they go, or look for some form of employment while travelling.[[/u]]",
-                "For example, they may work on local farms or in local hotels. By doing so, they not only earn some money, but they are likely to meet local people and acquire some understanding of their culture. There are some students who choose to work for the whole of their gap year.",
-                "A number may decide to get work experience, either at home or abroad, in an area which they hope to make their career, such as medicine or computers. A large proportion of students are now choosing to work with a charity which arranges voluntary work in various parts of the world. The projects provide hands-on experience of a very varied nature, from teaching to helping build roads or dams. The gap year is not just an adventure. Young people can benefit greatly from encountering new and varied experiences and from communication with a wide range of people. Perhaps most importantly, gap-year students have to learn to stand on their own two feet."
+                "Vietnamese cultural identity is a rich and intricate tapestry that reflects the nation's long and storied history. Rooted in over a thousand years of civilization, Vietnam's cultural identity is a fusion of **indigenous** traditions and external influences, shaped by its geographical location and historical interactions.",
+                "First and foremost, at the heart of Vietnamese culture is a deep **reverence** for family and community. Confucian values emphasizing respect for elders, filial piety, and social harmony have played a pivotal role in shaping Vietnamese society. These values are reflected in the close-knit family structures, hierarchical relationships, and communal rituals that are integral to daily life.",
+                "Secondly, Vietnamese cuisine is celebrated worldwide for its exquisite flavors and diversity. With its emphasis on fresh ingredients, fragrant herbs, and balanced flavors, Vietnamese food tells a story of the country's agricultural heritage and regional variations. Iconic dishes like pho, banh mi, and spring rolls have become global favorites, representing the culinary artistry deeply ingrained in Vietnamese culture. Also, Vietnam's artistic expressions are equally captivating. Traditional art forms like water puppetry, silk painting, and folk music continue to thrive alongside contemporary artistic movements. [[u]]**Ao dai, a graceful traditional dress, exemplifies the fusion of elegance and modesty in Vietnamese fashion, symbolizing cultural pride and identity.**[[/u]]",
+                "Today, in the face of modernization and globalization, Vietnamese cultural identity remains resilient. While adapting to the challenges of the 21st century, the Vietnamese people continue to honor **their** traditions, celebrate their unique cultural expressions, and pass on their heritage to future generations, ensuring that their cultural identity remains vibrant and enduring.",
+                "(Adapted from Saigoneer)"
               ],
               "questionNumbers": [
                 23,
@@ -4492,7 +4481,7 @@
             "practical",
             "challenging"
           ],
-          "correctIndex": 3,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 26. C"
         },
@@ -4507,7 +4496,7 @@
             "Gap-year students have an opportunity to travel and meet local people.",
             "Gap-year students earn money to support their family."
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 27. B"
         },
@@ -4522,7 +4511,7 @@
             "None of the students choose to work for the whole of their gap year to get experience.",
             "Most students consider a gap year as a chance to travel."
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 28. C"
         },
@@ -4552,7 +4541,7 @@
             "Paragraph 3",
             "Paragraph 4"
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 30. B"
         },
@@ -4726,9 +4715,16 @@
           "groups": [
             {
               "id": "part-1-group-1",
-              "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "title": "GREEN ENERGY IN THE CITY",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+              "context": [
+                "The new visitor centre at the riverside park, (1) _, uses solar panels and recycled materials throughout. City planners hope the building will inspire residents to consider cleaner lifestyles.",
+                "To encourage uptake, the municipal budget includes grants (2) _ household installation of rooftop panels and heat pumps. Applicants must show that the equipment meets national efficiency standards.",
+                "Households may also switch tariffs and pick the (3) _ from their electricity supplier when contract renewal is due. Independent advisers publish comparisons so consumers can judge costs and carbon savings fairly.",
+                "Officials stress that even modest habits—such as shorter showers or fewer single-use plastics—can (4) _ a lasting difference to local emissions over time.",
+                "Separate funding was reserved (5) _ neighbourhood groups planting trees and restoring pocket parks. Partnerships with schools ensure younger residents join litter picks and recycling drives.",
+                "The mayor argues that every voluntary (6) _, however small, signals commitment to the city's net-zero roadmap and encourages others to follow suit."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -4796,8 +4792,8 @@
               "instruction": "Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
               "context": [
                 "In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.",
-                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_.",
-                "This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material. Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
+                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_. This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material.",
+                "Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
                 "Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_."
               ],
               "questionNumbers": [
@@ -4817,12 +4813,12 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 18",
+              "title": "NEW WAYS OF LEARNING",
               "instruction": "Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
               "context": [
                 "In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.",
-                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_.",
-                "This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material. Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
+                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_. This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material.",
+                "Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
                 "Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_."
               ],
               "questionNumbers": [
@@ -4832,16 +4828,13 @@
             },
             {
               "id": "part-3-group-5",
-              "title": "Câu 23",
+              "title": "GREEN LIVING",
               "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
-                "In an era marked by climate change and environmental degradation, adopting green living habits has become increasingly vital. Green living refers to a lifestyle that seeks to minimize one's ecological footprint through conscious choices in daily activities. This can include everything from reducing waste to conserving energy and using sustainable products.",
-                "More individuals recognize the importance of preserving our planet, and the movement toward greener practices continues to gain momentum. One of the most significant aspects of green living is its focus on sustainability. By choosing products that are eco-friendly, consumers can support businesses that prioritize environmental responsibility.",
-                "For instance, using reusable bags, bottles, and containers reduces plastic waste and promotes a circular economy. Furthermore, opting for locally sourced foods not only supports local farmers but also decreases the carbon emissions associated with transportation. When green living habits are adopted, they can lead to profound changes in our environment.",
-                "By reducing their energy consumption through the use of energy-efficient appliances, individuals help lower greenhouse gas emissions. Consequently, this contributes to cleaner air and mitigates the effects of climate change.",
-                "Moreover, by practicing water conservation methods, such as fixing leaks and using low-flow fixtures, households can significantly reduce water waste, promoting the sustainable use of this precious resource.",
-                "Therefore, educating individuals about green living habits is crucial for promoting a more sustainable future. Schools and community organizations can offer workshops and resources that highlight the benefits of eco-friendly practices.",
-                "Additionally, social media campaigns can raise awareness and encourage people to share their experiences with sustainable living. By empowering individuals to make informed choices, we can collectively work towards a healthier planet for generations to come."
+                "In an era marked by climate change and environmental degradation, adopting green living habits has become increasingly vital. Green living refers to a lifestyle that seeks to minimize one's ecological footprint through conscious choices in daily activities. This can include everything from reducing waste to conserving energy and using sustainable products. More individuals recognize the importance of preserving our planet, and the movement toward greener practices continues to gain momentum. One of the most significant aspects of green living is its focus on sustainability.",
+                "By choosing products that are eco-friendly, consumers can support businesses that prioritize environmental responsibility. For instance, using reusable bags, bottles, and containers reduces plastic waste and promotes a circular economy. Furthermore, opting for locally sourced foods not only supports local farmers but also decreases the carbon emissions associated with transportation. When green living habits are adopted, they can lead to profound changes in our environment.",
+                "By reducing their energy consumption through the use of energy-efficient appliances, individuals help lower greenhouse gas emissions. Consequently, this contributes to cleaner air and mitigates the effects of climate change. Moreover, by practicing water conservation methods, such as fixing leaks and using low-flow fixtures, households can significantly reduce water waste, promoting the sustainable use of this precious resource.",
+                "Therefore, educating individuals about green living habits is crucial for promoting a more sustainable future. Schools and community organizations can offer workshops and resources that highlight the benefits of eco-friendly practices. Additionally, social media campaigns can raise awareness and encourage people to share their experiences with sustainable living. By empowering individuals to make informed choices, we can collectively work towards a healthier planet for generations to come."
               ],
               "questionNumbers": [
                 23,
@@ -4865,15 +4858,13 @@
           "groups": [
             {
               "id": "part-4-group-6",
-              "title": "Câu 31",
+              "title": "THE CONSUMER ELECTRONICS SHOW",
               "instruction": "Read the following passage about Consumer Electronics Show and mark the letter A, B, C, D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
                 "The Consumer Electronics Show in Las Vegas is always a spectacle of innovation. Imagine walking into the convention halls and being greeted by the next generation of artificial intelligence not just as digital assistants, but as deeply integrated companions that anticipate our needs in ways we've only dreamed of. AI could be woven into every fabric of our daily lives, from personalized health monitoring to enhancing our creative endeavors.",
                 "Virtual and augmented reality have been making leaps and bounds, and by 2025, we might finally see the lines between the digital and physical worlds blur in profoundly immersive ways. Envision slipping on a pair of sleek AR glasses and instantly transforming your surroundings into a customized workspace or an interactive learning environment. This could make remote interactions feel as natural as face-to-face conversations.",
-                "(I) Sustainability is another trend that's been gaining momentum. (II) Tech companies are increasingly conscious of their environmental footprint, and at CES 2025, I wouldn't be surprised to see a plethora of eco-friendly gadgets. (III) Imagine homes equipped with smart systems that optimize energy use, reducing waste and promoting a greener lifestyle without sacrificing comfort or convenience. (IV) The Internet of Things (IoT) is likely to become even more interconnected and intuitive. Smart homes could evolve into empathetic environments that adjust lighting, temperature, and ambiance based on our moods or health metrics. Perhaps we'll see refrigerators that not only keep track of groceries but also suggest recipes to reduce food waste, or closets that recommend outfits based on the weather forecast and your calendar. Transportation technology is on the cusp of a revolution. Electric vehicles are just the beginning. By 2025, CES might showcase advancements in autonomous driving systems becoming mainstream, or even personal air transportation like flying cars or drones. It's thrilling to think about commuting not just on roads but through the skies, potentially reshaping urban planning and our daily lives. Biotechnology could also take center stage. Wearables may transition from fitness trackers to health guardians, capable of monitoring municipal signs with medical-grade accuracy, predicting health issues before they arise, and seamlessly communicating with healthcare providers. This integration of tech and wellness could empower us to lead healthier, more informed lives. While these are educated speculations based on current trends, the magic of CES lies in its ability to introduce the unexpected innovations that challenge our perceptions and expand the boundaries of what's possible. The 2025 show is bound to unveil something that will make us all stop and marvel.",
-                "",
-                "",
-                ""
+                "(I) Sustainability is another trend that's been gaining momentum. (II) Tech companies are increasingly conscious of their environmental footprint, and at CES 2025, I wouldn't be surprised to see a plethora of eco-friendly gadgets. (III) Imagine homes equipped with smart systems that optimize energy use, reducing waste and promoting a greener lifestyle without sacrificing comfort or convenience. (IV) The Internet of Things (IoT) is likely to become even more interconnected and intuitive. Smart homes could evolve into empathetic environments that adjust lighting, temperature, and ambiance based on our moods or health metrics. Perhaps we'll see refrigerators that not only keep track of groceries but also suggest recipes to reduce food waste, or closets that recommend outfits based on the weather forecast and your calendar.",
+                "Transportation technology is on the cusp of a revolution. Electric vehicles are just the beginning. By 2025, CES might showcase advancements in autonomous driving systems becoming mainstream, or even personal air transportation like flying cars or drones. It's thrilling to think about commuting not just on roads but through the skies, potentially reshaping urban planning and our daily lives. Biotechnology could also take center stage. Wearables may transition from fitness trackers to health guardians, capable of monitoring vital signs with medical-grade accuracy, predicting health issues before they arise, and seamlessly communicating with healthcare providers. This integration of tech and wellness could empower us to lead healthier, more informed lives. While these are educated speculations based on current trends, the magic of CES lies in its ability to introduce the unexpected innovations that challenge our perceptions and expand the boundaries of what's possible. The 2025 show is bound to unveil something that will make us all stop and marvel."
               ],
               "questionNumbers": [
                 31,
@@ -4896,7 +4887,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best word or phrase that fills blank (1).",
           "options": [
             "which designed",
             "designing",
@@ -4911,7 +4902,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best word or phrase that fills blank (2).",
           "options": [
             "to promote",
             "promoted",
@@ -4926,14 +4917,14 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best word or phrase that fills blank (3).",
           "options": [
             "green energy option",
             "green option energy",
             "energy green option",
             "option green energy"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
           "explanationEvidence": "66_Full. md#pair-13 -> 3. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
         },
@@ -4941,7 +4932,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best word or phrase that fills blank (4).",
           "options": [
             "do",
             "take",
@@ -4956,7 +4947,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best word or phrase that fills blank (5).",
           "options": [
             "into",
             "for",
@@ -4971,7 +4962,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best word or phrase that fills blank (6).",
           "options": [
             "act",
             "action",
