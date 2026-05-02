@@ -19,6 +19,7 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
       topic,
       count: payload.count || "—",
       notes: notes || "—",
+      ...(payload.presetId ? { presetId: payload.presetId } : {}),
     };
     return {
       handled: true,
@@ -42,6 +43,10 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
       topic,
       count: payload.count || "—",
       notes: notes || "—",
+      ...(payload.kind ? { kind: payload.kind } : {}),
+      ...(payload.source ? { source: payload.source } : {}),
+      ...(payload.difficulty ? { difficulty: payload.difficulty } : {}),
+      ...(payload.presetId ? { presetId: payload.presetId } : {}),
     };
     return {
       handled: true,

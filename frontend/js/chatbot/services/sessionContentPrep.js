@@ -2,6 +2,7 @@
  * Chuẩn hóa pool mock: xáo trộn, loại trùng theo khóa, cắt đúng số lượng phiên.
  */
 import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
+import { findDirectQuizPreset } from "../data/directQuizPresets.js";
 
 /**
  * @param {number} min
@@ -134,6 +135,13 @@ function pickPreferredEndingSlide(pool) {
  * @param {Record<string, string>} meta */
 export function prepareQuizSessionData(data, meta) {
   const want = parseCountInRange(meta?.count, 1, 500, 10);
+  const directPreset = findDirectQuizPreset(meta);
+  if (directPreset) {
+    return {
+      title: `Quiz THPTQG 2026 — ${directPreset.source}`,
+      questions: directPreset.questions.slice(0, want),
+    };
+  }
   const pool = Array.isArray(data?.questions) ? data.questions : [];
   const questions = pickUniqueShuffled(pool, quizDedupeKey, want);
   return { ...data, questions };

@@ -1,3 +1,5 @@
+import { DIRECT_QUIZ_AUTOFILL_SAMPLES } from "./directQuizPresets.js";
+
 const SAMPLES_FULLSET = [
   { t: "Ôn tập tổng hợp Tiếng Anh THPT Quốc gia (Guided)", l: "Khá", m: "Chuyên nghiệp (đa sắc)", s: "10", q: "20", f: "10", e: "Tập trung vào phần Đọc hiểu và Điền từ." },
   { t: "Chuyên đề Từ vựng Unit 1-5 (Tiếng Anh 12)", l: "Cơ bản", m: "Tối giản (Học thuật)", s: "8", q: "15", f: "20", e: "Ôn tập từ vựng trọng tâm sách giáo khoa." },
@@ -28,20 +30,7 @@ const SAMPLES_SLIDE = [
   { t: "Inversion (Đảo ngữ) - Chuyên đề nâng cao", c: "15", s: "Never/Hardly -> Only/Not until -> Should/Were/Had", y: "Vũ trụ tối (Huyền bí)", n: "Dành cho nhóm học sinh giỏi ôn thi chuyên." },
 ];
 
-const SAMPLES_QUIZ = [
-  { s: "Trổng hợp Ngữ pháp THPT QG - Phần 1", k: "Grammar", q: "25", d: "Khá", n: "Bao gồm mạo từ, thì, và câu hỏi đuôi." },
-  { s: "Phrasal Verbs & Idioms thường gặp (Bộ 1)", k: "Vocabulary", q: "20", d: "Khó", n: "Các cụm từ chủ đề Family, School và Work." },
-  { s: "Phát âm đuôi -ed, -s và Ngữ âm cơ bản", k: "Reading", q: "30", d: "Cơ bản", n: "Phân biệt /s/, /z/, /iz/ và âm câm." },
-  { s: "Reading Passages: Education in the future", k: "Reading", q: "10", d: "Khá", n: "2 bài đọc điền từ và Đọc hiểu trả lời câu hỏi." },
-  { s: "Tìm lỗi sai (Error Identification) - Lớp 12", k: "Grammar", q: "20", d: "Khá", n: "Lỗi về thì, đại từ và từ vựng gây nhầm lẫn." },
-  { s: "Chuyên đề Câu đồng nghĩa (Sentence Transformation)", k: "Grammar", q: "15", d: "Khá", n: "Viết lại câu với so sánh, câu bị động, tường thuật." },
-  { s: "Từ vựng Unit 1: Home Life & Generations", k: "Vocabulary", q: "25", d: "Cơ bản", n: "Bám sát danh mục từ vựng SGK mới." },
-  { s: "Reading: Biodiversity & Environment", k: "Reading", q: "10", d: "Khó", n: "Nhiều từ vựng học thuật về môi trường." },
-  { s: "Stress (Trọng âm) từ 2 và 3 âm tiết", k: "Reading", q: "40", d: "Khá", n: "Quy tắc trọng âm danh từ, động từ và đuôi -ion, -ic." },
-  { s: "Collocations: Get, Do, Make, Take", k: "Vocabulary", q: "20", d: "Khá", n: "Phân biệt Do homework vs Make a decision." },
-  { s: "Prepositions after Adjectives & Verbs", k: "Grammar", q: "20", d: "Cơ bản", n: "Các giới từ đi kèm popular adj/verb trong lớp 12." },
-  { s: "Mixed Quiz: Luyện đề tổng hợp số 01", k: "Reading", q: "50", d: "Khá", n: "Đề thi thử rút gọn bám sát form THPT QG." },
-];
+const SAMPLES_QUIZ = DIRECT_QUIZ_AUTOFILL_SAMPLES.slice();
 
 const SAMPLES_FLASH = [
   { l: "Unit 1: Generational differences", b: "Nghĩa + Phiên âm + Ví dụ", c: "20", n: "SGK Tiếng Anh 12." },

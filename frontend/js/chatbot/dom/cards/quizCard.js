@@ -50,6 +50,7 @@ export function createQuizFormCard(deps) {
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
   const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
+  let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.source === "string") srcText.value = prefill.source;
   if (typeof prefill.kind === "string") kind.value = prefill.kind;
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) qn.value = String(prefill.count);
@@ -61,6 +62,7 @@ export function createQuizFormCard(deps) {
 
   addAutofillBtn(root, () => {
     const item = SAMPLES_QUIZ[autofillCounters.quiz++ % SAMPLES_QUIZ.length];
+    presetId = String(item.id ?? "");
     srcText.value = String(item.s ?? "");
     kind.value = String(item.k ?? "");
     qn.value = String(toPositiveInt(item.q, 20));
@@ -110,6 +112,7 @@ export function createQuizFormCard(deps) {
       count: "20",
       difficulty: DEFAULT_DIFFICULTY,
       notes: "",
+      presetId: "",
     });
   });
 
@@ -145,6 +148,7 @@ export function createQuizFormCard(deps) {
         count: useCount,
         difficulty: lv,
         notes: notesValue,
+        presetId,
       });
       return;
     }
@@ -157,6 +161,7 @@ export function createQuizFormCard(deps) {
         count: useCount,
         difficulty: lv || DEFAULT_DIFFICULTY,
         notes: notesValue,
+        presetId,
       });
     });
   });
