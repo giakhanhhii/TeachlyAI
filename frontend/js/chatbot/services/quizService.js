@@ -16,6 +16,8 @@ export function insertInlineMcLineBreaks(s) {
   let t = String(s);
   t = t.replace(/([.:;?!])\s+(?:-\s+)?([A-Fa-f])\.\s/g, "$1\n$2. ");
   t = t.replace(/\s+(?=[B-Fb-f]\.\s)/g, "\n");
+  // THPT-style reordering stems: "a - … b - … c - …" (letter, space, hyphen — not "a.")
+  t = t.replace(/\s+(?=[a-e]\s-\s)/gi, "\n");
   return t;
 }
 

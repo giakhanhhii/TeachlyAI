@@ -3955,7 +3955,13 @@
               "id": "part-1-group-1",
               "title": "Câu 1",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 1 to 6.",
-              "context": [],
+              "context": [
+                "DISCOVER NEW TRAVEL BUDDIES WITH TRAVELMATE",
+                "\"Who will you explore your next destination with? Will they share the same (1)_____ for adventure, or will they prefer a more relaxing trip?\" If you often wonder (2)_____ your travel companions before your next vacation, we have exciting news for you! TravelMate, a (3)_____, allows you to select your future travel buddies before your trip.",
+                "This service is designed to give you a more enjoyable and personalized experience. All you need to do is share your travel preferences with the platform, and you'll be matched with others (4)_____ similar tastes. Whether you're looking to (5)_____ new friends or reconnect with previous ones, TravelMate makes it easy.",
+                "If you're seeking adventure or simply want (6)_____ a relaxing getaway, there's a perfect match waiting for you!",
+                "(Adapted from Global Travel)"
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -3969,7 +3975,12 @@
               "id": "part-1-group-2",
               "title": "Câu 7",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 7 to 10.",
-              "context": [],
+              "context": [
+                "Sustainable Living: Every Action Matters! Adopting sustainable practices in our daily lives can have a significant impact on the environment. Here are (7)_____ insights to help you make a difference!",
+                "Statistics to Consider: Each year, billions of plastic items are discarded, a large portion of our waste. This not only fills landfills but also (8)_____ aquatic ecosystems, harming marine wildlife.",
+                "Action Steps You Can Take: Start by minimizing your consumption. For example, (9)_____ reusable cutlery and plates instead of disposable ones. If you have items that are still functional but no longer needed, repurpose them through local swap events or community programs (10)_____ discarding them.",
+                "(Adapted from Green Living Initiatives)"
+              ],
               "questionNumbers": [
                 7,
                 8,
@@ -3990,7 +4001,10 @@
               "id": "part-2-group-2",
               "title": "Câu 11",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the word/phrase that best fits each blank from 11 to 12.",
-              "context": [],
+              "context": [
+                "When shopping, (11)_____ brands that use sustainable materials, helping reduce your carbon footprint. Lastly, (12)_____ waste properly by separating recyclables from general waste, aiding the recycling process.",
+                "(Adapted from Green Living Initiatives)"
+              ],
               "questionNumbers": [
                 11,
                 12
@@ -4014,15 +4028,18 @@
               "title": "Câu 18",
               "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 18 to 22.",
               "context": [
-                "Regular participation in sports offers numerous advantages to individuals of all ages.",
-                "Firstly, it promotes physical fitness and overall health. (18) _, flexibility, and endurance. (19) _ and related health issues such as diabetes and heart disease.",
-                "Secondly, sports play a vital role in enhancing mental well-being. When individuals participate in sports, their bodies release endorphins, which are chemicals (20) _. Furthermore, being part of a team or engaging in (21) _ of camaraderie and self-confidence.",
-                "In summary, participation in sports is not just about physical activity; (22) _. It promotes physical fitness, enhances mental well-being, and teaches valuable life skills."
+                "Cristiano Ronaldo, one of the greatest football players of all time, (18)_____. Born on February 5, 1985, in Funchal, Madeira, Portugal, he showed exceptional talent from a young age. His journey began at Sporting Lisbon, where he honed his skills before moving to Manchester United in 2003. There, he developed into a formidable player, winning multiple Premier League titles and the coveted UEFA Champions League.",
+                "During his time at Manchester United, Ronaldo developed into a world-class player, winning three Premier League titles and the UEFA Champions League. He became well known for his incredible speed and powerful shots (19)_____. In 2009, he transferred to Real Madrid, where he broke numerous records, including becoming the club's all-time leading scorer. (20)_____.",
+                "Possessing remarkable athleticism and a keen sense of strategy, (21)_____. His training regimen, which includes intense workouts and a strict diet, ensures that he remains at peak performance. This dedication has allowed him to adapt his playing style over the years, maintaining his relevance in an ever-evolving sport. Additionally, Ronaldo's ability to lead his teammates has earned him respect both on and off the field.",
+                "Beyond his football career, Ronaldo is a philanthropist who uses his platform to give back to the community. (22)_____. His influence extends far beyond the pitch, making him a global icon and a role model for aspiring athletes. Ultimately, Cristiano Ronaldo's legacy is defined not only by his records but also by his commitment to making a positive impact in the world.",
+                "(Adapted from https://www.sport.org)"
               ],
               "questionNumbers": [
                 18,
                 19,
-                20
+                20,
+                21,
+                22
               ]
             }
           ]
@@ -4035,30 +4052,15 @@
           "questionEnd": 30,
           "groups": [
             {
-              "id": "part-3-group-4",
-              "title": "Câu 18",
-              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 18 to 22.",
-              "context": [
-                "Regular participation in sports offers numerous advantages to individuals of all ages.",
-                "Firstly, it promotes physical fitness and overall health. (18) _, flexibility, and endurance. (19) _ and related health issues such as diabetes and heart disease.",
-                "Secondly, sports play a vital role in enhancing mental well-being. When individuals participate in sports, their bodies release endorphins, which are chemicals (20) _. Furthermore, being part of a team or engaging in (21) _ of camaraderie and self-confidence.",
-                "In summary, participation in sports is not just about physical activity; (22) _. It promotes physical fitness, enhances mental well-being, and teaches valuable life skills."
-              ],
-              "questionNumbers": [
-                21,
-                22
-              ]
-            },
-            {
               "id": "part-3-group-5",
               "title": "Câu 23",
               "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
               "context": [
-                "More and more young people are choosing to take a gap year between finishing school and starting university. Alternatively, they may decide to take a gap year between graduating from university and starting a career, feeling the need for some time out before joining the rat race. Most students see the time as an opportunity to travel.",
-                "The idea of travelling to as many foreign places as possible appeals greatly. A large percentage of gap-year students have wealthy parents who can easily subsidize their travel. [[u]]Others have to save up before they go, or look for some form of employment while travelling.[[/u]]",
-                "For example, they may work on local farms or in local hotels. By doing so, they not only earn some money, but they are likely to meet local people and acquire some understanding of their culture. There are some students who choose to work for the whole of their gap year.",
-                "A number may decide to get work experience, either at home or abroad, in an area which they hope to make their career, such as medicine or computers. A large proportion of students are now choosing to work with a charity which arranges voluntary work in various parts of the world. The projects provide hands-on experience of a very varied nature, from teaching to helping build roads or dams.",
-                "The gap year is not just an adventure. Young people can benefit greatly from encountering new and varied experiences and from communication with a wide range of people. Perhaps most importantly, gap-year students have to learn to stand on their own two feet."
+                "Vietnamese cultural identity is a rich and intricate tapestry that reflects the nation's long and storied history. Rooted in over a thousand years of civilization, Vietnam's cultural identity is a fusion of **indigenous** traditions and external influences, shaped by its geographical location and historical interactions.",
+                "First and foremost, at the heart of Vietnamese culture is a deep **reverence** for family and community. Confucian values emphasizing respect for elders, filial piety, and social harmony have played a pivotal role in shaping Vietnamese society. These values are reflected in the close-knit family structures, hierarchical relationships, and communal rituals that are integral to daily life.",
+                "Secondly, Vietnamese cuisine is celebrated worldwide for its exquisite flavors and diversity. With its emphasis on fresh ingredients, fragrant herbs, and balanced flavors, Vietnamese food tells a story of the country's agricultural heritage and regional variations. Iconic dishes like pho, banh mi, and spring rolls have become global favorites, representing the culinary artistry deeply ingrained in Vietnamese culture. Also, Vietnam's artistic expressions are equally captivating. Traditional art forms like water puppetry, silk painting, and folk music continue to thrive alongside contemporary artistic movements. [[u]]**Ao dai, a graceful traditional dress, exemplifies the fusion of elegance and modesty in Vietnamese fashion, symbolizing cultural pride and identity.**[[/u]]",
+                "Today, in the face of modernization and globalization, Vietnamese cultural identity remains resilient. While adapting to the challenges of the 21st century, the Vietnamese people continue to honor **their** traditions, celebrate their unique cultural expressions, and pass on their heritage to future generations, ensuring that their cultural identity remains vibrant and enduring.",
+                "(Adapted from Saigoneer)"
               ],
               "questionNumbers": [
                 23,
@@ -4085,10 +4087,12 @@
               "title": "Câu 31",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the questions from 31 to 40.",
               "context": [
-                "[[u]]South Korea is developing next-generation military robots that will mimic the movements and capabilities of birds, snakes, marine creatures and even insects on the battlefields of the future.[[/u]] The move comes as the country seeks to modernize its armed forces while tackling manpower shortages caused by demographic changes.",
-                "The military has long required almost all men to complete national service, but draft evasion has become a growing issue in recent years. (I) Some young men try to avoid enlistment by obtaining fake medical diagnoses. (II) Others seek exemptions through fabricated documents or other dishonest means, which has triggered public criticism. (III) Authorities say these practices undermine fairness and place greater pressure on those who do serve. (IV)",
-                "In response, defense planners are investing in robotic systems for surveillance, reconnaissance, and support operations in dangerous terrain. Some prototypes are designed to crawl like snakes through narrow spaces, while others can fly over difficult areas or move efficiently in water. Analysts say these technologies could help soldiers gather intelligence more quickly and reduce human risk in hazardous missions, especially during border incidents and natural-disaster response.",
-                "Engineers are also working with local firms and research institutes to build compact \"biobots\" inspired by animal movement. These machines are being engineered to operate in environments that are difficult for traditional vehicles, and officials argue that such systems could transform future military strategy."
+                "Keeping up with what is happening in the world is generally seen as an essential part of being a well-informed and educated citizen. Watching, listening to or reading the news can satisfy our curiosity, make us think, help us make choices and even avoid danger. However, people are increasingly wondering if staying up to date with what is going on is good for us.",
+                "The frequency, speed and way we access news has completely changed over the past few decades. Whereas previously most newspapers were published daily and TV and radio news broadcasts were **limited**, now we are constantly bombarded with news from all sides, and we have 24-hour news channels.",
+                "The content of news reports is almost always negative. **I** Throughout history, our survival has depended on noticing threats and avoiding danger, so the human brain is hard-wired to seek out information that is frightening or alarming. **II** It is about humans paying more attention to negative things because that kept us alive in the past and this is reflected in the news we consume. **III** In addition, because people now use smartphones to record events live, the news we see has become far more graphic and shocking. **IV**",
+                "Recent studies have shown that our news habits have disadvantages for our physical and emotional health. In one survey, over 50 percent of Americans reported that the news caused them stress and anxiety, often causing tiredness or poor sleep. Research by psychology expert Graham Davey has also proved that watching terrible or sad news on TV can worsen people's moods and make **them** worry more about their own lives. Exposure to this ever-increasing bad news can **take a toll on** our positivity and affect our health.",
+                "[[u]]While it is true that staying aware and informed is not a bad thing, we should not forget that we have a choice, not only about how much news we consume, but equally importantly about the kind of news we want to see.[[/u]]",
+                "(Adapted from English Workbook 12-English Discovery)"
               ],
               "questionNumbers": [
                 31,
@@ -4111,14 +4115,14 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1. Choose the best option that best fits blank (1).",
+          "prompt": "Question 1.",
           "options": [
-            "searching",
-            "seeking",
-            "exploring",
-            "creating"
+            "enthusiastically",
+            "enthusiast",
+            "enthusiasm",
+            "enthusiastic"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 1. A"
         },
@@ -4126,14 +4130,14 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2. Choose the best option that best fits blank (2).",
+          "prompt": "Question 2.",
           "options": [
-            "At",
-            "on",
-            "in",
+            "about",
+            "for",
+            "over",
             "with"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 2. D"
         },
@@ -4141,14 +4145,14 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3. Choose the best option that best fits blank (3).",
+          "prompt": "Question 3.",
           "options": [
-            "comprehensive training courses",
-            "courses training comprehensive",
-            "training courses comprehensive",
-            "courses comprehensive training"
+            "travel platform new",
+            "new travel platform",
+            "travel new platform",
+            "new platform travel"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 3. D"
         },
@@ -4156,12 +4160,12 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4. Choose the best option that best fits blank (4).",
+          "prompt": "Question 4.",
           "options": [
-            "which they needed",
-            "needed",
-            "need",
-            "needing"
+            "who has",
+            "had",
+            "to have",
+            "having"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4171,14 +4175,14 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5. Choose the best option that best fits blank (5).",
+          "prompt": "Question 5.",
           "options": [
-            "to travelling",
-            "to travel",
-            "travel",
-            "travelling"
+            "take",
+            "make",
+            "give",
+            "do"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 5. C"
         },
@@ -4186,12 +4190,12 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6. Choose the best option that best fits blank (6).",
+          "prompt": "Question 6.",
           "options": [
-            "adventurous",
-            "adventure",
-            "advent",
-            "adventurously"
+            "have",
+            "to having",
+            "to have",
+            "having"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4201,14 +4205,14 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7. Choose the best option that best fits blank (7).",
+          "prompt": "Question 7.",
           "options": [
-            "conversation",
-            "preparation",
-            "encouragement",
-            "accomplishment"
+            "another",
+            "others",
+            "each",
+            "some"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 7. A"
         },
@@ -4216,14 +4220,14 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8. Choose the best option that best fits blank (8).",
+          "prompt": "Question 8.",
           "options": [
-            "set up",
-            "put off",
-            "give up",
-            "take off"
+            "devastates",
+            "nourishes",
+            "conserves",
+            "enhances"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 8. C"
         },
@@ -4231,14 +4235,14 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9. Choose the best option that best fits blank (9).",
+          "prompt": "Question 9.",
           "options": [
-            "much",
-            "few",
-            "little",
-            "many"
+            "turn up",
+            "opt for",
+            "rely on",
+            "throw away"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 9. D"
         },
@@ -4246,14 +4250,14 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10. Choose the best option that best fits blank (10).",
+          "prompt": "Question 10.",
           "options": [
-            "In spite of",
-            "In addition",
-            "Instead of",
-            "In view of"
+            "because of",
+            "thanks to",
+            "according to",
+            "instead of"
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 10. B"
         },
@@ -4261,14 +4265,14 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11. Choose the best option that best fits blank (11).",
+          "prompt": "Question 11.",
           "options": [
-            "others",
-            "other",
-            "the others",
-            "another"
+            "inquire",
+            "seek",
+            "verify",
+            "demand"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 11. A"
         },
@@ -4276,14 +4280,14 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12. Choose the best option that best fits blank (12).",
+          "prompt": "Question 12.",
           "options": [
-            "increased",
-            "encouraged",
-            "supported",
-            "strengthened"
+            "manage",
+            "accumulate",
+            "distribute",
+            "utilize"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 12. D"
         },
@@ -4366,12 +4370,12 @@
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18. Choose the best option that best fits blank (18).",
+          "prompt": "Question 18.",
           "options": [
-            "Engaging in sports activities helps to develop strength",
-            "When engaging in sports activities helps to develop strength",
-            "When we engaging in sports activities helps to develop strength",
-            "If engaging in sports activities helps to develop strength"
+            "has made a significant impact on the sport",
+            "impacting significantly on the sport",
+            "whose significant impact on the sport",
+            "have a significant impact on the sport recognized"
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4381,12 +4385,12 @@
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19. Choose the best option that best fits blank (19).",
+          "prompt": "Question 19.",
           "options": [
-            "It additionally reduces the risk of obesity",
-            "In addition to, it reduces the risk of obesity",
-            "Additionally, it reduces the risk of obesity",
-            "It reduces the risk of obesity, additionally"
+            "gave a lot of fear to his opponent on the pitch",
+            "which made him a formidable opponent on the pitch",
+            "allowed him to become a formidable opponent on the pitch",
+            "of which the success in passing opponents and scoring"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4396,12 +4400,12 @@
           "id": "q20",
           "number": 20,
           "partId": "part-2",
-          "prompt": "Question 20. Choose the best option that best fits blank (20).",
+          "prompt": "Question 20.",
           "options": [
-            "they help to reduce stress and improve mood",
-            "helps to reduce stress and improve mood",
-            "help to reduce stress and improve mood",
-            "that help to reduce stress and improve mood"
+            "Young athletes have inspired Ronaldo to strengthen his relentless drive and work ethic",
+            "The relentless drive and work ethic of Ronaldo have forced many young fans to become footballers",
+            "Ronaldo's relentless drive and work ethic have inspired many young athletes who aspire to follow his footsteps",
+            "Aiming to encourage young athletes to become footballers, Ronaldo trained hard and shared his experiences with them"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4410,13 +4414,13 @@
         {
           "id": "q21",
           "number": 21,
-          "partId": "part-3",
-          "prompt": "Question 21. Choose the best option that completes **blank (21)**.",
+          "partId": "part-2",
+          "prompt": "Question 21.",
           "options": [
-            "individual sports fosters a sense",
-            "sports individual fosters a sense",
-            "individual sports a sense is fostered",
-            "individual sports foster a sense"
+            "The label of one of the all-time best players is attributed to Ronaldo",
+            "Experts consistently regard Ronaldo as one of the greatest players of all time",
+            "Achieving the title of the best player of all time is a simple feat for Ronaldo",
+            "Ronaldo consistently demonstrates why he is considered one of the best players of all time"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4425,15 +4429,15 @@
         {
           "id": "q22",
           "number": 22,
-          "partId": "part-3",
-          "prompt": "Question 22. Choose the best option that completes **blank (22)**.",
+          "partId": "part-2",
+          "prompt": "Question 22.",
           "options": [
-            "it provides numerous benefits for both the body and mind",
-            "it provides for both the body and mind numerous benefits",
-            "numerous benefits are provided for both the body and mind",
-            "both the body and mind are provided numerous benefits"
+            "Various charities would definitely struggle to support causes like children's hospitals and disaster relief efforts without Ronaldo's contributions",
+            "His millions of dollars serve as an aid to causes like children's hospitals and disaster relief efforts",
+            "Spending millions of dollars, various charities can support causes such as children's hospitals and disaster relief efforts on behalf of Ronaldo",
+            "He has donated millions of dollars to various charities, supporting causes such as children's hospitals and disaster relief efforts"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 22. C"
         },
@@ -4441,12 +4445,12 @@
           "id": "q23",
           "number": 23,
           "partId": "part-3",
-          "prompt": "Question 23. Which of the following is NOT mentioned as a field of career for gap-year students?",
+          "prompt": "Question 23. The word **indigenous** in paragraph 1 is **OPPOSITE** in meaning to _.",
           "options": [
-            "medicine",
-            "computers",
-            "teaching",
-            "farming"
+            "local",
+            "foreign",
+            "native",
+            "traditional"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4456,12 +4460,12 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The word **benefit** in **paragraph 1** is OPPOSITE in meaning to _.",
+          "prompt": "Question 24. Which of the following is NOT mentioned as Confucian values emphasizing respect for?",
           "options": [
-            "harm",
-            "help",
-            "promote",
-            "profit"
+            "filial piety",
+            "social harmony",
+            "individualism",
+            "elders"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4471,14 +4475,14 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word **their** in **paragraph 2** refers to _.",
+          "prompt": "Question 25. The word **reverence** in paragraph 2 could be best replaced by _.",
           "options": [
-            "wealthy parents'",
-            "gap-year students'",
-            "others'",
-            "local people's"
+            "disrespect",
+            "admiration",
+            "indifference",
+            "criticism"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 25. A"
         },
@@ -4486,14 +4490,14 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. The word **hands-on** in **paragraph 4** could be best replaced by _.",
+          "prompt": "Question 26. Which of the following best paraphrases the underlined sentence in paragraph 3?",
           "options": [
-            "detailed",
-            "theoretical",
-            "practical",
-            "challenging"
+            "The ao dai, known for its elegance and modesty, represents a blend of Vietnamese fashion that embodies cultural identity and pride.",
+            "As a traditional dress, the ao dai reflects the combination of sophistication and simplicity in Vietnamese fashion, representing the nation's cultural values.",
+            "The graceful ao dai, a traditional Vietnamese attire, signifies the blend of elegance and restraint, illustrating the pride and identity of Vietnamese culture.",
+            "Known as a traditional dress, the ao dai beautifully combines elegance with symbol of Vietnam's cultural identity and pride."
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 26. C"
         },
@@ -4501,12 +4505,12 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in the **second paragraph**?",
+          "prompt": "Question 27. The word **their** in paragraph 4 refers to _.",
           "options": [
-            "Gap-year students receive practical training for their future careers.",
-            "Gap-year students must do some jobs to earn money for their travel.",
-            "Gap-year students have an opportunity to travel and meet local people.",
-            "Gap-year students earn money to support their family."
+            "Vietnamese cuisine",
+            "Vietnamese people",
+            "Traditional art forms",
+            "Agricultural heritage"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4518,10 +4522,10 @@
           "partId": "part-3",
           "prompt": "Question 28. According to the passage, which of the following is TRUE?",
           "options": [
-            "The number of students taking a gap year between high school and university is falling.",
-            "Students can take a gap year only before starting university.",
-            "None of the students choose to work for the whole of their gap year to get experience.",
-            "Most students consider a gap year as a chance to travel."
+            "Vietnamese cultural identity is static and unchanging.",
+            "Modernization has completely erased Vietnamese traditions.",
+            "Vietnamese cuisine has gained international recognition.",
+            "Water puppetry is no longer practiced in Vietnam."
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4531,7 +4535,7 @@
           "id": "q29",
           "number": 29,
           "partId": "part-3",
-          "prompt": "Question 29. In which paragraph does the writer discuss the work experience of gap-year students?",
+          "prompt": "Question 29. In which paragraph does the writer mention a present concession relationship?",
           "options": [
             "Paragraph 1",
             "Paragraph 2",
@@ -4546,14 +4550,14 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30. In which paragraph does the writer mention the benefits of gap year trip?",
+          "prompt": "Question 30. In which paragraph does the writer state that Vietnamese cultural identity is influenced by both internal and external factors?",
           "options": [
             "Paragraph 1",
             "Paragraph 2",
             "Paragraph 3",
             "Paragraph 4"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 30. B"
         },
@@ -4561,14 +4565,14 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31. Where in **paragraph 2** does the following sentence best fit? Others have claimed to be suffering mental illness or have put on so much weight that they are above the maximum limit for recruits.",
+          "prompt": "Question 31. The word **limited** in paragraph 2 is **OPPOSITE** in meaning to _.",
           "options": [
-            "(I)",
-            "(II)",
-            "(III)",
-            "(IV)"
+            "infinite",
+            "restricted",
+            "reliable",
+            "harmonious"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 31. D"
         },
@@ -4576,14 +4580,14 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32. The word **engineered** in the **final paragraph** can be best replaced by _.",
+          "prompt": "Question 32. Where in paragraph 3 does the following sentence best fit? **There is a concept known as \"negativity bias\".**",
           "options": [
-            "determined",
-            "decided",
-            "designed",
-            "defined"
+            "I",
+            "II",
+            "III",
+            "IV"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 32. D"
         },
@@ -4591,14 +4595,14 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33. The word **which** in **paragraph 2** refers to _.",
+          "prompt": "Question 33. Which of the following best summarizes paragraph 3?",
           "options": [
-            "birth rate",
-            "service",
-            "technology",
-            "nation"
+            "The news focuses mostly on positive events, which helps people feel better.",
+            "Humans tend to pay more attention to negative news because it has helped us survive in the past.",
+            "News reports today are less shocking and more focused on personal stories.",
+            "The news today is about entertaining content rather than alarming or frightening events."
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 33. C"
         },
@@ -4606,14 +4610,14 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34. Which of the following is NOT mentioned as mimicking the movements and capabilities of military robots?",
+          "prompt": "Question 34. The word **them** in paragraph 4 refers to _.",
           "options": [
-            "birds",
-            "marine creatures",
-            "insects",
-            "rabbits"
+            "people",
+            "moods",
+            "news",
+            "lives"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 34. C"
         },
@@ -4621,14 +4625,14 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35. Which of the following best summarizes **paragraph 3**?",
+          "prompt": "Question 35. The phrase **take a toll on** in paragraph 4 could be best replaced by _.",
           "options": [
-            "South Korea is developing the best military robots",
-            "Military robots can assist in military operations and natural disasters.",
-            "Military robots are the most advanced artificial intelligence in the world",
-            "Robots are designed based on real creatures"
+            "pay attention to",
+            "cause harm to",
+            "bring benefits to",
+            "lend support to"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 35. A"
         },
@@ -4636,14 +4640,14 @@
           "id": "q36",
           "number": 36,
           "partId": "part-4",
-          "prompt": "Question 36. The word **constricted** in **paragraph 3** is OPPOSITE in meaning to _.",
+          "prompt": "Question 36. Which of the following is NOT mentioned as one of the effects that news can have on humans according to recent studies?",
           "options": [
-            "narrow",
-            "massive",
-            "tiny",
-            "shallow"
+            "worry",
+            "tiredness",
+            "sadness",
+            "poor sleep"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 36. B"
         },
@@ -4651,12 +4655,12 @@
           "id": "q37",
           "number": 37,
           "partId": "part-4",
-          "prompt": "Question 37. Based on **paragraph 3**, which of the following is TRUE about the use of **\"biobots\"** in the future?",
+          "prompt": "Question 37. Which of the following is TRUE according to the passage?",
           "options": [
-            "Only snake robots are useful in areas affected by natural disasters.",
-            "Swimming robots must always be deployed along with flying ones.",
-            "Birdlike androids will only assist in reconnaissance operations.",
-            "Small flying robots can be used to gather information about enemy forces."
+            "Watching negative news regularly has no real impact on people's mental or physical health.",
+            "We can control both the amount and type of news we consume, which helps reduce its harmful effects.",
+            "The news today focuses mainly on positive stories that make people feel less stressed and more relaxed.",
+            "News consumption has decreased because many people no longer find it relevant or interesting to keep up with."
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4666,14 +4670,14 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in the **first paragraph**?",
+          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 5?",
           "options": [
-            "Modern military robots are created by South Korea can imitate the actions and characteristics of animals for future battlefields.",
-            "South Korea are created military robots which can imitate the actions and characteristics of animals for future battlefields.",
-            "Modern military robots will battle with birds, snakes, marine creatures and even insects in South Korea battlefields.",
-            "The actions and characteristics of animals will mimic modern military robots of South Korea for future battlefields."
+            "We should stop watching the news entirely to avoid its harmful effects.",
+            "The news should be controlled by the government to limit negative impacts.",
+            "It is important to be mindful of both how much and what kind of news we consume.",
+            "It doesn't matter what kind of news we watch as long as we stay informed."
           ],
-          "correctIndex": 3,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 38. D"
         },
@@ -4681,14 +4685,14 @@
           "id": "q39",
           "number": 39,
           "partId": "part-4",
-          "prompt": "Question 39. What can be inferred from the passage?",
+          "prompt": "Question 39. Which of the following can be inferred from the passage?",
           "options": [
-            "Military robots have been widely used by the South Korean army in various missions.",
-            "Future \"biobots\" will only be based on flying and swimming creatures.",
-            "The South Korean army may collaborate with other technology companies in the country.",
-            "The majority of Korean men does not want to join the army because of religious reason."
+            "The rise of 24-hour news channels has led to a significant increase in news consumption.",
+            "People are generally more interested in positive news stories than negative ones.",
+            "Exposure to bad news has no noticeable impact on people's mental or physical health.",
+            "Modern technology has made it more difficult for people to avoid news altogether."
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 39. D"
         },
@@ -4698,12 +4702,12 @@
           "partId": "part-4",
           "prompt": "Question 40. Which of the following best summarizes the passage?",
           "options": [
-            "Measures taken by the South Korean army to increase the country's birth rate.",
-            "The development of animal-based robots for military purposes in South Korea.",
-            "New technology being used in rescue operations in areas affected by disasters.",
-            "Reasons why real animals are perfect models for military robots in Korea. -- END"
+            "People are generally unaffected by the news, and it has no significant impact on their emotional or physical well-being.",
+            "Watching the news can harm our well-being, and it's better to stop watching it altogether to protect our health.",
+            "Negative news contributes to stress and anxiety, but the problem lies in how it's presented, not the news itself.",
+            "Staying informed is important, but excessive negative news can harm our health, so we must choose carefully."
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 40. C"
         }
@@ -4727,9 +4731,16 @@
           "groups": [
             {
               "id": "part-1-group-1",
-              "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "title": "GREEN ENERGY IN THE CITY",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
+              "context": [
+                "The new visitor centre at the riverside park, (1) _, uses solar panels and recycled materials throughout. City planners hope the building will inspire residents to consider cleaner lifestyles.",
+                "To encourage uptake, the municipal budget includes grants (2) _ household installation of rooftop panels and heat pumps. Applicants must show that the equipment meets national efficiency standards.",
+                "Households may also switch tariffs and pick the (3) _ from their electricity supplier when contract renewal is due. Independent advisers publish comparisons so consumers can judge costs and carbon savings fairly.",
+                "Officials stress that even modest habits—such as shorter showers or fewer single-use plastics—can (4) _ a lasting difference to local emissions over time.",
+                "Separate funding was reserved (5) _ neighbourhood groups planting trees and restoring pocket parks. Partnerships with schools ensure younger residents join litter picks and recycling drives.",
+                "The mayor argues that every voluntary (6) _, however small, signals commitment to the city's net-zero roadmap and encourages others to follow suit."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -4797,8 +4808,8 @@
               "instruction": "Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
               "context": [
                 "In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.",
-                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_.",
-                "This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material. Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
+                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_. This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material.",
+                "Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
                 "Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_."
               ],
               "questionNumbers": [
@@ -4818,12 +4829,12 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 18",
+              "title": "NEW WAYS OF LEARNING",
               "instruction": "Read the following passage about new ways of learning and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks.",
               "context": [
                 "In recent years, the landscape of education has undergone a significant transformation, driven by technological advancements and innovative methodologies. Traditional classroom learning is no longer the only option. Varied and interactive methods that make studying more engaging and accessible (18)_.",
-                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_.",
-                "This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material. Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
+                "One prominent development is the rise of online platforms, which offer flexible and accessible learning opportunities. These platforms enable learners to engage with interactive content, participate in virtual discussions, and access resources from anywhere in the world. Another emerging trend is personalized learning, (19)_. This approach ensures that learners progress at their own pace, fostering a deeper understanding of the material.",
+                "Gamification has also gained traction, as it incorporates game-like elements such as rewards and challenges to make learning more engaging and motivating. (20)_. Collaborative learning has evolved as well, with tools like video conferencing and shared digital workspaces facilitating teamwork and communication, regardless of geographical barriers. (21)_.",
                 "Additionally, microlearning breaking down information into small, manageable chunks has proven effective for busy individuals seeking to acquire knowledge in short, focused sessions. These innovative methods not only enhance the learning experience but also equip individuals with the skills needed to thrive in a rapidly changing world. Making use of these new approaches, (22)_."
               ],
               "questionNumbers": [
@@ -4833,16 +4844,13 @@
             },
             {
               "id": "part-3-group-5",
-              "title": "Câu 23",
+              "title": "GREEN LIVING",
               "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
-                "In an era marked by climate change and environmental degradation, adopting green living habits has become increasingly vital. Green living refers to a lifestyle that seeks to minimize one's ecological footprint through conscious choices in daily activities. This can include everything from reducing waste to conserving energy and using sustainable products.",
-                "More individuals recognize the importance of preserving our planet, and the movement toward greener practices continues to gain momentum. One of the most significant aspects of green living is its focus on sustainability. By choosing products that are eco-friendly, consumers can support businesses that prioritize environmental responsibility.",
-                "For instance, using reusable bags, bottles, and containers reduces plastic waste and promotes a circular economy. Furthermore, opting for locally sourced foods not only supports local farmers but also decreases the carbon emissions associated with transportation. When green living habits are adopted, they can lead to profound changes in our environment.",
-                "By reducing their energy consumption through the use of energy-efficient appliances, individuals help lower greenhouse gas emissions. Consequently, this contributes to cleaner air and mitigates the effects of climate change.",
-                "Moreover, by practicing water conservation methods, such as fixing leaks and using low-flow fixtures, households can significantly reduce water waste, promoting the sustainable use of this precious resource.",
-                "Therefore, educating individuals about green living habits is crucial for promoting a more sustainable future. Schools and community organizations can offer workshops and resources that highlight the benefits of eco-friendly practices.",
-                "Additionally, social media campaigns can raise awareness and encourage people to share their experiences with sustainable living. By empowering individuals to make informed choices, we can collectively work towards a healthier planet for generations to come."
+                "In an era marked by climate change and environmental degradation, adopting green living habits has become increasingly vital. Green living refers to a lifestyle that seeks to minimize one's ecological footprint through conscious choices in daily activities. This can include everything from reducing waste to conserving energy and using sustainable products. More individuals recognize the importance of preserving our planet, and the movement toward greener practices continues to gain momentum. One of the most significant aspects of green living is its focus on sustainability.",
+                "By choosing products that are eco-friendly, consumers can support businesses that prioritize environmental responsibility. For instance, using reusable bags, bottles, and containers reduces plastic waste and promotes a circular economy. Furthermore, opting for locally sourced foods not only supports local farmers but also decreases the carbon emissions associated with transportation. When green living habits are adopted, they can lead to profound changes in our environment.",
+                "By reducing their energy consumption through the use of energy-efficient appliances, individuals help lower greenhouse gas emissions. Consequently, this contributes to cleaner air and mitigates the effects of climate change. Moreover, by practicing water conservation methods, such as fixing leaks and using low-flow fixtures, households can significantly reduce water waste, promoting the sustainable use of this precious resource.",
+                "Therefore, educating individuals about green living habits is crucial for promoting a more sustainable future. Schools and community organizations can offer workshops and resources that highlight the benefits of eco-friendly practices. Additionally, social media campaigns can raise awareness and encourage people to share their experiences with sustainable living. By empowering individuals to make informed choices, we can collectively work towards a healthier planet for generations to come."
               ],
               "questionNumbers": [
                 23,
@@ -4866,15 +4874,13 @@
           "groups": [
             {
               "id": "part-4-group-6",
-              "title": "Câu 31",
+              "title": "THE CONSUMER ELECTRONICS SHOW",
               "instruction": "Read the following passage about Consumer Electronics Show and mark the letter A, B, C, D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
                 "The Consumer Electronics Show in Las Vegas is always a spectacle of innovation. Imagine walking into the convention halls and being greeted by the next generation of artificial intelligence not just as digital assistants, but as deeply integrated companions that anticipate our needs in ways we've only dreamed of. AI could be woven into every fabric of our daily lives, from personalized health monitoring to enhancing our creative endeavors.",
                 "Virtual and augmented reality have been making leaps and bounds, and by 2025, we might finally see the lines between the digital and physical worlds blur in profoundly immersive ways. Envision slipping on a pair of sleek AR glasses and instantly transforming your surroundings into a customized workspace or an interactive learning environment. This could make remote interactions feel as natural as face-to-face conversations.",
-                "(I) Sustainability is another trend that's been gaining momentum. (II) Tech companies are increasingly conscious of their environmental footprint, and at CES 2025, I wouldn't be surprised to see a plethora of eco-friendly gadgets. (III) Imagine homes equipped with smart systems that optimize energy use, reducing waste and promoting a greener lifestyle without sacrificing comfort or convenience. (IV) The Internet of Things (IoT) is likely to become even more interconnected and intuitive. Smart homes could evolve into empathetic environments that adjust lighting, temperature, and ambiance based on our moods or health metrics. Perhaps we'll see refrigerators that not only keep track of groceries but also suggest recipes to reduce food waste, or closets that recommend outfits based on the weather forecast and your calendar. Transportation technology is on the cusp of a revolution. Electric vehicles are just the beginning. By 2025, CES might showcase advancements in autonomous driving systems becoming mainstream, or even personal air transportation like flying cars or drones. It's thrilling to think about commuting not just on roads but through the skies, potentially reshaping urban planning and our daily lives. Biotechnology could also take center stage. Wearables may transition from fitness trackers to health guardians, capable of monitoring municipal signs with medical-grade accuracy, predicting health issues before they arise, and seamlessly communicating with healthcare providers. This integration of tech and wellness could empower us to lead healthier, more informed lives. While these are educated speculations based on current trends, the magic of CES lies in its ability to introduce the unexpected innovations that challenge our perceptions and expand the boundaries of what's possible. The 2025 show is bound to unveil something that will make us all stop and marvel.",
-                "",
-                "",
-                ""
+                "(I) Sustainability is another trend that's been gaining momentum. (II) Tech companies are increasingly conscious of their environmental footprint, and at CES 2025, I wouldn't be surprised to see a plethora of eco-friendly gadgets. (III) Imagine homes equipped with smart systems that optimize energy use, reducing waste and promoting a greener lifestyle without sacrificing comfort or convenience. (IV) The Internet of Things (IoT) is likely to become even more interconnected and intuitive. Smart homes could evolve into empathetic environments that adjust lighting, temperature, and ambiance based on our moods or health metrics. Perhaps we'll see refrigerators that not only keep track of groceries but also suggest recipes to reduce food waste, or closets that recommend outfits based on the weather forecast and your calendar.",
+                "Transportation technology is on the cusp of a revolution. Electric vehicles are just the beginning. By 2025, CES might showcase advancements in autonomous driving systems becoming mainstream, or even personal air transportation like flying cars or drones. It's thrilling to think about commuting not just on roads but through the skies, potentially reshaping urban planning and our daily lives. Biotechnology could also take center stage. Wearables may transition from fitness trackers to health guardians, capable of monitoring vital signs with medical-grade accuracy, predicting health issues before they arise, and seamlessly communicating with healthcare providers. This integration of tech and wellness could empower us to lead healthier, more informed lives. While these are educated speculations based on current trends, the magic of CES lies in its ability to introduce the unexpected innovations that challenge our perceptions and expand the boundaries of what's possible. The 2025 show is bound to unveil something that will make us all stop and marvel."
               ],
               "questionNumbers": [
                 31,
@@ -4897,7 +4903,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best word or phrase that fills blank (1).",
           "options": [
             "which designed",
             "designing",
@@ -4912,7 +4918,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best word or phrase that fills blank (2).",
           "options": [
             "to promote",
             "promoted",
@@ -4927,22 +4933,22 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best word or phrase that fills blank (3).",
           "options": [
             "green energy option",
             "green option energy",
             "energy green option",
             "option green energy"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 3. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 3. A | manual=green-energy-option"
         },
         {
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best word or phrase that fills blank (4).",
           "options": [
             "do",
             "take",
@@ -4957,7 +4963,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best word or phrase that fills blank (5).",
           "options": [
             "into",
             "for",
@@ -4972,7 +4978,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best word or phrase that fills blank (6).",
           "options": [
             "act",
             "action",
@@ -5067,7 +5073,7 @@
             "achievement",
             "diversity",
             "experience",
-            "awareness Question 12 and above the footer."
+            "awareness"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
@@ -5197,22 +5203,22 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21.",
+          "prompt": "Question 21. Choose the sentence that best fits blank (21).",
           "options": [
-            "Interracial students share ideas and experiences so that they can use platforms like Zoom or Google Docs in their learning.",
+            "International students share ideas and experiences so that they can use platforms like Zoom or Google Docs in their learning.",
             "Students from different countries can now use platforms like Zoom or Google Docs, allowing them to share ideas and experiences.",
             "But for the use of platforms like Zoom or Google Docs, students from different countries could share ideas and experiences.",
             "Using platforms like Zoom or Google Docs, ideas and experiences can be shared with students from different countries."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 21. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 21. B | collaborative tools blank (21)"
         },
         {
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22.",
+          "prompt": "Question 22. Choose the sentence that best fits blank (22).",
           "options": [
             "learners can now meet the demands and challenges of the modern era",
             "the demands and challenges of the modern era are addressed by learners",
@@ -5234,9 +5240,9 @@
             "Using sustainable products",
             "Composting organic waste"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 23. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 23. D | composting-not-in-passage"
         },
         {
           "id": "q24",
@@ -5257,16 +5263,16 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word they in paragraph 3 refers to _.",
+          "prompt": "Question 25. The word they in paragraph 2 refers to _.",
           "options": [
             "carbon emissions",
             "individuals",
             "green living habits",
             "local farmers"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 25. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 25. C | they=green-living-habits"
         },
         {
           "id": "q26",
@@ -5279,9 +5285,9 @@
             "prohibiting",
             "abandoning"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 26. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 26. A | enabling"
         },
         {
           "id": "q27",
@@ -5294,9 +5300,9 @@
             "Choosing eco-friendly products supports businesses focusing on environmental responsibility.",
             "Purchasing harmful products supports businesses ignoring environmental issues."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 27. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 27. C | paraphrase eco-friendly support"
         },
         {
           "id": "q28",
@@ -5309,9 +5315,9 @@
             "The movement for greener habits has slowed as fewer people value protecting the environment.",
             "Using reusable products can contribute to a decrease in plastic waste and promote sustainability."
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 28. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 28. D | reusable bags passage"
         },
         {
           "id": "q29",
@@ -5324,9 +5330,9 @@
             "Paragraph 1",
             "Paragraph 4"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 29. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 29. A | Consequently paragraph 3"
         },
         {
           "id": "q30",
@@ -5369,9 +5375,9 @@
             "hidden away in selected aspects of everyday life",
             "entirely neglected in most parts of our day-to-day existence"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 32. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 32. B | integrated"
         },
         {
           "id": "q33",
@@ -5384,9 +5390,9 @@
             "distressing",
             "oblivious"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 33. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 33. D | oblivious"
         },
         {
           "id": "q34",
@@ -5407,16 +5413,16 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35. Which of the following best summarizes paragraph 4?",
+          "prompt": "Question 35. Which of the following best summarizes paragraph 3?",
           "options": [
             "Biotechnology is about to seamlessly integrate in personal health monitoring.",
             "The rise of sustainable technologies could help reduce negative environmental impacts.",
             "The IoT being more intuitive and interconnected may enhance everyday conveniences.",
             "Our daily life is likely to undergo a transformation with the help of smart companions."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 35. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 35. C | IoT smart homes paragraph 3"
         },
         {
           "id": "q36",
@@ -5452,7 +5458,7 @@
           "id": "q38",
           "number": 38,
           "partId": "part-4",
-          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 6?",
+          "prompt": "Question 38. Which of the following best paraphrases the underlined sentence in paragraph 4?",
           "options": [
             "The fusion of technology with health may enable us to live better and more knowledgeable lives.",
             "Using technology in wellness is unnecessary for remarkably improving ordinary people's lifestyles.",
@@ -5461,7 +5467,7 @@
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 38. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 38. A | tech wellness paragraph 4"
         },
         {
           "id": "q39",
@@ -5474,9 +5480,9 @@
             "Optimistic and enthusiastic about their potential impact",
             "Skeptical about their practical applications"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 39. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 39. C | optimistic tone"
         },
         {
           "id": "q40",
@@ -5489,9 +5495,9 @@
             "A report on confirmed technologies is to be presented at CES 2025, highlighting potential impacts on various aspects of life.",
             "A detailed analysis of past CES events led to some profound changes in current technology."
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 40. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 40. A | educated speculations"
         }
       ]
     },
@@ -5568,10 +5574,7 @@
               "title": "Câu 12",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
-                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike. (I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives. (IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI. To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change.",
-                "",
-                "",
-                ""
+                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike. (I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives. (IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI. To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change."
               ],
               "questionNumbers": [
                 12,
@@ -5599,10 +5602,7 @@
               "title": "Câu 12",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the best answer to each of the following questions.",
               "context": [
-                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike. (I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives. (IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI. To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change.",
-                "",
-                "",
-                ""
+                "Artificial intelligence (AI) is transforming industries, from healthcare to education. However, as AI technologies advance, the risk of AI abuse also increases. AI abuse refers to the misuse of AI systems to harm individuals or manipulate society. Common forms include deep fake videos, where faces and voices are digitally altered to create fake content, and data manipulation, which involves AI algorithms influencing public opinion through misleading information. AI abuse is a growing concern as these systems become more accessible, raising ethical and safety issues for individuals and societies alike. (I) One example of AI abuse is in social media, where AI-driven bots spread false information. (II) These bots, designed to imitate real users, can post, comment, and interact with others, making it difficult to distinguish between genuine and fake content. (III) As a result, they can change opinions on political and social issues, sometimes with harmful consequences. The speed at which these bots operate allows misinformation to spread rapidly, posing challenges for fact-checkers and social media platforms in controlling false narratives. (IV) Another area where AI abuse has gained attention is privacy invasion. Facial recognition technology, for example, is often used by authorities for security. However, some private organisations use it without consent, tracking individuals in public spaces and selling the information to advertisers. This practice violates personal privacy and has sparked a debate about the ethical use of AI. To combat AI abuse, experts suggest stricter regulations and improved awareness. Laws need to address emerging technologies and prevent the misuse of AI systems. Additionally, educating the public on identifying AI-generated content can empower individuals to navigate the digital world safely. As AI continues to evolve, establishing clear ethical guidelines will be essential to prevent its harmful uses and to ensure that AI remains a tool for positive change."
               ],
               "questionNumbers": [
                 21
