@@ -10428,7 +10428,7 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1.",
+          "prompt": "Question 1. Choose the best word or phrase for blank (1).",
           "options": [
             "feeling",
             "energy",
@@ -10443,7 +10443,7 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2.",
+          "prompt": "Question 2. Choose the best word or phrase for blank (2).",
           "options": [
             "under",
             "of",
@@ -10458,7 +10458,7 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3.",
+          "prompt": "Question 3. Choose the best word or phrase for blank (3).",
           "options": [
             "A sense of wonder",
             "Great wonder",
@@ -10473,7 +10473,7 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4.",
+          "prompt": "Question 4. Choose the best word or phrase for blank (4).",
           "options": [
             "sustaining",
             "to sustaining",
@@ -10488,7 +10488,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the best word or phrase for blank (5).",
           "options": [
             "nutritional",
             "nutrient",
@@ -10503,7 +10503,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the best word or phrase for blank (6).",
           "options": [
             "has",
             "makes",
@@ -10518,7 +10518,7 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7.",
+          "prompt": "Question 7. Choose the best word or phrase for blank (7).",
           "options": [
             "an",
             "the",
@@ -10533,7 +10533,7 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8.",
+          "prompt": "Question 8. Choose the best word or phrase for blank (8).",
           "options": [
             "Moreover",
             "Meanwhile",
@@ -10548,7 +10548,7 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9.",
+          "prompt": "Question 9. Choose the best word or phrase for blank (9).",
           "options": [
             "the others",
             "others",
@@ -10563,7 +10563,7 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10.",
+          "prompt": "Question 10. Choose the best word or phrase for blank (10).",
           "options": [
             "release",
             "releases",
@@ -10578,7 +10578,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the best word or phrase for blank (11).",
           "options": [
             "component",
             "substance",
@@ -10593,7 +10593,7 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12.",
+          "prompt": "Question 12. Choose the best word or phrase for blank (12).",
           "options": [
             "used up",
             "built up",
@@ -10803,7 +10803,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26.",
+          "prompt": "Question 26. Choose the best phrase for blank (26).",
           "options": [
             "staying more connected to people around us or even our loved ones",
             "less connected to the people around us or even our loved ones",
@@ -10818,7 +10818,7 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27.",
+          "prompt": "Question 27. Choose the best sentence for blank (27).",
           "options": [
             "Technology gives rise to a number of conflicts within the family",
             "Relationships at home and at work are not dependent on technology",
@@ -10833,7 +10833,7 @@
           "id": "q28",
           "number": 28,
           "partId": "part-3",
-          "prompt": "Question 28.",
+          "prompt": "Question 28. Choose the best phrase for blank (28).",
           "options": [
             "Whether we choose to stay technologically or socially connected",
             "Because we choose to stay technologically or socially connected",
@@ -10848,7 +10848,7 @@
           "id": "q29",
           "number": 29,
           "partId": "part-3",
-          "prompt": "Question 29.",
+          "prompt": "Question 29. Choose the best sentence for blank (29).",
           "options": [
             "We established a relationship of trust within our family",
             "Building strong relationships was essential within our family",
@@ -10863,12 +10863,12 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30.",
+          "prompt": "Question 30. Choose the best phrase for blank (30).",
           "options": [
             "and there is a danger that we will run out of time for connections",
             "but it is possible for us not to have enough time for connections",
             "so running short of time for connections is impossible",
-            "or connections is likely to be established in the long run Tài liệu On Thi"
+            "or lasting connections may take time to develop"
           ],
           "correctIndex": 0,
           "explanation": "Đáp án A (and there is a danger that we will run out of time for connections) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
@@ -10912,7 +10912,7 @@
           "options": [
             "They contribute to our carbon footprint.",
             "They can be used for long periods.",
-            "They aren't well suited to personal use. Tài Liệu On Thi",
+            "They aren't well suited to personal use.",
             "They create fewer emissions."
           ],
           "correctIndex": 2,
@@ -10930,8 +10930,8 @@
             "unworkable",
             "feasible"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (possible) tạo cặp trái nghĩa trực tiếp với từ/cụm gạch chân trong đoạn; các lựa chọn còn lại gần nghĩa hoặc không đối lập đúng ngữ cảnh.",
+          "correctIndex": 2,
+          "explanation": "Đáp án C (unworkable) trái nghĩa với viable (khả thi).",
           "explanationEvidence": "Cau 34: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10975,8 +10975,8 @@
             "defeat",
             "captivate"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 1,
+          "explanation": "Đáp án B (surpass) gần nghĩa với outweigh (vượt trội hơn).",
           "explanationEvidence": "Cau 37: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11003,7 +11003,7 @@
             "There exists little infrastructure for renewable energy at present.",
             "Green energy costs are rising.",
             "The downsides of green energy could soon outweigh the benefits.",
-            "Green energy will enhance green living. Tài Liệu On Thi"
+            "Green energy will enhance green living."
           ],
           "correctIndex": 2,
           "explanation": "Đáp án C (The downsides of green energy could soon outweigh the benefits.) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
@@ -11157,7 +11157,7 @@
             {
               "id": "part-3-group-5",
               "title": "Câu 30",
-              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 30 to 34.",
+              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits blank (30). Continue with blanks (31)–(34) in Part 4.",
               "context": [
                 "In recent years, technology has rapidly transformed the healthcare industry. Various devices and software systems, such as digital health records and diagnostic tools, (30) _. These advancements have enabled healthcare providers to store, retrieve, and analyze patient information more effectively.",
                 "For instance, artificial intelligence systems can scan thousands of medical records, (31) _.",
@@ -11180,8 +11180,8 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "Câu 30",
-              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 30 to 34.",
+              "title": "Câu 31",
+              "instruction": "Read the following passage about technology in healthcare and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 31 to 34.",
               "context": [
                 "In recent years, technology has rapidly transformed the healthcare industry. Various devices and software systems, such as digital health records and diagnostic tools, (30) _. These advancements have enabled healthcare providers to store, retrieve, and analyze patient information more effectively.",
                 "For instance, artificial intelligence systems can scan thousands of medical records, (31) _.",
@@ -11244,8 +11244,8 @@
             "include",
             "acquire"
           ],
-          "correctIndex": 1,
-          "explanation": "Đáp án B (consume) tạo cặp trái nghĩa trực tiếp với từ/cụm gạch chân trong đoạn; các lựa chọn còn lại gần nghĩa hoặc không đối lập đúng ngữ cảnh.",
+          "correctIndex": 0,
+          "explanation": "Đáp án A (release) đối lập với absorb trong ngữ cảnh hấp thụ nhiệt.",
           "explanationEvidence": "Cau 2: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11274,8 +11274,8 @@
             "Climate change occurring at a moderate pace could help plants and animals develop.",
             "If the climate changes too slowly, plants and animals could benefit."
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 0,
+          "explanation": "Đáp án A diễn đạt lại ý biến đổi khí hậu nhanh và mạnh gây tổn hại cho sinh vật.",
           "explanationEvidence": "Cau 4: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11417,22 +11417,22 @@
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14.",
+          "prompt": "Question 14. Choose the best word or phrase for blank (14).",
           "options": [
             "dedicate",
-            "that dedicated",
+            "dedicated",
             "was dedicated",
-            "dedicated"
+            "dedicating"
           ],
           "correctIndex": 1,
-          "explanation": "Đáp án B (that dedicated) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "explanation": "Đáp án B (dedicated) tạo cụm \"organization dedicated to preserving\".",
           "explanationEvidence": "Cau 14: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q15",
           "number": 15,
           "partId": "part-2",
-          "prompt": "Question 15.",
+          "prompt": "Question 15. Choose the best word or phrase for blank (15).",
           "options": [
             "up",
             "on",
@@ -11447,7 +11447,7 @@
           "id": "q16",
           "number": 16,
           "partId": "part-2",
-          "prompt": "Question 16.",
+          "prompt": "Question 16. Choose the best word or phrase for blank (16).",
           "options": [
             "make",
             "making",
@@ -11462,45 +11462,45 @@
           "id": "q17",
           "number": 17,
           "partId": "part-2",
-          "prompt": "Question 17.",
+          "prompt": "Question 17. Choose the best word or phrase for blank (17).",
           "options": [
             "conservative",
             "conservatory",
             "conservation",
-            "conserve Question 15 and Question 16."
+            "conserving"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (conservative) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 2,
+          "explanation": "Đáp án C (conservation) phù hợp ngữ cảnh đào tạo bảo tồn thực địa.",
           "explanationEvidence": "Cau 17: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18.",
+          "prompt": "Question 18. Choose the best word or phrase for blank (18).",
           "options": [
             "assure",
             "secure",
             "ensure",
             "guarantee"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (assure) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 2,
+          "explanation": "Đáp án C (ensure) đi với mệnh đề \"volunteers are well-prepared\".",
           "explanationEvidence": "Cau 18: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19.",
+          "prompt": "Question 19. Choose the best word or phrase for blank (19).",
           "options": [
             "natural heritage unique",
             "natural unique heritage",
             "unique heritage natural",
             "unique natural heritage"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (natural heritage unique) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (unique natural heritage) đúng trật tự tính từ trong tiếng Anh.",
           "explanationEvidence": "Cau 19: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11657,7 +11657,7 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30.",
+          "prompt": "Question 30. Choose the best phrase for blank (30).",
           "options": [
             "having been implemented to enhance the storage and analysis of patient data",
             "are used by hospitals to monitor, store, and evaluate extensive medical information",
@@ -11672,7 +11672,7 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31.",
+          "prompt": "Question 31. Choose the best phrase for blank (31).",
           "options": [
             "and identify patterns that help diagnose diseases accurately and swiftly",
             "using AI to study health records for improved diagnostics and health strategies",
@@ -11687,7 +11687,7 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32.",
+          "prompt": "Question 32. Choose the best sentence for blank (32).",
           "options": [
             "Many patients benefit from virtual consultations that increase physical visits to clinics",
             "It allows patients to consult specialists offline, avoiding waiting time and commutes",
@@ -11702,7 +11702,7 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33.",
+          "prompt": "Question 33. Choose the best sentence for blank (33).",
           "options": [
             "Virtual consultations are a key component of healthcare despite reduced in-person visits",
             "It hasn't been integrated as an essential service to reduce in-person medical visits",
@@ -11717,7 +11717,7 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34.",
+          "prompt": "Question 34. Choose the best sentence for blank (34).",
           "options": [
             "combining high-tech tools with compassion is unnecessary to improve patient care experiences",
             "human touch isn't still crucial in healthcare, despite advancements in medical technology",
@@ -11732,7 +11732,7 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35.",
+          "prompt": "Question 35. Choose the best word or phrase for blank (35).",
           "options": [
             "amount",
             "number",
