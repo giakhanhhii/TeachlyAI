@@ -1689,8 +1689,8 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 18",
-              "instruction": "Read the following passage about vocation education and mark the letter A, B, C, or D to indicate the correct option that best fits each of the numbered blanks from 18 to 22.",
+              "title": "Vocational Education Passage (continued)",
+              "instruction": "Complete the passage by choosing the option that best fits each of blanks 21 and 22.",
               "context": [
                 "Vocational schools offer a compelling alternative to traditional four-year degrees, providing high school graduates and career changers with a practical, fast-track path to success. These schools focus on hands-on training from day one, (18)_. This approach accelerates entry into the workforce, enabling graduates to quickly secure jobs with in-demand skills. (19)_.",
                 "This means students can avoid large amounts of debt and start earning money sooner. With smaller class sizes, vocational schools offer personalized attention and direct mentorship, creating a collaborative and supportive learning environment. Vocational schools often provide great career services, such as help with job searching and building a resume.",
@@ -1705,13 +1705,13 @@
             },
             {
               "id": "part-3-group-5",
-              "title": "Câu 23",
+              "title": "AI Robots in Surgery",
               "instruction": "Read the following passage about AI robots and mark the letter A, B, C, or D to indicate the correct answer to each of the questions from 23 to 30.",
               "context": [
                 "Artificial intelligence (AI) and robotics are revolutionizing medicine, especially in areas like disease diagnosis and surgical procedures. Robotic surgical systems, like the da Vinci Surgical System, assist human surgeons in performing minimally invasive surgeries, offering precision and efficiency. While AI-powered robots can process vast amounts of data and learn from previous surgeries, the key question is whether they can fully replace human surgeons.",
                 "AI's potential lies in its ability to navigate surgeries with remarkable precision, reducing human error, fatigue, and emotional influence, which results in quicker recovery and improved patient outcomes. AI-powered robots can also help address the shortage of experienced surgeons and improve healthcare availability. Although implementing robotic systems is costly, their long-term benefits, including fewer surgeries and reduced healthcare costs, may ultimately make them more cost-effective.",
                 "However, significant challenges remain. One of the main concerns is the human element in surgery. Patients rely on their surgeons for empathy, clear communication, and comfort, which AI robots currently cannot provide. There are also legal questions surrounding responsibility in case of complications during surgery- whether it should fall on the surgeon, AI developers, or the hospital. Additionally, AI systems depend on high-quality, unbiased data to make accurate decisions. If the data used for training is [[u]]flawed[[/u]], it could lead to safety risks. There are also concerns about cybersecurity, as AI-powered robots connected to networks could be vulnerable to cyber-attacks. Moreover, the high upfront costs of robotic systems may limit their availability to certain medical facilities, deepening healthcare disparities.",
-                "[[u]]Despite these challenges, many experts believe AI and robotics will complement rather than replace surgeons. AI can assist by providing guidance during surgeries, performing repetitive tasks, and improving accuracy, allowing human surgeons to focus on more complex aspects. The future of surgery may involve a collaborative approach, where AI and human surgeons work together, combining AI's precision with human empathy and judgment. Balancing the benefits of AI with the ethical and emotional complexities it presents will be crucial in shaping the future of healthcare.[[/u]]"
+                "Despite these challenges, many experts believe AI and robotics will complement rather than replace surgeons. AI can assist by providing guidance during surgeries, performing repetitive tasks, and improving accuracy, allowing human surgeons to focus on more complex aspects. The future of surgery may involve a collaborative approach, where AI and human surgeons work together, combining AI's precision with human empathy and judgment. Balancing the benefits of AI with the ethical and emotional complexities it presents will be crucial in shaping the future of healthcare."
               ],
               "questionNumbers": [
                 23,
@@ -1738,7 +1738,7 @@
               "title": "Green Tourism In Vietnam",
               "instruction": "Read the passage about green and sustainable tourism and mark the letter A, B, C, or D to indicate the correct answer to each of the questions from 31 to 40.",
               "context": [
-                "[[u]]Vietnam's tourism sector has seen significant growth in recent years, with increasing numbers of both international and domestic visitors. However, this growth has put pressure on the environment and cultural heritage, particularly in rapidly developing tourist destinations. To address these challenges, the country is shifting towards green tourism, emphasizing sustainability and responsibility towards nature and local communities.[[/u]]",
+                "Vietnam's tourism sector has seen significant growth in recent years, with increasing numbers of both international and domestic visitors. However, this growth has put pressure on the environment and cultural heritage, particularly in rapidly developing tourist destinations. To address these challenges, the country is shifting towards green tourism, emphasizing sustainability and responsibility towards nature and local communities.",
                 "Studies show that many tourists are increasingly conscious of their environmental impact. A 2020 European Commission report found that 82% of EU citizens were willing to adjust their habits to ensure sustainable tourism, such as reducing waste, paying extra to protect the environment, and supporting local communities. Similarly, a survey by Vietnam's National Administration of Tourism (VNAT) revealed that 76% of international tourists were ready to reduce waste, 62% would buy local products, and 45% preferred eco-friendly travel options like low-impact vehicles and off-peak season visits.",
                 "In Vietnam, the trend towards green tourism is gaining traction, with more tourists seeking outdoor activities that allow them to enjoy nature while minimizing their impact. The COVID-19 pandemic has further motivated domestic tourists to adopt more sustainable travel behaviors, with 88% of them embracing green tourism practices, according to Booking.com.",
                 "(I) Several Vietnamese destinations have pioneered green tourism initiatives. (II) For example, Hoi An has promoted \"no plastic waste\" hotels and aims to reduce plastic waste by 13-15% annually, targeting zero plastic by 2025. (III) Additionally, green tours such as garbage collection boat tours in Hoi An, cave exploration in Phong Nha-Ke Bang, and turtle watching tours in Con Dao are attracting tourists. (IV) Vietnam's government supports this shift towards sustainability through its National Action Plan on Green Growth (2021-2030) and tourism strategies emphasizing eco-tourism, community-based tourism, and the use of clean energy.",
@@ -2065,7 +2065,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21.",
+          "prompt": "Question 21. Choose the option that best fits blank (21).",
           "options": [
             "demonstrated the potential for personal and career development offered by vocational schools",
             "showing how vocational schools foster growth in both personal and career aspects",
@@ -2080,7 +2080,7 @@
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22.",
+          "prompt": "Question 22. Choose the option that best fits blank (22).",
           "options": [
             "For those seeking a direct route to success, vocational education offers a promising solution",
             "Vocational education provided an effective pathway for those aiming for a direct route to success",
@@ -2095,7 +2095,7 @@
           "id": "q23",
           "number": 23,
           "partId": "part-3",
-          "prompt": "Question 23. The word they in paragraph 1 refers to _.",
+          "prompt": "Question 23. The word \"they\" in paragraph 1 refers to _.",
           "options": [
             "AI-powered robots",
             "previous surgeries",
@@ -2110,7 +2110,7 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The word address in paragraph 2 is CLOSEST in meaning to _",
+          "prompt": "Question 24. The word \"address\" in paragraph 2 is CLOSEST in meaning to _.",
           "options": [
             "solve",
             "encourage",
@@ -2443,7 +2443,19 @@
                 14,
                 15,
                 16,
-                17,
+                17
+              ]
+            },
+            {
+              "id": "part-2-group-4",
+              "title": "The Art Form of Opera",
+              "instruction": "Read the following passage and mark the letter A, B, C or D to indicate the correct answers from 18 to 22.",
+              "context": [
+                "The art form of the opera (18) _ during the 1590s. At the time a group of composers and artists known as the Camerata were interested in injecting storytelling into music. They were inspired by the belief that the great tragic plays of ancient Greece had been sung rather than simply acted. Another motivation may have been the desire of the composers to find an alternative to the production of music for the Church, (19) _. This is supported by the selection of material for the opera.",
+                "Early composers took their material from the mythologies of ancient Rome and Greece, which was full of plot twists, betrayals, and love affairs. From the very beginning, the sobriety of the Church had little place in opera. (20) _. Composers quickly embraced the new art form for the opportunities and creative freedom it offered. Wealthy nobles supported the opera because its elaborate and expensive performances allowed them to display their wealth as well as their sophistication.",
+                "The early years of opera were marked primarily by experimentation. (21) _, everything was new and untested. Early composers experimented with the structure, subject material, and organization of the opera. They tried different placements for the orchestra, as well as different sizes. By the early 1600s, however, (22) _."
+              ],
+              "questionNumbers": [
                 18,
                 19,
                 20
@@ -2459,13 +2471,30 @@
           "questionEnd": 30,
           "groups": [
             {
-              "id": "part-3-group-3",
-              "title": "Câu 13",
-              "instruction": "Mark the letter A, B, C, or D on your answer sheet to indicate the correct arrangement of the sentence to make a meaningful paragraph/letter in each of the following Questions.",
-              "context": [],
+              "id": "part-3-group-1",
+              "title": "The Art Form of Opera (continued)",
+              "instruction": "Read the following passage and mark the letter A, B, C or D to indicate the correct answers from 18 to 22.",
+              "context": [
+                "The art form of the opera (18) _ during the 1590s. At the time a group of composers and artists known as the Camerata were interested in injecting storytelling into music. They were inspired by the belief that the great tragic plays of ancient Greece had been sung rather than simply acted. Another motivation may have been the desire of the composers to find an alternative to the production of music for the Church, (19) _. This is supported by the selection of material for the opera.",
+                "Early composers took their material from the mythologies of ancient Rome and Greece, which was full of plot twists, betrayals, and love affairs. From the very beginning, the sobriety of the Church had little place in opera. (20) _. Composers quickly embraced the new art form for the opportunities and creative freedom it offered. Wealthy nobles supported the opera because its elaborate and expensive performances allowed them to display their wealth as well as their sophistication.",
+                "The early years of opera were marked primarily by experimentation. (21) _, everything was new and untested. Early composers experimented with the structure, subject material, and organization of the opera. They tried different placements for the orchestra, as well as different sizes. By the early 1600s, however, (22) _."
+              ],
               "questionNumbers": [
                 21,
-                22,
+                22
+              ]
+            },
+            {
+              "id": "part-3-group-2",
+              "title": "Plastic Bags Passage",
+              "instruction": "Read the passage and mark the letter A, B, C or D to indicate the correct answers from 23 to 30.",
+              "context": [
+                "Plastic bags are used by everybody. From a vegetable vendor to a designer store, everyone seems to use them. Even though they are one of the modern conveniences that we seem to be unable to do without, they are responsible for causing pollution, killing wildlife, and using up the precious resources of the Earth. But, most of us are blissfully unaware of the outcomes that are occurring and will take place in the future because of the plastic bags.",
+                "Every once in a while, the government passes out an order banning store owners from providing plastic bags to customers for carrying their purchases. Plastic bags are very popular with both retailers as well as consumers because they are cheap, strong, lightweight, functional, as well as a hygienic means of carrying food as well as other goods. About a hundred billion plastic bags are used every year in the U.S. alone. And then, when one considers the huge economies and populations of India, China, Europe, and other parts of the world, the numbers can be staggering. The problem is further worsened by the developed countries shipping off their plastic waste to developing countries like India.",
+                "Once they are used, most bags go into landfills. Each year, more and more bags are ending up littering the environment. [[u]]Once they become litter, plastic bags find their way into our waterways, parks, beaches, and streets.[[/u]] About 100,000 animals, such as dolphins, turtles, whales, penguins are killed every year due to these bags. Many animals ingest plastic bags, mistaking them for food, and therefore, die. And worse, the ingested plastic bag remains intact even after the death and decomposition of the animal. One of the worst environmental effects is that they are non-biodegradable. The decomposition takes about 400 years. No one will live so long to witness the decomposition of plastic!",
+                "A tote bag can make a good substitute for carrying groceries and the shopping. You can keep the bag with the cashier, and then put your purchases into it instead of the usual plastic bag. Recycling the bags you already have is another good idea. These can come into use for various purposes, like holding your garbage instead of purchasing new ones. While governments may be working out ways to lessen the impact of plastic bags on the environment; however, each of us should shoulder some of the responsibility for this problem, which ultimately harms us. Plastics are not only non-biodegradable, but are one of the major pollutants of the sea. For a clean and green environment, try to use alternatives to plastic whenever and wherever possible. Cut down your use of plastic, and do your bit to save our planet."
+              ],
+              "questionNumbers": [
                 23,
                 24,
                 25,
@@ -2490,11 +2519,11 @@
               "title": "Câu 31",
               "instruction": "Read the following passage about conservation and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 31 to 40.",
               "context": [
-                "(I) In what conservationists are describing as a turning point, the ambitious Greater Mekong Wildlife Bridge Project has faced an unforeseen obstacle. (II) Despite an unprecedented \\50 million investment, the migrating elephant populations have decreased by 35% since it was launched. (III) These statistics have sent shockwaves through the conservation community, challenging long-held assumptions about wildlife corridor effectiveness. (IV) The idea of wildlife corridors has long captivated conservationists. By creating protected pathways between fragmented habitats, these artificial lifelines were meant to ensure species survival. However, underlying this seemingly flawless approach is a more complicated reality. As human expansion intrudes upon these corridors, animals find themselves playing Russian roulette with each crossing, facing life threatening risks from poachers who have caught wind of these predictable migration routes. Recent findings from the Southeast Asian Conservation Institute showed a worrying situation. When faced with human disturbance, elephants altered their migration patterns, venturing into unprotected areas. These behavioral adaptations proved catastrophic poaching incidents increased by 180% in these areas. The findings have left conservationists deeply concerned about the unintended consequences of their well intentioned interventions. The economic implications of corridor conservation add another layer of complexity to an already challenging issue. Local communities, stuck in a difficult position, often view these projects with skepticism. Traditional farming practices fall by the wayside as authorities implement strict land-use regulations. While compensation schemes exist on paper, they rarely translate into adequate financial support for affected communities. Conservation biologists have begun advocating for a paradigm shift in approach. Rather than imposing artificial corridors, they propose integrating wildlife passages into existing human infrastructure. This strategy has already proven successful in countries like Malaysia, where elevated highways incorporate natural underpasses. These structures allow for wildlife movement while maintaining human activity above, creating a win-win situation for all stakeholders. Yet the jury is still out on the long-term viability of such solutions. Critics argue that these modified corridors merely paper over the cracks of a deeper issue - humanity's relentless expansion into natural habitats. As urban sprawl continues unabated, even these innovative approaches may prove to be nothing more than a band-aid on a gaping wound.",
-                "",
-                "",
-                "",
-                ""
+                "(I) In what conservationists are describing as a turning point, the ambitious Greater Mekong Wildlife Bridge Project has faced an unforeseen obstacle. (II) Despite an unprecedented \\50 million investment, the migrating elephant populations have decreased by 35% since it was launched. (III) These statistics have sent shockwaves through the conservation community, challenging long-held assumptions about wildlife corridor effectiveness. (IV)",
+                "The idea of wildlife corridors has long captivated conservationists. By creating protected pathways between fragmented habitats, these artificial lifelines were meant to ensure species survival. However, underlying this seemingly flawless approach is a more complicated reality. As human expansion intrudes upon these corridors, animals find themselves playing Russian roulette with each crossing, facing life threatening risks from poachers who have caught wind of these predictable migration routes.",
+                "Recent findings from the Southeast Asian Conservation Institute showed a worrying situation. When faced with human disturbance, elephants altered their migration patterns, venturing into unprotected areas. These behavioral adaptations proved catastrophic poaching incidents increased by 180% in these areas. The findings have left conservationists deeply concerned about the unintended consequences of their well intentioned interventions.",
+                "The economic implications of corridor conservation add another layer of complexity to an already challenging issue. Local communities, stuck in a difficult position, often view these projects with skepticism. Traditional farming practices fall by the wayside as authorities implement strict land-use regulations. While compensation schemes exist on paper, they rarely translate into adequate financial support for affected communities.",
+                "Conservation biologists have begun advocating for a paradigm shift in approach. [[u]]Rather than imposing artificial corridors, they propose integrating wildlife passages into existing human infrastructure.[[/u]] This strategy has already proven successful in countries like Malaysia, where elevated highways incorporate natural underpasses. These structures allow for wildlife movement while maintaining human activity above, creating a win-win situation for all stakeholders. Yet the jury is still out on the long-term viability of such solutions. Critics argue that these modified corridors merely paper over the cracks of a deeper issue - humanity's relentless expansion into natural habitats. As urban sprawl continues unabated, even these innovative approaches may prove to be nothing more than a band-aid on a gaping wound."
               ],
               "questionNumbers": [
                 31,
@@ -2762,7 +2791,7 @@
             "b-a-d-c-e",
             "d-b-a-c-e",
             "c-b-e-a-d",
-            "a-b-c-e-d Read the passage and mark the letter A, B, C or D to indicate the correct answers from 36 to 40. The art form of the opera (18) _ during the 1590s. At the time a group of composers and artists known as the Camerata were interested in injecting story telling into music. They were inspired by the belief that the great tragic plays of ancient Greece had been sung rather than simply acted. Another motivation may have been the desire of the composers to find an alternative to the production of music for the Church, (19) _. This is supported by the selection of material for the opera. Early composers took their material from the mythologies of ancient Rome and Greece, which was full of plot twists, betrayals, and love affairs. From the very beginning, the sobriety of the Church had little place in opera. (20) _. Composers quickly embraced the new art form for the opportunities and creative freedom it offered. Wealthy nobles supported the opera because its elaborate and expensive performances allowed them to display their wealth as well as their sophistication. The early years of opera were marked primarily by experimentation. (21) _, everything was new and untested. Early composers experimented with the structure, subject material, and organization of the opera. They tried different placements for the orchestra, as well as different sizes. By the early 1600s, however, (22) _."
+            "a-b-c-e-d"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -2837,7 +2866,7 @@
             "the format of the opera is approached what it is today",
             "the format of the opera was approaching what we know today",
             "the format of the opera was changing immediately to what we are today",
-            "the format of the opera stays unchanged and is not different from what we know today Read the passage and mark the letter A, B, C or D to indicate the correct answers from 23 to 30. Plastic bags are used by everybody. From a vegetable vendor to a designer store, everyone seems to use them. Even though they are one of the modern conveniences that we seem to be unable to do without, they are responsible for causing pollution, killing wildlife, and using up the precious resources of the Earth. But, most of us are blissfully unaware of the outcomes that are occurring and will take place in the future because of the plastic bags. Every once in a while, the government passes out an order banning store owners from providing plastic bags to customers for carrying their purchases. Plastic bags are very popular with both retailers as well as consumers because they are cheap, strong, lightweight, functional, as well as a hygienic means of carrying food as well as other goods. About a hundred billion plastic bags are used every year in the U. S. alone. And then, when one considers the huge economies and populations of India, China, Europe, and other parts of the world, the numbers can be staggering. The problem is further worsened by the developed countries shipping off their plastic waste to developing countries like India. Once they are used, most bags go into landfills. Each year, more and more bags are ending up littering the environment. Once they become litter, plastic bags find their way into our waterways, parks, beaches, and streets. About 100,000 animals, such as dolphins, turtles, whales, penguins are killed every year due to these bags. Many animals ingest plastic bags, mistaking them for food, and therefore, die. And worse, the ingested plastic bag remains intact even after the death and decomposition of the animal. One of the worst environmental effects is that they are non-biodegradable. The decomposition takes about 400 years. No one will live so long to witness the decomposition of plastic! A tote bag can make a good substitute for carrying groceries and the shopping. You can keep the bag with the cashier, and then put your purchases into it instead of the usual plastic bag. Recycling the bags you already have is another good idea. These can come into use for various purposes, like holding your garbage instead of purchasing new ones. While governments may be working out ways to lessen the impact of plastic bags on the environment; however, each of us should shoulder some of the responsibility for this problem, which ultimately harms us. Plastics are not only non-biodegradable, but are one of the major pollutants of the sea. For a clean and green environment, try to use alternatives to plastic whenever and wherever possible. Cut down your use of plastic, and do your bit to save our planet."
+            "the format of the opera stays unchanged and is not different from what we know today"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -3255,7 +3284,7 @@
                 "Unlike Helen Keller, Albert Einstein seriously struggled with his academic performance in his early life. After years of difficulty at school, however, he finally found his passion in science and mathematics. At 26 years old, he received a doctorate in physics from the University of Zurich.",
                 "Then, Einstein started doing some of the most groundbreaking work in the history of the field, including his theory of relativity, which changed the field of physics forever and earned him the Nobel Prize in Physics in 1921.",
                 "Despite their incredible achievements, both Helen Keller and Albert Einstein remained lifelong learners. Keller continued reading and writing all her life and she published 12 fantastic books, including her inspirational autobiography, The Story of My Life. As for Einstein, after receiving his Nobel Prize, he continued researching new ideas and stayed active in the scientific community until he passed away in 1955.",
-                "The lives of Keller and Einstein are proof of the importance and value of lifelong learning. Through their hard work and dedication, they showed that anyone can achieve greatness if they have a strong desire to learn."
+                "[[u]]The lives of Keller and Einstein are proof of the importance and value of lifelong learning.[[/u]] Through their hard work and dedication, they showed that anyone can achieve greatness if they have a strong desire to learn."
               ],
               "questionNumbers": [
                 23,
@@ -3668,7 +3697,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word their in paragraph 3 refers to _.",
+          "prompt": "Question 25. The word their in paragraph 5 refers to _.",
           "options": [
             "Keller's and Einstein's achievements",
             "Keller's books",
@@ -3683,7 +3712,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. The word groundbreaking in paragraph 2 could be best replaced by _.",
+          "prompt": "Question 26. The word groundbreaking in paragraph 4 could be best replaced by _.",
           "options": [
             "conventional",
             "recreational",
