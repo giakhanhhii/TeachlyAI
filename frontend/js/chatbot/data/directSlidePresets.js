@@ -38,6 +38,46 @@ function pickSlidesByIndexes(slides, indexes) {
   return picked.length ? picked : slides.slice();
 }
 
+function buildDetailedExampleLine(chapter) {
+  const detailedExample = String(chapter?.detailedExample || "").trim();
+  if (detailedExample) return detailedExample;
+  const sentenceA = String(chapter?.exampleA || "").trim();
+  const sentenceB = String(chapter?.exampleB || "").trim();
+  if (sentenceA && sentenceB) {
+    return `Ví dụ: ${sentenceA} ${sentenceB} Qua hai câu này, học sinh cần xác định đúng mẫu ${String(chapter?.name || "").toLowerCase()}.`;
+  }
+  return sentenceA || sentenceB || "";
+}
+
+function buildDetailedExplanationLine(chapter) {
+  const focus = String(chapter?.focus || "").trim();
+  const rule = String(chapter?.rule || "").trim();
+  if (focus && rule) {
+    return `Phân tích: ${focus} Quy tắc cần áp dụng là ${rule}`;
+  }
+  return focus || rule || "";
+}
+
+function buildPracticeTaskLine(chapter) {
+  const detailedPractice = String(chapter?.detailedPractice || "").trim();
+  if (detailedPractice) return detailedPractice;
+  const practiceA = String(chapter?.practiceA || "").trim();
+  const practiceB = String(chapter?.practiceB || "").trim();
+  if (practiceA && practiceB) {
+    return `Bài luyện tập: ${practiceA} Sau đó, ${practiceB.toLowerCase()}.`;
+  }
+  return practiceA || practiceB || "";
+}
+
+function buildPracticeGuideLine(chapter, preset) {
+  const pitfallA = String(chapter?.pitfallA || "").trim();
+  const notes = String(preset?.notes || "").trim();
+  if (pitfallA && notes) {
+    return `Lưu ý khi làm bài: tránh lỗi "${pitfallA.toLowerCase()}"; ${notes.toLowerCase()}`;
+  }
+  return pitfallA || notes || "";
+}
+
 function buildChapterSlides(preset, chapter, chapterIndex) {
   const base = chapterIndex * 5 + 5;
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
@@ -53,9 +93,9 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       chapter.exampleB,
     ]),
     createSlide(`${preset.id}-${String(base + 2).padStart(2, "0")}`, `${chapter.name} - Ví dụ`, [
-      chapter.exampleA,
-      chapter.exampleB,
-      `Tập trung nhận ra đúng mẫu ${chapter.name.toLowerCase()}.`,
+      buildDetailedExampleLine(chapter),
+      buildDetailedExplanationLine(chapter),
+      `Yêu cầu: giải thích vì sao các từ/cấu trúc trên đúng với ${chapter.name.toLowerCase()}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
       chapter.pitfallA,
@@ -63,9 +103,9 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
-      chapter.practiceA,
-      chapter.practiceB,
-      `Yêu cầu thực hiện: ${preset.notes}`,
+      buildPracticeTaskLine(chapter),
+      buildPracticeGuideLine(chapter, preset),
+      `Yêu cầu thực hiện: viết đáp án đầy đủ và nêu lý do chọn dạng đúng của ${chapter.name.toLowerCase()}.`,
     ]),
   ];
 }
@@ -448,10 +488,14 @@ const RAW_SLIDE_PRESETS = [
         rule: "a/an/the + noun; adjective + noun; preposition + noun.",
         exampleA: "The explanation was clear.",
         exampleB: "They discussed the importance of education.",
+        detailedExample:
+          "Ví dụ: In the sentence 'They discussed the importance of education in rural areas', the word 'importance' must be a noun because it comes after 'the' and before 'of education'. A similar pattern appears in 'Her explanation was clear and easy to follow', where 'explanation' is the noun after a possessive adjective.",
         pitfallA: "Chọn tính từ vào vị trí danh từ.",
         pitfallB: "Không xét từ đứng trước chỗ trống.",
         practiceA: "Xác định vị trí cần danh từ.",
         practiceB: "Điền noun form đúng.",
+        detailedPractice:
+          "Bài luyện tập: Complete the sentence 'The teacher gave a very clear _______ of the new grammar rule. (explain)'. Học sinh phải chọn noun form đúng và giải thích vì sao sau 'a very clear' cần một danh từ.",
       },
       {
         name: "Dấu hiệu tính từ",
@@ -459,10 +503,14 @@ const RAW_SLIDE_PRESETS = [
         rule: "be/seem/become + adjective; adjective + noun.",
         exampleA: "The method is effective.",
         exampleB: "This is a useful strategy.",
+        detailedExample:
+          "Ví dụ: In 'The method is effective enough for weak students', the word 'effective' is an adjective because it stands after the linking verb 'is'. In 'This is a useful strategy for vocabulary revision', 'useful' is also an adjective because it directly modifies the noun 'strategy'.",
         pitfallA: "Dùng trạng từ sau linking verb.",
         pitfallB: "Nhầm adjective với noun.",
         practiceA: "Chọn adjective form.",
         practiceB: "Sửa lỗi word form trong câu.",
+        detailedPractice:
+          "Bài luyện tập: Complete the sentence 'Although the plan sounds ________, it is not easy to apply in a real exam. (use)'. Học sinh phải chọn adjective form đúng, sau đó nêu dấu hiệu giúp nhận ra chỗ trống cần tính từ.",
       },
       {
         name: "Dấu hiệu trạng từ",
@@ -470,10 +518,14 @@ const RAW_SLIDE_PRESETS = [
         rule: "verb + adverb; adverb + adjective.",
         exampleA: "She answered confidently.",
         exampleB: "The task was extremely difficult.",
+        detailedExample:
+          "Ví dụ: In 'She answered the interview questions confidently and clearly', the words 'confidently' and 'clearly' are adverbs because they describe how she answered. In 'The task was extremely difficult for most students', 'extremely' is an adverb because it modifies the adjective 'difficult', not the noun.",
         pitfallA: "Dùng adjective để bổ nghĩa động từ.",
         pitfallB: "Quên hậu tố -ly khi cần.",
         practiceA: "Điền adverb form.",
         practiceB: "Phân biệt adjective và adverb.",
+        detailedPractice:
+          "Bài luyện tập: Complete the sentence 'The candidate spoke ________ during the presentation, so everyone could understand the main ideas. (confident)'. Học sinh phải điền adverb form đúng và chỉ ra động từ nào đang được bổ nghĩa.",
       },
       {
         name: "Tiền tố",
@@ -492,10 +544,14 @@ const RAW_SLIDE_PRESETS = [
         rule: "-tion/-ment cho noun; -ful/-ive cho adjective; -ly cho adverb.",
         exampleA: "inform -> information.",
         exampleB: "careful -> carefully.",
+        detailedExample:
+          "Ví dụ: From the base word 'inform', we form the noun 'information' in 'The information in this article is reliable and up to date'. From the adjective 'careful', we form the adverb 'carefully' in 'Students should read the instructions carefully before choosing an answer'.",
         pitfallA: "Sai chính tả khi thêm hậu tố.",
         pitfallB: "Chọn đúng nghĩa nhưng sai từ loại.",
         practiceA: "Hoàn thành bảng word family.",
         practiceB: "Mini test word formation.",
+        detailedPractice:
+          "Bài luyện tập: Complete the sentence 'Before submitting the essay, read the question ________ to avoid careless mistakes. (careful)'. Học sinh phải đổi từ gốc sang đúng hậu tố và giải thích vì sao vị trí đó cần trạng từ.",
       },
     ],
   },
