@@ -53,3 +53,41 @@
 
 - Test 5 Part 3 now has corrected prompt references for the target words in questions 25 and 26.
 - The sentence used by question 27 is explicitly marked for emphasis in the passage context.
+
+# Fix Full THPTQG - Test 6
+
+## Scope
+
+- Fixed `thptqg-simulation-test-6` in `backend/mock/thptqg_fulltest.json`.
+- Read only the targeted `pair-12` block from `data_output/66_Full.md` and the cleaner duplicate in `example5.md` to restore the original stems/passages.
+- Did not edit importer or repair scripts.
+
+## Issues Found
+
+- Questions `1-12` had no real stem/context in the test data, so the UI could only show generic prompts.
+- Questions `21-22` were detached from the Ronaldo cloze passage and were still using the wrong sports placeholder content.
+- Questions `23-30` were showing the wrong passage (`gap year`) instead of the original `Vietnamese cultural identity` passage.
+- Questions `31-40` were showing the wrong passage (`military robots`) instead of the original `news` passage, so the bolded target words and underlined sentence were also wrong or missing.
+
+## Manual Fixes
+
+- Restored the full original cloze stem for questions `1-6` (`TravelMate`) and `7-12` (`Sustainable Living`).
+- Restored the missing continuation stem for questions `11-12`.
+- Reattached questions `18-22` to the original Cristiano Ronaldo cloze passage and replaced the wrong placeholder options in questions `18-22`.
+- Replaced the Part 3 passage with the original `Vietnamese cultural identity` reading and restored the intended emphasis markers:
+  - `**indigenous**`
+  - `**reverence**`
+  - `[[u]]...[[/u]]` around the `Ao dai...` sentence
+  - `**their**`
+- Replaced the Part 4 passage with the original `news` reading and restored the intended emphasis markers:
+  - `**limited**`
+  - `**them**`
+  - `**take a toll on**`
+  - `[[u]]...[[/u]]` around the concluding sentence used by question `38`
+- Updated question prompts `23-40` to match the restored passages instead of the wrong imported content.
+
+## Verification Notes
+
+- Test 6 now has actual passage text for questions `1-12` instead of empty context arrays.
+- Questions `21-22` now sit inside the same Ronaldo passage block as `18-20`.
+- Questions `23-30` and `31-40` now point at the correct restored readings, with the bolded and underlined text present in the passage context.
