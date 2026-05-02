@@ -78,6 +78,18 @@ function buildPracticeGuideLine(chapter, preset) {
   return pitfallA || notes || "";
 }
 
+function buildPitfallLine(chapter, key) {
+  const detailed = String(chapter?.[`${key}Detail`] || "").trim();
+  if (detailed) return detailed;
+  return String(chapter?.[key] || "").trim();
+}
+
+function buildPitfallFixLine(chapter) {
+  const detailedFix = String(chapter?.pitfallFix || "").trim();
+  if (detailedFix) return detailedFix;
+  return `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`;
+}
+
 function buildChapterSlides(preset, chapter, chapterIndex) {
   const base = chapterIndex * 5 + 5;
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
@@ -98,9 +110,9 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       `Yêu cầu: giải thích vì sao các từ/cấu trúc trên đúng với ${chapter.name.toLowerCase()}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
-      chapter.pitfallA,
-      chapter.pitfallB,
-      `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`,
+      buildPitfallLine(chapter, "pitfallA"),
+      buildPitfallLine(chapter, "pitfallB"),
+      buildPitfallFixLine(chapter),
     ]),
     createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
       buildPracticeTaskLine(chapter),
@@ -328,6 +340,9 @@ const RAW_SLIDE_PRESETS = [
         exampleB: "The road was being repaired at 8 a.m.",
         pitfallA: "Bỏ being.",
         pitfallB: "Dùng being sai thì.",
+        pitfallADetail: "Lỗi thường gặp nhất là viết *The documents are checked now* hoặc *The road was repaired at 8 a.m.* dù câu đang nhấn vào hành động đang diễn ra. Khi đã có dấu hiệu như now, at the moment, at 8 a.m., while..., học sinh phải giữ đủ cụm *be + being + V3* chứ không được bỏ *being*.",
+        pitfallBDetail: "Nhiều bạn nhớ có *being* nhưng lại lắp sai trợ động từ thời: viết *is being repaired yesterday* hoặc *was being checked now*. Cần xác định rõ mốc thời gian trước: hiện tại dùng *am/is/are being + V3*, quá khứ tiếp diễn bị động dùng *was/were being + V3*.",
+        pitfallFix: "Cách tự kiểm tra nhanh: tìm dấu hiệu thời gian trước, chọn đúng dạng *be*, sau đó kiểm tra xem câu có đang mang nghĩa bị động và tiếp diễn không. Nếu thiếu một trong ba mắt xích *be - being - V3* thì câu vẫn chưa đúng.",
         practiceA: "Chọn present continuous passive.",
         practiceB: "Viết 2 câu có now và at that time.",
       },
