@@ -1,93 +1,75 @@
-# Fix Full THPTQG - Test 4
+# Full THPTQG mock — recurring defect patterns (AI repair checklist)
 
-## Scope
+Use this as a **generic** log when auditing or fixing imports/heuristic-built entries in `backend/mock/thptqg_fulltest.json`. Patterns apply across mocks; verify against the answer key and original PDF/source when available.
 
-- Fixed `thptqg-simulation-test-4` in `backend/mock/thptqg_fulltest.json`.
-- Synced the embedded frontend fallback bundle after the data fix.
-- Did not edit importer or repair scripts.
+---
 
-## Issues Found
+## Stems and prompts
 
-- Question 17 option D contained the next opera passage, so the passage was rendered as an answer choice.
-- Part 3 had one empty arrangement group for questions 21-30, causing the missing-passage warning.
-- Question 22 option D contained the plastic-bags passage, so the passage was rendered as an answer choice.
-- Questions 31-40 used one long context string plus empty strings, so paragraph labels and paragraph-target highlighting could not work correctly.
+### Arrangement / reordering items rendered on one line (`a - … b - …`)
 
-## Manual Fixes
+**Symptom:** Utterances run together in one paragraph; labels `a`–`e` are hard to scan.
 
-- Trimmed question 17 option D back to only `a-b-c-e-d`.
-- Added a dedicated opera passage group for questions 18-20 in Part 2.
-- Added the continued opera passage group for questions 21-22 in Part 3.
-- Added a separate plastic-bags passage group for questions 23-30 in Part 3.
-- Trimmed question 22 option D back to only the answer text.
-- Split the conservation passage for questions 31-40 into five paragraph entries.
-- Marked the underlined sentences with `[[u]]...[[/u]]` so the existing renderer can show emphasis.
+**Cause:** Stems often use `a -` / `b -` (space-hyphen) instead of `A.` / `B.`; default line-break helpers may only split the latter.
 
-## Verification Notes
+**Fix:** Ensure `insertInlineMcLineBreaks` in `quizService.js` inserts newlines before each `[a-e] - ` label; or store explicit `\n` after each label line in JSON.
 
-- Test 4 now has reading context for questions 21-30.
-- Plastic-bags and opera passages are no longer inside answer options.
-- The conservation passage has multiple context entries, allowing `Paragraph 1` through `Paragraph 5` labels and prompt-based highlighting.
+### Blank stems (`Question N.` only)
 
-# Fix Full THPTQG - Test 5
+**Symptom:** UI falls back to generic copy (“Choose the best arrangement…”).
 
-## Scope
+**Cause:** Missing real stem text or empty `context` for cloze blocks.
 
-- Fixed `thptqg-simulation-test-5` questions 21-30 in `backend/mock/thptqg_fulltest.json`.
-- Synced the same manual text fixes into `frontend/js/chatbot/services/embeddedThptqgFullTestBundle.js`.
-- Did not edit importer, repair scripts, or rendering scripts.
+**Fix:** Restore full passage/cloze from source material; wire group `instruction` + `context` + question prompts consistently.
 
-## Issues Found
+### Answer option polluted by passage text
 
-- Question 25 asked for `their` in paragraph 3, but the target word appears in paragraph 5.
-- Question 26 asked for `groundbreaking` in paragraph 2, but the target word appears in paragraph 4.
-- Question 27 quotes a long sentence, and the existing focus matcher may not catch that full sentence automatically.
+**Symptom:** A reading passage or next question’s stem appears inside an option string.
 
-## Manual Fixes
+**Cause:** Bad merge or paste during import.
 
-- Changed question 25 prompt to reference paragraph 5 so `their` is highlighted in the correct passage paragraph.
-- Changed question 26 prompt to reference paragraph 4 so `groundbreaking` is highlighted in the correct passage paragraph.
-- Wrapped the quoted sentence for question 27 with `[[u]]...[[/u]]` in the passage context so it is emphasized without changing renderer logic.
+**Fix:** Trim options to the intended sequence/text only; move prose back into `context` or `prompt`.
 
-## Verification Notes
+---
 
-- Test 5 Part 3 now has corrected prompt references for the target words in questions 25 and 26.
-- The sentence used by question 27 is explicitly marked for emphasis in the passage context.
+## Reading passages (`parts[].groups[].context`)
 
-# Fix Full THPTQG - Test 6
+### Padding entries (`""`) or fake splits
 
-## Scope
+**Symptom:** Blank stripes between paragraphs, wrong “Paragraph N” mapping, or long-reading layout treating unrelated chunks as separate paragraphs.
 
-- Fixed `thptqg-simulation-test-6` in `backend/mock/thptqg_fulltest.json`.
-- Read only the targeted `pair-12` block from `data_output/66_Full.md` and the cleaner duplicate in `example5.md` to restore the original stems/passages.
-- Did not edit importer or repair scripts.
+**Cause:** `context` arrays padded with empty strings, or one blob split arbitrarily.
 
-## Issues Found
+**Fix:** Remove empty strings; use either **one** continuous string when the section should read as a single block (no artificial paragraph breaks), or **one string per real paragraph** aligned with prompts that reference paragraph numbers.
 
-- Questions `1-12` had no real stem/context in the test data, so the UI could only show generic prompts.
-- Questions `21-22` were detached from the Ronaldo cloze passage and were still using the wrong sports placeholder content.
-- Questions `23-30` were showing the wrong passage (`gap year`) instead of the original `Vietnamese cultural identity` passage.
-- Questions `31-40` were showing the wrong passage (`military robots`) instead of the original `news` passage, so the bolded target words and underlined sentence were also wrong or missing.
+### Marked emphasis missing
 
-## Manual Fixes
+**Symptom:** “Underlined sentence”, “the word X in paragraph Y”, or bold targets do not highlight.
 
-- Restored the full original cloze stem for questions `1-6` (`TravelMate`) and `7-12` (`Sustainable Living`).
-- Restored the missing continuation stem for questions `11-12`.
-- Reattached questions `18-22` to the original Cristiano Ronaldo cloze passage and replaced the wrong placeholder options in questions `18-22`.
-- Replaced the Part 3 passage with the original `Vietnamese cultural identity` reading and restored the intended emphasis markers:
-  - `**indigenous**`
-  - `**reverence**`
-  - `[[u]]...[[/u]]` around the `Ao dai...` sentence
-  - `**their**`
-- Replaced the Part 4 passage with the original `news` reading and restored the intended emphasis markers:
-  - `**limited**`
-  - `**them**`
-  - `**take a toll on**`
-  - `[[u]]...[[/u]]` around the concluding sentence used by question `38`
-- Updated question prompts `23-40` to match the restored passages instead of the wrong imported content.
+**Cause:** Passage text lacks markers the renderer expects.
 
-## Verification Notes
+**Fix:** Use `**word**` for bold targets and `[[u]]…[[/u]]` around sentences meant to be underlined, consistent with how the experience view resolves emphasis.
 
-- Test 6 now has actual passage text for questions `1-12` instead of empty context arrays.
-- Questions `21-22` now sit inside the same Ronaldo passage block as `18-20`.
-- Questions `23-30` and `31-40` now point at the correct restored readings, with the bolded and underlined text present in the passage context.
+### Prompt paragraph index ≠ passage layout
+
+**Symptom:** Question asks for “paragraph 2” but the target appears elsewhere.
+
+**Cause:** Passage was merged/split without updating prompts.
+
+**Fix:** Renumber prompt **or** reshuffle `context` strings so paragraph indices match.
+
+### Wrong passage attached to a question range
+
+**Symptom:** Questions clearly refer to topic A while sidebar shows topic B.
+
+**Cause:** Wrong group wiring after partial import.
+
+**Fix:** Replace `context` for that group and reconcile prompts/options with the restored passage.
+
+---
+
+## Operational notes
+
+- After editing `thptqg_fulltest.json`, regenerate the embedded fallback:  
+  `node scripts/sync_thptqg_embedded_bundle.mjs`
+- Prefer manual edits in mock JSON over importer one-offs unless the pipeline is being fixed project-wide.
