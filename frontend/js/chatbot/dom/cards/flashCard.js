@@ -12,6 +12,10 @@ import {
   wrapField,
 } from "./flowCardShared.js";
 
+function randomFlashAutofillCount() {
+  return 10 + Math.floor(Math.random() * 11);
+}
+
 export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
@@ -44,7 +48,7 @@ export function createFlashcardFormCard(deps) {
     presetId = String(s.id ?? "");
     list.value = String(s.l ?? "");
     back.value = String(s.b ?? "");
-    count.value = String(clamp(toPositiveInt(s.c, 20), 1, 40));
+    count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
     notes.value = String(s.n ?? "");
   });
 
