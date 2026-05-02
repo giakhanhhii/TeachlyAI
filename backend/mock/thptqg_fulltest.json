@@ -11045,8 +11045,13 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 1 to 8.",
+              "context": [
+                "**Global warming** refers to the long-term rise in Earth's average surface temperature linked to human activities. **It** is driven mainly by higher concentrations of greenhouse gases in the atmosphere. **It** matters because even small shifts can disrupt weather patterns, ecosystems, and human livelihoods.",
+                "Carbon dioxide, methane, and other greenhouse gases allow sunlight to reach the ground but **absorb** much of the heat that would otherwise radiate back to space. As the levels of these gases grow, they trap more heat and push global temperatures upward.",
+                "Warmer temperatures melt ice sheets and make ocean water expand. Rising **sea levels** threaten low-lying **coastal** cities, farmland, and freshwater supplies for millions of residents.",
+                "Many plants and animals need stable conditions to survive. [[u]]If the climate changes rapidly and severely, it can cause significant harm to some plants and animals.[[/u]] **Extreme** heatwaves, droughts, and storms become more likely when climate patterns shift."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -11061,8 +11066,10 @@
             {
               "id": "part-1-group-2",
               "title": "Câu 9",
-              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
-              "context": [],
+              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 9 to 10.",
+              "context": [
+                "Arrangement items: each question lists lettered parts in the stem; choose the order that forms a natural monologue or coherent paragraph."
+              ],
               "questionNumbers": [
                 9,
                 10
@@ -11079,9 +11086,11 @@
           "groups": [
             {
               "id": "part-2-group-2",
-              "title": "Câu 9",
-              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions",
-              "context": [],
+              "title": "Câu 11",
+              "instruction": "Mark the letter A, B, C or D on your answer sheet to indicate the best arrangement of utterances or sentences to make a meaningful exchange or text in each of the following questions from 11 to 13.",
+              "context": [
+                "Arrangement items: each question lists lettered parts in the stem; choose the order that forms a natural letter or dialogue."
+              ],
               "questionNumbers": [
                 11,
                 12,
@@ -11109,7 +11118,7 @@
             {
               "id": "part-2-group-4",
               "title": "Câu 20",
-              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 20 to 29.",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to question 20.",
               "context": [
                 "(I) The authors noted that while other forms of pollution are decreasing, noise pollution has been increasing. (II) This conclusion is reinforced by the fact that there has been an increase in the number of people who have been complaining about excessive noise in the WHO region. (III) Populations that are exposed to high noise levels can be afflicted by other symptoms such as: stress reactions, sleep-stage changes, and clinical symptoms like hypertension and cardiovascular diseases. (IV) All these impacts can contribute to premature mortality. It is important to note that these adverse health problems impact all age groups including children and adolescents. In fact, it has been reported that children who live and or study in an area afflicted with noise pollution tend to suffer from stress, impairments in memory and attention as well as difficulty reading. \"In Western Europe, the guidelines say, traffic noise results in an annual loss of at least one million healthy years\". Traffic noise is currently ranked second among environmental threats to public health. The danger of noise pollution is more present to us when we are asleep. Because the human ear is so sensitive, it never rests, it is always working, picking up and transmitting sounds for our brains to interpret. This always on working process is where the danger lies, though you may be sleeping, sounds are still being picked up and processed. The most common side effects of this phenomenon are sleep disturbance and tiredness, impaired memory, judgment, and psychomotor skills. The other more serious outcomes of this can be the triggering of the body's acute stress response, which raises blood pressure and heart rate as the body and brain go into a state of hyperarousal. According to the European Environment Agency, at least 10,000 cases of premature deaths from noise exposure occur each year, although incomplete data mean this number is significantly underestimated."
               ],
@@ -11128,8 +11137,8 @@
           "groups": [
             {
               "id": "part-3-group-4",
-              "title": "Câu 20",
-              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 20 to 29.",
+              "title": "Câu 21",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the correct answer to each of the questions from 21 to 29.",
               "context": [
                 "(I) The authors noted that while other forms of pollution are decreasing, noise pollution has been increasing. (II) This conclusion is reinforced by the fact that there has been an increase in the number of people who have been complaining about excessive noise in the WHO region. (III) Populations that are exposed to high noise levels can be afflicted by other symptoms such as: stress reactions, sleep-stage changes, and clinical symptoms like hypertension and cardiovascular diseases. (IV) All these impacts can contribute to premature mortality. It is important to note that these adverse health problems impact all age groups including children and adolescents. In fact, it has been reported that children who live and or study in an area afflicted with noise pollution tend to suffer from stress, impairments in memory and attention as well as difficulty reading. \"In Western Europe, the guidelines say, traffic noise results in an annual loss of at least one million healthy years\". Traffic noise is currently ranked second among environmental threats to public health. The danger of noise pollution is more present to us when we are asleep. Because the human ear is so sensitive, it never rests, it is always working, picking up and transmitting sounds for our brains to interpret. This always on working process is where the danger lies, though you may be sleeping, sounds are still being picked up and processed. The most common side effects of this phenomenon are sleep disturbance and tiredness, impaired memory, judgment, and psychomotor skills. The other more serious outcomes of this can be the triggering of the body's acute stress response, which raises blood pressure and heart rate as the body and brain go into a state of hyperarousal. According to the European Environment Agency, at least 10,000 cases of premature deaths from noise exposure occur each year, although incomplete data mean this number is significantly underestimated."
               ],
