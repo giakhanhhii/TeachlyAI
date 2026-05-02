@@ -22,6 +22,22 @@ function formatFlashMultilineHtml(s) {
   return escapeHtml(String(s || "")).replace(/\n/g, "<br>");
 }
 
+function formatFlashFrontHtml(s) {
+  const lines = String(s || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length >= 2 && /^từ gốc:/i.test(lines[0])) {
+    const head = `<div class="flash-front-origin">${escapeHtml(lines[0])}</div>`;
+    const body = `<div class="flash-front-main">${lines
+      .slice(1)
+      .map((line) => escapeHtml(line))
+      .join("<br>")}</div>`;
+    return `${head}${body}`;
+  }
+  return formatFlashMultilineHtml(s);
+}
+
 /** Viết hoa chữ cái đầu mặt trước / mặt sau thẻ. */
 function capitalizeFirst(s) {
   const t = String(s || "").trim();
@@ -307,7 +323,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     inner.setAttribute("role", "button");
     inner.tabIndex = 0;
 
-    const frontTerm = formatFlashMultilineHtml(capitalizeFirst(c.front));
+    const frontTerm = formatFlashFrontHtml(capitalizeFirst(c.front));
     const backText = formatFlashMultilineHtml(capitalizeFirst(c.back));
     const phoneticBlock = c.phonetic ? `<div class="flash-phonetic">${escapeHtml(c.phonetic)}</div>` : "";
     const hintBlock = c.hint ? `<div class="flash-mini-hint">${escapeHtml(c.hint)}</div>` : "";
@@ -393,6 +409,21 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     frame.appendChild(inner);
     wrap.appendChild(frame);
     cardSlot.appendChild(wrap);
+    const frontOrigin = wrap.querySelector(".flash-front-origin");
+    if (frontOrigin instanceof HTMLElement) {
+      frontOrigin.style.display = "block";
+      frontOrigin.style.fontSize = "0.5em";
+      frontOrigin.style.lineHeight = "1.35";
+      frontOrigin.style.fontWeight = "600";
+      frontOrigin.style.opacity = "0.55";
+      frontOrigin.style.marginBottom = "0.45em";
+      frontOrigin.style.letterSpacing = "0.02em";
+    }
+    const frontMain = wrap.querySelector(".flash-front-main");
+    if (frontMain instanceof HTMLElement) {
+      frontMain.style.display = "block";
+      frontMain.style.lineHeight = "1.25";
+    }
     requestAnimationFrame(() => fitFlashCardText(inner));
 
     const visibleTotal = Math.max(1, visibleIndices.length);
