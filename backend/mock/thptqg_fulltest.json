@@ -8692,7 +8692,7 @@
               "context": [
                 "(I) Urbanization is reshaping societies as millions of people move from rural areas to cities each year. (II) This movement is driven by the search for jobs, education, and improved living standards. (III) Cities have become engines of economic growth and innovation. (IV) At the same time, urban expansion presents planners with difficult choices about land use and infrastructure.",
                 "Urban areas typically provide a number of job opportunities across manufacturing, services, and technology sectors. Residents benefit from technological advancements, economic growth, and access to specialized healthcare and schools. These advantages explain why migration toward cities continues worldwide.",
-                "Rapid growth also produces serious stresses: overcrowding, traffic congestion, and strain on housing and utilities. The proliferation of informal settlements on city edges shows how demand can outpace formal construction; they often lack reliable water, sanitation, or transport links. Crime rates and health risks may rise where planning fails to keep pace.",
+                "Rapid growth also produces serious stresses: overcrowding, traffic congestion, and strain on housing and utilities. The proliferation of informal settlements on city edges shows how demand can outpace formal construction; many people settle before utilities arrive, and they often lack reliable water, sanitation, or transport links. Crime rates and health risks may rise where planning fails to keep pace.",
                 "[[u]]Governments and urban planners must prioritize creating inclusive, well-connected cities that provide access to essential services for all residents.[[/u]] Sustainable zoning, investment in transit, and equitable housing policy can reduce inequality while preserving environmental quality. International cooperation and community participation remain central to successful urban strategies."
               ],
               "questionNumbers": [
@@ -8742,9 +8742,9 @@
               "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 17 to 20.",
               "context": [
                 "Plastic pollution has become one of the defining environmental crises of our time. Researchers estimate that millions of tonnes of plastic waste enter rivers and oceans annually, and much of it (17)_.",
-                "Scientists (18)_, drawing on field studies and satellite monitoring, agree that concentrations will keep rising unless production and disposal patterns change.",
+                "Scientists (18)_ agree that concentrations will keep rising unless production and disposal patterns change.",
                 "(19)_",
-                "National bans and recycling schemes have expanded across many regions, yet (20)_"
+                "National bans and recycling schemes have expanded across many regions, (20)_"
               ],
               "questionNumbers": [
                 17,
@@ -8764,24 +8764,27 @@
           "groups": [
             {
               "id": "part-3-group-3",
-              "title": "Câu 17",
-              "instruction": "",
-              "context": [],
+              "title": "Câu 21",
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 21 to 22.",
+              "context": [
+                "Plastic debris threatens marine food chains on every coast. Pollution will worsen until (21) _.",
+                "Pilot programmes that (22) _ coastal retailers eliminate single-use plastics show how quickly behaviour can change when policy and enforcement align."
+              ],
               "questionNumbers": [
-                21
+                21,
+                22
               ]
             },
             {
               "id": "part-3-group-4",
-              "title": "Câu 22",
-              "instruction": "Read the following advertisement and mark the letter A, B, C or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 22 to 27.",
+              "title": "Câu 23",
+              "instruction": "Read the following advertisement and mark the letter A, B, C or D on your answer sheet to indicate the correct option that best fits each of the numbered blanks from 23 to 27.",
               "context": [
-                "Udemy: Learn Anything, Anytime Udemy is an online learning platform (22) _ people learn new skills and improve their knowledge. With over 150,000 (23) _, students can (24) _ from a wide range of subjects. Whether you want to learn about topics like business, design, IT, and more.",
-                "Udemy offers flexible learning (25) _ your own pace, so you can fit courses around your schedule. Whether you're looking (26) _ in your career or learn something new, Udemy has something for everyone. You can access courses on your computer, tablet, or phone, making learning easy and (27) _.",
+                "Udemy: Learn Anything, Anytime. Udemy is an online learning platform that helps people learn new skills and improve their knowledge. With over 150,000 (23) _, students can (24) _ from a wide range of subjects, whether you want to learn about business, design, IT, and more.",
+                "Udemy offers flexible learning (25) _ your own pace, so you can fit courses around your schedule. Whether you're looking (26) _ in your career or to learn something new, Udemy has something for everyone. You can access courses on your computer, tablet, or phone, making learning easy and (27) _.",
                 "Start learning today and unlock your potential with Udemy."
               ],
               "questionNumbers": [
-                22,
                 23,
                 24,
                 25,
@@ -8792,17 +8795,13 @@
             {
               "id": "part-3-group-5",
               "title": "Câu 28",
-              "instruction": "Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 28 to 35.",
+              "instruction": "Read the following passage about cultural diversity and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 28 to 30.",
               "context": [
                 "Cultural diversity refers to the presence of multiple cultural groups and their practices within a society. It encompasses various aspects such as language, traditions, beliefs, and values. Embracing cultural diversity can lead to a more inclusive and harmonious society, where individuals appreciate and respect differences.",
-                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights.",
-                "This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business.",
-                "Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
-                "By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.",
-                "Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance. In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches.",
-                "This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
-                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence.",
-                "By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
+                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights. This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business. Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
+                "[[u]]By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.[[/u]] Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance.",
+                "In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches. This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
+                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence. By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
               ],
               "questionNumbers": [
                 28,
@@ -8821,18 +8820,14 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "Câu 28",
-              "instruction": "Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 28 to 35.",
+              "title": "Câu 31",
+              "instruction": "Read the following passage about cultural diversity and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 31 to 35.",
               "context": [
                 "Cultural diversity refers to the presence of multiple cultural groups and their practices within a society. It encompasses various aspects such as language, traditions, beliefs, and values. Embracing cultural diversity can lead to a more inclusive and harmonious society, where individuals appreciate and respect differences.",
-                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights.",
-                "This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business.",
-                "Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
-                "By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.",
-                "Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance. In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches.",
-                "This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
-                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence.",
-                "By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
+                "This diversity enriches communities by introducing new perspectives, fostering creativity, and promoting mutual understanding. One significant benefit of cultural diversity is the exchange of ideas and knowledge. When people from different cultural backgrounds interact, they share their unique experiences and insights. This exchange can lead to innovative solutions and improvements in various fields such as science, art, and business. Moreover, cultural diversity can enhance social cohesion by encouraging people to work together and learn from one another. Education plays a crucial role in promoting cultural diversity. Schools and universities can create inclusive environments by incorporating diverse perspectives into their curricula and encouraging students to engage with different cultures.",
+                "[[u]]By doing so, educational institutions help students develop a global mindset and prepare them for a multicultural world.[[/u]] Additionally, exposure to diverse cultures at a young age can reduce prejudices and promote tolerance.",
+                "In the workplace, cultural diversity can boost productivity and creativity. Diverse teams bring together individuals with different skills, viewpoints, and problem-solving approaches. This variety can enhance decision-making processes and lead to more effective and innovative solutions. Companies that prioritize cultural diversity also tend to have a more positive work environment and higher employee satisfaction.",
+                "Despite its benefits, cultural diversity also presents challenges. Misunderstandings and conflicts can arise when people from different cultural backgrounds interact. To address these challenges, it is essential to promote open communication and cultural competence. By fostering an inclusive culture, societies and organizations can maximize the benefits of cultural diversity while minimizing potential conflicts."
               ],
               "questionNumbers": [
                 31,
