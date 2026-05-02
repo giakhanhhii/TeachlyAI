@@ -489,7 +489,7 @@ const RAW_SLIDE_PRESETS = [
         exampleA: "The explanation was clear.",
         exampleB: "They discussed the importance of education.",
         detailedExample:
-          "Ví dụ: In the sentence 'They discussed the importance of education in rural areas', the word 'importance' must be a noun because it comes after 'the' and before 'of education'. A similar pattern appears in 'Her explanation was clear and easy to follow', where 'explanation' is the noun after a possessive adjective.",
+          "Ví dụ: Trong câu 'They discussed the importance of education in rural areas', từ 'importance' phải là danh từ vì nó đứng sau mạo từ 'the' và đứng trước cụm giới từ 'of education'. Tương tự, trong câu 'Her explanation was clear and easy to follow', từ 'explanation' cũng là danh từ vì nó đứng sau tính từ sở hữu 'her'.",
         pitfallA: "Chọn tính từ vào vị trí danh từ.",
         pitfallB: "Không xét từ đứng trước chỗ trống.",
         practiceA: "Xác định vị trí cần danh từ.",
@@ -504,7 +504,7 @@ const RAW_SLIDE_PRESETS = [
         exampleA: "The method is effective.",
         exampleB: "This is a useful strategy.",
         detailedExample:
-          "Ví dụ: In 'The method is effective enough for weak students', the word 'effective' is an adjective because it stands after the linking verb 'is'. In 'This is a useful strategy for vocabulary revision', 'useful' is also an adjective because it directly modifies the noun 'strategy'.",
+          "Ví dụ: Trong câu 'The method is effective enough for weak students', từ 'effective' là tính từ vì nó đứng sau động từ nối 'is'. Trong câu 'This is a useful strategy for vocabulary revision', từ 'useful' cũng là tính từ vì nó bổ nghĩa trực tiếp cho danh từ 'strategy'.",
         pitfallA: "Dùng trạng từ sau linking verb.",
         pitfallB: "Nhầm adjective với noun.",
         practiceA: "Chọn adjective form.",
@@ -519,7 +519,7 @@ const RAW_SLIDE_PRESETS = [
         exampleA: "She answered confidently.",
         exampleB: "The task was extremely difficult.",
         detailedExample:
-          "Ví dụ: In 'She answered the interview questions confidently and clearly', the words 'confidently' and 'clearly' are adverbs because they describe how she answered. In 'The task was extremely difficult for most students', 'extremely' is an adverb because it modifies the adjective 'difficult', not the noun.",
+          "Ví dụ: Trong câu 'She answered the interview questions confidently and clearly', hai từ 'confidently' và 'clearly' là trạng từ vì chúng bổ nghĩa cho động từ 'answered', cho biết cô ấy trả lời như thế nào. Trong câu 'The task was extremely difficult for most students', từ 'extremely' là trạng từ vì nó bổ nghĩa cho tính từ 'difficult', chứ không bổ nghĩa cho danh từ.",
         pitfallA: "Dùng adjective để bổ nghĩa động từ.",
         pitfallB: "Quên hậu tố -ly khi cần.",
         practiceA: "Điền adverb form.",
@@ -545,7 +545,7 @@ const RAW_SLIDE_PRESETS = [
         exampleA: "inform -> information.",
         exampleB: "careful -> carefully.",
         detailedExample:
-          "Ví dụ: From the base word 'inform', we form the noun 'information' in 'The information in this article is reliable and up to date'. From the adjective 'careful', we form the adverb 'carefully' in 'Students should read the instructions carefully before choosing an answer'.",
+          "Ví dụ: Từ gốc 'inform' có thể đổi thành danh từ 'information' trong câu 'The information in this article is reliable and up to date'. Từ tính từ 'careful' có thể đổi thành trạng từ 'carefully' trong câu 'Students should read the instructions carefully before choosing an answer', vì vị trí đó cần một từ bổ nghĩa cho động từ 'read'.",
         pitfallA: "Sai chính tả khi thêm hậu tố.",
         pitfallB: "Chọn đúng nghĩa nhưng sai từ loại.",
         practiceA: "Hoàn thành bảng word family.",
