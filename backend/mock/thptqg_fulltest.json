@@ -8249,7 +8249,7 @@
           "id": "q13",
           "number": 13,
           "partId": "part-2",
-          "prompt": "Question 13. - a. The decision-making process involves several steps to reach a thoughtful and well-considered conclusion. - b. Gathering relevant information helps to create a clear understanding of the options and their potential outcomes. - c. After gathering information, evaluating the pros and cons of each option is essential to make an informed choice. - d. Identifying the decision that needs to be made is the first step, establishing a foundation for the process. - e. By following these steps, individuals can make more confident decisions and reduce the risk of regret.",
+          "prompt": "Question 13. a. The decision-making process involves several steps to reach a thoughtful and well-considered conclusion. b. Gathering relevant information helps to create a clear understanding of the options and their potential outcomes. c. After gathering information, evaluating the pros and cons of each option is essential to make an informed choice. d. Identifying the decision that needs to be made is the first step, establishing a foundation for the process. e. By following these steps, individuals can make more confident decisions and reduce the risk of regret.",
           "options": [
             "d-b-c-a-e",
             "a-c-d-b-e",
@@ -8264,7 +8264,7 @@
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14. - a. By 2020, the parking lots had been replaced with parks and recreational areas, making the city centre more pedestrian-friendly. - b. The city centre of Redwood has seen major transformations between 2000 and 2020. - c. Overall, these changes had made the city center more attractive and accessible, with a greater focus on green spaces and public amenities. - d. Public transportation was also improved, with a new tram system connecting the city centre to the surrounding suburbs. - e. In 2000, the area was dominated by office buildings and parking lots, with few public spaces.",
+          "prompt": "Question 14. a. By 2020, the parking lots had been replaced with parks and recreational areas, making the city centre more pedestrian-friendly. b. The city centre of Redwood has seen major transformations between 2000 and 2020. c. Overall, these changes had made the city center more attractive and accessible, with a greater focus on green spaces and public amenities. d. Public transportation was also improved, with a new tram system connecting the city centre to the surrounding suburbs. e. In 2000, the area was dominated by office buildings and parking lots, with few public spaces.",
           "options": [
             "b-a-e-d-c",
             "b-a-d-e-c",
@@ -8279,7 +8279,7 @@
           "id": "q15",
           "number": 15,
           "partId": "part-2",
-          "prompt": "Question 15. - a. Jake: That's awesome! What kind of dishes are you learning? - b. Sarah: I'm starting with simple recipes like pasta and soups. - c. Sarah: I've been learning how to cook recently. - d. Jake: That sounds delicious! - e. Sarah: Yeah, it's been fun experimenting with new ingredients.",
+          "prompt": "Question 15. a. Jake: That's awesome! What kind of dishes are you learning? b. Sarah: I'm starting with simple recipes like pasta and soups. c. Sarah: I've been learning how to cook recently. d. Jake: That sounds delicious! e. Sarah: Yeah, it's been fun experimenting with new ingredients.",
           "options": [
             "a-d-c-b-e",
             "c-a-b-d-e",
@@ -8294,7 +8294,7 @@
           "id": "q16",
           "number": 16,
           "partId": "part-2",
-          "prompt": "Question 16. - a. Olivia: Hey, Max! Did you catch that new movie everyone's talking about? - b. Max: Hi, Olivia! Yes, I saw it last night. It was fantastic! - c. Olivia: I've heard great reviews. What did you like most about it?",
+          "prompt": "Question 16. a. Olivia: Hey, Max! Did you catch that new movie everyone's talking about? b. Max: Hi, Olivia! Yes, I saw it last night. It was fantastic! c. Olivia: I've heard great reviews. What did you like most about it?",
           "options": [
             "a-b-c",
             "a-c-b",
@@ -8309,7 +8309,7 @@
           "id": "q17",
           "number": 17,
           "partId": "part-2",
-          "prompt": "Question 17. Hi Lisa, - a. Let me know the details, and maybe we can make some plans together. - b. I've been thinking of taking a short break myself, so I'd love to join if there's still room. - c. Looking forward to hearing from you and hoping we can arrange something. - d. I heard you are planning a weekend trip to the beach. That sounds like so much fun! - e. Where are you planning to go, and how long will you be staying? Best, Tina",
+          "prompt": "Question 17. Hi Lisa, a. Let me know the details, and maybe we can make some plans together. b. I've been thinking of taking a short break myself, so I'd love to join if there's still room. c. Looking forward to hearing from you and hoping we can arrange something. d. I heard you are planning a weekend trip to the beach. That sounds like so much fun! e. Where are you planning to go, and how long will you be staying? Best, Tina",
           "options": [
             "d-e-a-c-b",
             "e-c-d-b-a",
