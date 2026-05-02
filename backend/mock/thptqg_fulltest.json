@@ -918,7 +918,7 @@
             {
               "id": "part-3-group-5",
               "title": "AVICII'S LIFE AFTER REHAB",
-              "instruction": "Read the following passage about endangered languages and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
+              "instruction": "Read the following passage about Avicii's life after rehab and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 23 to 30.",
               "context": [
                 "Once he completed his month in rehab, Avicii seemed to have a new outlook on life. He was meditating regularly, reading about the collective unconscious, and got a puppy. After not performing for a long period of time, he returned to the stage in 2016 at Miami's Ultra Music Festival.",
                 "It was announced a few days after this gig that he would not be performing live anymore. Avicii chose to not perform so that he could focus on bettering his mental health.",
@@ -1322,7 +1322,7 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The phrase \"new-found stability\" in paragraph 2 suggests that Avicii felt",
+          "prompt": "Question 24. The phrase \"new-found stability\" in paragraph 3 suggests that Avicii felt",
           "options": [
             "completely free of mental health issues",
             "more balanced than before",
@@ -1337,7 +1337,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word suppress in paragraph 2 is closest in meaning to",
+          "prompt": "Question 25. The word \"suppress\" in paragraph 3 is closest in meaning to",
           "options": [
             "express",
             "ignore",
@@ -1389,7 +1389,7 @@
             "Paragraph 3",
             "Paragraph 4"
           ],
-          "correctIndex": 1,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-6 -> 28. B"
         },
@@ -1710,12 +1710,8 @@
               "context": [
                 "Artificial intelligence (AI) and robotics are revolutionizing medicine, especially in areas like disease diagnosis and surgical procedures. Robotic surgical systems, like the da Vinci Surgical System, assist human surgeons in performing minimally invasive surgeries, offering precision and efficiency. While AI-powered robots can process vast amounts of data and learn from previous surgeries, the key question is whether they can fully replace human surgeons.",
                 "AI's potential lies in its ability to navigate surgeries with remarkable precision, reducing human error, fatigue, and emotional influence, which results in quicker recovery and improved patient outcomes. AI-powered robots can also help address the shortage of experienced surgeons and improve healthcare availability. Although implementing robotic systems is costly, their long-term benefits, including fewer surgeries and reduced healthcare costs, may ultimately make them more cost-effective.",
-                "However, significant challenges remain. One of the main concerns is the human element in surgery. Patients rely on their surgeons for empathy, clear communication, and comfort, which AI robots currently cannot provide.",
-                "There are also legal questions surrounding responsibility in case of complications during surgery- whether it should fall on the surgeon, AI developers, or the hospital.",
-                "Additionally, AI systems depend on high-quality, unbiased data to make accurate decisions. If the data used for training is flawed, it could lead to safety risks. There are also concerns about cybersecurity, as AI-powered robots connected to networks could be vulnerable to cyber-attacks.",
-                "Moreover, the high upfront costs of robotic systems may limit their availability to certain medical facilities, deepening healthcare disparities.",
-                "Despite these challenges, many experts believe AI and robotics will complement rather than replace surgeons. AI can assist by providing guidance during surgeries, performing repetitive tasks, and improving accuracy, allowing human surgeons to focus on more complex aspects. The future of surgery may involve a collaborative approach, where AI and human surgeons work together, combining AI's precision with human empathy and judgment.",
-                "Balancing the benefits of AI with the ethical and emotional complexities it presents will be crucial in shaping the future of healthcare."
+                "However, significant challenges remain. One of the main concerns is the human element in surgery. Patients rely on their surgeons for empathy, clear communication, and comfort, which AI robots currently cannot provide. There are also legal questions surrounding responsibility in case of complications during surgery- whether it should fall on the surgeon, AI developers, or the hospital. Additionally, AI systems depend on high-quality, unbiased data to make accurate decisions. If the data used for training is [[u]]flawed[[/u]], it could lead to safety risks. There are also concerns about cybersecurity, as AI-powered robots connected to networks could be vulnerable to cyber-attacks. Moreover, the high upfront costs of robotic systems may limit their availability to certain medical facilities, deepening healthcare disparities.",
+                "[[u]]Despite these challenges, many experts believe AI and robotics will complement rather than replace surgeons. AI can assist by providing guidance during surgeries, performing repetitive tasks, and improving accuracy, allowing human surgeons to focus on more complex aspects. The future of surgery may involve a collaborative approach, where AI and human surgeons work together, combining AI's precision with human empathy and judgment. Balancing the benefits of AI with the ethical and emotional complexities it presents will be crucial in shaping the future of healthcare.[[/u]]"
               ],
               "questionNumbers": [
                 23,
@@ -1739,17 +1735,14 @@
           "groups": [
             {
               "id": "part-4-group-5",
-              "title": "Câu 23",
-              "instruction": "Read the following passage about AI robots and mark the letter A, B, C, or D to indicate the correct answer to each of the questions from 23 to 30.",
+              "title": "Green Tourism In Vietnam",
+              "instruction": "Read the passage about green and sustainable tourism and mark the letter A, B, C, or D to indicate the correct answer to each of the questions from 31 to 40.",
               "context": [
-                "Artificial intelligence (AI) and robotics are revolutionizing medicine, especially in areas like disease diagnosis and surgical procedures. Robotic surgical systems, like the da Vinci Surgical System, assist human surgeons in performing minimally invasive surgeries, offering precision and efficiency. While AI-powered robots can process vast amounts of data and learn from previous surgeries, the key question is whether they can fully replace human surgeons.",
-                "AI's potential lies in its ability to navigate surgeries with remarkable precision, reducing human error, fatigue, and emotional influence, which results in quicker recovery and improved patient outcomes. AI-powered robots can also help address the shortage of experienced surgeons and improve healthcare availability. Although implementing robotic systems is costly, their long-term benefits, including fewer surgeries and reduced healthcare costs, may ultimately make them more cost-effective.",
-                "However, significant challenges remain. One of the main concerns is the human element in surgery. Patients rely on their surgeons for empathy, clear communication, and comfort, which AI robots currently cannot provide.",
-                "There are also legal questions surrounding responsibility in case of complications during surgery- whether it should fall on the surgeon, AI developers, or the hospital.",
-                "Additionally, AI systems depend on high-quality, unbiased data to make accurate decisions. If the data used for training is flawed, it could lead to safety risks. There are also concerns about cybersecurity, as AI-powered robots connected to networks could be vulnerable to cyber-attacks.",
-                "Moreover, the high upfront costs of robotic systems may limit their availability to certain medical facilities, deepening healthcare disparities.",
-                "Despite these challenges, many experts believe AI and robotics will complement rather than replace surgeons. AI can assist by providing guidance during surgeries, performing repetitive tasks, and improving accuracy, allowing human surgeons to focus on more complex aspects. The future of surgery may involve a collaborative approach, where AI and human surgeons work together, combining AI's precision with human empathy and judgment.",
-                "Balancing the benefits of AI with the ethical and emotional complexities it presents will be crucial in shaping the future of healthcare."
+                "[[u]]Vietnam's tourism sector has seen significant growth in recent years, with increasing numbers of both international and domestic visitors. However, this growth has put pressure on the environment and cultural heritage, particularly in rapidly developing tourist destinations. To address these challenges, the country is shifting towards green tourism, emphasizing sustainability and responsibility towards nature and local communities.[[/u]]",
+                "Studies show that many tourists are increasingly conscious of their environmental impact. A 2020 European Commission report found that 82% of EU citizens were willing to adjust their habits to ensure sustainable tourism, such as reducing waste, paying extra to protect the environment, and supporting local communities. Similarly, a survey by Vietnam's National Administration of Tourism (VNAT) revealed that 76% of international tourists were ready to reduce waste, 62% would buy local products, and 45% preferred eco-friendly travel options like low-impact vehicles and off-peak season visits.",
+                "In Vietnam, the trend towards green tourism is gaining traction, with more tourists seeking outdoor activities that allow them to enjoy nature while minimizing their impact. The COVID-19 pandemic has further motivated domestic tourists to adopt more sustainable travel behaviors, with 88% of them embracing green tourism practices, according to Booking.com.",
+                "(I) Several Vietnamese destinations have pioneered green tourism initiatives. (II) For example, Hoi An has promoted \"no plastic waste\" hotels and aims to reduce plastic waste by 13-15% annually, targeting zero plastic by 2025. (III) Additionally, green tours such as garbage collection boat tours in Hoi An, cave exploration in Phong Nha-Ke Bang, and turtle watching tours in Con Dao are attracting tourists. (IV) Vietnam's government supports this shift towards sustainability through its National Action Plan on Green Growth (2021-2030) and tourism strategies emphasizing eco-tourism, community-based tourism, and the use of clean energy.",
+                "Experts suggest that investment in green tourism technologies, promotion of eco-friendly products, and public awareness campaigns are essential to furthering the sustainable tourism agenda. Ultimately, green tourism in Vietnam aims to create [[u]]immersive[[/u]] experiences that benefit both tourists and local communities while preserving the environment for future generations."
               ],
               "questionNumbers": [
                 31,
@@ -2132,7 +2125,7 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word flawed in paragraph 3 is OPPOSITE in meaning to _.",
+          "prompt": "Question 25. The word \"flawed\" in paragraph 3 is OPPOSITE in meaning to _.",
           "options": [
             "perfect",
             "defective",
@@ -2212,7 +2205,7 @@
             "Paragraph 1",
             "Paragraph 2",
             "Paragraph 3",
-            "Paragraph 4 Read the passage about green and sustainable tourism and mark the letter A, B, C, or D to indicate the correct answer to each of the questions from 31 to 40. Vietnam's tourism sector has seen significant growth in recent years, with increasing numbers of both international and domestic visitors. However, this growth has put pressure on the environment and cultural heritage, particularly in rapidly developing tourist destinations. To address these challenges, the country is shifting towards green tourism, emphasizing sustainability and responsibility towards nature and local communities. Studies show that many tourists are increasingly conscious of their environmental impact. A 2020 European Commission report found that 82% of EU citizens were willing to adjust their habits to ensure sustainable tourism, such as reducing waste, paying extra to protect the environment, and supporting local communities. Similarly, a survey by Vietnam's National Administration of Tourism (VNAT) revealed that 76% of international tourists were ready to reduce waste, 62% would buy local products, and 45% preferred eco-friendly travel options like low-impact vehicles and off-peak season visits. In Vietnam, the trend towards green tourism is gaining traction, with more tourists seeking outdoor activities that allow them to enjoy nature while minimizing their impact. The COVID-19 pandemic has further motivated domestic tourists to adopt more sustainable travel behaviors, with 88% of them embracing green tourism practices, according to Booking. com. I Several Vietnamese destinations have pioneered green tourism initiatives. (II) For example, Hoi An has promoted \"no plastic waste\" hotels and aims to reduce plastic waste by 13-15% annually, targeting zero plastic by 2025. (III) Additionally, green tours such as garbage collection boat tours in Hoi An, cave exploration in Phong Nha-Ke Bang, and turtle watching tours in Con Dao are attracting tourists. (IV) Vietnam's government supports this shift towards sustainability through its National Action Plan on Green Growth (2021-2030) and tourism strategies emphasizing eco-tourism, community-based tourism, and the use of clean energy. Experts suggest that investment in green tourism technologies, promotion of eco-friendly products, and public awareness campaigns are essential to furthering the sustainable tourism agenda. Ultimately, green tourism in Vietnam aims to create immersive experiences that benefit both tourists and local communities while preserving the environment for future generations."
+            "Paragraph 4"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -3138,18 +3131,18 @@
           "questionStart": 1,
           "questionEnd": 10,
           "groups": [
-      {
-        "id": "part-1-group-1",
-        "title": "Câu 1",
-        "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
-        "context": [
-          "Emotional intelligence is one of the key qualities that makes humans (1) _. It is often described as a unique (2) _ that allows people to recognize, understand, and manage emotions effectively. Instead of (3) _ upset when problems arise, emotionally aware people stay calm and think carefully.",
-          "People (4) _ develop emotional intelligence usually communicate better, show empathy, and build stronger relationships. They also have respect (5) _ the feelings of others, which helps create a positive environment at school and at work.",
-          "In the digital age, emotional intelligence remains essential because it helps us (6) _ with others in meaningful ways."
-        ],
-        "questionNumbers": [
-          1,
-          2,
+            {
+              "id": "part-1-group-1",
+              "title": "Câu 1",
+              "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
+              "context": [
+                "Emotional intelligence is one of the key qualities that makes humans (1) _. It is often described as a unique (2) _ that allows people to recognize, understand, and manage emotions effectively. Instead of (3) _ upset when problems arise, emotionally aware people stay calm and think carefully.",
+                "People (4) _ develop emotional intelligence usually communicate better, show empathy, and build stronger relationships. They also have respect (5) _ the feelings of others, which helps create a positive environment at school and at work.",
+                "In the digital age, emotional intelligence remains essential because it helps us (6) _ with others in meaningful ways."
+              ],
+              "questionNumbers": [
+                1,
+                2,
                 3,
                 4,
                 5,
@@ -3288,12 +3281,12 @@
               "id": "part-4-group-6",
               "title": "A SHORT HISTORY OF THE SELFIE",
               "instruction": "Read the following passage about the urban shift and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 31 to 40.",
-        "context": [
-          "They're everywhere - people posing with their phones held out in front of them or on a selfie-stick. And it's not just young people - social media users of all ages take selfies, including space-walking astronauts and the Pope.",
-          "So when did this selfie mania begin? I. Most people would guess that it was around the beginning of this century or perhaps a bit later when smartphones became mainstream. But most people would be wrong, just as Britney Spears and Paris Hilton were wrong when they declared on Twitter in 2017 that they had invented the selfie eleven years previously. In fact, they were around 167 years too late to make that claim. II. The oldest existing selfie dates back to 1839 when photographer Robert Cornelius took a self-portrait photograph of himself. III. Cornelius couldn't take a dozen shots and choose the best one-his selfie had to be just one photo. Half a century later, in 1914, thirteen-year-old Grand Duchess Anastasia of Russia took a picture of herself in a mirror and became the first teenager to take a selfie. IV.",
-          "And what about the origin of the word itself? It is thought to come from Australia where people have a habit of putting -ieon the end of words - barbie for barbecue, postie for postal worker and even Aussie for Australian. In 2002, an Australian man took a photo of an injury to his lip and put it up on a public forum to ask for advice on how to treat it. He referred to the photo as a selfie, and the term was born. Selfie became Oxford Dictionaries' word of the year in 2013.",
-          "So, why do we take so many photos of ourselves? A 2017 study into 'selfitis', as the obsessive taking of selfies has been called, found a range of motivations, from seeking to feel more part of a group to shaking off depressive thoughts and of course - capturing a memorable moment. Since we live so much of our lives online, there is pressure to present good quality images, and so it is no surprise that airbrushing apps that enable people to retouch images and present an idealised version of themselves are gaining popularity."
-        ],
+              "context": [
+                "They're everywhere - people posing with their phones held out in front of them or on a selfie-stick. And it's not just young people - social media users of all ages take selfies, including space-walking astronauts and the Pope.",
+                "So when did this selfie mania begin? I. Most people would guess that it was around the beginning of this century or perhaps a bit later when smartphones became mainstream. But most people would be wrong, just as Britney Spears and Paris Hilton were wrong when they declared on Twitter in 2017 that they had invented the selfie eleven years previously. In fact, they were around 167 years too late to make that claim. II. The oldest existing selfie dates back to 1839 when photographer Robert Cornelius took a self-portrait photograph of himself. III. Cornelius couldn't take a dozen shots and choose the best one-his selfie had to be just one photo. Half a century later, in 1914, thirteen-year-old Grand Duchess Anastasia of Russia took a picture of herself in a mirror and became the first teenager to take a selfie. IV.",
+                "And what about the origin of the word itself? It is thought to come from Australia where people have a habit of putting -ieon the end of words - barbie for barbecue, postie for postal worker and even Aussie for Australian. In 2002, an Australian man took a photo of an injury to his lip and put it up on a public forum to ask for advice on how to treat it. He referred to the photo as a selfie, and the term was born. Selfie became Oxford Dictionaries' word of the year in 2013.",
+                "So, why do we take so many photos of ourselves? A 2017 study into 'selfitis', as the obsessive taking of selfies has been called, found a range of motivations, from seeking to feel more part of a group to shaking off depressive thoughts and of course - capturing a memorable moment. Since we live so much of our lives online, there is pressure to present good quality images, and so it is no surprise that airbrushing apps that enable people to retouch images and present an idealised version of themselves are gaining popularity."
+              ],
               "questionNumbers": [
                 31,
                 32,

@@ -277,8 +277,8 @@ function extractPromptFocus(prompt) {
   const paragraphMatch = text.match(/\bparagraph\s+(\d+)/i);
   const quotedMatch = text.match(/["“]([^"”]{1,80})["”]/) || text.match(/'([^']{1,80})'/);
   const explicitWordMatch =
-    text.match(/\b(?:word|pronoun|phrase)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,4})\s+in\s+paragraph\b/i)
-    || text.match(/\b(?:word|pronoun|phrase)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,4})\s+refers?\b/i);
+    text.match(/\b(?:word|pronoun|phrase|statement)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,8})\s+in\s+paragraph\b/i)
+    || text.match(/\b(?:word|pronoun|phrase|statement)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,8})\s+refers?\b/i);
   const term = quotedMatch?.[1] || explicitWordMatch?.[1] || "";
   return {
     paragraphNumber: paragraphMatch ? Number(paragraphMatch[1]) : null,
