@@ -6742,9 +6742,9 @@
             "varied",
             "dynamic"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 17. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 17. B | opposite diverse"
         },
         {
           "id": "q18",
@@ -6802,9 +6802,9 @@
             "Healthcare initiatives only focus on offering advanced medical services.",
             "Environmental conservation is not a priority in Vietnam."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 21. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 21. B | healthcare passage"
         },
         {
           "id": "q22",
