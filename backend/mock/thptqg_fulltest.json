@@ -9143,7 +9143,7 @@
           "id": "q20",
           "number": 20,
           "partId": "part-2",
-          "prompt": "Question 20.",
+          "prompt": "Question 20. Choose the best sentence for blank (20).",
           "options": [
             "However, reducing plastic disposal is a complex task",
             "Thus, the persistence of plastics in nature poses a severe problem",
@@ -9158,7 +9158,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21.",
+          "prompt": "Question 21. Choose the best phrase for blank (21).",
           "options": [
             "governments worldwide take action on pollution reduction",
             "reducing plastic use could mitigate these environmental threats",
@@ -9173,7 +9173,7 @@
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22.",
+          "prompt": "Question 22. Choose the best word for blank (22).",
           "options": [
             "helped",
             "helping",
