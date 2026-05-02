@@ -90,13 +90,17 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const slideUiAbort = new AbortController();
   const uiSignal = slideUiAbort.signal;
   root.__slideExperienceAbort = slideUiAbort;
-  const raw = await fetchMockResource("slide");
-  const data = prepareSlideSessionData(raw, meta);
-  const deckTitle = data.title || "Bộ slide";
-  let slides = Array.isArray(data.slides) ? data.slides : [];
-  const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
-
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  const initialSlides = Array.isArray(initial?.slides) ? initial.slides : null;
+  const initialMeta = initial?.meta && typeof initial.meta === "object" ? initial.meta : null;
+  const effectiveMeta = initialMeta || meta;
+  const raw = await fetchMockResource("slide");
+  const data = prepareSlideSessionData(raw, effectiveMeta);
+  const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
+  let slides = initialSlides ? initialSlides.slice() : Array.isArray(data.slides) ? data.slides : [];
+  const sessionMeta =
+    initialMeta
+    || (data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta);
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   let total = Math.max(1, slides.length);
   index = Math.min(Math.max(0, index), Math.max(0, slides.length - 1));
@@ -570,6 +574,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       title: deckTitle,
       total: slides.length,
       index,
+      slides: slides.map((slide) => ({
+        ...slide,
+        bullets: Array.isArray(slide?.bullets) ? slide.bullets.slice() : [],
+      })),
     });
   }
 
