@@ -10030,7 +10030,7 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. a. Olivia: I really hope so. I'll check the weather now. If it's good, we can plan for Saturday. b. Noah: Perfect! I'm really looking forward to our upcoming trip. c. Olivia: Do you think they would join us? It'd be more fun with them. d. Olivia: Hey Noah, have you thought about hiking at Silver Peak this weekend? e. Noah: That sounds amazing! Let's invite Ava and Lucas to come along.",
+          "prompt": "Question 26.\na. Olivia: I really hope so. I'll check the weather now. If it's good, we can plan for Saturday.\nb. Noah: Perfect! I'm really looking forward to our upcoming trip.\nc. Olivia: Do you think they would join us? It'd be more fun with them.\nd. Olivia: Hey Noah, have you thought about hiking at Silver Peak this weekend?\ne. Noah: That sounds amazing! Let's invite Ava and Lucas to come along.",
           "options": [
             "d-e-c-a-b",
             "b-a-c-e-d",
@@ -10045,7 +10045,7 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27. a. To achieve this, I always set clear goals and create projects to accomplish each one at the beginning of each week. b. Time management has been one of the most valuable skills I've developed over the years. c. By breaking down larger projects into smaller tasks, I make steady progress without feeling overwhelmed. d. This practice has significantly improved my productivity and allowed me to balance work and personal commitments effectively. e. Moreover, I use tools like to-do lists and digital calendars to stay on track and avoid missing important deadlines.",
+          "prompt": "Question 27.\na. To achieve this, I always set clear goals and create projects to accomplish each one at the beginning of each week.\nb. Time management has been one of the most valuable skills I've developed over the years.\nc. By breaking down larger projects into smaller tasks, I make steady progress without feeling overwhelmed.\nd. This practice has significantly improved my productivity and allowed me to balance work and personal commitments effectively.\ne. Moreover, I use tools like to-do lists and digital calendars to stay on track and avoid missing important deadlines.",
           "options": [
             "b-c-a-d-e",
             "b-a-c-e-d",
@@ -10060,27 +10060,27 @@
           "id": "q28",
           "number": 28,
           "partId": "part-3",
-          "prompt": "Question 28. a. Nga: Oh, really? What was the argument about? b. Nga: Hey, Nam. You look sad. What happened? c. Nam: Yesterday, I argued with my parents. (Adapted from iLearn Smart World 12)",
+          "prompt": "Question 28.\na. Nga: Oh, really? What was the argument about?\nb. Nga: Hey, Nam. You look sad. What happened?\nc. Nam: Yesterday, I argued with my parents.\n(Adapted from iLearn Smart World 12)",
           "options": [
             "a-b-c",
             "c-b-a",
             "b-c-a",
             "c-a-b"
           ],
-          "correctIndex": 0,
-          "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 2,
+          "explanation": "Thứ tự b-c-a mở lời chào, phản hồi, rồi câu hỏi tiếp theo; các đáp án khác làm mất logic đáp–hỏi.",
           "explanationEvidence": "Cau 28: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q29",
           "number": 29,
           "partId": "part-3",
-          "prompt": "Question 29. a. By experiencing diverse cultures, they gain a broader perspective on global traditions. b. However, there's also a risk of focusing too much on external influences and neglecting their own cultural roots. Question 28 and Question 29. c. World festivals, such as Halloween and Christmas, have a significant impact on young Vietnamese people. d. These events not only promote cultural exchange but also encourage creativity and participation in global trends. e. Therefore, it is essential to balance the appreciation of international festivals with the preservation of Vietnamese traditions.",
+          "prompt": "Question 29.\na. By experiencing diverse cultures, they gain a broader perspective on global traditions.\nb. However, there's also a risk of focusing too much on external influences and neglecting their own cultural roots.\nc. World festivals, such as Halloween and Christmas, have a significant impact on young Vietnamese people.\nd. These events not only promote cultural exchange but also encourage creativity and participation in global trends.\ne. Therefore, it is essential to balance the appreciation of international festivals with the preservation of Vietnamese traditions.",
           "options": [
             "c-a-b-d-e",
             "d-c-b-a-e",
             "c-a-d-b-e",
-            "c-b-d-a-c"
+            "c-b-d-a-e"
           ],
           "correctIndex": 0,
           "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
@@ -10090,7 +10090,7 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30.",
+          "prompt": "Question 30. Choose the best word or phrase for blank (30).",
           "options": [
             "imaginatively",
             "imagine",
@@ -10105,7 +10105,7 @@
           "id": "q31",
           "number": 31,
           "partId": "part-4",
-          "prompt": "Question 31.",
+          "prompt": "Question 31. Choose the best word or phrase for blank (31).",
           "options": [
             "in",
             "with",
@@ -10120,7 +10120,7 @@
           "id": "q32",
           "number": 32,
           "partId": "part-4",
-          "prompt": "Question 32.",
+          "prompt": "Question 32. Choose the best word or phrase for blank (32).",
           "options": [
             "to developing",
             "developing",
@@ -10135,7 +10135,7 @@
           "id": "q33",
           "number": 33,
           "partId": "part-4",
-          "prompt": "Question 33.",
+          "prompt": "Question 33. Choose the best word or phrase for blank (33).",
           "options": [
             "make",
             "get",
@@ -10150,7 +10150,7 @@
           "id": "q34",
           "number": 34,
           "partId": "part-4",
-          "prompt": "Question 34.",
+          "prompt": "Question 34. Choose the best word or phrase for blank (34).",
           "options": [
             "wearing",
             "wear",
@@ -10165,7 +10165,7 @@
           "id": "q35",
           "number": 35,
           "partId": "part-4",
-          "prompt": "Question 35.",
+          "prompt": "Question 35. Choose the best word or phrase for blank (35).",
           "options": [
             "white T-shirt clean",
             "clean white T-shirt",
