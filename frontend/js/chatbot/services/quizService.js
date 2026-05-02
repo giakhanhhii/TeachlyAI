@@ -18,6 +18,8 @@ export function insertInlineMcLineBreaks(s) {
   t = t.replace(/\s+(?=[B-Fb-f]\.\s)/g, "\n");
   // THPT-style reordering stems: "a - … b - … c - …" (letter, space, hyphen — not "a.")
   t = t.replace(/\s+(?=[a-e]\s-\s)/gi, "\n");
+  // Same style with a period: "a. … b. …" (watch for false positives like "e.g.")
+  t = t.replace(/\s+(?=[a-e]\.\s)/gi, "\n");
   return t;
 }
 
