@@ -6847,9 +6847,9 @@
             "Volunteers support students by teaching in schools and organizing additional activities.",
             "Students in Vietnam lack access to quality education due to limited extracurricular activities."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 24. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 24. C | paraphrase assist extracurricular"
         },
         {
           "id": "q25",
