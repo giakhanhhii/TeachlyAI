@@ -6817,9 +6817,9 @@
             "Teaching English to improve job prospects.",
             "Protecting the environment through conservation"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 22. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 22. B | urban infra not mentioned"
         },
         {
           "id": "q23",
@@ -6832,9 +6832,9 @@
             "volunteers",
             "local populations"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-18 -> 23. A | strategy=global-phrase+fallback-A | fallback=17"
+          "explanationEvidence": "66_Full. md#pair-18 -> 23. C | they volunteers"
         },
         {
           "id": "q24",
