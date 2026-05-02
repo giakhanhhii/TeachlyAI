@@ -5196,9 +5196,9 @@
             "But for the use of platforms like Zoom or Google Docs, students from different countries could share ideas and experiences.",
             "Using platforms like Zoom or Google Docs, ideas and experiences can be shared with students from different countries."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 21. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 21. B | collaborative tools blank (21)"
         },
         {
           "id": "q22",
