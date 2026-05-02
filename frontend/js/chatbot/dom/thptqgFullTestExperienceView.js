@@ -275,11 +275,12 @@ function escapeRegExp(text) {
 function extractPromptFocus(prompt) {
   const text = String(prompt || "");
   const paragraphMatch = text.match(/\bparagraph\s+(\d+)/i);
-  const quotedMatch = text.match(/["“]([^"”]{1,80})["”]/) || text.match(/'([^']{1,80})'/);
+  const doubleQuotedMatch = text.match(/["“]([^"”]{1,80})["”]/);
+  const singleQuotedMatch = text.match(/(^|[^A-Za-z])'([^']{1,80})'(?![A-Za-z])/);
   const explicitWordMatch =
     text.match(/\b(?:word|pronoun|phrase|statement)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,8})\s+in\s+paragraph\b/i)
     || text.match(/\b(?:word|pronoun|phrase|statement)\s+([A-Za-z][A-Za-z'’-]{1,40}(?:\s+[A-Za-z][A-Za-z'’-]{1,40}){0,8})\s+refers?\b/i);
-  const term = quotedMatch?.[1] || explicitWordMatch?.[1] || "";
+  const term = doubleQuotedMatch?.[1] || singleQuotedMatch?.[2] || explicitWordMatch?.[1] || "";
   return {
     paragraphNumber: paragraphMatch ? Number(paragraphMatch[1]) : null,
     term: String(term || "").trim(),
@@ -304,7 +305,7 @@ function collectPromptFocuses(questions) {
     });
 }
 
-function emphasizePromptReferences(prompt) {
+export function emphasizePromptReferences(prompt) {
   let next = String(prompt || "");
   next = next.replace(/\bparagraph\s+(\d+)/gi, "**paragraph $1**");
   const focus = extractPromptFocus(next);
@@ -709,14 +710,6 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
     resultLine.className = `quiz-review-result ${isCorrect ? "ok" : answerState === "wrong" ? "bad" : isInvalid ? "invalid" : ""}`.trim();
     resultLine.textContent = statusText;
     detailCard.appendChild(resultLine);
-
-    const evidence = document.createElement("div");
-    evidence.className = "thptqg-evidence";
-    const evidenceLabel = document.createElement("strong");
-    evidenceLabel.textContent = "Trích đoạn chứa đáp án:";
-    evidence.appendChild(evidenceLabel);
-    evidence.appendChild(document.createTextNode(` ${question.explanationEvidence || "Không có."}`));
-    detailCard.appendChild(evidence);
 
     const details = document.createElement("details");
     details.className = "thptqg-explanation-details";

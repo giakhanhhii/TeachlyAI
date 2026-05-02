@@ -14,11 +14,20 @@ if (!test) {
 const part3Group = test.parts
   .find((part) => part.id === "part-3")
   ?.groups.find((group) => group.id === "part-3-group-5");
+const part3IntroGroup = test.parts
+  .find((part) => part.id === "part-3")
+  ?.groups.find((group) => group.id === "part-3-group-4");
+
+if (part3IntroGroup) {
+  part3IntroGroup.title = "Vocational Education Passage (continued)";
+  part3IntroGroup.instruction = "Complete the passage by choosing the option that best fits each of blanks 21 and 22.";
+}
 
 if (!part3Group) {
   throw new Error("Missing part-3-group-5");
 }
 
+part3Group.title = "AI Robots in Surgery";
 part3Group.context = [
   "Artificial intelligence (AI) and robotics are revolutionizing medicine, especially in areas like disease diagnosis and surgical procedures. Robotic surgical systems, like the da Vinci Surgical System, assist human surgeons in performing minimally invasive surgeries, offering precision and efficiency. While AI-powered robots can process vast amounts of data and learn from previous surgeries, the key question is whether they can fully replace human surgeons.",
   "AI's potential lies in its ability to navigate surgeries with remarkable precision, reducing human error, fatigue, and emotional influence, which results in quicker recovery and improved patient outcomes. AI-powered robots can also help address the shortage of experienced surgeons and improve healthcare availability. Although implementing robotic systems is costly, their long-term benefits, including fewer surgeries and reduced healthcare costs, may ultimately make them more cost-effective.",
@@ -26,10 +35,26 @@ part3Group.context = [
   "[[u]]Despite these challenges, many experts believe AI and robotics will complement rather than replace surgeons. AI can assist by providing guidance during surgeries, performing repetitive tasks, and improving accuracy, allowing human surgeons to focus on more complex aspects. The future of surgery may involve a collaborative approach, where AI and human surgeons work together, combining AI's precision with human empathy and judgment. Balancing the benefits of AI with the ethical and emotional complexities it presents will be crucial in shaping the future of healthcare.[[/u]]",
 ];
 
+const q21 = test.questions.find((question) => question.number === 21);
+const q22 = test.questions.find((question) => question.number === 22);
+const q23 = test.questions.find((question) => question.number === 23);
+const q24 = test.questions.find((question) => question.number === 24);
 const q25 = test.questions.find((question) => question.number === 25);
 const q28 = test.questions.find((question) => question.number === 28);
 const q30 = test.questions.find((question) => question.number === 30);
 
+if (q21) {
+  q21.prompt = "Question 21. Choose the option that best fits blank (21).";
+}
+if (q22) {
+  q22.prompt = "Question 22. Choose the option that best fits blank (22).";
+}
+if (q23) {
+  q23.prompt = 'Question 23. The word "they" in paragraph 1 refers to _.';
+}
+if (q24) {
+  q24.prompt = 'Question 24. The word "address" in paragraph 2 is CLOSEST in meaning to _.';
+}
 if (q25) {
   q25.prompt = 'Question 25. The word "flawed" in paragraph 3 is OPPOSITE in meaning to _.';
 }
