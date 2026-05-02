@@ -15,62 +15,62 @@ function buildBank(prefix, rows) {
   return rows.map((row, index) => makeQuestion(`${prefix}-${index + 1}`, row[0], row[1], row[2], row[3]));
 }
 
+function pickQuestionSet(questions, indexes) {
+  const picked = (indexes || [])
+    .map((index) => questions[index - 1])
+    .filter(Boolean);
+  return picked.length ? picked : questions.slice();
+}
+
 function buildSentenceTransformationBank() {
-  const passive = [
-    ["People speak English in many countries.", "English _______ in many countries.", ["is spoken", "spoke", "has spoken", "speaks"], 0, "Câu bị động ở hiện tại đơn."],
-    ["They will announce the winner tomorrow.", "The winner _______ tomorrow.", ["announces", "will be announced", "announced", "was announced"], 1, "Bị động với thì tương lai đơn."],
-    ["Someone has stolen my bike.", "My bike _______.", ["has stolen", "has been stolen", "was stealing", "is stolen"], 1, "Bị động ở hiện tại hoàn thành."],
-    ["They are building a new bridge here.", "A new bridge _______ here.", ["is being built", "is built", "was built", "has built"], 0, "Bị động tiếp diễn."],
-    ["The teacher gave us extra homework.", "We _______ extra homework by the teacher.", ["gave", "were given", "have given", "give"], 1, "Bị động ở quá khứ đơn."],
-    ["They had finished the report before noon.", "The report _______ before noon.", ["had finished", "had been finished", "was finishing", "has been finished"], 1, "Bị động ở quá khứ hoàn thành."],
-    ["People should protect endangered animals.", "Endangered animals should _______.", ["protect", "be protected", "protected", "have protected"], 1, "Modal verb + be + V3."],
-    ["Nobody can solve this puzzle easily.", "This puzzle can't _______ easily.", ["solve", "be solved", "have solved", "solved"], 1, "Bị động với can."],
-    ["The manager is checking the documents now.", "The documents _______ now.", ["are checked", "are being checked", "have checked", "were being checked"], 1, "Bị động ở hiện tại tiếp diễn."],
-    ["They may postpone the meeting.", "The meeting may _______.", ["postpone", "be postponed", "have postponed", "being postponed"], 1, "Modal verb + passive."],
+  const rows = [
+    ["He started learning English three years ago.", ["He has learned English for three years.", "He has been learning English for three years.", "He learned English for three years.", "He was learning English for three years."], 1, "Start + thời điểm quá khứ -> hiện tại hoàn thành tiếp diễn."],
+    ["No one in my class speaks English better than Lan.", ["Lan speaks English well in my class.", "Lan is the best English speaker in my class.", "Lan speaks English better than her teacher.", "Lan is one of the best English speakers in my class."], 1, "So sánh hơn với no one -> so sánh nhất."],
+    ["She last saw her uncle two months ago.", ["She has seen her uncle for two months.", "She hasn't seen her uncle for two months.", "She didn't see her uncle for two months.", "She wasn't seeing her uncle for two months."], 1, "Last + quá khứ -> haven't seen for."],
+    ["The test was so difficult that many students failed it.", ["It was such difficult test that many students failed it.", "It was such a difficult test that many students failed it.", "The test was difficult enough for many students to fail.", "So difficult was the test many students failed it."], 1, "So...that -> such a/an + adj + noun + that."],
+    ["\"I will help you with your homework,\" Nam said to me.", ["Nam said me that he would help me with my homework.", "Nam told me that he would help me with my homework.", "Nam told that he would help me with my homework.", "Nam said to me he will help me with my homework."], 1, "Reported speech với tell + object."],
+    ["Although he was tired, he finished the report on time.", ["Despite being tired, he finished the report on time.", "Despite he was tired, he finished the report on time.", "In spite of he was tired, he finished the report on time.", "Because of being tired, he finished the report on time."], 0, "Although clause -> despite + V-ing/noun."],
+    ["People believe that the couple have left the country.", ["The couple are believed to have left the country.", "The couple believed to have left the country.", "It believes that the couple have left the country.", "The couple were believed leaving the country."], 0, "Passive reporting structure."],
+    ["The box was too heavy for her to carry.", ["The box was so heavy that she could carry it.", "The box was not heavy enough for her to carry.", "The box was so heavy that she couldn't carry it.", "The box was such heavy that she couldn't carry it."], 2, "Too...to -> so...that...can't."],
+    ["I wish I had paid more attention in class yesterday.", ["I regret not paying more attention in class yesterday.", "I regret paying more attention in class yesterday.", "I want to pay more attention in class yesterday.", "I hope I pay more attention in class yesterday."], 0, "Wish past perfect -> regret not V-ing."],
+    ["The last time we visited Hue was in 2022.", ["We haven't visited Hue since 2022.", "We didn't visit Hue since 2022.", "We haven't visited Hue in 2022.", "We weren't visiting Hue since 2022."], 0, "The last time -> haven't since."],
+    ["Hardly had she arrived home when it started to rain heavily.", ["No sooner had she arrived home than it started to rain heavily.", "No sooner she arrived home than it started to rain heavily.", "As soon as she arrived home, it had started to rain heavily.", "It started to rain heavily before she arrived home."], 0, "Hardly...when -> No sooner...than."],
+    ["He is too young to live alone in the city.", ["He is not old enough to live alone in the city.", "He is so young that he can live alone in the city.", "He is old enough to live alone in the city.", "He is such a young boy living alone in the city."], 0, "Too...to -> not old enough to."],
+    ["I haven't read such an interesting novel before.", ["This is the most interesting novel I have ever read.", "This is the more interesting novel I have ever read.", "This novel is so interesting than any other.", "Never I have read such an interesting novel before."], 0, "Hiện tại hoàn thành với superlative."],
+    ["Because he didn't revise carefully, he made several basic mistakes.", ["If he revised carefully, he wouldn't make several basic mistakes.", "If he had revised carefully, he wouldn't have made several basic mistakes.", "Unless he revised carefully, he wouldn't make several basic mistakes.", "If only he revised carefully, he would not make mistakes."], 1, "Điều kiện loại 3."],
+    ["\"Why don't we organise a recycling event next week?\" Mai said.", ["Mai suggested organising a recycling event the following week.", "Mai advised why we organised a recycling event the following week.", "Mai asked us organise a recycling event next week.", "Mai suggested to organise a recycling event next week."], 0, "Suggest + V-ing."],
+    ["He prefers reading books to watching television.", ["He would rather watch television than read books.", "He likes watching television more than reading books.", "He would rather read books than watch television.", "He prefers watch television to read books."], 2, "Prefer A to B -> would rather A than B."],
+    ["The bridge will be completed next month.", ["They will complete the bridge next month.", "They complete the bridge next month.", "They are completing the bridge next month.", "They have completed the bridge next month."], 0, "Passive -> active."],
+    ["The weather was so bad that the match had to be canceled.", ["It was such bad weather that the match had to be canceled.", "It was such a bad weather that the match had to be canceled.", "The weather was too bad because the match had to be canceled.", "Because the weather was bad, so the match had to be canceled."], 0, "So + adj + nounless -> such + noun phrase."],
+    ["Nobody in the group is more creative than Linh.", ["Linh is as creative as anybody in the group.", "Linh is the most creative person in the group.", "Linh is more creative than nobody in the group.", "Linh is one of the creative people in the group."], 1, "So sánh nhất."],
+    ["She didn't start working here until she had finished university.", ["Only after she had finished university did she start working here.", "Not until she had finished university she started working here.", "Only after she finished university she had started working here.", "After she had finished university, she didn't start working here."], 0, "Đảo ngữ với only after."],
+    ["The manager made the staff work late to finish the project.", ["The staff were made work late to finish the project.", "The staff were made to work late to finish the project.", "The manager was made the staff work late to finish the project.", "The staff made to work late to finish the project."], 1, "Make + O + V -> be made to V."],
+    ["It isn't necessary for you to submit the form today.", ["You mustn't submit the form today.", "You needn't submit the form today.", "You shouldn't submit the form today.", "You don't have submit the form today."], 1, "Không cần thiết -> needn't."],
+    ["She speaks too softly for everyone to hear clearly.", ["She speaks so softly that everyone can hear clearly.", "She doesn't speak softly enough for everyone to hear clearly.", "She speaks so softly that not everyone can hear clearly.", "Her voice is soft because everyone cannot hear clearly."], 2, "Too softly for everyone to hear -> not everyone can hear."],
+    ["\"Don't forget to send me the file tonight,\" Anna said.", ["Anna reminded me send her the file that night.", "Anna reminded me to send her the file that night.", "Anna suggested me to send her the file tonight.", "Anna warned me sending her the file that night."], 1, "Remind + O + to V."],
+    ["As soon as he finished the oral test, he called his mother.", ["No sooner had he finished the oral test than he called his mother.", "No sooner he had finished the oral test than he called his mother.", "Hardly he had finished the oral test when he called his mother.", "After he had called his mother, he finished the oral test."], 0, "As soon as -> No sooner...than."],
+    ["The film was more boring than I had expected.", ["The film wasn't as boring as I had expected.", "The film was not as interesting as I had expected.", "I had expected the film to be more boring than it was.", "I had expected the film boring more than this."], 1, "More boring than expected -> not as interesting as expected."],
+    ["He couldn't answer the final question because it was too difficult.", ["The final question was difficult enough for him to answer.", "The final question was so difficult that he couldn't answer it.", "It was such difficult final question that he couldn't answer it.", "Because the final question was difficult, he could answer it."], 1, "Too difficult to answer -> so difficult that he couldn't answer it."],
+    ["I only realised the truth after I had read the final email.", ["Not until I had read the final email did I realise the truth.", "Not until I had read the final email I realised the truth.", "Only after I read the final email that I realised the truth.", "I realised the truth before I had read the final email."], 0, "Not until inversion."],
+    ["They say that this cathedral was built in the 15th century.", ["This cathedral is said to build in the 15th century.", "This cathedral is said to have been built in the 15th century.", "This cathedral says to have been built in the 15th century.", "This cathedral was said building in the 15th century."], 1, "Passive reporting verb with past action."],
+    ["She regrets not applying for the exchange programme earlier.", ["She wishes she applied for the exchange programme earlier.", "She wishes she had applied for the exchange programme earlier.", "She wishes she would apply for the exchange programme earlier.", "She wishes she has applied for the exchange programme earlier."], 1, "Regret not doing in past -> wish had done."],
+    ["The lesson was so useful that every student took careful notes.", ["It was such useful lesson that every student took careful notes.", "It was such a useful lesson that every student took careful notes.", "The lesson was too useful for every student to take notes.", "Because the lesson was useful, so every student took notes."], 1, "So...that -> such a/an + noun."],
+    ["He no longer works for that company.", ["He still works for that company.", "He used to work for that company.", "He has worked for that company for years.", "He stopped work for that company."], 1, "No longer works -> used to work."],
+    ["Unless you finish the draft today, you won't join the final round.", ["If you don't finish the draft today, you won't join the final round.", "If you didn't finish the draft today, you wouldn't join the final round.", "If you finish the draft today, you won't join the final round.", "Provided you don't finish the draft today, you will join the final round."], 0, "Unless = if not."],
+    ["They have never seen such a breathtaking waterfall before.", ["This is the first breathtaking waterfall they saw.", "This is the most breathtaking waterfall they have ever seen.", "This waterfall is more breathtaking than before.", "Never before they have seen such a breathtaking waterfall."], 1, "Have never seen such... -> superlative."],
+    ["People think that she was forced to resign.", ["She is thought to be forced to resign.", "She is thought to have been forced to resign.", "She thinks to have been forced to resign.", "She thought to be forced to resign."], 1, "Past passive reporting structure."],
+    ["He had barely sat down when the teacher asked him a question.", ["No sooner did he sit down than the teacher asked him a question.", "Hardly had he sat down when the teacher asked him a question.", "Only after he sat down the teacher asked him a question.", "When the teacher asked him a question, he had sat down barely."], 1, "Barely...when pattern."],
+    ["The factory is going to increase production next quarter.", ["Production is going to be increased next quarter.", "Production is going to increase next quarter.", "Production is increasing by the factory next quarter.", "Production is going increased next quarter."], 0, "Be going to passive."],
+    ["She was the only student who solved the problem without help.", ["No student solved the problem without help except her.", "She solved the problem without help more than any student.", "Only she and other students solved the problem without help.", "Without help, the problem was solved by every student."], 0, "Only student -> no one else except her."],
+    ["Because he lived far from school, he had to get up very early.", ["If he doesn't live far from school, he won't have to get up early.", "If he had lived far from school, he would have got up very early.", "If he hadn't lived far from school, he wouldn't have had to get up so early.", "Unless he lived far from school, he would have got up early."], 2, "Điều kiện loại 3 với nguyên nhân quá khứ."],
+    ["\"You should revise the vocabulary list again,\" the teacher told us.", ["The teacher suggested us revising the vocabulary list again.", "The teacher advised us to revise the vocabulary list again.", "The teacher told us should revise the vocabulary list again.", "The teacher warned us revise the vocabulary list again."], 1, "Advise + object + to V."],
   ];
-  const reported = [
-    ["\"I will call you tonight,\" Minh said to Lan.", "Minh told Lan that _______.", ["he will call her that night", "he would call her that night", "I would call you tonight", "he called her that night"], 1, "Lùi thì và đổi đại từ."],
-    ["\"We are studying for the final exam,\" the students said.", "The students said that _______.", ["they were studying for the final exam", "we were studying for the final exam", "they are studying for the final exam", "they had studied for the final exam"], 0, "Câu tường thuật với hiện tại tiếp diễn."],
-    ["\"Do you like online classes?\" the teacher asked me.", "The teacher asked me _______.", ["did I like online classes", "if I liked online classes", "if do I like online classes", "whether did I like online classes"], 1, "Yes/No question -> if/whether."],
-    ["\"Where did you buy this dictionary?\" Hoa asked Nam.", "Hoa asked Nam where _______.", ["did he buy that dictionary", "he had bought that dictionary", "he bought this dictionary", "had he bought that dictionary"], 1, "Wh-question trong câu tường thuật."],
-    ["\"Please keep the room quiet,\" the librarian said.", "The librarian told us _______.", ["keep the room quiet", "keeping the room quiet", "to keep the room quiet", "that we kept the room quiet"], 2, "Câu mệnh lệnh -> tell + O + to V."],
-    ["\"Don't touch the wet paint,\" Dad said.", "Dad warned me _______.", ["not touching the wet paint", "don't touch the wet paint", "not to touch the wet paint", "that I don't touch the wet paint"], 2, "Warn + O + not to V."],
-    ["\"I have never seen this film before,\" she said.", "She said that _______ before.", ["she had never seen that film", "I had never seen this film", "she has never seen that film", "she never saw this film"], 0, "Lùi thì hiện tại hoàn thành -> quá khứ hoàn thành."],
-    ["\"Let's go out for coffee,\" he said.", "He suggested _______ for coffee.", ["to go out", "going out", "go out", "went out"], 1, "Suggest + V-ing."],
-    ["\"Why don't we review the lesson again?\" Mai said.", "Mai suggested that _______ the lesson again.", ["we should review", "we reviewed", "we reviewing", "should we review"], 0, "Suggest that + S + should + V."],
-    ["\"You should apply for that scholarship,\" her mother said.", "Her mother advised her _______ for that scholarship.", ["apply", "applying", "to apply", "that she applies"], 2, "Advise + O + to V."],
-  ];
-  const comparison = [
-    ["No one in my class is as careful as Linh.", "Linh is _______ in my class.", ["the most careful student", "more careful student", "as careful student", "careful than anyone"], 0, "So sánh nhất."],
-    ["This test is more difficult than the previous one.", "The previous test was not _______ this one.", ["so difficult as", "as difficult as", "more difficult than", "the most difficult"], 1, "Not as/so ... as."],
-    ["Tom runs faster than any other boy in the club.", "Tom is _______ in the club.", ["the fastest runner", "faster runner", "as fast as any boy", "more fast"], 0, "So sánh nhất với any other."],
-    ["Jane doesn't speak English as fluently as her sister.", "Jane's sister speaks English _______ Jane.", ["more fluently than", "as fluently than", "less fluently than", "more fluent than"], 0, "So sánh hơn với trạng từ."],
-    ["The more you revise, the more confident you become.", "If you revise more, you will become _______.", ["as confident", "the most confident", "more confident", "confidently"], 2, "Chuyển từ so sánh kép sang câu tương đương."],
-    ["My new laptop is not as expensive as yours.", "Your laptop is _______ mine.", ["less expensive than", "as expensive as", "more expensive than", "the most expensive"], 2, "So sánh hơn."],
-    ["Nobody in the team plays as creatively as Huy.", "Huy is _______ player in the team.", ["the more creative", "the most creative", "as creative as", "more creatively"], 1, "So sánh nhất với tính từ."],
-    ["This is the first time I have read such a moving novel.", "I have never read _______ before.", ["a more moving novel", "so moving novel", "the most moving than this", "as moving novel"], 0, "Never + comparative."],
-    ["Her presentation was better than I had expected.", "Her presentation was not _______ I had expected.", ["as good as", "so good as", "better than", "worse than"], 1, "Phủ định so sánh bằng."],
-    ["The road to the village is shorter than the old one.", "The old road is _______ the road to the village.", ["not as long as", "longer than", "the longest", "as shorter as"], 1, "Shorter -> longer than."],
-  ];
-  const mixed = [
-    ["He started learning French three years ago.", "He has _______ for three years.", ["learnt French", "been learning French", "learn French", "been learnt French"], 1, "Hiện tại hoàn thành tiếp diễn."],
-    ["I last met her in 2023.", "I haven't _______ 2023.", ["met her since", "meet her since", "met her for", "been met her since"], 0, "Haven't + V3 + since."],
-    ["Because it rained heavily, we canceled the picnic.", "If it had not rained heavily, we _______ the picnic.", ["would cancel", "would have canceled", "canceled", "had canceled"], 1, "Điều kiện loại 3."],
-    ["She is too young to travel abroad alone.", "She is not _______ to travel abroad alone.", ["old enough", "so old", "enough old", "as old enough"], 0, "Too...to -> not old enough."],
-    ["\"Why don't you join the English club?\" Nam said to me.", "Nam suggested that _______ the English club.", ["I joined", "I should join", "should I join", "I joining"], 1, "Suggest that + should."],
-    ["Although the task was difficult, they finished it on time.", "In spite of _______ task, they finished it on time.", ["the difficulty", "the difficult", "being difficult", "it was a difficult"], 0, "Although clause -> in spite of + noun."],
-    ["He doesn't study hard, so he can't get a scholarship.", "If he studied hard, he _______ a scholarship.", ["gets", "got", "would get", "will get"], 2, "Điều kiện loại 2."],
-    ["The last time we went to Da Nang was two years ago.", "We haven't gone to Da Nang _______.", ["for two years", "since two years", "two years ago", "in two years"], 0, "Haven't + V3 + for + khoảng thời gian."],
-    ["She prefers staying at home to going out late.", "She would rather _______ than go out late.", ["stayed at home", "stay at home", "to stay at home", "staying at home"], 1, "Would rather + V."],
-    ["The film was so boring that we left early.", "It was _______ film that we left early.", ["such boring", "so a boring", "such a boring", "a such boring"], 2, "Such + a/an + adj + noun."],
-  ];
-  return [...passive, ...reported, ...comparison, ...mixed].map((row, index) => makeQuestion(
-    `sentence-transformation-${index + 1}`,
-    `${row[0]} Choose the best sentence that is closest in meaning to the cue: ${row[1]}`,
+  return buildBank("sentence-transformation", rows.map((row) => [
+    `Choose the sentence that is closest in meaning to: ${row[0]}`,
+    row[1],
     row[2],
     row[3],
-    row[4],
-  ));
+  ]));
 }
 
 function buildErrorIdentificationBank() {
@@ -197,16 +197,16 @@ function buildRelativeClausesBank() {
     ["The athletes _______ for the final round are warming up outside.", ["select", "selected", "selecting", "to select"], 1, "Selected = who were selected."],
     ["The girl _______ next to the window is the team captain.", ["sit", "sitting", "sat", "to sit"], 1, "Sitting = who is sitting."],
     ["The products _______ from recycled materials sold out quickly.", ["make", "made", "making", "to make"], 1, "Made = which were made."],
-    ["The lecture hall is the place. We first met there.", "The lecture hall is the place _______ we first met.", ["which", "where", "whose", "when"], 1, "Kết hợp bằng where."],
-    ["That is the teacher. Her lessons always motivate us.", "That is the teacher _______ lessons always motivate us.", ["who", "whose", "whom", "which"], 1, "Whose lessons."],
-    ["The smartphone is mine. You borrowed it yesterday.", "The smartphone _______ yesterday is mine.", ["who you borrowed", "which you borrowed", "whose you borrowed", "where you borrowed"], 1, "Which làm tân ngữ."],
-    ["We visited a village. It had been rebuilt after the storm.", "We visited a village _______ after the storm.", ["rebuilding", "rebuilt", "which rebuild", "to rebuild"], 1, "Rút gọn bị động."],
-    ["I know the student. He can solve that coding problem.", "I know the student _______ that coding problem.", ["solves", "solving", "to solve", "who can solve"], 3, "Mệnh đề quan hệ đầy đủ."],
-    ["This is the moment. We have all been waiting for it.", "This is the moment _______ we have all been waiting for.", ["that", "where", "when", "whose"], 2, "Moment when."],
-    ["The volunteers arrived late. They missed the briefing.", "The volunteers _______ missed the briefing.", ["arriving late", "arrived late", "to arrive late", "were arriving late"], 0, "Phân từ hiện tại diễn tả nguyên nhân."],
-    ["The books were donated by alumni. They are on the top shelf.", "The books _______ are on the top shelf.", ["donating by alumni", "donated by alumni", "donate by alumni", "to donate by alumni"], 1, "Reduced passive clause."],
-    ["The factory employs local workers. It was opened last year.", "The factory _______ employs local workers.", ["opening last year", "opened last year", "which opening last year", "to open last year"], 1, "Reduced passive clause."],
-    ["The students were chosen for the programme. They must attend orientation.", "The students _______ must attend orientation.", ["choosing for the programme", "chosen for the programme", "choose for the programme", "to choose for the programme"], 1, "Reduced passive clause."],
+    ["The lecture hall _______ we first met is being renovated.", ["which", "where", "whose", "when"], 1, "Where cho địa điểm."],
+    ["That is the teacher _______ lessons always motivate us.", ["who", "whose", "whom", "which"], 1, "Whose + noun."],
+    ["The smartphone _______ yesterday is mine.", ["who you borrowed", "which you borrowed", "whose you borrowed", "where you borrowed"], 1, "Which làm tân ngữ."],
+    ["We visited a village _______ after the storm.", ["rebuilding", "rebuilt", "which rebuild", "to rebuild"], 1, "Rút gọn bị động."],
+    ["I know the student _______ that coding problem.", ["solves", "solving", "to solve", "who can solve"], 3, "Mệnh đề quan hệ đầy đủ."],
+    ["This is the moment _______ we have all been waiting for.", ["that", "where", "when", "whose"], 2, "Moment when."],
+    ["The volunteers _______ missed the briefing.", ["arriving late", "arrived late", "to arrive late", "were arriving late"], 0, "Phân từ hiện tại diễn tả nguyên nhân."],
+    ["The books _______ are on the top shelf.", ["donating by alumni", "donated by alumni", "donate by alumni", "to donate by alumni"], 1, "Reduced passive clause."],
+    ["The factory _______ employs local workers.", ["opening last year", "opened last year", "which opening last year", "to open last year"], 1, "Reduced passive clause."],
+    ["The students _______ must attend orientation.", ["choosing for the programme", "chosen for the programme", "choose for the programme", "to choose for the programme"], 1, "Reduced passive clause."],
   ];
   return buildBank("relative-clauses", rows);
 }
@@ -610,6 +610,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Nâng cao",
     notes: "Viết lại câu với so sánh, câu bị động, tường thuật và điều kiện.",
     questions: buildSentenceTransformationBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [1, 2, 4, 5, 6, 7, 8, 11, 14, 15, 19, 20, 28, 29, 35]);
+    },
   },
   {
     id: "quiz-error-identification",
@@ -619,6 +622,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Khá",
     notes: "Lỗi hòa hợp chủ vị, thì, từ loại và cấu trúc song song.",
     questions: buildErrorIdentificationBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [1, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17, 20, 21, 22, 24, 27, 31, 32, 39]);
+    },
   },
   {
     id: "quiz-tenses-verb-forms",
@@ -628,6 +634,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Khá",
     notes: "Tập trung vào các thì, câu điều kiện, wish và sự phối hợp thì.",
     questions: buildTensesBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [3, 4, 5, 6, 8, 9, 10, 13, 15, 17, 18, 19, 21, 22, 23, 24, 25, 26, 29, 30, 31, 34, 35, 38, 39]);
+    },
   },
   {
     id: "quiz-relative-clauses",
@@ -637,6 +646,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Khá",
     notes: "Bao gồm who, whom, whose, which, where, when và reduced clauses.",
     questions: buildRelativeClausesBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [2, 3, 5, 6, 8, 9, 12, 14, 15, 17, 19, 20, 21, 22, 24, 26, 31, 32, 35, 36]);
+    },
   },
   {
     id: "quiz-phrasal-verbs",
@@ -646,6 +658,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Nâng cao",
     notes: "Cụm động từ và thành ngữ xuất hiện nhiều trong đề THPTQG.",
     questions: buildPhrasalVerbsBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [1, 4, 7, 8, 10, 11, 12, 14, 15, 16, 19, 20, 25, 26, 27, 28, 29, 33, 35, 39]);
+    },
   },
   {
     id: "quiz-collocations",
@@ -655,6 +670,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Khá",
     notes: "Cụm từ đi với make, do, take, get, raise, conduct và các lựa chọn từ tự nhiên.",
     questions: buildCollocationBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [1, 2, 3, 4, 6, 8, 9, 12, 13, 14, 15, 18, 19, 21, 25, 26, 28, 31, 34, 40]);
+    },
   },
   {
     id: "quiz-reading-education",
@@ -664,6 +682,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Khá",
     notes: "Đọc hiểu ngắn về định hướng nghề nghiệp, CV, phỏng vấn và kỹ năng học tập.",
     questions: buildReadingEducationBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [9, 10, 11, 12, 13, 14, 17, 18, 25, 26]);
+    },
   },
   {
     id: "quiz-reading-environment",
@@ -673,6 +694,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Nâng cao",
     notes: "Đọc hiểu ngắn về môi trường, tái chế, năng lượng và lối sống bền vững.",
     questions: buildReadingEnvironmentBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [9, 10, 11, 12, 21, 22, 23, 24, 37, 38]);
+    },
   },
   {
     id: "quiz-phonetics-stress",
@@ -682,6 +706,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Khá",
     notes: "Phân biệt nguyên âm, đuôi -ed/-s và quy tắc trọng âm 2-4 âm tiết.",
     questions: buildPhoneticsBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [1, 2, 3, 4, 5, 7, 8, 10, 11, 15, 16, 17, 21, 22, 23, 24, 26, 27, 28, 29, 30, 31, 33, 34, 35, 36, 37, 38, 39, 40]);
+    },
   },
   {
     id: "quiz-prepositions",
@@ -691,6 +718,9 @@ export const DIRECT_QUIZ_PRESETS = [
     difficulty: "Cơ bản",
     notes: "Giới từ đi với tính từ, động từ, danh từ và các cụm cố định lớp 12.",
     questions: buildPrepositionsBank(),
+    get defaultQuestions() {
+      return pickQuestionSet(this.questions, [1, 2, 3, 4, 5, 6, 8, 10, 11, 13, 14, 16, 18, 19, 21, 23, 24, 27, 35, 40]);
+    },
   },
 ];
 
