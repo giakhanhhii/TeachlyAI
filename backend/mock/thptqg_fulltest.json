@@ -9475,8 +9475,10 @@
             {
               "id": "part-1-group-1",
               "title": "Câu 1",
-              "instruction": "",
-              "context": [],
+              "instruction": "Read the following passage and mark the letter A, B, C or D on your answer sheet to indicate the option that best fits each of the numbered blanks from 1 to 6.",
+              "context": [
+                "Community centres run weekend programmes so residents can (1) _ neighbours and try new clubs before they commit. Unlike (2) _ networks that focus on popularity, these sessions welcome beginners. (3) _ workshops fill quickly, yet organisers repeat that (4) _ severe weather, outdoor events move indoors. Anyone who (5) _ on the spring intake may wait months for a slot, and never borrow tools that look (6) _ or damaged."
+              ],
               "questionNumbers": [
                 1,
                 2,
@@ -9489,13 +9491,11 @@
             {
               "id": "part-1-group-2",
               "title": "GREEN LIVING: A PATH TO A SUSTAINABLE FUTURE",
-              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 7 to 10.",
               "context": [
                 "In a world grappling with climate change and environmental degradation, green living has emerged as a vital approach to ensure sustainability. Green living involves adopting practices that minimize harm to the environment while promoting a healthy lifestyle. These include reducing waste, conserving energy, and embracing renewable resources.",
-                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics.",
-                "For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems.",
-                "Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
-                "Additionally, adopting plant-based diets or reducing meat consumption can lessen the environmental impact of food production, which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
+                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics. For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems. Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
+                "Additionally, [[u]]adopting plant-based diets can lessen the environmental impact of food production[[/u]], which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
                 "For instance, cities are promoting cycling and public transport to decrease carbon emissions. Similarly, educational campaigns are raising awareness about sustainable practices. By making small, consistent changes, individuals and societies can contribute to a healthier planet and secure a better future for generations to come."
               ],
               "questionNumbers": [
@@ -9517,13 +9517,11 @@
             {
               "id": "part-2-group-2",
               "title": "GREEN LIVING: A PATH TO A SUSTAINABLE FUTURE",
-              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about green living and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 11 to 14.",
               "context": [
                 "In a world grappling with climate change and environmental degradation, green living has emerged as a vital approach to ensure sustainability. Green living involves adopting practices that minimize harm to the environment while promoting a healthy lifestyle. These include reducing waste, conserving energy, and embracing renewable resources.",
-                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics.",
-                "For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems.",
-                "Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
-                "Additionally, adopting plant-based diets or reducing meat consumption can lessen the environmental impact of food production, which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
+                "One key aspect of green living is reducing waste. This can be achieved through recycling, composting, and cutting back on single-use plastics. For example, using reusable water bottles and shopping bags can significantly decrease the amount of plastic waste that pollutes our ecosystems. Moreover, individuals can conserve energy by switching to energy-efficient appliances, unplugging devices when not in use, and maximizing natural light in their homes. Another crucial element of green living is opting for renewable energy sources like solar and wind power. These alternatives not only reduce greenhouse gas emissions but also lower energy costs over time.",
+                "Additionally, [[u]]adopting plant-based diets can lessen the environmental impact of food production[[/u]], which is a major contributor to deforestation and water pollution. Communities around the world are recognizing the importance of green living.",
                 "For instance, cities are promoting cycling and public transport to decrease carbon emissions. Similarly, educational campaigns are raising awareness about sustainable practices. By making small, consistent changes, individuals and societies can contribute to a healthier planet and secure a better future for generations to come."
               ],
               "questionNumbers": [
@@ -9536,7 +9534,7 @@
             {
               "id": "part-2-group-3",
               "title": "LIVING IN A MULTICULTURAL WORLD",
-              "instruction": "Read the following passage multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following Questions.",
+              "instruction": "Read the following passage about multicultural life and mark the letter A, B, C or D on your answer sheet to indicate the best answer to each of the following questions from 15 to 20.",
               "context": [
                 "(I) In today's interconnected society, multiculturalism has become a defining feature of many countries. (II) It refers to the coexistence of diverse cultural, ethnic, and religious groups within a community. (III) This diversity enriches societies, fostering creativity, innovation, and global understanding. (IV) However, living in a multicultural world also presents challenges, such as the need to balance cultural preservation with social integration. One significant advantage of multiculturalism is the opportunity for cultural exchange. People from different backgrounds can share traditions, cuisine, art, and perspectives, broadening their understanding of the world. For example, international festivals and food markets often showcase the vibrant diversity of a community, promoting appreciation and respect for different cultures. Such exchanges contribute to a richer, more inclusive society. However, multiculturalism also requires individuals and societies to navigate potential challenges. Misunderstandings, cultural clashes, and prejudice can arise in multicultural settings. For instance, differing values or customs might lead to tensions or conflicts. To address these issues, [[u]]education and dialogue are essential to resolving cultural misunderstandings[[/u]]. Schools and workplaces can play a critical role by fostering inclusivity and teaching cultural awareness. Multiculturalism also brings economic benefits. Diverse teams in workplaces often bring unique skills and perspectives, leading to increased creativity and problem-solving abilities. Moreover, tourism thrives in multicultural areas, as visitors are drawn to the rich tapestry of cultures and traditions. Living in a multicultural world teaches us that diversity is not something to fear but to celebrate. By embracing and learning from our differences, we can build stronger, more harmonious communities. While challenges exist, the benefits of multiculturalism far outweigh the difficulties, making it a vital component of a thriving modern society."
               ],
