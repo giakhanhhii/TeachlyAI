@@ -84,8 +84,12 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const resultBtn = createPrimaryNavButton({ label: "Xem kết quả", disabled: false });
+  resultBtn.classList.add("exp-back-btn");
+  resultBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
   footer.appendChild(backBtn);
+  footer.appendChild(resultBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
@@ -109,6 +113,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     });
 
     backBtn.disabled = index <= 0;
+    resultBtn.hidden = true;
+    resultBtn.disabled = true;
     nextBtn.disabled = !gradedByIndex[index] && selected === null;
     backBtn.textContent = "Quay lại";
 
@@ -128,6 +134,10 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     else {
       const isLast = index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
+      if (isLast) {
+        resultBtn.hidden = false;
+        resultBtn.disabled = false;
+      }
     }
     emitState();
   }
@@ -196,19 +206,28 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       activeStepView?.applyGrading?.(selected);
       const isLast = index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
+      if (isLast) {
+        resultBtn.hidden = false;
+        resultBtn.disabled = false;
+      }
       nextBtn.disabled = false;
       emitState();
       return;
     }
 
     if (index >= questions.length - 1) {
-      reviewMode = true;
-      reviewFilter = "all";
-      renderReview();
+      deps?.onContinueCreate?.("quiz");
       return;
     }
     index += 1;
     renderQuestion();
+  });
+
+  resultBtn.addEventListener("click", () => {
+    if (reviewMode) return;
+    reviewMode = true;
+    reviewFilter = "all";
+    renderReview();
   });
 
   root.appendChild(shell);

@@ -72,6 +72,19 @@ function buildDefaultQuestionIndexes(count) {
   return picked.map((index) => index + 1);
 }
 
+function resolveQuizKindFromFlashPreset(preset) {
+  const id = String(preset?.id || "").toLowerCase();
+  const topic = String(preset?.topic || "").toLowerCase();
+  if (id.includes("synonyms-antonyms")) return "Synonyms and Antonyms";
+  if (id.includes("prefix-suffix") || id.includes("opposite-prefixes") || topic.includes("word formation")) return "Word Formation";
+  if (id.includes("phrasal-verbs")) return "Phrasal Verbs";
+  if (id.includes("collocations") || topic.includes("collocation")) return "Collocations";
+  if (id.includes("linking") || topic.includes("từ nối") || topic.includes("liên kết")) return "Word Choice";
+  if (id.includes("phonetic")) return "Vocabulary";
+  if (topic.includes("idiom") || topic.includes("thành ngữ")) return "Idioms";
+  return "Word Choice";
+}
+
 function pickQuestionSet(questions, indexes) {
   const picked = indexes.map((index) => questions[index - 1]).filter(Boolean);
   return picked.length ? picked : questions.slice();
@@ -81,10 +94,11 @@ function buildQuizPresetFromFlashPreset(preset, index) {
   const count = String(20 + (index % 5));
   const questions = buildVocabularyQuestionBank(preset);
   const defaultQuestions = pickQuestionSet(questions, buildDefaultQuestionIndexes(Number(count)));
+  const kind = resolveQuizKindFromFlashPreset(preset);
   return {
     id: `quiz-extra-${preset.id}`,
-    source: `Vocabulary: ${preset.topic}`,
-    kind: "Vocabulary",
+    source: preset.topic,
+    kind,
     count,
     difficulty: index % 3 === 0 ? "Cơ bản" : index % 3 === 1 ? "Khá" : "Nâng cao",
     notes: `Tạo từ preset flashcard: ${preset.notes}`,
