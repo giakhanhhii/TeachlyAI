@@ -257,6 +257,101 @@ function ensureFallbackShellList(doc, sink) {
 }
 
 /**
+ * @param {string} value
+ * @returns {string[]}
+ */
+function splitSlideTextFragments(value) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return [];
+  return raw
+    .split(/\s*(?:\||•|;)\s*|\.\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+/**
+ * @param {string} value
+ * @returns {{ headline: string, detail: string }}
+ */
+function buildSlideTextPair(value) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return { headline: "", detail: "" };
+  const colonParts = raw.split(/\s*:\s*/).map((part) => part.trim()).filter(Boolean);
+  if (colonParts.length >= 2) {
+    return {
+      headline: colonParts[0],
+      detail: colonParts.slice(1).join(": "),
+    };
+  }
+  const arrowParts = raw.split(/\s*->\s*/).map((part) => part.trim()).filter(Boolean);
+  if (arrowParts.length >= 2) {
+    return {
+      headline: arrowParts[0],
+      detail: arrowParts.slice(1).join(" -> "),
+    };
+  }
+  const words = raw.split(/\s+/).filter(Boolean);
+  if (words.length >= 10) {
+    return {
+      headline: words.slice(0, 5).join(" "),
+      detail: raw,
+    };
+  }
+  return {
+    headline: raw,
+    detail: raw,
+  };
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function buildSlideTextPool(title, bullets, want) {
+  const unique = [];
+  const seen = new Set();
+  const push = (value) => {
+    const normalized = String(value || "").replace(/\s+/g, " ").trim();
+    if (!normalized) return;
+    const key = normalized.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    unique.push(normalized);
+  };
+
+  push(title);
+  bullets.forEach((bullet) => {
+    push(bullet);
+    splitSlideTextFragments(bullet).forEach(push);
+  });
+
+  const pool = unique.map((item) => buildSlideTextPair(item)).filter((item) => item.headline || item.detail);
+  if (!pool.length) return Array.from({ length: Math.max(1, want) }, () => ({ headline: title, detail: title }));
+  while (pool.length < want) {
+    const next = pool[pool.length % Math.max(1, unique.length)];
+    pool.push({
+      headline: next.headline,
+      detail: next.detail || next.headline,
+    });
+  }
+  return pool;
+}
+
+/**
+ * @param {Element} node
+ * @returns {boolean}
+ */
+function isHeadlineShellTarget(node) {
+  if (!(node instanceof Element)) return false;
+  const tag = String(node.tagName || "").toUpperCase();
+  if (tag === "H1" || tag === "H2" || tag === "H3" || tag === "H4" || tag === "TH" || tag === "STRONG") return true;
+  const cls = String(node.getAttribute("class") || "");
+  return /(label|q-title|box-label|subtitle|number)/i.test(cls);
+}
+
+/**
  * Mark title + bullets placeholders on a cloned slide for data fill.
  * @param {Element} root
  * @param {Document} doc
@@ -336,7 +431,7 @@ function ensureShellFromFullDeck(doc) {
 
   if (hasComicCover) {
     const coverProto = allRoots[0].cloneNode(true);
-    coverProto.removeAttribute("id");
+    decorateComicCoverPrototype(coverProto, doc);
     const coverTpl = doc.createElement("template");
     coverTpl.id = "layout-cover";
     coverTpl.setAttribute("data-shell-layout-role", "cover");
@@ -347,7 +442,7 @@ function ensureShellFromFullDeck(doc) {
 
   variantRoots.forEach((root, idx) => {
     const proto = root.cloneNode(true);
-    proto.removeAttribute("id");
+    decorateSlidePrototype(proto, doc);
     const t = doc.createElement("template");
     t.id = idx === 0 ? "layout-content" : `layout-content-v${idx}`;
     t.setAttribute("data-shell-layout-variant", String(idx));
@@ -1195,17 +1290,7 @@ function fillContentSlots(root, title, bullets) {
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     ul.replaceChildren();
-    let originalItems = [];
-    try {
-      originalItems = JSON.parse(ul.getAttribute("data-shell-original-items") || "[]");
-      if (!Array.isArray(originalItems)) originalItems = [];
-    } catch {
-      originalItems = [];
-    }
-    const items = bullets.length ? bullets.slice() : originalItems.slice();
-    if (items.length < originalItems.length) {
-      items.push(...originalItems.slice(items.length));
-    }
+    const items = bullets.length ? bullets.slice() : title ? [title] : [];
     items.forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
@@ -1218,8 +1303,12 @@ function fillContentSlots(root, title, bullets) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    const textPool = buildSlideTextPool(title, bullets, targets.length);
+    let poolIndex = 0;
     targets.forEach((node, idx) => {
-      node.textContent = bullets[idx] || node.getAttribute("data-shell-original-text") || "";
+      const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+      poolIndex += 1;
+      node.textContent = isHeadlineShellTarget(node) ? pick.headline : pick.detail || pick.headline;
     });
   }
 }
@@ -1293,10 +1382,9 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     const isAuthoredSlide = isAuthoredShellTemplate(pick);
     if (isAuthoredSlide) {
       first.setAttribute("data-shell-authored-slide", "1");
-    } else {
-      fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
     }
-    if (first instanceof Element && !isAuthoredSlide) relocateThemeStickersUnderSlideContent(first);
+    fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
+    if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
   });
 

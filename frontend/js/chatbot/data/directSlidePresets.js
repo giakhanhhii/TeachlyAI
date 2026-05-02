@@ -42,55 +42,56 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
   const base = chapterIndex * 5 + 5;
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
   return [
-    createSlide(tag, `${chapter.name} - Trọng tâm`, [
-      `${chapter.name} nằm trong chủ đề ${preset.topic}.`,
+    createSlide(tag, `${chapter.name} - Khái niệm`, [
       chapter.focus,
-      `Phần này đi theo cấu trúc: ${preset.structure}.`,
-    ]),
-    createSlide(`${preset.id}-${String(base + 1).padStart(2, "0")}`, `${chapter.name} - Quy tắc`, [
       chapter.rule,
-      `Không mở rộng sang nội dung ngoài ${preset.topic}.`,
-      `Ghi nhớ theo yêu cầu: ${preset.notes}.`,
+      `Ghi chú triển khai: ${preset.notes}`,
+    ]),
+    createSlide(`${preset.id}-${String(base + 1).padStart(2, "0")}`, `${chapter.name} - Công thức`, [
+      chapter.rule,
+      chapter.exampleA,
+      chapter.exampleB,
     ]),
     createSlide(`${preset.id}-${String(base + 2).padStart(2, "0")}`, `${chapter.name} - Ví dụ`, [
       chapter.exampleA,
       chapter.exampleB,
-      "Ví dụ được giữ ngắn để học sinh thấy đúng mẫu cần học.",
+      `Tập trung nhận ra đúng mẫu ${chapter.name.toLowerCase()}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
       chapter.pitfallA,
       chapter.pitfallB,
-      `Khi làm bài, chỉ kiểm tra lỗi liên quan đến ${preset.topic}.`,
+      `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
       chapter.practiceA,
       chapter.practiceB,
-      `Chốt đáp án bằng cách đối chiếu lại ${chapter.name}.`,
+      `Yêu cầu thực hiện: ${preset.notes}`,
     ]),
   ];
 }
 
 function buildDeckFromBlueprint(preset) {
   const structureParts = splitStructure(preset.structure);
+  const chapterNames = preset.chapters.map((chapter) => chapter.name);
+  const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
+  const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
   const slides = [
-    createSlide(`${preset.id}-01`, preset.topic, [
-      `Mẫu: ${preset.style}.`,
-      `Cấu trúc: ${preset.structure}.`,
-      `Ghi chú: ${preset.notes}.`,
+    createSlide(`${preset.id}-01`, `${preset.topic} - Tổng quan`, [
+      ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
+      `Cấu trúc bài học: ${preset.structure}`,
     ]),
-    createSlide(`${preset.id}-02`, "Mục tiêu bài học", [
-      `Nắm đúng nội dung của ${preset.topic}.`,
-      "Không trộn sang chuyên đề hoặc kỹ năng khác.",
-      `Hoàn thành bài theo đúng ghi chú: ${preset.notes}.`,
+    createSlide(`${preset.id}-02`, `${preset.topic} - Mục tiêu`, [
+      `Nhận diện đúng các phần: ${chapterNames.slice(0, 3).join(", ")}.`,
+      `Thuộc công thức trọng tâm: ${chapterRules.join(" | ")}.`,
+      `Luyện theo yêu cầu: ${preset.notes}`,
     ]),
-    createSlide(`${preset.id}-03`, "Cấu trúc triển khai", [
-      ...structureParts.map((part, index) => `Phần ${index + 1}: ${part}.`),
-      `Toàn bộ slide chỉ phục vụ chủ đề ${preset.topic}.`,
+    createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
+      ...structureParts.map((part, index) => `Mạch ${index + 1}: ${part}.`),
+      `Mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}.`,
     ]),
-    createSlide(`${preset.id}-04`, "Khởi động", [
-      `Câu hỏi mở đầu chỉ xoay quanh ${preset.topic}.`,
-      "Học sinh nhắc lại kiến thức nền liên quan trực tiếp.",
-      "Giáo viên dẫn vào phần lý thuyết đầu tiên.",
+    createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, [
+      ...chapterRules,
+      `Ví dụ neo kiến thức: ${chapterExamples.join(" | ")}.`,
     ]),
   ];
 
@@ -99,9 +100,9 @@ function buildDeckFromBlueprint(preset) {
   });
 
   slides.push(createSlide(`${preset.id}-30`, "Tổng kết", [
-    `Tóm tắt lại ${preset.topic}.`,
-    `Ôn theo sơ đồ: ${preset.structure}.`,
-    `Bài tập về nhà bám đúng ghi chú: ${preset.notes}.`,
+    `Ôn lại các phần chính: ${chapterNames.join(", ")}.`,
+    `Nhắc lại công thức và ví dụ then chốt: ${chapterExamples.join(" | ")}.`,
+    `Bài tập sau giờ học vẫn bám đúng cấu trúc: ${preset.structure}.`,
   ]));
 
   return slides;
@@ -374,7 +375,7 @@ const RAW_SLIDE_PRESETS = [
     count: "18",
     structure: "Rút gọn V-ing -> Rút gọn V3 -> Rút gọn to V",
     style: "Vũ trụ tối (Huyền bí)",
-    notes: "Chỉ luyện reduced relative clauses, không trộn đại từ quan hệ đầy đủ.",
+    notes: "Chỉ luyện reduced relative clauses bằng V-ing, V3 và to V.",
     chapters: [
       {
         name: "Rút gọn bằng V-ing",
