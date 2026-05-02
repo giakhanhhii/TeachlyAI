@@ -4925,9 +4925,9 @@
             "promoting",
             "promote"
           ],
-          "correctIndex": 1,
-          "explanation": "Khoản trợ cấp nhằm thúc đẩy (promote) lắp đặt pin mái nhà — chọn dạng từ/cấu trúc khớp mạch grants + household installation.",
-          "explanationEvidence": "grants … household installation of rooftop panels"
+          "correctIndex": 0,
+          "explanation": "Grants to promote…: động từ nguyên mẫu có mục đích sau danh từ grants (khoản trợ cấp để thúc đẩy lắp đặt).",
+          "explanationEvidence": "grants to promote household installation"
         },
         {
           "id": "q3",
@@ -5045,9 +5045,9 @@
             "range",
             "number"
           ],
-          "correctIndex": 2,
-          "explanation": "Donate a portion/range of income — chọn cụm khớp đề (thường gặp ‘a portion of income’; đề có thể dùng ‘range’ để chỉ khoảng đóng góp linh hoạt).",
-          "explanationEvidence": "donate … of your income to trusted charities"
+          "correctIndex": 1,
+          "explanation": "Donate a portion of your income: collocation chuẩn (một phần thu nhập).",
+          "explanationEvidence": "donate a portion of your income"
         },
         {
           "id": "q11",
@@ -5090,9 +5090,9 @@
             "b-c-a-e-d",
             "d-b-c-a-e"
           ],
-          "correctIndex": 1,
-          "explanation": "Mua điện thoại: nhân viên chào hàng (b) → khách hỏi (d) → tư vấn (b lần 2?) — trình tự b-d-e-c-a theo đáp án.",
-          "explanationEvidence": "sales dialogue flow b-d-e-c-a"
+          "correctIndex": 0,
+          "explanation": "d → b → a → e → c: khách vào hỏi → nhân viên giới thiệu dòng máy → cụ thể một máy → khách mua và nhờ chuyển dữ liệu → nhờ gợi ý máy giá phải chăng.",
+          "explanationEvidence": "d-b-a-e-c"
         },
         {
           "id": "q14",
@@ -5120,9 +5120,9 @@
             "c - b - a",
             "a - c - b"
           ],
-          "correctIndex": 3,
-          "explanation": "Mua quà: Julia chào và nói nhu cầu (a) → nhân viên chào mừng và liệt kê (c) → Julia chọn nến (b). Trình tự a-c-b.",
-          "explanationEvidence": "gift shop dialogue a-c-b"
+          "correctIndex": 1,
+          "explanation": "c → a → b: Julia chào và nêu nhu cầu → nhân viên chào mừng và giới thiệu hàng → Julia chọn nến.",
+          "explanationEvidence": "gift shop c-a-b"
         },
         {
           "id": "q16",
@@ -5135,9 +5135,9 @@
             "b-a-c-d-e",
             "d-b-a-c-e"
           ],
-          "correctIndex": 1,
-          "explanation": "Học ngoại ngữ: khó khăn ban đầu (b) → nản (d) → tuy nhiên nền tảng (a) → luyện tập (c) → thành tựu (e). Thứ tự a-d-c-b-e.",
-          "explanationEvidence": "language learning a-d-c-b-e"
+          "correctIndex": 0,
+          "explanation": "b-d-a-c-e: mở đề khó học ngoại ngữ → nản lòng → nền tảng rồi hệ thống phức tạp hơn → luyện tập tiến bộ → kết thành tựu.",
+          "explanationEvidence": "language learning b-d-a-c-e"
         },
         {
           "id": "q17",
@@ -5180,9 +5180,9 @@
             "where the use of artificial intelligence in adapting content to individual strengths and weaknesses",
             "tailors educational content to individual strengths and weaknesses with the help of artificial intelligence"
           ],
-          "correctIndex": 0,
-          "explanation": "Personalized learning trend — câu mô tả AI điều chỉnh nội dung (chọn đúng dạng điền trong đề).",
-          "explanationEvidence": "personalized learning … AI tailors content"
+          "correctIndex": 1,
+          "explanation": "Mệnh đề quan hệ ‘in which artificial intelligence tailors…’ — ngữ pháp đúng sau dấu phẩy; tránh mệnh đề A lỗi wording.",
+          "explanationEvidence": "personalized learning, in which AI tailors content"
         },
         {
           "id": "q20",
@@ -5225,9 +5225,9 @@
             "the modern era no longer presents demands and challenges to learners",
             "learners' solution to the challenges of the modern era is now achieved"
           ],
-          "correctIndex": 3,
-          "explanation": "Đoạn kết: learners can now meet the demands… hoặc câu tương đương trong đề để khép ‘Making use of these approaches’.",
-          "explanationEvidence": "closing sentence on modern learners"
+          "correctIndex": 0,
+          "explanation": "Making use of these new approaches, learners can now meet the demands and challenges of the modern era — câu kết mạch lý, tích cực.",
+          "explanationEvidence": "learners can now meet the demands … modern era"
         },
         {
           "id": "q23",
@@ -5894,9 +5894,9 @@
             "(I)",
             "(II)"
           ],
-          "correctIndex": 1,
-          "explanation": "Câu về bot bắt chước người chèn sau đoạn mô tả bot hoạt động như người dùng thật — thường sau (II) hoặc (III) tùy mạch; theo đáp án là (III).",
-          "explanationEvidence": "insert mimic human behaviour near bot description"
+          "correctIndex": 3,
+          "explanation": "Câu ‘mimic human behaviour’ nối tiếp ngay sau (II): vừa nói bot giả làm người thật, rồi giải thích vì sao hiệu quả trước khi sang (III) về đổi ý kiến — đáp án (II) = index 3 trong đề.",
+          "explanationEvidence": "after (II): bots imitate real users, then clarify mimicry"
         },
         {
           "id": "q14",
@@ -6239,9 +6239,9 @@
             "remain the same as artistic movements and societal values develop",
             "capable of changing significantly as time and artistic trends evolve"
           ],
-          "correctIndex": 0,
-          "explanation": "Ý kiến về ‘great art’ thay đổi theo lịch sử và quan điểm công chúng.",
-          "explanationEvidence": "ideas about what great art is … alter"
+          "correctIndex": 1,
+          "explanation": "Great art có thể thay đổi dần theo thời gian vì dư luận và xu hướng nghệ thuật thay đổi (B: gradually change … shifting public opinions).",
+          "explanationEvidence": "ideas about what great art is change over time"
         },
         {
           "id": "q37",
@@ -6787,9 +6787,9 @@
             "Paragraph 4",
             "Paragraph 1"
           ],
-          "correctIndex": 0,
-          "explanation": "Phần về y tế: tìm đoạn nói clinics, health campaigns — theo đánh số đoạn trong đề.",
-          "explanationEvidence": "healthcare … clinics and public health campaigns"
+          "correctIndex": 1,
+          "explanation": "Vai trò tình nguyện viên trong y tế (clinics, public health campaigns) nằm ở đoạn sau phần giáo dục — trong đề là Paragraph 3 (index 1).",
+          "explanationEvidence": "Another significant field … healthcare … public health campaigns"
         },
         {
           "id": "q21",
@@ -7027,9 +7027,9 @@
             "involving the fact that people from rural areas rapidly migrate to some big cities",
             "involves the mass migration of people from rural areas to some big cities"
           ],
-          "correctIndex": 0,
-          "explanation": "Urbanization: mệnh đề quan hệ mô tả xu thế di cư nông thôn–thành thị (chọn câu đầy đủ ngữ pháp trong đề).",
-          "explanationEvidence": "urbanization involves migration to cities"
+          "correctIndex": 3,
+          "explanation": "Urbanization … involves the mass migration of people from rural areas to some big cities — vị ngữ đúng ngữ pháp (D, index 3); các phương án khác lỗi cấu trúc.",
+          "explanationEvidence": "Urbanization involves the mass migration … to big cities"
         },
         {
           "id": "q37",
@@ -7042,9 +7042,9 @@
             "struggling to make the influx of residential scale not beyond control",
             "often managing the influx of residents that is rapidly expanding"
           ],
-          "correctIndex": 0,
-          "explanation": "Áp lực hạ tầng không theo kịp dòng người nhập cư — ý nối sau ‘strain on infrastructure’.",
-          "explanationEvidence": "demand for housing, transportation … exceeds supply"
+          "correctIndex": 1,
+          "explanation": "Mệnh đề quan hệ ‘which often struggles to keep pace with the influx of new residents’ bổ nghĩa cho infrastructure — khớp overcrowding/strain trong đoạn (B, index 1).",
+          "explanationEvidence": "strain on infrastructure … demand exceeds supply"
         },
         {
           "id": "q38",
