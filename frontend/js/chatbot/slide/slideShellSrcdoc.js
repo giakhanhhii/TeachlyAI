@@ -321,11 +321,11 @@ function buildSlideTextPool(title, bullets, want) {
     unique.push(normalized);
   };
 
-  push(title);
   bullets.forEach((bullet) => {
     push(bullet);
     splitSlideTextFragments(bullet).forEach(push);
   });
+  push(title);
 
   const pool = unique.map((item) => buildSlideTextPair(item)).filter((item) => item.headline || item.detail);
   if (!pool.length) return Array.from({ length: Math.max(1, want) }, () => ({ headline: title, detail: title }));
@@ -763,6 +763,16 @@ function injectShellPreviewFit(doc) {
       padding-right: 12px;
       overflow-wrap: anywhere;
       word-break: break-word;
+    }
+    .shell-slide-instance .doughnut-chart {
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 50% !important;
+      flex: 0 0 auto !important;
+      align-self: center !important;
+    }
+    .shell-slide-instance .doughnut-chart::after {
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 50% !important;
     }
     .shell-slide-instance .content-area {
       max-width: 100% !important;

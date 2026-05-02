@@ -125,13 +125,13 @@
 
         .doughnut-chart-container { display: flex; align-items: center; justify-content: center; gap: 60px; width: 100%; }
         .doughnut-chart {
-            width: 380px; height: 380px; border-radius: 50%;
+            width: 380px; height: 380px; min-width: 380px; min-height: 380px; flex: 0 0 380px; aspect-ratio: 1 / 1; border-radius: 50%;
             background: conic-gradient(var(--c-main) 0% 40%, var(--c-alt) 40% 70%, var(--c-accent) 70% 90%, #222 90% 100%);
             position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
         .doughnut-chart::after {
             content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 200px; height: 200px; background: white; border-radius: 50%;
+            width: 200px; height: 200px; min-width: 200px; min-height: 200px; aspect-ratio: 1 / 1; background: white; border-radius: 50%;
         }
         .legend { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 20px; }
         .legend li { display: flex; align-items: center; font-size: 22px; font-weight: 600; color: #333; }
