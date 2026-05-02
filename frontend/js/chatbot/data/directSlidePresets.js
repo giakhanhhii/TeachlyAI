@@ -78,6 +78,20 @@ function buildPracticeGuideLine(chapter, preset) {
   return pitfallA || notes || "";
 }
 
+function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
+  if (preset?.id === "slide-reported-speech") {
+    return [
+      "Present -> Past: Khi động từ tường thuật ở quá khứ, các thì hiện tại thường lùi về thì quá khứ tương ứng để giữ đúng mốc thời gian của lời nói gốc.",
+      "Will -> Would: Dùng would để giữ ý nghĩa tương lai, lời hứa hoặc dự định nhưng nhìn từ thời điểm đã lùi về quá khứ trong câu tường thuật.",
+      "Đổi đại từ và trạng từ: I/my/we/our đổi theo người nói; today -> that day; tomorrow -> the next day; here -> there.",
+    ];
+  }
+  return [
+    ...chapterRules,
+    `Ví dụ neo kiến thức: ${chapterExamples.join(" | ")}.`,
+  ];
+}
+
 function buildPitfallLine(chapter, key) {
   const detailed = String(chapter?.[`${key}Detail`] || "").trim();
   if (detailed) return detailed;
@@ -141,10 +155,7 @@ function buildDeckFromBlueprint(preset) {
       ...structureParts.map((part, index) => `Mạch ${index + 1}: ${part}.`),
       `Mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}.`,
     ]),
-    createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, [
-      ...chapterRules,
-      `Ví dụ neo kiến thức: ${chapterExamples.join(" | ")}.`,
-    ]),
+    createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
   ];
 
   preset.chapters.forEach((chapter, chapterIndex) => {

@@ -756,6 +756,39 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
+    .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+      list-style: none !important;
+      padding-left: 0 !important;
+      margin: 0 auto !important;
+      max-width: 980px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 20px !important;
+      text-align: center !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      font-size: clamp(28px, 2.35vw, 40px) !important;
+      line-height: 1.35 !important;
+      font-weight: 700 !important;
+      text-align: center !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .section-center,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-group,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-content {
+      justify-content: center !important;
+    }
     .shell-slide-instance .outer-title {
       max-width: 100%;
       box-sizing: border-box;
