@@ -4101,14 +4101,14 @@
           "id": "q1",
           "number": 1,
           "partId": "part-1",
-          "prompt": "Question 1. Choose the best option that best fits blank (1).",
+          "prompt": "Question 1.",
           "options": [
-            "searching",
-            "seeking",
-            "exploring",
-            "creating"
+            "enthusiastically",
+            "enthusiast",
+            "enthusiasm",
+            "enthusiastic"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 1. A"
         },
@@ -4116,14 +4116,14 @@
           "id": "q2",
           "number": 2,
           "partId": "part-1",
-          "prompt": "Question 2. Choose the best option that best fits blank (2).",
+          "prompt": "Question 2.",
           "options": [
-            "At",
-            "on",
-            "in",
+            "about",
+            "for",
+            "over",
             "with"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 2. D"
         },
@@ -4131,14 +4131,14 @@
           "id": "q3",
           "number": 3,
           "partId": "part-1",
-          "prompt": "Question 3. Choose the best option that best fits blank (3).",
+          "prompt": "Question 3.",
           "options": [
-            "comprehensive training courses",
-            "courses training comprehensive",
-            "training courses comprehensive",
-            "courses comprehensive training"
+            "travel platform new",
+            "new travel platform",
+            "travel new platform",
+            "new platform travel"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 3. D"
         },
@@ -4146,12 +4146,12 @@
           "id": "q4",
           "number": 4,
           "partId": "part-1",
-          "prompt": "Question 4. Choose the best option that best fits blank (4).",
+          "prompt": "Question 4.",
           "options": [
-            "which they needed",
-            "needed",
-            "need",
-            "needing"
+            "who has",
+            "had",
+            "to have",
+            "having"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4161,14 +4161,14 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5. Choose the best option that best fits blank (5).",
+          "prompt": "Question 5.",
           "options": [
-            "to travelling",
-            "to travel",
-            "travel",
-            "travelling"
+            "take",
+            "make",
+            "give",
+            "do"
           ],
-          "correctIndex": 2,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 5. C"
         },
@@ -4176,12 +4176,12 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6. Choose the best option that best fits blank (6).",
+          "prompt": "Question 6.",
           "options": [
-            "adventurous",
-            "adventure",
-            "advent",
-            "adventurously"
+            "have",
+            "to having",
+            "to have",
+            "having"
           ],
           "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4191,14 +4191,14 @@
           "id": "q7",
           "number": 7,
           "partId": "part-1",
-          "prompt": "Question 7. Choose the best option that best fits blank (7).",
+          "prompt": "Question 7.",
           "options": [
-            "conversation",
-            "preparation",
-            "encouragement",
-            "accomplishment"
+            "another",
+            "others",
+            "each",
+            "some"
           ],
-          "correctIndex": 0,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 7. A"
         },
@@ -4206,14 +4206,14 @@
           "id": "q8",
           "number": 8,
           "partId": "part-1",
-          "prompt": "Question 8. Choose the best option that best fits blank (8).",
+          "prompt": "Question 8.",
           "options": [
-            "set up",
-            "put off",
-            "give up",
-            "take off"
+            "devastates",
+            "nourishes",
+            "conserves",
+            "enhances"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 8. C"
         },
@@ -4221,14 +4221,14 @@
           "id": "q9",
           "number": 9,
           "partId": "part-1",
-          "prompt": "Question 9. Choose the best option that best fits blank (9).",
+          "prompt": "Question 9.",
           "options": [
-            "much",
-            "few",
-            "little",
-            "many"
+            "turn up",
+            "opt for",
+            "rely on",
+            "throw away"
           ],
-          "correctIndex": 3,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 9. D"
         },
@@ -4236,14 +4236,14 @@
           "id": "q10",
           "number": 10,
           "partId": "part-1",
-          "prompt": "Question 10. Choose the best option that best fits blank (10).",
+          "prompt": "Question 10.",
           "options": [
-            "In spite of",
-            "In addition",
-            "Instead of",
-            "In view of"
+            "because of",
+            "thanks to",
+            "according to",
+            "instead of"
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 10. B"
         },
@@ -4251,14 +4251,14 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11. Choose the best option that best fits blank (11).",
+          "prompt": "Question 11.",
           "options": [
-            "others",
-            "other",
-            "the others",
-            "another"
+            "inquire",
+            "seek",
+            "verify",
+            "demand"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 11. A"
         },
@@ -4266,14 +4266,14 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12. Choose the best option that best fits blank (12).",
+          "prompt": "Question 12.",
           "options": [
-            "increased",
-            "encouraged",
-            "supported",
-            "strengthened"
+            "manage",
+            "accumulate",
+            "distribute",
+            "utilize"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 12. D"
         },
@@ -4356,7 +4356,7 @@
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18. Choose the best option that best fits blank (18).",
+          "prompt": "Question 18.",
           "options": [
             "Engaging in sports activities helps to develop strength",
             "When engaging in sports activities helps to develop strength",
@@ -4371,7 +4371,7 @@
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19. Choose the best option that best fits blank (19).",
+          "prompt": "Question 19.",
           "options": [
             "It additionally reduces the risk of obesity",
             "In addition to, it reduces the risk of obesity",
@@ -4386,7 +4386,7 @@
           "id": "q20",
           "number": 20,
           "partId": "part-2",
-          "prompt": "Question 20. Choose the best option that best fits blank (20).",
+          "prompt": "Question 20.",
           "options": [
             "they help to reduce stress and improve mood",
             "helps to reduce stress and improve mood",
@@ -4400,8 +4400,8 @@
         {
           "id": "q21",
           "number": 21,
-          "partId": "part-3",
-          "prompt": "Question 21. Choose the best option that completes **blank (21)**.",
+          "partId": "part-2",
+          "prompt": "Question 21.",
           "options": [
             "individual sports fosters a sense",
             "sports individual fosters a sense",
@@ -4415,15 +4415,15 @@
         {
           "id": "q22",
           "number": 22,
-          "partId": "part-3",
-          "prompt": "Question 22. Choose the best option that completes **blank (22)**.",
+          "partId": "part-2",
+          "prompt": "Question 22.",
           "options": [
             "it provides numerous benefits for both the body and mind",
             "it provides for both the body and mind numerous benefits",
             "numerous benefits are provided for both the body and mind",
             "both the body and mind are provided numerous benefits"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 22. C"
         },
@@ -5301,9 +5301,9 @@
             "The movement for greener habits has slowed as fewer people value protecting the environment.",
             "Using reusable products can contribute to a decrease in plastic waste and promote sustainability."
           ],
-          "correctIndex": 1,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 28. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 28. D | reusable bags passage"
         },
         {
           "id": "q29",
@@ -5316,9 +5316,9 @@
             "Paragraph 1",
             "Paragraph 4"
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 29. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 29. A | Consequently paragraph 3"
         },
         {
           "id": "q30",
@@ -5361,9 +5361,9 @@
             "hidden away in selected aspects of everyday life",
             "entirely neglected in most parts of our day-to-day existence"
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 32. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 32. B | integrated"
         },
         {
           "id": "q33",
@@ -5376,9 +5376,9 @@
             "distressing",
             "oblivious"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 33. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 33. D | oblivious"
         },
         {
           "id": "q34",
