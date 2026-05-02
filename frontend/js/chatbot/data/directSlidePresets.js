@@ -78,6 +78,32 @@ function buildPracticeGuideLine(chapter, preset) {
   return pitfallA || notes || "";
 }
 
+function buildFormulaSummaryLines(chapter) {
+  const name = String(chapter?.name || "").trim();
+  const focus = String(chapter?.focus || "").trim();
+  const rule = String(chapter?.rule || "").trim();
+  const exampleA = String(chapter?.exampleA || "").trim();
+  const exampleB = String(chapter?.exampleB || "").trim();
+
+  const lineA = name && rule
+    ? `${name}: ${rule}`
+    : rule || name;
+
+  const lineB = focus
+    ? `Giải thích ngắn: ${focus}`
+    : "";
+
+  const lineC = exampleA && exampleB
+    ? `Ví dụ tổng quát: ${exampleA} ${exampleB}`
+    : exampleA
+      ? `Ví dụ tổng quát: ${exampleA}`
+      : exampleB
+        ? `Ví dụ tổng quát: ${exampleB}`
+        : "";
+
+  return [lineA, lineB, lineC].filter(Boolean);
+}
+
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
   const chapterBullets = (preset?.chapters || [])
     .slice(0, 3)
@@ -124,11 +150,11 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       chapter.rule,
       `Ghi chú triển khai: ${preset.notes}`,
     ]),
-    createSlide(`${preset.id}-${String(base + 1).padStart(2, "0")}`, `${chapter.name} - Công thức`, [
-      chapter.rule,
-      chapter.exampleA,
-      chapter.exampleB,
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 1).padStart(2, "0")}`,
+      `${chapter.name} - Công thức`,
+      buildFormulaSummaryLines(chapter),
+    ),
     createSlide(`${preset.id}-${String(base + 2).padStart(2, "0")}`, `${chapter.name} - Ví dụ`, [
       buildDetailedExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
