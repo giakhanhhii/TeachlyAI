@@ -9008,7 +9008,7 @@
           "id": "q11",
           "number": 11,
           "partId": "part-2",
-          "prompt": "Question 11.",
+          "prompt": "Question 11. Choose the best word or phrase for blank (11).",
           "options": [
             "other",
             "the others",
@@ -9023,7 +9023,7 @@
           "id": "q12",
           "number": 12,
           "partId": "part-2",
-          "prompt": "Question 12.",
+          "prompt": "Question 12. Choose the best word or phrase for blank (12).",
           "options": [
             "puts off",
             "takes out",
@@ -9038,7 +9038,7 @@
           "id": "q13",
           "number": 13,
           "partId": "part-2",
-          "prompt": "Question 13.",
+          "prompt": "Question 13. Choose the best word or phrase for blank (13).",
           "options": [
             "distance",
             "passenger",
@@ -9053,7 +9053,7 @@
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14.",
+          "prompt": "Question 14. Choose the best word or phrase for blank (14).",
           "options": [
             "Instead of",
             "Due to",
@@ -9068,7 +9068,7 @@
           "id": "q15",
           "number": 15,
           "partId": "part-2",
-          "prompt": "Question 15.",
+          "prompt": "Question 15. Choose the best word or phrase for blank (15).",
           "options": [
             "level",
             "supply",
@@ -9083,7 +9083,7 @@
           "id": "q16",
           "number": 16,
           "partId": "part-2",
-          "prompt": "Question 16.",
+          "prompt": "Question 16. Choose the best word or phrase for blank (16).",
           "options": [
             "demand",
             "rate",
@@ -9098,7 +9098,7 @@
           "id": "q17",
           "number": 17,
           "partId": "part-2",
-          "prompt": "Question 17.",
+          "prompt": "Question 17. Choose the best phrase for blank (17).",
           "options": [
             "is disposed of without proper treatment each year",
             "is produced and mismanaged by humans annually",
@@ -9113,7 +9113,7 @@
           "id": "q18",
           "number": 18,
           "partId": "part-2",
-          "prompt": "Question 18.",
+          "prompt": "Question 18. Choose the best phrase for blank (18).",
           "options": [
             "whose researches conducted in multiple fields have shown concerning results",
             "warning the public about the hazards, use plastic reduction as a key solution",
@@ -9128,7 +9128,7 @@
           "id": "q19",
           "number": 19,
           "partId": "part-2",
-          "prompt": "Question 19.",
+          "prompt": "Question 19. Choose the best sentence for blank (19).",
           "options": [
             "Plastic in the sea harms not only fish but also other aquatic creatures",
             "To prevent harm to marine animals, various programs are proposed",
