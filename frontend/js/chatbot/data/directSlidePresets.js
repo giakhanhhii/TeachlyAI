@@ -79,17 +79,28 @@ function buildPracticeGuideLine(chapter, preset) {
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
-  if (preset?.id === "slide-reported-speech") {
-    return [
-      "Present -> Past: Khi động từ tường thuật ở quá khứ, các thì hiện tại thường lùi về thì quá khứ tương ứng để giữ đúng mốc thời gian của lời nói gốc.",
-      "Will -> Would: Dùng would để giữ ý nghĩa tương lai, lời hứa hoặc dự định nhưng nhìn từ thời điểm đã lùi về quá khứ trong câu tường thuật.",
-      "Đổi đại từ và trạng từ: I/my/we/our đổi theo người nói; today -> that day; tomorrow -> the next day; here -> there.",
-    ];
-  }
+  const chapterBullets = (preset?.chapters || [])
+    .slice(0, 3)
+    .map((chapter) => {
+      const name = String(chapter?.name || "").trim();
+      const focus = String(chapter?.focus || "").trim();
+      const exampleA = String(chapter?.exampleA || "").trim();
+      if (name && focus && exampleA) return `${name}: ${focus} Ví dụ tổng quát: ${exampleA}`;
+      if (name && focus) return `${name}: ${focus}`;
+      if (name && exampleA) return `${name}: Ví dụ tổng quát: ${exampleA}`;
+      return focus || exampleA || "";
+    })
+    .filter(Boolean);
+
+  if (chapterBullets.length) return chapterBullets;
+
   return [
-    ...chapterRules,
-    `Ví dụ neo kiến thức: ${chapterExamples.join(" | ")}.`,
-  ];
+    ...chapterRules.map((rule, index) => {
+      const example = chapterExamples[index] || chapterExamples[0] || "";
+      return example ? `${rule} Ví dụ tổng quát: ${example}` : rule;
+    }),
+    `Cấu trúc học nhanh: ${preset?.structure || ""}`.trim(),
+  ].filter(Boolean);
 }
 
 function buildPitfallLine(chapter, key) {
