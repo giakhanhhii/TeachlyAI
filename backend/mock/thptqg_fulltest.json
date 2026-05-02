@@ -5984,9 +5984,9 @@
             "Facial recognition technology is only used by authorities for security.",
             "Social media bots can spread misinformation quickly."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 19. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 19. C | only authorities false"
         },
         {
           "id": "q20",
@@ -5999,9 +5999,9 @@
             "Regulating AI will completely stop AI abuse.",
             "Facial recognition is only a concern when used in public spaces."
           ],
-          "correctIndex": 0,
+          "correctIndex": 1,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 20. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 20. B | inference balanced"
         },
         {
           "id": "q21",
@@ -6014,9 +6014,9 @@
             "AI abuse, including misinformation and privacy invasion, is a growing issue but can be reduced through regulations and awareness.",
             "AI offers many benefits, but its misuse in spreading false information and violating privacy raises concerns."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-16 -> 21. A | strategy=global-phrase+fallback-A | fallback=9"
+          "explanationEvidence": "66_Full. md#pair-16 -> 21. C | full summary"
         },
         {
           "id": "q22",
