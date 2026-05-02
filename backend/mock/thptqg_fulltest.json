@@ -4928,7 +4928,7 @@
           ],
           "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 3. D | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 3. A | manual=green-energy-option"
         },
         {
           "id": "q4",
@@ -5059,7 +5059,7 @@
             "achievement",
             "diversity",
             "experience",
-            "awareness Question 12 and above the footer."
+            "awareness"
           ],
           "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
@@ -5189,7 +5189,7 @@
           "id": "q21",
           "number": 21,
           "partId": "part-3",
-          "prompt": "Question 21.",
+          "prompt": "Question 21. Choose the sentence that best fits blank (21).",
           "options": [
             "Interracial students share ideas and experiences so that they can use platforms like Zoom or Google Docs in their learning.",
             "Students from different countries can now use platforms like Zoom or Google Docs, allowing them to share ideas and experiences.",
@@ -5204,7 +5204,7 @@
           "id": "q22",
           "number": 22,
           "partId": "part-3",
-          "prompt": "Question 22.",
+          "prompt": "Question 22. Choose the sentence that best fits blank (22).",
           "options": [
             "learners can now meet the demands and challenges of the modern era",
             "the demands and challenges of the modern era are addressed by learners",
@@ -5226,9 +5226,9 @@
             "Using sustainable products",
             "Composting organic waste"
           ],
-          "correctIndex": 2,
+          "correctIndex": 3,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 23. C | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 23. D | composting-not-in-passage"
         },
         {
           "id": "q24",
@@ -5249,16 +5249,16 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word they in paragraph 3 refers to _.",
+          "prompt": "Question 25. The word they in paragraph 2 refers to _.",
           "options": [
             "carbon emissions",
             "individuals",
             "green living habits",
             "local farmers"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 25. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 25. C | they=green-living-habits"
         },
         {
           "id": "q26",
@@ -5271,9 +5271,9 @@
             "prohibiting",
             "abandoning"
           ],
-          "correctIndex": 1,
+          "correctIndex": 0,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 26. B | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 26. A | enabling"
         },
         {
           "id": "q27",
@@ -5286,9 +5286,9 @@
             "Choosing eco-friendly products supports businesses focusing on environmental responsibility.",
             "Purchasing harmful products supports businesses ignoring environmental issues."
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được dựng theo answer key/phrase nếu có, phần còn thiếu được đối chiếu heuristic để giữ form đầy đủ.",
-          "explanationEvidence": "66_Full. md#pair-13 -> 27. A | strategy=phrase+heuristic+global-phrase | heuristic=3"
+          "explanationEvidence": "66_Full. md#pair-13 -> 27. C | paraphrase eco-friendly support"
         },
         {
           "id": "q28",
