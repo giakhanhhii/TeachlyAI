@@ -1,3 +1,5 @@
+import { EXTRA_DIRECT_QUIZ_PRESETS } from "./directQuizExtraPresets.js";
+
 function normalizeText(value) {
   return String(value || "")
     .toLowerCase()
@@ -601,7 +603,7 @@ function buildPrepositionsBank() {
   return buildBank("prepositions-fixed-expressions", rows);
 }
 
-export const DIRECT_QUIZ_PRESETS = [
+const BASE_DIRECT_QUIZ_PRESETS = [
   {
     id: "quiz-sentence-transformation",
     source: "Câu đồng nghĩa (Sentence Transformation)",
@@ -723,6 +725,8 @@ export const DIRECT_QUIZ_PRESETS = [
     },
   },
 ];
+
+export const DIRECT_QUIZ_PRESETS = [...BASE_DIRECT_QUIZ_PRESETS, ...EXTRA_DIRECT_QUIZ_PRESETS];
 
 export const DIRECT_QUIZ_AUTOFILL_SAMPLES = DIRECT_QUIZ_PRESETS.map((preset) => ({
   id: preset.id,
