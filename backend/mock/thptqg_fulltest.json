@@ -7973,7 +7973,7 @@
               "title": "Câu 18",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the correct word or phrase that best fits each of the numbered blanks from 18 to 22.",
               "context": [
-                "**Social media** has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
+                "Social media has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
                 "**Social media** platforms enable users to share information instantly, making it easier to stay updated on global events, (19)_. This has also transformed the way businesses reach customers, allowing for more targeted marketing, (20)_.",
                 "However, there are concerns about the negative impact of **social media**, particularly on mental health. Studies have shown that excessive **social media** use can lead to feelings of isolation, anxiety, and depression.",
                 "Despite these concerns, **social media** continues to grow in popularity, with no signs of slowing down, (21)_. Finding a balance between its benefits and its risks is essential to ensure **social media** has a positive influence on our lives. (22)_."
@@ -7998,7 +7998,7 @@
               "title": "Câu 18",
               "instruction": "Read the following passage and mark the letter A, B, C, or D on your answer sheet to indicate the correct word or phrase that best fits each of the numbered blanks from 18 to 22.",
               "context": [
-                "**Social media** has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
+                "Social media has become an integral part of modern society, influencing the way people communicate, share information, and stay connected. (18)_. Platforms like Facebook, Twitter, and Instagram have millions of users worldwide, making **social media** a dominant force in communication. One of the benefits of **social media** is that it allows individuals to connect with others regardless of geographical location.",
                 "**Social media** platforms enable users to share information instantly, making it easier to stay updated on global events, (19)_. This has also transformed the way businesses reach customers, allowing for more targeted marketing, (20)_.",
                 "However, there are concerns about the negative impact of **social media**, particularly on mental health. Studies have shown that excessive **social media** use can lead to feelings of isolation, anxiety, and depression.",
                 "Despite these concerns, **social media** continues to grow in popularity, with no signs of slowing down, (21)_. Finding a balance between its benefits and its risks is essential to ensure **social media** has a positive influence on our lives. (22)_."
@@ -9842,15 +9842,15 @@
             "installing solar panels",
             "buying luxury cars"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (buying luxury cars) là hoạt động không được nhắc trong bài; các lựa chọn khác đều có căn cứ trong đoạn văn.",
           "explanationEvidence": "Cau 13: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q14",
           "number": 14,
           "partId": "part-2",
-          "prompt": "Question 14. The word \"alternatives\" in paragraph 3 could be best replaced by _.",
+          "prompt": "Question 14. The word \"alternatives\" in paragraph 2 could be best replaced by _.",
           "options": [
             "Challenges",
             "Opponents",
@@ -9943,12 +9943,12 @@
           "prompt": "Question 20. The word \"it\" in paragraph 5 refers to",
           "options": [
             "learning from differences",
-            "a thriving society The logo for 'Tài Liệu On Thi' features a cartoon character with brown hair and a red shirt, sitting and reading a green book. The text 'Tài Liệu On Thi' is written in a large, stylized font behind the character.",
+            "a thriving society",
             "building stronger communities",
             "multiculturalism"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (multiculturalism) khớp tham chiếu đại từ \"it\" trong đoạn kết; các lựa chọn khác không phù hợp ngữ cảnh.",
           "explanationEvidence": "Cau 20: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9962,8 +9962,8 @@
             "Cultural misunderstandings cannot be resolved through dialogue.",
             "Open communication and learning are key to overcoming cultural differences."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D khớp nghĩa với câu in đậm về đối thoại và học hỏi để xóa bỏ hiểu lầm văn hóa.",
           "explanationEvidence": "Cau 21: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10007,15 +10007,15 @@
             "separation of ethnic groups",
             "living together peacefully"
           ],
-          "correctIndex": 1,
-          "explanation": "Đáp án B khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D (living together peacefully) gần nghĩa với sự chung sống hòa bình của nhiều nhóm văn hóa.",
           "explanationEvidence": "Cau 24: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. Dear Pat, a. Can I see you there? Please write to me soon. b. I am writing to tell you that I arrived here three weeks ago. c. I am studying at a language school in Brighton. The students come from many different countries. d. Also, I have made a lot of new friends. b. e. I want to visit London next week because I am going back to my country on Monday. With best wishes (Adapted from Ket 1)",
+          "prompt": "Question 25.\nDear Pat,\na. Can I see you there? Please write to me soon.\nb. I am writing to tell you that I arrived here three weeks ago.\nc. I am studying at a language school in Brighton. The students come from many different countries.\nd. Also, I have made a lot of new friends.\ne. I want to visit London next week because I am going back to my country on Monday.\nWith best wishes\n(Adapted from Ket 1)",
           "options": [
             "b-e-d-c-a",
             "a-e-b-c-d",
