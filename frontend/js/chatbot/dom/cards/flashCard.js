@@ -13,7 +13,8 @@ import {
 } from "./flowCardShared.js";
 
 function randomFlashAutofillCount() {
-  return 10 + Math.floor(Math.random() * 11);
+  if (Math.random() < 0.6) return 20;
+  return 10 + Math.floor(Math.random() * 10);
 }
 
 export function createFlashcardFormCard(deps) {
