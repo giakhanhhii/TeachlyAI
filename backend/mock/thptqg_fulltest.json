@@ -7343,7 +7343,7 @@
           "id": "q5",
           "number": 5,
           "partId": "part-1",
-          "prompt": "Question 5.",
+          "prompt": "Question 5. Choose the option that best fits blank (5).",
           "options": [
             "to preparing",
             "preparing",
@@ -7358,7 +7358,7 @@
           "id": "q6",
           "number": 6,
           "partId": "part-1",
-          "prompt": "Question 6.",
+          "prompt": "Question 6. Choose the option that best fits blank (6).",
           "options": [
             "to",
             "with",
