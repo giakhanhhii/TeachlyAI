@@ -4431,12 +4431,12 @@
           "id": "q23",
           "number": 23,
           "partId": "part-3",
-          "prompt": "Question 23. Which of the following is NOT mentioned as a field of career for gap-year students?",
+          "prompt": "Question 23. The word **indigenous** in paragraph 1 is **OPPOSITE** in meaning to _.",
           "options": [
-            "medicine",
-            "computers",
-            "teaching",
-            "farming"
+            "local",
+            "foreign",
+            "native",
+            "traditional"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4446,14 +4446,14 @@
           "id": "q24",
           "number": 24,
           "partId": "part-3",
-          "prompt": "Question 24. The word **benefit** in **paragraph 4** is OPPOSITE in meaning to _.",
+          "prompt": "Question 24. Which of the following is NOT mentioned as Confucian values emphasizing respect for?",
           "options": [
-            "harm",
-            "help",
-            "promote",
-            "profit"
+            "filial piety",
+            "social harmony",
+            "individualism",
+            "elders"
           ],
-          "correctIndex": 0,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 24. C"
         },
@@ -4461,12 +4461,12 @@
           "id": "q25",
           "number": 25,
           "partId": "part-3",
-          "prompt": "Question 25. The word **their** in **paragraph 2** refers to _.",
+          "prompt": "Question 25. The word **reverence** in paragraph 2 could be best replaced by _.",
           "options": [
-            "wealthy parents'",
-            "gap-year students'",
-            "others'",
-            "local people's"
+            "disrespect",
+            "admiration",
+            "indifference",
+            "criticism"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4476,14 +4476,14 @@
           "id": "q26",
           "number": 26,
           "partId": "part-3",
-          "prompt": "Question 26. The word **hands-on** in **paragraph 4** could be best replaced by _.",
+          "prompt": "Question 26. Which of the following best paraphrases the underlined sentence in paragraph 3?",
           "options": [
-            "detailed",
-            "theoretical",
-            "practical",
-            "challenging"
+            "The ao dai, known for its elegance and modesty, represents a blend of Vietnamese fashion that embodies cultural identity and pride.",
+            "As a traditional dress, the ao dai reflects the combination of sophistication and simplicity in Vietnamese fashion, representing the nation's cultural values.",
+            "The graceful ao dai, a traditional Vietnamese attire, signifies the blend of elegance and restraint, illustrating the pride and identity of Vietnamese culture.",
+            "Known as a traditional dress, the ao dai beautifully combines elegance with symbol of Vietnam's cultural identity and pride."
           ],
-          "correctIndex": 2,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 26. C"
         },
@@ -4491,12 +4491,12 @@
           "id": "q27",
           "number": 27,
           "partId": "part-3",
-          "prompt": "Question 27. Which of the following best paraphrases the underlined sentence in the **second paragraph**?",
+          "prompt": "Question 27. The word **their** in paragraph 4 refers to _.",
           "options": [
-            "Gap-year students receive practical training for their future careers.",
-            "Gap-year students must do some jobs to earn money for their travel.",
-            "Gap-year students have an opportunity to travel and meet local people.",
-            "Gap-year students earn money to support their family."
+            "Vietnamese cuisine",
+            "Vietnamese people",
+            "Traditional art forms",
+            "Agricultural heritage"
           ],
           "correctIndex": 1,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
@@ -4508,12 +4508,12 @@
           "partId": "part-3",
           "prompt": "Question 28. According to the passage, which of the following is TRUE?",
           "options": [
-            "The number of students taking a gap year between high school and university is falling.",
-            "Students can take a gap year only before starting university.",
-            "None of the students choose to work for the whole of their gap year to get experience.",
-            "Most students consider a gap year as a chance to travel."
+            "Vietnamese cultural identity is static and unchanging.",
+            "Modernization has completely erased Vietnamese traditions.",
+            "Vietnamese cuisine has gained international recognition.",
+            "Water puppetry is no longer practiced in Vietnam."
           ],
-          "correctIndex": 3,
+          "correctIndex": 2,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 28. C"
         },
@@ -4521,7 +4521,7 @@
           "id": "q29",
           "number": 29,
           "partId": "part-3",
-          "prompt": "Question 29. In which paragraph does the writer discuss the work experience of gap-year students?",
+          "prompt": "Question 29. In which paragraph does the writer mention a present concession relationship?",
           "options": [
             "Paragraph 1",
             "Paragraph 2",
@@ -4536,14 +4536,14 @@
           "id": "q30",
           "number": 30,
           "partId": "part-3",
-          "prompt": "Question 30. In which paragraph does the writer mention the benefits of gap year trip?",
+          "prompt": "Question 30. In which paragraph does the writer state that Vietnamese cultural identity is influenced by both internal and external factors?",
           "options": [
             "Paragraph 1",
             "Paragraph 2",
             "Paragraph 3",
             "Paragraph 4"
           ],
-          "correctIndex": 3,
+          "correctIndex": 0,
           "explanation": "Đáp án được lấy từ lời giải gốc trong bộ 66 đề.",
           "explanationEvidence": "66_Full. md#pair-12 -> 30. B"
         },
