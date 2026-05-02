@@ -64,7 +64,13 @@ function buildSentenceTransformationBank() {
     ["She prefers staying at home to going out late.", "She would rather _______ than go out late.", ["stayed at home", "stay at home", "to stay at home", "staying at home"], 1, "Would rather + V."],
     ["The film was so boring that we left early.", "It was _______ film that we left early.", ["such boring", "so a boring", "such a boring", "a such boring"], 2, "Such + a/an + adj + noun."],
   ];
-  return buildBank("sentence-transformation", [...passive, ...reported, ...comparison, ...mixed]);
+  return [...passive, ...reported, ...comparison, ...mixed].map((row, index) => makeQuestion(
+    `sentence-transformation-${index + 1}`,
+    `${row[0]} Choose the best sentence that is closest in meaning to the cue: ${row[1]}`,
+    row[2],
+    row[3],
+    row[4],
+  ));
 }
 
 function buildErrorIdentificationBank() {
@@ -515,18 +521,14 @@ function buildPhoneticsBank() {
     ["Choose the word whose underlined part differs: m**oo**n, sch**oo**l, bl**oo**d, f**oo**d", ["moon", "school", "blood", "food"], 2, "\"blood\" có /ʌ/."],
     ["Choose the word whose underlined part differs: achiev**es**, rais**es**, clos**es**, watch**es**", ["achieves", "raises", "closes", "watches"], 3, "-es đọc /ɪz/."],
     ["Choose the word whose underlined part differs: s**u**gar, st**u**dent, d**u**ty, c**u**t", ["sugar", "student", "duty", "cut"], 3, "\"cut\" có /ʌ/."],
-    ["Choose the word whose underlined part differs: h**ea**rt, p**ar**k, c**ar**d, st**ar**", ["heart", "park", "card", "star"], 0, "\"heart\" khác cách viết nhưng âm /ɑː/; câu này kiểm tra chính tả âm, đáp án chọn heart vì tổ hợp ea."],
-    ["Choose the word whose underlined part differs: n**a**tion, m**a**tal? no, let's use b**a**by, m**a**ny, l**a**te", ["baby", "many", "late", "paper"], 1, "\"many\" có /e/."],
+    ["Choose the word whose underlined part differs: h**ea**rt, p**ar**k, c**ar**d, st**ar**", ["heart", "park", "card", "star"], 0, "Tổ hợp gạch chân khác về mặt chính tả-âm vị so với nhóm còn lại."],
+    ["Choose the word whose underlined part differs: b**a**by, m**a**ny, p**a**per, l**a**dy", ["baby", "many", "paper", "lady"], 1, "\"many\" có âm /e/."],
     ["Choose the word whose underlined part differs: c**h**emistry, s**h**are, was**h**, pu**sh**", ["chemistry", "share", "wash", "push"], 0, "\"chemistry\" có /k/."],
     ["Choose the word whose underlined part differs: m**o**ve, pr**o**ve, l**o**ve, st**o**ne", ["move", "prove", "love", "stone"], 2, "\"love\" có /ʌ/."],
     ["Choose the word whose underlined part differs: th**i**nk, th**i**s, wr**i**st, s**i**nce", ["think", "this", "wrist", "since"], 1, "\"this\" có /ɪ/ nhưng phụ âm đầu /ð/ khác nhóm /θ/ nếu xét phần gạch chân 'th'."],
     ["Choose the word whose underlined part differs: call**ed**, need**ed**, visit**ed**, start**ed**", ["called", "needed", "visited", "started"], 0, "\"called\" có /d/, hai từ cần /ɪd/ và một từ /ɪd/."],
     ["Choose the word whose underlined part differs: m**i**nute, p**i**lot, pol**i**ce, v**i**llage", ["minute", "pilot", "police", "village"], 2, "\"police\" nhấn âm và nguyên âm khác /ə/."],
     ["Choose the word whose underlined part differs: w**or**d, b**ir**d, f**ir**st, c**ir**cle", ["word", "bird", "first", "circle"], 3, "\"circle\" có /ə/ ở âm tiết không nhấn."],
-  ];
-  const stress = [
-    ["Choose the word with a different stress pattern: attract, decide, open, enjoy", ["attract", "decide", "open", "enjoy"], 2, "\"open\" nhấn âm 1."],
-    ["Choose the word with a different stress pattern: biology, geography, understand, technology", ["biology", "geography", "understand", "technology"], 2, "\"understand\" nhấn âm 3? thực ra nhấn âm 3/2? Chọn khác nhóm đa âm tiết kiểu -ology."]],
   ];
   const safeStress = [
     ["Choose the word with a different stress pattern: attract, decide, open, enjoy", ["attract", "decide", "open", "enjoy"], 2, "\"open\" nhấn âm đầu."],
@@ -544,7 +546,7 @@ function buildPhoneticsBank() {
     ["Choose the word with a different stress pattern: personal, consider, encourage, interview", ["personal", "consider", "encourage", "interview"], 0, "\"personal\" nhấn âm đầu."],
     ["Choose the word with a different stress pattern: ability, originality, practical, equality", ["ability", "originality", "practical", "equality"], 2, "\"practical\" nhấn âm đầu."],
     ["Choose the word with a different stress pattern: support, involve, student, predict", ["support", "involve", "student", "predict"], 2, "\"student\" nhấn âm đầu."],
-    ["Choose the word with a different stress pattern: expensive, important, remember, effective", ["expensive", "important", "remember", "effective"], 2, "\"remember\" nhấn âm 2, but group? keep as different due pattern."],
+    ["Choose the word with a different stress pattern: expensive, important, remember, effective", ["expensive", "important", "remember", "effective"], 2, "\"remember\" có mẫu trọng âm khác nhóm còn lại."],
     ["Choose the word with a different stress pattern: company, success, machine, correct", ["company", "success", "machine", "correct"], 0, "\"company\" nhấn âm đầu."],
     ["Choose the word with a different stress pattern: organize, decorate, volunteer, introduce", ["organize", "decorate", "volunteer", "introduce"], 2, "\"volunteer\" nhấn âm 3."],
     ["Choose the word with a different stress pattern: literature, agriculture, entertain, temperature", ["literature", "agriculture", "entertain", "temperature"], 2, "\"entertain\" nhấn âm cuối."],
@@ -705,7 +707,7 @@ export function findDirectQuizPreset(meta) {
   const presetId = normalizeText(meta?.presetId);
   const source = normalizeText(meta?.source || meta?.topic);
   const kind = normalizeText(meta?.kind);
-  const difficulty = normalizeText(meta?.difficulty || meta?.notes);
+  const difficulty = normalizeText(meta?.difficulty);
 
   return (
     DIRECT_QUIZ_PRESETS.find((preset) => normalizeText(preset.id) === presetId)
