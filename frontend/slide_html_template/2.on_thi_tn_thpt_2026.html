@@ -54,6 +54,31 @@
         .card.gold { border-left: 7px solid #f5c518; }
         ul { padding-left: 22px; }
         li { margin-bottom: 7px; }
+        .slide-light ul[data-shell="bullets"],
+        .slide-white ul[data-shell="bullets"] {
+            list-style: disc !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding-left: 22px !important;
+            text-align: left !important;
+            align-self: stretch !important;
+        }
+        .slide-light ul[data-shell="bullets"] li,
+        .slide-white ul[data-shell="bullets"] li {
+            list-style: disc !important;
+            width: auto !important;
+            margin: 0 0 7px 0 !important;
+            padding: 0 !important;
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 18px !important;
+            line-height: 1.35 !important;
+            font-weight: 400 !important;
+            text-align: left !important;
+            word-break: normal !important;
+            overflow-wrap: break-word !important;
+        }
         .quote { font-size: 22px; font-weight: 700; color: #1a3bbf; line-height: 1.4; }
         .big-num { font-family: 'Montserrat', sans-serif; font-size: 88px; font-weight: 950; color: #f5c518; line-height: 1; }
         .label { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; color: inherit; }
@@ -192,7 +217,7 @@
         }
     </style>
 </head>
-<body>
+<body class="shell-theme-academic">
     <div class="deck">
         <section class="slide-container slide slide-blue">
             <div class="center">

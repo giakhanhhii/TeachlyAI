@@ -756,10 +756,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
-    .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
       padding: 0 28px !important;
       margin: 54px auto 0 !important;
@@ -772,10 +772,10 @@ function injectShellPreviewFit(doc) {
       gap: 20px !important;
       text-align: center !important;
     }
-    .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
