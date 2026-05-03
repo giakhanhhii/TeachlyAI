@@ -12,6 +12,11 @@ import {
   wrapField,
 } from "./flowCardShared.js";
 
+function randomFlashAutofillCount() {
+  if (Math.random() < 0.6) return 20;
+  return 10 + Math.floor(Math.random() * 10);
+}
+
 export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
@@ -33,6 +38,7 @@ export function createFlashcardFormCard(deps) {
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
   const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
+  let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.list === "string") list.value = prefill.list;
   if (typeof prefill.back === "string") back.value = prefill.back;
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
@@ -40,9 +46,10 @@ export function createFlashcardFormCard(deps) {
 
   addAutofillBtn(root, () => {
     const s = SAMPLES_FLASH[autofillCounters.flash++ % SAMPLES_FLASH.length];
+    presetId = String(s.id ?? "");
     list.value = String(s.l ?? "");
     back.value = String(s.b ?? "");
-    count.value = String(clamp(toPositiveInt(s.c, 20), 1, 40));
+    count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
     notes.value = String(s.n ?? "");
   });
 
@@ -87,6 +94,7 @@ export function createFlashcardFormCard(deps) {
       count: "20",
       aiImage: "Không",
       notes: "",
+      presetId: "",
     });
   });
 
@@ -117,6 +125,7 @@ export function createFlashcardFormCard(deps) {
           count: useCount,
           aiImage: "Không",
           notes: "",
+          presetId,
         });
       });
       return;
@@ -129,6 +138,7 @@ export function createFlashcardFormCard(deps) {
       count: useCount,
       aiImage: "Không",
       notes: nt,
+      presetId,
     });
   });
 

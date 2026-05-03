@@ -257,6 +257,101 @@ function ensureFallbackShellList(doc, sink) {
 }
 
 /**
+ * @param {string} value
+ * @returns {string[]}
+ */
+function splitSlideTextFragments(value) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return [];
+  return raw
+    .split(/\s*(?:\||•|;)\s*|\.\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+/**
+ * @param {string} value
+ * @returns {{ headline: string, detail: string }}
+ */
+function buildSlideTextPair(value) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return { headline: "", detail: "" };
+  const colonParts = raw.split(/\s*:\s*/).map((part) => part.trim()).filter(Boolean);
+  if (colonParts.length >= 2) {
+    return {
+      headline: colonParts[0],
+      detail: colonParts.slice(1).join(": "),
+    };
+  }
+  const arrowParts = raw.split(/\s*->\s*/).map((part) => part.trim()).filter(Boolean);
+  if (arrowParts.length >= 2) {
+    return {
+      headline: arrowParts[0],
+      detail: arrowParts.slice(1).join(" -> "),
+    };
+  }
+  const words = raw.split(/\s+/).filter(Boolean);
+  if (words.length >= 10) {
+    return {
+      headline: words.slice(0, 5).join(" "),
+      detail: raw,
+    };
+  }
+  return {
+    headline: raw,
+    detail: raw,
+  };
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function buildSlideTextPool(title, bullets, want) {
+  const unique = [];
+  const seen = new Set();
+  const push = (value) => {
+    const normalized = String(value || "").replace(/\s+/g, " ").trim();
+    if (!normalized) return;
+    const key = normalized.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    unique.push(normalized);
+  };
+
+  bullets.forEach((bullet) => {
+    push(bullet);
+    splitSlideTextFragments(bullet).forEach(push);
+  });
+  push(title);
+
+  const pool = unique.map((item) => buildSlideTextPair(item)).filter((item) => item.headline || item.detail);
+  if (!pool.length) return Array.from({ length: Math.max(1, want) }, () => ({ headline: title, detail: title }));
+  while (pool.length < want) {
+    const next = pool[pool.length % Math.max(1, unique.length)];
+    pool.push({
+      headline: next.headline,
+      detail: next.detail || next.headline,
+    });
+  }
+  return pool;
+}
+
+/**
+ * @param {Element} node
+ * @returns {boolean}
+ */
+function isHeadlineShellTarget(node) {
+  if (!(node instanceof Element)) return false;
+  const tag = String(node.tagName || "").toUpperCase();
+  if (tag === "H1" || tag === "H2" || tag === "H3" || tag === "H4" || tag === "TH" || tag === "STRONG") return true;
+  const cls = String(node.getAttribute("class") || "");
+  return /(label|q-title|box-label|subtitle|number)/i.test(cls);
+}
+
+/**
  * Mark title + bullets placeholders on a cloned slide for data fill.
  * @param {Element} root
  * @param {Document} doc
@@ -336,7 +431,7 @@ function ensureShellFromFullDeck(doc) {
 
   if (hasComicCover) {
     const coverProto = allRoots[0].cloneNode(true);
-    coverProto.removeAttribute("id");
+    decorateComicCoverPrototype(coverProto, doc);
     const coverTpl = doc.createElement("template");
     coverTpl.id = "layout-cover";
     coverTpl.setAttribute("data-shell-layout-role", "cover");
@@ -347,7 +442,7 @@ function ensureShellFromFullDeck(doc) {
 
   variantRoots.forEach((root, idx) => {
     const proto = root.cloneNode(true);
-    proto.removeAttribute("id");
+    decorateSlidePrototype(proto, doc);
     const t = doc.createElement("template");
     t.id = idx === 0 ? "layout-content" : `layout-content-v${idx}`;
     t.setAttribute("data-shell-layout-variant", String(idx));
@@ -661,6 +756,42 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
+    .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+      list-style: none !important;
+      padding: 0 28px !important;
+      margin: 54px auto 0 !important;
+      width: min(1140px, calc(100% - 48px)) !important;
+      max-width: 1140px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 20px !important;
+      text-align: center !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      font-size: clamp(28px, 2.35vw, 40px) !important;
+      line-height: 1.35 !important;
+      font-weight: 700 !important;
+      text-align: center !important;
+      word-break: normal !important;
+      overflow-wrap: break-word !important;
+    }
+    .shell-slide-instance[data-shell-authored-slide="1"] .section-center,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-group,
+    .shell-slide-instance[data-shell-authored-slide="1"] .title-content {
+      justify-content: center !important;
+    }
     .shell-slide-instance .outer-title {
       max-width: 100%;
       box-sizing: border-box;
@@ -668,6 +799,16 @@ function injectShellPreviewFit(doc) {
       padding-right: 12px;
       overflow-wrap: anywhere;
       word-break: break-word;
+    }
+    .shell-slide-instance .doughnut-chart {
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 50% !important;
+      flex: 0 0 auto !important;
+      align-self: center !important;
+    }
+    .shell-slide-instance .doughnut-chart::after {
+      aspect-ratio: 1 / 1 !important;
+      border-radius: 50% !important;
     }
     .shell-slide-instance .content-area {
       max-width: 100% !important;
@@ -1195,17 +1336,7 @@ function fillContentSlots(root, title, bullets) {
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     ul.replaceChildren();
-    let originalItems = [];
-    try {
-      originalItems = JSON.parse(ul.getAttribute("data-shell-original-items") || "[]");
-      if (!Array.isArray(originalItems)) originalItems = [];
-    } catch {
-      originalItems = [];
-    }
-    const items = bullets.length ? bullets.slice() : originalItems.slice();
-    if (items.length < originalItems.length) {
-      items.push(...originalItems.slice(items.length));
-    }
+    const items = bullets.length ? bullets.slice() : title ? [title] : [];
     items.forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
@@ -1218,8 +1349,12 @@ function fillContentSlots(root, title, bullets) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    const textPool = buildSlideTextPool(title, bullets, targets.length);
+    let poolIndex = 0;
     targets.forEach((node, idx) => {
-      node.textContent = bullets[idx] || node.getAttribute("data-shell-original-text") || "";
+      const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+      poolIndex += 1;
+      node.textContent = isHeadlineShellTarget(node) ? pick.headline : pick.detail || pick.headline;
     });
   }
 }
@@ -1293,10 +1428,9 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     const isAuthoredSlide = isAuthoredShellTemplate(pick);
     if (isAuthoredSlide) {
       first.setAttribute("data-shell-authored-slide", "1");
-    } else {
-      fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
     }
-    if (first instanceof Element && !isAuthoredSlide) relocateThemeStickersUnderSlideContent(first);
+    fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
+    if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
   });
 

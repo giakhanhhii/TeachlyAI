@@ -158,13 +158,48 @@ export function speakText(text, lang) {
 }
 
 /**
+ * @param {string} text
+ */
+function extractEnglishSpeechSegments(text) {
+  const cleaned = String(text || "")
+    .replace(/\r/g, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const colonIndex = line.indexOf(":");
+      return colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : line;
+    });
+
+  return cleaned
+    .map((line) => {
+      const matches = line.match(/[A-Za-z][A-Za-z0-9' -]*/g) || [];
+      return matches
+        .map((item) => item.replace(/\s+/g, " ").trim())
+        .filter(Boolean)
+        .join(" ");
+    })
+    .filter(Boolean);
+}
+
+/**
  * @param {{ front: string, back: string }} card 
  */
 export function speakFlashcard(card) {
   const front = String(card.front || "").trim();
   const back = String(card.back || "").trim();
+  const englishFrontSegments = extractEnglishSpeechSegments(front);
+  if (englishFrontSegments.length) {
+    speakText(englishFrontSegments.join(". "), "en-US");
+    return;
+  }
+  const englishBackSegments = extractEnglishSpeechSegments(back);
+  if (englishBackSegments.length) {
+    speakText(englishBackSegments.join(". "), "en-US");
+    return;
+  }
   const text = front || back;
   if (!text) return;
-  const useEn = /^[a-zA-Z0-9\s\-'.,]+$/.test(front);
+  const useEn = /^[a-zA-Z0-9\s\-'.,]+$/.test(text);
   speakText(text, useEn ? "en-US" : "vi-VN");
 }

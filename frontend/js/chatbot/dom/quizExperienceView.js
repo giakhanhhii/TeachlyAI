@@ -18,6 +18,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
   const questions = Array.isArray(data.questions) ? data.questions : [];
+  const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
@@ -64,7 +65,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     if (typeof opts.onStateChange !== "function") return;
     opts.onStateChange({
       kind: "quiz",
-      meta: { ...meta },
+      meta: { ...sessionMeta },
       title: titleText,
       total: questions.length,
       index,
@@ -83,8 +84,12 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const resultBtn = createPrimaryNavButton({ label: "Xem kết quả", disabled: false });
+  resultBtn.classList.add("exp-back-btn");
+  resultBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
   footer.appendChild(backBtn);
+  footer.appendChild(resultBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
 
@@ -108,6 +113,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     });
 
     backBtn.disabled = index <= 0;
+    resultBtn.hidden = true;
+    resultBtn.disabled = true;
     nextBtn.disabled = !gradedByIndex[index] && selected === null;
     backBtn.textContent = "Quay lại";
 
@@ -127,6 +134,10 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     else {
       const isLast = index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
+      if (isLast) {
+        resultBtn.hidden = false;
+        resultBtn.disabled = false;
+      }
     }
     emitState();
   }
@@ -195,19 +206,28 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       activeStepView?.applyGrading?.(selected);
       const isLast = index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
+      if (isLast) {
+        resultBtn.hidden = false;
+        resultBtn.disabled = false;
+      }
       nextBtn.disabled = false;
       emitState();
       return;
     }
 
     if (index >= questions.length - 1) {
-      reviewMode = true;
-      reviewFilter = "all";
-      renderReview();
+      deps?.onContinueCreate?.("quiz");
       return;
     }
     index += 1;
     renderQuestion();
+  });
+
+  resultBtn.addEventListener("click", () => {
+    if (reviewMode) return;
+    reviewMode = true;
+    reviewFilter = "all";
+    renderReview();
   });
 
   root.appendChild(shell);

@@ -29,10 +29,10 @@ export function createSlideFormCard(deps) {
 
   const count = el("input", "flow-input");
   count.type = "number";
-  count.min = "1";
+  count.min = "5";
   count.max = "30";
-  count.placeholder = "1–30";
-  root.appendChild(wrapField("Số lượng slide", count, "Tối đa 30 slide để đảm bảo chất lượng nội dung."));
+  count.placeholder = "5–30";
+  root.appendChild(wrapField("Số lượng slide", count, "Chọn từ 5 đến 30 slide để đảm bảo chất lượng nội dung."));
 
   const structure = flowTextarea("VD: Lý thuyết → Ví dụ → Tổng kết", 2);
   root.appendChild(wrapField("Cấu trúc mong muốn", structure));
@@ -46,6 +46,7 @@ export function createSlideFormCard(deps) {
   root.appendChild(wrapField("Ghi chú thêm", notes));
 
   const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
+  let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.topic === "string") docText.value = prefill.topic;
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
   if (typeof prefill.structure === "string") structure.value = prefill.structure;
@@ -57,8 +58,9 @@ export function createSlideFormCard(deps) {
 
   addAutofillBtn(root, () => {
     const s = SAMPLES_SLIDE[autofillCounters.slide++ % SAMPLES_SLIDE.length];
+    presetId = String(s.id ?? "");
     docText.value = String(s.t ?? "");
-    count.value = String(clamp(toPositiveInt(s.c, 10), 1, 30));
+    count.value = String(clamp(toPositiveInt(s.c, 10), 5, 30));
     structure.value = String(s.s ?? "");
     style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
     styleMobileSelect.sync();
@@ -83,7 +85,7 @@ export function createSlideFormCard(deps) {
     const countRaw = count.value.trim();
     const n = Number(countRaw);
     const sty = style.value;
-    const complete = Boolean(topic) && Boolean(countRaw) && Number.isFinite(n) && n >= 1 && n <= 30 && Boolean(sty);
+    const complete = Boolean(topic) && Boolean(countRaw) && Number.isFinite(n) && n >= 5 && n <= 30 && Boolean(sty);
     return { topic, n, sty, countRaw, complete };
   }
 
@@ -104,6 +106,7 @@ export function createSlideFormCard(deps) {
       structure: "",
       style: SLIDE_TEMPLATE_DEFAULT,
       notes: "",
+      presetId: "",
     });
   });
 
@@ -113,8 +116,8 @@ export function createSlideFormCard(deps) {
     const countRaw = count.value.trim();
     if (countRaw) {
       const n = Number(countRaw);
-      if (!Number.isFinite(n) || n < 1 || n > 30) {
-        err.textContent = "Số slide phải từ 1 đến 30.";
+      if (!Number.isFinite(n) || n < 5 || n > 30) {
+        err.textContent = "Số slide phải từ 5 đến 30.";
         err.style.display = "block";
         return;
       }
@@ -139,6 +142,7 @@ export function createSlideFormCard(deps) {
         structure: structureValue,
         style: sty,
         notes: notesValue,
+        presetId,
       });
       return;
     }
@@ -151,6 +155,7 @@ export function createSlideFormCard(deps) {
         structure: structureValue,
         style: sty || SLIDE_TEMPLATE_DEFAULT,
         notes: notesValue,
+        presetId,
       });
     });
   });
