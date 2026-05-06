@@ -237,6 +237,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: stretch;
             min-width: 0;
         }
         .highlight-numbers-layout > div:last-child::before {
@@ -250,6 +251,15 @@
             color: #e01a22;
             text-align: left;
             letter-spacing: 0.3px;
+            width: 100%;
+            align-self: flex-start;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list {
+            margin: 0;
+            max-width: none;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul {
+            width: 100%;
         }
         .highlight-numbers-layout .number { font-size: 140px; color: #e01a22; line-height: 1; }
         .highlight-numbers-layout .number-label { font-size: 28px; font-weight: 800; color: #1c3879; font-family: 'Nunito', sans-serif; margin-top: 10px; }
