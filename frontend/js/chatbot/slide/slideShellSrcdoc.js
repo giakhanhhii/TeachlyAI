@@ -291,7 +291,11 @@ function normalizeSlideHeadline(value) {
  * @returns {{ headline: string, detail: string }}
  */
 function buildSlideTextPair(value) {
-  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  const raw = String(value || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .trim();
   if (!raw) return { headline: "", detail: "" };
   const colonParts = raw.split(/\s*:\s*/).map((part) => part.trim()).filter(Boolean);
   if (colonParts.length >= 2) {
@@ -830,10 +834,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
       padding: 0 28px !important;
       margin: 54px auto 0 !important;
@@ -846,10 +850,10 @@ function injectShellPreviewFit(doc) {
       gap: 20px !important;
       text-align: center !important;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
@@ -1093,6 +1097,13 @@ function injectShellPanelFitScript(doc) {
   const s = doc.createElement("script");
   s.setAttribute("data-slide-shell-panel-fit", "1");
   s.textContent = `(function(){
+  function isAuthoredAutoFitPanel(el) {
+    if (!el || !el.matches) return false;
+    if (!el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area")) return false;
+    return !!el.querySelector(
+      ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout"
+    );
+  }
   function hasComicPanelAncestor(el) {
     var p = el.parentElement;
     while (p) {
@@ -1102,10 +1113,12 @@ function injectShellPanelFitScript(doc) {
     return false;
   }
   function collectPanels(doc) {
-    var sel = ".shell-slide-instance .card, .shell-slide-instance .content-card, .shell-slide-instance .comic-panel";
+    var sel = ".shell-slide-instance .card, .shell-slide-instance .content-card, .shell-slide-instance .comic-panel, .shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area";
     return Array.prototype.filter.call(doc.querySelectorAll(sel), function (el) {
-      if (el.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return false;
+      var autoFitAuthored = isAuthoredAutoFitPanel(el);
+      if (el.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !autoFitAuthored) return false;
       if (el.classList.contains("comic-panel") && hasComicPanelAncestor(el)) return false;
+      if (el.matches && el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area") && !autoFitAuthored) return false;
       return true;
     });
   }
@@ -1241,7 +1254,7 @@ function injectShellPanelFitScript(doc) {
     applyPanelLayoutToElement(cs, scaled, display);
   }
   function wrapPanel(panel) {
-    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
+    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !isAuthoredAutoFitPanel(panel)) return;
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
     panel.classList.add("shell-panel-fit-host");
     var sizer = document.createElement("div");
@@ -1258,7 +1271,7 @@ function injectShellPanelFitScript(doc) {
   }
   var fitEditPaused = false;
   function measureAndFit(panel) {
-    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
+    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !isAuthoredAutoFitPanel(panel)) return;
     if (fitEditPaused || (document.body && document.body.classList.contains("slide-visual-edit-on"))) return;
     var sizer = panel.querySelector(":scope > .shell-panel-fit-sizer");
     if (!sizer) return;

@@ -71,7 +71,7 @@ function buildDetailedExampleLine(chapter) {
     );
   }
 
-  return parts.length ? `Ví dụ: ${parts.join(", ")}` : "";
+  return parts.length ? `Ví dụ: ${parts.join("\n")}` : "";
 }
 
 function buildSecondExampleLine(chapter) {
@@ -87,7 +87,7 @@ function buildSecondExampleLine(chapter) {
     parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
   }
 
-  return parts.length ? `Phân tích: ${parts.join(", ")}` : "";
+  return parts.length ? `Phân tích: ${parts.join("\n")}` : "";
 }
 
 function buildDetailedExplanationLine(chapter) {
@@ -260,6 +260,19 @@ function buildPitfallFixLine(chapter) {
   return `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`;
 }
 
+function buildPitfallSlideLines(chapter) {
+  const extraLines = Array.isArray(chapter?.pitfallExtraLines)
+    ? chapter.pitfallExtraLines.map((line) => String(line || "").trim()).filter(Boolean)
+    : [];
+
+  return [
+    buildPitfallLine(chapter, "pitfallA"),
+    buildPitfallLine(chapter, "pitfallB"),
+    ...extraLines,
+    buildPitfallFixLine(chapter),
+  ].filter(Boolean);
+}
+
 function buildStructureRouteLine(part, index, preset) {
   const customRouteLine = String(preset?.routeLines?.[index] || "").trim();
   if (customRouteLine) return normalizeRouteLineText(customRouteLine);
@@ -300,11 +313,11 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       buildSecondExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
     ]),
-    createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
-      buildPitfallLine(chapter, "pitfallA"),
-      buildPitfallLine(chapter, "pitfallB"),
-      buildPitfallFixLine(chapter),
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 3).padStart(2, "0")}`,
+      `${chapter.name} - Lỗi thường gặp`,
+      buildPitfallSlideLines(chapter),
+    ),
     createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
       buildPracticeTaskLine(chapter),
       buildPracticeGuideLine(chapter, preset),
@@ -859,6 +872,13 @@ const RAW_SLIDE_PRESETS = [
         exampleB: "\"Don't be late\" -> He told us not to be late.",
         pitfallA: "Dùng that-clause cho mệnh lệnh.",
         pitfallB: "Đặt not sai vị trí.",
+        pitfallExtraLines: [
+          "Quên tân ngữ sau tell, ask, remind hoặc warn nên câu thiếu người nhận mệnh lệnh.",
+          "Giữ nguyên động từ gốc thay vì chuyển sang to V hoặc not to V trong câu tường thuật.",
+          "Với please, cần ưu tiên asked hoặc told thay vì bê nguyên please vào reported speech.",
+        ],
+        pitfallFix:
+          "Cách soát nhanh: xác định người nhận lời nói trước, rồi kiểm tra mẫu verb + object + to V hoặc verb + object + not to V; nếu câu chưa có object hoặc còn that-clause thì cần sửa lại.",
         practiceA: "Chuyển 4 mệnh lệnh sang reported speech.",
         practiceB: "Tạo câu với remind và warn.",
       },
