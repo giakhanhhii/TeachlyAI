@@ -164,9 +164,12 @@ function buildFormulaColumnBlock(column) {
   const note = String(column?.note || "").trim();
   return [
     heading,
-    explanation ? `Giải thích: ${explanation}` : "",
-    example ? `Ví dụ: ${example}` : "",
-    note ? `Lưu ý: ${note}` : "",
+    explanation ? `Trọng tâm: ${explanation}` : "Trọng tâm: nhận đúng ý nghĩa của mẫu này trong câu.",
+    heading ? `Mẫu chính: ${heading}` : "",
+    "Bước 1: nhìn đúng dấu hiệu ngữ pháp trước khi biến đổi.",
+    example ? `Ví dụ mẫu: ${example}` : "Ví dụ mẫu: tự đặt một câu ngắn theo công thức này.",
+    note ? `Lưu ý: ${note}` : "Lưu ý: không đổi máy móc nếu ngữ cảnh không phù hợp.",
+    "Tự kiểm tra: viết lại thêm một câu khác rồi đối chiếu cấu trúc.",
   ].filter(Boolean).join("\n");
 }
 
@@ -186,41 +189,37 @@ function buildFormulaSummaryLines(chapter) {
   const pitfallA = String(chapter?.pitfallA || "").trim();
   const pitfallB = String(chapter?.pitfallB || "").trim();
 
-  const lineA = name && focus
-    ? `${name}: ${focus}`
-    : focus || name;
+  const conceptBlock = [
+    name || "Khái niệm",
+    focus ? `Khái niệm: ${focus}` : "Khái niệm: xác định đúng chức năng của cấu trúc trong câu.",
+    name ? `Vai trò: ${name.toLowerCase()} giúp nối ý gọn và đúng ngữ pháp.` : "",
+    rule ? `Dấu hiệu: ${rule}` : "",
+    exampleA ? `Ví dụ 1: ${exampleA}` : "",
+    exampleB ? `Ví dụ 2: ${exampleB}` : exampleA ? `Ví dụ 2: biến đổi lại ${exampleA.toLowerCase()}.` : "",
+    pitfallA ? `Lỗi hay gặp: ${pitfallA}` : "",
+  ].filter(Boolean).join("\n");
 
-  const lineB = rule
-    ? `Công thức cốt lõi: ${rule}`
-    : "";
+  const formulaBlock = [
+    "Công thức cốt lõi",
+    rule ? `Mẫu: ${rule}` : "Mẫu: quan sát cấu trúc chính rồi mới điền từ.",
+    "Bước 1: xác định từ hoặc cụm cần được bổ nghĩa.",
+    "Bước 2: chọn đúng dạng theo chức năng ngữ pháp và nghĩa.",
+    "Bước 3: đọc lại cả mệnh đề để kiểm tra độ tự nhiên.",
+    practiceA ? `Vận dụng: ${practiceA}` : "Vận dụng: áp dụng mẫu vào một câu mới cùng chủ điểm.",
+    practiceB ? `Nhắc lại: ${practiceB}` : pitfallB ? `Nhắc lại: tránh ${pitfallB.toLowerCase()}.` : "",
+  ].filter(Boolean).join("\n");
 
-  const lineC = exampleA
-    ? `Ví dụ 1: ${exampleA}`
-    : "";
+  const quickUseBlock = [
+    "Cách áp dụng nhanh",
+    "Nhìn từ đứng trước và đứng sau chỗ cần điền.",
+    focus ? `Gợi ý nghĩa: ${focus}` : "Gợi ý nghĩa: luôn kiểm tra quan hệ logic trong câu.",
+    exampleA ? `Mẫu quen thuộc: ${exampleA}` : "",
+    exampleB ? `Mẫu bổ sung: ${exampleB}` : "",
+    pitfallA ? `Tránh lỗi 1: ${pitfallA}` : "",
+    pitfallB ? `Tránh lỗi 2: ${pitfallB}` : "",
+  ].filter(Boolean).join("\n");
 
-  const lineD = exampleB
-    ? `Ví dụ 2: ${exampleB}`
-    : "";
-
-  const lineE = practiceA
-    ? `Vận dụng: ${practiceA}`
-    : focus
-      ? `Vận dụng: áp dụng đúng cấu trúc này vào câu hỏi cùng chủ điểm.`
-      : "";
-
-  const lineF = practiceB
-    ? `Bước tiếp theo: ${practiceB}`
-    : "";
-
-  const lineG = pitfallA
-    ? `Lỗi hay gặp: ${pitfallA}`
-    : "";
-
-  const lineH = pitfallB
-    ? `Cần tránh thêm: ${pitfallB}`
-    : "";
-
-  return [lineA, lineB, lineC, lineD, lineE, lineF, lineG, lineH].filter(Boolean);
+  return [conceptBlock, formulaBlock, quickUseBlock].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
