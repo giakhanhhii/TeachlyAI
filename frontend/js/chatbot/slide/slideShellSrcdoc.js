@@ -756,10 +756,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
       padding: 0 28px !important;
       margin: 54px auto 0 !important;
@@ -772,10 +772,10 @@ function injectShellPreviewFit(doc) {
       gap: 20px !important;
       text-align: center !important;
     }
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
@@ -954,6 +954,56 @@ function injectShellPreviewFit(doc) {
       max-width: none !important;
       max-height: none !important;
       transform: none !important;
+    }
+    body.shell-theme-friendly #presentation-area,
+    body.shell-theme-friendly #slides-master-container {
+      height: 720px !important;
+      min-height: 720px !important;
+      max-height: 720px !important;
+      overflow: hidden !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance.slide-container[data-shell-authored-slide="1"] {
+      height: 720px !important;
+      min-height: 720px !important;
+      max-height: 720px !important;
+      overflow: hidden !important;
+      padding: 30px 64px 26px !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance.slide-container[data-shell-authored-slide="1"]::before {
+      top: 14px !important;
+      right: 20px !important;
+      bottom: 12px !important;
+      left: 20px !important;
+      min-height: 0 !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .content-area {
+      flex: 1 1 auto !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: hidden !important;
+      justify-content: center !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout {
+      max-height: 500px !important;
+      overflow: hidden !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout table {
+      table-layout: fixed !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout th,
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout td {
+      padding: 13px 18px !important;
+      word-break: break-word !important;
+      vertical-align: top !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout th {
+      font-size: 22px !important;
+      line-height: 1.3 !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout td {
+      font-size: 20px !important;
+      line-height: 1.4 !important;
     }
   `;
   doc.head.appendChild(style);
@@ -1351,10 +1401,31 @@ function fillContentSlots(root, title, bullets) {
   if (targets.length) {
     const textPool = buildSlideTextPool(title, bullets, targets.length);
     let poolIndex = 0;
+    let pendingPick = null;
     targets.forEach((node, idx) => {
-      const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+      const isHeadline = isHeadlineShellTarget(node);
+      const nextNode = targets[idx + 1] || null;
+      const nextNeedsDetail = !!nextNode && !isHeadlineShellTarget(nextNode);
+
+      if (isHeadline) {
+        if (pendingPick) {
+          poolIndex += 1;
+          pendingPick = null;
+        }
+        const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+        node.textContent = pick.headline;
+        if (nextNeedsDetail) {
+          pendingPick = pick;
+        } else {
+          poolIndex += 1;
+        }
+        return;
+      }
+
+      const pick = pendingPick || textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+      node.textContent = pick.detail || pick.headline;
       poolIndex += 1;
-      node.textContent = isHeadlineShellTarget(node) ? pick.headline : pick.detail || pick.headline;
+      pendingPick = null;
     });
   }
 }

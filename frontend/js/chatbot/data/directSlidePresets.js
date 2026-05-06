@@ -22,6 +22,20 @@ function splitStructure(structure) {
     .filter(Boolean);
 }
 
+function capitalizeRouteWords(value) {
+  return String(value || "").replace(/(^|[\s(/-])(\p{L})/gu, (match, prefix, letter) => {
+    void match;
+    return `${prefix}${letter.toLocaleUpperCase("vi-VN")}`;
+  });
+}
+
+function normalizeExampleSnippet(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/[.?!]+$/u, "")
+    .trim();
+}
+
 function buildDefaultSlideIndexes(count) {
   const want = Math.max(10, Math.min(30, Number(count) || 10));
   if (want >= 30) return Array.from({ length: 30 }, (_, index) => index + 1);
@@ -41,28 +55,50 @@ function pickSlidesByIndexes(slides, indexes) {
 function buildDetailedExampleLine(chapter) {
   const detailedExample = String(chapter?.detailedExample || "").trim();
   if (detailedExample) return detailedExample;
-  const sentenceA = String(chapter?.exampleA || "").trim();
-  if (sentenceA) return `Ví dụ A: ${sentenceA}`;
-  const sentenceB = String(chapter?.exampleB || "").trim();
-  if (sentenceB) return `Ví dụ A: ${sentenceB}`;
-  return "";
+  const sentenceA = normalizeExampleSnippet(chapter?.exampleA);
+  const sentenceB = normalizeExampleSnippet(chapter?.exampleB);
+  const name = String(chapter?.name || "").trim().toLowerCase();
+  const rule = String(chapter?.rule || "").trim();
+
+  const parts = [];
+  if (sentenceA) parts.push(`Ví dụ 1 -> ${sentenceA}`);
+  if (sentenceB) parts.push(`Ví dụ 2 -> ${sentenceB}`);
+  if (rule || name) {
+    parts.push(
+      `Ví dụ 3 -> tự tạo thêm một câu cùng mẫu ${name || "ngữ pháp này"} rồi kiểm tra lại theo công thức ${rule || "đã học"}`
+    );
+  }
+
+  return parts.length ? `Ví dụ: ${parts.join(", ")}` : "";
 }
 
 function buildSecondExampleLine(chapter) {
-  const sentenceB = String(chapter?.exampleB || "").trim();
-  if (sentenceB) return `Ví dụ B: ${sentenceB}`;
-  const name = String(chapter?.name || "").toLowerCase().trim();
-  if (name) return `Ví dụ B: học sinh cần đối chiếu thêm với mẫu ${name}.`;
-  return "";
+  const focus = String(chapter?.focus || "").trim();
+  const rule = String(chapter?.rule || "").trim();
+  const pitfallA = String(chapter?.pitfallA || "").trim();
+  const pitfallB = String(chapter?.pitfallB || "").trim();
+
+  const parts = [];
+  if (focus) parts.push(`Ý 1 -> ${focus}`);
+  if (rule) parts.push(`Ý 2 -> ${rule}`);
+  if (pitfallA || pitfallB) {
+    parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
+  }
+
+  return parts.length ? `Phân tích: ${parts.join(", ")}` : "";
 }
 
 function buildDetailedExplanationLine(chapter) {
-  const focus = String(chapter?.focus || "").trim();
-  const rule = String(chapter?.rule || "").trim();
-  if (focus && rule) {
-    return `Phân tích: ${focus} Quy tắc cần áp dụng là ${rule}`;
+  const practiceA = String(chapter?.practiceA || "").trim();
+  const practiceB = String(chapter?.practiceB || "").trim();
+  const name = String(chapter?.name || "").trim().toLowerCase();
+
+  if (practiceA && practiceB) {
+    return `Ghi nhớ: ${practiceA} Sau đó, ${practiceB.toLowerCase()} để chốt lại ${name}.`;
   }
-  return focus || rule || "";
+  if (practiceA) return `Ghi nhớ: ${practiceA}`;
+  if (practiceB) return `Ghi nhớ: ${practiceB}`;
+  return name ? `Ghi nhớ: giải thích vì sao các câu trên đúng với ${name}.` : "";
 }
 
 function buildPracticeTaskLine(chapter) {
@@ -213,6 +249,9 @@ function buildPitfallFixLine(chapter) {
 }
 
 function buildStructureRouteLine(part, index, preset) {
+  const customRouteLine = String(preset?.routeLines?.[index] || "").trim();
+  if (customRouteLine) return capitalizeRouteWords(customRouteLine);
+
   const cleanPart = String(part || "").trim();
   const topic = String(preset?.topic || "").trim();
   const notes = String(preset?.notes || "").trim();
@@ -225,7 +264,7 @@ function buildStructureRouteLine(part, index, preset) {
   if (chapterExample) pieces.push(`ví dụ neo nhớ ${chapterExample}`);
   else if (topic) pieces.push(`ví dụ và bài tập đều bám đúng phạm vi ${topic}`);
   if (notes) pieces.push(`lưu ý ${notes}`);
-  return pieces.join(", ");
+  return capitalizeRouteWords(pieces.join(". "));
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -248,7 +287,6 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       buildDetailedExampleLine(chapter),
       buildSecondExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
-      `Yêu cầu: giải thích vì sao các từ/cấu trúc trên đúng với ${chapter.name.toLowerCase()}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
       buildPitfallLine(chapter, "pitfallA"),
@@ -268,6 +306,12 @@ function buildDeckFromBlueprint(preset) {
   const chapterNames = preset.chapters.map((chapter) => chapter.name);
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
+  const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
+    ? preset.routeLines.map((line) => capitalizeRouteWords(line))
+    : [
+        ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
+        `Ghi Nhớ Chung: Mỗi Mạch Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}`,
+      ];
   const slides = [
     createSlide(`${preset.id}-01`, `${preset.topic} - Tổng quan`, [
       ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
@@ -279,8 +323,7 @@ function buildDeckFromBlueprint(preset) {
       `Luyện theo yêu cầu: ${preset.notes}`,
     ]),
     createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
-      ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-      `Ghi nhớ chung: mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}`,
+      ...routeLines,
     ]),
     createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
   ];
@@ -436,6 +479,10 @@ const RAW_SLIDE_PRESETS = [
     structure: "Bị động cơ bản -> Bị động đặc biệt -> Bài tập viết lại câu",
     style: "Vui tươi (Thân thiện)",
     notes: "Chỉ luyện câu bị động và các biến thể bị động.",
+    routeLines: [
+      "Mạch 1: Bị động cơ bản và bị động theo thì. Trọng tâm là xác định đúng tân ngữ, đổi tân ngữ lên làm chủ ngữ mới, chọn đúng dạng be theo thì của câu gốc, rồi chuyển động từ chính về V3 hoặc PII. Ví dụ neo nhớ: They clean the room every day thành The room is cleaned every day, và The letter has been sent giúp nhận ra dạng hoàn thành bị động.",
+      "Mạch 2: Bị động đặc biệt và luyện viết lại câu. Trọng tâm là modal passive, bị động tiếp diễn, cấu trúc have or get something done, cùng bài tập viết lại câu sao cho đúng nghĩa và đúng thì. Ví dụ neo nhớ: The form must be submitted today, The documents are being checked now, và She had her hair cut.",
+    ],
     chapters: [
       {
         name: "Bị động cơ bản",
