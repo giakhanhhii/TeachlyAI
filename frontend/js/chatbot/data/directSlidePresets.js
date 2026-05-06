@@ -42,11 +42,18 @@ function buildDetailedExampleLine(chapter) {
   const detailedExample = String(chapter?.detailedExample || "").trim();
   if (detailedExample) return detailedExample;
   const sentenceA = String(chapter?.exampleA || "").trim();
+  if (sentenceA) return `Ví dụ A: ${sentenceA}`;
   const sentenceB = String(chapter?.exampleB || "").trim();
-  if (sentenceA && sentenceB) {
-    return `Ví dụ: ${sentenceA} ${sentenceB} Qua hai câu này, học sinh cần xác định đúng mẫu ${String(chapter?.name || "").toLowerCase()}.`;
-  }
-  return sentenceA || sentenceB || "";
+  if (sentenceB) return `Ví dụ A: ${sentenceB}`;
+  return "";
+}
+
+function buildSecondExampleLine(chapter) {
+  const sentenceB = String(chapter?.exampleB || "").trim();
+  const name = String(chapter?.name || "").toLowerCase().trim();
+  if (sentenceB && name) return `Ví dụ B: ${sentenceB} Qua câu này, học sinh cần xác định đúng mẫu ${name}.`;
+  if (sentenceB) return `Ví dụ B: ${sentenceB}`;
+  return "";
 }
 
 function buildDetailedExplanationLine(chapter) {
@@ -184,7 +191,6 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       buildConceptSupportLine(chapter),
       chapter.rule,
       buildConceptExampleLine(chapter),
-      buildConceptTakeawayLine(chapter, preset),
       `Ghi chú triển khai: ${preset.notes}`,
     ]),
     createSlide(
@@ -194,6 +200,7 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
     ),
     createSlide(`${preset.id}-${String(base + 2).padStart(2, "0")}`, `${chapter.name} - Ví dụ`, [
       buildDetailedExampleLine(chapter),
+      buildSecondExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
       `Yêu cầu: giải thích vì sao các từ/cấu trúc trên đúng với ${chapter.name.toLowerCase()}.`,
     ]),
