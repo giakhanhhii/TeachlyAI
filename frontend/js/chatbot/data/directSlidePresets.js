@@ -190,12 +190,12 @@ function buildStructureRouteLine(part, index, preset) {
   const chapterFocus = String(chapter?.focus || "").trim();
   const chapterExample = String(chapter?.exampleA || "").trim();
 
-  const pieces = [`Mạch ${index + 1}: ${cleanPart}.`];
-  if (chapterFocus) pieces.push(`Trọng tâm: ${chapterFocus}`);
-  if (chapterExample) pieces.push(`Ví dụ neo nhớ: ${chapterExample}`);
-  else if (topic) pieces.push(`Ví dụ và bài tập đều bám đúng phạm vi ${topic}.`);
-  if (notes) pieces.push(`Lưu ý triển khai: ${notes}`);
-  return pieces.join(" ");
+  const pieces = [`Mạch ${index + 1}: ${cleanPart}`];
+  if (chapterFocus) pieces.push(`trọng tâm là ${chapterFocus}`);
+  if (chapterExample) pieces.push(`ví dụ neo nhớ ${chapterExample}`);
+  else if (topic) pieces.push(`ví dụ và bài tập đều bám đúng phạm vi ${topic}`);
+  if (notes) pieces.push(`lưu ý ${notes}`);
+  return pieces.join(", ");
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -250,7 +250,7 @@ function buildDeckFromBlueprint(preset) {
     ]),
     createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
       ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-      `Mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}.`,
+      `Ghi nhớ chung: mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}`,
     ]),
     createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
   ];
