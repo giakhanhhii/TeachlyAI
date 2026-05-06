@@ -78,6 +78,14 @@ function buildPracticeGuideLine(chapter, preset) {
   return pitfallA || notes || "";
 }
 
+function buildConceptLine(chapter) {
+  const name = String(chapter?.name || "").trim();
+  const focus = String(chapter?.focus || "").trim();
+  if (focus) return `Khái niệm: ${focus}`;
+  if (name) return `Khái niệm: ${name} là một điểm ngữ pháp cần nhận diện đúng trong ngữ cảnh câu.`;
+  return "Khái niệm: xác định đúng chức năng ngữ pháp trước khi áp dụng công thức.";
+}
+
 function buildFormulaSummaryLines(chapter) {
   const name = String(chapter?.name || "").trim();
   const focus = String(chapter?.focus || "").trim();
@@ -146,7 +154,7 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
   return [
     createSlide(tag, `${chapter.name} - Khái niệm`, [
-      chapter.focus,
+      buildConceptLine(chapter),
       chapter.rule,
       `Ghi chú triển khai: ${preset.notes}`,
     ]),
