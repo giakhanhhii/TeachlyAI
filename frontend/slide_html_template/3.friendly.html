@@ -34,6 +34,7 @@
             width: 1280px;
             height: 720px;
             transform-origin: center center;
+            overflow: hidden;
         }
 
         /* Container chính với màu nền peach giống ảnh mẫu */
@@ -49,7 +50,7 @@
             position: absolute;
             top: 0; left: 0;
             overflow: hidden;
-            padding: 50px 80px; /* Đẩy nội dung vào trong vùng trắng */
+            padding: 34px 64px 38px; /* Gọn hơn để nội dung fit như các shell khác */
         }
 
         .slide-container.active {
@@ -126,7 +127,7 @@
         }
 
         .slide-container h1 { font-size: 65px; line-height: 1.2; text-transform: uppercase; }
-        .slide-container .slide-title { font-size: 50px; margin-bottom: 25px; margin-top: 10px; text-transform: uppercase; text-align: center; }
+        .slide-container .slide-title { font-size: 50px; margin-bottom: 14px; margin-top: 4px; text-transform: uppercase; text-align: center; }
         .slide-container h3 { font-size: 30px; margin-bottom: 15px; color: #1c3879; text-align: left; }
         .slide-container .subtitle { font-size: 30px; text-align: center; font-weight: 600; color: #1c3879; margin-top: 20px; }
 
@@ -136,6 +137,8 @@
             flex-grow: 1;
             justify-content: center;
             width: 100%;
+            min-height: 0;
+            overflow: hidden;
         }
 
         /* ==========================================
@@ -151,8 +154,8 @@
         .section-title-layout p { font-size: 28px; text-align: center; max-width: 900px; }
 
         /* Two Column */
-        .two-column { display: flex; gap: 50px; width: 100%; align-items: center; }
-        .two-column > div { flex: 1; }
+        .two-column { display: flex; gap: 42px; width: 100%; align-items: stretch; flex: 1 1 auto; min-height: 0; }
+        .two-column > div { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
         .two-column.tiled { align-items: stretch; }
         .two-column.tiled > div {
             background-color: #f8faff;
@@ -163,11 +166,23 @@
         }
 
         /* Bullet List */
-        .bullet-list { width: 100%; max-width: 1000px; margin: 0 auto; }
+        .bullet-list { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 0; }
         .bullet-list ul { list-style: none; margin: 0; padding: 0; }
         .bullet-list li { margin-bottom: 20px; padding-left: 45px; position: relative; }
         /* Sửa lỗi đè chữ: chỉ chọn icon fa-solid để position absolute */
         .bullet-list li i.fa-solid { color: #e01a22; font-size: 24px; left: 0; top: 6px; position: absolute; }
+        .two-column .bullet-list {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 auto;
+        }
+        .two-column .bullet-list ul {
+            width: 100%;
+        }
+        .two-column .bullet-list li {
+            margin-bottom: 14px;
+        }
 
         /* Tiled Text With Icons */
         .tiled-content { display: flex; gap: 30px; width: 100%; justify-content: center; align-items: stretch; }
@@ -196,6 +211,14 @@
         /* Images */
         .image-wrapper { border-radius: 24px; height: 320px; width: 100%; overflow: hidden; border: 4px solid #fce4d6; }
         .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .two-column .image-wrapper {
+            height: auto;
+            min-height: 260px;
+            max-height: 340px;
+            aspect-ratio: 4 / 3;
+            flex: 0 1 auto;
+            align-self: center;
+        }
         .image-tile { flex: 1; text-align: center; }
         .image-tile .image-wrapper { height: 200px; margin-bottom: 15px; }
         .image-tile p { font-size: 20px; text-align: center; }
@@ -203,6 +226,24 @@
         /* Highlighted Numbers */
         .highlight-numbers-layout { display: flex; align-items: center; gap: 50px; }
         .highlight-numbers-layout > div:first-child { flex: 0 0 40%; text-align: center; }
+        .highlight-numbers-layout > div:last-child {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+        }
+        .highlight-numbers-layout > div:last-child::before {
+            content: 'Gợi ý nhanh';
+            display: block;
+            margin-bottom: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            line-height: 1.15;
+            color: #e01a22;
+            text-align: left;
+            letter-spacing: 0.3px;
+        }
         .highlight-numbers-layout .number { font-size: 140px; color: #e01a22; line-height: 1; }
         .highlight-numbers-layout .number-label { font-size: 28px; font-weight: 800; color: #1c3879; font-family: 'Nunito', sans-serif; margin-top: 10px; }
 

@@ -78,6 +78,40 @@ function buildPracticeGuideLine(chapter, preset) {
   return pitfallA || notes || "";
 }
 
+function buildConceptLine(chapter) {
+  const name = String(chapter?.name || "").trim();
+  const focus = String(chapter?.focus || "").trim();
+  if (focus) return `Khái niệm: ${focus}`;
+  if (name) return `Khái niệm: ${name} là một điểm ngữ pháp cần nhận diện đúng trong ngữ cảnh câu.`;
+  return "Khái niệm: xác định đúng chức năng ngữ pháp trước khi áp dụng công thức.";
+}
+
+function buildConceptSupportLine(chapter) {
+  const name = String(chapter?.name || "").trim();
+  const rule = String(chapter?.rule || "").trim();
+  if (name && rule) return `Dấu hiệu nhận diện: với ${name.toLowerCase()}, em cần nhớ mẫu ${rule}`;
+  if (rule) return `Dấu hiệu nhận diện: ${rule}`;
+  return "Dấu hiệu nhận diện: quan sát vai trò của từ/cụm trong câu trước khi rút gọn hoặc chọn cấu trúc.";
+}
+
+function buildConceptExampleLine(chapter) {
+  const exampleA = String(chapter?.exampleA || "").trim();
+  const exampleB = String(chapter?.exampleB || "").trim();
+  if (exampleA && exampleB) return `Ví dụ nhanh: ${exampleA} ${exampleB}`;
+  if (exampleA) return `Ví dụ nhanh: ${exampleA}`;
+  if (exampleB) return `Ví dụ nhanh: ${exampleB}`;
+  return "Ví dụ nhanh: thử đặt cấu trúc vào một câu ngắn để kiểm tra xem nghĩa và vai trò ngữ pháp có khớp không.";
+}
+
+function buildConceptTakeawayLine(chapter, preset) {
+  const practiceA = String(chapter?.practiceA || "").trim();
+  const notes = String(preset?.notes || "").trim();
+  if (practiceA && notes) return `Gợi ý học nhanh: ${practiceA} ${notes}`;
+  if (practiceA) return `Gợi ý học nhanh: ${practiceA}`;
+  if (notes) return `Gợi ý học nhanh: ${notes}`;
+  return "Gợi ý học nhanh: đọc khái niệm, đối chiếu công thức, rồi tự đặt một câu mẫu để ghi nhớ lâu hơn.";
+}
+
 function buildFormulaSummaryLines(chapter) {
   const name = String(chapter?.name || "").trim();
   const focus = String(chapter?.focus || "").trim();
@@ -146,8 +180,11 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
   return [
     createSlide(tag, `${chapter.name} - Khái niệm`, [
-      chapter.focus,
+      buildConceptLine(chapter),
+      buildConceptSupportLine(chapter),
       chapter.rule,
+      buildConceptExampleLine(chapter),
+      buildConceptTakeawayLine(chapter, preset),
       `Ghi chú triển khai: ${preset.notes}`,
     ]),
     createSlide(
