@@ -239,6 +239,15 @@
             align-items: stretch;
             min-width: 0;
         }
+        .highlight-numbers-layout > div:last-child .highlight-hint-box {
+            background: #f8faff;
+            border: 2px dashed #bacbe6;
+            border-radius: 24px;
+            padding: 24px 28px;
+            width: 100%;
+            max-width: 520px;
+            align-self: flex-start;
+        }
         .highlight-numbers-layout > div:last-child::before {
             content: 'Gợi ý nhanh';
             display: block;
@@ -259,6 +268,21 @@
         }
         .highlight-numbers-layout > div:last-child .bullet-list ul {
             width: 100%;
+        }
+        .highlight-hint-box h3 {
+            margin-bottom: 12px;
+            font-size: 28px;
+            text-align: left;
+            color: #1c3879;
+        }
+        .highlight-hint-box p {
+            font-size: 20px;
+            line-height: 1.45;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        .highlight-hint-box p:last-child {
+            margin-bottom: 0;
         }
         .highlight-numbers-layout .number { font-size: 140px; color: #e01a22; line-height: 1; }
         .highlight-numbers-layout .number-label { font-size: 28px; font-weight: 800; color: #1c3879; font-family: 'Nunito', sans-serif; margin-top: 10px; }
@@ -536,8 +560,12 @@
                         <div class="number-label">Trọng Số Điểm Thi</div>
                     </div>
                     <div>
-                        <h3>Quyết Định Phân Loại Thí Sinh</h3>
-                        <p>Phần Đọc hiểu (Reading Comprehension) và Điền từ vào chỗ trống (Cloze Test) thường chiếm khoảng 40% tổng số điểm. Để làm tốt, học sinh cần rèn luyện kỹ năng Skimming (đọc lướt tìm ý chính) và Scanning (đọc quét tìm thông tin chi tiết), đồng thời trau dồi vốn từ vựng phong phú qua việc đọc tài liệu tiếng Anh mỗi ngày.</p>
+                        <div class="highlight-hint-box">
+                            <h3>Quyết Định Phân Loại Thí Sinh</h3>
+                            <p>Phần Đọc hiểu (Reading Comprehension) và Điền từ vào chỗ trống (Cloze Test) thường chiếm khoảng 40% tổng số điểm.</p>
+                            <p>Để làm tốt, học sinh cần rèn luyện kỹ năng Skimming (đọc lướt tìm ý chính) và Scanning (đọc quét tìm thông tin chi tiết).</p>
+                            <p>Đồng thời, cần trau dồi vốn từ vựng phong phú qua việc đọc tài liệu tiếng Anh mỗi ngày.</p>
+                        </div>
                     </div>
                 </div>
             </div>
