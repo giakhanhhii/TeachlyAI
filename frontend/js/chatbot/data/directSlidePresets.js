@@ -50,9 +50,9 @@ function buildDetailedExampleLine(chapter) {
 
 function buildSecondExampleLine(chapter) {
   const sentenceB = String(chapter?.exampleB || "").trim();
-  const name = String(chapter?.name || "").toLowerCase().trim();
-  if (sentenceB && name) return `Ví dụ B: ${sentenceB} Qua câu này, học sinh cần xác định đúng mẫu ${name}.`;
   if (sentenceB) return `Ví dụ B: ${sentenceB}`;
+  const name = String(chapter?.name || "").toLowerCase().trim();
+  if (name) return `Ví dụ B: học sinh cần đối chiếu thêm với mẫu ${name}.`;
   return "";
 }
 
@@ -182,6 +182,22 @@ function buildPitfallFixLine(chapter) {
   return `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`;
 }
 
+function buildStructureRouteLine(part, index, preset) {
+  const cleanPart = String(part || "").trim();
+  const topic = String(preset?.topic || "").trim();
+  const notes = String(preset?.notes || "").trim();
+  const chapter = preset?.chapters?.[index];
+  const chapterFocus = String(chapter?.focus || "").trim();
+  const chapterExample = String(chapter?.exampleA || "").trim();
+
+  const pieces = [`Mạch ${index + 1}: ${cleanPart}.`];
+  if (chapterFocus) pieces.push(`Trọng tâm: ${chapterFocus}`);
+  if (chapterExample) pieces.push(`Ví dụ neo nhớ: ${chapterExample}`);
+  else if (topic) pieces.push(`Ví dụ và bài tập đều bám đúng phạm vi ${topic}.`);
+  if (notes) pieces.push(`Lưu ý triển khai: ${notes}`);
+  return pieces.join(" ");
+}
+
 function buildChapterSlides(preset, chapter, chapterIndex) {
   const base = chapterIndex * 5 + 5;
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
@@ -233,7 +249,7 @@ function buildDeckFromBlueprint(preset) {
       `Luyện theo yêu cầu: ${preset.notes}`,
     ]),
     createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
-      ...structureParts.map((part, index) => `Mạch ${index + 1}: ${part}.`),
+      ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
       `Mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}.`,
     ]),
     createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
