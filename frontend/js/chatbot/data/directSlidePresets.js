@@ -829,8 +829,10 @@ const RAW_SLIDE_PRESETS = [
       },
       {
         name: "Đổi trạng từ thời gian và nơi chốn",
-        focus: "Here, now, today, tomorrow thường đổi trong câu tường thuật.",
-        rule: "now -> then; today -> that day; tomorrow -> the next day.",
+        focus:
+          "Khi người kể đã đổi mốc nhìn, em thường đổi here thành there, this place thành that place, và cân nhắc come thành go để câu tường thuật tự nhiên hơn.",
+        rule:
+          "đổi now thành then, today thành that day, tonight thành that night, tomorrow thành the next day, yesterday thành the day before khi mốc thời gian đã lùi về quá khứ",
         exampleA: "\"I am leaving tomorrow\" -> He said he was leaving the next day.",
         exampleB: "\"I live here\" -> She said she lived there.",
         pitfallA: "Giữ tomorrow khi ngữ cảnh đã đổi.",
