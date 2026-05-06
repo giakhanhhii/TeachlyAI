@@ -22,11 +22,13 @@ function splitStructure(structure) {
     .filter(Boolean);
 }
 
-function capitalizeRouteWords(value) {
-  return String(value || "").replace(/(^|[\s(/-])(\p{L})/gu, (match, prefix, letter) => {
-    void match;
-    return `${prefix}${letter.toLocaleUpperCase("vi-VN")}`;
-  });
+function normalizeRouteLineText(value) {
+  return String(value || "")
+    .trim()
+    .replace(/(^|\n)(\s*)(\p{L})/gu, (match, prefix, spacing, letter) => {
+      void match;
+      return `${prefix}${spacing}${letter.toLocaleUpperCase("vi-VN")}`;
+    });
 }
 
 function normalizeExampleSnippet(value) {
@@ -155,7 +157,25 @@ function buildConceptTakeawayLine(chapter, preset) {
   return "Gợi ý học nhanh: đọc khái niệm, đối chiếu công thức, rồi tự đặt một câu mẫu để ghi nhớ lâu hơn.";
 }
 
+function buildFormulaColumnBlock(column) {
+  const heading = String(column?.heading || "").trim();
+  const explanation = String(column?.explanation || "").trim();
+  const example = String(column?.example || "").trim();
+  const note = String(column?.note || "").trim();
+  return [
+    heading,
+    explanation ? `Giải thích: ${explanation}` : "",
+    example ? `Ví dụ: ${example}` : "",
+    note ? `Lưu ý: ${note}` : "",
+  ].filter(Boolean).join("\n");
+}
+
 function buildFormulaSummaryLines(chapter) {
+  const formulaColumns = Array.isArray(chapter?.formulaColumns) ? chapter.formulaColumns : [];
+  if (formulaColumns.length) {
+    return formulaColumns.map((column) => buildFormulaColumnBlock(column)).filter(Boolean);
+  }
+
   const name = String(chapter?.name || "").trim();
   const focus = String(chapter?.focus || "").trim();
   const rule = String(chapter?.rule || "").trim();
@@ -166,49 +186,41 @@ function buildFormulaSummaryLines(chapter) {
   const pitfallA = String(chapter?.pitfallA || "").trim();
   const pitfallB = String(chapter?.pitfallB || "").trim();
 
-  const lineA = name && rule
-    ? `${name}: ${rule}`
-    : rule || name;
+  const lineA = name && focus
+    ? `${name}: ${focus}`
+    : focus || name;
 
-  const lineB = focus
-    ? `Phân biệt nhanh: ${focus}`
+  const lineB = rule
+    ? `Công thức cốt lõi: ${rule}`
     : "";
 
-  const lineC = exampleA && exampleB
-    ? `Ví dụ tổng quát: ${exampleA} ${exampleB}`
-    : exampleA
-      ? `Ví dụ tổng quát: ${exampleA}`
-      : exampleB
-        ? `Ví dụ tổng quát: ${exampleB}`
-        : "";
+  const lineC = exampleA
+    ? `Ví dụ 1: ${exampleA}`
+    : "";
 
-  const lineD = practiceA
-    ? `Gợi ý vận dụng: ${practiceA}`
+  const lineD = exampleB
+    ? `Ví dụ 2: ${exampleB}`
+    : "";
+
+  const lineE = practiceA
+    ? `Vận dụng: ${practiceA}`
     : focus
-      ? `Gợi ý vận dụng: áp dụng đúng cấu trúc này vào câu hỏi cùng chủ điểm.`
+      ? `Vận dụng: áp dụng đúng cấu trúc này vào câu hỏi cùng chủ điểm.`
       : "";
 
-  const lineE = exampleB
-    ? `Ví dụ bổ sung: ${exampleB}`
-    : practiceB
-      ? `Bước luyện nhanh: ${practiceB}`
-      : "";
+  const lineF = practiceB
+    ? `Bước tiếp theo: ${practiceB}`
+    : "";
 
-  const lineF = practiceA && practiceB
-    ? `Luyện theo bước: ${practiceA} Sau đó, ${practiceB.toLowerCase()}.`
-    : practiceB
-      ? `Luyện theo bước: ${practiceB}`
-      : "";
+  const lineG = pitfallA
+    ? `Lỗi hay gặp: ${pitfallA}`
+    : "";
 
-  const lineG = pitfallA && pitfallB
-    ? `Lưu ý tránh lỗi: ${pitfallA} Đồng thời, ${pitfallB.toLowerCase()}.`
-    : pitfallA
-      ? `Lưu ý tránh lỗi: ${pitfallA}`
-      : pitfallB
-        ? `Lưu ý tránh lỗi: ${pitfallB}`
-        : "";
+  const lineH = pitfallB
+    ? `Cần tránh thêm: ${pitfallB}`
+    : "";
 
-  return [lineA, lineB, lineC, lineD, lineE, lineF, lineG].filter(Boolean);
+  return [lineA, lineB, lineC, lineD, lineE, lineF, lineG, lineH].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
@@ -250,7 +262,7 @@ function buildPitfallFixLine(chapter) {
 
 function buildStructureRouteLine(part, index, preset) {
   const customRouteLine = String(preset?.routeLines?.[index] || "").trim();
-  if (customRouteLine) return capitalizeRouteWords(customRouteLine);
+  if (customRouteLine) return normalizeRouteLineText(customRouteLine);
 
   const cleanPart = String(part || "").trim();
   const topic = String(preset?.topic || "").trim();
@@ -259,12 +271,12 @@ function buildStructureRouteLine(part, index, preset) {
   const chapterFocus = String(chapter?.focus || "").trim();
   const chapterExample = String(chapter?.exampleA || "").trim();
 
-  const pieces = [`Mạch ${index + 1}: ${cleanPart}`];
-  if (chapterFocus) pieces.push(`trọng tâm là ${chapterFocus}`);
-  if (chapterExample) pieces.push(`ví dụ neo nhớ ${chapterExample}`);
-  else if (topic) pieces.push(`ví dụ và bài tập đều bám đúng phạm vi ${topic}`);
-  if (notes) pieces.push(`lưu ý ${notes}`);
-  return capitalizeRouteWords(pieces.join(". "));
+  const pieces = [`Track ${index + 1}: ${cleanPart}`];
+  if (chapterFocus) pieces.push(`Knowledge: ${chapterFocus}`);
+  if (chapterExample) pieces.push(`Example: ${chapterExample}`);
+  else if (topic) pieces.push(`Example: Ví dụ và bài tập đều bám đúng phạm vi ${topic}.`);
+  if (notes) pieces.push(`Note: ${notes}`);
+  return normalizeRouteLineText(pieces.join("\n"));
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -307,10 +319,10 @@ function buildDeckFromBlueprint(preset) {
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
   const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
-    ? preset.routeLines.map((line) => capitalizeRouteWords(line))
+    ? preset.routeLines.map((line) => normalizeRouteLineText(line))
     : [
         ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-        `Ghi Nhớ Chung: Mỗi Mạch Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}`,
+        `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,
       ];
   const slides = [
     createSlide(`${preset.id}-01`, `${preset.topic} - Tổng quan`, [
@@ -480,8 +492,8 @@ const RAW_SLIDE_PRESETS = [
     style: "Vui tươi (Thân thiện)",
     notes: "Chỉ luyện câu bị động và các biến thể bị động.",
     routeLines: [
-      "Mạch 1: Bị động cơ bản và bị động theo thì. Trọng tâm là xác định đúng tân ngữ, đổi tân ngữ lên làm chủ ngữ mới, chọn đúng dạng be theo thì của câu gốc, rồi chuyển động từ chính về V3 hoặc PII. Ví dụ neo nhớ: They clean the room every day thành The room is cleaned every day, và The letter has been sent giúp nhận ra dạng hoàn thành bị động.",
-      "Mạch 2: Bị động đặc biệt và luyện viết lại câu. Trọng tâm là modal passive, bị động tiếp diễn, cấu trúc have or get something done, cùng bài tập viết lại câu sao cho đúng nghĩa và đúng thì. Ví dụ neo nhớ: The form must be submitted today, The documents are being checked now, và She had her hair cut.",
+      "Track 1: Passive Basics And Tense Changes\nKnowledge: Tập trung vào cách đưa tân ngữ lên làm chủ ngữ mới, chọn đúng dạng be theo thì của câu gốc, rồi đổi động từ chính về V3 hoặc PII để câu bị động vẫn đúng nghĩa.\nExample: They clean the room every day -> The room is cleaned every day. The letter has been sent là mẫu giúp nhận ra hiện tại hoàn thành bị động rất nhanh.\nNote: Không được quên be, không giữ nguyên động từ ở dạng V1 hoặc V2, và luôn kiểm tra lại xem thì của câu bị động đã bám đúng câu gốc chưa.",
+      "Track 2: Special Passive Forms\nKnowledge: Tập trung vào modal passive, bị động tiếp diễn, và cấu trúc have or get something done để xử lý các dạng biến thể thường gặp trong bài viết lại câu và bài nhận diện lỗi sai.\nExample: The form must be submitted today. The documents are being checked now. She had her hair cut là mẫu tiêu biểu cho dạng nhờ người khác làm việc cho mình.\nNote: Cần phân biệt rõ be, being, been trong từng cấu trúc, đồng thời tránh dùng sai vị trí của not hoặc bỏ mất thành phần bắt buộc trong cụm passive đặc biệt.",
     ],
     chapters: [
       {
@@ -762,6 +774,10 @@ const RAW_SLIDE_PRESETS = [
     structure: "Lùi thì -> Đổi đại từ/trạng từ -> Câu hỏi và mệnh lệnh",
     style: "Comic",
     notes: "Chỉ luyện reported speech theo form viết lại câu.",
+    routeLines: [
+      "Track 1: Backshift Rules\nKnowledge: Tập trung vào việc lùi thì khi chuyển câu trực tiếp sang câu tường thuật, đặc biệt với các mẫu present sang past, will sang would, và can sang could trong câu kể thông thường.\nExample: \"I am tired\" -> He said he was tired. \"I will call you later\" -> She said she would call me later để học sinh thấy rõ sự thay đổi của động từ chính.\nNote: Chỉ lùi thì khi động từ tường thuật đứng ở quá khứ; nếu nội dung vẫn là sự thật hiển nhiên hoặc tình huống vẫn còn đúng, có thể giữ nguyên thì thay vì lùi máy móc.",
+      "Track 2: Reported Questions And Commands\nKnowledge: Tập trung vào cách đổi câu hỏi về trật tự câu khẳng định, dùng if hoặc whether cho yes/no questions, và dùng tell, ask, order, remind + object + to V cho câu mệnh lệnh.\nExample: \"Do you like English?\" -> He asked if I liked English. \"Open the door\" -> She told me to open the door là hai mẫu rất hay xuất hiện trong phần viết lại câu.\nNote: Không giữ đảo trợ động từ trong câu hỏi tường thuật, không dùng that-clause cho câu mệnh lệnh, và phải đặt not đúng vị trí trong mẫu told somebody not to V.",
+    ],
     chapters: [
       {
         name: "Lùi thì",
@@ -769,6 +785,32 @@ const RAW_SLIDE_PRESETS = [
         rule: "present -> past; will -> would; can -> could.",
         exampleA: "\"I am tired\" -> He said he was tired.",
         exampleB: "\"I will call\" -> She said she would call.",
+        formulaColumns: [
+          {
+            heading: "Present -> Past",
+            explanation:
+              "Khi câu trực tiếp dùng thì hiện tại, em thường lùi về thì quá khứ tương ứng nếu động từ tường thuật đứng ở quá khứ.",
+            example: "\"I am tired\" -> He said he was tired.",
+            note:
+              "Áp dụng tốt với present simple và present continuous, nhưng không lùi máy móc nếu nội dung vẫn là sự thật hiển nhiên.",
+          },
+          {
+            heading: "Will -> Would",
+            explanation:
+              "Khi câu trực tiếp dùng will để nói ý định, lời hứa hoặc dự đoán, em thường đổi will thành would trong câu tường thuật.",
+            example: "\"I will call\" -> She said she would call.",
+            note:
+              "Giữ nguyên phần nghĩa phía sau will, chỉ đổi trợ động từ để câu reported speech vẫn đúng mạch và đúng thì.",
+          },
+          {
+            heading: "Can -> Could",
+            explanation:
+              "Khi câu trực tiếp dùng can để chỉ khả năng hoặc sự cho phép, em thường đổi can thành could khi chuyển sang câu tường thuật.",
+            example: "\"I can swim\" -> He said he could swim.",
+            note:
+              "Luôn đọc ngữ cảnh trước để phân biệt can mang nghĩa ability hay permission, rồi mới đổi sang could cho chính xác.",
+          },
+        ],
         pitfallA: "Giữ nguyên thì không phù hợp.",
         pitfallB: "Lùi thì sai với modal verbs.",
         practiceA: "Lùi thì 5 câu trực tiếp.",
@@ -787,8 +829,10 @@ const RAW_SLIDE_PRESETS = [
       },
       {
         name: "Đổi trạng từ thời gian và nơi chốn",
-        focus: "Here, now, today, tomorrow thường đổi trong câu tường thuật.",
-        rule: "now -> then; today -> that day; tomorrow -> the next day.",
+        focus:
+          "Khi người kể đã đổi mốc nhìn, em thường đổi here thành there, this place thành that place, và cân nhắc come thành go để câu tường thuật tự nhiên hơn.",
+        rule:
+          "đổi now thành then, today thành that day, tonight thành that night, tomorrow thành the next day, yesterday thành the day before khi mốc thời gian đã lùi về quá khứ",
         exampleA: "\"I am leaving tomorrow\" -> He said he was leaving the next day.",
         exampleB: "\"I live here\" -> She said she lived there.",
         pitfallA: "Giữ tomorrow khi ngữ cảnh đã đổi.",

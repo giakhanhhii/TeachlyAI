@@ -263,10 +263,27 @@ function ensureFallbackShellList(doc, sink) {
 function splitSlideTextFragments(value) {
   const raw = String(value || "").replace(/\s+/g, " ").trim();
   if (!raw) return [];
+  if (/^(?:track|mạch|mach)\s+\d+\s*:/iu.test(raw)) {
+    return [];
+  }
   return raw
     .split(/\s*(?:\||•|;)\s*|\.\s+/u)
     .map((part) => part.trim())
     .filter(Boolean);
+}
+
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+function normalizeSlideHeadline(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const routeMatch = raw.match(/^(?:mạch|mach)\s+(\d+)\b/iu);
+  if (routeMatch) {
+    return `Track ${routeMatch[1]}`;
+  }
+  return raw;
 }
 
 /**
@@ -279,26 +296,26 @@ function buildSlideTextPair(value) {
   const colonParts = raw.split(/\s*:\s*/).map((part) => part.trim()).filter(Boolean);
   if (colonParts.length >= 2) {
     return {
-      headline: colonParts[0],
+      headline: normalizeSlideHeadline(colonParts[0]),
       detail: colonParts.slice(1).join(": "),
     };
   }
   const arrowParts = raw.split(/\s*->\s*/).map((part) => part.trim()).filter(Boolean);
   if (arrowParts.length >= 2) {
     return {
-      headline: arrowParts[0],
+      headline: normalizeSlideHeadline(arrowParts[0]),
       detail: arrowParts.slice(1).join(" -> "),
     };
   }
   const words = raw.split(/\s+/).filter(Boolean);
   if (words.length >= 10) {
     return {
-      headline: words.slice(0, 5).join(" "),
+      headline: normalizeSlideHeadline(words.slice(0, 5).join(" ")),
       detail: raw,
     };
   }
   return {
-    headline: raw,
+    headline: normalizeSlideHeadline(raw),
     detail: raw,
   };
 }
@@ -337,6 +354,63 @@ function buildSlideTextPool(title, bullets, want) {
     });
   }
   return pool;
+}
+
+/**
+ * @param {Element} node
+ * @param {string} value
+ */
+function setShellTextContent(node, value) {
+  const parts = String(value || "").split(/\n/);
+  node.replaceChildren();
+  parts.forEach((part, index) => {
+    if (index > 0) node.appendChild(node.ownerDocument.createElement("br"));
+    node.appendChild(node.ownerDocument.createTextNode(part));
+  });
+}
+
+/**
+ * @param {Element} root
+ * @param {string[]} bullets
+ * @returns {boolean}
+ */
+function fillStructuredTableColumns(root, bullets) {
+  const table = root.querySelector(".table-layout table");
+  if (!(table instanceof HTMLTableElement)) return false;
+  if (!Array.isArray(bullets) || !bullets.length || !bullets.every((item) => String(item || "").includes("\n"))) return false;
+
+  const headerCells = Array.from(table.querySelectorAll("thead th"));
+  const bodyRows = Array.from(table.querySelectorAll("tbody tr"));
+  if (!headerCells.length || bullets.length !== headerCells.length || !bodyRows.length) return false;
+
+  const bodyCellsByRow = bodyRows.map((row) => Array.from(row.querySelectorAll("td, th")));
+  if (bodyCellsByRow.some((cells) => cells.length < headerCells.length)) return false;
+
+  bullets.forEach((bullet, columnIndex) => {
+    const parts = String(bullet || "")
+      .split(/\n+/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (!parts.length) return;
+
+    setShellTextContent(headerCells[columnIndex], parts[0]);
+
+    const detailParts = parts.slice(1);
+    bodyRows.forEach((_, rowIndex) => {
+      const cell = bodyCellsByRow[rowIndex]?.[columnIndex];
+      if (!(cell instanceof HTMLElement)) return;
+      const remaining = detailParts.length - rowIndex;
+      let content = "";
+      if (rowIndex === bodyRows.length - 1 && remaining > 1) {
+        content = detailParts.slice(rowIndex).join("\n");
+      } else {
+        content = detailParts[rowIndex] || "";
+      }
+      setShellTextContent(cell, content);
+    });
+  });
+
+  return true;
 }
 
 /**
@@ -1394,6 +1468,9 @@ function fillContentSlots(root, title, bullets) {
     });
     return;
   }
+  if (fillStructuredTableColumns(root, bullets)) {
+    return;
+  }
   const targets = Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
     (a, b) =>
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
@@ -1413,7 +1490,7 @@ function fillContentSlots(root, title, bullets) {
           pendingPick = null;
         }
         const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
-        node.textContent = pick.headline;
+        setShellTextContent(node, pick.headline);
         if (nextNeedsDetail) {
           pendingPick = pick;
         } else {
@@ -1423,7 +1500,7 @@ function fillContentSlots(root, title, bullets) {
       }
 
       const pick = pendingPick || textPool[poolIndex % textPool.length] || { headline: title, detail: title };
-      node.textContent = pick.detail || pick.headline;
+      setShellTextContent(node, pick.detail || pick.headline);
       poolIndex += 1;
       pendingPick = null;
     });
