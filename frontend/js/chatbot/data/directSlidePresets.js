@@ -31,6 +31,46 @@ function normalizeRouteLineText(value) {
     });
 }
 
+function isFriendlySlideStyle(style) {
+  return normalizeText(style).includes("than thien");
+}
+
+function shortenFriendlyRouteLineText(value, maxLength) {
+  const clean = String(value || "").replace(/\s+/g, " ").trim();
+  if (!clean) return "";
+  if (clean.length <= maxLength) return clean;
+  return `${clean.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}
+
+function compactFriendlyRouteLine(value) {
+  const lines = String(value || "")
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return lines
+    .map((line, index) => {
+      if (index === 0) {
+        const match = line.match(/^((?:Track|Mạch)\s+\d+)\s*:\s*(.+)$/iu);
+        if (!match) return shortenFriendlyRouteLineText(line, 40);
+        return `${match[1]}: ${shortenFriendlyRouteLineText(match[2], 34)}`;
+      }
+
+      const labelMatch = line.match(/^([^:]+):\s*(.+)$/u);
+      if (!labelMatch) return shortenFriendlyRouteLineText(line, 58);
+
+      const label = labelMatch[1].trim();
+      const body = labelMatch[2].trim();
+      const maxLength =
+        /^Knowledge$/i.test(label) ? 58 :
+        /^Example$/i.test(label) ? 56 :
+        /^Note$/i.test(label) ? 52 :
+        56;
+      return `${label}: ${shortenFriendlyRouteLineText(body, maxLength)}`;
+    })
+    .join("\n");
+}
+
 function normalizeExampleSnippet(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -274,7 +314,10 @@ function buildPitfallSlideLines(chapter) {
 
 function buildStructureRouteLine(part, index, preset) {
   const customRouteLine = String(preset?.routeLines?.[index] || "").trim();
-  if (customRouteLine) return normalizeRouteLineText(customRouteLine);
+  if (customRouteLine) {
+    const normalized = normalizeRouteLineText(customRouteLine);
+    return isFriendlySlideStyle(preset?.style) ? compactFriendlyRouteLine(normalized) : normalized;
+  }
 
   const cleanPart = String(part || "").trim();
   const topic = String(preset?.topic || "").trim();
@@ -288,7 +331,8 @@ function buildStructureRouteLine(part, index, preset) {
   if (chapterExample) pieces.push(`Example: ${chapterExample}`);
   else if (topic) pieces.push(`Example: Ví dụ và bài tập đều bám đúng phạm vi ${topic}.`);
   if (notes) pieces.push(`Note: ${notes}`);
-  return normalizeRouteLineText(pieces.join("\n"));
+  const normalized = normalizeRouteLineText(pieces.join("\n"));
+  return isFriendlySlideStyle(preset?.style) ? compactFriendlyRouteLine(normalized) : normalized;
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -331,7 +375,10 @@ function buildDeckFromBlueprint(preset) {
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
   const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
-    ? preset.routeLines.map((line) => normalizeRouteLineText(line))
+    ? preset.routeLines.map((line) => {
+        const normalized = normalizeRouteLineText(line);
+        return isFriendlySlideStyle(preset?.style) ? compactFriendlyRouteLine(normalized) : normalized;
+      })
     : [
         ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
         `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,

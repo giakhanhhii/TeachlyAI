@@ -261,8 +261,12 @@ function ensureFallbackShellList(doc, sink) {
  * @returns {string[]}
  */
 function splitSlideTextFragments(value) {
-  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  const source = String(value || "").replace(/\r\n/g, "\n");
+  const raw = source.replace(/\s+/g, " ").trim();
   if (!raw) return [];
+  if (source.includes("\n")) {
+    return [];
+  }
   if (/^(?:track|mạch|mach)\s+\d+\s*:/iu.test(raw)) {
     return [];
   }
@@ -297,6 +301,20 @@ function buildSlideTextPair(value) {
     .replace(/ *\n */g, "\n")
     .trim();
   if (!raw) return { headline: "", detail: "" };
+  const routeLines = raw.split(/\n+/).map((part) => part.trim()).filter(Boolean);
+  if (routeLines.length > 1 && /^(?:track|mạch|mach)\s+\d+\s*:/iu.test(routeLines[0])) {
+    const firstLine = routeLines[0];
+    const match = firstLine.match(/^((?:Track|Mạch)\s+\d+)\s*:\s*(.+)$/iu);
+    const headline = match ? normalizeSlideHeadline(match[1]) : normalizeSlideHeadline(firstLine);
+    const detailLines = [
+      match ? match[2].trim() : "",
+      ...routeLines.slice(1),
+    ].filter(Boolean);
+    return {
+      headline,
+      detail: detailLines.join("\n"),
+    };
+  }
   const colonParts = raw.split(/\s*:\s*/).map((part) => part.trim()).filter(Boolean);
   if (colonParts.length >= 2) {
     return {
@@ -358,6 +376,120 @@ function buildSlideTextPool(title, bullets, want) {
     });
   }
   return pool;
+}
+
+/**
+ * @param {string[]} values
+ * @returns {string[]}
+ */
+function collectUniqueSlideTextValues(values) {
+  const unique = [];
+  const seen = new Set();
+  values.forEach((value) => {
+    const normalized = String(value || "").replace(/\s+/g, " ").trim();
+    if (!normalized) return;
+    const key = normalized.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    unique.push(normalized);
+  });
+  return unique;
+}
+
+/**
+ * @param {string} value
+ * @returns {number}
+ */
+function measureSlideTextWeight(value) {
+  return Math.max(1, String(value || "").replace(/\s+/g, " ").trim().length);
+}
+
+/**
+ * @param {string[]} items
+ * @param {number} want
+ * @returns {string[][]}
+ */
+function partitionSlideTextGroups(items, want) {
+  const normalized = collectUniqueSlideTextValues(items);
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const groupCount = Math.min(safeWant, normalized.length);
+  if (!groupCount) return [];
+  if (groupCount === 1) return [normalized];
+
+  const totalWeight = normalized.reduce((sum, item) => sum + measureSlideTextWeight(item), 0);
+  const targetWeight = totalWeight / groupCount;
+  const groups = [];
+  let current = [];
+  let currentWeight = 0;
+
+  normalized.forEach((item, idx) => {
+    const remainingItems = normalized.length - idx;
+    const remainingGroups = groupCount - groups.length;
+    if (current.length && groups.length < groupCount - 1) {
+      const shouldReserveRemaining = remainingItems === remainingGroups;
+      const reachedTargetWeight = currentWeight >= targetWeight;
+      if (shouldReserveRemaining || reachedTargetWeight) {
+        groups.push(current);
+        current = [];
+        currentWeight = 0;
+      }
+    }
+
+    current.push(item);
+    currentWeight += measureSlideTextWeight(item);
+  });
+
+  if (current.length) {
+    groups.push(current);
+  }
+
+  return groups;
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function buildBalancedSlideTextPairs(title, bullets, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const bulletValues = collectUniqueSlideTextValues(bullets);
+  const directGroups = bulletValues.length >= safeWant ? partitionSlideTextGroups(bulletValues, safeWant) : [];
+  const fragmentValues = collectUniqueSlideTextValues(
+    bulletValues.flatMap((bullet) => {
+      const fragments = splitSlideTextFragments(bullet);
+      return fragments.length >= 2 ? fragments : [bullet];
+    }),
+  );
+  const balancedGroups =
+    directGroups.length >= safeWant
+      ? directGroups
+      : fragmentValues.length >= safeWant
+        ? partitionSlideTextGroups(fragmentValues, safeWant)
+        : [];
+
+  if (!balancedGroups.length) {
+    return buildSlideTextPool(title, bullets, safeWant).slice(0, safeWant);
+  }
+
+  const pairs = balancedGroups
+    .map((group) => buildSlideTextPair(group.join(". ")))
+    .filter((item) => item.headline || item.detail);
+
+  if (!pairs.length) {
+    return buildSlideTextPool(title, bullets, safeWant).slice(0, safeWant);
+  }
+
+  while (pairs.length < safeWant) {
+    const fallback = pairs[pairs.length % pairs.length];
+    pairs.push({
+      headline: fallback.headline,
+      detail: fallback.detail || fallback.headline,
+    });
+  }
+
+  return pairs.slice(0, safeWant);
 }
 
 /**
@@ -427,6 +559,20 @@ function isHeadlineShellTarget(node) {
   if (tag === "H1" || tag === "H2" || tag === "H3" || tag === "H4" || tag === "TH" || tag === "STRONG") return true;
   const cls = String(node.getAttribute("class") || "");
   return /(label|q-title|box-label|subtitle|number)/i.test(cls);
+}
+
+/**
+ * @param {Element[]} targets
+ * @returns {number}
+ */
+function getStructuredShellTextPairCount(targets) {
+  if (!Array.isArray(targets) || targets.length < 4 || targets.length % 2 !== 0) return 0;
+  for (let idx = 0; idx < targets.length; idx += 2) {
+    if (!isHeadlineShellTarget(targets[idx]) || isHeadlineShellTarget(targets[idx + 1])) {
+      return 0;
+    }
+  }
+  return targets.length / 2;
 }
 
 /**
@@ -1083,6 +1229,27 @@ function injectShellPreviewFit(doc) {
       font-size: 20px !important;
       line-height: 1.4 !important;
     }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
+      width: min(920px, 100%) !important;
+      margin: 0 auto !important;
+      padding: 0 0 0 52px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      gap: 16px !important;
+      list-style: none !important;
+      align-self: center !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li {
+      font-size: 22px !important;
+      line-height: 1.45 !important;
+      font-weight: 500 !important;
+      text-align: left !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+    }
   `;
   doc.head.appendChild(style);
 }
@@ -1159,7 +1326,7 @@ function injectShellPanelFitScript(doc) {
       getNumericCssValue(hostCs.paddingRight) -
       (isComicPanel ? 36 : 16);
     if (!availW || availW < 80) return;
-    var maxLines = isComicPanel ? 3 : 4;
+    var maxLines = isComicPanel ? 6 : 6;
     if (title.classList.contains("cta-title") || title.classList.contains("section-title")) {
       maxLines = 2;
     }
@@ -1489,6 +1656,22 @@ function fillContentSlots(root, title, bullets) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    const pairCount = getStructuredShellTextPairCount(targets);
+    if (pairCount >= 2) {
+      const textPairs = buildBalancedSlideTextPairs(title, bullets, pairCount);
+      textPairs.forEach((pick, idx) => {
+        const headlineNode = targets[idx * 2];
+        const detailNode = targets[idx * 2 + 1];
+        if (headlineNode) {
+          setShellTextContent(headlineNode, pick.headline);
+        }
+        if (detailNode) {
+          setShellTextContent(detailNode, pick.detail || pick.headline);
+        }
+      });
+      return;
+    }
+
     const textPool = buildSlideTextPool(title, bullets, targets.length);
     let poolIndex = 0;
     let pendingPick = null;
