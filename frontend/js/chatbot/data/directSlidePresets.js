@@ -22,6 +22,13 @@ function splitStructure(structure) {
     .filter(Boolean);
 }
 
+function capitalizeRouteWords(value) {
+  return String(value || "").replace(/(^|[\s(/-])(\p{L})/gu, (match, prefix, letter) => {
+    void match;
+    return `${prefix}${letter.toLocaleUpperCase("vi-VN")}`;
+  });
+}
+
 function normalizeExampleSnippet(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -242,6 +249,9 @@ function buildPitfallFixLine(chapter) {
 }
 
 function buildStructureRouteLine(part, index, preset) {
+  const customRouteLine = String(preset?.routeLines?.[index] || "").trim();
+  if (customRouteLine) return capitalizeRouteWords(customRouteLine);
+
   const cleanPart = String(part || "").trim();
   const topic = String(preset?.topic || "").trim();
   const notes = String(preset?.notes || "").trim();
@@ -254,7 +264,7 @@ function buildStructureRouteLine(part, index, preset) {
   if (chapterExample) pieces.push(`ví dụ neo nhớ ${chapterExample}`);
   else if (topic) pieces.push(`ví dụ và bài tập đều bám đúng phạm vi ${topic}`);
   if (notes) pieces.push(`lưu ý ${notes}`);
-  return pieces.join(", ");
+  return capitalizeRouteWords(pieces.join(". "));
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -296,6 +306,12 @@ function buildDeckFromBlueprint(preset) {
   const chapterNames = preset.chapters.map((chapter) => chapter.name);
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
+  const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
+    ? preset.routeLines.map((line) => capitalizeRouteWords(line))
+    : [
+        ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
+        `Ghi Nhớ Chung: Mỗi Mạch Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}`,
+      ];
   const slides = [
     createSlide(`${preset.id}-01`, `${preset.topic} - Tổng quan`, [
       ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
@@ -307,8 +323,7 @@ function buildDeckFromBlueprint(preset) {
       `Luyện theo yêu cầu: ${preset.notes}`,
     ]),
     createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
-      ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-      `Ghi nhớ chung: mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}`,
+      ...routeLines,
     ]),
     createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
   ];
@@ -464,6 +479,10 @@ const RAW_SLIDE_PRESETS = [
     structure: "Bị động cơ bản -> Bị động đặc biệt -> Bài tập viết lại câu",
     style: "Vui tươi (Thân thiện)",
     notes: "Chỉ luyện câu bị động và các biến thể bị động.",
+    routeLines: [
+      "Mạch 1: Bị động cơ bản và bị động theo thì. Trọng tâm là xác định đúng tân ngữ, đổi tân ngữ lên làm chủ ngữ mới, chọn đúng dạng be theo thì của câu gốc, rồi chuyển động từ chính về V3 hoặc PII. Ví dụ neo nhớ: They clean the room every day thành The room is cleaned every day, và The letter has been sent giúp nhận ra dạng hoàn thành bị động.",
+      "Mạch 2: Bị động đặc biệt và luyện viết lại câu. Trọng tâm là modal passive, bị động tiếp diễn, cấu trúc have or get something done, cùng bài tập viết lại câu sao cho đúng nghĩa và đúng thì. Ví dụ neo nhớ: The form must be submitted today, The documents are being checked now, và She had her hair cut.",
+    ],
     chapters: [
       {
         name: "Bị động cơ bản",
