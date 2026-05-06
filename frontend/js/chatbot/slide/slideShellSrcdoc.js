@@ -533,6 +533,25 @@ function partitionSlideTextGroups(items, want) {
 function buildBalancedSlideTextPairs(title, bullets, want) {
   const safeWant = Math.max(1, Math.floor(Number(want) || 0));
   const bulletValues = collectUniqueSlideTextValues(bullets);
+  const routeValues = bulletValues.filter((bullet) => /^(?:track|mạch|mach)\s+\d+\s*:/iu.test(bullet));
+  if (routeValues.length) {
+    const routePairs = routeValues.slice(0, safeWant).map((bullet, index) => {
+      const pair = buildSlideTextPair(bullet);
+      return {
+        headline: `Track ${index + 1}`,
+        detail: pair.detail || pair.headline,
+      };
+    });
+    while (routePairs.length < safeWant && routePairs.length) {
+      const fallback = routePairs[routePairs.length % routePairs.length];
+      routePairs.push({
+        headline: `Track ${routePairs.length + 1}`,
+        detail: fallback.detail || fallback.headline,
+      });
+    }
+    if (routePairs.length) return routePairs.slice(0, safeWant);
+  }
+
   const directGroups = bulletValues.length >= safeWant ? partitionSlideTextGroups(bulletValues, safeWant) : [];
   const fragmentValues = collectUniqueSlideTextValues(
     bulletValues.flatMap((bullet) => {
