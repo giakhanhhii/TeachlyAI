@@ -106,8 +106,8 @@
         }
         .callout strong { color: #d62c2c; }
         .checklist { list-style: none; padding-left: 0; }
-        .checklist li { list-style: none; position: relative; padding-left: 28px; }
-        .checklist li::before { content: '✓'; position: absolute; left: 0; top: 0; font-weight: 900; color: #1a3bbf; }
+        .checklist li { list-style: none; position: relative; padding-left: 0; }
+        .checklist li::before { content: none; }
         .numbered { counter-reset: item; list-style: none; padding-left: 0; }
         .numbered li { list-style: none; position: relative; padding-left: 42px; }
         .numbered li::before {
@@ -172,6 +172,16 @@
         .phase { display: flex; flex-direction: column; align-items: center; gap: 12px; }
         .phase.top { padding-bottom: 162px; justify-content: flex-start; }
         .phase.bottom { padding-top: 162px; }
+        .phase.phase--flip {
+            padding-top: 162px;
+            padding-bottom: 0;
+        }
+        .phase.phase--flip .card {
+            order: 2;
+        }
+        .phase.phase--flip .dot {
+            order: 1;
+        }
         .dot { width: 20px; height: 20px; border-radius: 50%; border: 4px solid #1a3bbf; background: #fff; z-index: 1; position: absolute; top: 159px; }
         .dot.red { border-color: #d62c2c; }
         .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; }
@@ -756,6 +766,22 @@
                 lastSlide.classList.add('ending-slide');
                 lastSlide.setAttribute('data-role', 'ending-slide');
             }
+
+            const TIMELINE_LINE_TOP = 168;
+            const TIMELINE_SAFE_TOP = 84;
+            document.querySelectorAll('.timeline .phase.top').forEach((phase) => {
+                const card = phase.querySelector('.card');
+                if (!card) return;
+                phase.classList.remove('phase--flip');
+                const cardRect = card.getBoundingClientRect();
+                const phaseRect = phase.getBoundingClientRect();
+                const cardBottom = cardRect.bottom - phaseRect.top;
+                const overflow = cardBottom - TIMELINE_LINE_TOP;
+                const availableTop = TIMELINE_LINE_TOP - TIMELINE_SAFE_TOP;
+                if (overflow > 0 && cardRect.height > availableTop) {
+                    phase.classList.add('phase--flip');
+                }
+            });
         })();
     </script>
 </body>
