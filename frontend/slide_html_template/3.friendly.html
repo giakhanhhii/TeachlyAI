@@ -262,11 +262,46 @@
             justify-content: center;
         }
         .highlight-numbers-layout > div:last-child .bullet-list {
+            display: flex;
+            align-items: center;
             margin: 0;
             max-width: none;
+            min-height: 360px;
         }
         .highlight-numbers-layout > div:last-child .bullet-list ul {
             width: 100%;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] li {
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            margin-bottom: 12px;
+            padding-left: 38px;
+            font-size: 21px;
+            line-height: 1.42;
+            text-align: left;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] li::before {
+            content: '•';
+            color: #e01a22;
+            font-size: 28px;
+            line-height: 1;
+            position: absolute;
+            left: 4px;
+            top: 1px;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] li:last-child {
+            margin-bottom: 0;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] li i.fa-solid {
+            font-size: 21px;
+            top: 4px;
         }
         .highlight-hint-box h3 {
             margin-bottom: 12px;
@@ -874,11 +909,7 @@
                     </div>
                     <div>
                         <div class="bullet-list">
-                            <ul>
-                                <li><i class="fa-solid fa-stopwatch"></i> <strong>Vòng 1:</strong> Làm nhanh câu dễ: ngữ âm, giao tiếp, câu đơn lẻ, từ loại. Không dừng quá lâu ở một câu.</li>
-                                <li><i class="fa-solid fa-stopwatch"></i> <strong>Vòng 2:</strong> Xử lý đọc hiểu, cloze test và câu cần suy luận. Gạch từ khóa và loại đáp án nhiễu.</li>
-                                <li><i class="fa-solid fa-stopwatch"></i> <strong>Vòng 3:</strong> Kiểm tra lại phiếu trả lời, câu chưa chắc và các lỗi tô nhầm. Không bỏ trống đáp án.</li>
-                            </ul>
+                            <ul data-shell="bullets" data-shell-bullet-count="6"></ul>
                         </div>
                     </div>
                 </div>

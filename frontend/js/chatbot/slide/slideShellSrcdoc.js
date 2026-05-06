@@ -398,6 +398,84 @@ function collectUniqueSlideTextValues(values) {
 
 /**
  * @param {string} value
+ * @returns {string[]}
+ */
+function splitSlideBulletFragments(value) {
+  const raw = String(value || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+  if (!raw) return [];
+  return raw
+    .split(/\s*(?:\n+|\||•|;)\s*|\.\s+/u)
+    .map((part) => part.trim().replace(/[.。]+$/u, ""))
+    .filter(Boolean);
+}
+
+/**
+ * @param {string[]} values
+ * @param {number} want
+ * @returns {string[]}
+ */
+function buildCompactBulletLines(values, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const fragments = collectUniqueSlideTextValues(values.flatMap(splitSlideBulletFragments));
+  const lines = [];
+  fragments.forEach((fragment) => {
+    if (lines.length >= safeWant) return;
+    const words = fragment.split(/\s+/).filter(Boolean);
+    if (words.length <= 14) {
+      lines.push(fragment);
+      return;
+    }
+    for (let idx = 0; idx < words.length && lines.length < safeWant; idx += 12) {
+      lines.push(words.slice(idx, idx + 12).join(" "));
+    }
+  });
+  return collectUniqueSlideTextValues(lines).slice(0, safeWant);
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {string[]}
+ */
+function buildSlideBulletItems(title, bullets, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const bulletValues = collectUniqueSlideTextValues(bullets);
+  const compactLines = buildCompactBulletLines([...bulletValues, title], safeWant);
+  if (compactLines.length >= safeWant) {
+    return compactLines;
+  }
+  const fragmentValues = collectUniqueSlideTextValues(
+    bulletValues.flatMap((bullet) => {
+      const fragments = splitSlideTextFragments(bullet);
+      return fragments.length >= 2 ? fragments : [bullet];
+    }),
+  );
+
+  let items =
+    fragmentValues.length >= safeWant
+      ? fragmentValues
+      : bulletValues.length >= safeWant
+        ? bulletValues
+        : collectUniqueSlideTextValues([...compactLines, ...fragmentValues, ...bulletValues, title]);
+
+  if (!items.length) {
+    items = title ? [title] : [];
+  }
+  if (!items.length) {
+    return [];
+  }
+  while (items.length < safeWant) {
+    items.push(items[items.length % items.length] || items[0]);
+  }
+  return items.slice(0, safeWant);
+}
+
+/**
+ * @param {string} value
  * @returns {number}
  */
 function measureSlideTextWeight(value) {
@@ -1326,7 +1404,7 @@ function injectShellPanelFitScript(doc) {
       getNumericCssValue(hostCs.paddingRight) -
       (isComicPanel ? 36 : 16);
     if (!availW || availW < 80) return;
-    var maxLines = isComicPanel ? 6 : 6;
+    var maxLines = isComicPanel ? 3 : 4;
     if (title.classList.contains("cta-title") || title.classList.contains("section-title")) {
       maxLines = 2;
     }
@@ -1640,7 +1718,15 @@ function fillContentSlots(root, title, bullets) {
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     ul.replaceChildren();
-    const items = bullets.length ? bullets.slice() : title ? [title] : [];
+    const desiredCount = Number(ul.getAttribute("data-shell-bullet-count") || 0);
+    const items =
+      desiredCount > 0
+        ? buildSlideBulletItems(title, bullets, desiredCount)
+        : bullets.length
+          ? bullets.slice()
+          : title
+            ? [title]
+            : [];
     items.forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
