@@ -238,8 +238,15 @@
         .image-tile p { font-size: 20px; text-align: center; }
 
         /* Highlighted Numbers */
-        .highlight-numbers-layout { display: flex; align-items: center; gap: 50px; }
-        .highlight-numbers-layout > div:first-child { flex: 0 0 32%; text-align: center; }
+        .highlight-numbers-layout {
+            align-items: center;
+            display: flex;
+            gap: 44px;
+            justify-content: center;
+            min-height: 500px;
+            width: 100%;
+        }
+        .highlight-numbers-layout > div:first-child { flex: 0 0 31%; text-align: center; }
         .highlight-numbers-layout > div:last-child {
             display: flex;
             flex-direction: column;
@@ -249,27 +256,64 @@
             flex: 1 1 auto;
         }
         .highlight-numbers-layout > div:last-child .highlight-hint-box {
-            background: #f8faff;
-            border: 2px dashed #bacbe6;
+            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+            border: 2px solid #dde8fb;
+            border-left: 10px solid #e01a22;
             border-radius: 24px;
-            padding: 34px 40px;
-            width: 96%;
+            box-shadow: 0 16px 34px rgba(28, 56, 121, 0.12);
+            padding: 32px 38px;
+            width: 94%;
             max-width: none;
-            min-height: 480px;
+            min-height: 360px;
+            max-height: 430px;
             align-self: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow: hidden;
         }
         .highlight-numbers-layout > div:last-child .bullet-list {
             display: flex;
             align-items: center;
+            justify-content: center;
             margin: 0;
             max-width: none;
             min-height: 360px;
+            width: 94%;
+            align-self: center;
+            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+            border: 2px solid #dde8fb;
+            border-left: 10px solid #e01a22;
+            border-radius: 24px;
+            box-shadow: 0 16px 34px rgba(28, 56, 121, 0.12);
+            padding: 34px 38px;
+            overflow: hidden;
         }
         .highlight-numbers-layout > div:last-child .bullet-list ul {
             width: 100%;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell="bullets"] {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell="bullets"] li {
+            display: -webkit-box;
+            line-height: 1.42;
+            margin: 0;
+            overflow: hidden;
+            padding-left: 0;
+            position: relative;
+            text-align: left;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+        .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell="bullets"] li::before {
+            content: none;
         }
         .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] {
             display: flex;
@@ -282,19 +326,13 @@
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 1;
             margin-bottom: 12px;
-            padding-left: 38px;
+            padding-left: 0;
             font-size: 21px;
             line-height: 1.42;
             text-align: left;
         }
         .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] li::before {
-            content: '•';
-            color: #e01a22;
-            font-size: 28px;
-            line-height: 1;
-            position: absolute;
-            left: 4px;
-            top: 1px;
+            content: none;
         }
         .highlight-numbers-layout > div:last-child .bullet-list ul[data-shell-bullet-count="6"] li:last-child {
             margin-bottom: 0;
@@ -624,13 +662,13 @@
                         <div class="number-label">Trọng Số Điểm Thi</div>
                     </div>
                     <div>
-                        <div class="highlight-hint-box">
-                            <h3>Quyết Định Phân Loại Thí Sinh</h3>
-                            <p>Phần Đọc hiểu (Reading Comprehension) và Điền từ vào chỗ trống (Cloze Test) thường chiếm khoảng 40% tổng số điểm.</p>
-                            <p>Để làm tốt, học sinh cần rèn luyện kỹ năng Skimming (đọc lướt tìm ý chính) và Scanning (đọc quét tìm thông tin chi tiết).</p>
-                            <p>Đồng thời, cần trau dồi vốn từ vựng phong phú qua việc đọc tài liệu tiếng Anh mỗi ngày.</p>
-                            <p>Học sinh nên ghi chú từ khóa, xác định bằng chứng trong bài đọc và luyện thói quen loại đáp án nhiễu.</p>
-                            <p>Mục tiêu cuối cùng là đọc đủ nhanh để hiểu ý chính nhưng vẫn giữ được độ chính xác ở từng câu hỏi.</p>
+                        <div class="bullet-list">
+                            <ul data-shell="bullets" data-shell-bullet-count="4">
+                                <li>Đọc lướt để nắm ý chính trước khi xử lý câu hỏi.</li>
+                                <li>Scan từ khóa và quay lại đúng vùng chứng cứ.</li>
+                                <li>Loại đáp án nhiễu bằng nghĩa tương đương, không chỉ nhìn từ giống.</li>
+                                <li>Giữ tốc độ đọc ổn định nhưng vẫn kiểm tra từng câu bằng chứng.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
