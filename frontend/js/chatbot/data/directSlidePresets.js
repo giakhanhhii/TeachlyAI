@@ -31,6 +31,46 @@ function normalizeRouteLineText(value) {
     });
 }
 
+function isFriendlySlideStyle(style) {
+  return normalizeText(style).includes("than thien");
+}
+
+function shortenFriendlyRouteLineText(value, maxLength) {
+  const clean = String(value || "").replace(/\s+/g, " ").trim();
+  if (!clean) return "";
+  if (clean.length <= maxLength) return clean;
+  return `${clean.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}
+
+function compactFriendlyRouteLine(value) {
+  const lines = String(value || "")
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return lines
+    .map((line, index) => {
+      if (index === 0) {
+        const match = line.match(/^((?:Track|Mạch)\s+\d+)\s*:\s*(.+)$/iu);
+        if (!match) return shortenFriendlyRouteLineText(line, 40);
+        return `${match[1]}: ${shortenFriendlyRouteLineText(match[2], 34)}`;
+      }
+
+      const labelMatch = line.match(/^([^:]+):\s*(.+)$/u);
+      if (!labelMatch) return shortenFriendlyRouteLineText(line, 58);
+
+      const label = labelMatch[1].trim();
+      const body = labelMatch[2].trim();
+      const maxLength =
+        /^Knowledge$/i.test(label) ? 58 :
+        /^Example$/i.test(label) ? 56 :
+        /^Note$/i.test(label) ? 52 :
+        56;
+      return `${label}: ${shortenFriendlyRouteLineText(body, maxLength)}`;
+    })
+    .join("\n");
+}
+
 function normalizeExampleSnippet(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -71,7 +111,7 @@ function buildDetailedExampleLine(chapter) {
     );
   }
 
-  return parts.length ? `Ví dụ: ${parts.join(", ")}` : "";
+  return parts.length ? `Ví dụ: ${parts.join("\n")}` : "";
 }
 
 function buildSecondExampleLine(chapter) {
@@ -87,7 +127,7 @@ function buildSecondExampleLine(chapter) {
     parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
   }
 
-  return parts.length ? `Phân tích: ${parts.join(", ")}` : "";
+  return parts.length ? `Phân tích: ${parts.join("\n")}` : "";
 }
 
 function buildDetailedExplanationLine(chapter) {
@@ -164,9 +204,12 @@ function buildFormulaColumnBlock(column) {
   const note = String(column?.note || "").trim();
   return [
     heading,
-    explanation ? `Giải thích: ${explanation}` : "",
-    example ? `Ví dụ: ${example}` : "",
-    note ? `Lưu ý: ${note}` : "",
+    explanation ? `Trọng tâm: ${explanation}` : "Trọng tâm: nhận đúng ý nghĩa của mẫu này trong câu.",
+    heading ? `Mẫu chính: ${heading}` : "",
+    "Bước 1: nhìn đúng dấu hiệu ngữ pháp trước khi biến đổi.",
+    example ? `Ví dụ mẫu: ${example}` : "Ví dụ mẫu: tự đặt một câu ngắn theo công thức này.",
+    note ? `Lưu ý: ${note}` : "Lưu ý: không đổi máy móc nếu ngữ cảnh không phù hợp.",
+    "Tự kiểm tra: viết lại thêm một câu khác rồi đối chiếu cấu trúc.",
   ].filter(Boolean).join("\n");
 }
 
@@ -186,41 +229,37 @@ function buildFormulaSummaryLines(chapter) {
   const pitfallA = String(chapter?.pitfallA || "").trim();
   const pitfallB = String(chapter?.pitfallB || "").trim();
 
-  const lineA = name && focus
-    ? `${name}: ${focus}`
-    : focus || name;
+  const conceptBlock = [
+    name || "Khái niệm",
+    focus ? `Khái niệm: ${focus}` : "Khái niệm: xác định đúng chức năng của cấu trúc trong câu.",
+    name ? `Vai trò: ${name.toLowerCase()} giúp nối ý gọn và đúng ngữ pháp.` : "",
+    rule ? `Dấu hiệu: ${rule}` : "",
+    exampleA ? `Ví dụ 1: ${exampleA}` : "",
+    exampleB ? `Ví dụ 2: ${exampleB}` : exampleA ? `Ví dụ 2: biến đổi lại ${exampleA.toLowerCase()}.` : "",
+    pitfallA ? `Lỗi hay gặp: ${pitfallA}` : "",
+  ].filter(Boolean).join("\n");
 
-  const lineB = rule
-    ? `Công thức cốt lõi: ${rule}`
-    : "";
+  const formulaBlock = [
+    "Công thức cốt lõi",
+    rule ? `Mẫu: ${rule}` : "Mẫu: quan sát cấu trúc chính rồi mới điền từ.",
+    "Bước 1: xác định từ hoặc cụm cần được bổ nghĩa.",
+    "Bước 2: chọn đúng dạng theo chức năng ngữ pháp và nghĩa.",
+    "Bước 3: đọc lại cả mệnh đề để kiểm tra độ tự nhiên.",
+    practiceA ? `Vận dụng: ${practiceA}` : "Vận dụng: áp dụng mẫu vào một câu mới cùng chủ điểm.",
+    practiceB ? `Nhắc lại: ${practiceB}` : pitfallB ? `Nhắc lại: tránh ${pitfallB.toLowerCase()}.` : "",
+  ].filter(Boolean).join("\n");
 
-  const lineC = exampleA
-    ? `Ví dụ 1: ${exampleA}`
-    : "";
+  const quickUseBlock = [
+    "Cách áp dụng nhanh",
+    "Nhìn từ đứng trước và đứng sau chỗ cần điền.",
+    focus ? `Gợi ý nghĩa: ${focus}` : "Gợi ý nghĩa: luôn kiểm tra quan hệ logic trong câu.",
+    exampleA ? `Mẫu quen thuộc: ${exampleA}` : "",
+    exampleB ? `Mẫu bổ sung: ${exampleB}` : "",
+    pitfallA ? `Tránh lỗi 1: ${pitfallA}` : "",
+    pitfallB ? `Tránh lỗi 2: ${pitfallB}` : "",
+  ].filter(Boolean).join("\n");
 
-  const lineD = exampleB
-    ? `Ví dụ 2: ${exampleB}`
-    : "";
-
-  const lineE = practiceA
-    ? `Vận dụng: ${practiceA}`
-    : focus
-      ? `Vận dụng: áp dụng đúng cấu trúc này vào câu hỏi cùng chủ điểm.`
-      : "";
-
-  const lineF = practiceB
-    ? `Bước tiếp theo: ${practiceB}`
-    : "";
-
-  const lineG = pitfallA
-    ? `Lỗi hay gặp: ${pitfallA}`
-    : "";
-
-  const lineH = pitfallB
-    ? `Cần tránh thêm: ${pitfallB}`
-    : "";
-
-  return [lineA, lineB, lineC, lineD, lineE, lineF, lineG, lineH].filter(Boolean);
+  return [conceptBlock, formulaBlock, quickUseBlock].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
@@ -260,9 +299,25 @@ function buildPitfallFixLine(chapter) {
   return `Sửa lỗi bằng cách đối chiếu lại công thức của ${chapter.name}.`;
 }
 
+function buildPitfallSlideLines(chapter) {
+  const extraLines = Array.isArray(chapter?.pitfallExtraLines)
+    ? chapter.pitfallExtraLines.map((line) => String(line || "").trim()).filter(Boolean)
+    : [];
+
+  return [
+    buildPitfallLine(chapter, "pitfallA"),
+    buildPitfallLine(chapter, "pitfallB"),
+    ...extraLines,
+    buildPitfallFixLine(chapter),
+  ].filter(Boolean);
+}
+
 function buildStructureRouteLine(part, index, preset) {
   const customRouteLine = String(preset?.routeLines?.[index] || "").trim();
-  if (customRouteLine) return normalizeRouteLineText(customRouteLine);
+  if (customRouteLine) {
+    const normalized = normalizeRouteLineText(customRouteLine);
+    return isFriendlySlideStyle(preset?.style) ? compactFriendlyRouteLine(normalized) : normalized;
+  }
 
   const cleanPart = String(part || "").trim();
   const topic = String(preset?.topic || "").trim();
@@ -276,7 +331,8 @@ function buildStructureRouteLine(part, index, preset) {
   if (chapterExample) pieces.push(`Example: ${chapterExample}`);
   else if (topic) pieces.push(`Example: Ví dụ và bài tập đều bám đúng phạm vi ${topic}.`);
   if (notes) pieces.push(`Note: ${notes}`);
-  return normalizeRouteLineText(pieces.join("\n"));
+  const normalized = normalizeRouteLineText(pieces.join("\n"));
+  return isFriendlySlideStyle(preset?.style) ? compactFriendlyRouteLine(normalized) : normalized;
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -300,11 +356,11 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       buildSecondExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
     ]),
-    createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
-      buildPitfallLine(chapter, "pitfallA"),
-      buildPitfallLine(chapter, "pitfallB"),
-      buildPitfallFixLine(chapter),
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 3).padStart(2, "0")}`,
+      `${chapter.name} - Lỗi thường gặp`,
+      buildPitfallSlideLines(chapter),
+    ),
     createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
       buildPracticeTaskLine(chapter),
       buildPracticeGuideLine(chapter, preset),
@@ -319,7 +375,10 @@ function buildDeckFromBlueprint(preset) {
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
   const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
-    ? preset.routeLines.map((line) => normalizeRouteLineText(line))
+    ? preset.routeLines.map((line) => {
+        const normalized = normalizeRouteLineText(line);
+        return isFriendlySlideStyle(preset?.style) ? compactFriendlyRouteLine(normalized) : normalized;
+      })
     : [
         ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
         `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,
@@ -577,14 +636,14 @@ const RAW_SLIDE_PRESETS = [
       },
       {
         name: "Which và that",
-        focus: "Which dùng cho vật; that dùng trong mệnh đề xác định.",
-        rule: "which/that + clause for things.",
+        focus: "Which cho vật; that cho mệnh đề xác định.",
+        rule: "noun + which/that + clause.",
         exampleA: "The book which I bought is useful.",
-        exampleB: "This is the only answer that makes sense.",
-        pitfallA: "Dùng that trong mệnh đề có dấu phẩy.",
-        pitfallB: "Dùng which cho người trong câu thông thường.",
+        exampleB: "The answer that makes sense is here.",
+        pitfallA: "Không dùng that sau dấu phẩy.",
+        pitfallB: "Không dùng which cho người.",
         practiceA: "Chọn which hoặc that.",
-        practiceB: "Giải thích vì sao that không dùng sau dấu phẩy.",
+        practiceB: "Nhắc lại: that không đứng sau dấu phẩy.",
       },
       {
         name: "Whose",
@@ -859,6 +918,13 @@ const RAW_SLIDE_PRESETS = [
         exampleB: "\"Don't be late\" -> He told us not to be late.",
         pitfallA: "Dùng that-clause cho mệnh lệnh.",
         pitfallB: "Đặt not sai vị trí.",
+        pitfallExtraLines: [
+          "Quên tân ngữ sau tell, ask, remind hoặc warn nên câu thiếu người nhận mệnh lệnh.",
+          "Giữ nguyên động từ gốc thay vì chuyển sang to V hoặc not to V trong câu tường thuật.",
+          "Với please, cần ưu tiên asked hoặc told thay vì bê nguyên please vào reported speech.",
+        ],
+        pitfallFix:
+          "Cách soát nhanh: xác định người nhận lời nói trước, rồi kiểm tra mẫu verb + object + to V hoặc verb + object + not to V; nếu câu chưa có object hoặc còn that-clause thì cần sửa lại.",
         practiceA: "Chuyển 4 mệnh lệnh sang reported speech.",
         practiceB: "Tạo câu với remind và warn.",
       },

@@ -261,8 +261,12 @@ function ensureFallbackShellList(doc, sink) {
  * @returns {string[]}
  */
 function splitSlideTextFragments(value) {
-  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  const source = String(value || "").replace(/\r\n/g, "\n");
+  const raw = source.replace(/\s+/g, " ").trim();
   if (!raw) return [];
+  if (source.includes("\n")) {
+    return [];
+  }
   if (/^(?:track|mạch|mach)\s+\d+\s*:/iu.test(raw)) {
     return [];
   }
@@ -291,8 +295,26 @@ function normalizeSlideHeadline(value) {
  * @returns {{ headline: string, detail: string }}
  */
 function buildSlideTextPair(value) {
-  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  const raw = String(value || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .trim();
   if (!raw) return { headline: "", detail: "" };
+  const routeLines = raw.split(/\n+/).map((part) => part.trim()).filter(Boolean);
+  if (routeLines.length > 1 && /^(?:track|mạch|mach)\s+\d+\s*:/iu.test(routeLines[0])) {
+    const firstLine = routeLines[0];
+    const match = firstLine.match(/^((?:Track|Mạch)\s+\d+)\s*:\s*(.+)$/iu);
+    const headline = match ? normalizeSlideHeadline(match[1]) : normalizeSlideHeadline(firstLine);
+    const detailLines = [
+      match ? match[2].trim() : "",
+      ...routeLines.slice(1),
+    ].filter(Boolean);
+    return {
+      headline,
+      detail: detailLines.join("\n"),
+    };
+  }
   const colonParts = raw.split(/\s*:\s*/).map((part) => part.trim()).filter(Boolean);
   if (colonParts.length >= 2) {
     return {
@@ -354,6 +376,198 @@ function buildSlideTextPool(title, bullets, want) {
     });
   }
   return pool;
+}
+
+/**
+ * @param {string[]} values
+ * @returns {string[]}
+ */
+function collectUniqueSlideTextValues(values) {
+  const unique = [];
+  const seen = new Set();
+  values.forEach((value) => {
+    const normalized = String(value || "").replace(/\s+/g, " ").trim();
+    if (!normalized) return;
+    const key = normalized.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    unique.push(normalized);
+  });
+  return unique;
+}
+
+/**
+ * @param {string} value
+ * @returns {string[]}
+ */
+function splitSlideBulletFragments(value) {
+  const raw = String(value || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+  if (!raw) return [];
+  return raw
+    .split(/\s*(?:\n+|\||•|;)\s*|\.\s+/u)
+    .map((part) => part.trim().replace(/[.。]+$/u, ""))
+    .filter(Boolean);
+}
+
+/**
+ * @param {string[]} values
+ * @param {number} want
+ * @returns {string[]}
+ */
+function buildCompactBulletLines(values, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const fragments = collectUniqueSlideTextValues(values.flatMap(splitSlideBulletFragments));
+  const lines = [];
+  fragments.forEach((fragment) => {
+    if (lines.length >= safeWant) return;
+    const words = fragment.split(/\s+/).filter(Boolean);
+    if (words.length <= 14) {
+      lines.push(fragment);
+      return;
+    }
+    for (let idx = 0; idx < words.length && lines.length < safeWant; idx += 12) {
+      lines.push(words.slice(idx, idx + 12).join(" "));
+    }
+  });
+  return collectUniqueSlideTextValues(lines).slice(0, safeWant);
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {string[]}
+ */
+function buildSlideBulletItems(title, bullets, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const bulletValues = collectUniqueSlideTextValues(bullets);
+  const compactLines = buildCompactBulletLines([...bulletValues, title], safeWant);
+  if (compactLines.length >= safeWant) {
+    return compactLines;
+  }
+  const fragmentValues = collectUniqueSlideTextValues(
+    bulletValues.flatMap((bullet) => {
+      const fragments = splitSlideTextFragments(bullet);
+      return fragments.length >= 2 ? fragments : [bullet];
+    }),
+  );
+
+  let items =
+    fragmentValues.length >= safeWant
+      ? fragmentValues
+      : bulletValues.length >= safeWant
+        ? bulletValues
+        : collectUniqueSlideTextValues([...compactLines, ...fragmentValues, ...bulletValues, title]);
+
+  if (!items.length) {
+    items = title ? [title] : [];
+  }
+  if (!items.length) {
+    return [];
+  }
+  while (items.length < safeWant) {
+    items.push(items[items.length % items.length] || items[0]);
+  }
+  return items.slice(0, safeWant);
+}
+
+/**
+ * @param {string} value
+ * @returns {number}
+ */
+function measureSlideTextWeight(value) {
+  return Math.max(1, String(value || "").replace(/\s+/g, " ").trim().length);
+}
+
+/**
+ * @param {string[]} items
+ * @param {number} want
+ * @returns {string[][]}
+ */
+function partitionSlideTextGroups(items, want) {
+  const normalized = collectUniqueSlideTextValues(items);
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const groupCount = Math.min(safeWant, normalized.length);
+  if (!groupCount) return [];
+  if (groupCount === 1) return [normalized];
+
+  const totalWeight = normalized.reduce((sum, item) => sum + measureSlideTextWeight(item), 0);
+  const targetWeight = totalWeight / groupCount;
+  const groups = [];
+  let current = [];
+  let currentWeight = 0;
+
+  normalized.forEach((item, idx) => {
+    const remainingItems = normalized.length - idx;
+    const remainingGroups = groupCount - groups.length;
+    if (current.length && groups.length < groupCount - 1) {
+      const shouldReserveRemaining = remainingItems === remainingGroups;
+      const reachedTargetWeight = currentWeight >= targetWeight;
+      if (shouldReserveRemaining || reachedTargetWeight) {
+        groups.push(current);
+        current = [];
+        currentWeight = 0;
+      }
+    }
+
+    current.push(item);
+    currentWeight += measureSlideTextWeight(item);
+  });
+
+  if (current.length) {
+    groups.push(current);
+  }
+
+  return groups;
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function buildBalancedSlideTextPairs(title, bullets, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const bulletValues = collectUniqueSlideTextValues(bullets);
+  const directGroups = bulletValues.length >= safeWant ? partitionSlideTextGroups(bulletValues, safeWant) : [];
+  const fragmentValues = collectUniqueSlideTextValues(
+    bulletValues.flatMap((bullet) => {
+      const fragments = splitSlideTextFragments(bullet);
+      return fragments.length >= 2 ? fragments : [bullet];
+    }),
+  );
+  const balancedGroups =
+    directGroups.length >= safeWant
+      ? directGroups
+      : fragmentValues.length >= safeWant
+        ? partitionSlideTextGroups(fragmentValues, safeWant)
+        : [];
+
+  if (!balancedGroups.length) {
+    return buildSlideTextPool(title, bullets, safeWant).slice(0, safeWant);
+  }
+
+  const pairs = balancedGroups
+    .map((group) => buildSlideTextPair(group.join(". ")))
+    .filter((item) => item.headline || item.detail);
+
+  if (!pairs.length) {
+    return buildSlideTextPool(title, bullets, safeWant).slice(0, safeWant);
+  }
+
+  while (pairs.length < safeWant) {
+    const fallback = pairs[pairs.length % pairs.length];
+    pairs.push({
+      headline: fallback.headline,
+      detail: fallback.detail || fallback.headline,
+    });
+  }
+
+  return pairs.slice(0, safeWant);
 }
 
 /**
@@ -423,6 +637,20 @@ function isHeadlineShellTarget(node) {
   if (tag === "H1" || tag === "H2" || tag === "H3" || tag === "H4" || tag === "TH" || tag === "STRONG") return true;
   const cls = String(node.getAttribute("class") || "");
   return /(label|q-title|box-label|subtitle|number)/i.test(cls);
+}
+
+/**
+ * @param {Element[]} targets
+ * @returns {number}
+ */
+function getStructuredShellTextPairCount(targets) {
+  if (!Array.isArray(targets) || targets.length < 4 || targets.length % 2 !== 0) return 0;
+  for (let idx = 0; idx < targets.length; idx += 2) {
+    if (!isHeadlineShellTarget(targets[idx]) || isHeadlineShellTarget(targets[idx + 1])) {
+      return 0;
+    }
+  }
+  return targets.length / 2;
 }
 
 /**
@@ -830,10 +1058,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
       padding: 0 28px !important;
       margin: 54px auto 0 !important;
@@ -846,10 +1074,10 @@ function injectShellPreviewFit(doc) {
       gap: 20px !important;
       text-align: center !important;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
@@ -1079,6 +1307,35 @@ function injectShellPreviewFit(doc) {
       font-size: 20px !important;
       line-height: 1.4 !important;
     }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"][data-shell-no-bullets="1"] {
+      list-style: none !important;
+      padding-left: 0 !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"][data-shell-no-bullets="1"] li {
+      list-style: none !important;
+      padding-left: 0 !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
+      width: min(920px, 100%) !important;
+      margin: 0 auto !important;
+      padding: 0 0 0 52px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      gap: 16px !important;
+      list-style: none !important;
+      align-self: center !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li {
+      font-size: 22px !important;
+      line-height: 1.45 !important;
+      font-weight: 500 !important;
+      text-align: left !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+    }
   `;
   doc.head.appendChild(style);
 }
@@ -1093,6 +1350,13 @@ function injectShellPanelFitScript(doc) {
   const s = doc.createElement("script");
   s.setAttribute("data-slide-shell-panel-fit", "1");
   s.textContent = `(function(){
+  function isAuthoredAutoFitPanel(el) {
+    if (!el || !el.matches) return false;
+    if (!el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area")) return false;
+    return !!el.querySelector(
+      ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout"
+    );
+  }
   function hasComicPanelAncestor(el) {
     var p = el.parentElement;
     while (p) {
@@ -1102,10 +1366,12 @@ function injectShellPanelFitScript(doc) {
     return false;
   }
   function collectPanels(doc) {
-    var sel = ".shell-slide-instance .card, .shell-slide-instance .content-card, .shell-slide-instance .comic-panel";
+    var sel = ".shell-slide-instance .card, .shell-slide-instance .content-card, .shell-slide-instance .comic-panel, .shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area";
     return Array.prototype.filter.call(doc.querySelectorAll(sel), function (el) {
-      if (el.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return false;
+      var autoFitAuthored = isAuthoredAutoFitPanel(el);
+      if (el.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !autoFitAuthored) return false;
       if (el.classList.contains("comic-panel") && hasComicPanelAncestor(el)) return false;
+      if (el.matches && el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area") && !autoFitAuthored) return false;
       return true;
     });
   }
@@ -1241,7 +1507,7 @@ function injectShellPanelFitScript(doc) {
     applyPanelLayoutToElement(cs, scaled, display);
   }
   function wrapPanel(panel) {
-    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
+    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !isAuthoredAutoFitPanel(panel)) return;
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
     panel.classList.add("shell-panel-fit-host");
     var sizer = document.createElement("div");
@@ -1258,7 +1524,7 @@ function injectShellPanelFitScript(doc) {
   }
   var fitEditPaused = false;
   function measureAndFit(panel) {
-    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
+    if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !isAuthoredAutoFitPanel(panel)) return;
     if (fitEditPaused || (document.body && document.body.classList.contains("slide-visual-edit-on"))) return;
     var sizer = panel.querySelector(":scope > .shell-panel-fit-sizer");
     if (!sizer) return;
@@ -1459,8 +1725,24 @@ function fillContentSlots(root, title, bullets) {
   if (titleEl) titleEl.textContent = title;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
+    const noBulletTitles = new Set([
+      "Defining và non-defining - Lỗi thường gặp",
+    ]);
+    if (noBulletTitles.has(String(title || "").trim())) {
+      ul.setAttribute("data-shell-no-bullets", "1");
+    } else {
+      ul.removeAttribute("data-shell-no-bullets");
+    }
     ul.replaceChildren();
-    const items = bullets.length ? bullets.slice() : title ? [title] : [];
+    const desiredCount = Number(ul.getAttribute("data-shell-bullet-count") || 0);
+    const items =
+      desiredCount > 0
+        ? buildSlideBulletItems(title, bullets, desiredCount)
+        : bullets.length
+          ? bullets.slice()
+          : title
+            ? [title]
+            : [];
     items.forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
@@ -1476,6 +1758,22 @@ function fillContentSlots(root, title, bullets) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    const pairCount = getStructuredShellTextPairCount(targets);
+    if (pairCount >= 2) {
+      const textPairs = buildBalancedSlideTextPairs(title, bullets, pairCount);
+      textPairs.forEach((pick, idx) => {
+        const headlineNode = targets[idx * 2];
+        const detailNode = targets[idx * 2 + 1];
+        if (headlineNode) {
+          setShellTextContent(headlineNode, pick.headline);
+        }
+        if (detailNode) {
+          setShellTextContent(detailNode, pick.detail || pick.headline);
+        }
+      });
+      return;
+    }
+
     const textPool = buildSlideTextPool(title, bullets, targets.length);
     let poolIndex = 0;
     let pendingPick = null;
