@@ -22,6 +22,13 @@ function splitStructure(structure) {
     .filter(Boolean);
 }
 
+function normalizeExampleSnippet(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .replace(/[.?!]+$/u, "")
+    .trim();
+}
+
 function buildDefaultSlideIndexes(count) {
   const want = Math.max(10, Math.min(30, Number(count) || 10));
   if (want >= 30) return Array.from({ length: 30 }, (_, index) => index + 1);
@@ -41,28 +48,50 @@ function pickSlidesByIndexes(slides, indexes) {
 function buildDetailedExampleLine(chapter) {
   const detailedExample = String(chapter?.detailedExample || "").trim();
   if (detailedExample) return detailedExample;
-  const sentenceA = String(chapter?.exampleA || "").trim();
-  if (sentenceA) return `Ví dụ A: ${sentenceA}`;
-  const sentenceB = String(chapter?.exampleB || "").trim();
-  if (sentenceB) return `Ví dụ A: ${sentenceB}`;
-  return "";
+  const sentenceA = normalizeExampleSnippet(chapter?.exampleA);
+  const sentenceB = normalizeExampleSnippet(chapter?.exampleB);
+  const name = String(chapter?.name || "").trim().toLowerCase();
+  const rule = String(chapter?.rule || "").trim();
+
+  const parts = [];
+  if (sentenceA) parts.push(`Ví dụ 1 -> ${sentenceA}`);
+  if (sentenceB) parts.push(`Ví dụ 2 -> ${sentenceB}`);
+  if (rule || name) {
+    parts.push(
+      `Ví dụ 3 -> tự tạo thêm một câu cùng mẫu ${name || "ngữ pháp này"} rồi kiểm tra lại theo công thức ${rule || "đã học"}`
+    );
+  }
+
+  return parts.length ? `Ví dụ: ${parts.join(", ")}` : "";
 }
 
 function buildSecondExampleLine(chapter) {
-  const sentenceB = String(chapter?.exampleB || "").trim();
-  if (sentenceB) return `Ví dụ B: ${sentenceB}`;
-  const name = String(chapter?.name || "").toLowerCase().trim();
-  if (name) return `Ví dụ B: học sinh cần đối chiếu thêm với mẫu ${name}.`;
-  return "";
+  const focus = String(chapter?.focus || "").trim();
+  const rule = String(chapter?.rule || "").trim();
+  const pitfallA = String(chapter?.pitfallA || "").trim();
+  const pitfallB = String(chapter?.pitfallB || "").trim();
+
+  const parts = [];
+  if (focus) parts.push(`Ý 1 -> ${focus}`);
+  if (rule) parts.push(`Ý 2 -> ${rule}`);
+  if (pitfallA || pitfallB) {
+    parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
+  }
+
+  return parts.length ? `Phân tích: ${parts.join(", ")}` : "";
 }
 
 function buildDetailedExplanationLine(chapter) {
-  const focus = String(chapter?.focus || "").trim();
-  const rule = String(chapter?.rule || "").trim();
-  if (focus && rule) {
-    return `Phân tích: ${focus} Quy tắc cần áp dụng là ${rule}`;
+  const practiceA = String(chapter?.practiceA || "").trim();
+  const practiceB = String(chapter?.practiceB || "").trim();
+  const name = String(chapter?.name || "").trim().toLowerCase();
+
+  if (practiceA && practiceB) {
+    return `Ghi nhớ: ${practiceA} Sau đó, ${practiceB.toLowerCase()} để chốt lại ${name}.`;
   }
-  return focus || rule || "";
+  if (practiceA) return `Ghi nhớ: ${practiceA}`;
+  if (practiceB) return `Ghi nhớ: ${practiceB}`;
+  return name ? `Ghi nhớ: giải thích vì sao các câu trên đúng với ${name}.` : "";
 }
 
 function buildPracticeTaskLine(chapter) {
@@ -248,7 +277,6 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       buildDetailedExampleLine(chapter),
       buildSecondExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
-      `Yêu cầu: giải thích vì sao các từ/cấu trúc trên đúng với ${chapter.name.toLowerCase()}.`,
     ]),
     createSlide(`${preset.id}-${String(base + 3).padStart(2, "0")}`, `${chapter.name} - Lỗi thường gặp`, [
       buildPitfallLine(chapter, "pitfallA"),

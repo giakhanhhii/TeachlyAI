@@ -54,7 +54,7 @@
             position: absolute;
             top: 0; left: 0;
             overflow: hidden;
-            padding: 34px 64px 38px; /* Gọn hơn để nội dung fit như các shell khác */
+            padding: 30px 64px 26px; /* Chừa thêm chiều cao hữu dụng ở đáy cho slide dài */
         }
 
         .slide-container.active {
@@ -71,8 +71,8 @@
         .slide-container::before {
             content: '';
             position: absolute;
-            top: 20px; 
-            bottom: 20px; 
+            top: 14px; 
+            bottom: 12px; 
             left: 20px; 
             right: 20px;
             background-color: #ffffff;
@@ -209,10 +209,11 @@
 
         /* Table Layout */
         .table-layout { width: 100%; }
-        .table-layout table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
+        .table-layout table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; table-layout: fixed; }
         .table-layout th, .table-layout td { border: 1px solid #bacbe6; padding: 15px 20px; text-align: left; }
         .table-layout th { background-color: #1c3879; color: #ffffff; font-family: 'Nunito', sans-serif; font-size: 24px; text-align: center; font-weight: 800; }
         .table-layout td { background-color: #f8faff; font-size: 22px; }
+        .table-layout td, .table-layout th { word-break: break-word; vertical-align: top; }
 
         /* Images */
         .image-wrapper { border-radius: 24px; height: 320px; width: 100%; overflow: hidden; border: 4px solid #fce4d6; }
@@ -338,6 +339,36 @@
         .strategy-step .badge { display: inline-block; background: #e01a22; color: white; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 50%; width: 42px; height: 42px; line-height: 42px; text-align: center; margin-bottom: 10px; font-size: 22px; }
         .strategy-step h3 { text-align: left; font-size: 24px; color: #e01a22; margin-bottom: 8px; }
         .strategy-step p { font-size: 19px; line-height: 1.4; text-align: left; }
+
+        /* Auto-fit cho các slide friendly bị tràn chiều cao */
+        .slide-container.fit-tight .slide-title {
+            font-size: 42px;
+            margin-bottom: 8px;
+        }
+        .slide-container.fit-tight p,
+        .slide-container.fit-tight li,
+        .slide-container.fit-tight td,
+        .slide-container.fit-tight th,
+        .slide-container.fit-tight .subtitle {
+            font-size: 21px;
+            line-height: 1.42;
+        }
+        .slide-container.fit-table .slide-title {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+        .slide-container.fit-table .table-layout th,
+        .slide-container.fit-table .table-layout td {
+            padding: 10px 14px;
+        }
+        .slide-container.fit-table .table-layout th {
+            font-size: 20px;
+            line-height: 1.25;
+        }
+        .slide-container.fit-table .table-layout td {
+            font-size: 18px;
+            line-height: 1.3;
+        }
     </style>
 </head>
 <body>
@@ -896,10 +927,50 @@
             const slides = document.querySelectorAll('.slide-container');
             let currentSlide = 0;
 
+            function isOverflowing(element) {
+                return element.scrollHeight - element.clientHeight > 2;
+            }
+
+            function fitSlide(slide) {
+                slide.classList.remove('fit-tight', 'fit-table');
+
+                if (!isOverflowing(slide)) return;
+
+                if (slide.querySelector('.table-layout')) {
+                    slide.classList.add('fit-table');
+                }
+
+                if (isOverflowing(slide)) {
+                    slide.classList.add('fit-tight');
+                }
+            }
+
+            function fitAllSlides() {
+                slides.forEach((slide) => {
+                    const isActive = slide.classList.contains('active');
+                    const prevDisplay = slide.style.display;
+                    const prevVisibility = slide.style.visibility;
+
+                    if (!isActive) {
+                        slide.style.display = 'flex';
+                        slide.style.visibility = 'hidden';
+                    }
+
+                    fitSlide(slide);
+
+                    if (!isActive) {
+                        slide.style.display = prevDisplay;
+                        slide.style.visibility = prevVisibility;
+                    }
+                });
+            }
+
             function showSlide(index) {
                 slides.forEach(slide => slide.classList.remove('active'));
                 slides[index].classList.add('active');
             }
+
+            fitAllSlides();
 
             // Mặc định hiện slide đầu tiên
             showSlide(currentSlide);
@@ -933,7 +1004,10 @@
                 area.style.transform = `scale(${scale})`;
             }
 
-            window.addEventListener('resize', scalePresentation);
+            window.addEventListener('resize', () => {
+                fitAllSlides();
+                scalePresentation();
+            });
             scalePresentation(); // Gọi hàm khi vừa load trang
         });
     </script>
