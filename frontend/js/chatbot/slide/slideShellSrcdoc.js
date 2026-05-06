@@ -1307,6 +1307,14 @@ function injectShellPreviewFit(doc) {
       font-size: 20px !important;
       line-height: 1.4 !important;
     }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"][data-shell-no-bullets="1"] {
+      list-style: none !important;
+      padding-left: 0 !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"][data-shell-no-bullets="1"] li {
+      list-style: none !important;
+      padding-left: 0 !important;
+    }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
       width: min(920px, 100%) !important;
       margin: 0 auto !important;
@@ -1717,6 +1725,14 @@ function fillContentSlots(root, title, bullets) {
   if (titleEl) titleEl.textContent = title;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
+    const noBulletTitles = new Set([
+      "Defining và non-defining - Lỗi thường gặp",
+    ]);
+    if (noBulletTitles.has(String(title || "").trim())) {
+      ul.setAttribute("data-shell-no-bullets", "1");
+    } else {
+      ul.removeAttribute("data-shell-no-bullets");
+    }
     ul.replaceChildren();
     const desiredCount = Number(ul.getAttribute("data-shell-bullet-count") || 0);
     const items =
