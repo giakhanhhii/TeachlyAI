@@ -126,6 +126,9 @@ function buildFormulaSummaryLines(chapter) {
   const exampleA = String(chapter?.exampleA || "").trim();
   const exampleB = String(chapter?.exampleB || "").trim();
   const practiceA = String(chapter?.practiceA || "").trim();
+  const practiceB = String(chapter?.practiceB || "").trim();
+  const pitfallA = String(chapter?.pitfallA || "").trim();
+  const pitfallB = String(chapter?.pitfallB || "").trim();
 
   const lineA = name && rule
     ? `${name}: ${rule}`
@@ -149,7 +152,27 @@ function buildFormulaSummaryLines(chapter) {
       ? `Gợi ý vận dụng: áp dụng đúng cấu trúc này vào câu hỏi cùng chủ điểm.`
       : "";
 
-  return [lineA, lineB, lineC, lineD].filter(Boolean);
+  const lineE = exampleB
+    ? `Ví dụ bổ sung: ${exampleB}`
+    : practiceB
+      ? `Bước luyện nhanh: ${practiceB}`
+      : "";
+
+  const lineF = practiceA && practiceB
+    ? `Luyện theo bước: ${practiceA} Sau đó, ${practiceB.toLowerCase()}.`
+    : practiceB
+      ? `Luyện theo bước: ${practiceB}`
+      : "";
+
+  const lineG = pitfallA && pitfallB
+    ? `Lưu ý tránh lỗi: ${pitfallA} Đồng thời, ${pitfallB.toLowerCase()}.`
+    : pitfallA
+      ? `Lưu ý tránh lỗi: ${pitfallA}`
+      : pitfallB
+        ? `Lưu ý tránh lỗi: ${pitfallB}`
+        : "";
+
+  return [lineA, lineB, lineC, lineD, lineE, lineF, lineG].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
