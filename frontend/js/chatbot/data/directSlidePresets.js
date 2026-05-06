@@ -125,13 +125,17 @@ function buildFormulaSummaryLines(chapter) {
   const rule = String(chapter?.rule || "").trim();
   const exampleA = String(chapter?.exampleA || "").trim();
   const exampleB = String(chapter?.exampleB || "").trim();
+  const practiceA = String(chapter?.practiceA || "").trim();
+  const practiceB = String(chapter?.practiceB || "").trim();
+  const pitfallA = String(chapter?.pitfallA || "").trim();
+  const pitfallB = String(chapter?.pitfallB || "").trim();
 
   const lineA = name && rule
     ? `${name}: ${rule}`
     : rule || name;
 
   const lineB = focus
-    ? `Giải thích ngắn: ${focus}`
+    ? `Phân biệt nhanh: ${focus}`
     : "";
 
   const lineC = exampleA && exampleB
@@ -142,7 +146,33 @@ function buildFormulaSummaryLines(chapter) {
         ? `Ví dụ tổng quát: ${exampleB}`
         : "";
 
-  return [lineA, lineB, lineC].filter(Boolean);
+  const lineD = practiceA
+    ? `Gợi ý vận dụng: ${practiceA}`
+    : focus
+      ? `Gợi ý vận dụng: áp dụng đúng cấu trúc này vào câu hỏi cùng chủ điểm.`
+      : "";
+
+  const lineE = exampleB
+    ? `Ví dụ bổ sung: ${exampleB}`
+    : practiceB
+      ? `Bước luyện nhanh: ${practiceB}`
+      : "";
+
+  const lineF = practiceA && practiceB
+    ? `Luyện theo bước: ${practiceA} Sau đó, ${practiceB.toLowerCase()}.`
+    : practiceB
+      ? `Luyện theo bước: ${practiceB}`
+      : "";
+
+  const lineG = pitfallA && pitfallB
+    ? `Lưu ý tránh lỗi: ${pitfallA} Đồng thời, ${pitfallB.toLowerCase()}.`
+    : pitfallA
+      ? `Lưu ý tránh lỗi: ${pitfallA}`
+      : pitfallB
+        ? `Lưu ý tránh lỗi: ${pitfallB}`
+        : "";
+
+  return [lineA, lineB, lineC, lineD, lineE, lineF, lineG].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
@@ -190,12 +220,12 @@ function buildStructureRouteLine(part, index, preset) {
   const chapterFocus = String(chapter?.focus || "").trim();
   const chapterExample = String(chapter?.exampleA || "").trim();
 
-  const pieces = [`Mạch ${index + 1}: ${cleanPart}.`];
-  if (chapterFocus) pieces.push(`Trọng tâm: ${chapterFocus}`);
-  if (chapterExample) pieces.push(`Ví dụ neo nhớ: ${chapterExample}`);
-  else if (topic) pieces.push(`Ví dụ và bài tập đều bám đúng phạm vi ${topic}.`);
-  if (notes) pieces.push(`Lưu ý triển khai: ${notes}`);
-  return pieces.join(" ");
+  const pieces = [`Mạch ${index + 1}: ${cleanPart}`];
+  if (chapterFocus) pieces.push(`trọng tâm là ${chapterFocus}`);
+  if (chapterExample) pieces.push(`ví dụ neo nhớ ${chapterExample}`);
+  else if (topic) pieces.push(`ví dụ và bài tập đều bám đúng phạm vi ${topic}`);
+  if (notes) pieces.push(`lưu ý ${notes}`);
+  return pieces.join(", ");
 }
 
 function buildChapterSlides(preset, chapter, chapterIndex) {
@@ -250,7 +280,7 @@ function buildDeckFromBlueprint(preset) {
     ]),
     createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
       ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-      `Mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}.`,
+      `Ghi nhớ chung: mỗi mạch đều dùng ví dụ và bài tập đúng phạm vi ${preset.topic}`,
     ]),
     createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
   ];
