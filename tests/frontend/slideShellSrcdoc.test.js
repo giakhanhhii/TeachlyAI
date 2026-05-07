@@ -94,6 +94,38 @@ const COMIC_STRATEGY_SHELL = `
 </html>
 `;
 
+const SEA_LIFE_MIXED_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sea Life Shell 2026</title>
+  </head>
+  <body class="shell-theme-sealife">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <div class="card title-card">
+          <div class="title-content">
+            <h1>Placeholder title</h1>
+            <p>Placeholder detail</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-container" id="slide2">
+        <h2 class="outer-title">Placeholder title</h2>
+        <div class="card">
+          <div class="cols-3">
+            <div class="tl-item"><h3>One</h3><p>Placeholder detail one</p></div>
+            <div class="tl-item"><h3>Two</h3><p>Placeholder detail two</p></div>
+            <div class="tl-item"><h3>Three</h3><p>Placeholder detail three</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 describe("slideShellSrcdoc.js", () => {
   it("balances long knowledge text across paired authored boxes", () => {
     const srcdoc = buildSlideDeckSrcdoc(
@@ -184,6 +216,41 @@ describe("slideShellSrcdoc.js", () => {
     });
     details.forEach((item) => {
       expect(item.length).toBeLessThanOrEqual(36);
+    });
+  });
+
+  it("uses graduated Sea Life budgets based on layout density", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      SEA_LIFE_MIXED_SHELL,
+      [
+        {
+          title: "Conditional Type 1 Overview",
+          bullets: [
+            "Concept: This pattern describes a possible condition in the present or future and keeps the grammar link clear for exam answers.",
+          ],
+        },
+        {
+          title: "Conditional Type 2 Practice",
+          bullets: [
+            "Concept: This pattern describes an unreal present condition and helps students avoid confusing type 2 with type 1.",
+            "Signal: If + past simple, would could + V. Example: If I had more time, I would join the club.",
+            "Practice: Fill four sentences, rewrite two examples, then explain why the formula matches the meaning.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const titleCardDetail = doc.querySelector(".title-card p")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const denseDetails = Array.from(doc.querySelectorAll(".cols-3 p")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
+
+    expect(titleCardDetail.length).toBeGreaterThan(50);
+    expect(titleCardDetail.length).toBeLessThanOrEqual(66);
+    denseDetails.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(43);
     });
   });
 });

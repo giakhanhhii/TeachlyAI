@@ -448,10 +448,16 @@ function resolveSlideShellThemeKey(root, opts = {}) {
   ) {
     return "comic";
   }
-  if (!classList) return "";
-  if (classList.contains("shell-theme-space-bright")) return "space-bright";
-  if (classList.contains("shell-theme-space-black")) return "space-black";
-  if (classList.contains("shell-theme-sealife")) return "sealife";
+  if (classList?.contains("shell-theme-space-bright")) return "space-bright";
+  if (classList?.contains("shell-theme-space-black")) return "space-black";
+  if (classList?.contains("shell-theme-sealife")) return "sealife";
+  if (
+    slide?.querySelector?.(
+      ".title-card, .section-card, .outer-title, .cols-3, .task-grid, .timeline-container, .pct-item, .image-layout",
+    )
+  ) {
+    return "sealife";
+  }
   return "";
 }
 
@@ -579,54 +585,54 @@ function getSpaceBlackTextBudget(root) {
   if (!slide) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 72, maxSentences: 1 },
+      detail: { maxChars: 72, maxSentences: 1, maxWords: 12 },
     };
   }
   if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 40, maxSentences: 1 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
     };
   }
   if (slide.querySelector(".table-like")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 56, maxSentences: 1 },
+      detail: { maxChars: 56, maxSentences: 1, maxWords: 10 },
     };
   }
   if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 62, maxSentences: 1 },
+      detail: { maxChars: 62, maxSentences: 1, maxWords: 11 },
     };
   }
   if (slide.querySelector(".timeline-layout")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 44, maxSentences: 1 },
+      detail: { maxChars: 44, maxSentences: 1, maxWords: 9 },
     };
   }
   if (slide.querySelector(".styled-bullets")) {
     return {
       headline: { maxWords: 4, maxChars: 22 },
-      detail: { maxChars: 60, maxSentences: 1 },
+      detail: { maxChars: 60, maxSentences: 1, maxWords: 11 },
     };
   }
   if (slide.querySelector(".tiled-content > .tile")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 64, maxSentences: 1 },
+      detail: { maxChars: 64, maxSentences: 1, maxWords: 10 },
     };
   }
   if (slide.querySelector(".two-column")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 60, maxSentences: 1 },
+      detail: { maxChars: 60, maxSentences: 1, maxWords: 10 },
     };
   }
   return {
     headline: { maxWords: 4, maxChars: 26 },
-    detail: { maxChars: 68, maxSentences: 1 },
+    detail: { maxChars: 68, maxSentences: 1, maxWords: 12 },
   };
 }
 
@@ -639,48 +645,54 @@ function getSealifeTextBudget(root) {
   if (!slide) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 70, maxSentences: 1 },
+      detail: { maxChars: 62, maxSentences: 1, maxWords: 11 },
+    };
+  }
+  if (slide.querySelector(".cols-3")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".task-grid")) {
     return {
-      headline: { maxWords: 4, maxChars: 22 },
-      detail: { maxChars: 52, maxSentences: 1 },
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".table-like")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 58, maxSentences: 1 },
+      detail: { maxChars: 50, maxSentences: 1, maxWords: 9 },
     };
   }
   if (slide.querySelector(".timeline-container")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 46, maxSentences: 1 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".pct-item")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 48, maxSentences: 1 },
+      detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
     };
   }
   if (slide.querySelector(".image-layout")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 64, maxSentences: 1 },
+      detail: { maxChars: 58, maxSentences: 1, maxWords: 10 },
     };
   }
   if (slide.querySelector(".title-card, .section-card")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 56, maxSentences: 1 },
+      detail: { maxChars: 62, maxSentences: 1, maxWords: 11 },
     };
   }
   return {
     headline: { maxWords: 4, maxChars: 24 },
-    detail: { maxChars: 66, maxSentences: 1 },
+    detail: { maxChars: 58, maxSentences: 1, maxWords: 10 },
   };
 }
 
@@ -2069,13 +2081,29 @@ function injectShellPreviewFit(doc) {
     }
     body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li {
-      font-size: 21px !important;
-      line-height: 1.45 !important;
+      font-size: 24px !important;
+      line-height: 1.5 !important;
       font-weight: 500 !important;
       text-align: left !important;
-      margin-bottom: 8px !important;
+      margin-bottom: 14px !important;
       overflow-wrap: break-word !important;
       word-break: normal !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column ul[data-shell="bullets"],
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .bullet-list ul[data-shell="bullets"] {
+      gap: 6px !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column,
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column.align-start {
+      align-items: center !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column > :has(.image-wrapper) {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column .image-wrapper {
+      margin: 0 auto !important;
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area:has(> .tiled-content) {
       flex: 1 1 auto !important;
@@ -2673,7 +2701,9 @@ function fillContentSlots(root, title, bullets, options = {}) {
   const slideRoot = getRootSlideElement(root);
   const themeKey = resolveSlideShellThemeKey(slideRoot || root, { forceSpaceBright: options.forceSpaceBright });
   const isComic = themeKey === "comic";
+  const isSealife = themeKey === "sealife";
   const isSpaceBright = themeKey === "space-bright";
+  const isSpaceBlack = themeKey === "space-black";
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
   const renderTitle =
     isComic && themeTextBudget
@@ -2716,15 +2746,24 @@ function fillContentSlots(root, title, bullets, options = {}) {
         return 0;
       }
     })();
+    const spaceBlackDefaultCount = (() => {
+      if (!isSpaceBlack) return 3;
+      const slide = getRootSlideElement(root);
+      if (slide?.querySelector(".two-column, .bullet-list")) return Math.min(5, Math.max(5, bullets.length || 5));
+      if (slide?.querySelector(".styled-bullets")) return Math.min(5, Math.max(4, bullets.length || 4));
+      return Math.min(5, Math.max(4, bullets.length || 4));
+    })();
     const compactCount = isComic
       ? resolveComicBulletCount(slideRoot || root, ul, desiredCount, templateItemCount, bullets.length)
       : desiredCount > 0
         ? desiredCount
-        : templateItemCount > 0
-          ? templateItemCount
-          : Math.min(3, Math.max(1, bullets.length || 1));
+        : isSpaceBlack
+          ? spaceBlackDefaultCount
+          : templateItemCount > 0
+            ? templateItemCount
+            : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      isSpaceBright || isComic
+      isSpaceBright || isSpaceBlack || isComic
         ? buildSlideBulletItems(renderTitle, bullets, compactCount)
         : desiredCount > 0
           ? buildSlideBulletItems(renderTitle, bullets, desiredCount)
@@ -2754,6 +2793,12 @@ function fillContentSlots(root, title, bullets, options = {}) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    if (isSealife && targets.length === 1 && !isHeadlineShellTarget(targets[0]) && themeTextBudget) {
+      const pair = buildSlideTextPair(bullets[0] || renderTitle);
+      const detail = capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, themeTextBudget.detail));
+      setShellTextContent(targets[0], detail);
+      return;
+    }
     const pairCount = getStructuredShellTextPairCount(targets);
     if (pairCount >= 2) {
       const textPairs = compactPairs(buildBalancedSlideTextPairs(renderTitle, bullets, pairCount));
@@ -2820,6 +2865,68 @@ function fillContentSlots(root, title, bullets, options = {}) {
 }
 
 /**
+ * Hard word-cap post-pass for space-black theme.
+ * Runs after fillContentSlots to ensure no text node in content areas
+ * exceeds layout-specific word limits, regardless of fill path taken.
+ * @param {Element} slideRoot
+ */
+function enforceSpaceBlackWordCap(slideRoot) {
+  /** @param {string} text @param {number} maxWords @returns {string} */
+  const capWords = (text, maxWords) => {
+    const trimmed = String(text || "").replace(/\s+/g, " ").trim();
+    const words = trimmed.split(" ").filter(Boolean);
+    if (words.length <= maxWords) return trimmed;
+    return words.slice(0, maxWords).join(" ") + "...";
+  };
+  /** @param {Element} node @param {number} maxWords */
+  const capElement = (node, maxWords) => {
+    const current = node.textContent || "";
+    const capped = capWords(current, maxWords);
+    if (capped !== current.replace(/\s+/g, " ").trim()) {
+      node.textContent = capped;
+    }
+  };
+
+  const hasTiled = !!slideRoot.querySelector(".tiled-content > .tile");
+  const hasTable = !!slideRoot.querySelector(".table-like");
+  const hasGrid = !!slideRoot.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile");
+  const hasTimeline = !!slideRoot.querySelector(".timeline-layout");
+  const hasTwoCol = !!slideRoot.querySelector(".two-column");
+
+  // Bullets (li)
+  const bulletMaxWords = hasTwoCol ? 14 : hasTable ? 12 : hasTiled ? 9 : hasGrid ? 13 : 13;
+  slideRoot.querySelectorAll("ul[data-shell='bullets'] li").forEach((li) => capElement(li, bulletMaxWords));
+
+  // Table-like cells
+  if (hasTable) {
+    slideRoot.querySelectorAll(".label-pill").forEach((el) => capElement(el, 5));
+    slideRoot.querySelectorAll(".row-text").forEach((el) => capElement(el, 14));
+  }
+
+  // Tile / small-tile detail paragraphs
+  if (hasTiled) {
+    slideRoot.querySelectorAll(".tiled-content .tile p, .tiled-content .tile h3").forEach((el) => {
+      const isHeading = el.tagName === "H3";
+      capElement(el, isHeading ? 5 : 10);
+    });
+  }
+  if (hasGrid) {
+    slideRoot.querySelectorAll(".small-tile p, .small-tile li").forEach((el) => capElement(el, 12));
+    slideRoot.querySelectorAll(".small-tile h3").forEach((el) => capElement(el, 5));
+  }
+
+  // Styled-bullets detail
+  slideRoot.querySelectorAll(".styled-bullets li p").forEach((el) => capElement(el, 12));
+
+  // data-shell-text-target nodes not covered above
+  const contentSelectors = ".tile h3, .tile p, .small-tile h3, .small-tile p, .label-pill, .row-text, .timeline-item h3, .timeline-item p";
+  slideRoot.querySelectorAll(`[data-shell-text-target]:not(${contentSelectors})`).forEach((el) => {
+    const isHeading = /H[1-4]|STRONG|TH/.test(el.tagName);
+    capElement(el, isHeading ? 5 : 12);
+  });
+}
+
+/**
  * Builds full HTML for iframe srcdoc: clones `layout-content` per slide.
  * @param {string} shellHtml raw shell file
  * @param {{ title?: string, bullets?: string[] }[]} slides
@@ -2857,6 +2964,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   const endingTemplate = getShellEndingTemplate(doc);
   const variantTemplates = getShellVariantTemplates(doc);
   const isSpaceBrightTheme = !!doc.body?.classList?.contains("shell-theme-space-bright");
+  const isSpaceBlackTheme = !!doc.body?.classList?.contains("shell-theme-space-black");
 
   if (!master || (!coverTemplate && !variantTemplates.length)) {
     injectShellPreviewFit(doc);
@@ -2904,6 +3012,9 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
         String(s?.title || ""),
         Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
       );
+    }
+    if (isSpaceBlackTheme && first instanceof Element) {
+      enforceSpaceBlackWordCap(first);
     }
   });
 

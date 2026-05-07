@@ -1,6 +1,6 @@
 /**
  * Main Hub card grid for empty chat — mirrors `frontend/main_hub.html` structure & SVGs.
- * @param {(flow: "slide"|"quiz"|"flashcard") => void} onPick
+ * @param {(flow: "fullset"|"slide"|"quiz"|"flashcard") => void} onPick
  */
 export function createStartupHubElement(onPick) {
   const handlePick = typeof onPick === "function" ? onPick : null;
@@ -27,6 +27,39 @@ export function createStartupHubElement(onPick) {
       </div>
     </div>
     <div class="cards-row">
+      <button type="button" class="card" data-flow="fullset" aria-label="Tạo Full Set">
+        <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="${svgIdPrefix}-forest-grad-1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a237e" />
+              <stop offset="100%" stop-color="#1b5e20" />
+            </linearGradient>
+          </defs>
+          <rect width="200" height="116" fill="url(#${svgIdPrefix}-forest-grad-1)" />
+          <circle cx="155" cy="30" r="18" fill="#fff9c4" opacity="0.9" />
+          <circle cx="163" cy="25" r="13" fill="#1a237e" />
+          <polygon points="0,116 20,70 40,116" fill="#0d3b0d" />
+          <polygon points="25,116 50,50 75,116" fill="#1b5e20" />
+          <polygon points="60,116 80,62 100,116" fill="#0d3b0d" />
+          <polygon points="140,116 160,55 180,116" fill="#0d3b0d" />
+          <polygon points="165,116 185,48 200,116" fill="#1b5e20" />
+          <circle cx="40" cy="20" r="1.5" fill="#fff" opacity="0.8" />
+          <circle cx="80" cy="15" r="1.5" fill="#fff" opacity="0.7" />
+          <circle cx="120" cy="22" r="1" fill="#fff" opacity="0.9" />
+          <circle cx="60" cy="35" r="1" fill="#fff" opacity="0.6" />
+          <path d="M98 55 L100 47 L102 55 L110 57 L102 59 L100 67 L98 59 L90 57 Z" fill="#fff9c4" opacity="0.9" />
+        </svg>
+        <div class="card-body">
+          <div class="card-title">Tạo Full Set</div>
+          <div class="card-desc">Tạo bộ 3 slide, quiz, flashcard</div>
+          <div class="badge badge-recommend">
+            <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+              <polygon points="6,1 7.5,4.5 11,4.8 8.5,7.2 9.2,11 6,9 2.8,11 3.5,7.2 1,4.8 4.5,4.5" fill="#2e7d32" />
+            </svg>
+            KHUYẾN KHÍCH
+          </div>
+        </div>
+      </button>
       <button type="button" class="card" data-flow="slide" aria-label="Tạo slide">
         <svg class="card-img" viewBox="0 0 200 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
@@ -153,7 +186,7 @@ export function createStartupHubElement(onPick) {
     </div>
   </div>`;
 
-  ["slide", "quiz", "flashcard"].forEach((flow) => {
+  ["fullset", "slide", "quiz", "flashcard"].forEach((flow) => {
     const card = wrap.querySelector(`.card[data-flow="${flow}"]`);
     if (card?.parentElement) {
       card.parentElement.appendChild(card);
@@ -161,10 +194,10 @@ export function createStartupHubElement(onPick) {
   });
 
   wrap.querySelectorAll(".card[data-flow]").forEach((btn) => {
-    btn.addEventListener("click", () => {
+      btn.addEventListener("click", () => {
       const flow = /** @type {string} */ (btn.getAttribute("data-flow") || "");
       if (!handlePick) return;
-      if (flow === "quiz" || flow === "slide" || flow === "flashcard") {
+      if (flow === "fullset" || flow === "quiz" || flow === "slide" || flow === "flashcard") {
         handlePick(flow);
       }
     });
