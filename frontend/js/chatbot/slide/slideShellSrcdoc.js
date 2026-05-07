@@ -850,6 +850,128 @@ function setShellTextContent(node, value) {
 }
 
 /**
+ * @param {ParentNode} root
+ * @returns {{ maxChars: number, maxSentences: number }}
+ */
+function getSpaceBrightExampleBoxBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return { maxChars: 118, maxSentences: 1 };
+  }
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return { maxChars: 86, maxSentences: 1 };
+  }
+  if (slide.querySelector(".table-like")) {
+    return { maxChars: 96, maxSentences: 1 };
+  }
+  if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
+    return { maxChars: 118, maxSentences: 1 };
+  }
+  return { maxChars: 108, maxSentences: 1 };
+}
+
+/**
+ * @param {string} title
+ * @param {string} fallbackLabel
+ * @returns {string}
+ */
+function resolveSpaceBrightExampleBoxLabel(title, fallbackLabel = "") {
+  const rawTitle = String(title || "").trim();
+  if (/chiến thuật|cloze|đọc hiểu|reading/i.test(rawTitle)) return "Chiến thuật";
+  if (/luyện tập|practice/i.test(rawTitle)) return "Gợi ý";
+  if (/trọng âm|stress|phát âm|thì|tense/i.test(rawTitle)) return "Mẹo";
+  if (/tiền tố|prefix|hậu tố|suffix|word form/i.test(rawTitle)) return "Ghi nhớ";
+  return String(fallbackLabel || "").trim() || "Ghi nhớ";
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @returns {string}
+ */
+function deriveSpaceBrightExampleBoxHint(title, bullets) {
+  const rawTitle = String(title || "").trim();
+  const joined = collectUniqueSlideTextValues(bullets).join(" ").toLowerCase();
+  const normalized = `${rawTitle} ${joined}`.toLowerCase();
+
+  if (/tiền tố|prefix/.test(normalized)) {
+    return "xác định nghĩa gốc trước, rồi mới chọn tiền tố phủ định, lặp lại hay mức độ cho phù hợp.";
+  }
+  if (/hậu tố|suffix|word form/.test(normalized)) {
+    return "nhìn vị trí trong câu trước để đoán danh từ, tính từ, trạng từ hay động từ rồi mới gắn hậu tố.";
+  }
+  if (/trọng âm|stress/.test(normalized)) {
+    return "đọc nhanh cả bốn đáp án trong đầu để tìm từ có nhịp nhấn khác hẳn ba từ còn lại.";
+  }
+  if (/phát âm|pronunciation/.test(normalized)) {
+    return "ưu tiên nhìn âm cuối và chữ cái đứng trước để loại nhanh những đáp án phát âm lệch quy tắc.";
+  }
+  if (/cloze|điền|đọc hiểu|reading/.test(normalized)) {
+    return "đọc lướt toàn câu hoặc toàn đoạn trước, rồi mới khóa đáp án bằng cả ngữ pháp lẫn ngữ nghĩa.";
+  }
+  if (/thì|tense/.test(normalized)) {
+    return "xem dấu hiệu thời gian trước, rồi đối chiếu xem hành động đã hoàn tất, đang diễn ra hay lặp lại.";
+  }
+  if (/lỗi sai|error/.test(normalized)) {
+    return "kiểm tra lần lượt chủ vị, thì, từ loại và liên từ để loại đáp án sai theo từng lớp.";
+  }
+  return "";
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} usedCount
+ * @returns {boolean}
+ */
+function fillSpaceBrightExampleBox(root, title, bullets, usedCount = 0) {
+  if (!isSpaceBrightSlideRoot(root)) return false;
+  const paragraph = root.querySelector(".example-box p");
+  if (!(paragraph instanceof HTMLElement)) return false;
+
+  const originalText = String(paragraph.getAttribute("data-shell-original-text") || "").replace(/\s+/g, " ").trim();
+  const originalMatch = originalText.match(/^\s*([^:：]{1,24})[:：]\s*(.+)$/u);
+  const fallbackLabel = originalMatch ? originalMatch[1].trim() : "";
+  const fallbackDetail = originalMatch ? originalMatch[2].trim() : originalText;
+  const label = resolveSpaceBrightExampleBoxLabel(title, fallbackLabel);
+
+  const fragments = collectUniqueSlideTextValues(
+    bullets.flatMap((bullet) => {
+      const parts = splitSlideBulletFragments(bullet);
+      return parts.length ? parts : [bullet];
+    }),
+  );
+  const safeUsedCount = Math.max(0, Math.floor(Number(usedCount) || 0));
+  const leftover = fragments.slice(safeUsedCount);
+  const preferred = leftover.length ? leftover : fragments;
+  const detailBudget = getSpaceBrightExampleBoxBudget(root);
+  const synthesized =
+    preferred.slice(0, 2).join("; ") ||
+    deriveSpaceBrightExampleBoxHint(title, bullets) ||
+    fallbackDetail ||
+    title;
+  const compactDetail = capitalizeSlideLead(
+    compactSlideTextValue(
+      synthesized || deriveSpaceBrightExampleBoxHint(title, bullets) || fallbackDetail || title,
+      detailBudget,
+    ),
+  );
+
+  paragraph.replaceChildren();
+  if (label) {
+    const lead = paragraph.ownerDocument.createElement("span");
+    lead.className = "formula";
+    lead.textContent = `${label}:`;
+    paragraph.appendChild(lead);
+    paragraph.appendChild(paragraph.ownerDocument.createTextNode(` ${compactDetail}`));
+  } else {
+    paragraph.textContent = compactDetail;
+  }
+  return true;
+}
+
+/**
  * @param {Element} root
  * @param {string[]} bullets
  * @returns {boolean}
@@ -1549,10 +1671,6 @@ function injectShellPreviewFit(doc) {
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer > .shell-panel-fit-outer > .shell-panel-fit-scaled {
       transform-origin: top center !important;
-    }
-    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .example-box:has(> p:empty),
-    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .example-box:has(> [data-shell-text-target]:empty) {
-      display: none !important;
     }
     body.shell-theme-friendly #presentation-area,
     body.shell-theme-friendly #slides-master-container {
@@ -2315,6 +2433,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
           setShellTextContent(detailNode, pick.detail || pick.headline);
         }
       });
+      fillSpaceBrightExampleBox(root, title, bullets, pairCount);
       return;
     }
 
@@ -2346,6 +2465,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
       poolIndex += 1;
       pendingPick = null;
     });
+    fillSpaceBrightExampleBox(root, title, bullets, targets.length);
     return;
   }
   if (isSpaceBright && shouldSkipSpaceBrightFallbackBody(root)) {
