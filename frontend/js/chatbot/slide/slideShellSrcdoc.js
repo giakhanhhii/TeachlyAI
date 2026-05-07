@@ -423,15 +423,30 @@ function getRootSlideElement(root) {
 
 /**
  * @param {ParentNode} root
- * @returns {boolean}
+ * @param {{ forceSpaceBright?: boolean }} [opts]
+ * @returns {"space-bright" | "space-black" | "sealife" | ""}
  */
-function isSpaceBrightSlideRoot(root) {
+function resolveSlideShellThemeKey(root, opts = {}) {
+  if (opts.forceSpaceBright) return "space-bright";
   const slide = getRootSlideElement(root);
   const doc =
     slide?.ownerDocument ||
     (root && "ownerDocument" in root ? root.ownerDocument : null) ||
     (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
-  return !!doc?.body?.classList?.contains("shell-theme-space-bright");
+  const classList = doc?.body?.classList;
+  if (!classList) return "";
+  if (classList.contains("shell-theme-space-bright")) return "space-bright";
+  if (classList.contains("shell-theme-space-black")) return "space-black";
+  if (classList.contains("shell-theme-sealife")) return "sealife";
+  return "";
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {boolean}
+ */
+function isSpaceBrightSlideRoot(root) {
+  return resolveSlideShellThemeKey(root) === "space-bright";
 }
 
 /**
@@ -539,6 +554,132 @@ function getSpaceBrightTextBudget(root) {
       headline: { maxWords: 6, maxChars: 42 },
       detail: { maxChars: 96, maxSentences: 1 },
   };
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } }}
+ */
+function getSpaceBlackTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 72, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 40, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".table-like")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 56, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 62, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".timeline-layout")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 44, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".styled-bullets")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 60, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".tiled-content > .tile")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 64, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".two-column")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 60, maxSentences: 1 },
+    };
+  }
+  return {
+    headline: { maxWords: 4, maxChars: 26 },
+    detail: { maxChars: 68, maxSentences: 1 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } }}
+ */
+function getSealifeTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 70, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".task-grid")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 52, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".table-like")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 58, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".timeline-container")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 46, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".pct-item")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 48, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".image-layout")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 64, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".title-card, .section-card")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 56, maxSentences: 1 },
+    };
+  }
+  return {
+    headline: { maxWords: 4, maxChars: 24 },
+    detail: { maxChars: 66, maxSentences: 1 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {"space-bright" | "space-black" | "sealife" | ""} themeKey
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } } | null}
+ */
+function getSlideShellThemeTextBudget(root, themeKey) {
+  if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
+  if (themeKey === "space-black") return getSpaceBlackTextBudget(root);
+  if (themeKey === "sealife") return getSealifeTextBudget(root);
+  return null;
 }
 
 /**
@@ -929,6 +1070,7 @@ function fillSpaceBrightExampleBox(root, title, bullets, usedCount = 0) {
   if (!isSpaceBrightSlideRoot(root)) return false;
   const paragraph = root.querySelector(".example-box p");
   if (!(paragraph instanceof HTMLElement)) return false;
+  if (String(paragraph.textContent || "").replace(/\s+/g, " ").trim()) return true;
 
   const originalText = String(paragraph.getAttribute("data-shell-original-text") || "").replace(/\s+/g, " ").trim();
   const originalMatch = originalText.match(/^\s*([^:：]{1,24})[:：]\s*(.+)$/u);
@@ -972,6 +1114,35 @@ function fillSpaceBrightExampleBox(root, title, bullets, usedCount = 0) {
     paragraph.textContent = compactDetail;
   }
   return true;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {number}
+ */
+function estimateSpaceBrightPrimarySlotUsage(root) {
+  const targets = getSpaceBrightPrimaryTextTargets(
+    root,
+    Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+      (a, b) =>
+        Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
+    ),
+  );
+  if (!targets.length) return 0;
+  const pairCount = getStructuredShellTextPairCount(targets);
+  return pairCount >= 2 ? pairCount : targets.length;
+}
+
+/**
+ * @param {Element} slide
+ * @param {string} title
+ * @param {string[]} bullets
+ */
+function backfillSpaceBrightEmptyExampleBoxes(slide, title, bullets) {
+  if (!(slide instanceof Element)) return;
+  if (!slide.querySelector(".example-box p")) return;
+  const usedCount = estimateSpaceBrightPrimarySlotUsage(slide);
+  fillSpaceBrightExampleBox(slide, title, bullets, usedCount);
 }
 
 /**
@@ -1449,10 +1620,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
       padding: 0 28px !important;
       margin: 54px auto 0 !important;
@@ -1465,10 +1636,10 @@ function injectShellPreviewFit(doc) {
       gap: 20px !important;
       text-align: center !important;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
@@ -1755,6 +1926,25 @@ function injectShellPreviewFit(doc) {
       padding-top: 10px !important;
       padding-bottom: 10px !important;
       list-style: none !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"],
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
+      width: min(900px, 100%) !important;
+      max-width: 900px !important;
+      margin: 18px auto 0 !important;
+      padding-left: 28px !important;
+      align-self: center !important;
+      text-align: left !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li {
+      font-size: 21px !important;
+      line-height: 1.45 !important;
+      font-weight: 500 !important;
+      text-align: left !important;
+      margin-bottom: 8px !important;
+      overflow-wrap: break-word !important;
+      word-break: normal !important;
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area:has(> .tiled-content) {
       flex: 1 1 auto !important;
@@ -2354,19 +2544,20 @@ function fillContentSlots(root, title, bullets, options = {}) {
     slideRoot?.ownerDocument ||
     (root && "ownerDocument" in root ? root.ownerDocument : null) ||
     (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
-  const isSpaceBright = !!options.forceSpaceBright || !!slideDoc?.body?.classList?.contains("shell-theme-space-bright");
-  const spaceBrightBudget = isSpaceBright ? getSpaceBrightTextBudget(slideRoot || root) : null;
+  const themeKey = resolveSlideShellThemeKey(slideRoot || root, { forceSpaceBright: options.forceSpaceBright });
+  const isSpaceBright = themeKey === "space-bright";
+  const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
   const compactPairs = (pairs) =>
-    !isSpaceBright || !spaceBrightBudget
+    !themeTextBudget
       ? pairs
       : pairs.map((pair) => ({
-          headline: capitalizeSlideLead(compactSlideTextValue(pair.headline, spaceBrightBudget.headline)),
-          detail: capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, spaceBrightBudget.detail)),
+          headline: capitalizeSlideLead(compactSlideTextValue(pair.headline, themeTextBudget.headline)),
+          detail: capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, themeTextBudget.detail)),
         }));
   const compactItems = (items) =>
-    !isSpaceBright || !spaceBrightBudget
+    !themeTextBudget
       ? items
-      : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, spaceBrightBudget.detail)));
+      : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, themeTextBudget.detail)));
 
   const titleEl = root.querySelector("[data-shell=\"title\"]");
   if (titleEl) titleEl.textContent = title;
@@ -2567,6 +2758,13 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     );
     if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
+    if (isSpaceBrightTheme && first instanceof Element) {
+      backfillSpaceBrightEmptyExampleBoxes(
+        first,
+        String(s?.title || ""),
+        Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
+      );
+    }
   });
 
   const navMode = meta?.slideNavMode === "scroll" ? "scroll" : "active";
