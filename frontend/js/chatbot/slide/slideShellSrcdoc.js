@@ -440,7 +440,14 @@ function resolveSlideShellThemeKey(root, opts = {}) {
     (root && "ownerDocument" in root ? root.ownerDocument : null) ||
     (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
   const classList = doc?.body?.classList;
-  if (classList?.contains("shell-theme-comic") || slide?.querySelector?.(".comic-panel, .comic-list, .comic-title")) return "comic";
+  if (
+    classList?.contains("shell-theme-comic") ||
+    slide?.querySelector?.(
+      ".comic-panel, .comic-list, .comic-title, .comic-grid-2, .comic-grid-3, .strategy-strip, .check-grid, .timeline",
+    )
+  ) {
+    return "comic";
+  }
   if (!classList) return "";
   if (classList.contains("shell-theme-space-bright")) return "space-bright";
   if (classList.contains("shell-theme-space-black")) return "space-black";
@@ -466,19 +473,19 @@ function compactSlideTextValue(value, opts = {}) {
   if (!raw) return "";
   const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
   const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
+  let next = raw;
   if (maxWords) {
     const words = raw.split(/\s+/).filter(Boolean);
     if (words.length > maxWords) {
-      return `${words.slice(0, maxWords).join(" ")}...`;
+      next = `${words.slice(0, maxWords).join(" ")}...`;
     }
   }
-  const sentences = raw
+  const sentences = next
     .split(/(?<=[.!?])\s+/u)
     .map((part) => part.trim())
     .filter(Boolean);
   const maxSentencesRaw = Math.floor(Number(opts.maxSentences) || 0);
   const maxSentences = maxSentencesRaw > 0 ? maxSentencesRaw : 0;
-  let next = raw;
   if (maxSentences && sentences.length > maxSentences) {
     next = sentences.slice(0, maxSentences).join(" ");
   }
@@ -686,7 +693,31 @@ function getComicTextBudget(root) {
   if (!slide) {
     return {
       headline: { maxWords: 6, maxChars: 42 },
-      detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
+      detail: { maxChars: 52, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".two-column .comic-list")) {
+    return {
+      headline: { maxWords: 5, maxChars: 30 },
+      detail: { maxChars: 48, maxSentences: 1, maxWords: 9 },
+    };
+  }
+  if (slide.querySelector(".comic-grid-2 .comic-list")) {
+    return {
+      headline: { maxWords: 4, maxChars: 26 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
+    };
+  }
+  if (slide.querySelector(".comic-list") && slide.querySelector("img, .image-wrapper")) {
+    return {
+      headline: { maxWords: 5, maxChars: 32 },
+      detail: { maxChars: 52, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".comic-list")) {
+    return {
+      headline: { maxWords: 5, maxChars: 34 },
+      detail: { maxChars: 54, maxSentences: 1, maxWords: 10 },
     };
   }
   if (slide.querySelector(".table-layout")) {
@@ -701,7 +732,13 @@ function getComicTextBudget(root) {
       detail: { maxChars: 38, maxSentences: 1, maxWords: 8 },
     };
   }
-  if (slide.querySelector(".strategy-strip, .comic-grid-3, .check-grid")) {
+  if (slide.querySelector(".strategy-strip")) {
+    return {
+      headline: { maxWords: 2, maxChars: 14 },
+      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
+    };
+  }
+  if (slide.querySelector(".comic-grid-3, .check-grid")) {
     return {
       headline: { maxWords: 4, maxChars: 26 },
       detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
@@ -716,12 +753,12 @@ function getComicTextBudget(root) {
   if (slide.querySelector(".comic-grid-2, .two-column, .compact-card-row")) {
     return {
       headline: { maxWords: 5, maxChars: 32 },
-      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
+      detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
     };
   }
   return {
     headline: { maxWords: 6, maxChars: 42 },
-    detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
+    detail: { maxChars: 52, maxSentences: 1, maxWords: 10 },
   };
 }
 
@@ -789,11 +826,16 @@ function compactStructuredSlideColumns(bullets, budget) {
  */
 function resolveComicBulletCount(root, ul, desiredCount, templateItemCount, bulletCount) {
   const slide = root instanceof Element ? root : null;
-  if (desiredCount > 0) return Math.min(desiredCount, 2);
+  const availableCount = Math.max(1, bulletCount || templateItemCount || desiredCount || 1);
+  const boundedCount = (fallback, max) => Math.min(max, Math.max(1, templateItemCount || fallback, availableCount));
+  if (desiredCount > 0) return Math.min(desiredCount, 4);
   if (slide?.querySelector(".comic-title") && !slide.querySelector(".slide-title")) return 1;
   if (ul.closest(".comic-grid-3, .strategy-strip, .check-grid, .timeline")) return 1;
-  if (templateItemCount > 0) return Math.min(templateItemCount, 2);
-  return Math.min(2, Math.max(1, bulletCount || 1));
+  if (ul.closest(".two-column, .comic-grid-2")) return boundedCount(4, 4);
+  if (slide?.querySelector("img, .image-wrapper")) return boundedCount(3, 3);
+  if (ul.closest(".comic-panel")) return boundedCount(3, 4);
+  if (templateItemCount > 0) return boundedCount(templateItemCount, 3);
+  return Math.min(3, availableCount);
 }
 
 /**

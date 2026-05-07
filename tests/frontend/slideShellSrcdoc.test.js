@@ -58,6 +58,42 @@ const COMIC_LIST_SHELL = `
 </html>
 `;
 
+const COMIC_STRATEGY_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Comic Strategy Shell 2026</title>
+  </head>
+  <body class="shell-theme-comic">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="slide-title">Placeholder</h2>
+        <div class="content-area">
+          <div class="strategy-strip">
+            <div class="strategy-step">
+              <span class="badge">1</span>
+              <h3>Placeholder A</h3>
+              <p>Placeholder detail A</p>
+            </div>
+            <div class="strategy-step">
+              <span class="badge">2</span>
+              <h3>Placeholder B</h3>
+              <p>Placeholder detail B</p>
+            </div>
+            <div class="strategy-step">
+              <span class="badge">3</span>
+              <h3>Placeholder C</h3>
+              <p>Placeholder detail C</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 describe("slideShellSrcdoc.js", () => {
   it("balances long knowledge text across paired authored boxes", () => {
     const srcdoc = buildSlideDeckSrcdoc(
@@ -113,9 +149,41 @@ describe("slideShellSrcdoc.js", () => {
     );
 
     expect(title.length).toBeLessThanOrEqual(45);
-    expect(bullets.length).toBeLessThanOrEqual(2);
+    expect(bullets.length).toBeLessThanOrEqual(4);
     bullets.forEach((item) => {
-      expect(item.length).toBeLessThanOrEqual(45);
+      expect(item.length).toBeLessThanOrEqual(56);
+    });
+  });
+
+  it("keeps comic strategy panels extra short to protect three-column layouts", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      COMIC_STRATEGY_SHELL,
+      [
+        {
+          title: "Câu điều kiện hỗn hợp - công thức và cách dùng trong bài tập",
+          bullets: [
+            "Khái niệm: kết nối nguyên nhân quá khứ với kết quả hiện tại; cần xác định rõ hai mốc thời gian.",
+            "Công thức: If + past perfect, would + V now. Bước 1: nhìn mệnh đề if. Bước 2: xác định kết quả ở hiện tại.",
+            "Lỗi hay gặp: dùng would have cho kết quả hiện tại hoặc không nhận ra mixed conditional.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const headings = Array.from(doc.querySelectorAll(".strategy-step h3")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
+    const details = Array.from(doc.querySelectorAll(".strategy-step p")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
+
+    headings.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(14);
+    });
+    details.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(36);
     });
   });
 });
