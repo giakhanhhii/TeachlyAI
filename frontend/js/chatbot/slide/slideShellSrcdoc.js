@@ -1682,6 +1682,36 @@ function injectShellPanelFitScript(doc) {
     applyPanelLayoutToElement(cs, outer, display);
     applyPanelLayoutToElement(cs, scaled, display);
   }
+  function measurePanelNaturalSize(scaled) {
+    var baseRect = scaled && scaled.getBoundingClientRect ? scaled.getBoundingClientRect() : null;
+    var maxRight = baseRect ? baseRect.left : 0;
+    var maxBottom = baseRect ? baseRect.top : 0;
+    Array.prototype.forEach.call(scaled.querySelectorAll("*"), function (node) {
+      if (!node || node.nodeType !== 1) return;
+      var cs = window.getComputedStyle(node);
+      if (cs.display === "none" || cs.visibility === "hidden") return;
+      var rect = node.getBoundingClientRect();
+      if (!rect || (!rect.width && !rect.height)) return;
+      maxRight = Math.max(maxRight, rect.right);
+      maxBottom = Math.max(maxBottom, rect.bottom);
+    });
+    return {
+      width: Math.max(
+        scaled.scrollWidth || 0,
+        scaled.offsetWidth || 0,
+        scaled.clientWidth || 0,
+        baseRect ? Math.ceil(maxRight - baseRect.left) : 0,
+        1
+      ),
+      height: Math.max(
+        scaled.scrollHeight || 0,
+        scaled.offsetHeight || 0,
+        scaled.clientHeight || 0,
+        baseRect ? Math.ceil(maxBottom - baseRect.top) : 0,
+        1
+      ),
+    };
+  }
   function wrapPanel(panel) {
     if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !isAuthoredAutoFitPanel(panel)) return;
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
@@ -1718,8 +1748,9 @@ function injectShellPanelFitScript(doc) {
     var availW = Math.max(0, Math.floor((panelRect && panelRect.width) || panel.clientWidth || panel.offsetWidth || 0));
     var availH = Math.max(0, Math.floor((panelRect && panelRect.height) || panel.clientHeight || panel.offsetHeight || 0));
     if (!availW || !availH) return;
-    var naturalW = Math.max(scaled.scrollWidth || 0, scaled.offsetWidth || 0, 1);
-    var naturalH = Math.max(scaled.scrollHeight || 0, scaled.offsetHeight || 0, 1);
+    var measured = measurePanelNaturalSize(scaled);
+    var naturalW = Math.max(measured.width || 0, 1);
+    var naturalH = Math.max(measured.height || 0, 1);
     if (!naturalW || !naturalH) return;
     var scaleX = availW / naturalW;
     var scaleY = availH / naturalH;
