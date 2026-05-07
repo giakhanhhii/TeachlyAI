@@ -211,8 +211,14 @@ function collectShellTextTargets(sink, title) {
     ".text-column p",
     ".timeline-content p",
     ".timeline-content h4",
+    ".timeline-item h3",
+    ".timeline-item p",
     ".tile h3",
     ".tile p",
+    ".small-tile h3",
+    ".small-tile p",
+    ".label-pill",
+    ".row-text",
     ".mini-panel h3",
     ".mini-panel p",
     ".g-card h3",
@@ -394,6 +400,235 @@ function collectUniqueSlideTextValues(values) {
     unique.push(normalized);
   });
   return unique;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {Element | null}
+ */
+function getRootSlideElement(root) {
+  if (root instanceof Element) {
+    return root;
+  }
+  if (root && "querySelector" in root) {
+    const nestedSlide = root.querySelector(".shell-slide-instance, .slide-container, .slide");
+    if (nestedSlide instanceof Element) {
+      return nestedSlide;
+    }
+  }
+  return root && "firstElementChild" in root && root.firstElementChild instanceof Element
+    ? root.firstElementChild
+    : null;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {boolean}
+ */
+function isSpaceBrightSlideRoot(root) {
+  const slide = getRootSlideElement(root);
+  const doc =
+    slide?.ownerDocument ||
+    (root && "ownerDocument" in root ? root.ownerDocument : null) ||
+    (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
+  return !!doc?.body?.classList?.contains("shell-theme-space-bright");
+}
+
+/**
+ * @param {string} value
+ * @param {{ maxChars?: number, maxSentences?: number, maxWords?: number }} [opts]
+ * @returns {string}
+ */
+function compactSlideTextValue(value, opts = {}) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return "";
+  const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
+  const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
+  if (maxWords) {
+    const words = raw.split(/\s+/).filter(Boolean);
+    if (words.length > maxWords) {
+      return `${words.slice(0, maxWords).join(" ")}...`;
+    }
+  }
+  const sentences = raw
+    .split(/(?<=[.!?])\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const maxSentencesRaw = Math.floor(Number(opts.maxSentences) || 0);
+  const maxSentences = maxSentencesRaw > 0 ? maxSentencesRaw : 0;
+  let next = raw;
+  if (maxSentences && sentences.length > maxSentences) {
+    next = sentences.slice(0, maxSentences).join(" ");
+  }
+  const maxCharsRaw = Math.floor(Number(opts.maxChars) || 0);
+  const maxChars = maxCharsRaw > 0 ? maxCharsRaw : 0;
+  if (maxChars && next.length > maxChars) {
+    const trimmed = next.slice(0, maxChars).replace(/[,:;\s]+$/u, "").trim();
+    return `${trimmed}...`;
+  }
+  return next;
+}
+
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+function capitalizeSlideLead(value) {
+  const raw = String(value || "");
+  const match = raw.match(/\p{L}/u);
+  if (!match || match.index == null) return raw;
+  const idx = match.index;
+  return `${raw.slice(0, idx)}${raw.slice(idx, idx + 1).toLocaleUpperCase("vi-VN")}${raw.slice(idx + 1)}`;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } }}
+ */
+function getSpaceBrightTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 6, maxChars: 42 },
+      detail: { maxChars: 100, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".tiled-content > .tile")) {
+    return {
+      headline: { maxWords: 6, maxChars: 36 },
+      detail: { maxChars: 88, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-3 > .small-tile, .grid-2 > .small-tile")) {
+    return {
+      headline: { maxWords: 5, maxChars: 30 },
+      detail: { maxChars: 82, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".table-like")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 72, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".timeline-layout")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 54, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".quote-layout")) {
+    return {
+      headline: { maxWords: 6, maxChars: 34 },
+      detail: { maxChars: 110, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".two-column")) {
+    return {
+      headline: { maxWords: 6, maxChars: 38 },
+      detail: { maxChars: 84, maxSentences: 1 },
+    };
+  }
+  return {
+      headline: { maxWords: 6, maxChars: 42 },
+      detail: { maxChars: 96, maxSentences: 1 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {Array<{ headline: string, detail: string }>} pairs
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function compactSpaceBrightTextPairs(root, pairs) {
+  if (!isSpaceBrightSlideRoot(root)) return pairs;
+  const budget = getSpaceBrightTextBudget(root);
+  return pairs.map((pair) => ({
+    headline: compactSlideTextValue(pair.headline, budget.headline),
+    detail: compactSlideTextValue(pair.detail || pair.headline, budget.detail),
+  }));
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {string[]} items
+ * @returns {string[]}
+ */
+function compactSpaceBrightBulletItems(root, items) {
+  if (!isSpaceBrightSlideRoot(root)) return items;
+  const budget = getSpaceBrightTextBudget(root);
+  return items.map((item) => compactSlideTextValue(item, budget.detail));
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {Element[]} targets
+ * @returns {Element[]}
+ */
+function getSpaceBrightPrimaryTextTargets(root, targets) {
+  if (!targets.length) return targets;
+  const slide = getRootSlideElement(root);
+  if (!slide) return targets;
+
+  const keepWithin = (selector) => {
+    const picked = targets.filter((node) => node.closest(selector));
+    return picked.length ? picked : targets;
+  };
+
+  if (slide.querySelector(".table-like")) {
+    return keepWithin(".table-like");
+  }
+  if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
+    return keepWithin(".small-tile");
+  }
+  if (slide.querySelector(".tiled-content > .tile")) {
+    return keepWithin(".tile");
+  }
+  if (slide.querySelector(".timeline-layout")) {
+    return keepWithin(".timeline-layout");
+  }
+  if (slide.querySelector(".quote-layout")) {
+    return keepWithin(".quote-layout");
+  }
+  if (slide.querySelector(".styled-bullets")) {
+    return keepWithin(".styled-bullets");
+  }
+  if (slide.querySelector(".highlight-numbers-layout")) {
+    return keepWithin(".highlight-numbers-layout");
+  }
+  if (slide.querySelector(".two-column")) {
+    const bulletItems = targets.filter((node) => node.closest(".bullet-list"));
+    if (bulletItems.length) {
+      return bulletItems.slice(0, 3);
+    }
+    const withinColumn = targets.filter((node) => node.closest(".two-column"));
+    if (!withinColumn.length) return targets;
+    let headlineCount = 0;
+    let detailCount = 0;
+    const picked = withinColumn.filter((node) => {
+      if (isHeadlineShellTarget(node)) {
+        if (headlineCount >= 1) return false;
+        headlineCount += 1;
+        return true;
+      }
+      if (detailCount >= 2) return false;
+      detailCount += 1;
+      return true;
+    });
+    return picked.length ? picked : withinColumn.slice(0, 3);
+  }
+  return targets;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {boolean}
+ */
+function shouldSkipSpaceBrightFallbackBody(root) {
+  const slide = getRootSlideElement(root);
+  return !!slide?.querySelector(
+    ".table-like, .grid-2, .grid-3, .quote-layout, .timeline-layout, .two-column, .tiled-content, .highlight-numbers-layout, .styled-bullets",
+  );
 }
 
 /**
@@ -1379,7 +1614,9 @@ function injectShellPreviewFit(doc) {
       text-align: left !important;
       width: 100% !important;
       margin: 0 !important;
-      padding: 0 !important;
+      min-height: 76px !important;
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
       list-style: none !important;
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area:has(> .tiled-content) {
@@ -1758,6 +1995,14 @@ function injectShellPanelFitScript(doc) {
     var scaleX = availW / naturalW;
     var scaleY = availH / naturalH;
     var scale = Math.min(1, scaleX, scaleY);
+    if (
+      document.body &&
+      document.body.classList.contains("shell-theme-space-bright") &&
+      panel.matches('.shell-slide-instance[data-shell-authored-slide="1"] .content-area') &&
+      panel.querySelector('ul[data-shell="bullets"]')
+    ) {
+      scale = Math.max(scale, 0.92);
+    }
     if (!isFinite(scale) || scale <= 0) scale = 1;
     scaled.style.width = naturalW + "px";
     scaled.style.height = naturalH + "px";
@@ -1933,8 +2178,28 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
  * @param {ParentNode} root
  * @param {string} title
  * @param {string[]} bullets
+ * @param {{ forceSpaceBright?: boolean }} [options]
  */
-function fillContentSlots(root, title, bullets) {
+function fillContentSlots(root, title, bullets, options = {}) {
+  const slideRoot = getRootSlideElement(root);
+  const slideDoc =
+    slideRoot?.ownerDocument ||
+    (root && "ownerDocument" in root ? root.ownerDocument : null) ||
+    (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
+  const isSpaceBright = !!options.forceSpaceBright || !!slideDoc?.body?.classList?.contains("shell-theme-space-bright");
+  const spaceBrightBudget = isSpaceBright ? getSpaceBrightTextBudget(slideRoot || root) : null;
+  const compactPairs = (pairs) =>
+    !isSpaceBright || !spaceBrightBudget
+      ? pairs
+      : pairs.map((pair) => ({
+          headline: capitalizeSlideLead(compactSlideTextValue(pair.headline, spaceBrightBudget.headline)),
+          detail: capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, spaceBrightBudget.detail)),
+        }));
+  const compactItems = (items) =>
+    !isSpaceBright || !spaceBrightBudget
+      ? items
+      : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, spaceBrightBudget.detail)));
+
   const titleEl = root.querySelector("[data-shell=\"title\"]");
   if (titleEl) titleEl.textContent = title;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
@@ -1949,15 +2214,27 @@ function fillContentSlots(root, title, bullets) {
     }
     ul.replaceChildren();
     const desiredCount = Number(ul.getAttribute("data-shell-bullet-count") || 0);
+    const templateItemCount = (() => {
+      try {
+        const raw = ul.getAttribute("data-shell-original-items");
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.length : 0;
+      } catch (_) {
+        return 0;
+      }
+    })();
+    const compactCount = desiredCount > 0 ? desiredCount : templateItemCount > 0 ? templateItemCount : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      desiredCount > 0
-        ? buildSlideBulletItems(title, bullets, desiredCount)
-        : bullets.length
-          ? bullets.slice()
-          : title
-            ? [title]
-            : [];
-    items.forEach((b) => {
+      isSpaceBright
+        ? buildSlideBulletItems(title, bullets, compactCount)
+        : desiredCount > 0
+          ? buildSlideBulletItems(title, bullets, desiredCount)
+          : bullets.length
+            ? bullets.slice()
+            : title
+              ? [title]
+              : [];
+    compactItems(items).forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
       ul.appendChild(li);
@@ -1967,14 +2244,20 @@ function fillContentSlots(root, title, bullets) {
   if (fillStructuredTableColumns(root, bullets)) {
     return;
   }
-  const targets = Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+  const targets = isSpaceBright ? getSpaceBrightPrimaryTextTargets(
+    root,
+    Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+      (a, b) =>
+        Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
+    ),
+  ) : Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
     (a, b) =>
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
     const pairCount = getStructuredShellTextPairCount(targets);
     if (pairCount >= 2) {
-      const textPairs = buildBalancedSlideTextPairs(title, bullets, pairCount);
+      const textPairs = compactPairs(buildBalancedSlideTextPairs(title, bullets, pairCount));
       textPairs.forEach((pick, idx) => {
         const headlineNode = targets[idx * 2];
         const detailNode = targets[idx * 2 + 1];
@@ -1988,7 +2271,7 @@ function fillContentSlots(root, title, bullets) {
       return;
     }
 
-    const textPool = buildSlideTextPool(title, bullets, targets.length);
+    const textPool = compactPairs(buildSlideTextPool(title, bullets, targets.length));
     let poolIndex = 0;
     let pendingPick = null;
     targets.forEach((node, idx) => {
@@ -2016,7 +2299,23 @@ function fillContentSlots(root, title, bullets) {
       poolIndex += 1;
       pendingPick = null;
     });
+    return;
   }
+  if (isSpaceBright && shouldSkipSpaceBrightFallbackBody(root)) {
+    return;
+  }
+  const sink = resolveShellContentSink(slideRoot || /** @type {Element} */ (root));
+  const listDoc = slideRoot?.ownerDocument || (root instanceof Element ? root.ownerDocument : null);
+  if (!listDoc) {
+    return;
+  }
+  const list = ensureFallbackShellList(listDoc, sink);
+  list.replaceChildren();
+  compactItems(buildSlideBulletItems(title, bullets, isSpaceBright ? 2 : 3)).forEach((b) => {
+    const li = list.ownerDocument.createElement("li");
+    li.textContent = b;
+    list.appendChild(li);
+  });
 }
 
 /**
@@ -2056,6 +2355,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   const coverTemplate = getShellCoverTemplate(doc);
   const endingTemplate = getShellEndingTemplate(doc);
   const variantTemplates = getShellVariantTemplates(doc);
+  const isSpaceBrightTheme = !!doc.body?.classList?.contains("shell-theme-space-bright");
 
   if (!master || (!coverTemplate && !variantTemplates.length)) {
     injectShellPreviewFit(doc);
@@ -2089,7 +2389,12 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     if (isAuthoredSlide) {
       first.setAttribute("data-shell-authored-slide", "1");
     }
-    fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
+    fillContentSlots(
+      frag,
+      String(s?.title || ""),
+      Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
+      { forceSpaceBright: isSpaceBrightTheme },
+    );
     if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
   });
