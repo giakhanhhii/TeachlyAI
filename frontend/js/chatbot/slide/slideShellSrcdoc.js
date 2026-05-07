@@ -1266,15 +1266,42 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.radar-grid) .content-area {
       flex: 0 1 auto !important;
     }
-    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-sizer,
-    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-outer,
-    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-scaled {
+    body:not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-sizer,
+    body:not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-outer,
+    body:not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-scaled {
       overflow: visible !important;
       width: auto !important;
       height: auto !important;
       max-width: none !important;
       max-height: none !important;
       transform: none !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance.slide-container[data-shell-authored-slide="1"] {
+      height: 720px !important;
+      min-height: 720px !important;
+      max-height: 720px !important;
+      overflow: hidden !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: hidden !important;
+      justify-content: flex-start !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer {
+      align-items: flex-start !important;
+      justify-content: center !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer,
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer > .shell-panel-fit-outer {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer > .shell-panel-fit-outer > .shell-panel-fit-scaled {
+      transform-origin: top center !important;
     }
     body.shell-theme-friendly #presentation-area,
     body.shell-theme-friendly #slides-master-container {
@@ -1391,7 +1418,7 @@ function injectShellPanelFitScript(doc) {
     if (!el || !el.matches) return false;
     if (!el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area")) return false;
     return !!el.querySelector(
-      ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout"
+      ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout, :scope > .two-column, :scope > .quote-layout"
     );
   }
   function hasComicPanelAncestor(el) {
@@ -1494,7 +1521,10 @@ function injectShellPanelFitScript(doc) {
   }
   function fitShellTitles(doc) {
     Array.prototype.forEach.call(doc.querySelectorAll('.shell-slide-instance [data-shell="title"]'), function (title) {
-      if (title.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
+      if (
+        title.closest('.shell-slide-instance[data-shell-authored-slide="1"]') &&
+        !(doc.body && doc.body.classList.contains("shell-theme-space-bright"))
+      ) return;
       fitTitle(title);
     });
   }
@@ -1735,7 +1765,10 @@ function injectShellPanelFitScript(doc) {
         run();
       });
       Array.prototype.forEach.call(document.querySelectorAll(".shell-slide-instance"), function (slide) {
-        if (slide.matches('[data-shell-authored-slide="1"]')) return;
+        if (
+          slide.matches('[data-shell-authored-slide="1"]') &&
+          !(document.body && document.body.classList.contains("shell-theme-space-bright"))
+        ) return;
         shellPanelFitRO.observe(slide);
       });
     } else {
