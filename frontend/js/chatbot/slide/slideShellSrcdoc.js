@@ -133,7 +133,13 @@ function decorateComicCoverPrototype(root, doc) {
   root.removeAttribute("id");
   const panel = root.querySelector(".comic-panel") || root;
   const title =
-    panel.querySelector(".comic-title") || panel.querySelector("h1") || panel.querySelector("h2") || panel.querySelector("p");
+    panel.querySelector(".comic-title") ||
+    panel.querySelector("h1") ||
+    panel.querySelector("h2") ||
+    root.querySelector("h2.slide-title") ||
+    root.querySelector("h1") ||
+    root.querySelector("h2") ||
+    panel.querySelector("p");
   if (title) {
     title.setAttribute("data-shell", "title");
     title.textContent = "";
@@ -434,8 +440,8 @@ function resolveSlideShellThemeKey(root, opts = {}) {
     (root && "ownerDocument" in root ? root.ownerDocument : null) ||
     (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
   const classList = doc?.body?.classList;
+  if (classList?.contains("shell-theme-comic") || slide?.querySelector?.(".comic-panel, .comic-list, .comic-title")) return "comic";
   if (!classList) return "";
-  if (classList.contains("shell-theme-comic")) return "comic";
   if (classList.contains("shell-theme-space-bright")) return "space-bright";
   if (classList.contains("shell-theme-space-black")) return "space-black";
   if (classList.contains("shell-theme-sealife")) return "sealife";
@@ -679,43 +685,43 @@ function getComicTextBudget(root) {
   const slide = getRootSlideElement(root);
   if (!slide) {
     return {
-      headline: { maxWords: 5, maxChars: 30 },
-      detail: { maxChars: 78, maxSentences: 1, maxWords: 14 },
+      headline: { maxWords: 6, maxChars: 42 },
+      detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
     };
   }
   if (slide.querySelector(".table-layout")) {
     return {
-      headline: { maxWords: 4, maxChars: 22 },
-      detail: { maxChars: 46, maxSentences: 1, maxWords: 10 },
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 32, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".pronunciation-stack, .comic-rule-grid")) {
     return {
-      headline: { maxWords: 5, maxChars: 28 },
-      detail: { maxChars: 64, maxSentences: 1, maxWords: 12 },
+      headline: { maxWords: 4, maxChars: 28 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 8 },
     };
   }
   if (slide.querySelector(".strategy-strip, .comic-grid-3, .check-grid")) {
     return {
       headline: { maxWords: 4, maxChars: 26 },
-      detail: { maxChars: 72, maxSentences: 1, maxWords: 13 },
+      detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".timeline")) {
     return {
-      headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 58, maxSentences: 1, maxWords: 11 },
+      headline: { maxWords: 3, maxChars: 20 },
+      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".comic-grid-2, .two-column, .compact-card-row")) {
     return {
-      headline: { maxWords: 5, maxChars: 30 },
-      detail: { maxChars: 84, maxSentences: 1, maxWords: 15 },
+      headline: { maxWords: 5, maxChars: 32 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
     };
   }
   return {
-    headline: { maxWords: 5, maxChars: 30 },
-    detail: { maxChars: 78, maxSentences: 1, maxWords: 14 },
+    headline: { maxWords: 6, maxChars: 42 },
+    detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
   };
 }
 
@@ -771,6 +777,23 @@ function compactStructuredSlideColumns(bullets, budget) {
       .filter(Boolean)
       .join("\n"),
   );
+}
+
+/**
+ * @param {Element | null} root
+ * @param {HTMLUListElement | Element} ul
+ * @param {number} desiredCount
+ * @param {number} templateItemCount
+ * @param {number} bulletCount
+ * @returns {number}
+ */
+function resolveComicBulletCount(root, ul, desiredCount, templateItemCount, bulletCount) {
+  const slide = root instanceof Element ? root : null;
+  if (desiredCount > 0) return Math.min(desiredCount, 2);
+  if (slide?.querySelector(".comic-title") && !slide.querySelector(".slide-title")) return 1;
+  if (ul.closest(".comic-grid-3, .strategy-strip, .check-grid, .timeline")) return 1;
+  if (templateItemCount > 0) return Math.min(templateItemCount, 2);
+  return Math.min(2, Math.max(1, bulletCount || 1));
 }
 
 /**
@@ -2607,8 +2630,13 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
 function fillContentSlots(root, title, bullets, options = {}) {
   const slideRoot = getRootSlideElement(root);
   const themeKey = resolveSlideShellThemeKey(slideRoot || root, { forceSpaceBright: options.forceSpaceBright });
+  const isComic = themeKey === "comic";
   const isSpaceBright = themeKey === "space-bright";
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
+  const renderTitle =
+    isComic && themeTextBudget
+      ? capitalizeSlideLead(compactSlideTextValue(title, themeTextBudget.headline))
+      : title;
   const compactPairs = (pairs) =>
     !themeTextBudget
       ? pairs
@@ -2621,8 +2649,10 @@ function fillContentSlots(root, title, bullets, options = {}) {
       ? items
       : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, themeTextBudget.detail)));
 
-  const titleEl = root.querySelector("[data-shell=\"title\"]");
-  if (titleEl) titleEl.textContent = title;
+  const titleEl =
+    root.querySelector("[data-shell=\"title\"]") ||
+    (isComic ? root.querySelector("h2.slide-title, h1.comic-title, .comic-title, h1, h2") : null);
+  if (titleEl) titleEl.textContent = renderTitle;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     const noBulletTitles = new Set([
@@ -2644,16 +2674,22 @@ function fillContentSlots(root, title, bullets, options = {}) {
         return 0;
       }
     })();
-    const compactCount = desiredCount > 0 ? desiredCount : templateItemCount > 0 ? templateItemCount : Math.min(3, Math.max(1, bullets.length || 1));
+    const compactCount = isComic
+      ? resolveComicBulletCount(slideRoot || root, ul, desiredCount, templateItemCount, bullets.length)
+      : desiredCount > 0
+        ? desiredCount
+        : templateItemCount > 0
+          ? templateItemCount
+          : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      isSpaceBright
-        ? buildSlideBulletItems(title, bullets, compactCount)
+      isSpaceBright || isComic
+        ? buildSlideBulletItems(renderTitle, bullets, compactCount)
         : desiredCount > 0
-          ? buildSlideBulletItems(title, bullets, desiredCount)
+          ? buildSlideBulletItems(renderTitle, bullets, desiredCount)
           : bullets.length
             ? bullets.slice()
-            : title
-              ? [title]
+            : renderTitle
+              ? [renderTitle]
               : [];
     compactItems(items).forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
@@ -2678,7 +2714,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
   if (targets.length) {
     const pairCount = getStructuredShellTextPairCount(targets);
     if (pairCount >= 2) {
-      const textPairs = compactPairs(buildBalancedSlideTextPairs(title, bullets, pairCount));
+      const textPairs = compactPairs(buildBalancedSlideTextPairs(renderTitle, bullets, pairCount));
       textPairs.forEach((pick, idx) => {
         const headlineNode = targets[idx * 2];
         const detailNode = targets[idx * 2 + 1];
@@ -2689,11 +2725,11 @@ function fillContentSlots(root, title, bullets, options = {}) {
           setShellTextContent(detailNode, pick.detail || pick.headline);
         }
       });
-      fillSpaceBrightExampleBox(root, title, bullets, pairCount);
+      fillSpaceBrightExampleBox(root, renderTitle, bullets, pairCount);
       return;
     }
 
-    const textPool = compactPairs(buildSlideTextPool(title, bullets, targets.length));
+    const textPool = compactPairs(buildSlideTextPool(renderTitle, bullets, targets.length));
     let poolIndex = 0;
     let pendingPick = null;
     targets.forEach((node, idx) => {
@@ -2706,7 +2742,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
           poolIndex += 1;
           pendingPick = null;
         }
-        const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+        const pick = textPool[poolIndex % textPool.length] || { headline: renderTitle, detail: renderTitle };
         setShellTextContent(node, pick.headline);
         if (nextNeedsDetail) {
           pendingPick = pick;
@@ -2716,12 +2752,12 @@ function fillContentSlots(root, title, bullets, options = {}) {
         return;
       }
 
-      const pick = pendingPick || textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+      const pick = pendingPick || textPool[poolIndex % textPool.length] || { headline: renderTitle, detail: renderTitle };
       setShellTextContent(node, pick.detail || pick.headline);
       poolIndex += 1;
       pendingPick = null;
     });
-    fillSpaceBrightExampleBox(root, title, bullets, targets.length);
+    fillSpaceBrightExampleBox(root, renderTitle, bullets, targets.length);
     return;
   }
   if (isSpaceBright && shouldSkipSpaceBrightFallbackBody(root)) {
@@ -2734,7 +2770,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
   }
   const list = ensureFallbackShellList(listDoc, sink);
   list.replaceChildren();
-  compactItems(buildSlideBulletItems(title, bullets, isSpaceBright ? 2 : 3)).forEach((b) => {
+  compactItems(buildSlideBulletItems(renderTitle, bullets, isSpaceBright || isComic ? 2 : 3)).forEach((b) => {
     const li = list.ownerDocument.createElement("li");
     li.textContent = b;
     list.appendChild(li);
