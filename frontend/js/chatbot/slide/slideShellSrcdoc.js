@@ -1513,6 +1513,20 @@ function injectShellPanelFitScript(doc) {
     }
     return getNumericCssValue(el.dataset[dataKey]) || getNumericCssValue(window.getComputedStyle(el).fontSize) || 0;
   }
+  function getSpaceBrightCardAvailableHeight(tile) {
+    var rect = tile.getBoundingClientRect ? tile.getBoundingClientRect() : null;
+    var area = tile.closest(".content-area");
+    var slide = tile.closest(".shell-slide-instance");
+    var areaRect = area && area.getBoundingClientRect ? area.getBoundingClientRect() : null;
+    var slideRect = slide && slide.getBoundingClientRect ? slide.getBoundingClientRect() : null;
+    var bottoms = [];
+    if (areaRect && areaRect.height) bottoms.push(areaRect.bottom);
+    if (slideRect && slideRect.height) bottoms.push(slideRect.bottom - 60);
+    var bottom = bottoms.length ? Math.min.apply(Math, bottoms) : 0;
+    var top = rect && rect.top ? rect.top : 0;
+    var available = bottom > top ? Math.floor(bottom - top) : 0;
+    return available || Math.floor((tile.clientHeight || tile.offsetHeight || 0));
+  }
   function fitSpaceBrightCard(tile) {
     if (!tile || !window.getComputedStyle || tile.getAttribute("data-edit-geom") === "1") return;
     var heading = tile.querySelector("h3");
@@ -1538,7 +1552,11 @@ function injectShellPanelFitScript(doc) {
       });
     }
     setSizes(baseHeading, baseDetail);
-    var availableH = tile.clientHeight || tile.getBoundingClientRect().height || 0;
+    tile.style.height = "auto";
+    var availableH = getSpaceBrightCardAvailableHeight(tile);
+    if (availableH) {
+      tile.style.maxHeight = availableH + "px";
+    }
     var availableW = tile.clientWidth || tile.getBoundingClientRect().width || 0;
     if (!availableH || !availableW) return;
     var cacheKey = [
