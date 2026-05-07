@@ -133,7 +133,13 @@ function decorateComicCoverPrototype(root, doc) {
   root.removeAttribute("id");
   const panel = root.querySelector(".comic-panel") || root;
   const title =
-    panel.querySelector(".comic-title") || panel.querySelector("h1") || panel.querySelector("h2") || panel.querySelector("p");
+    panel.querySelector(".comic-title") ||
+    panel.querySelector("h1") ||
+    panel.querySelector("h2") ||
+    root.querySelector("h2.slide-title") ||
+    root.querySelector("h1") ||
+    root.querySelector("h2") ||
+    panel.querySelector("p");
   if (title) {
     title.setAttribute("data-shell", "title");
     title.textContent = "";
@@ -424,7 +430,7 @@ function getRootSlideElement(root) {
 /**
  * @param {ParentNode} root
  * @param {{ forceSpaceBright?: boolean }} [opts]
- * @returns {"space-bright" | "space-black" | "sealife" | ""}
+ * @returns {"comic" | "space-bright" | "space-black" | "sealife" | ""}
  */
 function resolveSlideShellThemeKey(root, opts = {}) {
   if (opts.forceSpaceBright) return "space-bright";
@@ -434,10 +440,24 @@ function resolveSlideShellThemeKey(root, opts = {}) {
     (root && "ownerDocument" in root ? root.ownerDocument : null) ||
     (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
   const classList = doc?.body?.classList;
-  if (!classList) return "";
-  if (classList.contains("shell-theme-space-bright")) return "space-bright";
-  if (classList.contains("shell-theme-space-black")) return "space-black";
-  if (classList.contains("shell-theme-sealife")) return "sealife";
+  if (
+    classList?.contains("shell-theme-comic") ||
+    slide?.querySelector?.(
+      ".comic-panel, .comic-list, .comic-title, .comic-grid-2, .comic-grid-3, .strategy-strip, .check-grid, .timeline",
+    )
+  ) {
+    return "comic";
+  }
+  if (classList?.contains("shell-theme-space-bright")) return "space-bright";
+  if (classList?.contains("shell-theme-space-black")) return "space-black";
+  if (classList?.contains("shell-theme-sealife")) return "sealife";
+  if (
+    slide?.querySelector?.(
+      ".title-card, .section-card, .outer-title, .cols-3, .task-grid, .timeline-container, .pct-item, .image-layout",
+    )
+  ) {
+    return "sealife";
+  }
   return "";
 }
 
@@ -459,19 +479,19 @@ function compactSlideTextValue(value, opts = {}) {
   if (!raw) return "";
   const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
   const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
+  let next = raw;
   if (maxWords) {
     const words = raw.split(/\s+/).filter(Boolean);
     if (words.length > maxWords) {
-      return `${words.slice(0, maxWords).join(" ")}...`;
+      next = `${words.slice(0, maxWords).join(" ")}...`;
     }
   }
-  const sentences = raw
+  const sentences = next
     .split(/(?<=[.!?])\s+/u)
     .map((part) => part.trim())
     .filter(Boolean);
   const maxSentencesRaw = Math.floor(Number(opts.maxSentences) || 0);
   const maxSentences = maxSentencesRaw > 0 ? maxSentencesRaw : 0;
-  let next = raw;
   if (maxSentences && sentences.length > maxSentences) {
     next = sentences.slice(0, maxSentences).join(" ");
   }
@@ -565,54 +585,54 @@ function getSpaceBlackTextBudget(root) {
   if (!slide) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 72, maxSentences: 1 },
+      detail: { maxChars: 72, maxSentences: 1, maxWords: 12 },
     };
   }
   if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 40, maxSentences: 1 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
     };
   }
   if (slide.querySelector(".table-like")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 56, maxSentences: 1 },
+      detail: { maxChars: 56, maxSentences: 1, maxWords: 10 },
     };
   }
   if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 62, maxSentences: 1 },
+      detail: { maxChars: 62, maxSentences: 1, maxWords: 11 },
     };
   }
   if (slide.querySelector(".timeline-layout")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 44, maxSentences: 1 },
+      detail: { maxChars: 44, maxSentences: 1, maxWords: 9 },
     };
   }
   if (slide.querySelector(".styled-bullets")) {
     return {
       headline: { maxWords: 4, maxChars: 22 },
-      detail: { maxChars: 60, maxSentences: 1 },
+      detail: { maxChars: 60, maxSentences: 1, maxWords: 11 },
     };
   }
   if (slide.querySelector(".tiled-content > .tile")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 64, maxSentences: 1 },
+      detail: { maxChars: 64, maxSentences: 1, maxWords: 10 },
     };
   }
   if (slide.querySelector(".two-column")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 60, maxSentences: 1 },
+      detail: { maxChars: 60, maxSentences: 1, maxWords: 10 },
     };
   }
   return {
     headline: { maxWords: 4, maxChars: 26 },
-    detail: { maxChars: 68, maxSentences: 1 },
+    detail: { maxChars: 68, maxSentences: 1, maxWords: 12 },
   };
 }
 
@@ -625,57 +645,142 @@ function getSealifeTextBudget(root) {
   if (!slide) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 70, maxSentences: 1 },
+      detail: { maxChars: 88, maxSentences: 2, maxWords: 18 },
+    };
+  }
+  if (slide.querySelector(".cols-3")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".task-grid")) {
     return {
-      headline: { maxWords: 4, maxChars: 22 },
-      detail: { maxChars: 52, maxSentences: 1 },
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".table-like")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 58, maxSentences: 1 },
+      detail: { maxChars: 50, maxSentences: 1, maxWords: 9 },
     };
   }
   if (slide.querySelector(".timeline-container")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 46, maxSentences: 1 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".pct-item")) {
     return {
       headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 48, maxSentences: 1 },
+      detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
     };
   }
   if (slide.querySelector(".image-layout")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 64, maxSentences: 1 },
+      detail: { maxChars: 180, maxSentences: 2, maxWords: 36 },
     };
   }
   if (slide.querySelector(".title-card, .section-card")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 56, maxSentences: 1 },
+      detail: { maxChars: 260, maxSentences: 2, maxWords: 52 },
     };
   }
   return {
     headline: { maxWords: 4, maxChars: 24 },
-    detail: { maxChars: 66, maxSentences: 1 },
+    detail: { maxChars: 88, maxSentences: 2, maxWords: 18 },
   };
 }
 
 /**
  * @param {ParentNode} root
- * @param {"space-bright" | "space-black" | "sealife" | ""} themeKey
- * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } } | null}
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } }}
+ */
+function getComicTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 6, maxChars: 42 },
+      detail: { maxChars: 52, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".two-column .comic-list")) {
+    return {
+      headline: { maxWords: 5, maxChars: 30 },
+      detail: { maxChars: 48, maxSentences: 1, maxWords: 9 },
+    };
+  }
+  if (slide.querySelector(".comic-grid-2 .comic-list")) {
+    return {
+      headline: { maxWords: 4, maxChars: 26 },
+      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
+    };
+  }
+  if (slide.querySelector(".comic-list") && slide.querySelector("img, .image-wrapper")) {
+    return {
+      headline: { maxWords: 5, maxChars: 32 },
+      detail: { maxChars: 52, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".comic-list")) {
+    return {
+      headline: { maxWords: 5, maxChars: 34 },
+      detail: { maxChars: 54, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".table-layout")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 32, maxSentences: 1, maxWords: 7 },
+    };
+  }
+  if (slide.querySelector(".pronunciation-stack, .comic-rule-grid")) {
+    return {
+      headline: { maxWords: 4, maxChars: 28 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 8 },
+    };
+  }
+  if (slide.querySelector(".strategy-strip")) {
+    return {
+      headline: { maxWords: 2, maxChars: 14 },
+      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
+    };
+  }
+  if (slide.querySelector(".comic-grid-3, .check-grid")) {
+    return {
+      headline: { maxWords: 4, maxChars: 26 },
+      detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
+    };
+  }
+  if (slide.querySelector(".timeline")) {
+    return {
+      headline: { maxWords: 3, maxChars: 20 },
+      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
+    };
+  }
+  if (slide.querySelector(".comic-grid-2, .two-column, .compact-card-row")) {
+    return {
+      headline: { maxWords: 5, maxChars: 32 },
+      detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
+    };
+  }
+  return {
+    headline: { maxWords: 6, maxChars: 42 },
+    detail: { maxChars: 52, maxSentences: 1, maxWords: 10 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {"comic" | "space-bright" | "space-black" | "sealife" | ""} themeKey
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } } | null}
  */
 function getSlideShellThemeTextBudget(root, themeKey) {
+  if (themeKey === "comic") return getComicTextBudget(root);
   if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
   if (themeKey === "space-black") return getSpaceBlackTextBudget(root);
   if (themeKey === "sealife") return getSealifeTextBudget(root);
@@ -705,6 +810,90 @@ function compactSpaceBrightBulletItems(root, items) {
   if (!isSpaceBrightSlideRoot(root)) return items;
   const budget = getSpaceBrightTextBudget(root);
   return items.map((item) => compactSlideTextValue(item, budget.detail));
+}
+
+/**
+ * @param {string[]} bullets
+ * @param {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } } | null} budget
+ * @returns {string[]}
+ */
+function compactStructuredSlideColumns(bullets, budget) {
+  if (!budget) return bullets;
+  return bullets.map((bullet) =>
+    String(bullet || "")
+      .split(/\n+/)
+      .map((part, idx) => compactSlideTextValue(part, idx === 0 ? budget.headline : budget.detail))
+      .filter(Boolean)
+      .join("\n"),
+  );
+}
+
+/**
+ * Sea Life has several intentionally roomy image/title cards; give those
+ * cards enough lesson substance while keeping dense grids tightly capped.
+ * @param {ParentNode} root
+ * @returns {number}
+ */
+function getSealifeRoomyDetailCount(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) return 2;
+  if (slide.querySelector(".image-layout")) return 3;
+  if (slide.querySelector(".title-card, .section-card")) return 3;
+  return 1;
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {{ detail: { maxChars: number, maxSentences: number, maxWords?: number } }} budget
+ * @param {number} maxItems
+ * @returns {string}
+ */
+function buildSealifeRichDetailText(title, bullets, budget, maxItems) {
+  const values = collectUniqueSlideTextValues(bullets.length ? bullets : [title]);
+  const details = values
+    .map((value) => {
+      const pair = buildSlideTextPair(value);
+      return pair.detail || pair.headline;
+    })
+    .filter(Boolean)
+    .slice(0, Math.max(1, maxItems));
+
+  const joined = details.length ? details.join(" ") : title;
+  return capitalizeSlideLead(compactSlideTextValue(joined, budget.detail));
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {{ headline: { maxWords: number, maxChars: number } }} budget
+ * @returns {string}
+ */
+function buildSealifeLeadHeadlineText(title, bullets, budget) {
+  const pair = buildSlideTextPair(bullets[0] || title);
+  return capitalizeSlideLead(compactSlideTextValue(pair.headline || title, budget.headline));
+}
+
+/**
+ * @param {Element | null} root
+ * @param {HTMLUListElement | Element} ul
+ * @param {number} desiredCount
+ * @param {number} templateItemCount
+ * @param {number} bulletCount
+ * @returns {number}
+ */
+function resolveComicBulletCount(root, ul, desiredCount, templateItemCount, bulletCount) {
+  const slide = root instanceof Element ? root : null;
+  const availableCount = Math.max(1, bulletCount || templateItemCount || desiredCount || 1);
+  const boundedCount = (fallback, max) => Math.min(max, Math.max(1, templateItemCount || fallback, availableCount));
+  if (desiredCount > 0) return Math.min(desiredCount, 4);
+  if (slide?.querySelector(".comic-title") && !slide.querySelector(".slide-title")) return 1;
+  if (ul.closest(".comic-grid-3, .strategy-strip, .check-grid, .timeline")) return 1;
+  if (ul.closest(".two-column, .comic-grid-2")) return boundedCount(4, 4);
+  if (slide?.querySelector("img, .image-wrapper")) return boundedCount(3, 3);
+  if (ul.closest(".comic-panel")) return boundedCount(3, 4);
+  if (templateItemCount > 0) return boundedCount(templateItemCount, 3);
+  return Math.min(3, availableCount);
 }
 
 /**
@@ -1938,13 +2127,29 @@ function injectShellPreviewFit(doc) {
     }
     body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li {
-      font-size: 21px !important;
-      line-height: 1.45 !important;
+      font-size: 24px !important;
+      line-height: 1.5 !important;
       font-weight: 500 !important;
       text-align: left !important;
-      margin-bottom: 8px !important;
+      margin-bottom: 14px !important;
       overflow-wrap: break-word !important;
       word-break: normal !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column ul[data-shell="bullets"],
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .bullet-list ul[data-shell="bullets"] {
+      gap: 6px !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column,
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column.align-start {
+      align-items: center !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column > :has(.image-wrapper) {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column .image-wrapper {
+      margin: 0 auto !important;
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area:has(> .tiled-content) {
       flex: 1 1 auto !important;
@@ -2540,13 +2745,16 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
  */
 function fillContentSlots(root, title, bullets, options = {}) {
   const slideRoot = getRootSlideElement(root);
-  const slideDoc =
-    slideRoot?.ownerDocument ||
-    (root && "ownerDocument" in root ? root.ownerDocument : null) ||
-    (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
   const themeKey = resolveSlideShellThemeKey(slideRoot || root, { forceSpaceBright: options.forceSpaceBright });
+  const isComic = themeKey === "comic";
+  const isSealife = themeKey === "sealife";
   const isSpaceBright = themeKey === "space-bright";
+  const isSpaceBlack = themeKey === "space-black";
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
+  const renderTitle =
+    isComic && themeTextBudget
+      ? capitalizeSlideLead(compactSlideTextValue(title, themeTextBudget.headline))
+      : title;
   const compactPairs = (pairs) =>
     !themeTextBudget
       ? pairs
@@ -2559,8 +2767,10 @@ function fillContentSlots(root, title, bullets, options = {}) {
       ? items
       : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, themeTextBudget.detail)));
 
-  const titleEl = root.querySelector("[data-shell=\"title\"]");
-  if (titleEl) titleEl.textContent = title;
+  const titleEl =
+    root.querySelector("[data-shell=\"title\"]") ||
+    (isComic ? root.querySelector("h2.slide-title, h1.comic-title, .comic-title, h1, h2") : null);
+  if (titleEl) titleEl.textContent = renderTitle;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     const noBulletTitles = new Set([
@@ -2582,16 +2792,31 @@ function fillContentSlots(root, title, bullets, options = {}) {
         return 0;
       }
     })();
-    const compactCount = desiredCount > 0 ? desiredCount : templateItemCount > 0 ? templateItemCount : Math.min(3, Math.max(1, bullets.length || 1));
+    const spaceBlackDefaultCount = (() => {
+      if (!isSpaceBlack) return 3;
+      const slide = getRootSlideElement(root);
+      if (slide?.querySelector(".two-column, .bullet-list")) return Math.min(5, Math.max(5, bullets.length || 5));
+      if (slide?.querySelector(".styled-bullets")) return Math.min(5, Math.max(4, bullets.length || 4));
+      return Math.min(5, Math.max(4, bullets.length || 4));
+    })();
+    const compactCount = isComic
+      ? resolveComicBulletCount(slideRoot || root, ul, desiredCount, templateItemCount, bullets.length)
+      : desiredCount > 0
+        ? desiredCount
+        : isSpaceBlack
+          ? spaceBlackDefaultCount
+          : templateItemCount > 0
+            ? templateItemCount
+            : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      isSpaceBright
-        ? buildSlideBulletItems(title, bullets, compactCount)
+      isSpaceBright || isSpaceBlack || isComic
+        ? buildSlideBulletItems(renderTitle, bullets, compactCount)
         : desiredCount > 0
-          ? buildSlideBulletItems(title, bullets, desiredCount)
+          ? buildSlideBulletItems(renderTitle, bullets, desiredCount)
           : bullets.length
             ? bullets.slice()
-            : title
-              ? [title]
+            : renderTitle
+              ? [renderTitle]
               : [];
     compactItems(items).forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
@@ -2600,7 +2825,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
     });
     return;
   }
-  if (fillStructuredTableColumns(root, bullets)) {
+  if (fillStructuredTableColumns(root, compactStructuredSlideColumns(bullets, themeTextBudget))) {
     return;
   }
   const targets = isSpaceBright ? getSpaceBrightPrimaryTextTargets(
@@ -2614,9 +2839,37 @@ function fillContentSlots(root, title, bullets, options = {}) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    if (
+      isSealife &&
+      targets.length === 2 &&
+      targets.every((node) => !isHeadlineShellTarget(node)) &&
+      themeTextBudget
+    ) {
+      setShellTextContent(targets[0], buildSealifeLeadHeadlineText(renderTitle, bullets, themeTextBudget));
+      setShellTextContent(
+        targets[1],
+        buildSealifeRichDetailText(
+          renderTitle,
+          bullets,
+          themeTextBudget,
+          getSealifeRoomyDetailCount(slideRoot || root),
+        ),
+      );
+      return;
+    }
+    if (isSealife && targets.length === 1 && !isHeadlineShellTarget(targets[0]) && themeTextBudget) {
+      const detail = buildSealifeRichDetailText(
+        renderTitle,
+        bullets,
+        themeTextBudget,
+        getSealifeRoomyDetailCount(slideRoot || root),
+      );
+      setShellTextContent(targets[0], detail);
+      return;
+    }
     const pairCount = getStructuredShellTextPairCount(targets);
     if (pairCount >= 2) {
-      const textPairs = compactPairs(buildBalancedSlideTextPairs(title, bullets, pairCount));
+      const textPairs = compactPairs(buildBalancedSlideTextPairs(renderTitle, bullets, pairCount));
       textPairs.forEach((pick, idx) => {
         const headlineNode = targets[idx * 2];
         const detailNode = targets[idx * 2 + 1];
@@ -2627,11 +2880,11 @@ function fillContentSlots(root, title, bullets, options = {}) {
           setShellTextContent(detailNode, pick.detail || pick.headline);
         }
       });
-      fillSpaceBrightExampleBox(root, title, bullets, pairCount);
+      fillSpaceBrightExampleBox(root, renderTitle, bullets, pairCount);
       return;
     }
 
-    const textPool = compactPairs(buildSlideTextPool(title, bullets, targets.length));
+    const textPool = compactPairs(buildSlideTextPool(renderTitle, bullets, targets.length));
     let poolIndex = 0;
     let pendingPick = null;
     targets.forEach((node, idx) => {
@@ -2644,7 +2897,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
           poolIndex += 1;
           pendingPick = null;
         }
-        const pick = textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+        const pick = textPool[poolIndex % textPool.length] || { headline: renderTitle, detail: renderTitle };
         setShellTextContent(node, pick.headline);
         if (nextNeedsDetail) {
           pendingPick = pick;
@@ -2654,12 +2907,12 @@ function fillContentSlots(root, title, bullets, options = {}) {
         return;
       }
 
-      const pick = pendingPick || textPool[poolIndex % textPool.length] || { headline: title, detail: title };
+      const pick = pendingPick || textPool[poolIndex % textPool.length] || { headline: renderTitle, detail: renderTitle };
       setShellTextContent(node, pick.detail || pick.headline);
       poolIndex += 1;
       pendingPick = null;
     });
-    fillSpaceBrightExampleBox(root, title, bullets, targets.length);
+    fillSpaceBrightExampleBox(root, renderTitle, bullets, targets.length);
     return;
   }
   if (isSpaceBright && shouldSkipSpaceBrightFallbackBody(root)) {
@@ -2672,10 +2925,72 @@ function fillContentSlots(root, title, bullets, options = {}) {
   }
   const list = ensureFallbackShellList(listDoc, sink);
   list.replaceChildren();
-  compactItems(buildSlideBulletItems(title, bullets, isSpaceBright ? 2 : 3)).forEach((b) => {
+  compactItems(buildSlideBulletItems(renderTitle, bullets, isSpaceBright || isComic ? 2 : 3)).forEach((b) => {
     const li = list.ownerDocument.createElement("li");
     li.textContent = b;
     list.appendChild(li);
+  });
+}
+
+/**
+ * Hard word-cap post-pass for space-black theme.
+ * Runs after fillContentSlots to ensure no text node in content areas
+ * exceeds layout-specific word limits, regardless of fill path taken.
+ * @param {Element} slideRoot
+ */
+function enforceSpaceBlackWordCap(slideRoot) {
+  /** @param {string} text @param {number} maxWords @returns {string} */
+  const capWords = (text, maxWords) => {
+    const trimmed = String(text || "").replace(/\s+/g, " ").trim();
+    const words = trimmed.split(" ").filter(Boolean);
+    if (words.length <= maxWords) return trimmed;
+    return words.slice(0, maxWords).join(" ") + "...";
+  };
+  /** @param {Element} node @param {number} maxWords */
+  const capElement = (node, maxWords) => {
+    const current = node.textContent || "";
+    const capped = capWords(current, maxWords);
+    if (capped !== current.replace(/\s+/g, " ").trim()) {
+      node.textContent = capped;
+    }
+  };
+
+  const hasTiled = !!slideRoot.querySelector(".tiled-content > .tile");
+  const hasTable = !!slideRoot.querySelector(".table-like");
+  const hasGrid = !!slideRoot.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile");
+  const hasTimeline = !!slideRoot.querySelector(".timeline-layout");
+  const hasTwoCol = !!slideRoot.querySelector(".two-column");
+
+  // Bullets (li)
+  const bulletMaxWords = hasTwoCol ? 14 : hasTable ? 12 : hasTiled ? 9 : hasGrid ? 13 : 13;
+  slideRoot.querySelectorAll("ul[data-shell='bullets'] li").forEach((li) => capElement(li, bulletMaxWords));
+
+  // Table-like cells
+  if (hasTable) {
+    slideRoot.querySelectorAll(".label-pill").forEach((el) => capElement(el, 5));
+    slideRoot.querySelectorAll(".row-text").forEach((el) => capElement(el, 14));
+  }
+
+  // Tile / small-tile detail paragraphs
+  if (hasTiled) {
+    slideRoot.querySelectorAll(".tiled-content .tile p, .tiled-content .tile h3").forEach((el) => {
+      const isHeading = el.tagName === "H3";
+      capElement(el, isHeading ? 5 : 10);
+    });
+  }
+  if (hasGrid) {
+    slideRoot.querySelectorAll(".small-tile p, .small-tile li").forEach((el) => capElement(el, 12));
+    slideRoot.querySelectorAll(".small-tile h3").forEach((el) => capElement(el, 5));
+  }
+
+  // Styled-bullets detail
+  slideRoot.querySelectorAll(".styled-bullets li p").forEach((el) => capElement(el, 12));
+
+  // data-shell-text-target nodes not covered above
+  const contentSelectors = ".tile h3, .tile p, .small-tile h3, .small-tile p, .label-pill, .row-text, .timeline-item h3, .timeline-item p";
+  slideRoot.querySelectorAll(`[data-shell-text-target]:not(${contentSelectors})`).forEach((el) => {
+    const isHeading = /H[1-4]|STRONG|TH/.test(el.tagName);
+    capElement(el, isHeading ? 5 : 12);
   });
 }
 
@@ -2717,6 +3032,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   const endingTemplate = getShellEndingTemplate(doc);
   const variantTemplates = getShellVariantTemplates(doc);
   const isSpaceBrightTheme = !!doc.body?.classList?.contains("shell-theme-space-bright");
+  const isSpaceBlackTheme = !!doc.body?.classList?.contains("shell-theme-space-black");
 
   if (!master || (!coverTemplate && !variantTemplates.length)) {
     injectShellPreviewFit(doc);
@@ -2764,6 +3080,9 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
         String(s?.title || ""),
         Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
       );
+    }
+    if (isSpaceBlackTheme && first instanceof Element) {
+      enforceSpaceBlackWordCap(first);
     }
   });
 

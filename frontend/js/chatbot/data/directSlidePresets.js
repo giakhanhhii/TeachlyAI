@@ -907,8 +907,10 @@ const RAW_SLIDE_PRESETS = [
         exampleB: "\"Where do you live?\" -> She asked where I lived.",
         pitfallA: "Giữ đảo trợ động từ trong câu tường thuật.",
         pitfallB: "Quên if/whether.",
-        practiceA: "Viết lại 5 câu hỏi.",
+        practiceA: "Viết lại 5 câu hỏi tường thuật.",
         practiceB: "Sửa lỗi word order.",
+        detailedPractice:
+          "Bài luyện tập: Câu 1: \"Do you like English?\" -> He asked if...; Câu 2: \"Where do you live?\" -> She asked where...; Câu 3: \"Can you help me?\" -> She asked whether...; Câu 4: \"What are you doing?\" -> He asked what...; Câu 5: \"Did you finish homework?\" -> The teacher asked if....",
       },
       {
         name: "Câu mệnh lệnh tường thuật",
