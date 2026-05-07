@@ -1417,6 +1417,9 @@ function injectShellPanelFitScript(doc) {
   function isAuthoredAutoFitPanel(el) {
     if (!el || !el.matches) return false;
     if (!el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area")) return false;
+    if (el.classList.contains("shell-panel-fit-host") && el.querySelector(":scope > .shell-panel-fit-sizer")) {
+      return true;
+    }
     return !!el.querySelector(
       ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout, :scope > .two-column, :scope > .quote-layout"
     );
