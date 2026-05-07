@@ -946,14 +946,17 @@ function fillSpaceBrightExampleBox(root, title, bullets, usedCount = 0) {
   const leftover = fragments.slice(safeUsedCount);
   const preferred = leftover.length ? leftover : fragments;
   const detailBudget = getSpaceBrightExampleBoxBudget(root);
+  const leftoverText = leftover.slice(0, 2).join("; ");
+  const derivedHint = deriveSpaceBrightExampleBoxHint(title, bullets);
   const synthesized =
+    leftoverText ||
+    derivedHint ||
     preferred.slice(0, 2).join("; ") ||
-    deriveSpaceBrightExampleBoxHint(title, bullets) ||
     fallbackDetail ||
     title;
   const compactDetail = capitalizeSlideLead(
     compactSlideTextValue(
-      synthesized || deriveSpaceBrightExampleBoxHint(title, bullets) || fallbackDetail || title,
+      synthesized || derivedHint || fallbackDetail || title,
       detailBudget,
     ),
   );
