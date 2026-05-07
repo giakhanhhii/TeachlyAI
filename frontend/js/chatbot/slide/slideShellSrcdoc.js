@@ -1355,6 +1355,24 @@ function injectShellPreviewFit(doc) {
       padding: 0 !important;
       list-style: none !important;
     }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area:has(> .tiled-content) {
+      flex: 1 1 auto !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: hidden !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .tiled-content {
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: visible !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .tiled-content > .tile {
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: hidden !important;
+    }
   `;
   doc.head.appendChild(style);
 }
@@ -1480,6 +1498,97 @@ function injectShellPanelFitScript(doc) {
       fitTitle(title);
     });
   }
+  function getShellFitLineHeightRatio(el, fallback) {
+    if (!el || !window.getComputedStyle) return fallback;
+    var cs = window.getComputedStyle(el);
+    var fontSize = getNumericCssValue(cs.fontSize) || 1;
+    var lineHeight = getNumericCssValue(cs.lineHeight);
+    return lineHeight > 0 ? lineHeight / fontSize : fallback;
+  }
+  function ensureTileTextFitBase(el, key) {
+    if (!el || !window.getComputedStyle) return 0;
+    var dataKey = "shellBase" + key + "FontSize";
+    if (!el.dataset[dataKey]) {
+      el.dataset[dataKey] = String(getNumericCssValue(window.getComputedStyle(el).fontSize) || 0);
+    }
+    return getNumericCssValue(el.dataset[dataKey]) || getNumericCssValue(window.getComputedStyle(el).fontSize) || 0;
+  }
+  function fitSpaceBrightCard(tile) {
+    if (!tile || !window.getComputedStyle || tile.getAttribute("data-edit-geom") === "1") return;
+    var heading = tile.querySelector("h3");
+    var details = Array.prototype.filter.call(tile.querySelectorAll("p, li"), function (node) {
+      return !!node && node.getAttribute("data-edit-geom") !== "1";
+    });
+    var detail = details[0] || null;
+    if (!details.length && !heading) return;
+    var baseHeading = ensureTileTextFitBase(heading, "Heading") || 32;
+    var baseDetail = ensureTileTextFitBase(detail, "Detail") || 24;
+    var headingRatio = getShellFitLineHeightRatio(heading, 1.2);
+    var detailRatio = getShellFitLineHeightRatio(detail, 1.42);
+    var minHeading = Math.max(20, Math.floor(baseHeading * 0.62));
+    var minDetail = Math.max(14, Math.floor(baseDetail * 0.58));
+    function setSizes(hSize, dSize) {
+      if (heading) {
+        heading.style.fontSize = hSize + "px";
+        heading.style.lineHeight = headingRatio;
+      }
+      details.forEach(function (node) {
+        node.style.fontSize = dSize + "px";
+        node.style.lineHeight = detailRatio;
+      });
+    }
+    setSizes(baseHeading, baseDetail);
+    var availableH = tile.clientHeight || tile.getBoundingClientRect().height || 0;
+    var availableW = tile.clientWidth || tile.getBoundingClientRect().width || 0;
+    if (!availableH || !availableW) return;
+    var cacheKey = [
+      Math.round(availableW),
+      Math.round(availableH),
+      heading ? heading.textContent || "" : "",
+      details.map(function (node) { return node.textContent || ""; }).join("\\n"),
+      baseHeading,
+      baseDetail
+    ].join("|");
+    if (tile.dataset.shellTileFitCacheKey === cacheKey && tile.dataset.shellTileFitHeading && tile.dataset.shellTileFitDetail) {
+      setSizes(Number(tile.dataset.shellTileFitHeading) || baseHeading, Number(tile.dataset.shellTileFitDetail) || baseDetail);
+      return;
+    }
+    function fits(hSize, dSize) {
+      setSizes(hSize, dSize);
+      return tile.scrollHeight <= availableH + 1 && tile.scrollWidth <= availableW + 1;
+    }
+    var low = 0;
+    var high = 1;
+    var best = fits(baseHeading, baseDetail) ? 1 : 0;
+    while (high - low > 0.02) {
+      var mid = (low + high) / 2;
+      var hSize = Math.round(minHeading + (baseHeading - minHeading) * mid);
+      var dSize = Math.round(minDetail + (baseDetail - minDetail) * mid);
+      if (fits(hSize, dSize)) {
+        best = mid;
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+    var finalHeading = Math.round(minHeading + (baseHeading - minHeading) * best);
+    var finalDetail = Math.round(minDetail + (baseDetail - minDetail) * best);
+    setSizes(finalHeading, finalDetail);
+    tile.dataset.shellTileFitCacheKey = cacheKey;
+    tile.dataset.shellTileFitHeading = String(finalHeading);
+    tile.dataset.shellTileFitDetail = String(finalDetail);
+  }
+  function fitSpaceBrightTiles(doc) {
+    if (!doc.body || !doc.body.classList.contains("shell-theme-space-bright")) return;
+    Array.prototype.forEach.call(
+      doc.querySelectorAll(
+        '.shell-slide-instance[data-shell-authored-slide="1"] .tiled-content > .tile, ' +
+        '.shell-slide-instance[data-shell-authored-slide="1"] .grid-2 > .small-tile, ' +
+        '.shell-slide-instance[data-shell-authored-slide="1"] .grid-3 > .small-tile'
+      ),
+      fitSpaceBrightCard
+    );
+  }
   function applyPanelLayoutToElement(cs, el, display) {
     if (!cs || !el) return;
     el.style.minWidth = "0";
@@ -1579,6 +1688,7 @@ function injectShellPanelFitScript(doc) {
     if (fitEditPaused) return;
     if (document.body && document.body.classList.contains("slide-visual-edit-on")) return;
     fitShellTitles(document);
+    fitSpaceBrightTiles(document);
     collectPanels(document).forEach(function (panel) {
       wrapPanel(panel);
       measureAndFit(panel);
@@ -2351,6 +2461,20 @@ function measureSlideShellActiveHeight(slide) {
 }
 
 /**
+ * @param {Document} doc
+ */
+function runSlideShellPanelFit(doc) {
+  try {
+    const w = doc.defaultView;
+    if (w && typeof w.__slideShellPanelFitRun === "function") {
+      w.__slideShellPanelFitRun();
+    }
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+/**
  * @param {HTMLIFrameElement} iframe
  * @param {{ top?: number, ratio?: number } | undefined} scrollState
  */
@@ -2360,6 +2484,7 @@ function syncSlideShellActiveViewport(iframe, scrollState) {
   const master = doc.querySelector("#slides-master-container");
   if (!master || master.getAttribute("data-nav-mode") !== "active") return;
   setSlideShellDocumentViewportMode(doc, "active");
+  runSlideShellPanelFit(doc);
   const hostWin = iframe.ownerDocument?.defaultView || window;
   const isMobileViewport = Boolean(hostWin?.matchMedia?.("(max-width: 640px)")?.matches);
   const activeSlide =
