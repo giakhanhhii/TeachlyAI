@@ -226,6 +226,7 @@
 
         .table-layout table {
             border-collapse: collapse;
+            table-layout: fixed;
             width: 100%;
             text-align: left;
         }
@@ -247,11 +248,19 @@
             padding: 20px;
             border-bottom: 4px solid #111827;
             border-right: 6px solid #111827;
+            font-size: 22px;
+            line-height: 1.3;
         }
 
         .table-layout td:last-child { border-right: none; }
         .table-layout tr:last-child td { border-bottom: none; }
         .table-layout tr:nth-child(even) { background-color: #f8fafc; }
+        .table-layout th,
+        .table-layout td {
+            overflow-wrap: anywhere;
+            vertical-align: top;
+            word-break: break-word;
+        }
 
         .comic-grid-2 {
             display: grid;
@@ -363,6 +372,105 @@
             font-family: 'Bangers', system-ui;
             font-size: 30px;
             margin-bottom: 10px;
+        }
+
+        .pronunciation-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .pronunciation-card {
+            display: grid;
+            grid-template-columns: 104px minmax(0, 1fr);
+            gap: 14px;
+            align-items: stretch;
+            background-color: #ffffff;
+            border: 4px solid #111827;
+            box-shadow: 6px 6px 0px #111827;
+            padding: 14px 16px;
+        }
+
+        .comic-rule-chip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            padding: 10px 12px;
+            background-color: #7dd3fc;
+            border: 4px solid #111827;
+            font-family: 'Bangers', system-ui;
+            font-size: 26px;
+            letter-spacing: 1px;
+            line-height: 1;
+            text-align: center;
+            color: #111827;
+            box-shadow: 4px 4px 0px #111827;
+        }
+
+        .pronunciation-copy,
+        .comic-rule-copy {
+            min-width: 0;
+        }
+
+        .pronunciation-copy h3,
+        .comic-rule-copy h3 {
+            margin: 0 0 6px 0;
+            font-size: 28px;
+            color: #111827;
+            -webkit-text-stroke: 0;
+        }
+
+        .pronunciation-copy p,
+        .comic-rule-copy p {
+            margin: 0;
+            font-size: 21px;
+            line-height: 1.28;
+        }
+
+        .comic-rule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            width: 100%;
+            align-items: start;
+            align-content: start;
+        }
+
+        .comic-rule-grid.tight {
+            gap: 14px;
+        }
+
+        .comic-rule-card {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background-color: #ffffff;
+            border: 4px solid #111827;
+            box-shadow: 6px 6px 0px #111827;
+            padding: 16px 18px;
+            min-height: 0;
+        }
+
+        .comic-rule-grid.tight .comic-rule-card {
+            padding: 14px 16px;
+            gap: 12px;
+        }
+
+        .comic-rule-grid.tight .comic-rule-chip {
+            font-size: 23px;
+            padding: 8px 10px;
+            min-width: 82px;
+        }
+
+        .comic-rule-grid.tight .comic-rule-copy h3 {
+            font-size: 24px;
+        }
+
+        .comic-rule-grid.tight .comic-rule-copy p {
+            font-size: 18px;
+            line-height: 1.25;
         }
 
         .speech-note {
@@ -896,44 +1004,56 @@
     <div class="comic-badge cyan" style="top: 36px; left: 70px; transform: rotate(-10deg);">SNAP!</div>
     <h2 class="slide-title" style="color: #fde047;">PRONUNCIATION POWER</h2>
     <div class="content-area">
-        <div class="comic-grid-2" style="height: 100%;">
-            <div class="comic-panel" style="padding: 36px;">
+        <div class="comic-grid-2 compact-grid-2" style="height: 100%;">
+            <div class="comic-panel" style="padding: 28px;">
                 <h3 style="text-align: center; color: #f43f5e;">-ED ENDINGS</h3>
-                <div class="rule-rows" style="margin-top: 20px;">
-                    <div class="rule-row">
-                        <div class="rule-label">/id/</div>
-                        <div>After <strong>/t/</strong> or <strong>/d/</strong></div>
-                        <div><em>wanted, needed, visited</em></div>
+                <div class="pronunciation-stack">
+                    <div class="pronunciation-card">
+                        <div class="comic-rule-chip">/id/</div>
+                        <div class="pronunciation-copy">
+                            <h3>After /t/ or /d/</h3>
+                            <p>Pronounce /id/ in wanted, needed, visited.</p>
+                        </div>
                     </div>
-                    <div class="rule-row">
-                        <div class="rule-label" style="background-color: #fde047;">/t/</div>
-                        <div>After voiceless sounds: <strong>p, k, f, s, sh, ch</strong></div>
-                        <div><em>looked, laughed, watched</em></div>
+                    <div class="pronunciation-card">
+                        <div class="comic-rule-chip" style="background-color: #fde047;">/t/</div>
+                        <div class="pronunciation-copy">
+                            <h3>After voiceless sounds</h3>
+                            <p>Use /t/ after p, k, f, s, sh, ch like looked, laughed, watched.</p>
+                        </div>
                     </div>
-                    <div class="rule-row">
-                        <div class="rule-label" style="background-color: #f43f5e; color: #fff;">/d/</div>
-                        <div>After voiced sounds</div>
-                        <div><em>played, opened, called</em></div>
+                    <div class="pronunciation-card">
+                        <div class="comic-rule-chip" style="background-color: #f43f5e; color: #fff;">/d/</div>
+                        <div class="pronunciation-copy">
+                            <h3>After voiced sounds</h3>
+                            <p>Use /d/ for played, opened, called and similar voiced endings.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="comic-panel" style="padding: 36px; background-color: #f8fafc;">
+            <div class="comic-panel" style="padding: 28px; background-color: #f8fafc;">
                 <h3 style="text-align: center; color: #7dd3fc;">-S / -ES ENDINGS</h3>
-                <div class="rule-rows" style="margin-top: 20px;">
-                    <div class="rule-row">
-                        <div class="rule-label">/iz/</div>
-                        <div>After <strong>s, z, sh, ch, ge, ce</strong></div>
-                        <div><em>changes, watches, misses</em></div>
+                <div class="pronunciation-stack">
+                    <div class="pronunciation-card">
+                        <div class="comic-rule-chip">/iz/</div>
+                        <div class="pronunciation-copy">
+                            <h3>After s, z, sh, ch, ge, ce</h3>
+                            <p>Pronounce /iz/ in changes, watches, misses and similar endings.</p>
+                        </div>
                     </div>
-                    <div class="rule-row">
-                        <div class="rule-label" style="background-color: #fde047;">/s/</div>
-                        <div>After voiceless sounds: <strong>p, t, k, f, th</strong></div>
-                        <div><em>stops, laughs, likes</em></div>
+                    <div class="pronunciation-card">
+                        <div class="comic-rule-chip" style="background-color: #fde047;">/s/</div>
+                        <div class="pronunciation-copy">
+                            <h3>After voiceless sounds</h3>
+                            <p>Use /s/ after p, t, k, f, th in stops, laughs, likes and more.</p>
+                        </div>
                     </div>
-                    <div class="rule-row">
-                        <div class="rule-label" style="background-color: #f43f5e; color: #fff;">/z/</div>
-                        <div>After voiced sounds</div>
-                        <div><em>plays, learns, goes</em></div>
+                    <div class="pronunciation-card">
+                        <div class="comic-rule-chip" style="background-color: #f43f5e; color: #fff;">/z/</div>
+                        <div class="pronunciation-copy">
+                            <h3>After voiced sounds</h3>
+                            <p>Use /z/ for plays, learns, goes and other voiced word endings.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -946,27 +1066,35 @@
     <div class="comic-badge yellow" style="top: 42px; left: 70px; transform: rotate(-12deg);">BANG!</div>
     <h2 class="slide-title">WORD STRESS RULES</h2>
     <div class="content-area">
-        <div class="comic-panel">
-            <div class="rule-rows">
-                <div class="rule-row">
-                    <div class="rule-label">2 SYL</div>
-                    <div><strong>Nouns / Adjectives:</strong> stress the <strong>1st</strong> syllable.</div>
-                    <div><em>PRE-sent, TA-ble, HAP-py</em></div>
+            <div class="comic-panel">
+            <div class="comic-rule-grid tight">
+                <div class="comic-rule-card">
+                    <div class="comic-rule-chip">2 SYL</div>
+                    <div class="comic-rule-copy">
+                        <h3>Nouns and adjectives</h3>
+                        <p>Stress the 1st syllable in PRE-sent, TA-ble, HAP-py.</p>
+                    </div>
                 </div>
-                <div class="rule-row">
-                    <div class="rule-label" style="background-color: #fde047;">VERBS</div>
-                    <div><strong>2-syllable verbs:</strong> stress the <strong>2nd</strong> syllable.</div>
-                    <div><em>re-LAX, be-GIN, de-CIDE</em></div>
+                <div class="comic-rule-card">
+                    <div class="comic-rule-chip" style="background-color: #fde047;">VERBS</div>
+                    <div class="comic-rule-copy">
+                        <h3>Two-syllable verbs</h3>
+                        <p>Stress the 2nd syllable in re-LAX, be-GIN, de-CIDE.</p>
+                    </div>
                 </div>
-                <div class="rule-row">
-                    <div class="rule-label" style="background-color: #f43f5e; color: #fff;">-TION</div>
-                    <div><strong>-ic, -sion, -tion</strong>: stress the syllable before the suffix.</div>
-                    <div><em>eco-NOM-ic, infor-MA-tion</em></div>
+                <div class="comic-rule-card">
+                    <div class="comic-rule-chip" style="background-color: #f43f5e; color: #fff;">-TION</div>
+                    <div class="comic-rule-copy">
+                        <h3>Suffix before stress</h3>
+                        <p>With -ic, -sion, -tion, stress the syllable right before the suffix.</p>
+                    </div>
                 </div>
-                <div class="rule-row">
-                    <div class="rule-label" style="background-color: #ffffff;">-CY</div>
-                    <div><strong>-cy, -ty, -phy, -gy, -al</strong>: stress the 3rd syllable from the end.</div>
-                    <div><em>de-MOC-ra-cy, ge-OG-ra-phy</em></div>
+                <div class="comic-rule-card">
+                    <div class="comic-rule-chip" style="background-color: #ffffff;">-CY</div>
+                    <div class="comic-rule-copy">
+                        <h3>Third from the end</h3>
+                        <p>Use the 3rd syllable from the end for -cy, -ty, -phy, -gy, -al words.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1064,38 +1192,23 @@
 <div class="slide-container" id="slide20">
     <h2 class="slide-title" style="color: #7dd3fc;">COMPARISONS</h2>
     <div class="content-area">
-        <div class="comic-panel table-layout" style="padding: 0; height: 100%;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Form</th>
-                        <th>Example</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Equality</strong></td>
-                        <td>as + adj/adv + as</td>
-                        <td>Lan is <em>as careful as</em> her sister.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Comparative</strong></td>
-                        <td>adj-er / more + adj</td>
-                        <td>This task is <em>more difficult than</em> I thought.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Superlative</strong></td>
-                        <td>the adj-est / the most + adj</td>
-                        <td>English is <em>the most important</em> subject for her.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Double comp.</strong></td>
-                        <td>the more..., the more...</td>
-                        <td><em>The more</em> you practise, <em>the better</em> you perform.</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="comic-grid-2 compact-grid-2" style="height: 100%;">
+            <div class="mini-panel">
+                <h3 style="color: #f43f5e;">Equality</h3>
+                <p>Use as + adj or adv + as. Example: Lan is as careful as her sister.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">Comparative</h3>
+                <p>Use adj-er or more + adj. Example: This task is more difficult than I thought.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #fff7d6;">
+                <h3 style="color: #111827;">Superlative</h3>
+                <p>Use the adj-est or the most + adj. Example: English is the most important subject for her.</p>
+            </div>
+            <div class="mini-panel">
+                <h3 style="color: #f43f5e;">Double comparison</h3>
+                <p>Use the more..., the more.... Example: The more you practise, the better you perform.</p>
+            </div>
         </div>
     </div>
 </div>
@@ -1230,38 +1343,23 @@
 <div class="slide-container" id="slide26">
     <h2 class="slide-title" style="color: #fde047;">SENTENCE TRANSFORMATION</h2>
     <div class="content-area">
-        <div class="comic-panel table-layout" style="padding: 0; height: 100%;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pattern</th>
-                        <th>Core idea</th>
-                        <th>Example</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>too ... to</strong></td>
-                        <td>Quá ... không thể ...</td>
-                        <td>He is too young to drive.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>so ... that</strong></td>
-                        <td>Quá ... đến nỗi ...</td>
-                        <td>It was so late that we went home.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>because / because of</strong></td>
-                        <td>Mệnh đề ↔ cụm danh từ</td>
-                        <td>Because it rained, we stayed in.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>although / despite</strong></td>
-                        <td>Nhượng bộ</td>
-                        <td>Despite the rain, they played.</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="comic-grid-2 compact-grid-2" style="height: 100%;">
+            <div class="mini-panel">
+                <h3 style="color: #f43f5e;">too ... to</h3>
+                <p>Dùng để nói quá mức nên không thể làm gì. Example: He is too young to drive.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #eefaff;">
+                <h3 style="color: #7dd3fc;">so ... that</h3>
+                <p>Dùng để nói quá mức dẫn tới kết quả. Example: It was so late that we went home.</p>
+            </div>
+            <div class="mini-panel" style="background-color: #fff7d6;">
+                <h3 style="color: #111827;">because / because of</h3>
+                <p>Đổi qua lại giữa mệnh đề và cụm danh từ. Example: Because it rained, we stayed in.</p>
+            </div>
+            <div class="mini-panel">
+                <h3 style="color: #f43f5e;">although / despite</h3>
+                <p>Dùng cho ý nhượng bộ. Example: Despite the rain, they played.</p>
+            </div>
         </div>
     </div>
 </div>

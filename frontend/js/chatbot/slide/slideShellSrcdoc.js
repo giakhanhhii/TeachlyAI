@@ -424,7 +424,7 @@ function getRootSlideElement(root) {
 /**
  * @param {ParentNode} root
  * @param {{ forceSpaceBright?: boolean }} [opts]
- * @returns {"space-bright" | "space-black" | "sealife" | ""}
+ * @returns {"comic" | "space-bright" | "space-black" | "sealife" | ""}
  */
 function resolveSlideShellThemeKey(root, opts = {}) {
   if (opts.forceSpaceBright) return "space-bright";
@@ -435,6 +435,7 @@ function resolveSlideShellThemeKey(root, opts = {}) {
     (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
   const classList = doc?.body?.classList;
   if (!classList) return "";
+  if (classList.contains("shell-theme-comic")) return "comic";
   if (classList.contains("shell-theme-space-bright")) return "space-bright";
   if (classList.contains("shell-theme-space-black")) return "space-black";
   if (classList.contains("shell-theme-sealife")) return "sealife";
@@ -672,10 +673,59 @@ function getSealifeTextBudget(root) {
 
 /**
  * @param {ParentNode} root
- * @param {"space-bright" | "space-black" | "sealife" | ""} themeKey
- * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } } | null}
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } }}
+ */
+function getComicTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 5, maxChars: 30 },
+      detail: { maxChars: 78, maxSentences: 1, maxWords: 14 },
+    };
+  }
+  if (slide.querySelector(".table-layout")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 46, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".pronunciation-stack, .comic-rule-grid")) {
+    return {
+      headline: { maxWords: 5, maxChars: 28 },
+      detail: { maxChars: 64, maxSentences: 1, maxWords: 12 },
+    };
+  }
+  if (slide.querySelector(".strategy-strip, .comic-grid-3, .check-grid")) {
+    return {
+      headline: { maxWords: 4, maxChars: 26 },
+      detail: { maxChars: 72, maxSentences: 1, maxWords: 13 },
+    };
+  }
+  if (slide.querySelector(".timeline")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 58, maxSentences: 1, maxWords: 11 },
+    };
+  }
+  if (slide.querySelector(".comic-grid-2, .two-column, .compact-card-row")) {
+    return {
+      headline: { maxWords: 5, maxChars: 30 },
+      detail: { maxChars: 84, maxSentences: 1, maxWords: 15 },
+    };
+  }
+  return {
+    headline: { maxWords: 5, maxChars: 30 },
+    detail: { maxChars: 78, maxSentences: 1, maxWords: 14 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {"comic" | "space-bright" | "space-black" | "sealife" | ""} themeKey
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } } | null}
  */
 function getSlideShellThemeTextBudget(root, themeKey) {
+  if (themeKey === "comic") return getComicTextBudget(root);
   if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
   if (themeKey === "space-black") return getSpaceBlackTextBudget(root);
   if (themeKey === "sealife") return getSealifeTextBudget(root);
@@ -705,6 +755,22 @@ function compactSpaceBrightBulletItems(root, items) {
   if (!isSpaceBrightSlideRoot(root)) return items;
   const budget = getSpaceBrightTextBudget(root);
   return items.map((item) => compactSlideTextValue(item, budget.detail));
+}
+
+/**
+ * @param {string[]} bullets
+ * @param {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } } | null} budget
+ * @returns {string[]}
+ */
+function compactStructuredSlideColumns(bullets, budget) {
+  if (!budget) return bullets;
+  return bullets.map((bullet) =>
+    String(bullet || "")
+      .split(/\n+/)
+      .map((part, idx) => compactSlideTextValue(part, idx === 0 ? budget.headline : budget.detail))
+      .filter(Boolean)
+      .join("\n"),
+  );
 }
 
 /**
@@ -2540,10 +2606,6 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
  */
 function fillContentSlots(root, title, bullets, options = {}) {
   const slideRoot = getRootSlideElement(root);
-  const slideDoc =
-    slideRoot?.ownerDocument ||
-    (root && "ownerDocument" in root ? root.ownerDocument : null) ||
-    (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
   const themeKey = resolveSlideShellThemeKey(slideRoot || root, { forceSpaceBright: options.forceSpaceBright });
   const isSpaceBright = themeKey === "space-bright";
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
@@ -2600,7 +2662,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
     });
     return;
   }
-  if (fillStructuredTableColumns(root, bullets)) {
+  if (fillStructuredTableColumns(root, compactStructuredSlideColumns(bullets, themeTextBudget))) {
     return;
   }
   const targets = isSpaceBright ? getSpaceBrightPrimaryTextTargets(
