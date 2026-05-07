@@ -493,6 +493,12 @@ function getSpaceBrightTextBudget(root) {
       detail: { maxChars: 100, maxSentences: 1 },
     };
   }
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 38, maxSentences: 1 },
+    };
+  }
   if (slide.querySelector(".tiled-content > .tile")) {
     return {
       headline: { maxWords: 6, maxChars: 36 },
@@ -575,6 +581,9 @@ function getSpaceBrightPrimaryTextTargets(root, targets) {
     return picked.length ? picked : targets;
   };
 
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return keepWithin(".table-like").slice(0, 10);
+  }
   if (slide.querySelector(".table-like")) {
     return keepWithin(".table-like");
   }
@@ -829,7 +838,10 @@ function buildBalancedSlideTextPairs(title, bullets, want) {
  * @param {string} value
  */
 function setShellTextContent(node, value) {
-  const parts = String(value || "").split(/\n/);
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  const fallback = String(node.getAttribute("data-shell-original-text") || "").replace(/\s+/g, " ").trim();
+  const picked = raw || fallback || "Nội dung";
+  const parts = picked.split(/\n/);
   node.replaceChildren();
   parts.forEach((part, index) => {
     if (index > 0) node.appendChild(node.ownerDocument.createElement("br"));
@@ -1538,6 +1550,10 @@ function injectShellPreviewFit(doc) {
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer > .shell-panel-fit-outer > .shell-panel-fit-scaled {
       transform-origin: top center !important;
     }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .example-box:has(> p:empty),
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .example-box:has(> [data-shell-text-target]:empty) {
+      display: none !important;
+    }
     body.shell-theme-friendly #presentation-area,
     body.shell-theme-friendly #slides-master-container {
       height: 720px !important;
@@ -1636,6 +1652,29 @@ function injectShellPreviewFit(doc) {
       min-height: 0 !important;
       max-height: 100% !important;
       overflow: hidden !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .table-row {
+      align-items: stretch !important;
+      grid-template-columns: minmax(300px, 340px) minmax(0, 1fr) !important;
+      gap: 24px !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .label-pill,
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .row-text {
+      min-height: 92px !important;
+      display: flex !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .label-pill {
+      justify-content: center !important;
+      text-align: center !important;
+      padding: 16px 24px !important;
+      line-height: 1.25 !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .row-text {
+      justify-content: flex-start !important;
+      padding: 20px 26px !important;
+      line-height: 1.4 !important;
     }
   `;
   doc.head.appendChild(style);
@@ -2002,6 +2041,14 @@ function injectShellPanelFitScript(doc) {
       panel.querySelector('ul[data-shell="bullets"]')
     ) {
       scale = Math.max(scale, 0.92);
+    }
+    if (
+      document.body &&
+      document.body.classList.contains("shell-theme-space-bright") &&
+      panel.matches('.shell-slide-instance[data-shell-authored-slide="1"] .content-area') &&
+      panel.querySelector(".table-like")
+    ) {
+      scale = Math.max(scale, 0.95);
     }
     if (!isFinite(scale) || scale <= 0) scale = 1;
     scaled.style.width = naturalW + "px";
