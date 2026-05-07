@@ -481,6 +481,20 @@
             width: 100%;
         }
 
+        /* Bảng + icon cần ưu tiên không gian cho cột bảng để tránh thẻ nội dung bị bó hẹp */
+        .grid-2:has(.table-like):has(.big-icon) {
+            align-items: start;
+            gap: 24px;
+            grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.92fr);
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) > div:last-child {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
         .grid-3 {
             align-items: stretch;
             display: grid;
@@ -527,6 +541,12 @@
             width: 190px;
         }
 
+        .grid-2:has(.table-like):has(.big-icon) .big-icon {
+            font-size: 72px;
+            height: 156px;
+            width: 156px;
+        }
+
         .tip-ribbon {
             background: #EF476F;
             border: 3px solid #023047;
@@ -541,27 +561,57 @@
 
         .table-like {
             border-collapse: separate;
-            border-spacing: 0 14px;
+            border-spacing: 0 18px;
             width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .table-like {
+            border-spacing: 0 10px;
+            max-width: none;
+            margin: 0;
         }
 
         .table-row {
             align-items: center;
             display: grid;
-            gap: 18px;
-            grid-template-columns: 230px 1fr;
-            margin-bottom: 14px;
+            gap: 22px;
+            grid-template-columns: minmax(280px, 320px) 1fr;
+            margin-bottom: 18px;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .table-row {
+            align-items: stretch;
+            gap: 16px;
+            grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+            margin-bottom: 10px;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .table-row:nth-child(n + 6) {
+            display: none;
         }
 
         .label-pill {
             background: #FFD166;
             border: 3px solid #023047;
             border-radius: 18px;
+            display: flex;
             font-family: 'Quicksand', sans-serif;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            padding: 12px 18px;
+            justify-content: center;
+            min-height: 88px;
+            padding: 16px 24px;
             text-align: center;
+            align-items: center;
+            line-height: 1.25;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .label-pill {
+            font-size: 20px;
+            min-height: 62px;
+            padding: 12px 18px;
         }
 
         .row-text {
@@ -569,8 +619,35 @@
             border: 3px solid #023047;
             border-radius: 18px;
             box-shadow: 4px 4px 0 #A2D2FF;
-            font-size: 21px;
-            padding: 14px 18px;
+            font-size: 22px;
+            line-height: 1.35;
+            min-height: 88px;
+            display: flex;
+            align-items: center;
+            padding: 20px 26px;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .row-text {
+            align-items: flex-start;
+            font-size: 18px;
+            line-height: 1.32;
+            min-height: 62px;
+            padding: 12px 18px;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .example-box {
+            margin-top: 0;
+            min-height: 88px;
+            width: 100%;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .example-box p {
+            font-size: 20px;
+        }
+
+        .grid-2:has(.table-like):has(.big-icon) .example-box:empty,
+        .grid-2:has(.table-like):has(.big-icon) .example-box:has(p:empty) {
+            display: none;
         }
     </style>
 </head>
@@ -997,6 +1074,10 @@
                 <div class="table-row">
                     <div class="label-pill">Past Simple</div>
                     <div class="row-text">yesterday, last week, ago, in 2024.</div>
+                </div>
+                <div class="table-row">
+                    <div class="label-pill">Future Simple</div>
+                    <div class="row-text">tomorrow, next week, soon, in the future.</div>
                 </div>
             </div>
             <div>

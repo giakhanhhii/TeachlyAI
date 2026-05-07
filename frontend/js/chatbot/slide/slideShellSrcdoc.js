@@ -211,8 +211,14 @@ function collectShellTextTargets(sink, title) {
     ".text-column p",
     ".timeline-content p",
     ".timeline-content h4",
+    ".timeline-item h3",
+    ".timeline-item p",
     ".tile h3",
     ".tile p",
+    ".small-tile h3",
+    ".small-tile p",
+    ".label-pill",
+    ".row-text",
     ".mini-panel h3",
     ".mini-panel p",
     ".g-card h3",
@@ -394,6 +400,385 @@ function collectUniqueSlideTextValues(values) {
     unique.push(normalized);
   });
   return unique;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {Element | null}
+ */
+function getRootSlideElement(root) {
+  if (root instanceof Element) {
+    return root;
+  }
+  if (root && "querySelector" in root) {
+    const nestedSlide = root.querySelector(".shell-slide-instance, .slide-container, .slide");
+    if (nestedSlide instanceof Element) {
+      return nestedSlide;
+    }
+  }
+  return root && "firstElementChild" in root && root.firstElementChild instanceof Element
+    ? root.firstElementChild
+    : null;
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {{ forceSpaceBright?: boolean }} [opts]
+ * @returns {"space-bright" | "space-black" | "sealife" | ""}
+ */
+function resolveSlideShellThemeKey(root, opts = {}) {
+  if (opts.forceSpaceBright) return "space-bright";
+  const slide = getRootSlideElement(root);
+  const doc =
+    slide?.ownerDocument ||
+    (root && "ownerDocument" in root ? root.ownerDocument : null) ||
+    (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
+  const classList = doc?.body?.classList;
+  if (!classList) return "";
+  if (classList.contains("shell-theme-space-bright")) return "space-bright";
+  if (classList.contains("shell-theme-space-black")) return "space-black";
+  if (classList.contains("shell-theme-sealife")) return "sealife";
+  return "";
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {boolean}
+ */
+function isSpaceBrightSlideRoot(root) {
+  return resolveSlideShellThemeKey(root) === "space-bright";
+}
+
+/**
+ * @param {string} value
+ * @param {{ maxChars?: number, maxSentences?: number, maxWords?: number }} [opts]
+ * @returns {string}
+ */
+function compactSlideTextValue(value, opts = {}) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return "";
+  const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
+  const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
+  if (maxWords) {
+    const words = raw.split(/\s+/).filter(Boolean);
+    if (words.length > maxWords) {
+      return `${words.slice(0, maxWords).join(" ")}...`;
+    }
+  }
+  const sentences = raw
+    .split(/(?<=[.!?])\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const maxSentencesRaw = Math.floor(Number(opts.maxSentences) || 0);
+  const maxSentences = maxSentencesRaw > 0 ? maxSentencesRaw : 0;
+  let next = raw;
+  if (maxSentences && sentences.length > maxSentences) {
+    next = sentences.slice(0, maxSentences).join(" ");
+  }
+  const maxCharsRaw = Math.floor(Number(opts.maxChars) || 0);
+  const maxChars = maxCharsRaw > 0 ? maxCharsRaw : 0;
+  if (maxChars && next.length > maxChars) {
+    const trimmed = next.slice(0, maxChars).replace(/[,:;\s]+$/u, "").trim();
+    return `${trimmed}...`;
+  }
+  return next;
+}
+
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+function capitalizeSlideLead(value) {
+  const raw = String(value || "");
+  const match = raw.match(/\p{L}/u);
+  if (!match || match.index == null) return raw;
+  const idx = match.index;
+  return `${raw.slice(0, idx)}${raw.slice(idx, idx + 1).toLocaleUpperCase("vi-VN")}${raw.slice(idx + 1)}`;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } }}
+ */
+function getSpaceBrightTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 6, maxChars: 42 },
+      detail: { maxChars: 100, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 38, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".tiled-content > .tile")) {
+    return {
+      headline: { maxWords: 6, maxChars: 36 },
+      detail: { maxChars: 88, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-3 > .small-tile, .grid-2 > .small-tile")) {
+    return {
+      headline: { maxWords: 5, maxChars: 30 },
+      detail: { maxChars: 82, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".table-like")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 72, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".timeline-layout")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 54, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".quote-layout")) {
+    return {
+      headline: { maxWords: 6, maxChars: 34 },
+      detail: { maxChars: 110, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".two-column")) {
+    return {
+      headline: { maxWords: 6, maxChars: 38 },
+      detail: { maxChars: 84, maxSentences: 1 },
+    };
+  }
+  return {
+      headline: { maxWords: 6, maxChars: 42 },
+      detail: { maxChars: 96, maxSentences: 1 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } }}
+ */
+function getSpaceBlackTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 72, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 40, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".table-like")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 56, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 62, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".timeline-layout")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 44, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".styled-bullets")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 60, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".tiled-content > .tile")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 64, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".two-column")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 60, maxSentences: 1 },
+    };
+  }
+  return {
+    headline: { maxWords: 4, maxChars: 26 },
+    detail: { maxChars: 68, maxSentences: 1 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } }}
+ */
+function getSealifeTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 70, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".task-grid")) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 52, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".table-like")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 58, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".timeline-container")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 46, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".pct-item")) {
+    return {
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 48, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".image-layout")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 64, maxSentences: 1 },
+    };
+  }
+  if (slide.querySelector(".title-card, .section-card")) {
+    return {
+      headline: { maxWords: 4, maxChars: 24 },
+      detail: { maxChars: 56, maxSentences: 1 },
+    };
+  }
+  return {
+    headline: { maxWords: 4, maxChars: 24 },
+    detail: { maxChars: 66, maxSentences: 1 },
+  };
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {"space-bright" | "space-black" | "sealife" | ""} themeKey
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number } } | null}
+ */
+function getSlideShellThemeTextBudget(root, themeKey) {
+  if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
+  if (themeKey === "space-black") return getSpaceBlackTextBudget(root);
+  if (themeKey === "sealife") return getSealifeTextBudget(root);
+  return null;
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {Array<{ headline: string, detail: string }>} pairs
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function compactSpaceBrightTextPairs(root, pairs) {
+  if (!isSpaceBrightSlideRoot(root)) return pairs;
+  const budget = getSpaceBrightTextBudget(root);
+  return pairs.map((pair) => ({
+    headline: compactSlideTextValue(pair.headline, budget.headline),
+    detail: compactSlideTextValue(pair.detail || pair.headline, budget.detail),
+  }));
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {string[]} items
+ * @returns {string[]}
+ */
+function compactSpaceBrightBulletItems(root, items) {
+  if (!isSpaceBrightSlideRoot(root)) return items;
+  const budget = getSpaceBrightTextBudget(root);
+  return items.map((item) => compactSlideTextValue(item, budget.detail));
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {Element[]} targets
+ * @returns {Element[]}
+ */
+function getSpaceBrightPrimaryTextTargets(root, targets) {
+  if (!targets.length) return targets;
+  const slide = getRootSlideElement(root);
+  if (!slide) return targets;
+
+  const keepWithin = (selector) => {
+    const picked = targets.filter((node) => node.closest(selector));
+    return picked.length ? picked : targets;
+  };
+
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return keepWithin(".table-like").slice(0, 10);
+  }
+  if (slide.querySelector(".table-like")) {
+    return keepWithin(".table-like");
+  }
+  if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
+    return keepWithin(".small-tile");
+  }
+  if (slide.querySelector(".tiled-content > .tile")) {
+    return keepWithin(".tile");
+  }
+  if (slide.querySelector(".timeline-layout")) {
+    return keepWithin(".timeline-layout");
+  }
+  if (slide.querySelector(".quote-layout")) {
+    return keepWithin(".quote-layout");
+  }
+  if (slide.querySelector(".styled-bullets")) {
+    return keepWithin(".styled-bullets");
+  }
+  if (slide.querySelector(".highlight-numbers-layout")) {
+    return keepWithin(".highlight-numbers-layout");
+  }
+  if (slide.querySelector(".two-column")) {
+    const bulletItems = targets.filter((node) => node.closest(".bullet-list"));
+    if (bulletItems.length) {
+      return bulletItems.slice(0, 3);
+    }
+    const withinColumn = targets.filter((node) => node.closest(".two-column"));
+    if (!withinColumn.length) return targets;
+    let headlineCount = 0;
+    let detailCount = 0;
+    const picked = withinColumn.filter((node) => {
+      if (isHeadlineShellTarget(node)) {
+        if (headlineCount >= 1) return false;
+        headlineCount += 1;
+        return true;
+      }
+      if (detailCount >= 2) return false;
+      detailCount += 1;
+      return true;
+    });
+    return picked.length ? picked : withinColumn.slice(0, 3);
+  }
+  return targets;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {boolean}
+ */
+function shouldSkipSpaceBrightFallbackBody(root) {
+  const slide = getRootSlideElement(root);
+  return !!slide?.querySelector(
+    ".table-like, .grid-2, .grid-3, .quote-layout, .timeline-layout, .two-column, .tiled-content, .highlight-numbers-layout, .styled-bullets",
+  );
 }
 
 /**
@@ -594,12 +979,170 @@ function buildBalancedSlideTextPairs(title, bullets, want) {
  * @param {string} value
  */
 function setShellTextContent(node, value) {
-  const parts = String(value || "").split(/\n/);
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  const fallback = String(node.getAttribute("data-shell-original-text") || "").replace(/\s+/g, " ").trim();
+  const picked = raw || fallback || "Nội dung";
+  const parts = picked.split(/\n/);
   node.replaceChildren();
   parts.forEach((part, index) => {
     if (index > 0) node.appendChild(node.ownerDocument.createElement("br"));
     node.appendChild(node.ownerDocument.createTextNode(part));
   });
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {{ maxChars: number, maxSentences: number }}
+ */
+function getSpaceBrightExampleBoxBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) {
+    return { maxChars: 118, maxSentences: 1 };
+  }
+  if (slide.querySelector(".grid-2 .table-like") && slide.querySelector(".grid-2 .big-icon")) {
+    return { maxChars: 86, maxSentences: 1 };
+  }
+  if (slide.querySelector(".table-like")) {
+    return { maxChars: 96, maxSentences: 1 };
+  }
+  if (slide.querySelector(".grid-2 > .small-tile, .grid-3 > .small-tile")) {
+    return { maxChars: 118, maxSentences: 1 };
+  }
+  return { maxChars: 108, maxSentences: 1 };
+}
+
+/**
+ * @param {string} title
+ * @param {string} fallbackLabel
+ * @returns {string}
+ */
+function resolveSpaceBrightExampleBoxLabel(title, fallbackLabel = "") {
+  const rawTitle = String(title || "").trim();
+  if (/chiến thuật|cloze|đọc hiểu|reading/i.test(rawTitle)) return "Chiến thuật";
+  if (/luyện tập|practice/i.test(rawTitle)) return "Gợi ý";
+  if (/trọng âm|stress|phát âm|thì|tense/i.test(rawTitle)) return "Mẹo";
+  if (/tiền tố|prefix|hậu tố|suffix|word form/i.test(rawTitle)) return "Ghi nhớ";
+  return String(fallbackLabel || "").trim() || "Ghi nhớ";
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @returns {string}
+ */
+function deriveSpaceBrightExampleBoxHint(title, bullets) {
+  const rawTitle = String(title || "").trim();
+  const joined = collectUniqueSlideTextValues(bullets).join(" ").toLowerCase();
+  const normalized = `${rawTitle} ${joined}`.toLowerCase();
+
+  if (/tiền tố|prefix/.test(normalized)) {
+    return "xác định nghĩa gốc trước, rồi mới chọn tiền tố phủ định, lặp lại hay mức độ cho phù hợp.";
+  }
+  if (/hậu tố|suffix|word form/.test(normalized)) {
+    return "nhìn vị trí trong câu trước để đoán danh từ, tính từ, trạng từ hay động từ rồi mới gắn hậu tố.";
+  }
+  if (/trọng âm|stress/.test(normalized)) {
+    return "đọc nhanh cả bốn đáp án trong đầu để tìm từ có nhịp nhấn khác hẳn ba từ còn lại.";
+  }
+  if (/phát âm|pronunciation/.test(normalized)) {
+    return "ưu tiên nhìn âm cuối và chữ cái đứng trước để loại nhanh những đáp án phát âm lệch quy tắc.";
+  }
+  if (/cloze|điền|đọc hiểu|reading/.test(normalized)) {
+    return "đọc lướt toàn câu hoặc toàn đoạn trước, rồi mới khóa đáp án bằng cả ngữ pháp lẫn ngữ nghĩa.";
+  }
+  if (/thì|tense/.test(normalized)) {
+    return "xem dấu hiệu thời gian trước, rồi đối chiếu xem hành động đã hoàn tất, đang diễn ra hay lặp lại.";
+  }
+  if (/lỗi sai|error/.test(normalized)) {
+    return "kiểm tra lần lượt chủ vị, thì, từ loại và liên từ để loại đáp án sai theo từng lớp.";
+  }
+  return "";
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} usedCount
+ * @returns {boolean}
+ */
+function fillSpaceBrightExampleBox(root, title, bullets, usedCount = 0) {
+  if (!isSpaceBrightSlideRoot(root)) return false;
+  const paragraph = root.querySelector(".example-box p");
+  if (!(paragraph instanceof HTMLElement)) return false;
+  if (String(paragraph.textContent || "").replace(/\s+/g, " ").trim()) return true;
+
+  const originalText = String(paragraph.getAttribute("data-shell-original-text") || "").replace(/\s+/g, " ").trim();
+  const originalMatch = originalText.match(/^\s*([^:：]{1,24})[:：]\s*(.+)$/u);
+  const fallbackLabel = originalMatch ? originalMatch[1].trim() : "";
+  const fallbackDetail = originalMatch ? originalMatch[2].trim() : originalText;
+  const label = resolveSpaceBrightExampleBoxLabel(title, fallbackLabel);
+
+  const fragments = collectUniqueSlideTextValues(
+    bullets.flatMap((bullet) => {
+      const parts = splitSlideBulletFragments(bullet);
+      return parts.length ? parts : [bullet];
+    }),
+  );
+  const safeUsedCount = Math.max(0, Math.floor(Number(usedCount) || 0));
+  const leftover = fragments.slice(safeUsedCount);
+  const preferred = leftover.length ? leftover : fragments;
+  const detailBudget = getSpaceBrightExampleBoxBudget(root);
+  const leftoverText = leftover.slice(0, 2).join("; ");
+  const derivedHint = deriveSpaceBrightExampleBoxHint(title, bullets);
+  const synthesized =
+    leftoverText ||
+    derivedHint ||
+    preferred.slice(0, 2).join("; ") ||
+    fallbackDetail ||
+    title;
+  const compactDetail = capitalizeSlideLead(
+    compactSlideTextValue(
+      synthesized || derivedHint || fallbackDetail || title,
+      detailBudget,
+    ),
+  );
+
+  paragraph.replaceChildren();
+  if (label) {
+    const lead = paragraph.ownerDocument.createElement("span");
+    lead.className = "formula";
+    lead.textContent = `${label}:`;
+    paragraph.appendChild(lead);
+    paragraph.appendChild(paragraph.ownerDocument.createTextNode(` ${compactDetail}`));
+  } else {
+    paragraph.textContent = compactDetail;
+  }
+  return true;
+}
+
+/**
+ * @param {ParentNode} root
+ * @returns {number}
+ */
+function estimateSpaceBrightPrimarySlotUsage(root) {
+  const targets = getSpaceBrightPrimaryTextTargets(
+    root,
+    Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+      (a, b) =>
+        Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
+    ),
+  );
+  if (!targets.length) return 0;
+  const pairCount = getStructuredShellTextPairCount(targets);
+  return pairCount >= 2 ? pairCount : targets.length;
+}
+
+/**
+ * @param {Element} slide
+ * @param {string} title
+ * @param {string[]} bullets
+ */
+function backfillSpaceBrightEmptyExampleBoxes(slide, title, bullets) {
+  if (!(slide instanceof Element)) return;
+  if (!slide.querySelector(".example-box p")) return;
+  const usedCount = estimateSpaceBrightPrimarySlotUsage(slide);
+  fillSpaceBrightExampleBox(slide, title, bullets, usedCount);
 }
 
 /**
@@ -1077,10 +1620,10 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance ul[data-shell="bullets"] li {
       margin-bottom: 10px;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list),
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) {
       list-style: none !important;
       padding: 0 28px !important;
       margin: 54px auto 0 !important;
@@ -1093,10 +1636,10 @@ function injectShellPreviewFit(doc) {
       gap: 20px !important;
       text-align: center !important;
     }
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
-    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"]:not(:has(.content-card)) ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .section-center ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-group ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li,
+    body:not(.shell-theme-academic):not(.shell-theme-friendly):not(.shell-theme-space-bright):not(.shell-theme-space-black):not(.shell-theme-sealife) .shell-slide-instance[data-shell-authored-slide="1"] .title-content ul[data-shell="bullets"]:not(.styled-list):not(.legend):not(.comic-list) li {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
@@ -1266,15 +1809,42 @@ function injectShellPreviewFit(doc) {
     .shell-slide-instance[data-shell-authored-slide="1"] .content-card:has(.radar-grid) .content-area {
       flex: 0 1 auto !important;
     }
-    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-sizer,
-    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-outer,
-    .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-scaled {
+    body:not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-sizer,
+    body:not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-outer,
+    body:not(.shell-theme-space-bright) .shell-slide-instance[data-shell-authored-slide="1"] .shell-panel-fit-scaled {
       overflow: visible !important;
       width: auto !important;
       height: auto !important;
       max-width: none !important;
       max-height: none !important;
       transform: none !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance.slide-container[data-shell-authored-slide="1"] {
+      height: 720px !important;
+      min-height: 720px !important;
+      max-height: 720px !important;
+      overflow: hidden !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      overflow: hidden !important;
+      justify-content: flex-start !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer {
+      align-items: flex-start !important;
+      justify-content: center !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer,
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer > .shell-panel-fit-outer {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area.shell-panel-fit-host > .shell-panel-fit-sizer > .shell-panel-fit-outer > .shell-panel-fit-scaled {
+      transform-origin: top center !important;
     }
     body.shell-theme-friendly #presentation-area,
     body.shell-theme-friendly #slides-master-container {
@@ -1352,8 +1922,29 @@ function injectShellPreviewFit(doc) {
       text-align: left !important;
       width: 100% !important;
       margin: 0 !important;
-      padding: 0 !important;
+      min-height: 76px !important;
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
       list-style: none !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"],
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
+      width: min(900px, 100%) !important;
+      max-width: 900px !important;
+      margin: 18px auto 0 !important;
+      padding-left: 28px !important;
+      align-self: center !important;
+      text-align: left !important;
+    }
+    body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] li {
+      font-size: 21px !important;
+      line-height: 1.45 !important;
+      font-weight: 500 !important;
+      text-align: left !important;
+      margin-bottom: 8px !important;
+      overflow-wrap: break-word !important;
+      word-break: normal !important;
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .content-area:has(> .tiled-content) {
       flex: 1 1 auto !important;
@@ -1373,6 +1964,29 @@ function injectShellPreviewFit(doc) {
       max-height: 100% !important;
       overflow: hidden !important;
     }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .table-row {
+      align-items: stretch !important;
+      grid-template-columns: minmax(300px, 340px) minmax(0, 1fr) !important;
+      gap: 24px !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .label-pill,
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .row-text {
+      min-height: 92px !important;
+      display: flex !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .label-pill {
+      justify-content: center !important;
+      text-align: center !important;
+      padding: 16px 24px !important;
+      line-height: 1.25 !important;
+    }
+    body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] .table-like .row-text {
+      justify-content: flex-start !important;
+      padding: 20px 26px !important;
+      line-height: 1.4 !important;
+    }
   `;
   doc.head.appendChild(style);
 }
@@ -1390,8 +2004,11 @@ function injectShellPanelFitScript(doc) {
   function isAuthoredAutoFitPanel(el) {
     if (!el || !el.matches) return false;
     if (!el.matches(".shell-slide-instance[data-shell-authored-slide=\\"1\\"] .content-area")) return false;
+    if (el.classList.contains("shell-panel-fit-host") && el.querySelector(":scope > .shell-panel-fit-sizer")) {
+      return true;
+    }
     return !!el.querySelector(
-      ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout"
+      ":scope > .tiled-content, :scope > .grid-3, :scope > .grid-2, :scope > .styled-bullets, :scope > .table-like, :scope > .highlight-numbers-layout, :scope > .timeline-layout, :scope > .two-column, :scope > .quote-layout"
     );
   }
   function hasComicPanelAncestor(el) {
@@ -1494,7 +2111,10 @@ function injectShellPanelFitScript(doc) {
   }
   function fitShellTitles(doc) {
     Array.prototype.forEach.call(doc.querySelectorAll('.shell-slide-instance [data-shell="title"]'), function (title) {
-      if (title.closest('.shell-slide-instance[data-shell-authored-slide="1"]')) return;
+      if (
+        title.closest('.shell-slide-instance[data-shell-authored-slide="1"]') &&
+        !(doc.body && doc.body.classList.contains("shell-theme-space-bright"))
+      ) return;
       fitTitle(title);
     });
   }
@@ -1512,6 +2132,20 @@ function injectShellPanelFitScript(doc) {
       el.dataset[dataKey] = String(getNumericCssValue(window.getComputedStyle(el).fontSize) || 0);
     }
     return getNumericCssValue(el.dataset[dataKey]) || getNumericCssValue(window.getComputedStyle(el).fontSize) || 0;
+  }
+  function getSpaceBrightCardAvailableHeight(tile) {
+    var rect = tile.getBoundingClientRect ? tile.getBoundingClientRect() : null;
+    var area = tile.closest(".content-area");
+    var slide = tile.closest(".shell-slide-instance");
+    var areaRect = area && area.getBoundingClientRect ? area.getBoundingClientRect() : null;
+    var slideRect = slide && slide.getBoundingClientRect ? slide.getBoundingClientRect() : null;
+    var bottoms = [];
+    if (areaRect && areaRect.height) bottoms.push(areaRect.bottom);
+    if (slideRect && slideRect.height) bottoms.push(slideRect.bottom - 60);
+    var bottom = bottoms.length ? Math.min.apply(Math, bottoms) : 0;
+    var top = rect && rect.top ? rect.top : 0;
+    var available = bottom > top ? Math.floor(bottom - top) : 0;
+    return available || Math.floor((tile.clientHeight || tile.offsetHeight || 0));
   }
   function fitSpaceBrightCard(tile) {
     if (!tile || !window.getComputedStyle || tile.getAttribute("data-edit-geom") === "1") return;
@@ -1538,7 +2172,11 @@ function injectShellPanelFitScript(doc) {
       });
     }
     setSizes(baseHeading, baseDetail);
-    var availableH = tile.clientHeight || tile.getBoundingClientRect().height || 0;
+    tile.style.height = "auto";
+    var availableH = getSpaceBrightCardAvailableHeight(tile);
+    if (availableH) {
+      tile.style.maxHeight = availableH + "px";
+    }
     var availableW = tile.clientWidth || tile.getBoundingClientRect().width || 0;
     if (!availableH || !availableW) return;
     var cacheKey = [
@@ -1634,6 +2272,36 @@ function injectShellPanelFitScript(doc) {
     applyPanelLayoutToElement(cs, outer, display);
     applyPanelLayoutToElement(cs, scaled, display);
   }
+  function measurePanelNaturalSize(scaled) {
+    var baseRect = scaled && scaled.getBoundingClientRect ? scaled.getBoundingClientRect() : null;
+    var maxRight = baseRect ? baseRect.left : 0;
+    var maxBottom = baseRect ? baseRect.top : 0;
+    Array.prototype.forEach.call(scaled.querySelectorAll("*"), function (node) {
+      if (!node || node.nodeType !== 1) return;
+      var cs = window.getComputedStyle(node);
+      if (cs.display === "none" || cs.visibility === "hidden") return;
+      var rect = node.getBoundingClientRect();
+      if (!rect || (!rect.width && !rect.height)) return;
+      maxRight = Math.max(maxRight, rect.right);
+      maxBottom = Math.max(maxBottom, rect.bottom);
+    });
+    return {
+      width: Math.max(
+        scaled.scrollWidth || 0,
+        scaled.offsetWidth || 0,
+        scaled.clientWidth || 0,
+        baseRect ? Math.ceil(maxRight - baseRect.left) : 0,
+        1
+      ),
+      height: Math.max(
+        scaled.scrollHeight || 0,
+        scaled.offsetHeight || 0,
+        scaled.clientHeight || 0,
+        baseRect ? Math.ceil(maxBottom - baseRect.top) : 0,
+        1
+      ),
+    };
+  }
   function wrapPanel(panel) {
     if (panel.closest('.shell-slide-instance[data-shell-authored-slide="1"]') && !isAuthoredAutoFitPanel(panel)) return;
     if (panel.querySelector(":scope > .shell-panel-fit-sizer")) return;
@@ -1670,12 +2338,29 @@ function injectShellPanelFitScript(doc) {
     var availW = Math.max(0, Math.floor((panelRect && panelRect.width) || panel.clientWidth || panel.offsetWidth || 0));
     var availH = Math.max(0, Math.floor((panelRect && panelRect.height) || panel.clientHeight || panel.offsetHeight || 0));
     if (!availW || !availH) return;
-    var naturalW = Math.max(scaled.scrollWidth || 0, scaled.offsetWidth || 0, 1);
-    var naturalH = Math.max(scaled.scrollHeight || 0, scaled.offsetHeight || 0, 1);
+    var measured = measurePanelNaturalSize(scaled);
+    var naturalW = Math.max(measured.width || 0, 1);
+    var naturalH = Math.max(measured.height || 0, 1);
     if (!naturalW || !naturalH) return;
     var scaleX = availW / naturalW;
     var scaleY = availH / naturalH;
     var scale = Math.min(1, scaleX, scaleY);
+    if (
+      document.body &&
+      document.body.classList.contains("shell-theme-space-bright") &&
+      panel.matches('.shell-slide-instance[data-shell-authored-slide="1"] .content-area') &&
+      panel.querySelector('ul[data-shell="bullets"]')
+    ) {
+      scale = Math.max(scale, 0.92);
+    }
+    if (
+      document.body &&
+      document.body.classList.contains("shell-theme-space-bright") &&
+      panel.matches('.shell-slide-instance[data-shell-authored-slide="1"] .content-area') &&
+      panel.querySelector(".table-like")
+    ) {
+      scale = Math.max(scale, 0.95);
+    }
     if (!isFinite(scale) || scale <= 0) scale = 1;
     scaled.style.width = naturalW + "px";
     scaled.style.height = naturalH + "px";
@@ -1717,7 +2402,10 @@ function injectShellPanelFitScript(doc) {
         run();
       });
       Array.prototype.forEach.call(document.querySelectorAll(".shell-slide-instance"), function (slide) {
-        if (slide.matches('[data-shell-authored-slide="1"]')) return;
+        if (
+          slide.matches('[data-shell-authored-slide="1"]') &&
+          !(document.body && document.body.classList.contains("shell-theme-space-bright"))
+        ) return;
         shellPanelFitRO.observe(slide);
       });
     } else {
@@ -1848,8 +2536,29 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
  * @param {ParentNode} root
  * @param {string} title
  * @param {string[]} bullets
+ * @param {{ forceSpaceBright?: boolean }} [options]
  */
-function fillContentSlots(root, title, bullets) {
+function fillContentSlots(root, title, bullets, options = {}) {
+  const slideRoot = getRootSlideElement(root);
+  const slideDoc =
+    slideRoot?.ownerDocument ||
+    (root && "ownerDocument" in root ? root.ownerDocument : null) ||
+    (root && "firstElementChild" in root ? root.firstElementChild?.ownerDocument : null);
+  const themeKey = resolveSlideShellThemeKey(slideRoot || root, { forceSpaceBright: options.forceSpaceBright });
+  const isSpaceBright = themeKey === "space-bright";
+  const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
+  const compactPairs = (pairs) =>
+    !themeTextBudget
+      ? pairs
+      : pairs.map((pair) => ({
+          headline: capitalizeSlideLead(compactSlideTextValue(pair.headline, themeTextBudget.headline)),
+          detail: capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, themeTextBudget.detail)),
+        }));
+  const compactItems = (items) =>
+    !themeTextBudget
+      ? items
+      : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, themeTextBudget.detail)));
+
   const titleEl = root.querySelector("[data-shell=\"title\"]");
   if (titleEl) titleEl.textContent = title;
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
@@ -1864,15 +2573,27 @@ function fillContentSlots(root, title, bullets) {
     }
     ul.replaceChildren();
     const desiredCount = Number(ul.getAttribute("data-shell-bullet-count") || 0);
+    const templateItemCount = (() => {
+      try {
+        const raw = ul.getAttribute("data-shell-original-items");
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.length : 0;
+      } catch (_) {
+        return 0;
+      }
+    })();
+    const compactCount = desiredCount > 0 ? desiredCount : templateItemCount > 0 ? templateItemCount : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      desiredCount > 0
-        ? buildSlideBulletItems(title, bullets, desiredCount)
-        : bullets.length
-          ? bullets.slice()
-          : title
-            ? [title]
-            : [];
-    items.forEach((b) => {
+      isSpaceBright
+        ? buildSlideBulletItems(title, bullets, compactCount)
+        : desiredCount > 0
+          ? buildSlideBulletItems(title, bullets, desiredCount)
+          : bullets.length
+            ? bullets.slice()
+            : title
+              ? [title]
+              : [];
+    compactItems(items).forEach((b) => {
       const li = ul.ownerDocument.createElement("li");
       li.textContent = b;
       ul.appendChild(li);
@@ -1882,14 +2603,20 @@ function fillContentSlots(root, title, bullets) {
   if (fillStructuredTableColumns(root, bullets)) {
     return;
   }
-  const targets = Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+  const targets = isSpaceBright ? getSpaceBrightPrimaryTextTargets(
+    root,
+    Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+      (a, b) =>
+        Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
+    ),
+  ) : Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
     (a, b) =>
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
     const pairCount = getStructuredShellTextPairCount(targets);
     if (pairCount >= 2) {
-      const textPairs = buildBalancedSlideTextPairs(title, bullets, pairCount);
+      const textPairs = compactPairs(buildBalancedSlideTextPairs(title, bullets, pairCount));
       textPairs.forEach((pick, idx) => {
         const headlineNode = targets[idx * 2];
         const detailNode = targets[idx * 2 + 1];
@@ -1900,10 +2627,11 @@ function fillContentSlots(root, title, bullets) {
           setShellTextContent(detailNode, pick.detail || pick.headline);
         }
       });
+      fillSpaceBrightExampleBox(root, title, bullets, pairCount);
       return;
     }
 
-    const textPool = buildSlideTextPool(title, bullets, targets.length);
+    const textPool = compactPairs(buildSlideTextPool(title, bullets, targets.length));
     let poolIndex = 0;
     let pendingPick = null;
     targets.forEach((node, idx) => {
@@ -1931,7 +2659,24 @@ function fillContentSlots(root, title, bullets) {
       poolIndex += 1;
       pendingPick = null;
     });
+    fillSpaceBrightExampleBox(root, title, bullets, targets.length);
+    return;
   }
+  if (isSpaceBright && shouldSkipSpaceBrightFallbackBody(root)) {
+    return;
+  }
+  const sink = resolveShellContentSink(slideRoot || /** @type {Element} */ (root));
+  const listDoc = slideRoot?.ownerDocument || (root instanceof Element ? root.ownerDocument : null);
+  if (!listDoc) {
+    return;
+  }
+  const list = ensureFallbackShellList(listDoc, sink);
+  list.replaceChildren();
+  compactItems(buildSlideBulletItems(title, bullets, isSpaceBright ? 2 : 3)).forEach((b) => {
+    const li = list.ownerDocument.createElement("li");
+    li.textContent = b;
+    list.appendChild(li);
+  });
 }
 
 /**
@@ -1971,6 +2716,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
   const coverTemplate = getShellCoverTemplate(doc);
   const endingTemplate = getShellEndingTemplate(doc);
   const variantTemplates = getShellVariantTemplates(doc);
+  const isSpaceBrightTheme = !!doc.body?.classList?.contains("shell-theme-space-bright");
 
   if (!master || (!coverTemplate && !variantTemplates.length)) {
     injectShellPreviewFit(doc);
@@ -2004,9 +2750,21 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     if (isAuthoredSlide) {
       first.setAttribute("data-shell-authored-slide", "1");
     }
-    fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : []);
+    fillContentSlots(
+      frag,
+      String(s?.title || ""),
+      Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
+      { forceSpaceBright: isSpaceBrightTheme },
+    );
     if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
     master.appendChild(frag);
+    if (isSpaceBrightTheme && first instanceof Element) {
+      backfillSpaceBrightEmptyExampleBoxes(
+        first,
+        String(s?.title || ""),
+        Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
+      );
+    }
   });
 
   const navMode = meta?.slideNavMode === "scroll" ? "scroll" : "active";
