@@ -645,7 +645,7 @@ function getSealifeTextBudget(root) {
   if (!slide) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 62, maxSentences: 1, maxWords: 11 },
+      detail: { maxChars: 88, maxSentences: 2, maxWords: 18 },
     };
   }
   if (slide.querySelector(".cols-3")) {
@@ -681,18 +681,18 @@ function getSealifeTextBudget(root) {
   if (slide.querySelector(".image-layout")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 58, maxSentences: 1, maxWords: 10 },
+      detail: { maxChars: 180, maxSentences: 2, maxWords: 36 },
     };
   }
   if (slide.querySelector(".title-card, .section-card")) {
     return {
       headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 62, maxSentences: 1, maxWords: 11 },
+      detail: { maxChars: 260, maxSentences: 2, maxWords: 52 },
     };
   }
   return {
     headline: { maxWords: 4, maxChars: 24 },
-    detail: { maxChars: 58, maxSentences: 1, maxWords: 10 },
+    detail: { maxChars: 88, maxSentences: 2, maxWords: 18 },
   };
 }
 
@@ -826,6 +826,52 @@ function compactStructuredSlideColumns(bullets, budget) {
       .filter(Boolean)
       .join("\n"),
   );
+}
+
+/**
+ * Sea Life has several intentionally roomy image/title cards; give those
+ * cards enough lesson substance while keeping dense grids tightly capped.
+ * @param {ParentNode} root
+ * @returns {number}
+ */
+function getSealifeRoomyDetailCount(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) return 2;
+  if (slide.querySelector(".image-layout")) return 3;
+  if (slide.querySelector(".title-card, .section-card")) return 3;
+  return 1;
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {{ detail: { maxChars: number, maxSentences: number, maxWords?: number } }} budget
+ * @param {number} maxItems
+ * @returns {string}
+ */
+function buildSealifeRichDetailText(title, bullets, budget, maxItems) {
+  const values = collectUniqueSlideTextValues(bullets.length ? bullets : [title]);
+  const details = values
+    .map((value) => {
+      const pair = buildSlideTextPair(value);
+      return pair.detail || pair.headline;
+    })
+    .filter(Boolean)
+    .slice(0, Math.max(1, maxItems));
+
+  const joined = details.length ? details.join(" ") : title;
+  return capitalizeSlideLead(compactSlideTextValue(joined, budget.detail));
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {{ headline: { maxWords: number, maxChars: number } }} budget
+ * @returns {string}
+ */
+function buildSealifeLeadHeadlineText(title, bullets, budget) {
+  const pair = buildSlideTextPair(bullets[0] || title);
+  return capitalizeSlideLead(compactSlideTextValue(pair.headline || title, budget.headline));
 }
 
 /**
@@ -2793,9 +2839,31 @@ function fillContentSlots(root, title, bullets, options = {}) {
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
   if (targets.length) {
+    if (
+      isSealife &&
+      targets.length === 2 &&
+      targets.every((node) => !isHeadlineShellTarget(node)) &&
+      themeTextBudget
+    ) {
+      setShellTextContent(targets[0], buildSealifeLeadHeadlineText(renderTitle, bullets, themeTextBudget));
+      setShellTextContent(
+        targets[1],
+        buildSealifeRichDetailText(
+          renderTitle,
+          bullets,
+          themeTextBudget,
+          getSealifeRoomyDetailCount(slideRoot || root),
+        ),
+      );
+      return;
+    }
     if (isSealife && targets.length === 1 && !isHeadlineShellTarget(targets[0]) && themeTextBudget) {
-      const pair = buildSlideTextPair(bullets[0] || renderTitle);
-      const detail = capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, themeTextBudget.detail));
+      const detail = buildSealifeRichDetailText(
+        renderTitle,
+        bullets,
+        themeTextBudget,
+        getSealifeRoomyDetailCount(slideRoot || root),
+      );
       setShellTextContent(targets[0], detail);
       return;
     }

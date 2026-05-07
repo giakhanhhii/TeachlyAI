@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { DIRECT_SLIDE_PRESETS } from "../../frontend/js/chatbot/data/directSlidePresets.js";
 import { buildSlideDeckSrcdoc } from "../../frontend/js/chatbot/slide/slideShellSrcdoc.js";
 
 const FRIENDLY_TWO_BOX_SHELL = `
@@ -227,6 +228,8 @@ describe("slideShellSrcdoc.js", () => {
           title: "Conditional Type 1 Overview",
           bullets: [
             "Concept: This pattern describes a possible condition in the present or future and keeps the grammar link clear for exam answers.",
+            "Signal: Use if plus present simple, then will can or may plus base verb for the result.",
+            "Practice: Rewrite realistic questions and explain why each answer keeps the time meaning.",
           ],
         },
         {
@@ -247,10 +250,23 @@ describe("slideShellSrcdoc.js", () => {
       node.textContent.replace(/\s+/g, " ").trim(),
     );
 
-    expect(titleCardDetail.length).toBeGreaterThan(50);
-    expect(titleCardDetail.length).toBeLessThanOrEqual(66);
+    expect(titleCardDetail.length).toBeGreaterThan(90);
+    expect(titleCardDetail.length).toBeLessThanOrEqual(265);
     denseDetails.forEach((item) => {
       expect(item.length).toBeLessThanOrEqual(43);
     });
+  });
+
+  it("uses concrete reported-question rewriting prompts instead of placeholders", () => {
+    const preset = DIRECT_SLIDE_PRESETS.find((item) => item.id === "slide-reported-speech");
+    const practiceSlide = preset?.slides.find((slide) => slide.title === "Câu hỏi tường thuật - Luyện tập");
+    const prompt = practiceSlide?.bullets[0] || "";
+
+    expect(prompt).toContain('"Do you like English?"');
+    expect(prompt).toContain('"Where do you live?"');
+    expect(prompt).toContain('"Can you help me?"');
+    expect(prompt).toContain('"What are you doing?"');
+    expect(prompt).toContain('"Did you finish homework?"');
+    expect(prompt).not.toBe("Viết lại 5 câu hỏi.");
   });
 });
