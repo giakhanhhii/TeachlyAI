@@ -363,8 +363,15 @@ function buildSlideTextPair(value) {
 function buildSlideTextPool(title, bullets, want) {
   const unique = [];
   const seen = new Set();
+  const normalizeSlideTextValue = (value) =>
+    String(value || "")
+      .replace(/\r\n/g, "\n")
+      .split(/\n+/)
+      .map((part) => part.replace(/[ \t]+/g, " ").trim())
+      .filter(Boolean)
+      .join("\n");
   const push = (value) => {
-    const normalized = String(value || "").replace(/\s+/g, " ").trim();
+    const normalized = normalizeSlideTextValue(value);
     if (!normalized) return;
     const key = normalized.toLowerCase();
     if (seen.has(key)) return;
@@ -398,7 +405,12 @@ function collectUniqueSlideTextValues(values) {
   const unique = [];
   const seen = new Set();
   values.forEach((value) => {
-    const normalized = String(value || "").replace(/\s+/g, " ").trim();
+    const normalized = String(value || "")
+      .replace(/\r\n/g, "\n")
+      .split(/\n+/)
+      .map((part) => part.replace(/[ \t]+/g, " ").trim())
+      .filter(Boolean)
+      .join("\n");
     if (!normalized) return;
     const key = normalized.toLowerCase();
     if (seen.has(key)) return;
@@ -475,33 +487,45 @@ function isSpaceBrightSlideRoot(root) {
  * @returns {string}
  */
 function compactSlideTextValue(value, opts = {}) {
-  const raw = String(value || "").replace(/\s+/g, " ").trim();
-  if (!raw) return "";
-  const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
-  const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
-  let next = raw;
-  if (maxWords) {
-    const words = raw.split(/\s+/).filter(Boolean);
-    if (words.length > maxWords) {
-      next = `${words.slice(0, maxWords).join(" ")}...`;
+  const normalizeLine = (line) => String(line || "").replace(/[ \t]+/g, " ").trim();
+  const compactSingleLine = (line) => {
+    const raw = normalizeLine(line);
+    if (!raw) return "";
+    const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
+    const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
+    let next = raw;
+    if (maxWords) {
+      const words = raw.split(/\s+/).filter(Boolean);
+      if (words.length > maxWords) {
+        next = `${words.slice(0, maxWords).join(" ")}...`;
+      }
     }
-  }
-  const sentences = next
-    .split(/(?<=[.!?])\s+/u)
-    .map((part) => part.trim())
+    const sentences = next
+      .split(/(?<=[.!?])\s+/u)
+      .map((part) => part.trim())
+      .filter(Boolean);
+    const maxSentencesRaw = Math.floor(Number(opts.maxSentences) || 0);
+    const maxSentences = maxSentencesRaw > 0 ? maxSentencesRaw : 0;
+    if (maxSentences && sentences.length > maxSentences) {
+      next = sentences.slice(0, maxSentences).join(" ");
+    }
+    const maxCharsRaw = Math.floor(Number(opts.maxChars) || 0);
+    const maxChars = maxCharsRaw > 0 ? maxCharsRaw : 0;
+    if (maxChars && next.length > maxChars) {
+      const trimmed = next.slice(0, maxChars).replace(/[,:;\s]+$/u, "").trim();
+      return `${trimmed}...`;
+    }
+    return next;
+  };
+
+  const lines = String(value || "")
+    .replace(/\r\n/g, "\n")
+    .split(/\n+/)
+    .map(normalizeLine)
     .filter(Boolean);
-  const maxSentencesRaw = Math.floor(Number(opts.maxSentences) || 0);
-  const maxSentences = maxSentencesRaw > 0 ? maxSentencesRaw : 0;
-  if (maxSentences && sentences.length > maxSentences) {
-    next = sentences.slice(0, maxSentences).join(" ");
-  }
-  const maxCharsRaw = Math.floor(Number(opts.maxChars) || 0);
-  const maxChars = maxCharsRaw > 0 ? maxCharsRaw : 0;
-  if (maxChars && next.length > maxChars) {
-    const trimmed = next.slice(0, maxChars).replace(/[,:;\s]+$/u, "").trim();
-    return `${trimmed}...`;
-  }
-  return next;
+  if (!lines.length) return "";
+  if (lines.length === 1) return compactSingleLine(lines[0]);
+  return lines.map((line) => compactSingleLine(line)).filter(Boolean).join("\n");
 }
 
 /**
@@ -1107,6 +1131,9 @@ function partitionSlideTextGroups(items, want) {
 function buildBalancedSlideTextPairs(title, bullets, want) {
   const safeWant = Math.max(1, Math.floor(Number(want) || 0));
   const bulletValues = collectUniqueSlideTextValues(bullets);
+  if (bulletValues.length === safeWant) {
+    return bulletValues.map((bullet) => buildSlideTextPair(bullet));
+  }
   const routeValues = bulletValues.filter((bullet) => /^(?:track|mạch|mach)\s+\d+\s*:/iu.test(bullet));
   if (routeValues.length) {
     const routePairs = routeValues.slice(0, safeWant).map((bullet, index) => {
@@ -1168,8 +1195,15 @@ function buildBalancedSlideTextPairs(title, bullets, want) {
  * @param {string} value
  */
 function setShellTextContent(node, value) {
-  const raw = String(value || "").replace(/\s+/g, " ").trim();
-  const fallback = String(node.getAttribute("data-shell-original-text") || "").replace(/\s+/g, " ").trim();
+  const normalizeMultiline = (text) =>
+    String(text || "")
+      .replace(/\r\n/g, "\n")
+      .split(/\n+/)
+      .map((part) => part.replace(/[ \t]+/g, " ").trim())
+      .filter(Boolean)
+      .join("\n");
+  const raw = normalizeMultiline(value);
+  const fallback = normalizeMultiline(node.getAttribute("data-shell-original-text") || "");
   const picked = raw || fallback || "Nội dung";
   const parts = picked.split(/\n/);
   node.replaceChildren();

@@ -114,6 +114,15 @@ function buildDetailedExampleLine(chapter) {
   return parts.length ? `Ví dụ: ${parts.join("\n")}` : "";
 }
 
+function buildMultilineSectionLine(label, parts) {
+  const rows = parts.map((part) => String(part || "").trim()).filter(Boolean);
+  return rows.length ? `${label}: ${rows.join("\n")}` : "";
+}
+
+function trimTrailingSentencePunctuation(value) {
+  return String(value || "").trim().replace(/[.!?]+$/u, "");
+}
+
 function buildSecondExampleLine(chapter) {
   const focus = String(chapter?.focus || "").trim();
   const rule = String(chapter?.rule || "").trim();
@@ -127,20 +136,23 @@ function buildSecondExampleLine(chapter) {
     parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
   }
 
-  return parts.length ? `Phân tích: ${parts.join("\n")}` : "";
+  return buildMultilineSectionLine("Phân tích", parts);
 }
 
 function buildDetailedExplanationLine(chapter) {
   const practiceA = String(chapter?.practiceA || "").trim();
   const practiceB = String(chapter?.practiceB || "").trim();
   const name = String(chapter?.name || "").trim().toLowerCase();
+  const rule = trimTrailingSentencePunctuation(chapter?.rule);
+  const parts = [];
 
-  if (practiceA && practiceB) {
-    return `Ghi nhớ: ${practiceA} Sau đó, ${practiceB.toLowerCase()} để chốt lại ${name}.`;
+  if (practiceA) parts.push(`Ý 1 -> ${practiceA}`);
+  if (practiceB) parts.push(`Ý 2 -> ${practiceB}`);
+  if (rule || name) {
+    parts.push(`Ý 3 -> chốt lại bằng công thức ${rule || name}.`);
   }
-  if (practiceA) return `Ghi nhớ: ${practiceA}`;
-  if (practiceB) return `Ghi nhớ: ${practiceB}`;
-  return name ? `Ghi nhớ: giải thích vì sao các câu trên đúng với ${name}.` : "";
+
+  return buildMultilineSectionLine("Ghi nhớ", parts);
 }
 
 function buildPracticeTaskLine(chapter) {
@@ -148,10 +160,27 @@ function buildPracticeTaskLine(chapter) {
   if (detailedPractice) return detailedPractice;
   const practiceA = String(chapter?.practiceA || "").trim();
   const practiceB = String(chapter?.practiceB || "").trim();
-  if (practiceA && practiceB) {
-    return `Bài luyện tập: ${practiceA} Sau đó, ${practiceB.toLowerCase()}.`;
+  const name = String(chapter?.name || "").trim().toLowerCase();
+  const parts = [];
+  if (practiceA) parts.push(`Ý 1 -> ${practiceA}`);
+  if (practiceB) parts.push(`Ý 2 -> ${practiceB}`);
+  if (practiceA || practiceB || name) {
+    parts.push(`Ý 3 -> tự giải thích vì sao đáp án đúng vẫn bám ${name || "đúng cấu trúc"}.`);
   }
-  return practiceA || practiceB || "";
+  return buildMultilineSectionLine("Bài luyện tập", parts);
+}
+
+function buildSelfCheckLine(chapter) {
+  const focus = String(chapter?.focus || "").trim();
+  const rule = trimTrailingSentencePunctuation(chapter?.rule);
+  const name = String(chapter?.name || "").trim().toLowerCase();
+  const parts = [];
+
+  if (focus) parts.push(`Ý 1 -> nhắc lại dấu hiệu: ${focus}`);
+  if (rule) parts.push(`Ý 2 -> đối chiếu lại công thức ${rule}`);
+  if (name || rule) parts.push(`Ý 3 -> tự đặt 1 câu mới rồi kiểm tra lại theo ${name || rule}.`);
+
+  return buildMultilineSectionLine("Tự kiểm tra", parts);
 }
 
 function buildPracticeGuideLine(chapter, preset) {
@@ -355,6 +384,7 @@ function buildChapterSlides(preset, chapter, chapterIndex) {
       buildDetailedExampleLine(chapter),
       buildSecondExampleLine(chapter),
       buildDetailedExplanationLine(chapter),
+      buildSelfCheckLine(chapter),
     ]),
     createSlide(
       `${preset.id}-${String(base + 3).padStart(2, "0")}`,
