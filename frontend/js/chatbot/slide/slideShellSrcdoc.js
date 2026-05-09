@@ -977,16 +977,16 @@ function isSealifeImageLayoutRoot(root) {
  */
 function buildSealifeImageLayoutText(title, bullets, budget) {
   const lineBudget = {
-    maxChars: Math.min(Number(budget?.detail?.maxChars) || 52, 52),
+    maxChars: Math.min(Number(budget?.detail?.maxChars) || 44, 44),
     maxSentences: 1,
-    maxWords: Math.min(Number(budget?.detail?.maxWords) || 8, 8),
+    maxWords: Math.min(Number(budget?.detail?.maxWords) || 7, 7),
   };
-  const ideas = buildSlideBulletItems(title, bullets, 3)
+  const ideas = buildSlideBulletItems(title, bullets, 5)
     .map((item) => flattenSlideTextForCompact(item))
     .map((item) => capitalizeSlideLead(compactSlideTextValue(item, lineBudget)))
     .filter(Boolean)
-    .slice(0, 3);
-  while (ideas.length < 3 && ideas.length > 0) {
+    .slice(0, 5);
+  while (ideas.length < 5 && ideas.length > 0) {
     ideas.push(ideas[ideas.length - 1]);
   }
   return ideas.join("\n");
@@ -2362,25 +2362,31 @@ function injectShellPreviewFit(doc) {
       max-width: calc(100% - 120px) !important;
       margin-left: auto !important;
       margin-right: auto !important;
-      text-align: left !important;
+      text-align: center !important;
     }
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-content {
       width: min(100%, 980px) !important;
       max-width: 980px !important;
       margin-left: auto !important;
       margin-right: auto !important;
-      align-items: stretch !important;
-      text-align: left !important;
+      align-items: center !important;
+      text-align: center !important;
     }
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-card h1,
-    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-card p,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .section-card h1,
-    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .section-card p,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .tl-item h3,
-    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .tl-item p,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .mini-card h3,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .cols-3 h3 {
+      width: fit-content !important;
+      max-width: 100% !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-card p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .section-card p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .tl-item p,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .mini-card p,
-    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .cols-3 h3,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .cols-3 p,
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .pct-item p {
       width: fit-content !important;

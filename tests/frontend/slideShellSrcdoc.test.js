@@ -433,7 +433,7 @@ describe("slideShellSrcdoc.js", () => {
 
     expect(outerTitle.length).toBeLessThanOrEqual(21);
     expect(detail.length).toBeLessThanOrEqual(165);
-    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(2);
+    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(4);
     expect(titleStyle).toContain("left: 60px");
     expect(titleStyle).toContain("right: calc(50% + 25px)");
   });
@@ -458,7 +458,7 @@ describe("slideShellSrcdoc.js", () => {
     const detailHtml = doc.querySelector(".image-layout .text-part p")?.innerHTML || "";
     const titleStyle = doc.querySelector(".outer-title")?.getAttribute("style") || "";
 
-    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(2);
+    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(4);
     expect(titleStyle).toContain("left: calc(50% + 25px)");
     expect(titleStyle).toContain("right: 60px");
   });

@@ -67,7 +67,7 @@
             top: 40px;
             width: fit-content;
             max-width: calc(100% - 120px);
-            text-align: left;
+            text-align: center;
             color: #ffffff;
             font-size: 60px;
             left: 0;
@@ -153,9 +153,9 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            align-items: stretch;
+            align-items: center;
             gap: 12px;
-            text-align: left;
+            text-align: center;
         }
         .title-content > h1,
         .title-content > p {
@@ -163,6 +163,11 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
+        }
+        .title-content > h1 {
+            text-align: center;
+        }
+        .title-content > p {
             text-align: left;
         }
         .title-card h1,
@@ -275,7 +280,7 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
-            text-align: left;
+            text-align: center;
             text-wrap: balance;
         }
         .section-card p {
@@ -374,7 +379,7 @@
             align-items: center;
             gap: 25px;
             width: 280px;
-            text-align: left;
+            text-align: center;
         }
         .tl-item h3,
         .tl-item p {
@@ -382,8 +387,9 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
-            text-align: left;
         }
+        .tl-item h3 { text-align: center; }
+        .tl-item p { text-align: left; }
         .tl-item h3 { font-size: 38px; }
         .tl-item p { font-size: 22px; line-height: 1.5; }
 
@@ -411,7 +417,7 @@
             border: 3px solid #121212;
             border-radius: 20px;
             padding: 30px 40px;
-            text-align: left;
+            text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -425,8 +431,9 @@
             max-width: 100%;
             margin-left: auto;
             margin-right: auto;
-            text-align: left;
         }
+        .mini-card h3 { text-align: center; }
+        .mini-card p { text-align: left; }
         .mini-card h3 { font-size: 34px; margin-bottom: 15px; line-height: 1.3;}
         .mini-card p { font-size: 24px; line-height: 1.5;}
 
@@ -468,7 +475,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: left;
+            text-align: center;
             width: 300px;
             gap: 25px;
         }
