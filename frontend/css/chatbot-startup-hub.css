@@ -227,6 +227,200 @@
   }
 }
 
+/* ── Auto Mode toggle (chat-startup-hub embedded version) ── */
+.chat-startup-hub .auto-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1.5px solid rgba(46, 125, 50, 0.25);
+  border-radius: 999px;
+  padding: 6px 16px 6px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #558b2f;
+  margin-bottom: 14px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(4px);
+}
+.chat-startup-hub .auto-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(46, 125, 50, 0.45);
+}
+.chat-startup-hub .auto-mode-toggle[aria-pressed="true"] {
+  background: rgba(25, 118, 210, 0.12);
+  border-color: #1976d2;
+  color: #1565c0;
+}
+.chat-startup-hub .toggle-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: #b0bec5;
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.chat-startup-hub .auto-mode-toggle[aria-pressed="true"] .toggle-track {
+  background: #1976d2;
+}
+.chat-startup-hub .toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+.chat-startup-hub .auto-mode-toggle[aria-pressed="true"] .toggle-thumb {
+  transform: translateX(16px);
+}
+
+/* ── Auto Mode overlay / dialog (used in chatbot_ui.html) ── */
+.auto-mode-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+.auto-mode-dialog {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 28px 24px;
+  max-width: 400px;
+  width: calc(100% - 32px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: autoModeDialogIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes autoModeDialogIn {
+  from { opacity: 0; transform: scale(0.88) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.auto-mode-dialog-icon {
+  font-size: 32px;
+  text-align: center;
+}
+.auto-mode-dialog-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1b5e20;
+  text-align: center;
+  margin: 0;
+}
+.auto-mode-dialog-desc {
+  font-size: 14px;
+  color: #558b2f;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+.auto-mode-dialog-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.auto-mode-btn {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.12s;
+}
+.auto-mode-btn:active { transform: scale(0.97); }
+.auto-mode-btn-custom {
+  background: #f1f8e9;
+  color: #33691e;
+  border: 1.5px solid #c5e1a5;
+}
+.auto-mode-btn-custom:hover { background: #e8f5e9; }
+.auto-mode-btn-auto {
+  background: #1976d2;
+  color: #fff;
+}
+.auto-mode-btn-auto:hover { background: #1565c0; }
+.auto-mode-btn-auto:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Count selector specific */
+.auto-mode-dialog--count {
+  max-width: 440px;
+}
+.count-selector-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 4px 0;
+}
+.count-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.count-row-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2e7d32;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+.count-segmented {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.count-step-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid #c5e1a5;
+  background: #f1f8e9;
+  color: #33691e;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.count-step-btn:hover { background: #e8f5e9; }
+.count-step-btn.active {
+  background: #2e7d32;
+  border-color: #2e7d32;
+  color: #fff;
+}
+.count-total-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b5e20;
+  background: #e8f5e9;
+  border-radius: 8px;
+  padding: 6px 12px;
+  text-align: center;
+}
+.count-selector-warn {
+  font-size: 13px;
+  color: #c62828;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+}
+
 @media (max-width: 520px) {
   .chat-startup-hub .startup-hub-instruction {
     font-size: 20px;
