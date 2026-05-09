@@ -78,15 +78,40 @@ function normalizeExampleSnippet(value) {
     .trim();
 }
 
-function buildDefaultSlideIndexes(count) {
-  const want = Math.max(10, Math.min(30, Number(count) || 10));
-  if (want >= 30) return Array.from({ length: 30 }, (_, index) => index + 1);
-  const picked = new Set([1, 2, 3, 30]);
-  for (let i = 1; picked.size < want && i <= 28; i += 1) {
-    const index = 3 + Math.round((i * 26) / Math.max(1, want - 3));
-    picked.add(Math.max(4, Math.min(29, index)));
+/**
+ * Builds slide indexes in chapter order: overview (1-3) → chapter 1 → chapter 2 → … → summary (last).
+ * Slide 4 (Khung ghi nhớ) is intentionally skipped to match EXTRA preset behavior.
+ * @param {string|number} count - requested number of slides
+ * @param {number} deckSize - total slides in the deck (default 30 for 5-chapter RAW presets)
+ * @returns {number[]}
+ */
+function buildDefaultSlideIndexes(count, deckSize = 30) {
+  const want = Math.max(1, Math.min(deckSize, Number(count) || 10));
+  if (want >= deckSize) return Array.from({ length: deckSize }, (_, i) => i + 1);
+
+  const OVERVIEW = [1, 2, 3];
+  const SUMMARY = deckSize;
+  const CHAPTER_START = 5; // slide 4 skipped (same as buildExtraPresetDefaultIndexes)
+
+  if (want <= OVERVIEW.length) return OVERVIEW.slice(0, want);
+  if (want === OVERVIEW.length + 1) return [...OVERVIEW, SUMMARY];
+
+  const chapterBudget = want - OVERVIEW.length - 1; // reserve 1 slot for summary
+  const chapterSlides = [];
+  for (let i = CHAPTER_START; i < SUMMARY && chapterSlides.length < chapterBudget; i += 1) {
+    chapterSlides.push(i);
   }
-  return Array.from(picked).sort((a, b) => a - b).slice(0, want);
+  return [...OVERVIEW, ...chapterSlides, SUMMARY];
+}
+
+/**
+ * Exported version so sessionContentPrep.js can call it with the *actual* user-requested count.
+ * @param {number} want
+ * @param {number} deckSize
+ * @returns {number[]}
+ */
+export function buildPresetSlideIndexes(want, deckSize) {
+  return buildDefaultSlideIndexes(want, deckSize);
 }
 
 function pickSlidesByIndexes(slides, indexes) {
@@ -258,34 +283,26 @@ function buildFormulaSummaryLines(chapter) {
   const pitfallA = String(chapter?.pitfallA || "").trim();
   const pitfallB = String(chapter?.pitfallB || "").trim();
 
+  // Keep each block to max 4 lines to prevent overflow in space-constrained themes.
   const conceptBlock = [
     name || "Khái niệm",
     focus ? `Khái niệm: ${focus}` : "Khái niệm: xác định đúng chức năng của cấu trúc trong câu.",
-    name ? `Vai trò: ${name.toLowerCase()} giúp nối ý gọn và đúng ngữ pháp.` : "",
     rule ? `Dấu hiệu: ${rule}` : "",
-    exampleA ? `Ví dụ 1: ${exampleA}` : "",
-    exampleB ? `Ví dụ 2: ${exampleB}` : exampleA ? `Ví dụ 2: biến đổi lại ${exampleA.toLowerCase()}.` : "",
-    pitfallA ? `Lỗi hay gặp: ${pitfallA}` : "",
+    exampleA ? `Ví dụ: ${exampleA}` : "",
   ].filter(Boolean).join("\n");
 
   const formulaBlock = [
     "Công thức cốt lõi",
     rule ? `Mẫu: ${rule}` : "Mẫu: quan sát cấu trúc chính rồi mới điền từ.",
-    "Bước 1: xác định từ hoặc cụm cần được bổ nghĩa.",
-    "Bước 2: chọn đúng dạng theo chức năng ngữ pháp và nghĩa.",
-    "Bước 3: đọc lại cả mệnh đề để kiểm tra độ tự nhiên.",
+    "Bước 1: xác định → Bước 2: áp dụng đúng dạng → Bước 3: đọc lại để kiểm tra.",
     practiceA ? `Vận dụng: ${practiceA}` : "Vận dụng: áp dụng mẫu vào một câu mới cùng chủ điểm.",
-    practiceB ? `Nhắc lại: ${practiceB}` : pitfallB ? `Nhắc lại: tránh ${pitfallB.toLowerCase()}.` : "",
   ].filter(Boolean).join("\n");
 
   const quickUseBlock = [
     "Cách áp dụng nhanh",
-    "Nhìn từ đứng trước và đứng sau chỗ cần điền.",
-    focus ? `Gợi ý nghĩa: ${focus}` : "Gợi ý nghĩa: luôn kiểm tra quan hệ logic trong câu.",
-    exampleA ? `Mẫu quen thuộc: ${exampleA}` : "",
-    exampleB ? `Mẫu bổ sung: ${exampleB}` : "",
-    pitfallA ? `Tránh lỗi 1: ${pitfallA}` : "",
-    pitfallB ? `Tránh lỗi 2: ${pitfallB}` : "",
+    focus ? `Gợi ý: ${focus}` : "Gợi ý: kiểm tra quan hệ logic trong câu.",
+    exampleA ? `Mẫu: ${exampleA}` : "",
+    pitfallA ? `Tránh: ${pitfallA}` : "",
   ].filter(Boolean).join("\n");
 
   return [conceptBlock, formulaBlock, quickUseBlock].filter(Boolean);
@@ -1325,7 +1342,7 @@ export const DIRECT_SLIDE_PRESETS = ALL_RAW_SLIDE_PRESETS.map((preset) => {
   const slides = buildDeckFromBlueprint(preset);
   const defaultSlideIndexes = preset.customDefaultIndexes
     ? preset.customDefaultIndexes.filter((idx) => idx >= 1 && idx <= slides.length)
-    : buildDefaultSlideIndexes(preset.count);
+    : buildDefaultSlideIndexes(preset.count, slides.length);
   return {
     ...preset,
     slides,

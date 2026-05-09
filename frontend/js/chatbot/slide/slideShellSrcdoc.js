@@ -2308,7 +2308,7 @@ function injectShellPreviewFit(doc) {
       min-height: 0 !important;
       max-height: 100% !important;
       overflow: hidden !important;
-      justify-content: center !important;
+      justify-content: flex-start !important;
     }
     body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout {
       max-height: 500px !important;

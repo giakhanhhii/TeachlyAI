@@ -4,7 +4,7 @@
 import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
 import { findDirectQuizPreset } from "../data/directQuizPresets.js";
 import { findDirectFlashPreset } from "../data/directFlashPresets.js";
-import { findDirectSlidePreset } from "../data/directSlidePresets.js";
+import { findDirectSlidePreset, buildPresetSlideIndexes } from "../data/directSlidePresets.js";
 
 /**
  * @param {number} min
@@ -388,19 +388,25 @@ export function prepareSlideSessionData(data, meta) {
   const directPreset = findDirectSlidePreset(meta);
   if (directPreset) {
     const consumed = parseConsumedKeys(meta?.__consumedKeysJson);
-    const presetDefault = Array.isArray(directPreset.defaultSlides) ? directPreset.defaultSlides : [];
     const fullPool = Array.isArray(directPreset.slides) ? directPreset.slides : [];
     const remainingPool = filterPoolByConsumed(fullPool, slideDedupeKey, consumed);
-    const selected =
-      presetDefault.length && want <= presetDefault.length && consumed.size === 0
-        ? presetDefault.slice(0, want)
-        : remainingPool.slice(0, want);
-    const slides = consumed.size === 0 ? replaceDuplicateOpeningSlide(selected, fullPool) : selected;
-    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, slides, slideDedupeKey, consumed);
+
+    let selected;
+    if (consumed.size === 0) {
+      // Build ordered chapter indexes for the actual user-requested count,
+      // not the preset's own default count — this ensures Chuyên đề 1 → 2 → 3 ordering.
+      const indexes = buildPresetSlideIndexes(want, fullPool.length);
+      selected = indexes.map((i) => fullPool[i - 1]).filter(Boolean);
+      selected = replaceDuplicateOpeningSlide(selected, fullPool);
+    } else {
+      selected = remainingPool.slice(0, want);
+    }
+
+    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, selected, slideDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => slideDedupeKey(item)).filter(Boolean)).size;
     return {
       title: `Slide bài giảng — ${directPreset.topic}`,
-      slides,
+      slides: selected,
       sessionMeta: {
         ...meta,
         __offset: "0",
@@ -411,11 +417,12 @@ export function prepareSlideSessionData(data, meta) {
       },
     };
   }
+  // Non-preset fallback: keep slides in the order provided by the mock bundle (no shuffle).
   const pool = Array.isArray(data?.slides) ? data.slides : [];
   const preferredEnding = pickPreferredEndingSlide(pool);
   const endingSlide = preferredEnding || pool[pool.length - 1] || null;
   const contentPool = pool.filter((slide) => !isLikelyEndingSlide(slide));
-  const bodySlides = pickUniqueShuffled(contentPool, slideDedupeKey, Math.max(0, want - 1));
+  const bodySlides = contentPool.slice(0, Math.max(0, want - 1));
   const slides = want <= 1 ? (endingSlide ? [endingSlide] : []) : endingSlide ? [...bodySlides, endingSlide] : bodySlides;
   return {
     ...data,
