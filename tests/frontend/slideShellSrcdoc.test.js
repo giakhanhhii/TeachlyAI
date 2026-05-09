@@ -95,6 +95,43 @@ const COMIC_STRATEGY_SHELL = `
 </html>
 `;
 
+const COMIC_GRID_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Comic Grid Shell 2026</title>
+  </head>
+  <body class="shell-theme-comic">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="slide-title">Placeholder</h2>
+        <div class="content-area">
+          <div class="comic-grid-2 compact-grid-2" style="height: 100%;">
+            <div class="mini-panel">
+              <h3>One</h3>
+              <p>Placeholder detail one</p>
+            </div>
+            <div class="mini-panel">
+              <h3>Two</h3>
+              <p>Placeholder detail two</p>
+            </div>
+            <div class="mini-panel">
+              <h3>Three</h3>
+              <p>Placeholder detail three</p>
+            </div>
+            <div class="mini-panel">
+              <h3>Four</h3>
+              <p>Placeholder detail four</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 const SEA_LIFE_MIXED_SHELL = `
 <!DOCTYPE html>
 <html lang="vi">
@@ -119,6 +156,77 @@ const SEA_LIFE_MIXED_SHELL = `
             <div class="tl-item"><h3>One</h3><p>Placeholder detail one</p></div>
             <div class="tl-item"><h3>Two</h3><p>Placeholder detail two</p></div>
             <div class="tl-item"><h3>Three</h3><p>Placeholder detail three</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
+const SEA_LIFE_IMAGE_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sea Life Image Shell 2026</title>
+  </head>
+  <body class="shell-theme-sealife">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="outer-title">Placeholder title</h2>
+        <div class="image-layout">
+          <div class="card text-part">
+            <p>Placeholder detail</p>
+          </div>
+          <div class="image-wrapper">
+            <img src="https://example.com/test.jpg" alt="placeholder" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
+const SEA_LIFE_IMAGE_REVERSED_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sea Life Image Reversed Shell 2026</title>
+  </head>
+  <body class="shell-theme-sealife">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="outer-title" style="text-align: right; right: 60px;">Placeholder title</h2>
+        <div class="image-layout">
+          <div class="image-wrapper">
+            <img src="https://example.com/test.jpg" alt="placeholder" />
+          </div>
+          <div class="card text-part">
+            <p>Placeholder detail</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
+const SEA_LIFE_PRACTICE_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sea Life Practice Shell 2026</title>
+  </head>
+  <body class="shell-theme-sealife">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <div class="card title-card">
+          <div class="big-note">
+            <p>Placeholder detail</p>
           </div>
         </div>
       </div>
@@ -181,7 +289,7 @@ describe("slideShellSrcdoc.js", () => {
       node.textContent.replace(/\s+/g, " ").trim(),
     );
 
-    expect(title.length).toBeLessThanOrEqual(45);
+    expect(title.length).toBeLessThanOrEqual(34);
     expect(bullets.length).toBeLessThanOrEqual(4);
     bullets.forEach((item) => {
       expect(item.length).toBeLessThanOrEqual(56);
@@ -216,28 +324,64 @@ describe("slideShellSrcdoc.js", () => {
       expect(item.length).toBeLessThanOrEqual(14);
     });
     details.forEach((item) => {
-      expect(item.length).toBeLessThanOrEqual(36);
+      expect(item.length).toBeLessThanOrEqual(30);
     });
   });
 
-  it("uses graduated Sea Life budgets based on layout density", () => {
+  it("keeps comic grid titles and panel copy compact for dense layouts", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      COMIC_GRID_SHELL,
+      [
+        {
+          title: "Word Formation - Lộ trình kiến thức để tránh tràn chữ trên slide comic",
+          bullets: [
+            "Knowledge: Danh từ thường xuất hiện sau article, adjective hoặc preposition.",
+            "Ví dụ 1: The explanation was clear and the invention became famous worldwide.",
+            "Note: Dạy mẹo chọn đáp án theo từ loại và hậu tố để học sinh không rối.",
+            "Bước 2: đối chiếu lại công thức be/seem/become + adjective + noun.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const title = doc.querySelector(".slide-title")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const headings = Array.from(doc.querySelectorAll(".mini-panel h3")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
+    const details = Array.from(doc.querySelectorAll(".mini-panel p")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
+
+    expect(title.length).toBeLessThanOrEqual(20);
+    headings.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(20);
+      expect(item).not.toMatch(/^(?:Knowledge|Ví dụ|Note|Bước)\b/i);
+    });
+    details.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(34);
+      expect(item).not.toMatch(/^(?:Knowledge|Ví dụ|Note|Bước)\b/i);
+    });
+  });
+
+  it("keeps Sea Life title cards and dense columns short enough for the viewport", () => {
     const srcdoc = buildSlideDeckSrcdoc(
       SEA_LIFE_MIXED_SHELL,
       [
         {
-          title: "Conditional Type 1 Overview",
+          title: "Word Formation - Lộ trình kiến thức",
           bullets: [
-            "Concept: This pattern describes a possible condition in the present or future and keeps the grammar link clear for exam answers.",
-            "Signal: Use if plus present simple, then will can or may plus base verb for the result.",
-            "Practice: Rewrite realistic questions and explain why each answer keeps the time meaning.",
+            "Knowledge: Danh từ thường xuất hiện sau article, adjective hoặc preposition.\nExample: The explanation was clear.\nNote: Dạy mẹo chọn đáp án theo từ loại và hậu tố. Tiền tố/hậu tố.",
+            "Knowledge: Tính từ đứng trước danh từ hoặc sau linking verb.\nExample: The route is shorter than the old one.\nNote: Dùng ví dụ ngắn và bài tập viết lại câu.",
           ],
         },
         {
-          title: "Conditional Type 2 Practice",
+          title: "Dấu hiệu tính từ - Công thức",
           bullets: [
-            "Concept: This pattern describes an unreal present condition and helps students avoid confusing type 2 with type 1.",
-            "Signal: If + past simple, would could + V. Example: If I had more time, I would join the club.",
-            "Practice: Fill four sentences, rewrite two examples, then explain why the formula matches the meaning.",
+            "Khái niệm: dùng -er hoặc more theo độ dài tính từ.\nVai trò: so sánh hơn giúp nối ý gọn và đúng ngữ pháp.\nDấu hiệu: comparative + than.\nVí dụ 1: This route is shorter than the old one.",
+            "Công thức cốt lõi: comparative + than.\nBước 1: xác định tính từ hoặc trạng từ.\nBước 2: chọn đúng dạng theo số âm tiết.\nBước 3: đọc lại cả mệnh đề.",
+            "Cách áp dụng: nhìn từ đứng sau than.\nMẫu quen thuộc: The new method is more effective.\nTránh lỗi: dùng more với tính từ ngắn.",
           ],
         },
       ],
@@ -246,15 +390,103 @@ describe("slideShellSrcdoc.js", () => {
 
     const doc = new DOMParser().parseFromString(srcdoc, "text/html");
     const titleCardDetail = doc.querySelector(".title-card p")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const outerTitle = doc.querySelector(".outer-title")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const denseHeadings = Array.from(doc.querySelectorAll(".cols-3 h3")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
     const denseDetails = Array.from(doc.querySelectorAll(".cols-3 p")).map((node) =>
       node.textContent.replace(/\s+/g, " ").trim(),
     );
 
-    expect(titleCardDetail.length).toBeGreaterThan(90);
-    expect(titleCardDetail.length).toBeLessThanOrEqual(265);
-    denseDetails.forEach((item) => {
-      expect(item.length).toBeLessThanOrEqual(43);
+    expect(titleCardDetail.length).toBeLessThanOrEqual(112);
+    expect(titleCardDetail).not.toContain("Tiền tố/hậu tố");
+    expect(outerTitle.length).toBeLessThanOrEqual(18);
+    denseHeadings.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(17);
     });
+    denseDetails.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(33);
+    });
+  });
+
+  it("compacts Sea Life image-layout text and long titles before rendering", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      SEA_LIFE_IMAGE_SHELL,
+      [
+        {
+          title: "Dấu hiệu tính từ - Ví dụ áp dụng trong bài word form",
+          bullets: [
+            "Trong câu The method is effective, enough for weak students, từ effective là tính từ vì nó đứng sau linking verb is.",
+            "Ý 2 -> be/seem/become + adjective; adjective + noun.",
+            "Ý 3 -> tránh lỗi dùng trạng từ sau linking verb, đồng thời không nhầm adjective với noun.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const outerTitle = doc.querySelector(".outer-title")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const detail = doc.querySelector(".image-layout .text-part p")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const detailHtml = doc.querySelector(".image-layout .text-part p")?.innerHTML || "";
+    const titleStyle = doc.querySelector(".outer-title")?.getAttribute("style") || "";
+
+    expect(outerTitle.length).toBeLessThanOrEqual(21);
+    expect(detail.length).toBeLessThanOrEqual(165);
+    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(2);
+    expect(titleStyle).toContain("left: 60px");
+    expect(titleStyle).toContain("right: calc(50% + 25px)");
+  });
+
+  it("keeps Sea Life image-layout titles centered over the white box on the right", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      SEA_LIFE_IMAGE_REVERSED_SHELL,
+      [
+        {
+          title: "So sánh hơn - Ví dụ",
+          bullets: [
+            "Ví dụ 1 -> This route is shorter than the old one.",
+            "Ví dụ 2 -> The new method is more effective.",
+            "Lưu ý -> nhìn than để xác định vế so sánh.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const detailHtml = doc.querySelector(".image-layout .text-part p")?.innerHTML || "";
+    const titleStyle = doc.querySelector(".outer-title")?.getAttribute("style") || "";
+
+    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(2);
+    expect(titleStyle).toContain("left: calc(50% + 25px)");
+    expect(titleStyle).toContain("right: 60px");
+  });
+
+  it("formats Sea Life practice cards into three labeled lines", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      SEA_LIFE_PRACTICE_SHELL,
+      [
+        {
+          title: "Mixed conditional - Luyện tập",
+          bullets: [
+            "Phân tích mốc thời gian trong 3 câu.",
+            "Viết 2 câu mixed conditional.",
+            "Giải thích vì sao chọn đúng cấu trúc.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const detailHtml = doc.querySelector(".big-note p")?.innerHTML || "";
+    const detailText = doc.querySelector(".big-note p")?.textContent?.replace(/\s+/g, " ").trim() || "";
+
+    expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(2);
+    expect(detailText).toContain("Ý 1 ->");
+    expect(detailText).toContain("Ý 2 ->");
+    expect(detailText).toContain("Ý 3 ->");
   });
 
   it("uses concrete reported-question rewriting prompts instead of placeholders", () => {
