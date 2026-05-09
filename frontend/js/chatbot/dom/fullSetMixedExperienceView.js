@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData, shuffleInPlace } from "../services/sessionContentPrep.js";
+import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav } from "../slide/slideShellSrcdoc.js";
@@ -103,7 +103,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       ...questions.map((data) => ({ kind: /** @type {"quiz"} */ ("quiz"), data })),
       ...cards.map((data) => ({ kind: /** @type {"flash"} */ ("flash"), data })),
     ];
-    shuffleInPlace(steps);
   }
   if (!slides.length) {
     const slideDeckStep = steps.find((step) => step?.kind === "slide_deck");

@@ -1159,9 +1159,173 @@ const RAW_SLIDE_PRESETS = [
   },
 ];
 
-export const DIRECT_SLIDE_PRESETS = RAW_SLIDE_PRESETS.map((preset) => {
+const EXTRA_SLIDE_TOPIC_LIST = [
+  "Hiện tại hoàn thành và hiện tại hoàn thành tiếp diễn",
+  "Câu ước và giả định",
+  "Mệnh đề danh ngữ",
+  "Mệnh đề trạng ngữ chỉ thời gian và điều kiện",
+  "Liên từ và cụm nối ý",
+  "Cấu trúc đảo ngữ trong tiếng Anh",
+  "Gerund và Infinitive",
+  "Cụm động từ theo chủ đề học tập",
+  "Prepositions and Collocations",
+  "Mạo từ và từ hạn định",
+  "Đại từ và từ thay thế",
+  "Câu hỏi đuôi",
+  "Cấu trúc hỏi đáp gián tiếp",
+  "Word Stress trong đề THPT",
+  "Phát âm đuôi -ed và -s/-es",
+  "Nguyên âm dễ nhầm lẫn",
+  "Chức năng giao tiếp thường gặp",
+  "Viết lại câu đồng nghĩa",
+  "Sửa lỗi sai ngữ pháp",
+  "Kỹ năng đọc tìm ý chính",
+  "Kỹ năng đọc suy luận",
+  "Kỹ năng đọc từ đồng nghĩa trái nghĩa",
+  "Kỹ năng điền từ vào đoạn văn",
+  "Kỹ năng paraphrase trong reading",
+  "Viết đoạn văn opinion",
+  "Viết đoạn cause and effect",
+  "Viết đoạn advantages and disadvantages",
+  "Mô tả biểu đồ và số liệu",
+  "Từ vựng chủ đề Giáo dục",
+  "Từ vựng chủ đề Môi trường",
+  "Từ vựng chủ đề Công nghệ",
+  "Từ vựng chủ đề Sức khỏe",
+  "Từ vựng chủ đề Nghề nghiệp",
+  "Từ vựng chủ đề Văn hóa và lễ hội",
+  "Từ vựng chủ đề Du lịch",
+  "Từ vựng chủ đề Đô thị hóa",
+  "Mixed Grammar Review cho THPTQG",
+  "Chiến lược làm bài ngữ pháp",
+  "Chiến lược làm bài đọc hiểu",
+  "Tổng ôn 50 câu then chốt trước kỳ thi",
+];
+
+const EXTRA_SLIDE_STRUCTURE_OPTIONS = [
+  "Khái niệm cốt lõi -> Dấu hiệu nhận diện -> Luyện tập theo ngữ cảnh",
+  "Nền tảng kiến thức -> Công thức trọng tâm -> Bài tập vận dụng",
+  "Nhận diện dạng bài -> Mẫu trả lời nhanh -> Tự kiểm tra đáp án",
+  "Lý thuyết tinh gọn -> Ví dụ điển hình -> Luyện đề mục tiêu",
+  "Tổng quan chủ đề -> Checklist lỗi sai -> Bài tập thực chiến",
+];
+
+const EXTRA_SLIDE_NOTES_OPTIONS = [
+  "Giữ ví dụ ngắn gọn, bám sát ngữ cảnh thường xuất hiện trong đề THPT.",
+  "Ưu tiên bài tập nhận diện nhanh rồi mới chuyển sang câu vận dụng.",
+  "Mỗi phần đều có checklist để học sinh tự soát lỗi trước khi nộp bài.",
+  "Kết thúc mỗi track bằng một câu tự tạo để ghi nhớ cấu trúc lâu hơn.",
+  "Tập trung vào các lỗi sai học sinh lớp 12 thường gặp khi làm trắc nghiệm.",
+];
+
+const EXTRA_SLIDE_STYLE_OPTIONS = [
+  "Chuyên nghiệp (đa sắc)",
+  "Tối giản (Học thuật)",
+  "Vui tươi (Thân thiện)",
+  "Vũ trụ sáng (Trẻ trung)",
+  "Vũ trụ tối (Huyền bí)",
+  "Biển cả",
+  "Comic",
+];
+
+const EXTRA_SLIDE_COUNT_OPTIONS = ["10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30"];
+
+const AUTO_CHAPTER_TEMPLATES = [
+  {
+    name: "Kiến thức cơ bản",
+    focusStem: "Hiểu rõ định nghĩa và bản chất của điểm kiến thức",
+    ruleStem: "Xác định đúng phạm vi, chức năng ngữ pháp và ngữ nghĩa của điểm kiến thức này",
+    practiceStem: "Tóm tắt lại định nghĩa và vai trò của điểm kiến thức",
+  },
+  {
+    name: "Dấu hiệu nhận diện",
+    focusStem: "Nhận ra tín hiệu từ khóa trong câu",
+    ruleStem: "Đối chiếu vị trí từ cần điền với cấu trúc câu và ngữ cảnh xung quanh",
+    practiceStem: "Lập bảng nhận diện nhanh theo từng dạng câu hỏi thường gặp",
+  },
+  {
+    name: "Cấu trúc trọng tâm",
+    focusStem: "Chốt công thức và mẫu câu cốt lõi",
+    ruleStem: "Áp dụng đúng trật tự cấu trúc trong từng dạng bài viết lại câu và chọn đáp án",
+    practiceStem: "Viết lại câu theo mẫu để ghi nhớ sâu hơn và tự kiểm tra",
+  },
+  {
+    name: "Tránh lỗi phổ biến",
+    focusStem: "Nhận diện và tránh các lỗi sai học sinh hay mắc nhất",
+    ruleStem: "Soát lại công thức và logic nghĩa trước khi chốt đáp án cuối cùng",
+    practiceStem: "Sửa lỗi từng bước, giải thích lý do sai và cách sửa đúng",
+  },
+  {
+    name: "Luyện tập vận dụng",
+    focusStem: "Rèn kỹ năng làm bài qua câu hỏi gần đề thi thực tế",
+    ruleStem: "Kết hợp nhận diện dạng câu và kiểm tra ngữ cảnh nghĩa trước khi chọn đáp án",
+    practiceStem: "Tự tạo thêm câu mới cùng chủ điểm rồi kiểm tra lại theo công thức đã học",
+  },
+  {
+    name: "Vận dụng trong đề thi",
+    focusStem: "Chiến lược làm bài nhanh và chính xác trong đề THPTQG",
+    ruleStem: "Đọc kỹ đầu bài, xác định dạng câu hỏi rồi áp dụng đúng công thức đã học",
+    practiceStem: "Làm nhanh 3 câu kiểu đề thi rồi tự chấm điểm và rút kinh nghiệm",
+  },
+];
+
+function buildExtraSlidePresetId(topic, index) {
+  const topicSlug = normalizeText(topic).replace(/\s+/g, "-");
+  return `slide-extra-${String(index + 1).padStart(2, "0")}-${topicSlug || "topic"}`;
+}
+
+function buildAutoChaptersByTopic(topic) {
+  const topicText = String(topic || "").trim();
+  const topicLower = topicText.toLocaleLowerCase("vi-VN");
+  return AUTO_CHAPTER_TEMPLATES.map((template, index) => ({
+    name: `${template.name} - ${topicText}`,
+    focus: `${template.focusStem} của ${topicLower} trong bài thi.`,
+    rule: `${template.ruleStem} cho ${topicLower}.`,
+    exampleA: `Ví dụ ${index + 1}: Chọn đáp án phù hợp nhất với ${topicLower} trong ngữ cảnh câu.`,
+    exampleB: `Ví dụ ${index + 2}: Viết lại một câu ngắn để kiểm tra mức độ hiểu ${topicLower}.`,
+    pitfallA: `Lỗi ${index + 1}: Chọn đáp án theo cảm tính mà không bám dấu hiệu của ${topicLower}.`,
+    pitfallB: `Lỗi ${index + 2}: Bỏ qua bước đọc lại nghĩa tổng thể khi xử lý ${topicLower}.`,
+    practiceA: `Bài tập ${index + 1}: ${template.practiceStem} với 3 câu liên quan đến ${topicLower}.`,
+    practiceB: `Bài tập ${index + 2}: Tự giải thích vì sao đáp án đúng vẫn bám ${topicLower}.`,
+  }));
+}
+
+/**
+ * For auto-generated extra presets, pick exactly one slide per chapter to avoid
+ * visual duplicates in Sea Life and other themes that truncate long chapter titles.
+ * Overview slides 01-03 are always included; one "Khái niệm" per chapter; then Tổng kết.
+ * @param {number} chapterCount
+ * @returns {number[]}
+ */
+function buildExtraPresetDefaultIndexes(chapterCount) {
+  const overview = [1, 2, 3];
+  const chapterFirst = Array.from({ length: chapterCount }, (_, i) => 5 + i * 5);
+  const totalSlides = 4 + chapterCount * 5 + 1;
+  return [...overview, ...chapterFirst, totalSlides];
+}
+
+function buildExtraSlidePreset(topic, index) {
+  const chapterCount = AUTO_CHAPTER_TEMPLATES.length;
+  return {
+    id: buildExtraSlidePresetId(topic, index),
+    topic,
+    count: "10",
+    structure: EXTRA_SLIDE_STRUCTURE_OPTIONS[index % EXTRA_SLIDE_STRUCTURE_OPTIONS.length],
+    style: EXTRA_SLIDE_STYLE_OPTIONS[index % EXTRA_SLIDE_STYLE_OPTIONS.length],
+    notes: EXTRA_SLIDE_NOTES_OPTIONS[index % EXTRA_SLIDE_NOTES_OPTIONS.length],
+    chapters: buildAutoChaptersByTopic(topic),
+    customDefaultIndexes: buildExtraPresetDefaultIndexes(chapterCount),
+  };
+}
+
+const EXTRA_SLIDE_PRESETS = EXTRA_SLIDE_TOPIC_LIST.map((topic, index) => buildExtraSlidePreset(topic, index));
+const ALL_RAW_SLIDE_PRESETS = [...RAW_SLIDE_PRESETS, ...EXTRA_SLIDE_PRESETS];
+
+export const DIRECT_SLIDE_PRESETS = ALL_RAW_SLIDE_PRESETS.map((preset) => {
   const slides = buildDeckFromBlueprint(preset);
-  const defaultSlideIndexes = buildDefaultSlideIndexes(preset.count);
+  const defaultSlideIndexes = preset.customDefaultIndexes
+    ? preset.customDefaultIndexes.filter((idx) => idx >= 1 && idx <= slides.length)
+    : buildDefaultSlideIndexes(preset.count);
   return {
     ...preset,
     slides,

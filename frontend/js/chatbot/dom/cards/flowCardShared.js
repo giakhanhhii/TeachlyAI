@@ -128,16 +128,18 @@ export function randomCountSkipPdf(countMax) {
   return randomIntInclusive(lo, hi);
 }
 
+const FULLSET_TRIPLE_PRESETS = [
+  { sn: 10, qn: 20, fn: 10 },
+  { sn: 20, qn: 10, fn: 10 },
+  { sn: 15, qn: 15, fn: 10 },
+  { sn: 10, qn: 15, fn: 15 },
+  { sn: 15, qn: 10, fn: 15 },
+  { sn: 20, qn: 15, fn: 5 },
+  { sn: 10, qn: 20, fn: 10 },
+];
+
 export function randomFullsetTripleSum40() {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    const cut1 = randomIntInclusive(1, 38);
-    const cut2 = randomIntInclusive(cut1 + 1, 39);
-    const sn = cut1;
-    const qn = cut2 - cut1;
-    const fn = 40 - cut2;
-    if (sn <= 30 && qn >= 1 && fn >= 1) return { sn, qn, fn };
-  }
-  return { sn: 10, qn: 20, fn: 10 };
+  return FULLSET_TRIPLE_PRESETS[randomIntInclusive(0, FULLSET_TRIPLE_PRESETS.length - 1)];
 }
 
 export function toPositiveInt(value, fallback) {

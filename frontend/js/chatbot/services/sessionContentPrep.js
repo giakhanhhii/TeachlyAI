@@ -210,6 +210,46 @@ function pickPreferredEndingSlide(pool) {
   return ranked.length ? ranked[0].slide : null;
 }
 
+/** @param {any} slide */
+function slideVisualFingerprint(slide) {
+  const title = String(slide?.title || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  const firstBullet = (Array.isArray(slide?.bullets) ? slide.bullets : [])
+    .map((item) => String(item || "").replace(/\s+/g, " ").trim())
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(" | ")
+    .toLowerCase();
+  return `${title}#${firstBullet}`;
+}
+
+/** @param {any[]} selected
+ * @param {any[]} fullPool */
+function replaceDuplicateOpeningSlide(selected, fullPool) {
+  if (!Array.isArray(selected) || selected.length < 2) return selected;
+  const [first, second] = selected;
+  if (!first || !second) return selected;
+  if (slideVisualFingerprint(first) !== slideVisualFingerprint(second)) return selected;
+
+  const usedKeys = new Set(selected.map((slide) => slideDedupeKey(slide)).filter(Boolean));
+  const secondIdx = fullPool.indexOf(second);
+  const pickNext = (start) => {
+    for (let i = Math.max(0, start); i < fullPool.length; i += 1) {
+      const candidate = fullPool[i];
+      const key = slideDedupeKey(candidate);
+      if (key && usedKeys.has(key)) continue;
+      if (slideVisualFingerprint(candidate) === slideVisualFingerprint(second)) continue;
+      return candidate;
+    }
+    return null;
+  };
+
+  const replacement = pickNext(secondIdx + 1) || pickNext(0);
+  if (!replacement) return selected.slice(1);
+  return [...selected.slice(1), replacement];
+}
 /** @param {any} data
  * @param {Record<string, string>} meta */
 export function prepareQuizSessionData(data, meta) {
@@ -351,10 +391,11 @@ export function prepareSlideSessionData(data, meta) {
     const presetDefault = Array.isArray(directPreset.defaultSlides) ? directPreset.defaultSlides : [];
     const fullPool = Array.isArray(directPreset.slides) ? directPreset.slides : [];
     const remainingPool = filterPoolByConsumed(fullPool, slideDedupeKey, consumed);
-    const slides =
+    const selected =
       presetDefault.length && want <= presetDefault.length && consumed.size === 0
         ? presetDefault.slice(0, want)
         : remainingPool.slice(0, want);
+    const slides = consumed.size === 0 ? replaceDuplicateOpeningSlide(selected, fullPool) : selected;
     const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, slides, slideDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => slideDedupeKey(item)).filter(Boolean)).size;
     return {
