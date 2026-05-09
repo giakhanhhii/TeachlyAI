@@ -106,6 +106,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   hookFlashSpeechVoicesOnce();
   const experienceBody = layerView.body;
+  if (typeof experienceBody._kbAbort === "function") { experienceBody._kbAbort(); delete experienceBody._kbAbort; }
+  const outerKbController = new AbortController();
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const restoredCards = normalizeFlashCards(initial?.cardsSnapshot);
@@ -494,6 +496,20 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     index = visibleIndices[Math.min(visibleIndex + 1, visibleIndices.length - 1)];
     renderCard();
   });
+
+  function onGlobalKeydown(e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const layer = document.getElementById("experienceLayer");
+    if (!layer?.classList.contains("visible")) return;
+    e.preventDefault();
+    if (e.key === "ArrowLeft") {
+      if (!backBtn.disabled) backBtn.click();
+    } else {
+      if (!nextBtn.disabled) nextBtn.click();
+    }
+  }
+  experienceBody._kbAbort = () => outerKbController.abort();
+  document.addEventListener("keydown", onGlobalKeydown, { signal: outerKbController.signal });
 
   experienceBody.appendChild(shell);
   renderCard();
