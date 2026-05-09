@@ -2158,6 +2158,28 @@ function injectShellPreviewFit(doc) {
     .shell-theme-comic .shell-slide-instance .comic-panel [data-shell="title"] {
       margin-top: 10px !important;
     }
+    .shell-theme-comic .shell-slide-instance .comic-rule-grid.tight .comic-rule-card {
+      gap: 16px !important;
+      padding: 16px 18px !important;
+      align-items: center !important;
+    }
+    .shell-theme-comic .shell-slide-instance .comic-rule-grid.tight .comic-rule-chip {
+      min-width: 136px !important;
+      min-height: 66px !important;
+      padding: 10px 14px !important;
+      font-size: 36px !important;
+      line-height: 0.9 !important;
+      box-shadow: 5px 5px 0px #111827 !important;
+      flex-shrink: 0 !important;
+    }
+    .shell-theme-comic .shell-slide-instance .comic-rule-grid.tight .comic-rule-copy h3 {
+      font-size: 22px !important;
+      line-height: 1.04 !important;
+    }
+    .shell-theme-comic .shell-slide-instance .comic-rule-grid.tight .comic-rule-copy p {
+      font-size: 16px !important;
+      line-height: 1.2 !important;
+    }
     .shell-slide-instance[data-shell-authored-slide="1"] .card,
     .shell-slide-instance[data-shell-authored-slide="1"] .content-card,
     .shell-slide-instance[data-shell-authored-slide="1"] .comic-panel,
