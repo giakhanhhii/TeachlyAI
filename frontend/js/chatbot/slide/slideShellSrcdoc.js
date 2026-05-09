@@ -2639,16 +2639,9 @@ function injectShellPanelFitScript(doc) {
       '.shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p'
     ].join(", ");
     Array.prototype.forEach.call(doc.querySelectorAll(selector), function (node) {
-      if (!node || !window.getComputedStyle) return;
+      if (!node) return;
       var hasManualBreaks = !!node.querySelector("br");
-      var multiline = hasManualBreaks;
-      if (!multiline) {
-        var cs = window.getComputedStyle(node);
-        var fontSize = getNumericCssValue(cs.fontSize) || 24;
-        var lineHeight = getNumericCssValue(cs.lineHeight) || fontSize * 1.4;
-        multiline = node.scrollHeight > lineHeight * 1.35;
-      }
-      node.classList.toggle("shell-sealife-multiline", !!multiline);
+      node.classList.toggle("shell-sealife-multiline", hasManualBreaks);
     });
   }
   function fitSpaceBrightCard(tile) {
