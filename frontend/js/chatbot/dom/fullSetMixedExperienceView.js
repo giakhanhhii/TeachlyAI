@@ -72,8 +72,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   hookFlashSpeechVoicesOnce();
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
-  const outerKbController = new AbortController();
-  root._kbAbort = () => outerKbController.abort();
   root.innerHTML = "";
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
@@ -652,7 +650,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
               capture: true,
               signal: uiSignal,
             });
-            iframe.contentWindow?.addEventListener("keydown", onGlobalKeydown, { signal: uiSignal });
+            iframe.contentWindow?.addEventListener("keydown", onGlobalKeydown, { capture: true, signal: uiSignal });
             viewMode = "presentation";
             syncViewModeToIframe();
             syncShellSlideNav(iframe, slideDeckIndex, readDeckScrollState());
@@ -864,8 +862,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   });
   function onGlobalKeydown(e) {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    const layer = document.getElementById("experienceLayer");
-    if (!layer?.classList.contains("visible")) return;
+    if (!shell.isConnected) return;
     if (reviewMode) return;
     const step = steps[index];
     if (!step) return;
@@ -896,7 +893,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       if (!nextBtn.disabled) nextBtn.click();
     }
   }
-  document.addEventListener("keydown", onGlobalKeydown, { signal: outerKbController.signal });
+  root._kbAbort = () => window.removeEventListener("keydown", onGlobalKeydown, true);
+  window.addEventListener("keydown", onGlobalKeydown, true);
 
   shell.appendChild(progress.wrap);
   shell.appendChild(stage);

@@ -15,7 +15,6 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
-  const outerKbController = new AbortController();
   const raw = await fetchMockResource("quiz");
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
@@ -234,8 +233,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   function onGlobalKeydown(e) {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    const layer = document.getElementById("experienceLayer");
-    if (!layer?.classList.contains("visible")) return;
+    if (!shell.isConnected) return;
     if (reviewMode) return;
     e.preventDefault();
     if (e.key === "ArrowLeft") {
@@ -244,8 +242,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       if (!nextBtn.disabled) nextBtn.click();
     }
   }
-  root._kbAbort = () => outerKbController.abort();
-  document.addEventListener("keydown", onGlobalKeydown, { signal: outerKbController.signal });
+  root._kbAbort = () => window.removeEventListener("keydown", onGlobalKeydown, true);
+  window.addEventListener("keydown", onGlobalKeydown, true);
 
   root.appendChild(shell);
   renderQuestion();
