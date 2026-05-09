@@ -2393,15 +2393,21 @@ function injectShellPreviewFit(doc) {
       max-width: 100% !important;
       margin-left: auto !important;
       margin-right: auto !important;
-      text-align: left !important;
+      text-align: center !important;
     }
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part {
-      text-align: left !important;
+      text-align: center !important;
     }
     body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p {
       width: min(100%, 560px) !important;
       margin-left: auto !important;
       margin-right: auto !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] p.shell-sealife-multiline {
+      text-align: left !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p.shell-sealife-multiline {
       text-align: left !important;
     }
     body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column ul[data-shell="bullets"],
@@ -2620,6 +2626,30 @@ function injectShellPanelFitScript(doc) {
     var top = rect && rect.top ? rect.top : 0;
     var available = bottom > top ? Math.floor(bottom - top) : 0;
     return available || Math.floor((tile.clientHeight || tile.offsetHeight || 0));
+  }
+  function syncSealifeParagraphAlignment(doc) {
+    if (!(doc && doc.body && doc.body.classList && doc.body.classList.contains("shell-theme-sealife"))) return;
+    var selector = [
+      '.shell-slide-instance[data-shell-authored-slide="1"] .title-card p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .section-card p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .tl-item p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .mini-card p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .cols-3 p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .pct-item p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p'
+    ].join(", ");
+    Array.prototype.forEach.call(doc.querySelectorAll(selector), function (node) {
+      if (!node || !window.getComputedStyle) return;
+      var hasManualBreaks = !!node.querySelector("br");
+      var multiline = hasManualBreaks;
+      if (!multiline) {
+        var cs = window.getComputedStyle(node);
+        var fontSize = getNumericCssValue(cs.fontSize) || 24;
+        var lineHeight = getNumericCssValue(cs.lineHeight) || fontSize * 1.4;
+        multiline = node.scrollHeight > lineHeight * 1.35;
+      }
+      node.classList.toggle("shell-sealife-multiline", !!multiline);
+    });
   }
   function fitSpaceBrightCard(tile) {
     if (!tile || !window.getComputedStyle || tile.getAttribute("data-edit-geom") === "1") return;
@@ -2847,6 +2877,7 @@ function injectShellPanelFitScript(doc) {
     if (fitEditPaused) return;
     if (document.body && document.body.classList.contains("slide-visual-edit-on")) return;
     fitShellTitles(document);
+    syncSealifeParagraphAlignment(document);
     fitSpaceBrightTiles(document);
     collectPanels(document).forEach(function (panel) {
       wrapPanel(panel);

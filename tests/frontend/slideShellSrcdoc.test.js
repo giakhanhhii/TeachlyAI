@@ -489,6 +489,29 @@ describe("slideShellSrcdoc.js", () => {
     expect(detailText).toContain("Ý 3 ->");
   });
 
+  it("keeps Sea Life single-line detail centered and only left-aligns multiline detail", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      SEA_LIFE_MIXED_SHELL,
+      [
+        {
+          title: "Câu so sánh",
+          bullets: [
+            "Dùng as...as và not as/so...as.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const styleText = doc.querySelector("style[data-slide-shell-fit]")?.textContent || "";
+
+    expect(styleText).toContain("body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide=\"1\"] .title-card p");
+    expect(styleText).toContain("text-align: center !important;");
+    expect(styleText).toContain("p.shell-sealife-multiline");
+    expect(styleText).toContain("text-align: left !important;");
+  });
+
   it("uses concrete reported-question rewriting prompts instead of placeholders", () => {
     const preset = DIRECT_SLIDE_PRESETS.find((item) => item.id === "slide-reported-speech");
     const practiceSlide = preset?.slides.find((slide) => slide.title === "Câu hỏi tường thuật - Luyện tập");
