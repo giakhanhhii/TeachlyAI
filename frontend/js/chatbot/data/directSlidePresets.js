@@ -123,20 +123,7 @@ function buildDetailedExampleLine(chapter) {
   const detailedExample = String(chapter?.detailedExample || "").trim();
   if (detailedExample) return detailedExample;
   const sentenceA = normalizeExampleSnippet(chapter?.exampleA);
-  const sentenceB = normalizeExampleSnippet(chapter?.exampleB);
-  const name = String(chapter?.name || "").trim().toLowerCase();
-  const rule = String(chapter?.rule || "").trim();
-
-  const parts = [];
-  if (sentenceA) parts.push(`Ví dụ 1 -> ${sentenceA}`);
-  if (sentenceB) parts.push(`Ví dụ 2 -> ${sentenceB}`);
-  if (rule || name) {
-    parts.push(
-      `Ví dụ 3 -> tự tạo thêm một câu cùng mẫu ${name || "ngữ pháp này"} rồi kiểm tra lại theo công thức ${rule || "đã học"}`
-    );
-  }
-
-  return parts.length ? `Ví dụ: ${parts.join("\n")}` : "";
+  return sentenceA ? `Ví dụ 1: ${sentenceA}` : "";
 }
 
 function buildMultilineSectionLine(label, parts) {
@@ -149,63 +136,25 @@ function trimTrailingSentencePunctuation(value) {
 }
 
 function buildSecondExampleLine(chapter) {
-  const focus = String(chapter?.focus || "").trim();
-  const rule = String(chapter?.rule || "").trim();
-  const pitfallA = String(chapter?.pitfallA || "").trim();
-  const pitfallB = String(chapter?.pitfallB || "").trim();
-
-  const parts = [];
-  if (focus) parts.push(`Ý 1 -> ${focus}`);
-  if (rule) parts.push(`Ý 2 -> ${rule}`);
-  if (pitfallA || pitfallB) {
-    parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
-  }
-
-  return buildMultilineSectionLine("Phân tích", parts);
+  const sentenceB = normalizeExampleSnippet(chapter?.exampleB);
+  return sentenceB ? `Ví dụ 2: ${sentenceB}` : "";
 }
 
 function buildDetailedExplanationLine(chapter) {
-  const practiceA = String(chapter?.practiceA || "").trim();
-  const practiceB = String(chapter?.practiceB || "").trim();
-  const name = String(chapter?.name || "").trim().toLowerCase();
   const rule = trimTrailingSentencePunctuation(chapter?.rule);
-  const parts = [];
-
-  if (practiceA) parts.push(`Ý 1 -> ${practiceA}`);
-  if (practiceB) parts.push(`Ý 2 -> ${practiceB}`);
-  if (rule || name) {
-    parts.push(`Ý 3 -> chốt lại bằng công thức ${rule || name}.`);
-  }
-
-  return buildMultilineSectionLine("Ghi nhớ", parts);
+  return rule ? `Ghi nhớ: ${rule}` : "";
 }
 
 function buildPracticeTaskLine(chapter) {
   const detailedPractice = String(chapter?.detailedPractice || "").trim();
   if (detailedPractice) return detailedPractice;
   const practiceA = String(chapter?.practiceA || "").trim();
-  const practiceB = String(chapter?.practiceB || "").trim();
-  const name = String(chapter?.name || "").trim().toLowerCase();
-  const parts = [];
-  if (practiceA) parts.push(`Ý 1 -> ${practiceA}`);
-  if (practiceB) parts.push(`Ý 2 -> ${practiceB}`);
-  if (practiceA || practiceB || name) {
-    parts.push(`Ý 3 -> tự giải thích vì sao đáp án đúng vẫn bám ${name || "đúng cấu trúc"}.`);
-  }
-  return buildMultilineSectionLine("Bài luyện tập", parts);
+  return practiceA ? `Bài luyện tập: ${practiceA}` : "";
 }
 
 function buildSelfCheckLine(chapter) {
-  const focus = String(chapter?.focus || "").trim();
-  const rule = trimTrailingSentencePunctuation(chapter?.rule);
-  const name = String(chapter?.name || "").trim().toLowerCase();
-  const parts = [];
-
-  if (focus) parts.push(`Ý 1 -> nhắc lại dấu hiệu: ${focus}`);
-  if (rule) parts.push(`Ý 2 -> đối chiếu lại công thức ${rule}`);
-  if (name || rule) parts.push(`Ý 3 -> tự đặt 1 câu mới rồi kiểm tra lại theo ${name || rule}.`);
-
-  return buildMultilineSectionLine("Tự kiểm tra", parts);
+  const practiceA = String(chapter?.practiceA || "").trim();
+  return practiceA ? `Tự kiểm tra: ${practiceA}` : "";
 }
 
 function buildPracticeGuideLine(chapter, preset) {
@@ -253,59 +202,26 @@ function buildConceptTakeawayLine(chapter, preset) {
 
 function buildFormulaColumnBlock(column) {
   const heading = String(column?.heading || "").trim();
-  const explanation = String(column?.explanation || "").trim();
   const example = String(column?.example || "").trim();
-  const note = String(column?.note || "").trim();
-  return [
-    heading,
-    explanation ? `Trọng tâm: ${explanation}` : "Trọng tâm: nhận đúng ý nghĩa của mẫu này trong câu.",
-    heading ? `Mẫu chính: ${heading}` : "",
-    "Bước 1: nhìn đúng dấu hiệu ngữ pháp trước khi biến đổi.",
-    example ? `Ví dụ mẫu: ${example}` : "Ví dụ mẫu: tự đặt một câu ngắn theo công thức này.",
-    note ? `Lưu ý: ${note}` : "Lưu ý: không đổi máy móc nếu ngữ cảnh không phù hợp.",
-    "Tự kiểm tra: viết lại thêm một câu khác rồi đối chiếu cấu trúc.",
-  ].filter(Boolean).join("\n");
+  return [heading, example ? `Ví dụ: ${example}` : ""].filter(Boolean).join(": ") || heading;
 }
 
 function buildFormulaSummaryLines(chapter) {
   const formulaColumns = Array.isArray(chapter?.formulaColumns) ? chapter.formulaColumns : [];
   if (formulaColumns.length) {
-    return formulaColumns.map((column) => buildFormulaColumnBlock(column)).filter(Boolean);
+    return formulaColumns.slice(0, 3).map((column) => buildFormulaColumnBlock(column)).filter(Boolean);
   }
 
   const name = String(chapter?.name || "").trim();
-  const focus = String(chapter?.focus || "").trim();
   const rule = String(chapter?.rule || "").trim();
   const exampleA = String(chapter?.exampleA || "").trim();
-  const exampleB = String(chapter?.exampleB || "").trim();
-  const practiceA = String(chapter?.practiceA || "").trim();
-  const practiceB = String(chapter?.practiceB || "").trim();
   const pitfallA = String(chapter?.pitfallA || "").trim();
-  const pitfallB = String(chapter?.pitfallB || "").trim();
 
-  // Keep each block to max 4 lines to prevent overflow in space-constrained themes.
-  const conceptBlock = [
-    name || "Khái niệm",
-    focus ? `Khái niệm: ${focus}` : "Khái niệm: xác định đúng chức năng của cấu trúc trong câu.",
-    rule ? `Dấu hiệu: ${rule}` : "",
+  return [
+    rule ? `${name}: ${rule}` : (name || "Công thức cốt lõi"),
     exampleA ? `Ví dụ: ${exampleA}` : "",
-  ].filter(Boolean).join("\n");
-
-  const formulaBlock = [
-    "Công thức cốt lõi",
-    rule ? `Mẫu: ${rule}` : "Mẫu: quan sát cấu trúc chính rồi mới điền từ.",
-    "Bước 1: xác định → Bước 2: áp dụng đúng dạng → Bước 3: đọc lại để kiểm tra.",
-    practiceA ? `Vận dụng: ${practiceA}` : "Vận dụng: áp dụng mẫu vào một câu mới cùng chủ điểm.",
-  ].filter(Boolean).join("\n");
-
-  const quickUseBlock = [
-    "Cách áp dụng nhanh",
-    focus ? `Gợi ý: ${focus}` : "Gợi ý: kiểm tra quan hệ logic trong câu.",
-    exampleA ? `Mẫu: ${exampleA}` : "",
     pitfallA ? `Tránh: ${pitfallA}` : "",
-  ].filter(Boolean).join("\n");
-
-  return [conceptBlock, formulaBlock, quickUseBlock].filter(Boolean);
+  ].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {

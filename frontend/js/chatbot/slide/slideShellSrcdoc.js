@@ -846,11 +846,36 @@ function getComicTextBudget(root) {
  * @param {"comic" | "space-bright" | "space-black" | "sealife" | ""} themeKey
  * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } } | null}
  */
+/**
+ * @param {ParentNode} root
+ * @returns {{ headline: { maxWords: number, maxChars: number }, detail: { maxChars: number, maxSentences: number, maxWords?: number } }}
+ */
+function getFriendlyTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (slide && slide.querySelector(".table-layout")) {
+    return {
+      headline: { maxWords: 5, maxChars: 34 },
+      detail:   { maxChars: 38, maxSentences: 1, maxWords: 6 },
+    };
+  }
+  if (slide && slide.querySelector(".two-column.tiled, .mini-grid, .strategy-strip")) {
+    return {
+      headline: { maxWords: 6, maxChars: 42 },
+      detail:   { maxChars: 52, maxSentences: 1, maxWords: 9 },
+    };
+  }
+  return {
+    headline: { maxWords: 7, maxChars: 46 },
+    detail:   { maxChars: 58, maxSentences: 1, maxWords: 11 },
+  };
+}
+
 function getSlideShellThemeTextBudget(root, themeKey) {
   if (themeKey === "comic") return getComicTextBudget(root);
   if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
   if (themeKey === "space-black") return getSpaceBlackTextBudget(root);
   if (themeKey === "sealife") return getSealifeTextBudget(root);
+  if (themeKey === "friendly") return getFriendlyTextBudget(root);
   return null;
 }
 
@@ -2311,26 +2336,25 @@ function injectShellPreviewFit(doc) {
       justify-content: flex-start !important;
     }
     body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout {
-      max-height: 500px !important;
       overflow: hidden !important;
     }
     body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout table {
       table-layout: fixed !important;
     }
-    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout th,
-    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout td {
-      padding: 13px 18px !important;
-      word-break: break-word !important;
-      vertical-align: top !important;
-    }
-    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout th {
-      font-size: 22px !important;
-      line-height: 1.3 !important;
-    }
-    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout td {
-      font-size: 20px !important;
-      line-height: 1.4 !important;
-    }
+          body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout th,
+          body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout td {
+            padding: 10px 14px !important;
+            word-break: break-word !important;
+            vertical-align: top !important;
+          }
+          body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout th {
+            font-size: 17px !important;
+            line-height: 1.25 !important;
+          }
+          body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .table-layout td {
+            font-size: 15px !important;
+            line-height: 1.4 !important;
+          }
     body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"][data-shell-no-bullets="1"] {
       list-style: none !important;
       padding-left: 0 !important;
@@ -2338,6 +2362,15 @@ function injectShellPreviewFit(doc) {
     body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"][data-shell-no-bullets="1"] li {
       list-style: none !important;
       padding-left: 0 !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] [data-shell-text-target] {
+      font-family: 'Quicksand', sans-serif !important;
+      font-size: 19px !important;
+      font-weight: 500 !important;
+      color: #1c3879 !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      line-height: 1.5 !important;
     }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
       width: min(920px, 100%) !important;
@@ -3067,6 +3100,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
   const isSealife = themeKey === "sealife";
   const isSpaceBright = themeKey === "space-bright";
   const isSpaceBlack = themeKey === "space-black";
+  const isFriendly = themeKey === "friendly";
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
   const titleSeed = (isComic || isSealife) ? buildSlideTitleSeed(title) : title;
   const normalizeForThemeCompact = (value, kind = "detail") => {
@@ -3074,6 +3108,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
       const normalized = simplifyComicTextSeed(value);
       return kind === "headline" ? buildSlideTitleSeed(normalized) : normalized;
     }
+    if (isFriendly && kind !== "headline") return flattenSlideTextForCompact(value);
     if (!isSealife) return String(value || "");
     const normalized = flattenSlideTextForCompact(value);
     if (kind === "headline") return normalized;
@@ -3161,7 +3196,28 @@ function fillContentSlots(root, title, bullets, options = {}) {
     });
     return;
   }
-  if (fillStructuredTableColumns(root, compactStructuredSlideColumns(bullets, themeTextBudget))) {
+  const prepareFriendlyTableBullets = () => {
+    if (!isFriendly || !themeTextBudget) return null;
+    const slide = getRootSlideElement(root);
+    if (!slide?.querySelector(".table-layout table")) return null;
+    const bodyRowCount = slide.querySelectorAll(".table-layout table tbody tr").length || 3;
+    return bullets.map((bullet) => {
+      const parts = String(bullet || "")
+        .split(/\n+/).map((p) => p.trim()).filter(Boolean);
+      if (!parts.length) return bullet;
+      const header = compactSlideTextValue(parts[0], themeTextBudget.headline);
+      const details = parts.slice(1)
+        .map((p) => flattenSlideTextForCompact(p))
+        .map((p) => p.replace(/^(?:ý|y)\s*\d+\s*(?:->|:|-)\s*/iu, "").trim())
+        .filter(Boolean)
+        .slice(0, bodyRowCount)
+        .map((p) => compactSlideTextValue(p, themeTextBudget.detail))
+        .filter(Boolean);
+      return [header, ...details].join("\n");
+    });
+  };
+  const tableBullets = prepareFriendlyTableBullets() ?? compactStructuredSlideColumns(bullets, themeTextBudget);
+  if (fillStructuredTableColumns(root, tableBullets)) {
     return;
   }
   const targets = isSpaceBright ? getSpaceBrightPrimaryTextTargets(
