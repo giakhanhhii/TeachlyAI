@@ -355,6 +355,24 @@ function buildSlideTextPair(value) {
 }
 
 /**
+ * Prefer the primary clause of a title before compacting it for dense shells.
+ * @param {string} value
+ * @returns {string}
+ */
+function buildSlideTitleSeed(value) {
+  const raw = String(value || "").replace(/\s+/g, " ").trim();
+  if (!raw) return "";
+  const pair = buildSlideTextPair(raw);
+  if (pair.headline && pair.headline !== raw) return pair.headline;
+  const dashParts = raw
+    .split(/\s+(?:-|–|—)\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (dashParts.length >= 2) return dashParts[0];
+  return raw;
+}
+
+/**
  * @param {string} title
  * @param {string[]} bullets
  * @param {number} want
@@ -487,9 +505,19 @@ function isSpaceBrightSlideRoot(root) {
  * @returns {string}
  */
 function compactSlideTextValue(value, opts = {}) {
-  const normalizeLine = (line) => String(line || "").replace(/[ \t]+/g, " ").trim();
+  const trimByCharBudget = (text, maxChars) => {
+    const hard = String(text || "").slice(0, maxChars).replace(/[,:;\s]+$/u, "").trim();
+    if (!hard) return "";
+    const softBreak = hard.lastIndexOf(" ");
+    const minSoftBreak = Math.max(8, Math.floor(maxChars * 0.55));
+    if (softBreak >= minSoftBreak) {
+      return `${hard.slice(0, softBreak).trim()}...`;
+    }
+    return `${hard}...`;
+  };
+
   const compactSingleLine = (line) => {
-    const raw = normalizeLine(line);
+    const raw = String(line || "").replace(/[ \t]+/g, " ").trim();
     if (!raw) return "";
     const maxWordsRaw = Math.floor(Number(opts.maxWords) || 0);
     const maxWords = maxWordsRaw > 0 ? maxWordsRaw : 0;
@@ -512,8 +540,7 @@ function compactSlideTextValue(value, opts = {}) {
     const maxCharsRaw = Math.floor(Number(opts.maxChars) || 0);
     const maxChars = maxCharsRaw > 0 ? maxCharsRaw : 0;
     if (maxChars && next.length > maxChars) {
-      const trimmed = next.slice(0, maxChars).replace(/[,:;\s]+$/u, "").trim();
-      return `${trimmed}...`;
+      return trimByCharBudget(next, maxChars);
     }
     return next;
   };
@@ -521,11 +548,27 @@ function compactSlideTextValue(value, opts = {}) {
   const lines = String(value || "")
     .replace(/\r\n/g, "\n")
     .split(/\n+/)
-    .map(normalizeLine)
+    .map((line) => String(line || "").trim())
     .filter(Boolean);
   if (!lines.length) return "";
   if (lines.length === 1) return compactSingleLine(lines[0]);
   return lines.map((line) => compactSingleLine(line)).filter(Boolean).join("\n");
+}
+
+/**
+ * Collapse multiline shell content into a single compactable sentence.
+ * Sea Life layouts need this because preserving every line can still overflow
+ * even when each line individually respects the line budget.
+ * @param {string} value
+ * @returns {string}
+ */
+function flattenSlideTextForCompact(value) {
+  return String(value || "")
+    .replace(/\r\n/g, "\n")
+    .split(/\n+/)
+    .map((line) => line.replace(/[ \t]+/g, " ").trim())
+    .filter(Boolean)
+    .join(" ");
 }
 
 /**
@@ -668,55 +711,55 @@ function getSealifeTextBudget(root) {
   const slide = getRootSlideElement(root);
   if (!slide) {
     return {
-      headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 88, maxSentences: 2, maxWords: 18 },
+      headline: { maxWords: 3, maxChars: 20 },
+      detail: { maxChars: 72, maxSentences: 1, maxWords: 12 },
     };
   }
   if (slide.querySelector(".cols-3")) {
     return {
-      headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 38, maxSentences: 1, maxWords: 7 },
+      headline: { maxWords: 2, maxChars: 14 },
+      detail: { maxChars: 30, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".task-grid")) {
     return {
-      headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 40, maxSentences: 1, maxWords: 7 },
+      headline: { maxWords: 2, maxChars: 16 },
+      detail: { maxChars: 32, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".table-like")) {
     return {
-      headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 50, maxSentences: 1, maxWords: 9 },
+      headline: { maxWords: 2, maxChars: 16 },
+      detail: { maxChars: 34, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".timeline-container")) {
     return {
-      headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 38, maxSentences: 1, maxWords: 7 },
+      headline: { maxWords: 2, maxChars: 14 },
+      detail: { maxChars: 30, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".pct-item")) {
     return {
-      headline: { maxWords: 3, maxChars: 18 },
-      detail: { maxChars: 42, maxSentences: 1, maxWords: 8 },
+      headline: { maxWords: 2, maxChars: 14 },
+      detail: { maxChars: 32, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".image-layout")) {
     return {
-      headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 180, maxSentences: 2, maxWords: 36 },
+      headline: { maxWords: 3, maxChars: 20 },
+      detail: { maxChars: 76, maxSentences: 2, maxWords: 14 },
     };
   }
   if (slide.querySelector(".title-card, .section-card")) {
     return {
-      headline: { maxWords: 4, maxChars: 24 },
-      detail: { maxChars: 260, maxSentences: 2, maxWords: 52 },
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 108, maxSentences: 2, maxWords: 20 },
     };
   }
   return {
-    headline: { maxWords: 4, maxChars: 24 },
-    detail: { maxChars: 88, maxSentences: 2, maxWords: 18 },
+    headline: { maxWords: 3, maxChars: 20 },
+    detail: { maxChars: 72, maxSentences: 1, maxWords: 12 },
   };
 }
 
@@ -740,8 +783,8 @@ function getComicTextBudget(root) {
   }
   if (slide.querySelector(".comic-grid-2 .comic-list")) {
     return {
-      headline: { maxWords: 4, maxChars: 26 },
-      detail: { maxChars: 40, maxSentences: 1, maxWords: 8 },
+      headline: { maxWords: 3, maxChars: 20 },
+      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
     };
   }
   if (slide.querySelector(".comic-list") && slide.querySelector("img, .image-wrapper")) {
@@ -764,32 +807,32 @@ function getComicTextBudget(root) {
   }
   if (slide.querySelector(".pronunciation-stack, .comic-rule-grid")) {
     return {
-      headline: { maxWords: 4, maxChars: 28 },
-      detail: { maxChars: 38, maxSentences: 1, maxWords: 8 },
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 30, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".strategy-strip")) {
     return {
       headline: { maxWords: 2, maxChars: 14 },
-      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
+      detail: { maxChars: 28, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".comic-grid-3, .check-grid")) {
     return {
-      headline: { maxWords: 4, maxChars: 26 },
-      detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
+      headline: { maxWords: 3, maxChars: 18 },
+      detail: { maxChars: 30, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".timeline")) {
     return {
       headline: { maxWords: 3, maxChars: 20 },
-      detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
+      detail: { maxChars: 30, maxSentences: 1, maxWords: 6 },
     };
   }
   if (slide.querySelector(".comic-grid-2, .two-column, .compact-card-row")) {
     return {
-      headline: { maxWords: 5, maxChars: 32 },
-      detail: { maxChars: 36, maxSentences: 1, maxWords: 7 },
+      headline: { maxWords: 3, maxChars: 20 },
+      detail: { maxChars: 32, maxSentences: 1, maxWords: 6 },
     };
   }
   return {
@@ -860,9 +903,9 @@ function compactStructuredSlideColumns(bullets, budget) {
  */
 function getSealifeRoomyDetailCount(root) {
   const slide = getRootSlideElement(root);
-  if (!slide) return 2;
-  if (slide.querySelector(".image-layout")) return 3;
-  if (slide.querySelector(".title-card, .section-card")) return 3;
+  if (!slide) return 1;
+  if (slide.querySelector(".image-layout")) return 2;
+  if (slide.querySelector(".title-card, .section-card")) return 2;
   return 1;
 }
 
@@ -875,10 +918,29 @@ function getSealifeRoomyDetailCount(root) {
  */
 function buildSealifeRichDetailText(title, bullets, budget, maxItems) {
   const values = collectUniqueSlideTextValues(bullets.length ? bullets : [title]);
+  const isPracticeCard = /luyện tập|luyen tap|practice/i.test(String(title || ""));
+  if (isPracticeCard) {
+    const lineBudget = {
+      maxChars: Math.min(Number(budget?.detail?.maxChars) || 52, 52),
+      maxSentences: 1,
+      maxWords: 7,
+    };
+    const lines = buildSlideBulletItems(title, bullets, Math.max(3, maxItems))
+      .map((line) => flattenSlideTextForCompact(line))
+      .map((line) => line.replace(/^(?:ý|y)\s*\d+\s*(?:->|:|-)\s*/iu, "").trim())
+      .filter(Boolean)
+      .slice(0, 3)
+      .map((line, idx) => {
+        const compactLine = capitalizeSlideLead(compactSlideTextValue(line, lineBudget));
+        return compactLine ? `Ý ${idx + 1} -> ${compactLine}` : "";
+      })
+      .filter(Boolean);
+    if (lines.length) return lines.join("\n");
+  }
   const details = values
     .map((value) => {
       const pair = buildSlideTextPair(value);
-      return pair.detail || pair.headline;
+      return flattenSlideTextForCompact(pair.detail || pair.headline);
     })
     .filter(Boolean)
     .slice(0, Math.max(1, maxItems));
@@ -895,7 +957,63 @@ function buildSealifeRichDetailText(title, bullets, budget, maxItems) {
  */
 function buildSealifeLeadHeadlineText(title, bullets, budget) {
   const pair = buildSlideTextPair(bullets[0] || title);
-  return capitalizeSlideLead(compactSlideTextValue(pair.headline || title, budget.headline));
+  return capitalizeSlideLead(compactSlideTextValue(flattenSlideTextForCompact(pair.headline || title), budget.headline));
+}
+
+/**
+ * @param {Element | ParentNode | null} root
+ * @returns {boolean}
+ */
+function isSealifeImageLayoutRoot(root) {
+  const slide = getRootSlideElement(root);
+  return !!slide?.querySelector(".image-layout .text-part");
+}
+
+/**
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {{ detail: { maxChars: number, maxSentences: number, maxWords?: number } }} budget
+ * @returns {string}
+ */
+function buildSealifeImageLayoutText(title, bullets, budget) {
+  const lineBudget = {
+    maxChars: Math.min(Number(budget?.detail?.maxChars) || 44, 44),
+    maxSentences: 1,
+    maxWords: Math.min(Number(budget?.detail?.maxWords) || 7, 7),
+  };
+  const ideas = buildSlideBulletItems(title, bullets, 5)
+    .map((item) => flattenSlideTextForCompact(item))
+    .map((item) => capitalizeSlideLead(compactSlideTextValue(item, lineBudget)))
+    .filter(Boolean)
+    .slice(0, 5);
+  while (ideas.length < 5 && ideas.length > 0) {
+    ideas.push(ideas[ideas.length - 1]);
+  }
+  return ideas.join("\n");
+}
+
+/**
+ * Keep the title above the text box while centering it horizontally over
+ * the white text half of Sea Life image-layout slides.
+ * @param {Element | ParentNode | null} root
+ */
+function alignSealifeImageLayoutOuterTitle(root) {
+  const slide = getRootSlideElement(root);
+  const outerTitle = slide?.querySelector(".outer-title");
+  const imageLayout = slide?.querySelector(".image-layout");
+  if (!(slide instanceof Element) || !(outerTitle instanceof HTMLElement) || !(imageLayout instanceof HTMLElement)) return;
+  const firstChild = Array.from(imageLayout.children).find((node) => node instanceof HTMLElement) || null;
+  const textPart = imageLayout.querySelector(".text-part");
+  const textOnLeft = firstChild === textPart;
+  outerTitle.style.width = "auto";
+  outerTitle.style.textAlign = "center";
+  if (textOnLeft) {
+    outerTitle.style.left = "60px";
+    outerTitle.style.right = "calc(50% + 25px)";
+  } else {
+    outerTitle.style.left = "calc(50% + 25px)";
+    outerTitle.style.right = "60px";
+  }
 }
 
 /**
@@ -1073,6 +1191,76 @@ function buildSlideBulletItems(title, bullets, want) {
 }
 
 /**
+ * Drop verbose teaching labels before compacting comic copy so dense panels keep
+ * the actual rule instead of wasting space on "Knowledge", "Ví dụ", etc.
+ * @param {string} value
+ * @returns {string}
+ */
+function simplifyComicTextSeed(value) {
+  let next = flattenSlideTextForCompact(value)
+    .replace(/^(?:ý|y|step|bước)\s*\d+\s*(?:->|:|-)\s*/iu, "")
+    .trim();
+  const leadPatterns = [
+    /^(?:knowledge|khái niệm|vai trò|dấu hiệu|công thức cốt lõi|công thức|cách áp dụng nhanh|gợi ý nghĩa|vận dụng|nhắc lại|ghi nhớ|ghi chú|note|ví dụ(?:\s*\d+)?|example(?:\s*\d+)?|mẫu quen thuộc|mẫu bổ sung|tránh lỗi(?:\s*\d+)?|lỗi hay gặp)\s*:\s*/iu,
+  ];
+  let changed = true;
+  while (changed && next) {
+    changed = false;
+    leadPatterns.forEach((pattern) => {
+      if (pattern.test(next)) {
+        next = next.replace(pattern, "").trim();
+        changed = true;
+      }
+    });
+  }
+  return next;
+}
+
+/**
+ * Dense comic grids behave better when each panel starts from a short fragment
+ * instead of a full teaching paragraph.
+ * @param {string} title
+ * @param {string[]} bullets
+ * @param {number} want
+ * @returns {Array<{ headline: string, detail: string }>}
+ */
+function buildComicStructuredTextPairs(title, bullets, want) {
+  const safeWant = Math.max(1, Math.floor(Number(want) || 0));
+  const seeds = buildSlideBulletItems(title, bullets, safeWant).map((item) => simplifyComicTextSeed(item));
+  const pairs = seeds
+    .map((seed) => {
+      const pair = buildSlideTextPair(seed);
+      const fragments = splitSlideBulletFragments(seed).map((item) => simplifyComicTextSeed(item)).filter(Boolean);
+      const headline = simplifyComicTextSeed(pair.headline || fragments[0] || seed);
+      const detail =
+        simplifyComicTextSeed(pair.detail || "") ||
+        simplifyComicTextSeed(fragments[1] || "") ||
+        simplifyComicTextSeed(fragments[0] || seed);
+      return {
+        headline: headline || detail,
+        detail: detail || headline,
+      };
+    })
+    .filter((pair) => pair.headline || pair.detail);
+
+  if (!pairs.length) {
+    return Array.from({ length: safeWant }, () => ({
+      headline: simplifyComicTextSeed(title),
+      detail: simplifyComicTextSeed(title),
+    }));
+  }
+
+  while (pairs.length < safeWant) {
+    const fallback = pairs[pairs.length % pairs.length];
+    pairs.push({
+      headline: fallback.headline,
+      detail: fallback.detail || fallback.headline,
+    });
+  }
+  return pairs.slice(0, safeWant);
+}
+
+/**
  * @param {string} value
  * @returns {number}
  */
@@ -1195,15 +1383,15 @@ function buildBalancedSlideTextPairs(title, bullets, want) {
  * @param {string} value
  */
 function setShellTextContent(node, value) {
-  const normalizeMultiline = (text) =>
+  const normalizeMultilineText = (text) =>
     String(text || "")
       .replace(/\r\n/g, "\n")
       .split(/\n+/)
       .map((part) => part.replace(/[ \t]+/g, " ").trim())
       .filter(Boolean)
       .join("\n");
-  const raw = normalizeMultiline(value);
-  const fallback = normalizeMultiline(node.getAttribute("data-shell-original-text") || "");
+  const raw = normalizeMultilineText(value);
+  const fallback = normalizeMultilineText(node.getAttribute("data-shell-original-text") || "");
   const picked = raw || fallback || "Nội dung";
   const parts = picked.split(/\n/);
   node.replaceChildren();
@@ -2169,6 +2357,59 @@ function injectShellPreviewFit(doc) {
       overflow-wrap: break-word !important;
       word-break: normal !important;
     }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .outer-title {
+      width: fit-content !important;
+      max-width: calc(100% - 120px) !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-content {
+      width: min(100%, 980px) !important;
+      max-width: 980px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      align-items: center !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-card h1,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .section-card h1,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .tl-item h3,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .mini-card h3,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .cols-3 h3 {
+      width: fit-content !important;
+      max-width: 100% !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .title-card p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .section-card p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .tl-item p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .mini-card p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .cols-3 p,
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .pct-item p {
+      width: fit-content !important;
+      max-width: 100% !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part {
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p {
+      width: min(100%, 560px) !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-align: center !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] p.shell-sealife-multiline {
+      text-align: left !important;
+    }
+    body.shell-theme-sealife .shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p.shell-sealife-multiline {
+      text-align: left !important;
+    }
     body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .two-column ul[data-shell="bullets"],
     body.shell-theme-space-black .shell-slide-instance[data-shell-authored-slide="1"] .bullet-list ul[data-shell="bullets"] {
       gap: 6px !important;
@@ -2385,6 +2626,30 @@ function injectShellPanelFitScript(doc) {
     var top = rect && rect.top ? rect.top : 0;
     var available = bottom > top ? Math.floor(bottom - top) : 0;
     return available || Math.floor((tile.clientHeight || tile.offsetHeight || 0));
+  }
+  function syncSealifeParagraphAlignment(doc) {
+    if (!(doc && doc.body && doc.body.classList && doc.body.classList.contains("shell-theme-sealife"))) return;
+    var selector = [
+      '.shell-slide-instance[data-shell-authored-slide="1"] .title-card p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .section-card p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .tl-item p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .mini-card p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .cols-3 p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .pct-item p',
+      '.shell-slide-instance[data-shell-authored-slide="1"] .image-layout .text-part p'
+    ].join(", ");
+    Array.prototype.forEach.call(doc.querySelectorAll(selector), function (node) {
+      if (!node || !window.getComputedStyle) return;
+      var hasManualBreaks = !!node.querySelector("br");
+      var multiline = hasManualBreaks;
+      if (!multiline) {
+        var cs = window.getComputedStyle(node);
+        var fontSize = getNumericCssValue(cs.fontSize) || 24;
+        var lineHeight = getNumericCssValue(cs.lineHeight) || fontSize * 1.4;
+        multiline = node.scrollHeight > lineHeight * 1.35;
+      }
+      node.classList.toggle("shell-sealife-multiline", !!multiline);
+    });
   }
   function fitSpaceBrightCard(tile) {
     if (!tile || !window.getComputedStyle || tile.getAttribute("data-edit-geom") === "1") return;
@@ -2612,6 +2877,7 @@ function injectShellPanelFitScript(doc) {
     if (fitEditPaused) return;
     if (document.body && document.body.classList.contains("slide-visual-edit-on")) return;
     fitShellTitles(document);
+    syncSealifeParagraphAlignment(document);
     fitSpaceBrightTiles(document);
     collectPanels(document).forEach(function (panel) {
       wrapPanel(panel);
@@ -2785,21 +3051,40 @@ function fillContentSlots(root, title, bullets, options = {}) {
   const isSpaceBright = themeKey === "space-bright";
   const isSpaceBlack = themeKey === "space-black";
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
+  const titleSeed = (isComic || isSealife) ? buildSlideTitleSeed(title) : title;
+  const normalizeForThemeCompact = (value, kind = "detail") => {
+    if (isComic) {
+      const normalized = simplifyComicTextSeed(value);
+      return kind === "headline" ? buildSlideTitleSeed(normalized) : normalized;
+    }
+    if (!isSealife) return String(value || "");
+    const normalized = flattenSlideTextForCompact(value);
+    if (kind === "headline") return normalized;
+    return normalized;
+  };
   const renderTitle =
-    isComic && themeTextBudget
-      ? capitalizeSlideLead(compactSlideTextValue(title, themeTextBudget.headline))
-      : title;
+    (isComic || isSealife) && themeTextBudget
+      ? capitalizeSlideLead(
+          compactSlideTextValue(normalizeForThemeCompact(titleSeed, "headline"), themeTextBudget.headline),
+        )
+      : titleSeed;
   const compactPairs = (pairs) =>
     !themeTextBudget
       ? pairs
       : pairs.map((pair) => ({
-          headline: capitalizeSlideLead(compactSlideTextValue(pair.headline, themeTextBudget.headline)),
-          detail: capitalizeSlideLead(compactSlideTextValue(pair.detail || pair.headline, themeTextBudget.detail)),
+          headline: capitalizeSlideLead(
+            compactSlideTextValue(normalizeForThemeCompact(pair.headline, "headline"), themeTextBudget.headline),
+          ),
+          detail: capitalizeSlideLead(
+            compactSlideTextValue(normalizeForThemeCompact(pair.detail || pair.headline), themeTextBudget.detail),
+          ),
         }));
   const compactItems = (items) =>
     !themeTextBudget
       ? items
-      : items.map((item) => capitalizeSlideLead(compactSlideTextValue(item, themeTextBudget.detail)));
+      : items.map((item) =>
+          capitalizeSlideLead(compactSlideTextValue(normalizeForThemeCompact(item), themeTextBudget.detail)),
+        );
 
   const titleEl =
     root.querySelector("[data-shell=\"title\"]") ||
@@ -2883,7 +3168,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
       setShellTextContent(
         targets[1],
         buildSealifeRichDetailText(
-          renderTitle,
+          title,
           bullets,
           themeTextBudget,
           getSealifeRoomyDetailCount(slideRoot || root),
@@ -2892,18 +3177,27 @@ function fillContentSlots(root, title, bullets, options = {}) {
       return;
     }
     if (isSealife && targets.length === 1 && !isHeadlineShellTarget(targets[0]) && themeTextBudget) {
-      const detail = buildSealifeRichDetailText(
-        renderTitle,
-        bullets,
-        themeTextBudget,
-        getSealifeRoomyDetailCount(slideRoot || root),
-      );
+      const detail = isSealifeImageLayoutRoot(slideRoot || root)
+        ? buildSealifeImageLayoutText(title, bullets, themeTextBudget)
+        : buildSealifeRichDetailText(
+            title,
+            bullets,
+            themeTextBudget,
+            getSealifeRoomyDetailCount(slideRoot || root),
+          );
       setShellTextContent(targets[0], detail);
+      if (isSealifeImageLayoutRoot(slideRoot || root)) {
+        alignSealifeImageLayoutOuterTitle(slideRoot || root);
+      }
       return;
     }
     const pairCount = getStructuredShellTextPairCount(targets);
     if (pairCount >= 2) {
-      const textPairs = compactPairs(buildBalancedSlideTextPairs(renderTitle, bullets, pairCount));
+      const textPairs = compactPairs(
+        isComic
+          ? buildComicStructuredTextPairs(title, bullets, pairCount)
+          : buildBalancedSlideTextPairs(renderTitle, bullets, pairCount),
+      );
       textPairs.forEach((pick, idx) => {
         const headlineNode = targets[idx * 2];
         const detailNode = targets[idx * 2 + 1];
@@ -2964,6 +3258,9 @@ function fillContentSlots(root, title, bullets, options = {}) {
     li.textContent = b;
     list.appendChild(li);
   });
+  if (isSealifeImageLayoutRoot(slideRoot || root)) {
+    alignSealifeImageLayoutOuterTitle(slideRoot || root);
+  }
 }
 
 /**
