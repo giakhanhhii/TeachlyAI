@@ -1,3 +1,5 @@
+import * as autoModeStore from "../services/autoModeStore.js";
+
 /**
  * Main Hub card grid for empty chat — mirrors `frontend/main_hub.html` structure & SVGs.
  * @param {(flow: "fullset"|"slide"|"quiz"|"flashcard") => void} onPick
@@ -185,6 +187,25 @@ export function createStartupHubElement(onPick) {
       </button>
     </div>
   </div>`;
+
+  // Inject auto mode toggle above the instruction text
+  const headlineArea = wrap.querySelector(".headline-area");
+  if (headlineArea) {
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "auto-mode-toggle";
+    const isOn = autoModeStore.isEnabled();
+    toggle.setAttribute("aria-pressed", isOn ? "true" : "false");
+    toggle.title = "Bật/tắt chế độ Teachly tự tạo";
+    toggle.innerHTML = `<span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">${isOn ? "Tạo Auto" : "Tạo Custom"}</span>`;
+    toggle.addEventListener("click", () => {
+      const next = autoModeStore.toggle();
+      toggle.setAttribute("aria-pressed", next ? "true" : "false");
+      const lbl = toggle.querySelector(".toggle-label");
+      if (lbl) lbl.textContent = next ? "Tạo Auto" : "Tạo Custom";
+    });
+    headlineArea.insertBefore(toggle, headlineArea.firstChild);
+  }
 
   ["fullset", "slide", "quiz", "flashcard"].forEach((flow) => {
     const card = wrap.querySelector(`.card[data-flow="${flow}"]`);

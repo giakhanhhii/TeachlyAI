@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData, shuffleInPlace } from "../services/sessionContentPrep.js";
+import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav } from "../slide/slideShellSrcdoc.js";
@@ -71,6 +71,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   layerView.prepareShow();
   hookFlashSpeechVoicesOnce();
   const root = layerView.body;
+  if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   root.innerHTML = "";
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
@@ -103,7 +104,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       ...questions.map((data) => ({ kind: /** @type {"quiz"} */ ("quiz"), data })),
       ...cards.map((data) => ({ kind: /** @type {"flash"} */ ("flash"), data })),
     ];
-    shuffleInPlace(steps);
   }
   if (!slides.length) {
     const slideDeckStep = steps.find((step) => step?.kind === "slide_deck");
@@ -553,10 +553,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         }
 
         function applyViewMode(next) {
-          if (document.fullscreenElement === viewport) {
-            const exit = document.exitFullscreen || document.webkitExitFullscreen;
-            if (typeof exit === "function") void exit.call(document);
-          }
+          if (isFauxFs()) viewport.classList.remove("exp-slide-viewport--faux-fs");
           viewMode = next;
           syncViewModeToIframe();
           paintSlideChrome();
@@ -580,46 +577,37 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         prevArrow.addEventListener("click", () => bumpDeck(-1), { signal: uiSignal });
         nextArrow.addEventListener("click", () => bumpDeck(1), { signal: uiSignal });
 
-        fsBtn.addEventListener(
-          "click",
-          () => {
-            if (!shellReady || viewMode !== "presentation") return;
-            const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-            if (fsEl === viewport) {
-              const exit = document.exitFullscreen || document.webkitExitFullscreen;
-              if (typeof exit === "function") void exit.call(document);
-              return;
-            }
-            const req = viewport.requestFullscreen || viewport.webkitRequestFullscreen;
-            if (typeof req === "function") void req.call(viewport);
-          },
-          { signal: uiSignal },
-        );
+        function isFauxFs() {
+          return viewport.classList.contains("exp-slide-viewport--faux-fs");
+        }
 
-        function onFsChange() {
-          suppressArrowNavUntil = performance.now() + 320;
-          const fs = document.fullscreenElement === viewport || document.webkitFullscreenElement === viewport;
+        function paintFsBtn() {
+          const fs = isFauxFs();
           fsBtn.setAttribute("aria-label", fs ? "Thoát toàn màn hình" : "Toàn màn hình");
           fsBtn.title = fs ? "Thoát toàn màn hình" : "Toàn màn hình (chế độ Trình chiếu)";
           fsBtn.innerHTML = fs
             ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>'
             : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m10-18h3a2 2 0 0 1 2 2v3M3 8V5a2 2 0 0 1 2-2h3"/></svg>';
         }
+
+        fsBtn.addEventListener(
+          "click",
+          () => {
+            if (!shellReady || viewMode !== "presentation") return;
+            suppressArrowNavUntil = performance.now() + 320;
+            viewport.classList.toggle("exp-slide-viewport--faux-fs");
+            paintFsBtn();
+            syncViewModeToIframe();
+          },
+          { signal: uiSignal },
+        );
+
+        function onFsChange() {
+          suppressArrowNavUntil = performance.now() + 320;
+          paintFsBtn();
+        }
         document.addEventListener("fullscreenchange", onFsChange, { signal: uiSignal });
 
-        function onDocKeydown(e) {
-          const layer = document.getElementById("experienceLayer");
-          if (!layer?.classList.contains("visible") || !shellReady || viewMode !== "presentation") return;
-          if (performance.now() < suppressArrowNavUntil) return;
-          if (e.key === "ArrowLeft") {
-            e.preventDefault();
-            bumpDeck(-1);
-          } else if (e.key === "ArrowRight") {
-            e.preventDefault();
-            bumpDeck(1);
-          }
-        }
-        document.addEventListener("keydown", onDocKeydown, { signal: uiSignal });
 
         (async () => {
           try {
@@ -642,6 +630,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
             ]);
             if (myGen !== renderStepGen) return;
             loading.remove();
+            // Set correct height BEFORE showing the iframe so 100vh inside = 720px from the first paint.
+            // Without this, CSS aspect-ratio:16/9 at < 1280px width gives a short iframe (e.g. 405px),
+            // causing the 720px slide to be clipped symmetrically at top and bottom.
+            iframe.style.height = "720px";
+            iframe.style.aspectRatio = "auto";
             iframe.style.display = "";
             shellReady = true;
             const captureDeckScroll = () => {
@@ -657,6 +650,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
               capture: true,
               signal: uiSignal,
             });
+            iframe.contentWindow?.addEventListener("keydown", onGlobalKeydown, { capture: true, signal: uiSignal });
             viewMode = "presentation";
             syncViewModeToIframe();
             syncShellSlideNav(iframe, slideDeckIndex, readDeckScrollState());
@@ -667,6 +661,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
               syncViewModeToIframe,
               paintChrome: paintSlideChrome,
               deckLen: deckSlides.length,
+              getViewMode: () => viewMode,
+              getSuppressNavUntil: () => suppressArrowNavUntil,
             };
             nextBtn.disabled = false;
             refreshMixedNavChrome();
@@ -864,6 +860,42 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     index -= 1;
     renderStep();
   });
+  function onGlobalKeydown(e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if (!shell.isConnected) return;
+    if (reviewMode) return;
+    const step = steps[index];
+    if (!step) return;
+    if (step.kind === "slide_deck") {
+      if (!activeSlideDeckShell) return;
+      if (activeSlideDeckShell.getViewMode() !== "presentation") return;
+      if (performance.now() < activeSlideDeckShell.getSuppressNavUntil()) return;
+      e.preventDefault();
+      if (e.key === "ArrowLeft") {
+        if (slideDeckIndex <= 0) {
+          if (!backBtn.disabled) backBtn.click();
+        } else {
+          activeSlideDeckShell.bumpDeck(-1);
+        }
+      } else {
+        if (slideDeckIndex >= activeSlideDeckShell.deckLen - 1) {
+          if (!nextBtn.disabled) nextBtn.click();
+        } else {
+          activeSlideDeckShell.bumpDeck(1);
+        }
+      }
+      return;
+    }
+    e.preventDefault();
+    if (e.key === "ArrowLeft") {
+      if (!backBtn.disabled) backBtn.click();
+    } else {
+      if (!nextBtn.disabled) nextBtn.click();
+    }
+  }
+  root._kbAbort = () => window.removeEventListener("keydown", onGlobalKeydown, true);
+  window.addEventListener("keydown", onGlobalKeydown, true);
+
   shell.appendChild(progress.wrap);
   shell.appendChild(stage);
   shell.appendChild(footer);

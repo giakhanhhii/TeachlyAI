@@ -4,7 +4,7 @@
 import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
 import { findDirectQuizPreset } from "../data/directQuizPresets.js";
 import { findDirectFlashPreset } from "../data/directFlashPresets.js";
-import { findDirectSlidePreset } from "../data/directSlidePresets.js";
+import { findDirectSlidePreset, buildPresetSlideIndexes } from "../data/directSlidePresets.js";
 
 /**
  * @param {number} min
@@ -210,6 +210,46 @@ function pickPreferredEndingSlide(pool) {
   return ranked.length ? ranked[0].slide : null;
 }
 
+/** @param {any} slide */
+function slideVisualFingerprint(slide) {
+  const title = String(slide?.title || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  const firstBullet = (Array.isArray(slide?.bullets) ? slide.bullets : [])
+    .map((item) => String(item || "").replace(/\s+/g, " ").trim())
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(" | ")
+    .toLowerCase();
+  return `${title}#${firstBullet}`;
+}
+
+/** @param {any[]} selected
+ * @param {any[]} fullPool */
+function replaceDuplicateOpeningSlide(selected, fullPool) {
+  if (!Array.isArray(selected) || selected.length < 2) return selected;
+  const [first, second] = selected;
+  if (!first || !second) return selected;
+  if (slideVisualFingerprint(first) !== slideVisualFingerprint(second)) return selected;
+
+  const usedKeys = new Set(selected.map((slide) => slideDedupeKey(slide)).filter(Boolean));
+  const secondIdx = fullPool.indexOf(second);
+  const pickNext = (start) => {
+    for (let i = Math.max(0, start); i < fullPool.length; i += 1) {
+      const candidate = fullPool[i];
+      const key = slideDedupeKey(candidate);
+      if (key && usedKeys.has(key)) continue;
+      if (slideVisualFingerprint(candidate) === slideVisualFingerprint(second)) continue;
+      return candidate;
+    }
+    return null;
+  };
+
+  const replacement = pickNext(secondIdx + 1) || pickNext(0);
+  if (!replacement) return selected.slice(1);
+  return [...selected.slice(1), replacement];
+}
 /** @param {any} data
  * @param {Record<string, string>} meta */
 export function prepareQuizSessionData(data, meta) {
@@ -348,18 +388,25 @@ export function prepareSlideSessionData(data, meta) {
   const directPreset = findDirectSlidePreset(meta);
   if (directPreset) {
     const consumed = parseConsumedKeys(meta?.__consumedKeysJson);
-    const presetDefault = Array.isArray(directPreset.defaultSlides) ? directPreset.defaultSlides : [];
     const fullPool = Array.isArray(directPreset.slides) ? directPreset.slides : [];
     const remainingPool = filterPoolByConsumed(fullPool, slideDedupeKey, consumed);
-    const slides =
-      presetDefault.length && want <= presetDefault.length && consumed.size === 0
-        ? presetDefault.slice(0, want)
-        : remainingPool.slice(0, want);
-    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, slides, slideDedupeKey, consumed);
+
+    let selected;
+    if (consumed.size === 0) {
+      // Build ordered chapter indexes for the actual user-requested count,
+      // not the preset's own default count — this ensures Chuyên đề 1 → 2 → 3 ordering.
+      const indexes = buildPresetSlideIndexes(want, fullPool.length);
+      selected = indexes.map((i) => fullPool[i - 1]).filter(Boolean);
+      selected = replaceDuplicateOpeningSlide(selected, fullPool);
+    } else {
+      selected = remainingPool.slice(0, want);
+    }
+
+    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, selected, slideDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => slideDedupeKey(item)).filter(Boolean)).size;
     return {
       title: `Slide bài giảng — ${directPreset.topic}`,
-      slides,
+      slides: selected,
       sessionMeta: {
         ...meta,
         __offset: "0",
@@ -370,11 +417,12 @@ export function prepareSlideSessionData(data, meta) {
       },
     };
   }
+  // Non-preset fallback: keep slides in the order provided by the mock bundle (no shuffle).
   const pool = Array.isArray(data?.slides) ? data.slides : [];
   const preferredEnding = pickPreferredEndingSlide(pool);
   const endingSlide = preferredEnding || pool[pool.length - 1] || null;
   const contentPool = pool.filter((slide) => !isLikelyEndingSlide(slide));
-  const bodySlides = pickUniqueShuffled(contentPool, slideDedupeKey, Math.max(0, want - 1));
+  const bodySlides = contentPool.slice(0, Math.max(0, want - 1));
   const slides = want <= 1 ? (endingSlide ? [endingSlide] : []) : endingSlide ? [...bodySlides, endingSlide] : bodySlides;
   return {
     ...data,

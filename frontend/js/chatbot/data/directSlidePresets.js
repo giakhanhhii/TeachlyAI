@@ -78,15 +78,40 @@ function normalizeExampleSnippet(value) {
     .trim();
 }
 
-function buildDefaultSlideIndexes(count) {
-  const want = Math.max(10, Math.min(30, Number(count) || 10));
-  if (want >= 30) return Array.from({ length: 30 }, (_, index) => index + 1);
-  const picked = new Set([1, 2, 3, 30]);
-  for (let i = 1; picked.size < want && i <= 28; i += 1) {
-    const index = 3 + Math.round((i * 26) / Math.max(1, want - 3));
-    picked.add(Math.max(4, Math.min(29, index)));
+/**
+ * Builds slide indexes in chapter order: overview (1-3) → chapter 1 → chapter 2 → … → summary (last).
+ * Slide 4 (Khung ghi nhớ) is intentionally skipped to match EXTRA preset behavior.
+ * @param {string|number} count - requested number of slides
+ * @param {number} deckSize - total slides in the deck (default 30 for 5-chapter RAW presets)
+ * @returns {number[]}
+ */
+function buildDefaultSlideIndexes(count, deckSize = 30) {
+  const want = Math.max(1, Math.min(deckSize, Number(count) || 10));
+  if (want >= deckSize) return Array.from({ length: deckSize }, (_, i) => i + 1);
+
+  const OVERVIEW = [1, 2, 3];
+  const SUMMARY = deckSize;
+  const CHAPTER_START = 5; // slide 4 skipped (same as buildExtraPresetDefaultIndexes)
+
+  if (want <= OVERVIEW.length) return OVERVIEW.slice(0, want);
+  if (want === OVERVIEW.length + 1) return [...OVERVIEW, SUMMARY];
+
+  const chapterBudget = want - OVERVIEW.length - 1; // reserve 1 slot for summary
+  const chapterSlides = [];
+  for (let i = CHAPTER_START; i < SUMMARY && chapterSlides.length < chapterBudget; i += 1) {
+    chapterSlides.push(i);
   }
-  return Array.from(picked).sort((a, b) => a - b).slice(0, want);
+  return [...OVERVIEW, ...chapterSlides, SUMMARY];
+}
+
+/**
+ * Exported version so sessionContentPrep.js can call it with the *actual* user-requested count.
+ * @param {number} want
+ * @param {number} deckSize
+ * @returns {number[]}
+ */
+export function buildPresetSlideIndexes(want, deckSize) {
+  return buildDefaultSlideIndexes(want, deckSize);
 }
 
 function pickSlidesByIndexes(slides, indexes) {
@@ -98,20 +123,7 @@ function buildDetailedExampleLine(chapter) {
   const detailedExample = String(chapter?.detailedExample || "").trim();
   if (detailedExample) return detailedExample;
   const sentenceA = normalizeExampleSnippet(chapter?.exampleA);
-  const sentenceB = normalizeExampleSnippet(chapter?.exampleB);
-  const name = String(chapter?.name || "").trim().toLowerCase();
-  const rule = String(chapter?.rule || "").trim();
-
-  const parts = [];
-  if (sentenceA) parts.push(`Ví dụ 1 -> ${sentenceA}`);
-  if (sentenceB) parts.push(`Ví dụ 2 -> ${sentenceB}`);
-  if (rule || name) {
-    parts.push(
-      `Ví dụ 3 -> tự tạo thêm một câu cùng mẫu ${name || "ngữ pháp này"} rồi kiểm tra lại theo công thức ${rule || "đã học"}`
-    );
-  }
-
-  return parts.length ? `Ví dụ: ${parts.join("\n")}` : "";
+  return sentenceA ? `Ví dụ 1: ${sentenceA}` : "";
 }
 
 function buildMultilineSectionLine(label, parts) {
@@ -124,63 +136,25 @@ function trimTrailingSentencePunctuation(value) {
 }
 
 function buildSecondExampleLine(chapter) {
-  const focus = String(chapter?.focus || "").trim();
-  const rule = String(chapter?.rule || "").trim();
-  const pitfallA = String(chapter?.pitfallA || "").trim();
-  const pitfallB = String(chapter?.pitfallB || "").trim();
-
-  const parts = [];
-  if (focus) parts.push(`Ý 1 -> ${focus}`);
-  if (rule) parts.push(`Ý 2 -> ${rule}`);
-  if (pitfallA || pitfallB) {
-    parts.push(`Ý 3 -> tránh lỗi ${pitfallA || pitfallB}${pitfallA && pitfallB ? `, đồng thời không ${pitfallB.toLowerCase()}` : ""}`);
-  }
-
-  return buildMultilineSectionLine("Phân tích", parts);
+  const sentenceB = normalizeExampleSnippet(chapter?.exampleB);
+  return sentenceB ? `Ví dụ 2: ${sentenceB}` : "";
 }
 
 function buildDetailedExplanationLine(chapter) {
-  const practiceA = String(chapter?.practiceA || "").trim();
-  const practiceB = String(chapter?.practiceB || "").trim();
-  const name = String(chapter?.name || "").trim().toLowerCase();
   const rule = trimTrailingSentencePunctuation(chapter?.rule);
-  const parts = [];
-
-  if (practiceA) parts.push(`Ý 1 -> ${practiceA}`);
-  if (practiceB) parts.push(`Ý 2 -> ${practiceB}`);
-  if (rule || name) {
-    parts.push(`Ý 3 -> chốt lại bằng công thức ${rule || name}.`);
-  }
-
-  return buildMultilineSectionLine("Ghi nhớ", parts);
+  return rule ? `Ghi nhớ: ${rule}` : "";
 }
 
 function buildPracticeTaskLine(chapter) {
   const detailedPractice = String(chapter?.detailedPractice || "").trim();
   if (detailedPractice) return detailedPractice;
   const practiceA = String(chapter?.practiceA || "").trim();
-  const practiceB = String(chapter?.practiceB || "").trim();
-  const name = String(chapter?.name || "").trim().toLowerCase();
-  const parts = [];
-  if (practiceA) parts.push(`Ý 1 -> ${practiceA}`);
-  if (practiceB) parts.push(`Ý 2 -> ${practiceB}`);
-  if (practiceA || practiceB || name) {
-    parts.push(`Ý 3 -> tự giải thích vì sao đáp án đúng vẫn bám ${name || "đúng cấu trúc"}.`);
-  }
-  return buildMultilineSectionLine("Bài luyện tập", parts);
+  return practiceA ? `Bài luyện tập: ${practiceA}` : "";
 }
 
 function buildSelfCheckLine(chapter) {
-  const focus = String(chapter?.focus || "").trim();
-  const rule = trimTrailingSentencePunctuation(chapter?.rule);
-  const name = String(chapter?.name || "").trim().toLowerCase();
-  const parts = [];
-
-  if (focus) parts.push(`Ý 1 -> nhắc lại dấu hiệu: ${focus}`);
-  if (rule) parts.push(`Ý 2 -> đối chiếu lại công thức ${rule}`);
-  if (name || rule) parts.push(`Ý 3 -> tự đặt 1 câu mới rồi kiểm tra lại theo ${name || rule}.`);
-
-  return buildMultilineSectionLine("Tự kiểm tra", parts);
+  const practiceA = String(chapter?.practiceA || "").trim();
+  return practiceA ? `Tự kiểm tra: ${practiceA}` : "";
 }
 
 function buildPracticeGuideLine(chapter, preset) {
@@ -228,67 +202,26 @@ function buildConceptTakeawayLine(chapter, preset) {
 
 function buildFormulaColumnBlock(column) {
   const heading = String(column?.heading || "").trim();
-  const explanation = String(column?.explanation || "").trim();
   const example = String(column?.example || "").trim();
-  const note = String(column?.note || "").trim();
-  return [
-    heading,
-    explanation ? `Trọng tâm: ${explanation}` : "Trọng tâm: nhận đúng ý nghĩa của mẫu này trong câu.",
-    heading ? `Mẫu chính: ${heading}` : "",
-    "Bước 1: nhìn đúng dấu hiệu ngữ pháp trước khi biến đổi.",
-    example ? `Ví dụ mẫu: ${example}` : "Ví dụ mẫu: tự đặt một câu ngắn theo công thức này.",
-    note ? `Lưu ý: ${note}` : "Lưu ý: không đổi máy móc nếu ngữ cảnh không phù hợp.",
-    "Tự kiểm tra: viết lại thêm một câu khác rồi đối chiếu cấu trúc.",
-  ].filter(Boolean).join("\n");
+  return [heading, example ? `Ví dụ: ${example}` : ""].filter(Boolean).join(": ") || heading;
 }
 
 function buildFormulaSummaryLines(chapter) {
   const formulaColumns = Array.isArray(chapter?.formulaColumns) ? chapter.formulaColumns : [];
   if (formulaColumns.length) {
-    return formulaColumns.map((column) => buildFormulaColumnBlock(column)).filter(Boolean);
+    return formulaColumns.slice(0, 3).map((column) => buildFormulaColumnBlock(column)).filter(Boolean);
   }
 
   const name = String(chapter?.name || "").trim();
-  const focus = String(chapter?.focus || "").trim();
   const rule = String(chapter?.rule || "").trim();
   const exampleA = String(chapter?.exampleA || "").trim();
-  const exampleB = String(chapter?.exampleB || "").trim();
-  const practiceA = String(chapter?.practiceA || "").trim();
-  const practiceB = String(chapter?.practiceB || "").trim();
   const pitfallA = String(chapter?.pitfallA || "").trim();
-  const pitfallB = String(chapter?.pitfallB || "").trim();
 
-  const conceptBlock = [
-    name || "Khái niệm",
-    focus ? `Khái niệm: ${focus}` : "Khái niệm: xác định đúng chức năng của cấu trúc trong câu.",
-    name ? `Vai trò: ${name.toLowerCase()} giúp nối ý gọn và đúng ngữ pháp.` : "",
-    rule ? `Dấu hiệu: ${rule}` : "",
-    exampleA ? `Ví dụ 1: ${exampleA}` : "",
-    exampleB ? `Ví dụ 2: ${exampleB}` : exampleA ? `Ví dụ 2: biến đổi lại ${exampleA.toLowerCase()}.` : "",
-    pitfallA ? `Lỗi hay gặp: ${pitfallA}` : "",
-  ].filter(Boolean).join("\n");
-
-  const formulaBlock = [
-    "Công thức cốt lõi",
-    rule ? `Mẫu: ${rule}` : "Mẫu: quan sát cấu trúc chính rồi mới điền từ.",
-    "Bước 1: xác định từ hoặc cụm cần được bổ nghĩa.",
-    "Bước 2: chọn đúng dạng theo chức năng ngữ pháp và nghĩa.",
-    "Bước 3: đọc lại cả mệnh đề để kiểm tra độ tự nhiên.",
-    practiceA ? `Vận dụng: ${practiceA}` : "Vận dụng: áp dụng mẫu vào một câu mới cùng chủ điểm.",
-    practiceB ? `Nhắc lại: ${practiceB}` : pitfallB ? `Nhắc lại: tránh ${pitfallB.toLowerCase()}.` : "",
-  ].filter(Boolean).join("\n");
-
-  const quickUseBlock = [
-    "Cách áp dụng nhanh",
-    "Nhìn từ đứng trước và đứng sau chỗ cần điền.",
-    focus ? `Gợi ý nghĩa: ${focus}` : "Gợi ý nghĩa: luôn kiểm tra quan hệ logic trong câu.",
-    exampleA ? `Mẫu quen thuộc: ${exampleA}` : "",
-    exampleB ? `Mẫu bổ sung: ${exampleB}` : "",
-    pitfallA ? `Tránh lỗi 1: ${pitfallA}` : "",
-    pitfallB ? `Tránh lỗi 2: ${pitfallB}` : "",
-  ].filter(Boolean).join("\n");
-
-  return [conceptBlock, formulaBlock, quickUseBlock].filter(Boolean);
+  return [
+    rule ? `${name}: ${rule}` : (name || "Công thức cốt lõi"),
+    exampleA ? `Ví dụ: ${exampleA}` : "",
+    pitfallA ? `Tránh: ${pitfallA}` : "",
+  ].filter(Boolean);
 }
 
 function buildQuickMemoryBullets(preset, chapterRules, chapterExamples) {
@@ -1159,9 +1092,173 @@ const RAW_SLIDE_PRESETS = [
   },
 ];
 
-export const DIRECT_SLIDE_PRESETS = RAW_SLIDE_PRESETS.map((preset) => {
+const EXTRA_SLIDE_TOPIC_LIST = [
+  "Hiện tại hoàn thành và hiện tại hoàn thành tiếp diễn",
+  "Câu ước và giả định",
+  "Mệnh đề danh ngữ",
+  "Mệnh đề trạng ngữ chỉ thời gian và điều kiện",
+  "Liên từ và cụm nối ý",
+  "Cấu trúc đảo ngữ trong tiếng Anh",
+  "Gerund và Infinitive",
+  "Cụm động từ theo chủ đề học tập",
+  "Prepositions and Collocations",
+  "Mạo từ và từ hạn định",
+  "Đại từ và từ thay thế",
+  "Câu hỏi đuôi",
+  "Cấu trúc hỏi đáp gián tiếp",
+  "Word Stress trong đề THPT",
+  "Phát âm đuôi -ed và -s/-es",
+  "Nguyên âm dễ nhầm lẫn",
+  "Chức năng giao tiếp thường gặp",
+  "Viết lại câu đồng nghĩa",
+  "Sửa lỗi sai ngữ pháp",
+  "Kỹ năng đọc tìm ý chính",
+  "Kỹ năng đọc suy luận",
+  "Kỹ năng đọc từ đồng nghĩa trái nghĩa",
+  "Kỹ năng điền từ vào đoạn văn",
+  "Kỹ năng paraphrase trong reading",
+  "Viết đoạn văn opinion",
+  "Viết đoạn cause and effect",
+  "Viết đoạn advantages and disadvantages",
+  "Mô tả biểu đồ và số liệu",
+  "Từ vựng chủ đề Giáo dục",
+  "Từ vựng chủ đề Môi trường",
+  "Từ vựng chủ đề Công nghệ",
+  "Từ vựng chủ đề Sức khỏe",
+  "Từ vựng chủ đề Nghề nghiệp",
+  "Từ vựng chủ đề Văn hóa và lễ hội",
+  "Từ vựng chủ đề Du lịch",
+  "Từ vựng chủ đề Đô thị hóa",
+  "Mixed Grammar Review cho THPTQG",
+  "Chiến lược làm bài ngữ pháp",
+  "Chiến lược làm bài đọc hiểu",
+  "Tổng ôn 50 câu then chốt trước kỳ thi",
+];
+
+const EXTRA_SLIDE_STRUCTURE_OPTIONS = [
+  "Khái niệm cốt lõi -> Dấu hiệu nhận diện -> Luyện tập theo ngữ cảnh",
+  "Nền tảng kiến thức -> Công thức trọng tâm -> Bài tập vận dụng",
+  "Nhận diện dạng bài -> Mẫu trả lời nhanh -> Tự kiểm tra đáp án",
+  "Lý thuyết tinh gọn -> Ví dụ điển hình -> Luyện đề mục tiêu",
+  "Tổng quan chủ đề -> Checklist lỗi sai -> Bài tập thực chiến",
+];
+
+const EXTRA_SLIDE_NOTES_OPTIONS = [
+  "Giữ ví dụ ngắn gọn, bám sát ngữ cảnh thường xuất hiện trong đề THPT.",
+  "Ưu tiên bài tập nhận diện nhanh rồi mới chuyển sang câu vận dụng.",
+  "Mỗi phần đều có checklist để học sinh tự soát lỗi trước khi nộp bài.",
+  "Kết thúc mỗi track bằng một câu tự tạo để ghi nhớ cấu trúc lâu hơn.",
+  "Tập trung vào các lỗi sai học sinh lớp 12 thường gặp khi làm trắc nghiệm.",
+];
+
+const EXTRA_SLIDE_STYLE_OPTIONS = [
+  "Chuyên nghiệp (đa sắc)",
+  "Tối giản (Học thuật)",
+  "Vui tươi (Thân thiện)",
+  "Vũ trụ sáng (Trẻ trung)",
+  "Vũ trụ tối (Huyền bí)",
+  "Biển cả",
+  "Comic",
+];
+
+const EXTRA_SLIDE_COUNT_OPTIONS = ["10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30"];
+
+const AUTO_CHAPTER_TEMPLATES = [
+  {
+    name: "Kiến thức cơ bản",
+    focusStem: "Hiểu rõ định nghĩa và bản chất của điểm kiến thức",
+    ruleStem: "Xác định đúng phạm vi, chức năng ngữ pháp và ngữ nghĩa của điểm kiến thức này",
+    practiceStem: "Tóm tắt lại định nghĩa và vai trò của điểm kiến thức",
+  },
+  {
+    name: "Dấu hiệu nhận diện",
+    focusStem: "Nhận ra tín hiệu từ khóa trong câu",
+    ruleStem: "Đối chiếu vị trí từ cần điền với cấu trúc câu và ngữ cảnh xung quanh",
+    practiceStem: "Lập bảng nhận diện nhanh theo từng dạng câu hỏi thường gặp",
+  },
+  {
+    name: "Cấu trúc trọng tâm",
+    focusStem: "Chốt công thức và mẫu câu cốt lõi",
+    ruleStem: "Áp dụng đúng trật tự cấu trúc trong từng dạng bài viết lại câu và chọn đáp án",
+    practiceStem: "Viết lại câu theo mẫu để ghi nhớ sâu hơn và tự kiểm tra",
+  },
+  {
+    name: "Tránh lỗi phổ biến",
+    focusStem: "Nhận diện và tránh các lỗi sai học sinh hay mắc nhất",
+    ruleStem: "Soát lại công thức và logic nghĩa trước khi chốt đáp án cuối cùng",
+    practiceStem: "Sửa lỗi từng bước, giải thích lý do sai và cách sửa đúng",
+  },
+  {
+    name: "Luyện tập vận dụng",
+    focusStem: "Rèn kỹ năng làm bài qua câu hỏi gần đề thi thực tế",
+    ruleStem: "Kết hợp nhận diện dạng câu và kiểm tra ngữ cảnh nghĩa trước khi chọn đáp án",
+    practiceStem: "Tự tạo thêm câu mới cùng chủ điểm rồi kiểm tra lại theo công thức đã học",
+  },
+  {
+    name: "Vận dụng trong đề thi",
+    focusStem: "Chiến lược làm bài nhanh và chính xác trong đề THPTQG",
+    ruleStem: "Đọc kỹ đầu bài, xác định dạng câu hỏi rồi áp dụng đúng công thức đã học",
+    practiceStem: "Làm nhanh 3 câu kiểu đề thi rồi tự chấm điểm và rút kinh nghiệm",
+  },
+];
+
+function buildExtraSlidePresetId(topic, index) {
+  const topicSlug = normalizeText(topic).replace(/\s+/g, "-");
+  return `slide-extra-${String(index + 1).padStart(2, "0")}-${topicSlug || "topic"}`;
+}
+
+function buildAutoChaptersByTopic(topic) {
+  const topicText = String(topic || "").trim();
+  const topicLower = topicText.toLocaleLowerCase("vi-VN");
+  return AUTO_CHAPTER_TEMPLATES.map((template, index) => ({
+    name: `${template.name} - ${topicText}`,
+    focus: `${template.focusStem} của ${topicLower} trong bài thi.`,
+    rule: `${template.ruleStem} cho ${topicLower}.`,
+    exampleA: `Ví dụ ${index + 1}: Chọn đáp án phù hợp nhất với ${topicLower} trong ngữ cảnh câu.`,
+    exampleB: `Ví dụ ${index + 2}: Viết lại một câu ngắn để kiểm tra mức độ hiểu ${topicLower}.`,
+    pitfallA: `Lỗi ${index + 1}: Chọn đáp án theo cảm tính mà không bám dấu hiệu của ${topicLower}.`,
+    pitfallB: `Lỗi ${index + 2}: Bỏ qua bước đọc lại nghĩa tổng thể khi xử lý ${topicLower}.`,
+    practiceA: `Bài tập ${index + 1}: ${template.practiceStem} với 3 câu liên quan đến ${topicLower}.`,
+    practiceB: `Bài tập ${index + 2}: Tự giải thích vì sao đáp án đúng vẫn bám ${topicLower}.`,
+  }));
+}
+
+/**
+ * For auto-generated extra presets, pick exactly one slide per chapter to avoid
+ * visual duplicates in Sea Life and other themes that truncate long chapter titles.
+ * Overview slides 01-03 are always included; one "Khái niệm" per chapter; then Tổng kết.
+ * @param {number} chapterCount
+ * @returns {number[]}
+ */
+function buildExtraPresetDefaultIndexes(chapterCount) {
+  const overview = [1, 2, 3];
+  const chapterFirst = Array.from({ length: chapterCount }, (_, i) => 5 + i * 5);
+  const totalSlides = 4 + chapterCount * 5 + 1;
+  return [...overview, ...chapterFirst, totalSlides];
+}
+
+function buildExtraSlidePreset(topic, index) {
+  const chapterCount = AUTO_CHAPTER_TEMPLATES.length;
+  return {
+    id: buildExtraSlidePresetId(topic, index),
+    topic,
+    count: "10",
+    structure: EXTRA_SLIDE_STRUCTURE_OPTIONS[index % EXTRA_SLIDE_STRUCTURE_OPTIONS.length],
+    style: EXTRA_SLIDE_STYLE_OPTIONS[index % EXTRA_SLIDE_STYLE_OPTIONS.length],
+    notes: EXTRA_SLIDE_NOTES_OPTIONS[index % EXTRA_SLIDE_NOTES_OPTIONS.length],
+    chapters: buildAutoChaptersByTopic(topic),
+    customDefaultIndexes: buildExtraPresetDefaultIndexes(chapterCount),
+  };
+}
+
+const EXTRA_SLIDE_PRESETS = EXTRA_SLIDE_TOPIC_LIST.map((topic, index) => buildExtraSlidePreset(topic, index));
+const ALL_RAW_SLIDE_PRESETS = [...RAW_SLIDE_PRESETS, ...EXTRA_SLIDE_PRESETS];
+
+export const DIRECT_SLIDE_PRESETS = ALL_RAW_SLIDE_PRESETS.map((preset) => {
   const slides = buildDeckFromBlueprint(preset);
-  const defaultSlideIndexes = buildDefaultSlideIndexes(preset.count);
+  const defaultSlideIndexes = preset.customDefaultIndexes
+    ? preset.customDefaultIndexes.filter((idx) => idx >= 1 && idx <= slides.length)
+    : buildDefaultSlideIndexes(preset.count, slides.length);
   return {
     ...preset,
     slides,

@@ -14,6 +14,7 @@ import { renderQuizReviewView } from "./quizReviewView.js";
 export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
+  if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const raw = await fetchMockResource("quiz");
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
@@ -229,6 +230,20 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     reviewFilter = "all";
     renderReview();
   });
+
+  function onGlobalKeydown(e) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if (!shell.isConnected) return;
+    if (reviewMode) return;
+    e.preventDefault();
+    if (e.key === "ArrowLeft") {
+      if (!backBtn.disabled) backBtn.click();
+    } else {
+      if (!nextBtn.disabled) nextBtn.click();
+    }
+  }
+  root._kbAbort = () => window.removeEventListener("keydown", onGlobalKeydown, true);
+  window.addEventListener("keydown", onGlobalKeydown, true);
 
   root.appendChild(shell);
   renderQuestion();

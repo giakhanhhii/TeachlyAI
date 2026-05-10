@@ -123,25 +123,26 @@
         .slide-container th,
         .slide-container .subtitle {
             font-family: 'Quicksand', sans-serif;
-            color: #1c3879; /* Xanh đen đậm */
-            font-size: 24px; /* Chữ đều và to rõ ràng */
-            line-height: 1.6;
+            color: #1c3879;
+            font-size: 19px;
+            line-height: 1.5;
             text-align: justify;
             font-weight: 500;
         }
 
-        .slide-container h1 { font-size: 65px; line-height: 1.2; text-transform: uppercase; }
-        .slide-container .slide-title { font-size: 50px; margin-bottom: 14px; margin-top: 4px; text-transform: uppercase; text-align: center; }
-        .slide-container h3 { font-size: 30px; margin-bottom: 15px; color: #1c3879; text-align: left; }
-        .slide-container .subtitle { font-size: 30px; text-align: center; font-weight: 600; color: #1c3879; margin-top: 20px; }
+        .slide-container h1 { font-size: 62px; line-height: 1.2; text-transform: uppercase; }
+        .slide-container .slide-title { font-size: 44px; margin-bottom: 10px; margin-top: 4px; text-transform: uppercase; text-align: center; }
+        .slide-container h3 { font-size: 26px; margin-bottom: 10px; color: #1c3879; text-align: left; }
+        .slide-container .subtitle { font-size: 26px; text-align: center; font-weight: 600; color: #1c3879; margin-top: 16px; }
 
         .content-area {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            justify-content: center;
+            justify-content: flex-start;
             width: 100%;
             min-height: 0;
+            max-height: 420px;
             overflow: hidden;
         }
 
@@ -154,8 +155,8 @@
 
         /* Section Title Layout */
         .section-title-layout { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; flex-grow: 1; }
-        .section-title-layout h2 { font-size: 60px; margin-bottom: 20px; }
-        .section-title-layout p { font-size: 28px; text-align: center; max-width: 900px; }
+        .section-title-layout h2 { font-size: 48px; margin-bottom: 14px; }
+        .section-title-layout p { font-size: 20px; text-align: center; max-width: 900px; }
 
         /* Two Column */
         .two-column { display: flex; gap: 42px; width: 100%; align-items: center; flex: 1 1 auto; min-height: 0; }
@@ -177,9 +178,8 @@
         /* Bullet List */
         .bullet-list { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 0; }
         .bullet-list ul { list-style: none; margin: 0; padding: 0; }
-        .bullet-list li { margin-bottom: 20px; padding-left: 45px; position: relative; }
-        /* Sửa lỗi đè chữ: chỉ chọn icon fa-solid để position absolute */
-        .bullet-list li i.fa-solid { color: #e01a22; font-size: 24px; left: 0; top: 6px; position: absolute; }
+        .bullet-list li { margin-bottom: 14px; padding-left: 42px; position: relative; }
+        .bullet-list li i.fa-solid { color: #e01a22; font-size: 20px; left: 0; top: 5px; position: absolute; }
         .two-column .bullet-list {
             display: flex;
             align-items: center;
@@ -206,20 +206,19 @@
             flex-direction: column;
             align-items: center;
         }
-        .tile .icon { color: #e01a22; font-size: 50px; margin-bottom: 20px; }
-        .tile h3 { text-align: center; font-size: 26px; color: #e01a22; }
-        .tile p { text-align: center; font-size: 20px; } 
+        .tile .icon { color: #e01a22; font-size: 36px; margin-bottom: 10px; }
+        .tile h3 { text-align: center; font-size: 20px; color: #e01a22; }
+        .tile p { text-align: center; font-size: 16px; }
 
         /* Table Layout */
         .table-layout {
             width: 100%;
-            max-height: 500px;
             overflow: hidden;
         }
         .table-layout table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; table-layout: fixed; }
-        .table-layout th, .table-layout td { border: 1px solid #bacbe6; padding: 13px 18px; text-align: left; }
-        .table-layout th { background-color: #1c3879; color: #ffffff; font-family: 'Nunito', sans-serif; font-size: 22px; line-height: 1.3; text-align: center; font-weight: 800; }
-        .table-layout td { background-color: #f8faff; font-size: 20px; line-height: 1.4; }
+        .table-layout th, .table-layout td { border: 1px solid #bacbe6; padding: 10px 14px; text-align: left; }
+        .table-layout th { background-color: #1c3879; color: #ffffff; font-family: 'Nunito', sans-serif; font-size: 17px; line-height: 1.25; text-align: center; font-weight: 800; }
+        .table-layout td { background-color: #f8faff; font-size: 15px; line-height: 1.4; }
         .table-layout td, .table-layout th { word-break: break-word; vertical-align: top; }
 
         /* Images */
@@ -393,48 +392,48 @@
         /* ==========================================
            5. BỔ SUNG CHO BỘ 30 SLIDE
            ========================================== */
-        .mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; width: 100%; }
-        .mini-card { background: #f8faff; border: 2px solid #e2e8f0; border-radius: 22px; padding: 22px 26px; }
-        .mini-card h3 { color: #e01a22; font-size: 26px; margin-bottom: 8px; text-align: left; }
-        .mini-card p { font-size: 20px; line-height: 1.45; text-align: left; }
-        .formula-box { background: #fff7ed; border: 3px dashed #ffb36b; border-radius: 22px; padding: 22px 28px; margin: 10px auto 22px; width: 92%; }
-        .formula-box p { font-size: 24px; text-align: center; font-weight: 700; color: #1c3879; }
-        .example-box { background: #eef6ff; border-left: 8px solid #1c3879; border-radius: 16px; padding: 18px 24px; margin-top: 14px; }
-        .example-box p { font-size: 21px; line-height: 1.45; text-align: left; }
-        .strategy-strip { display: flex; gap: 18px; justify-content: space-between; width: 100%; }
-        .strategy-step { flex: 1; background: #f8faff; border-radius: 20px; padding: 20px 18px; border: 2px dashed #bacbe6; }
-        .strategy-step .badge { display: inline-block; background: #e01a22; color: white; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 50%; width: 42px; height: 42px; line-height: 42px; text-align: center; margin-bottom: 10px; font-size: 22px; }
-        .strategy-step h3 { text-align: left; font-size: 24px; color: #e01a22; margin-bottom: 8px; }
-        .strategy-step p { font-size: 19px; line-height: 1.4; text-align: left; }
+        .mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%; }
+        .mini-card { background: #f8faff; border: 2px solid #e2e8f0; border-radius: 18px; padding: 16px 20px; }
+        .mini-card h3 { color: #e01a22; font-size: 20px; margin-bottom: 6px; text-align: left; }
+        .mini-card p { font-size: 16px; line-height: 1.45; text-align: left; }
+        .formula-box { background: #fff7ed; border: 3px dashed #ffb36b; border-radius: 18px; padding: 14px 22px; margin: 8px auto 14px; width: 92%; }
+        .formula-box p { font-size: 20px; text-align: center; font-weight: 700; color: #1c3879; }
+        .example-box { background: #eef6ff; border-left: 6px solid #1c3879; border-radius: 14px; padding: 12px 18px; margin-top: 10px; }
+        .example-box p { font-size: 17px; line-height: 1.45; text-align: left; }
+        .strategy-strip { display: flex; gap: 14px; justify-content: space-between; width: 100%; }
+        .strategy-step { flex: 1; background: #f8faff; border-radius: 18px; padding: 16px 14px; border: 2px dashed #bacbe6; }
+        .strategy-step .badge { display: inline-block; background: #e01a22; color: white; font-family: 'Nunito', sans-serif; font-weight: 900; border-radius: 50%; width: 36px; height: 36px; line-height: 36px; text-align: center; margin-bottom: 8px; font-size: 18px; }
+        .strategy-step h3 { text-align: left; font-size: 19px; color: #e01a22; margin-bottom: 6px; }
+        .strategy-step p { font-size: 15px; line-height: 1.4; text-align: left; }
 
-        /* Auto-fit cho các slide friendly bị tràn chiều cao */
+        /* Auto-fit khi slide vẫn còn tràn chiều cao */
         .slide-container.fit-tight .slide-title {
-            font-size: 42px;
-            margin-bottom: 8px;
+            font-size: 38px;
+            margin-bottom: 6px;
         }
         .slide-container.fit-tight p,
         .slide-container.fit-tight li,
         .slide-container.fit-tight td,
         .slide-container.fit-tight th,
         .slide-container.fit-tight .subtitle {
-            font-size: 21px;
-            line-height: 1.42;
+            font-size: 17px;
+            line-height: 1.4;
         }
         .slide-container.fit-table .slide-title {
-            font-size: 40px;
-            margin-bottom: 8px;
+            font-size: 38px;
+            margin-bottom: 6px;
         }
         .slide-container.fit-table .table-layout th,
         .slide-container.fit-table .table-layout td {
-            padding: 10px 14px;
+            padding: 6px 10px;
         }
         .slide-container.fit-table .table-layout th {
-            font-size: 20px;
-            line-height: 1.25;
+            font-size: 15px;
+            line-height: 1.2;
         }
         .slide-container.fit-table .table-layout td {
-            font-size: 18px;
-            line-height: 1.3;
+            font-size: 13px;
+            line-height: 1.35;
         }
     </style>
 </head>
@@ -516,10 +515,10 @@
             <div class="content-area">
                 <div class="bullet-list">
                     <ul>
-                        <li><i class="fa-solid fa-circle-check"></i> <strong>Sự Hòa Hợp Chủ Vị (Subject-Verb Agreement):</strong> Nắm vững quy tắc chia động từ theo chủ ngữ số ít, số nhiều và các trường hợp đặc biệt (everyone, either... or...).</li>
-                        <li><i class="fa-solid fa-circle-check"></i> <strong>Các Thì Trong Tiếng Anh (Tenses):</strong> Trọng tâm vào 6 thì cơ bản thường xuất hiện: Hiện tại đơn, Hiện tại tiếp diễn, Quá khứ đơn, Quá khứ tiếp diễn, Tương lai đơn và Hiện tại hoàn thành.</li>
-                        <li><i class="fa-solid fa-circle-check"></i> <strong>Câu Bị Động (Passive Voice):</strong> Cách biến đổi câu chủ động sang bị động ở các thì khác nhau và dạng bị động đặc biệt (động từ khuyết thiếu, cấu trúc nhờ vả).</li>
-                        <li><i class="fa-solid fa-circle-check"></i> <strong>Mệnh Đề Trạng Ngữ (Adverbial Clauses):</strong> Phân biệt mệnh đề chỉ thời gian, nhượng bộ (Although, Despite), nguyên nhân (Because, Due to) và kết quả.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Sự Hòa Hợp Chủ Vị:</strong> Chia động từ theo chủ ngữ số ít/nhiều; lưu ý: everyone, either...or, neither...nor.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Các Thì (Tenses):</strong> 6 thì cốt lõi: Hiện tại đơn, Hiện tại tiếp diễn, Quá khứ đơn, Quá khứ tiếp diễn, Tương lai đơn, Hiện tại hoàn thành.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Câu Bị Động (Passive Voice):</strong> Đổi chủ động → bị động; nhớ bị động với modal verbs và cấu trúc have/get something done.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Mệnh Đề Trạng Ngữ:</strong> Phân biệt Although/Despite (nhượng bộ), Because/Due to (nguyên nhân), so that (kết quả).</li>
                     </ul>
                 </div>
             </div>
@@ -593,9 +592,9 @@
                     <div>
                         <div class="bullet-list">
                             <ul>
-                                <li><i class="fa-solid fa-puzzle-piece"></i> <strong>Đại Từ Quan Hệ:</strong> Sử dụng chính xác "Who, Whom" (chỉ người), "Which" (chỉ vật), "That" (thay thế cho cả người/vật trong mệnh đề xác định) và "Whose" (sở hữu).</li>
-                                <li><i class="fa-solid fa-puzzle-piece"></i> <strong>Rút Gọn Mệnh Đề:</strong> Đây là dạng bài thường gặp. Rút gọn bằng V-ing (chủ động), V-ed/PII (bị động) hoặc To V-inf (sau the first, the only...).</li>
-                                <li><i class="fa-solid fa-puzzle-piece"></i> <strong>Lưu ý dấu phẩy:</strong> Không sử dụng "That" trong mệnh đề quan hệ không xác định (có dấu phẩy).</li>
+                                <li><i class="fa-solid fa-puzzle-piece"></i> <strong>Đại Từ Quan Hệ:</strong> Who/Whom (người), Which (vật), That (xác định), Whose (sở hữu).</li>
+                                <li><i class="fa-solid fa-puzzle-piece"></i> <strong>Rút Gọn:</strong> V-ing (chủ động), V-ed/PII (bị động), To V-inf (the first/only...).</li>
+                                <li><i class="fa-solid fa-puzzle-piece"></i> <strong>Dấu phẩy:</strong> Mệnh đề không xác định (có dấu phẩy) không dùng "That".</li>
                             </ul>
                         </div>
                     </div>
@@ -638,14 +637,14 @@
         <!-- Slide 10: Styled_Bullet_Points (Từ Vựng) -->
         <div class="slide-container" id="slide10">
             <i class="fa-solid fa-spell-check decor-icon decor-2"></i>
-            <h2 class="slide-title">Từ Vựng: Chìa Khóa Đạt Điểm Khá Giỏi</h2>
+            <h2 class="slide-title">Từ Vựng: Chìa Khóa Đạt Điểm Giỏi</h2>
             <div class="content-area">
                 <div class="bullet-list">
                     <ul>
-                        <li><i class="fa-solid fa-gem"></i> <strong>Sự Cấu Tạo Từ (Word Formation):</strong> Nhận biết được vị trí của Danh từ, Động từ, Tính từ, Trạng từ trong câu để chọn đáp án điền khuyết chính xác (Ví dụ: sau giới từ là V-ing/Noun).</li>
-                        <li><i class="fa-solid fa-gem"></i> <strong>Cụm Từ Cố Định (Collocations):</strong> Tiếng Anh THPTQG chuộng kiểm tra sự kết hợp từ tự nhiên. Ví dụ: "do homework" chứ không phải "make homework", "pay attention to".</li>
-                        <li><i class="fa-solid fa-gem"></i> <strong>Cụm Động Từ (Phrasal Verbs):</strong> Học theo ngữ cảnh thay vì học vẹt. Các cụm phổ biến như: take off, put off, look forward to, bring up...</li>
-                        <li><i class="fa-solid fa-gem"></i> <strong>Thành Ngữ (Idioms):</strong> Dành cho mục tiêu 8.5+. Cần ghi nhớ ý nghĩa bóng của các cụm từ (VD: "once in a blue moon", "a piece of cake").</li>
+                        <li><i class="fa-solid fa-gem"></i> <strong>Cấu Tạo Từ:</strong> Xác định vị trí cần noun/verb/adj/adv trong câu trước khi chọn hậu tố (-tion, -ment, -ive, -ly...).</li>
+                        <li><i class="fa-solid fa-gem"></i> <strong>Collocations:</strong> Kết hợp từ tự nhiên: do homework, make progress, pay attention to, take responsibility.</li>
+                        <li><i class="fa-solid fa-gem"></i> <strong>Phrasal Verbs:</strong> Học theo ngữ cảnh: take off, put off, look forward to, carry out, turn down, bring up.</li>
+                        <li><i class="fa-solid fa-gem"></i> <strong>Idioms (8.5+):</strong> Ghi nhớ nghĩa bóng: "once in a blue moon" (hiếm khi), "a piece of cake" (dễ dàng).</li>
                     </ul>
                 </div>
             </div>
@@ -779,11 +778,11 @@
             <div class="content-area">
                 <div class="table-layout">
                     <table>
-                        <thead><tr><th>Dạng so sánh</th><th>Cấu trúc cần nhớ</th><th>Ghi chú trong đề thi</th></tr></thead>
+                        <thead><tr><th>Dạng so sánh</th><th>Cấu trúc</th><th>Lưu ý</th></tr></thead>
                         <tbody>
-                            <tr><td><strong>So sánh hơn</strong></td><td>short adj-er + than / more + long adj + than</td><td>Chú ý tính từ ngắn, dài và các dạng bất quy tắc như good → better.</td></tr>
+                            <tr><td><strong>Hơn</strong></td><td>adj-er + than / more + adj + than</td><td>Bất quy tắc: good→better, bad→worse.</td></tr>
                             <tr><td><strong>So sánh nhất</strong></td><td>the short adj-est / the most + long adj</td><td>Dễ nhầm với cách dùng mạo từ “the”; cần nhìn ngữ cảnh so sánh trong một nhóm.</td></tr>
-                            <tr><td><strong>So sánh kép</strong></td><td>the + comparative..., the + comparative...</td><td>Ví dụ: The harder you work, the more progress you make.</td></tr>
+                            <tr><td><strong>Kép</strong></td><td>the + comparative, the + comparative</td><td>VD: The harder you work, the more you achieve.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -801,7 +800,7 @@
                         <li><i class="fa-solid fa-circle-check"></i> <strong>Mạo từ a/an/the:</strong> “a/an” dùng cho danh từ đếm được số ít được nhắc lần đầu; “the” dùng khi danh từ đã xác định hoặc là duy nhất.</li>
                         <li><i class="fa-solid fa-circle-check"></i> <strong>Lượng từ:</strong> “many/few” đi với danh từ đếm được; “much/little” đi với danh từ không đếm được; “a lot of/plenty of” dùng linh hoạt trong nhiều ngữ cảnh.</li>
                         <li><i class="fa-solid fa-circle-check"></i> <strong>Giới từ thời gian:</strong> “in” cho tháng/năm/buổi, “on” cho ngày/thứ, “at” cho giờ chính xác hoặc cụm cố định như “at night”.</li>
-                        <li><i class="fa-solid fa-circle-check"></i> <strong>Giới từ đi kèm tính từ/động từ:</strong> học theo cụm: responsible for, keen on, good at, depend on, succeed in, apply for.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> <strong>Giới từ kèm adj/verb:</strong> responsible for, keen on, good at, depend on, succeed in, apply for.</li>
                     </ul>
                 </div>
             </div>
@@ -828,11 +827,11 @@
             <div class="content-area">
                 <div class="table-layout">
                     <table>
-                        <thead><tr><th>Nhóm</th><th>Ví dụ cần thuộc</th><th>Cách học hiệu quả</th></tr></thead>
+                        <thead><tr><th>Nhóm</th><th>Ví dụ</th><th>Cách học</th></tr></thead>
                         <tbody>
-                            <tr><td><strong>Collocations</strong></td><td>make progress, do research, take responsibility, pay attention, raise awareness</td><td>Ghi theo cụm hoàn chỉnh, đặt câu ngắn để nhớ cách dùng tự nhiên.</td></tr>
+                            <tr><td><strong>Collocations</strong></td><td>make progress, do research, pay attention, take responsibility</td><td>Ghi theo cụm, đặt câu ngắn để nhớ cách dùng tự nhiên.</td></tr>
                             <tr><td><strong>Phrasal verbs</strong></td><td>look after, look forward to, give up, put off, carry out, turn down</td><td>Học theo chủ đề và ngữ cảnh; chú ý động từ theo sau “to” có thể là V-ing.</td></tr>
-                            <tr><td><strong>Idioms cơ bản</strong></td><td>a piece of cake, break the ice, once in a blue moon, under pressure</td><td>Ưu tiên nghĩa bóng và tình huống sử dụng thay vì dịch từng từ.</td></tr>
+                            <tr><td><strong>Idioms</strong></td><td>a piece of cake, break the ice, once in a blue moon</td><td>Nhớ nghĩa bóng, không dịch từng từ.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -893,10 +892,10 @@
             <div class="content-area">
                 <div class="bullet-list">
                     <ul>
-                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Đọc nhanh toàn đoạn:</strong> Nắm chủ đề, thái độ của tác giả và mạch ý trước khi xử lý từng chỗ trống.</li>
-                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Xác định loại câu hỏi:</strong> Chỗ trống có thể kiểm tra từ vựng, ngữ pháp, liên từ, đại từ thay thế hoặc collocation.</li>
-                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Dựa vào trước và sau chỗ trống:</strong> Chủ ngữ, động từ, giới từ, dấu câu và từ nối là manh mối quan trọng.</li>
-                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Đọc lại sau khi chọn:</strong> Câu trả lời đúng phải làm đoạn văn trôi chảy cả về ngữ pháp lẫn ý nghĩa.</li>
+                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Đọc lướt toàn đoạn:</strong> Nắm chủ đề, thái độ tác giả và mạch ý trước khi xử lý từng chỗ trống.</li>
+                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Loại câu hỏi:</strong> Từ vựng, ngữ pháp, liên từ, đại từ thay thế hoặc collocation.</li>
+                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Manh mối ngữ cảnh:</strong> Chủ ngữ, động từ, giới từ, dấu câu, từ nối xung quanh chỗ trống.</li>
+                        <li><i class="fa-solid fa-arrow-right"></i> <strong>Đọc lại:</strong> Đáp án đúng phải làm đoạn văn trôi chảy về cả ngữ pháp lẫn ý nghĩa.</li>
                     </ul>
                 </div>
             </div>
@@ -908,11 +907,11 @@
             <div class="content-area">
                 <div class="table-layout">
                     <table>
-                        <thead><tr><th>Loại câu hỏi</th><th>Dấu hiệu</th><th>Cách xử lý nhanh</th></tr></thead>
+                        <thead><tr><th>Loại câu hỏi</th><th>Dấu hiệu nhận biết</th><th>Cách xử lý</th></tr></thead>
                         <tbody>
-                            <tr><td><strong>Main idea</strong></td><td>best title, mainly about, primary purpose</td><td>Đọc câu đầu/cuối mỗi đoạn, tránh chọn đáp án quá hẹp hoặc quá rộng.</td></tr>
-                            <tr><td><strong>Detail</strong></td><td>According to the passage, which is true?</td><td>Scan từ khóa, so sánh thông tin tương đương chứ không tìm đúng từng chữ.</td></tr>
-                            <tr><td><strong>Inference</strong></td><td>It can be inferred/suggested that...</td><td>Suy luận từ thông tin trong bài; không chọn ý ngoài văn bản dù nghe hợp lý.</td></tr>
+                            <tr><td><strong>Main idea</strong></td><td>best title, mainly about, primary purpose</td><td>Đọc đầu/cuối mỗi đoạn; tránh đáp án quá hẹp hoặc quá rộng.</td></tr>
+                            <tr><td><strong>Detail</strong></td><td>According to..., which is true?</td><td>Scan từ khóa; so sánh nghĩa tương đương, không chỉ từng chữ.</td></tr>
+                            <tr><td><strong>Inference</strong></td><td>It can be inferred/suggested that...</td><td>Suy luận từ văn bản; không chọn ý ngoài bài dù hợp lý.</td></tr>
                             <tr><td><strong>Reference</strong></td><td>The word “it/they/this” refers to...</td><td>Quay lại câu trước hoặc cụm ngay trước đại từ để tìm danh từ thay thế.</td></tr>
                         </tbody>
                     </table>

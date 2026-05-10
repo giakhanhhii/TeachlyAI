@@ -238,6 +238,8 @@ export function setupChatEventManager(deps) {
     const params = new URLSearchParams(location.search);
     const flowKind = normalizeFlowParam(params.get("flow"));
     if (flowKind) {
+      // When auto mode is ON, handleFlowEntry (injected from chatController) intercepts
+      // and shows the count selector instead of the normal guided flow.
       await handleFlowEntry(flowKind);
       clearFlowParamFromUrl();
       return;

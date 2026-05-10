@@ -44,6 +44,8 @@ import { createFlowService } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
+import * as autoModeStore from "./services/autoModeStore.js";
+import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 
 /** @type {any} */
 let guided = null;
@@ -537,6 +539,10 @@ export function init() {
       openOtherTopicForm(validKind);
       return;
     }
+    if (autoModeStore.isEnabled()) {
+      await launchAutoMode(validKind, autoModeStore.getCounts());
+      return;
+    }
     const nextCounts = await openContinueCreateDialog(validKind);
     if (!nextCounts) {
       input.focus();
@@ -571,6 +577,91 @@ export function init() {
   async function openSingleExperience(kind, meta, mode, experienceId) {
     if (!experienceController) return;
     await experienceController.openSingleExperience(kind, meta, mode, experienceId);
+  }
+
+  /** Normalize "flashcard" URL param value → internal "flash" experience kind. */
+  function toExpKind(flowKind) {
+    return flowKind === "flashcard" ? "flash" : flowKind;
+  }
+
+  /**
+   * Auto-generate content immediately using a random topic.
+   * @param {"fullset"|"slide"|"quiz"|"flash"} expKind - already normalized
+   * @param {{ slides: number, quiz: number, flash: number }} counts
+   */
+  async function launchAutoMode(expKind, counts) {
+    const topic = autoModeStore.pickNextTopic();
+    if (expKind === "fullset") {
+      await openResumeFullSetMixed(
+        {
+          topic,
+          slides: String(counts.slides),
+          quiz: String(counts.quiz),
+          flash: String(counts.flash),
+          slideTemplate: autoModeStore.pickRandomTheme(),
+        },
+        `Full Set — ${topic}`,
+      );
+      return;
+    }
+    const count = expKind === "slide" ? counts.slides : expKind === "quiz" ? counts.quiz : counts.flash;
+    const meta =
+      expKind === "flash"
+        ? { source: topic, count: String(count) }
+        : { topic, count: String(count), ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
+    await openSingleExperience(expKind, meta, "fresh");
+  }
+
+  /**
+   * Intercepts a card click: shows the auto mode choice popup or count selector.
+   * @param {"fullset"|"quiz"|"slide"|"flashcard"|"flash"} flowKind
+   * @param {() => void | Promise<void>} onCustom - called to proceed with the normal guided flow
+   */
+  function handleFlowWithAutoMode(flowKind, onCustom) {
+    const expKind = toExpKind(flowKind);
+
+    function openCountSelector() {
+      if (autoModeStore.getNeverAskCount()) {
+        void launchAutoMode(expKind, autoModeStore.getCounts());
+        return;
+      }
+      showCountSelectorPanel(expKind, autoModeStore.getCounts(), {
+        onConfirm: (counts, neverAsk) => {
+          autoModeStore.saveCounts(counts);
+          if (neverAsk) autoModeStore.setNeverAskCount(true);
+          void launchAutoMode(expKind, counts);
+        },
+        onCancel: () => {},
+      });
+    }
+
+    if (autoModeStore.isEnabled()) {
+      openCountSelector();
+      return;
+    }
+
+    const savedChoice = autoModeStore.getNeverAskChoice();
+    if (savedChoice === "auto") {
+      autoModeStore.enable();
+      openCountSelector();
+      return;
+    }
+    if (savedChoice === "custom") {
+      void onCustom();
+      return;
+    }
+
+    showAutoModeChoicePopup(expKind, {
+      onCustom: (neverAsk) => {
+        if (neverAsk) autoModeStore.setNeverAskChoice("custom");
+        void onCustom();
+      },
+      onAuto: (neverAsk) => {
+        if (neverAsk) autoModeStore.setNeverAskChoice("auto");
+        autoModeStore.enable();
+        openCountSelector();
+      },
+    });
   }
 
   guidedController = createGuidedInteractionController({
@@ -818,7 +909,9 @@ export function init() {
     commitNavigationSnapshot: (mode = "replace") => writeAppNavigationState(mode),
   });
 
-  messageHistoryService.setStartupFlowHandler((flowKind) => flowService.startFlowInCurrentSession(flowKind));
+  messageHistoryService.setStartupFlowHandler((flowKind) =>
+    handleFlowWithAutoMode(flowKind, () => flowService.startFlowInCurrentSession(flowKind)),
+  );
 
   async function sendPrompt(prompt) {
     await messageController.sendPrompt(prompt, {
@@ -869,7 +962,8 @@ export function init() {
     renderChatListUI,
     ensureSessionMessagesLoaded: () => ensureSessionMessagesLoaded(),
     renderMessages,
-    handleFlowEntry: (flowKind) => flowService.handleFlowEntry(flowKind),
+    handleFlowEntry: (flowKind) =>
+      handleFlowWithAutoMode(flowKind, () => flowService.handleFlowEntry(flowKind)),
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
     onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
