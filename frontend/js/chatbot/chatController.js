@@ -621,9 +621,14 @@ export function init() {
     const expKind = toExpKind(flowKind);
 
     function openCountSelector() {
+      if (autoModeStore.getNeverAskCount()) {
+        void launchAutoMode(expKind, autoModeStore.getCounts());
+        return;
+      }
       showCountSelectorPanel(expKind, autoModeStore.getCounts(), {
-        onConfirm: (counts) => {
+        onConfirm: (counts, neverAsk) => {
           autoModeStore.saveCounts(counts);
+          if (neverAsk) autoModeStore.setNeverAskCount(true);
           void launchAutoMode(expKind, counts);
         },
         onCancel: () => {},
@@ -635,9 +640,24 @@ export function init() {
       return;
     }
 
+    const savedChoice = autoModeStore.getNeverAskChoice();
+    if (savedChoice === "auto") {
+      autoModeStore.enable();
+      openCountSelector();
+      return;
+    }
+    if (savedChoice === "custom") {
+      void onCustom();
+      return;
+    }
+
     showAutoModeChoicePopup(expKind, {
-      onCustom: () => void onCustom(),
-      onAuto: () => {
+      onCustom: (neverAsk) => {
+        if (neverAsk) autoModeStore.setNeverAskChoice("custom");
+        void onCustom();
+      },
+      onAuto: (neverAsk) => {
+        if (neverAsk) autoModeStore.setNeverAskChoice("auto");
         autoModeStore.enable();
         openCountSelector();
       },

@@ -76,6 +76,8 @@ function getState() {
       flash: Number.isFinite(Number(s?.counts?.flash)) ? Math.max(5, Number(s.counts.flash)) : DEFAULT_COUNTS.flash,
     },
     usedTopics: Array.isArray(s?.usedTopics) ? s.usedTopics.filter((t) => typeof t === "string") : [],
+    neverAskChoice: s?.neverAskChoice === "custom" || s?.neverAskChoice === "auto" ? s.neverAskChoice : null,
+    neverAskCount: Boolean(s?.neverAskCount),
   };
 }
 
@@ -113,6 +115,38 @@ export function saveCounts(counts) {
       flash: Number.isFinite(Number(counts?.flash)) ? Math.max(5, Math.min(20, Math.floor(Number(counts.flash)))) : DEFAULT_COUNTS.flash,
     },
   });
+}
+
+/**
+ * Returns the saved "never ask again" choice for the mode popup, or null if not set.
+ * @returns {"custom"|"auto"|null}
+ */
+export function getNeverAskChoice() {
+  return getState().neverAskChoice;
+}
+
+/**
+ * Saves the user's mode choice so the mode popup is never shown again.
+ * @param {"custom"|"auto"} choice
+ */
+export function setNeverAskChoice(choice) {
+  saveState({ ...getState(), neverAskChoice: choice });
+}
+
+/**
+ * Returns whether the count selector should be skipped (user ticked "Không hỏi lại").
+ * @returns {boolean}
+ */
+export function getNeverAskCount() {
+  return getState().neverAskCount;
+}
+
+/**
+ * Saves the "never ask count" preference.
+ * @param {boolean} value
+ */
+export function setNeverAskCount(value) {
+  saveState({ ...getState(), neverAskCount: Boolean(value) });
 }
 
 /**
