@@ -182,13 +182,16 @@ def generate_flash_content(topic: str) -> dict[str, Any]:
     return data
 
 
-def generate_fullset_content() -> dict[str, Any]:
-    """Generate slide + quiz + flashcard for the SAME random topic.
+def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
+    """Generate slide + quiz + flashcard for the SAME topic.
+
+    If *topic* is provided (from the form), use it; otherwise pick randomly from TOPIC_POOL.
 
     Returns:
-        {"slide": {...}, "quiz": {...}, "flashcard": {...}}
+        {"slide": {...}, "quiz": {...}, "flashcard": {...}, "topic": str}
     """
-    topic = random.choice(TOPIC_POOL)
+    if not topic or not topic.strip():
+        topic = random.choice(TOPIC_POOL)
     logger.info("AI fullset generation: topic=%s", topic)
 
     import concurrent.futures
