@@ -48,7 +48,16 @@ from .ai_content_generate import (
     generate_autofill_quiz,
     generate_autofill_flash,
     generate_autofill_fullset,
+    generate_slide_from_document,
+    generate_quiz_from_document,
+    generate_flash_from_document,
+    generate_fullset_from_document,
     TOPIC_POOL,
+)
+from .utils.file_extractor import (
+    extract_text,
+    UnsupportedFormatError,
+    PageLimitError,
 )
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -409,6 +418,63 @@ def ai_generate(body: AiGenerateIn):
         raise HTTPException(
             status_code=502,
             detail=(str(exc) or "Lỗi sinh nội dung AI.").strip()[:600],
+        ) from exc
+
+
+@app.post("/api/file-upload")
+async def file_upload(
+    type: str = Form(...),
+    count: int = Form(default=10),
+    notes: str = Form(default=""),
+    file: UploadFile = File(...),
+):
+    """Upload a file (PDF/DOCX/MD/TXT), extract to Markdown, and generate content via AI.
+
+    Returns the same JSON schema as /api/ai-generate.
+    """
+    if not re.match(r"^(slide|quiz|flashcard|fullset)$", type):
+        raise HTTPException(status_code=422, detail="type không hợp lệ (slide/quiz/flashcard/fullset).")
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=503, detail="Chưa cấu hình OPENAI_API_KEY trong .env.")
+
+    contents = await file.read()
+    if len(contents) > 20 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Tệp quá lớn (tối đa 20 MB).")
+
+    try:
+        document_text = extract_text(contents, file.filename or "")
+    except UnsupportedFormatError as exc:
+        raise HTTPException(status_code=415, detail=str(exc)) from exc
+    except PageLimitError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    logger.info(
+        "File upload: type=%s filename=%s chars=%d count=%d",
+        type, file.filename, len(document_text), count,
+    )
+
+    try:
+        if type == "slide":
+            return generate_slide_from_document(document_text, count, notes)
+        if type == "quiz":
+            return generate_quiz_from_document(document_text, count, notes)
+        if type == "flashcard":
+            return generate_flash_from_document(document_text, count, notes)
+        return generate_fullset_from_document(document_text, notes=notes)
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("AI content generation from file failed (type=%s)", type)
+        code = getattr(exc, "status_code", None)
+        if code == 429:
+            raise HTTPException(status_code=503, detail="OpenAI rate limit. Vui lòng thử lại sau.") from exc
+        if code in (401, 403):
+            raise HTTPException(status_code=503, detail="OpenAI từ chối API key. Kiểm tra .env.") from exc
+        raise HTTPException(
+            status_code=502,
+            detail=(str(exc) or "Lỗi sinh nội dung AI từ tệp.").strip()[:600],
         ) from exc
 
 
