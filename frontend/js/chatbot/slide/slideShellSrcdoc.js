@@ -190,7 +190,7 @@ function isDecorativeShellNode(el) {
 function resolveShellContentSink(root) {
   return (
     root.querySelector(
-      ".content-area, .bullet-list, .text-column, .text-content, .content-panel, .panel-content, .section-center, .title-group, .title-content, .content-card, .comic-panel, .card",
+      ".content-area, .bullet-list, .text-column, .text-content, .content-panel, .panel-content, .section-center, .title-group, .title-content, .content-card, .comic-panel, .cards-grid, .card",
     ) || root
   );
 }
@@ -460,7 +460,7 @@ function getRootSlideElement(root) {
 /**
  * @param {ParentNode} root
  * @param {{ forceSpaceBright?: boolean }} [opts]
- * @returns {"comic" | "space-bright" | "space-black" | "sealife" | ""}
+ * @returns {"comic" | "space-bright" | "space-black" | "sealife" | "friendly" | "academic" | ""}
  */
 function resolveSlideShellThemeKey(root, opts = {}) {
   if (opts.forceSpaceBright) return "space-bright";
@@ -488,6 +488,8 @@ function resolveSlideShellThemeKey(root, opts = {}) {
   ) {
     return "sealife";
   }
+  if (classList?.contains("shell-theme-friendly")) return "friendly";
+  if (classList?.contains("shell-theme-academic")) return "academic";
   return "";
 }
 
@@ -870,12 +872,20 @@ function getFriendlyTextBudget(root) {
   };
 }
 
+function getAcademicTextBudget() {
+  return {
+    headline: { maxWords: 5, maxChars: 36 },
+    detail:   { maxChars: 120, maxSentences: 2, maxWords: 18 },
+  };
+}
+
 function getSlideShellThemeTextBudget(root, themeKey) {
   if (themeKey === "comic") return getComicTextBudget(root);
   if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
   if (themeKey === "space-black") return getSpaceBlackTextBudget(root);
   if (themeKey === "sealife") return getSealifeTextBudget(root);
   if (themeKey === "friendly") return getFriendlyTextBudget(root);
+  if (themeKey === "academic") return getAcademicTextBudget();
   return null;
 }
 
