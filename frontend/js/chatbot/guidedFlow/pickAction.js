@@ -26,11 +26,11 @@ function handleFullsetPick(guided, value) {
       handled: true,
       guided: { kind: "fullset", step: "await_pdf_confirm", data: {} },
       effects: [
-        { type: "pushUser", text: "Tải lên PDF" },
+        { type: "pushUser", text: "Tải lên file" },
         {
           type: "pushBot",
           text:
-            "Bạn đã chọn tải lên PDF.\n\nKhi tích hợp xong, Teachly sẽ dùng Chandra OCR2 để chuyển nội dung sang Markdown. Hiện tại bạn chỉ cần chọn tệp bên dưới để hoàn tất bước chuẩn bị trên giao diện.",
+            "Bạn đã chọn tải lên tệp tài liệu.\n\nTeachly sẽ chuyển nội dung sang Markdown và dùng AI để tạo Full Set từ tài liệu của bạn. Hỗ trợ: PDF, DOCX, Markdown (.md), TXT — tối đa 20 trang.",
           cardType: "fullset_pdf",
         },
       ],
