@@ -7,6 +7,9 @@ import {
   MSG_AUTO_CONFIRM_PDF,
   addAutofillBtn,
   autofillCounters,
+  resetAutofillCounter,
+  getAiAutofillHistory,
+  addAiAutofillHistory,
   coerceSelectThemeValue,
   el,
   flowTextarea,
@@ -25,6 +28,7 @@ import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createFullsetTopicCard(deps) {
+  resetAutofillCounter("fullset");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
@@ -110,10 +114,12 @@ export function createFullsetTopicCard(deps) {
       quiz.value = String(qn);
       flash.value = String(fn);
       extra.value = String(s.e ?? "");
+      return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("fullset");
+        const ai = await fetchAiAutofillTopic("fullset", getAiAutofillHistory("fullset"));
         topic.value = String(ai.topic ?? "");
+        addAiAutofillHistory("fullset", ai.topic);
         if (ai.level) {
           level.value = normalizeFullsetLevelAutofill(ai.level);
           levelMobileSelect.sync();
@@ -127,6 +133,7 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(ai.extra ?? "");
+        return "ai";
       } catch {
         const s = SAMPLES_FULLSET[idx % SAMPLES_FULLSET.length];
         const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
@@ -139,6 +146,7 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(s.e ?? "");
+        return "mock";
       }
     }
   });

@@ -112,9 +112,13 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const restoredCards = normalizeFlashCards(initial?.cardsSnapshot);
   let flashRaw;
+  let _devSrc = "mock"; /* DEV-ONLY */
   if (restoredCards.length === 0) {
-    flashRaw = isAiModeActive("flash")
-      ? await fetchAiContent("flashcard").catch(() => fetchMockResource("flashcard"))
+    const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
+    const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+    _devSrc = (isAiModeActive("flash") || !_isAutoTopic) ? "ai" : "mock"; /* DEV-ONLY */
+    flashRaw = _devSrc === "ai"
+      ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
       : await fetchMockResource("flashcard");
     incrementPlayCount("flash");
   }
@@ -152,6 +156,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-flash";
+  /* DEV-ONLY: source badge — remove after deploy */
+  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
 
   const topBar = createExperienceTopBar({
     title: titleText,

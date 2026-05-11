@@ -425,6 +425,67 @@
   to { transform: rotate(360deg); }
 }
 
+/* ── DEV-ONLY: Source badges (autofill form + experience views) ─────────── */
+/* Remove this entire block after deploy */
+
+.dev-src-tag {
+  display: inline-flex;
+  align-items: center;
+  position: absolute;
+  top: 14px;
+  right: 52px; /* sits left of the magic-wand button at right: 12px */
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.dev-src-tag--mock {
+  background: #e5e7eb;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.dev-src-tag--ai {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+/* Content experience badge */
+.dev-src-badge {
+  position: absolute;
+  top: 54px; /* below the ~48px exp-topbar */
+  right: 10px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.exp-shell { position: relative; }
+
+.dev-src-badge--mock {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.dev-src-badge--ai {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
 /* ── AI Status Panel ─────────────────────────────────────────────────────── */
 
 .ai-sp-trigger {

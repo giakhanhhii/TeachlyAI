@@ -4,6 +4,9 @@ import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
   autofillCounters,
+  resetAutofillCounter,
+  getAiAutofillHistory,
+  addAiAutofillHistory,
   el,
   flowTextarea,
   normalizeFullsetLevelAutofill,
@@ -17,6 +20,7 @@ import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createQuizFormCard(deps) {
+  resetAutofillCounter("quiz");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
@@ -72,11 +76,13 @@ export function createQuizFormCard(deps) {
       level.value = normalizeFullsetLevelAutofill(item.d);
       levelMobileSelect.sync();
       notes.value = String(item.n ?? "");
+      return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("quiz");
+        const ai = await fetchAiAutofillTopic("quiz", getAiAutofillHistory("quiz"));
         presetId = "";
         srcText.value = String(ai.source ?? "");
+        addAiAutofillHistory("quiz", ai.source);
         if (ai.kind) kind.value = String(ai.kind);
         if (ai.count) qn.value = String(toPositiveInt(ai.count, 20));
         if (ai.difficulty) {
@@ -84,6 +90,7 @@ export function createQuizFormCard(deps) {
           levelMobileSelect.sync();
         }
         notes.value = String(ai.notes ?? "");
+        return "ai";
       } catch {
         const item = SAMPLES_QUIZ[idx % SAMPLES_QUIZ.length];
         presetId = String(item.id ?? "");
@@ -93,6 +100,7 @@ export function createQuizFormCard(deps) {
         level.value = normalizeFullsetLevelAutofill(item.d);
         levelMobileSelect.sync();
         notes.value = String(item.n ?? "");
+        return "mock";
       }
     }
   });

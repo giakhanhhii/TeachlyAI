@@ -48,4 +48,12 @@ export const AUTOFILL_MOCK_LENGTHS = {
   fullset: SAMPLES_FULLSET.length,
 };
 
+/** Re-shuffle the samples for a given type in-place (call when opening a new flow card). */
+export function reshuffleType(type) {
+  if (type === "slide") shuffle(SAMPLES_SLIDE);
+  else if (type === "quiz") shuffle(SAMPLES_QUIZ);
+  else if (type === "flash") shuffle(SAMPLES_FLASH);
+  else if (type === "fullset") shuffle(SAMPLES_FULLSET);
+}
+
 export { SAMPLES_FULLSET, SAMPLES_SLIDE, SAMPLES_QUIZ, SAMPLES_FLASH };

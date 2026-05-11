@@ -135,10 +135,12 @@ class SlideExportIn(BaseModel):
 
 class AiGenerateIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flashcard|fullset)$")
+    topic: str | None = Field(default=None, max_length=300)
 
 
 class AiAutofillIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flash|fullset)$")
+    recent: list[str] = Field(default_factory=list)
 
 
 def _flash_translate_config_ok() -> bool:
@@ -378,10 +380,11 @@ def ai_generate(body: AiGenerateIn):
 
     try:
         kind = body.type
+        form_topic = (body.topic or "").strip() or None
         if kind == "fullset":
-            return generate_fullset_content()
-        topic = _random.choice(TOPIC_POOL)
-        logger.info("AI generate: type=%s topic=%s", kind, topic)
+            return generate_fullset_content(topic=form_topic)
+        topic = form_topic or _random.choice(TOPIC_POOL)
+        logger.info("AI generate: type=%s topic=%s (from_form=%s)", kind, topic, bool(form_topic))
         if kind == "slide":
             return generate_slide_content(topic)
         if kind == "quiz":
@@ -433,13 +436,14 @@ def ai_autofill(body: AiAutofillIn):
         )
     try:
         kind = body.type
+        recent = [str(t) for t in (body.recent or []) if t][:12]
         if kind == "slide":
-            return generate_autofill_slide()
+            return generate_autofill_slide(recent=recent)
         if kind == "quiz":
-            return generate_autofill_quiz()
+            return generate_autofill_quiz(recent=recent)
         if kind == "flash":
-            return generate_autofill_flash()
-        return generate_autofill_fullset()
+            return generate_autofill_flash(recent=recent)
+        return generate_autofill_fullset(recent=recent)
     except ValueError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:

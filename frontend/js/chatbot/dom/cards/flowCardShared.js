@@ -1,4 +1,5 @@
 import { randomIntInclusive } from "../../services/sessionContentPrep.js";
+import { reshuffleType } from "../../data/sampleFlowData.js";
 
 export const autofillCounters = {
   fullset: 0,
@@ -7,6 +8,32 @@ export const autofillCounters = {
   flash: 0,
   meta: 0,
 };
+
+/** Re-shuffle samples for a type and reset its counter — call when a new form card opens. */
+export function resetAutofillCounter(type) {
+  if (type in autofillCounters) {
+    autofillCounters[type] = 0;
+    reshuffleType(type);
+  }
+}
+
+const _MAX_HISTORY = 12;
+const _aiAutofillHistory = { slide: /** @type {string[]} */([]), quiz: /** @type {string[]} */([]), flash: /** @type {string[]} */([]), fullset: /** @type {string[]} */([]) };
+
+/** Returns the list of recently AI-generated topics for a given type. */
+export function getAiAutofillHistory(type) {
+  return /** @type {string[]} */ (_aiAutofillHistory[type] ?? []);
+}
+
+/** Records a newly AI-generated topic so future calls can avoid repeating it. */
+export function addAiAutofillHistory(type, topic) {
+  const hist = _aiAutofillHistory[/** @type {keyof typeof _aiAutofillHistory} */(type)];
+  if (!hist || !topic || typeof topic !== "string") return;
+  const cleaned = topic.trim();
+  if (!cleaned || hist.includes(cleaned)) return;
+  hist.push(cleaned);
+  if (hist.length > _MAX_HISTORY) hist.shift();
+}
 
 const MAGIC_WAND_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9 2L7.12 6.12L3 8L7.12 9.88L9 14L10.88 9.88L15 8L10.88 6.12L9 2ZM17 14L15.88 16.12L13.76 17L15.88 17.88L17 20L18.12 17.88L20.24 17L18.12 16.12L17 14ZM19 3L18.25 4.75L16.5 5.5L18.25 6.25L19 8L19.75 6.25L21.5 5.5L19.75 4.75L19 3Z"/></svg>`;
 
@@ -117,6 +144,11 @@ export function addAutofillBtn(root, callback) {
   btn.type = "button";
   btn.title = "Tự động điền dữ liệu mẫu (AI)";
   btn.innerHTML = MAGIC_WAND_SVG;
+
+  /* DEV-ONLY source tag — remove after deploy */
+  const srcTag = el("span", "dev-src-tag");
+  srcTag.hidden = true;
+
   btn.addEventListener("click", async (e) => {
     e.preventDefault();
     if (btn.disabled) return;
@@ -124,7 +156,12 @@ export function addAutofillBtn(root, callback) {
     btn.classList.add("is-loading");
     btn.innerHTML = SPINNER_SVG;
     try {
-      await callback();
+      const src = await callback();
+      if (src === "mock" || src === "ai") {
+        srcTag.hidden = false;
+        srcTag.className = `dev-src-tag dev-src-tag--${src}`;
+        srcTag.textContent = src === "ai" ? "⚡ AI" : "📦 Mock";
+      }
     } catch (err) {
       console.warn("[autofill] callback error", err);
     } finally {
@@ -133,7 +170,9 @@ export function addAutofillBtn(root, callback) {
       btn.innerHTML = MAGIC_WAND_SVG;
     }
   });
+
   root.appendChild(btn);
+  root.appendChild(srcTag);
 }
 
 export function randomCountSkipPdf(countMax) {

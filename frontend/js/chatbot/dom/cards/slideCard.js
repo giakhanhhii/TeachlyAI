@@ -4,6 +4,9 @@ import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
   autofillCounters,
+  resetAutofillCounter,
+  getAiAutofillHistory,
+  addAiAutofillHistory,
   clamp,
   el,
   flowTextarea,
@@ -18,6 +21,7 @@ import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createSlideFormCard(deps) {
+  resetAutofillCounter("slide");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
@@ -68,14 +72,17 @@ export function createSlideFormCard(deps) {
       style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
       styleMobileSelect.sync();
       notes.value = String(s.n ?? "");
+      return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("slide");
+        const ai = await fetchAiAutofillTopic("slide", getAiAutofillHistory("slide"));
         presetId = "";
         docText.value = String(ai.topic ?? "");
+        addAiAutofillHistory("slide", ai.topic);
         if (ai.count) count.value = String(clamp(toPositiveInt(ai.count, 10), 5, 30));
         if (ai.structure) structure.value = String(ai.structure);
         notes.value = String(ai.notes ?? "");
+        return "ai";
       } catch {
         const s = SAMPLES_SLIDE[idx % SAMPLES_SLIDE.length];
         presetId = String(s.id ?? "");
@@ -85,6 +92,7 @@ export function createSlideFormCard(deps) {
         style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
         styleMobileSelect.sync();
         notes.value = String(s.n ?? "");
+        return "mock";
       }
     }
   });

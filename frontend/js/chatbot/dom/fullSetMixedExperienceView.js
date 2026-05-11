@@ -91,10 +91,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let slides = [];
   let questions = [];
   let cards = [];
+  const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+  const _devSrc = (!steps.length && (isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
-    if (isAiModeActive("fullset")) {
-      const aiBundle = await fetchAiFullsetContent().catch(async () => {
+    if (_devSrc === "ai") {
+      const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
       });
@@ -165,6 +168,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
+  /* DEV-ONLY: source badge — remove after deploy */
+  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
   const topBar = createExperienceTopBar({ title: titleText }).bar;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {

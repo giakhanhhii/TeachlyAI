@@ -90,14 +90,16 @@ export function isAiModeActive(type) {
 /**
  * Fetch AI-generated content for a single content type.
  * @param {"slide"|"quiz"|"flashcard"} type
+ * @param {string} [topic] - topic from the form; if provided the AI generates content about it
  * @returns {Promise<any>}
  */
-export async function fetchAiContent(type) {
+export async function fetchAiContent(type, topic) {
   const url = `${getApiOrigin()}/api/ai-generate`;
+  const payload = topic ? { type, topic } : { type };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     let detail = "";
@@ -116,14 +118,16 @@ export async function fetchAiContent(type) {
  * Fetch AI-generated form autofill data for a content type.
  * Returns lightweight form field values (topic, count, etc.) — not full content.
  * @param {"slide"|"quiz"|"flash"|"fullset"} type
+ * @param {string[]} [recent] - recently generated topics to avoid repeating
  * @returns {Promise<any>}
  */
-export async function fetchAiAutofillTopic(type) {
+export async function fetchAiAutofillTopic(type, recent = []) {
   const url = `${getApiOrigin()}/api/ai-autofill`;
+  const payload = recent.length ? { type, recent } : { type };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     let detail = "";
@@ -140,14 +144,16 @@ export async function fetchAiAutofillTopic(type) {
 
 /**
  * Fetch AI-generated fullset content (slide + quiz + flashcard, same topic).
+ * @param {string} [topic] - topic from the form; if provided all three types share it
  * @returns {Promise<{ slide: any, quiz: any, flashcard: any, topic: string }>}
  */
-export async function fetchAiFullsetContent() {
+export async function fetchAiFullsetContent(topic) {
   const url = `${getApiOrigin()}/api/ai-generate`;
+  const payload = topic ? { type: "fullset", topic } : { type: "fullset" };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "fullset" }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     let detail = "";

@@ -15,46 +15,51 @@ logger = logging.getLogger(__name__)
 AI_CONTENT_MODEL = "gpt-4o-mini"
 
 TOPIC_POOL: list[str] = [
-    "Phrasal verbs with GET",
-    "Phrasal verbs with MAKE",
-    "Phrasal verbs with TAKE",
-    "Phrasal verbs with PUT",
-    "Phrasal verbs with GIVE",
-    "Common English idioms (body parts)",
-    "Business English vocabulary",
-    "Travel and tourism vocabulary",
-    "Academic word list — science",
-    "Academic word list — society",
-    "IELTS common vocabulary",
-    "Collocations with MAKE and DO",
-    "Collocations with TAKE and HAVE",
-    "Adjective-noun collocations",
-    "Verb-noun collocations (everyday)",
-    "English prefixes and meanings",
-    "English suffixes and word forms",
-    "Synonyms for common verbs",
-    "Synonyms for common adjectives",
-    "Antonyms for academic words",
-    "Technology and digital vocabulary",
-    "Environment and climate vocabulary",
-    "Health and medicine vocabulary",
-    "Education and learning vocabulary",
-    "Work and career vocabulary",
-    "Food and cooking vocabulary",
-    "Sports and fitness vocabulary",
-    "Money and finance vocabulary",
-    "Social media and internet vocabulary",
-    "Emotions and feelings vocabulary",
-    "Time expressions in English",
-    "Linking words and discourse markers",
-    "Conditional sentences types",
-    "Reported speech key verbs",
-    "Passive voice usage",
+    # Grammar — THPT core
+    "Passive voice across all tenses",
+    "Conditional sentences types 1, 2 and 3",
+    "Relative clauses and reduced relative clauses",
+    "Reported speech: statements, questions and commands",
+    "Modal verbs: must, should, could, may, might",
+    "Modal perfect: must have, should have, might have",
+    "Word formation: nouns, adjectives, adverbs and verbs",
+    "Subject-verb agreement in special cases",
     "Gerunds and infinitives",
-    "Modal verbs meanings",
-    "Question tags patterns",
-    "Comparative and superlative forms",
-    "Common English mistakes",
+    "Inversion in conditional and emphatic sentences",
+    "Comparative, superlative and double comparatives",
+    "Conjunctions and linking words",
+    "Articles and determiners",
+    "Question tags",
+    # Vocabulary — THPT themes
+    "Technology and artificial intelligence vocabulary",
+    "Urbanisation, rural migration and city life",
+    "Environment, climate change and deforestation",
+    "Endangered languages and cultural preservation",
+    "Education, schools and modern learning methods",
+    "Health, medicine and public health",
+    "Tourism, travel and leisure activities",
+    "Social media, internet and digital communication",
+    "Career, employment and workplace vocabulary",
+    "Globalisation and cultural exchange",
+    "Science, robotics and innovation vocabulary",
+    "Food, nutrition and sustainable living",
+    # Reading comprehension skills
+    "Reading: identifying main ideas and supporting details",
+    "Reading: inference and implied meaning",
+    "Reading: word meaning in context and paraphrase",
+    "Reading: causal relationships in academic texts",
+    "Reading: inserting a sentence into a paragraph",
+    # Cloze and fill-in-the-blank skills
+    "Collocations and fixed phrases in context",
+    "Phrasal verbs with GET, MAKE, TAKE and PUT",
+    "Discourse markers and linking expressions",
+    "Prepositions after adjectives, verbs and nouns",
+    "Word form selection in cloze passages",
+    # Sentence arrangement and writing
+    "Arranging sentences in a logical conversation",
+    "Arranging sentences to form a coherent paragraph",
+    "Sentence transformation and rewriting techniques",
+    "Error identification and correction",
 ]
 
 _SLIDE_SYSTEM = """You are an English learning content creator for Vietnamese students.
@@ -177,13 +182,16 @@ def generate_flash_content(topic: str) -> dict[str, Any]:
     return data
 
 
-def generate_fullset_content() -> dict[str, Any]:
-    """Generate slide + quiz + flashcard for the SAME random topic.
+def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
+    """Generate slide + quiz + flashcard for the SAME topic.
+
+    If *topic* is provided (from the form), use it; otherwise pick randomly from TOPIC_POOL.
 
     Returns:
-        {"slide": {...}, "quiz": {...}, "flashcard": {...}}
+        {"slide": {...}, "quiz": {...}, "flashcard": {...}, "topic": str}
     """
-    topic = random.choice(TOPIC_POOL)
+    if not topic or not topic.strip():
+        topic = random.choice(TOPIC_POOL)
     logger.info("AI fullset generation: topic=%s", topic)
 
     import concurrent.futures
@@ -217,47 +225,48 @@ def generate_fullset_content() -> dict[str, Any]:
 # Autofill helpers — lightweight calls that return form field values only
 # ---------------------------------------------------------------------------
 
-_AUTOFILL_SLIDE_SYSTEM = """You generate form autofill data for an English learning slide deck creation form (Vietnamese THPT students).
+_AUTOFILL_SLIDE_SYSTEM = """You generate form autofill data for an English slide deck creation form for Vietnamese grade-12 / THPT students.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
 {"topic": "<English topic in Vietnamese, 3-8 words>", "count": 10, "structure": "Giới thiệu → Ví dụ → Luyện tập", "notes": ""}
 Rules:
-- topic: a specific, useful English grammar/vocabulary/skill topic (in Vietnamese). Must be fresh and varied.
+- topic: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel, social media…), reading skills (main idea, inference, paraphrase, causal relationships…), or cloze skills (collocations, phrasal verbs, linking words…). Must be fresh each call.
 - count: integer between 10 and 15
 - structure: 3 short Vietnamese steps joined by " → "
 - notes: empty string"""
 
-_AUTOFILL_QUIZ_SYSTEM = """You generate form autofill data for an English quiz creation form (Vietnamese THPT students).
+_AUTOFILL_QUIZ_SYSTEM = """You generate form autofill data for an English quiz creation form for Vietnamese grade-12 / THPT students.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
 {"source": "<English topic in Vietnamese>", "kind": "<quiz type>", "count": 20, "difficulty": "<level>", "notes": ""}
 Rules:
-- source: a specific English grammar/vocabulary/skill topic (in Vietnamese)
+- source: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health…), reading comprehension, pronunciation, or communication functions. Must be fresh each call.
 - kind: one of exactly: Từ vựng | Ngữ pháp | Phát âm | Đọc hiểu | Giao tiếp
 - count: 15 or 20
 - difficulty: one of exactly: Mất gốc | Cơ bản | Khá | Nâng cao
 - notes: empty string"""
 
-_AUTOFILL_FLASH_SYSTEM = """You generate form autofill data for a flashcard creation form (Vietnamese THPT English learners).
+_AUTOFILL_FLASH_SYSTEM = """You generate form autofill data for a flashcard creation form for Vietnamese grade-12 / THPT English learners.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
-{"list": "<topic description in Vietnamese, 1-2 sentences>", "back": "Nghĩa tiếng Việt, Phiên âm, Ví dụ", "count": 20, "notes": ""}
+{"list": "<topic description in Vietnamese, 1 sentence>", "back": "Nghĩa tiếng Việt, Phiên âm, Ví dụ", "count": 20, "notes": ""}
 Rules:
-- list: 1 sentence describing the specific English vocabulary topic to cover (in Vietnamese)
+- list: 1 sentence in Vietnamese describing the specific English vocabulary topic to cover. Choose creatively and randomly from: urbanisation & city life, endangered languages & culture, AI & robotics, environment & climate, health & medicine, travel & tourism, social media, phrasal verbs, collocations, word formation, idioms, academic vocabulary. Must be fresh each call.
 - back: always exactly the string "Nghĩa tiếng Việt, Phiên âm, Ví dụ"
 - count: always 20
 - notes: empty string"""
 
-_AUTOFILL_FULLSET_SYSTEM = """You generate form autofill data for a full-set (slide + quiz + flashcard) creation form (Vietnamese THPT English learners).
+_AUTOFILL_FULLSET_SYSTEM = """You generate form autofill data for a full-set (slide + quiz + flashcard) creation form for Vietnamese grade-12 / THPT English learners.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
 {"topic": "<English topic in Vietnamese>", "level": "<level>", "slides": 10, "quiz": 20, "flash": 10, "extra": ""}
 Rules:
-- topic: a specific English grammar/vocabulary/skill topic (in Vietnamese)
+- topic: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel…), or reading/cloze skills. Must be fresh each call.
 - level: one of exactly: Mất gốc | Cơ bản | Khá | Nâng cao
 - slides + quiz + flash must be <= 40 and each >= 1
 - extra: empty string"""
 
 
-def generate_autofill_slide() -> dict[str, Any]:
+def generate_autofill_slide(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a slide deck autofill (no full content)."""
-    raw = _call_openai(_AUTOFILL_SLIDE_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_SLIDE_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_slide")
     data.setdefault("topic", "Phrasal verbs thông dụng")
     data["count"] = max(10, min(15, int(data.get("count") or 10)))
@@ -266,11 +275,12 @@ def generate_autofill_slide() -> dict[str, Any]:
     return data
 
 
-def generate_autofill_quiz() -> dict[str, Any]:
+def generate_autofill_quiz(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a quiz autofill (no full content)."""
     _VALID_KINDS = {"Từ vựng", "Ngữ pháp", "Phát âm", "Đọc hiểu", "Giao tiếp"}
     _VALID_LEVELS = {"Mất gốc", "Cơ bản", "Khá", "Nâng cao"}
-    raw = _call_openai(_AUTOFILL_QUIZ_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_QUIZ_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_quiz")
     data.setdefault("source", "Từ vựng tiếng Anh thông dụng")
     if data.get("kind") not in _VALID_KINDS:
@@ -282,9 +292,10 @@ def generate_autofill_quiz() -> dict[str, Any]:
     return data
 
 
-def generate_autofill_flash() -> dict[str, Any]:
+def generate_autofill_flash(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a flashcard autofill (no full content)."""
-    raw = _call_openai(_AUTOFILL_FLASH_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_FLASH_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_flash")
     data.setdefault("list", "Từ vựng tiếng Anh học thuật")
     data["back"] = "Nghĩa tiếng Việt, Phiên âm, Ví dụ"
@@ -293,10 +304,11 @@ def generate_autofill_flash() -> dict[str, Any]:
     return data
 
 
-def generate_autofill_fullset() -> dict[str, Any]:
+def generate_autofill_fullset(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a fullset autofill (no full content)."""
     _VALID_LEVELS = {"Mất gốc", "Cơ bản", "Khá", "Nâng cao"}
-    raw = _call_openai(_AUTOFILL_FULLSET_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_FULLSET_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_fullset")
     data.setdefault("topic", "Từ vựng tiếng Anh học thuật")
     if data.get("level") not in _VALID_LEVELS:
