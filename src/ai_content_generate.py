@@ -156,6 +156,7 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
 
 def generate_quiz_content(topic: str) -> dict[str, Any]:
     """Generate a 10-question quiz about topic. Returns mock-compatible JSON."""
+    topic = _sanitize_topic(topic)
     user_msg = f"Topic: {topic}\nGenerate the quiz JSON now."
     raw = _call_openai(_QUIZ_SYSTEM, user_msg, max_tokens=2400)
     data = _parse_json_response(raw, "quiz")
