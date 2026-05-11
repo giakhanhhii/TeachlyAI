@@ -582,6 +582,65 @@
         .final-card h3 { color: #111; font-size: 24px; margin-bottom: 12px; }
         .final-card p { color: #334155; font-size: 18px; margin: 0; }
 
+        /* ── Text-overflow safety: ngăn nội dung dài tràn slide ───────────── */
+        .content-card { overflow: hidden; }
+        .content-area { overflow: hidden; min-height: 0; }
+
+        /* Legend (biểu đồ) — giảm từ 22px → 14px, clamp 2 dòng */
+        .legend { gap: 10px; }
+        .legend li {
+            font-size: 14px; font-weight: 500;
+            align-items: flex-start; overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        }
+
+        /* Bullet list */
+        .styled-list { gap: 8px; }
+        .styled-list li {
+            font-size: 15px; padding: 10px 16px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+        }
+        .styled-list li strong { font-size: 16px; }
+
+        /* Text column */
+        .text-column { font-size: 15px; }
+        .text-column p, .text-column li { font-size: 15px; }
+
+        /* Tiles */
+        .tile p { font-size: 14px; line-height: 1.5; }
+        .tile h3 { font-size: 20px; margin-bottom: 10px; }
+
+        /* Mini grid cards */
+        .mini-card p { font-size: 13px; }
+        .mini-card h3 { font-size: 17px; margin-bottom: 8px; }
+
+        /* Process steps */
+        .process-step p { font-size: 13px; }
+        .process-step h3 { font-size: 15px; margin: 20px 0 8px; }
+
+        /* Timeline */
+        .timeline-content p { font-size: 13px; line-height: 1.45; }
+        .timeline-content h4 { font-size: 16px; margin-bottom: 6px; }
+
+        /* Table */
+        .strategy-table th { font-size: 16px; padding: 14px; }
+        .strategy-table td { font-size: 15px; padding: 12px 16px; }
+
+        /* Column gap giảm cho bố cục đôi */
+        .two-column { gap: 30px; }
+        .tiled-content { gap: 20px; }
+
+        /* Flashcard row */
+        .flashcard .term { font-size: 22px; }
+        .flashcard .meaning { font-size: 16px; }
+        .flashcard .example { font-size: 14px; padding: 12px; }
+
+        /* Slide title — giảm nhẹ nếu quá dài */
+        .content-card .slide-title { font-size: 34px; margin-bottom: 20px; }
+
     </style>
 </head>
 <body>
