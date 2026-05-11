@@ -1,6 +1,7 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { getFetch } from "../services/backgroundFetchStore.js";
+import { startAiCountdown } from "./experienceLoading.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -107,11 +108,13 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
     const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang slide, vui lòng đợi</span>'; root.appendChild(w); return w; })();
+    const _stopCountdown = startAiCountdown(_loadEl, 20);
     try {
       raw = _bgFetch
         ? await _bgFetch.promise
         : await fetchAiFileContent("slide", _uploadFile, { count: Number(effectiveMeta?.count) || 10, notes: effectiveMeta?.notes || "" });
     } catch (err) {
+      _stopCountdown();
       if (root._genStamp !== _genStamp) return;
       _loadEl.remove();
       root.innerHTML = "";
@@ -120,15 +123,19 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       root.appendChild(box);
       return;
     }
+    _stopCountdown();
     if (root._genStamp !== _genStamp) return;
     _loadEl.remove();
     if (!isRestore) incrementPlayCount("slide");
   } else {
     const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-    const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
+    const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
+    const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
+    const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
     raw = _devSrc === "ai"
       ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
       : await fetchMockResource("slide");
+    _stopCountdown?.();
     if (root._genStamp !== _genStamp) return;
     _loadEl?.remove();
     if (!isRestore) incrementPlayCount("slide");

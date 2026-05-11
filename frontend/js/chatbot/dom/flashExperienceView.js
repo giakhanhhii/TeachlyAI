@@ -1,6 +1,7 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { getFetch } from "../services/backgroundFetchStore.js";
+import { startAiCountdown } from "./experienceLoading.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
@@ -124,11 +125,13 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     if (_uploadFile || _bgFetch) {
       experienceBody.innerHTML = "";
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
+      const _stopCountdown = startAiCountdown(_loadEl, 15);
       try {
         flashRaw = _bgFetch
           ? await _bgFetch.promise
           : await fetchAiFileContent("flashcard", _uploadFile, { count: Number(meta?.count) || 20, notes: meta?.extra || "" });
       } catch (err) {
+        _stopCountdown();
         if (experienceBody._genStamp !== _genStamp) return;
         _loadEl.remove();
         experienceBody.innerHTML = "";
@@ -137,16 +140,20 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         experienceBody.appendChild(box);
         return;
       }
+      _stopCountdown();
       if (experienceBody._genStamp !== _genStamp) return;
       _loadEl.remove();
       _devSrc = "ai";
       incrementPlayCount("flash");
     } else {
       _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-      const _loadEl = _devSrc === "ai" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
+      const _loadLabel = _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải nội dung…";
+      const _loadEl = (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })();
+      const _stopCountdown = _devSrc === "ai" ? startAiCountdown(_loadEl, 15) : null;
       flashRaw = _devSrc === "ai"
         ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
         : await fetchMockResource("flashcard");
+      _stopCountdown?.();
       if (experienceBody._genStamp !== _genStamp) return;
       _loadEl?.remove();
       incrementPlayCount("flash");
