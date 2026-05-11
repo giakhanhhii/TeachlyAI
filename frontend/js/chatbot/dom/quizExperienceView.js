@@ -20,9 +20,11 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const _aiTopic = meta?.source || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _devSrc = (!isRestore && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
   const raw = _devSrc === "ai"
     ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
     : await fetchMockResource("quiz");
+  _loadEl?.remove();
   if (!isRestore) incrementPlayCount("quiz");
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";

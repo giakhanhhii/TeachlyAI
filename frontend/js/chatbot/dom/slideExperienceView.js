@@ -99,9 +99,11 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _devSrc = (!isRestore && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
   const raw = _devSrc === "ai"
     ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
     : await fetchMockResource("slide");
+  _loadEl?.remove();
   if (!isRestore) incrementPlayCount("slide");
   const data = prepareSlideSessionData(raw, effectiveMeta);
   const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
