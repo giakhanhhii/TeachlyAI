@@ -26,10 +26,10 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
       handled: true,
       guided: null,
       effects: [
-        { type: "pushUser", text: `Đã chọn tệp PDF: ${name}` },
+        { type: "pushUser", text: `Đã chọn tệp: ${name}` },
         {
           type: "pushBot",
-          text: "Teachly đã nhận tệp PDF. Bạn muốn tiếp tục theo cách nào?",
+          text: "Teachly đã nhận tệp. Bạn muốn tiếp tục theo cách nào?",
           actions: getSourceActions("fullset"),
         },
       ],
