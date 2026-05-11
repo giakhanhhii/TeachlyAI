@@ -9,11 +9,11 @@ export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "qu
 /** @type {Record<"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest", { label: string, value: string }[]>} */
 const SOURCE_ACTIONS_BY_KIND = {
   fullset: [
-    { label: "Tải lên PDF", value: "fullset_pdf" },
+    { label: "Tải lên file", value: "fullset_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "fullset_topic" },
   ],
   slide: [
-    { label: "Tải lên PDF", value: "slide_pdf" },
+    { label: "Tải lên file", value: "slide_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
   ],
   quiz: [
