@@ -70,9 +70,9 @@ function handleSingleModePick(guided, value, pdfFile) {
       const fileName = pdfFile.name;
       return {
         handled: true,
-        guided: { kind, step: "await_pdf_meta", data: { pdfFileName: fileName } },
+        guided: { kind, step: "await_pdf_meta", data: { pdfFileName: fileName, pdfFile } },
         effects: [
-          { type: "pushUser", text: `Tải lên PDF — ${fileName}` },
+          { type: "pushUser", text: `Tải lên file — ${fileName}` },
           { type: "pushBot", text: pdfMetaFormIntro(kind), cardType: metaCardType },
         ],
       };
@@ -81,7 +81,7 @@ function handleSingleModePick(guided, value, pdfFile) {
       handled: true,
       guided: { kind, step: "await_pdf_file", data: {} },
       effects: [
-        { type: "pushUser", text: "Tải lên PDF" },
+        { type: "pushUser", text: "Tải lên file" },
         { type: "pushBot", text: "", cardType: "pick_pdf_gate" },
       ],
     };
