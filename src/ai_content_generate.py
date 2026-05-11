@@ -69,7 +69,7 @@ Rules:
 - Exactly 10 slides
 - The FIRST slide (s1) title must be the topic itself (verbatim or a very close restatement — this is the cover/title slide)
 - Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
-- Each bullet: 10-18 words, write as a clear informative phrase or short sentence
+- Each bullet: 20-30 words, write as a detailed informative sentence with context or examples
 - Keep slide TITLES short (3-6 words) to avoid overflow
 - Content must be genuinely educational about the topic
 - Return ONLY valid JSON, no markdown fences, no explanation

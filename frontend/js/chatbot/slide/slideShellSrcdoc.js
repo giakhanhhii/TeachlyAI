@@ -855,20 +855,21 @@ function getComicTextBudget(root) {
 function getFriendlyTextBudget(root) {
   const slide = getRootSlideElement(root);
   if (slide && slide.querySelector(".table-layout")) {
+    // Per-cell budget: cells are short (5–8 words each after bullet splitting)
     return {
-      headline: { maxWords: 5, maxChars: 34 },
-      detail:   { maxChars: 100, maxSentences: 2, maxWords: 18 },
+      headline: { maxWords: 5, maxChars: 36 },
+      detail:   { maxChars: 64, maxSentences: 1, maxWords: 9 },
     };
   }
   if (slide && slide.querySelector(".two-column.tiled, .mini-grid, .strategy-strip")) {
     return {
-      headline: { maxWords: 6, maxChars: 42 },
-      detail:   { maxChars: 240, maxSentences: 3, maxWords: 40 },
+      headline: { maxWords: 7, maxChars: 48 },
+      detail:   { maxChars: 520, maxSentences: 6, maxWords: 80 },
     };
   }
   return {
-    headline: { maxWords: 7, maxChars: 46 },
-    detail:   { maxChars: 260, maxSentences: 3, maxWords: 44 },
+    headline: { maxWords: 7, maxChars: 48 },
+    detail:   { maxChars: 520, maxSentences: 6, maxWords: 80 },
   };
 }
 
