@@ -29,7 +29,7 @@ function pickPdfWithDialog() {
   return new Promise((resolve) => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".pdf,application/pdf";
+    input.accept = ".pdf,.md,.txt,.docx,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     let settled = false;
     const done = (/** @type {File | null} */ f) => {
