@@ -1,5 +1,3 @@
-import { getSourceActions } from "./shared.js";
-
 /**
  * @param {any} guided
  * @param {string} cardType
@@ -12,16 +10,34 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         handled: true,
         guided: null,
         effects: [
-          { type: "pushUser", text: "Bỏ qua tải PDF — nhờ Teachly tự động soạn nội dung" },
+          { type: "pushUser", text: "Bỏ qua tải file — nhờ Teachly tự động soạn nội dung" },
           {
             type: "pushBot",
             text: "Teachly đã ghi nhận lựa chọn của bạn. Bạn muốn tiếp tục theo cách nào?",
-            actions: getSourceActions("fullset"),
+            actions: [
+              { label: "Tải lên file", value: "fullset_pdf" },
+              { label: "Nhập chủ đề trực tiếp", value: "fullset_topic" },
+            ],
           },
         ],
       };
     }
     const name = payload.fileName || "—";
+    const experienceId =
+      globalThis.crypto && typeof globalThis.crypto.randomUUID === "function"
+        ? globalThis.crypto.randomUUID()
+        : `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const spec = {
+      topic: name,
+      level: "—",
+      slides: "10",
+      quiz: "10",
+      flash: "20",
+      slideTemplate: "",
+      extra: "",
+      __pdfPending: "1",
+      __experienceId: experienceId,
+    };
     return {
       handled: true,
       guided: null,
@@ -29,8 +45,13 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         { type: "pushUser", text: `Đã chọn tệp: ${name}` },
         {
           type: "pushBot",
-          text: "Teachly đã nhận tệp. Bạn muốn tiếp tục theo cách nào?",
-          actions: getSourceActions("fullset"),
+          text: "Teachly đã nhận tệp. Nhấn nút bên dưới để bắt đầu tạo Full Set từ tài liệu của bạn.",
+          resumeDock: {
+            title: `Full Set — ${name}`,
+            experienceId,
+            fullsetMixed: spec,
+            items: [],
+          },
         },
       ],
     };
