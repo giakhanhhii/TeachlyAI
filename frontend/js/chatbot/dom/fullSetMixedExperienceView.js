@@ -91,9 +91,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let slides = [];
   let questions = [];
   let cards = [];
+  const _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
-    if (isAiModeActive("fullset")) {
+    if (_devSrc === "ai") {
       const aiBundle = await fetchAiFullsetContent().catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
