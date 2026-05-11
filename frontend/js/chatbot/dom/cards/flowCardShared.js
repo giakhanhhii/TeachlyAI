@@ -15,7 +15,7 @@ export function getAiAutofillHistory(type) {
 export function addAiAutofillHistory(type, topic) {
   const hist = _aiAutofillHistory[/** @type {keyof typeof _aiAutofillHistory} */(type)];
   if (!hist || !topic || typeof topic !== "string") return;
-  const cleaned = topic.trim();
+  const cleaned = topic.trim().replace(/[\r\n\t\x00-\x1f\x7f]/g, " ").replace(/\s+/g, " ").slice(0, 200);
   if (!cleaned || hist.includes(cleaned)) return;
   hist.push(cleaned);
   if (hist.length > _MAX_HISTORY) hist.shift();
