@@ -1,4 +1,4 @@
-import { SAMPLES_QUIZ, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
+import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
   MSG_SKIP_USE_SUBMIT,
