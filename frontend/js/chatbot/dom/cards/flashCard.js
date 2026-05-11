@@ -54,6 +54,7 @@ export function createFlashcardFormCard(deps) {
       back.value = String(s.b ?? "");
       count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
       notes.value = String(s.n ?? "");
+      return "mock";
     } else {
       try {
         const ai = await fetchAiAutofillTopic("flash");
@@ -62,6 +63,7 @@ export function createFlashcardFormCard(deps) {
         back.value = String(ai.back ?? "Nghĩa tiếng Việt, Phiên âm, Ví dụ");
         count.value = String(clamp(toPositiveInt(ai.count, 20), 1, 40));
         notes.value = String(ai.notes ?? "");
+        return "ai";
       } catch {
         const s = SAMPLES_FLASH[idx % SAMPLES_FLASH.length];
         presetId = String(s.id ?? "");
@@ -69,6 +71,7 @@ export function createFlashcardFormCard(deps) {
         back.value = String(s.b ?? "");
         count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
         notes.value = String(s.n ?? "");
+        return "mock";
       }
     }
   });
