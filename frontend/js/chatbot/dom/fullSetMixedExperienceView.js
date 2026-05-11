@@ -91,11 +91,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let slides = [];
   let questions = [];
   let cards = [];
-  const _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
+  const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+  const _devSrc = (!steps.length && (isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_devSrc === "ai") {
-      const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
       const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
