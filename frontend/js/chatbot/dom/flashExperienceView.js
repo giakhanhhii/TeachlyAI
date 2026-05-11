@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { beginDwell } from "../services/dwellStore.js";
 import { getFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
@@ -168,6 +169,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   const cards = normalizeFlashCards(data.cards);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
   const totalCards = cards.length;
+  if (restoredCards.length === 0) beginDwell(meta?.source || meta?.list || meta?.topic || titleText, "flash");
   const cardKeys = buildCardKeys(cards);
   const cardKeySet = new Set(cardKeys);
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
