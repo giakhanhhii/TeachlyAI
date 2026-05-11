@@ -855,18 +855,18 @@ function getFriendlyTextBudget(root) {
   if (slide && slide.querySelector(".table-layout")) {
     return {
       headline: { maxWords: 5, maxChars: 34 },
-      detail:   { maxChars: 38, maxSentences: 1, maxWords: 6 },
+      detail:   { maxChars: 100, maxSentences: 2, maxWords: 18 },
     };
   }
   if (slide && slide.querySelector(".two-column.tiled, .mini-grid, .strategy-strip")) {
     return {
       headline: { maxWords: 6, maxChars: 42 },
-      detail:   { maxChars: 52, maxSentences: 1, maxWords: 9 },
+      detail:   { maxChars: 240, maxSentences: 3, maxWords: 40 },
     };
   }
   return {
     headline: { maxWords: 7, maxChars: 46 },
-    detail:   { maxChars: 58, maxSentences: 1, maxWords: 11 },
+    detail:   { maxChars: 260, maxSentences: 3, maxWords: 44 },
   };
 }
 

@@ -67,14 +67,15 @@ Generate a JSON slide deck about the given English topic.
 
 Rules:
 - Exactly 10 slides
+- The FIRST slide (s1) title must be the topic itself (verbatim or a very close restatement — this is the cover/title slide)
 - Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
-- Each bullet: max 7 words, clear and useful
-- Keep titles and bullets SHORT to avoid overflow
+- Each bullet: 10-18 words, write as a clear informative phrase or short sentence
+- Keep slide TITLES short (3-6 words) to avoid overflow
 - Content must be genuinely educational about the topic
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<deck title>","slides":[{"id":"s1","title":"<slide title>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
+{"title":"<deck title>","slides":[{"id":"s1","title":"<topic>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
 
 _QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
 Generate a JSON quiz about the given English topic.
@@ -144,6 +145,9 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
     # Validate basic shape
     if not isinstance(data.get("slides"), list):
         raise ValueError("AI slide response missing 'slides' array")
+    # First slide title = topic (cover slide)
+    if data["slides"]:
+        data["slides"][0]["title"] = topic
     # Ensure ids exist
     for i, s in enumerate(data["slides"]):
         if not s.get("id"):
