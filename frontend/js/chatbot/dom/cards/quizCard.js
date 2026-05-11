@@ -20,6 +20,7 @@ import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createQuizFormCard(deps) {
+  resetAutofillCounter("quiz");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
