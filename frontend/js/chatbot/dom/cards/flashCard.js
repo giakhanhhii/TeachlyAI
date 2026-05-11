@@ -1,4 +1,4 @@
-import { SAMPLES_FLASH } from "../../data/sampleFlowData.js";
+import { SAMPLES_FLASH, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
@@ -11,6 +11,7 @@ import {
   toPositiveInt,
   wrapField,
 } from "./flowCardShared.js";
+import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 function randomFlashAutofillCount() {
   if (Math.random() < 0.6) return 20;
@@ -44,13 +45,32 @@ export function createFlashcardFormCard(deps) {
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
-  addAutofillBtn(root, () => {
-    const s = SAMPLES_FLASH[autofillCounters.flash++ % SAMPLES_FLASH.length];
-    presetId = String(s.id ?? "");
-    list.value = String(s.l ?? "");
-    back.value = String(s.b ?? "");
-    count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
-    notes.value = String(s.n ?? "");
+  addAutofillBtn(root, async () => {
+    const idx = autofillCounters.flash++;
+    if (idx < AUTOFILL_MOCK_LENGTHS.flash) {
+      const s = SAMPLES_FLASH[idx];
+      presetId = String(s.id ?? "");
+      list.value = String(s.l ?? "");
+      back.value = String(s.b ?? "");
+      count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
+      notes.value = String(s.n ?? "");
+    } else {
+      try {
+        const ai = await fetchAiAutofillTopic("flash");
+        presetId = "";
+        list.value = String(ai.list ?? "");
+        back.value = String(ai.back ?? "Nghĩa tiếng Việt, Phiên âm, Ví dụ");
+        count.value = String(clamp(toPositiveInt(ai.count, 20), 1, 40));
+        notes.value = String(ai.notes ?? "");
+      } catch {
+        const s = SAMPLES_FLASH[idx % SAMPLES_FLASH.length];
+        presetId = String(s.id ?? "");
+        list.value = String(s.l ?? "");
+        back.value = String(s.b ?? "");
+        count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
+        notes.value = String(s.n ?? "");
+      }
+    }
   });
 
   const err = el("div", "flow-err");

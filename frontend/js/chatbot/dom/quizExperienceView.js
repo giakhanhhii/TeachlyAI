@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
@@ -15,7 +16,11 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
-  const raw = await fetchMockResource("quiz");
+  const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
+  const raw = (!isRestore && isAiModeActive("quiz"))
+    ? await fetchAiContent("quiz").catch(() => fetchMockResource("quiz"))
+    : await fetchMockResource("quiz");
+  if (!isRestore) incrementPlayCount("quiz");
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
   const questions = Array.isArray(data.questions) ? data.questions : [];

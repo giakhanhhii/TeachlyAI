@@ -1,4 +1,4 @@
-import { SAMPLES_FULLSET } from "../../data/sampleFlowData.js";
+import { SAMPLES_FULLSET, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
 import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
 import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
@@ -22,6 +22,7 @@ import {
 } from "./flowCardShared.js";
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
+import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");

@@ -1,4 +1,4 @@
-import { SAMPLES_QUIZ } from "../../data/sampleFlowData.js";
+import { SAMPLES_QUIZ, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
 import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
   MSG_SKIP_USE_SUBMIT,
@@ -14,6 +14,7 @@ import {
   wrapField,
 } from "./flowCardShared.js";
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";
+import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createQuizFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -60,15 +61,40 @@ export function createQuizFormCard(deps) {
   }
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
-  addAutofillBtn(root, () => {
-    const item = SAMPLES_QUIZ[autofillCounters.quiz++ % SAMPLES_QUIZ.length];
-    presetId = String(item.id ?? "");
-    srcText.value = String(item.s ?? "");
-    kind.value = String(item.k ?? "");
-    qn.value = String(toPositiveInt(item.q, 20));
-    level.value = normalizeFullsetLevelAutofill(item.d);
-    levelMobileSelect.sync();
-    notes.value = String(item.n ?? "");
+  addAutofillBtn(root, async () => {
+    const idx = autofillCounters.quiz++;
+    if (idx < AUTOFILL_MOCK_LENGTHS.quiz) {
+      const item = SAMPLES_QUIZ[idx];
+      presetId = String(item.id ?? "");
+      srcText.value = String(item.s ?? "");
+      kind.value = String(item.k ?? "");
+      qn.value = String(toPositiveInt(item.q, 20));
+      level.value = normalizeFullsetLevelAutofill(item.d);
+      levelMobileSelect.sync();
+      notes.value = String(item.n ?? "");
+    } else {
+      try {
+        const ai = await fetchAiAutofillTopic("quiz");
+        presetId = "";
+        srcText.value = String(ai.source ?? "");
+        if (ai.kind) kind.value = String(ai.kind);
+        if (ai.count) qn.value = String(toPositiveInt(ai.count, 20));
+        if (ai.difficulty) {
+          level.value = normalizeFullsetLevelAutofill(ai.difficulty);
+          levelMobileSelect.sync();
+        }
+        notes.value = String(ai.notes ?? "");
+      } catch {
+        const item = SAMPLES_QUIZ[idx % SAMPLES_QUIZ.length];
+        presetId = String(item.id ?? "");
+        srcText.value = String(item.s ?? "");
+        kind.value = String(item.k ?? "");
+        qn.value = String(toPositiveInt(item.q, 20));
+        level.value = normalizeFullsetLevelAutofill(item.d);
+        levelMobileSelect.sync();
+        notes.value = String(item.n ?? "");
+      }
+    }
   });
 
   const err = el("div", "flow-err");

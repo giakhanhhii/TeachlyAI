@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -94,7 +95,11 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const initialSlides = Array.isArray(initial?.slides) ? initial.slides : null;
   const initialMeta = initial?.meta && typeof initial.meta === "object" ? initial.meta : null;
   const effectiveMeta = initialMeta || meta;
-  const raw = await fetchMockResource("slide");
+  const isRestore = Boolean(initialSlides);
+  const raw = (!isRestore && isAiModeActive("slide"))
+    ? await fetchAiContent("slide").catch(() => fetchMockResource("slide"))
+    : await fetchMockResource("slide");
+  if (!isRestore) incrementPlayCount("slide");
   const data = prepareSlideSessionData(raw, effectiveMeta);
   const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
   let slides = initialSlides ? initialSlides.slice() : Array.isArray(data.slides) ? data.slides : [];

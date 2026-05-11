@@ -39,6 +39,17 @@ from .config import (
 from .flash_translate_clients import flash_translate_client_public_info
 from .flash_translate_service import flash_term_translate_en_to_vi, flash_terms_translate_batch
 from .database import DatabaseManager
+from .ai_content_generate import (
+    generate_slide_content,
+    generate_quiz_content,
+    generate_flash_content,
+    generate_fullset_content,
+    generate_autofill_slide,
+    generate_autofill_quiz,
+    generate_autofill_flash,
+    generate_autofill_fullset,
+    TOPIC_POOL,
+)
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -120,6 +131,14 @@ class FlashTranslateBatchOut(BaseModel):
 class SlideExportIn(BaseModel):
     title: str = Field(default="teachly-slides", max_length=240)
     srcdoc: str = Field(..., min_length=1, max_length=2_000_000)
+
+
+class AiGenerateIn(BaseModel):
+    type: str = Field(..., pattern=r"^(slide|quiz|flashcard|fullset)$")
+
+
+class AiAutofillIn(BaseModel):
+    type: str = Field(..., pattern=r"^(slide|quiz|flash|fullset)$")
 
 
 def _flash_translate_config_ok() -> bool:
@@ -341,6 +360,88 @@ def mock_bundle(name: str):
     except json.JSONDecodeError as e:
         logger.exception("Invalid mock JSON: %s", path)
         raise HTTPException(status_code=500, detail=f"Invalid JSON: {e}") from e
+
+
+@app.post("/api/ai-generate")
+def ai_generate(body: AiGenerateIn):
+    """Generate slide / quiz / flashcard (or fullset) via GPT-4o Mini.
+
+    For fullset, all three content types share the same random topic so the
+    deck is internally consistent.  Individual types each pick a random topic.
+    """
+    if not OPENAI_API_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="Chưa cấu hình OPENAI_API_KEY trong .env — không thể sinh nội dung AI.",
+        )
+    import random as _random
+
+    try:
+        kind = body.type
+        if kind == "fullset":
+            return generate_fullset_content()
+        topic = _random.choice(TOPIC_POOL)
+        logger.info("AI generate: type=%s topic=%s", kind, topic)
+        if kind == "slide":
+            return generate_slide_content(topic)
+        if kind == "quiz":
+            return generate_quiz_content(topic)
+        if kind == "flashcard":
+            return generate_flash_content(topic)
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("AI content generation failed (type=%s)", body.type)
+        code = getattr(exc, "status_code", None)
+        if code == 429:
+            raise HTTPException(
+                status_code=503,
+                detail="OpenAI rate limit / quota. Vui lòng thử lại sau.",
+            ) from exc
+        if code in (401, 403):
+            raise HTTPException(
+                status_code=503,
+                detail="OpenAI từ chối API key. Kiểm tra OPENAI_API_KEY trong .env.",
+            ) from exc
+        raise HTTPException(
+            status_code=502,
+            detail=(str(exc) or "Lỗi sinh nội dung AI.").strip()[:600],
+        ) from exc
+
+
+@app.post("/api/ai-autofill")
+def ai_autofill(body: AiAutofillIn):
+    """Return AI-generated form field values for autofill (slide/quiz/flash/fullset).
+
+    Lightweight call — returns only topic + form fields, not full content.
+    """
+    if not OPENAI_API_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="Chưa cấu hình OPENAI_API_KEY trong .env — không thể sinh gợi ý AI.",
+        )
+    try:
+        kind = body.type
+        if kind == "slide":
+            return generate_autofill_slide()
+        if kind == "quiz":
+            return generate_autofill_quiz()
+        if kind == "flash":
+            return generate_autofill_flash()
+        return generate_autofill_fullset()
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("AI autofill failed (type=%s)", body.type)
+        code = getattr(exc, "status_code", None)
+        if code == 429:
+            raise HTTPException(status_code=503, detail="OpenAI rate limit. Thử lại sau.") from exc
+        if code in (401, 403):
+            raise HTTPException(status_code=503, detail="OpenAI từ chối API key.") from exc
+        raise HTTPException(
+            status_code=502,
+            detail=(str(exc) or "Lỗi gợi ý AI autofill.").strip()[:400],
+        ) from exc
 
 
 @app.post("/api/slides/export-pdf")
