@@ -1,4 +1,4 @@
-import { SAMPLES_FULLSET, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
+import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
 import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
