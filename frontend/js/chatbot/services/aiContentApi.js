@@ -142,14 +142,16 @@ export async function fetchAiAutofillTopic(type) {
 
 /**
  * Fetch AI-generated fullset content (slide + quiz + flashcard, same topic).
+ * @param {string} [topic] - topic from the form; if provided all three types share it
  * @returns {Promise<{ slide: any, quiz: any, flashcard: any, topic: string }>}
  */
-export async function fetchAiFullsetContent() {
+export async function fetchAiFullsetContent(topic) {
   const url = `${getApiOrigin()}/api/ai-generate`;
+  const payload = topic ? { type: "fullset", topic } : { type: "fullset" };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "fullset" }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     let detail = "";
