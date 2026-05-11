@@ -343,3 +343,154 @@ def generate_autofill_fullset(recent: list[str] | None = None) -> dict[str, Any]
     data["flash"] = flash
     data["extra"] = ""
     return data
+
+
+# ---------------------------------------------------------------------------
+# Document-context generation — derive content from uploaded file text
+# ---------------------------------------------------------------------------
+
+_DOC_SLIDE_SYSTEM = """You are an English learning content creator for Vietnamese students.
+You are given an excerpt from an uploaded document (Markdown format).
+Your job is to read the document and create a slide deck that teaches the KEY content from it.
+
+Rules:
+- Exactly 10 slides (or as many as requested)
+- The FIRST slide (s1) title must be the main topic of the document (cover slide)
+- Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
+- Each bullet: 20-30 words, write as a detailed informative sentence using content from the document
+- Keep slide TITLES short (3-6 words)
+- Derive all content from the document — do not invent facts not present in it
+- Return ONLY valid JSON, no markdown fences, no explanation
+
+Schema:
+{"title":"<deck title>","slides":[{"id":"s1","title":"<main topic>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
+
+_DOC_QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
+You are given an excerpt from an uploaded document (Markdown format).
+Your job is to create quiz questions that test understanding of the document's content.
+
+Rules:
+- Exactly 10 questions (or as many as requested)
+- Each question: "text" (the question), "options" (4 short choices), "correctIndex" (0-3), "hint" (1 sentence explanation)
+- Options must be SHORT (1-5 words each), no A./B./C./D. prefixes
+- All questions must be answerable from the document
+- Return ONLY valid JSON, no markdown fences, no explanation
+
+Schema:
+{"title":"<quiz title>","questions":[{"id":"q1","text":"<question>","options":["<A>","<B>","<C>","<D>"],"correctIndex":0,"hint":"<hint>"},...]}"""
+
+_DOC_FLASH_SYSTEM = """You are an English flashcard creator for Vietnamese students.
+You are given an excerpt from an uploaded document (Markdown format).
+Your job is to extract key vocabulary or concepts from the document and create flashcards.
+
+Rules:
+- Exactly 20 cards (or as many as requested)
+- Each card: "front" (English word/phrase from the document, max 4 words), "phonetic" (IPA), "back" (Vietnamese or English definition, max 12 words), "hint" (usage note from the document, max 8 words)
+- Focus on words/phrases that appear in the document
+- Return ONLY valid JSON, no markdown fences, no explanation
+
+Schema:
+{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<definition>","hint":"<usage note>"},...]}"""
+
+_DOC_CHAR_LIMIT = 12_000  # chars of document sent to model (well within gpt-4o-mini context)
+
+
+def _build_doc_user_msg(document_text: str, count: int, notes: str) -> str:
+    excerpt = document_text[:_DOC_CHAR_LIMIT]
+    parts = [f"Document:\n---\n{excerpt}\n---", f"Items requested: {count}"]
+    if notes and notes.strip():
+        parts.append(f"Notes: {notes.strip()}")
+    parts.append("Generate the JSON now.")
+    return "\n".join(parts)
+
+
+def generate_slide_from_document(document_text: str, count: int = 10, notes: str = "") -> dict[str, Any]:
+    """Generate a slide deck from uploaded document text. Returns same schema as generate_slide_content."""
+    count = max(5, min(30, int(count or 10)))
+    raw = _call_openai(_DOC_SLIDE_SYSTEM, _build_doc_user_msg(document_text, count, notes), max_tokens=3000)
+    data = _parse_json_response(raw, "slide_from_doc")
+    if not isinstance(data.get("slides"), list):
+        raise ValueError("AI slide response missing 'slides' array")
+    for i, s in enumerate(data["slides"]):
+        if not s.get("id"):
+            s["id"] = f"ai_s{i + 1}"
+        if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
+            s["bullets"] = s["bullets"][:4]
+    return data
+
+
+def generate_quiz_from_document(document_text: str, count: int = 10, notes: str = "") -> dict[str, Any]:
+    """Generate a quiz from uploaded document text. Returns same schema as generate_quiz_content."""
+    count = max(1, min(50, int(count or 10)))
+    raw = _call_openai(_DOC_QUIZ_SYSTEM, _build_doc_user_msg(document_text, count, notes), max_tokens=3500)
+    data = _parse_json_response(raw, "quiz_from_doc")
+    if not isinstance(data.get("questions"), list):
+        raise ValueError("AI quiz response missing 'questions' array")
+    for i, q in enumerate(data["questions"]):
+        if not q.get("id"):
+            q["id"] = f"ai_q{i + 1}"
+        opts = q.get("options") or []
+        if len(opts) > 4:
+            q["options"] = opts[:4]
+        if isinstance(q.get("correctIndex"), int):
+            q["correctIndex"] = max(0, min(3, q["correctIndex"]))
+        else:
+            q["correctIndex"] = 0
+    return data
+
+
+def generate_flash_from_document(document_text: str, count: int = 20, notes: str = "") -> dict[str, Any]:
+    """Generate flashcards from uploaded document text. Returns same schema as generate_flash_content."""
+    count = max(1, min(500, int(count or 20)))
+    raw = _call_openai(_DOC_FLASH_SYSTEM, _build_doc_user_msg(document_text, count, notes), max_tokens=4000)
+    data = _parse_json_response(raw, "flash_from_doc")
+    if not isinstance(data.get("cards"), list):
+        raise ValueError("AI flashcard response missing 'cards' array")
+    for i, c in enumerate(data["cards"]):
+        if not c.get("id"):
+            c["id"] = f"ai_c{i + 1}"
+    return data
+
+
+def generate_fullset_from_document(
+    document_text: str,
+    counts: dict[str, int] | None = None,
+    notes: str = "",
+) -> dict[str, Any]:
+    """Generate slide + quiz + flashcard from uploaded document text.
+
+    Returns same schema as generate_fullset_content:
+    {"slide": {...}, "quiz": {...}, "flashcard": {...}, "topic": str}
+    """
+    import concurrent.futures
+
+    c = counts or {}
+    slide_count = max(5, min(30, int(c.get("slides", 10))))
+    quiz_count = max(1, min(50, int(c.get("quiz", 10))))
+    flash_count = max(1, min(500, int(c.get("flash", 20))))
+
+    def _gen_slide() -> dict[str, Any]:
+        return generate_slide_from_document(document_text, slide_count, notes)
+
+    def _gen_quiz() -> dict[str, Any]:
+        return generate_quiz_from_document(document_text, quiz_count, notes)
+
+    def _gen_flash() -> dict[str, Any]:
+        return generate_flash_from_document(document_text, flash_count, notes)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+        f_slide = pool.submit(_gen_slide)
+        f_quiz = pool.submit(_gen_quiz)
+        f_flash = pool.submit(_gen_flash)
+        slide_data = f_slide.result()
+        quiz_data = f_quiz.result()
+        flash_data = f_flash.result()
+
+    # Derive a topic label from the slide deck title
+    topic = str(slide_data.get("title") or "Tài liệu tải lên")
+    return {
+        "slide": slide_data,
+        "quiz": quiz_data,
+        "flashcard": flash_data,
+        "topic": topic,
+    }
