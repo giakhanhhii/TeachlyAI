@@ -60,6 +60,17 @@ export function mountAiStatusPanel() {
   panel.setAttribute("aria-label", "Trạng thái dữ liệu Mock / AI");
   document.body.appendChild(panel);
 
+  // Delegated listeners — attached once so renderPanel re-renders don't pile up handlers
+  panel.addEventListener("click", (e) => {
+    if (e.target.closest(".ai-sp-close")) closePanel();
+    if (e.target.closest(".ai-sp-reset")) {
+      localStorage.removeItem(STORAGE_KEY);
+      resetAutofillState();
+      updateTrigger();
+      renderPanel();
+    }
+  });
+
   // --- Fetch backend status once ---
   async function fetchBackendStatus() {
     try {
