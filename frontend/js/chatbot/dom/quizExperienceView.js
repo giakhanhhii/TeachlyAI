@@ -17,7 +17,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
-  const raw = (!isRestore && isAiModeActive("quiz"))
+  const _devSrc = (!isRestore && isAiModeActive("quiz")) ? "ai" : "mock"; /* DEV-ONLY */
+  const raw = _devSrc === "ai"
     ? await fetchAiContent("quiz").catch(() => fetchMockResource("quiz"))
     : await fetchMockResource("quiz");
   if (!isRestore) incrementPlayCount("quiz");
@@ -37,6 +38,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
+  /* DEV-ONLY: source badge — remove after deploy */
+  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
   shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
 
   const total = Math.max(1, questions.length);
