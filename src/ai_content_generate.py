@@ -263,9 +263,10 @@ Rules:
 - extra: empty string"""
 
 
-def generate_autofill_slide() -> dict[str, Any]:
+def generate_autofill_slide(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a slide deck autofill (no full content)."""
-    raw = _call_openai(_AUTOFILL_SLIDE_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_SLIDE_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_slide")
     data.setdefault("topic", "Phrasal verbs thông dụng")
     data["count"] = max(10, min(15, int(data.get("count") or 10)))
@@ -274,11 +275,12 @@ def generate_autofill_slide() -> dict[str, Any]:
     return data
 
 
-def generate_autofill_quiz() -> dict[str, Any]:
+def generate_autofill_quiz(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a quiz autofill (no full content)."""
     _VALID_KINDS = {"Từ vựng", "Ngữ pháp", "Phát âm", "Đọc hiểu", "Giao tiếp"}
     _VALID_LEVELS = {"Mất gốc", "Cơ bản", "Khá", "Nâng cao"}
-    raw = _call_openai(_AUTOFILL_QUIZ_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_QUIZ_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_quiz")
     data.setdefault("source", "Từ vựng tiếng Anh thông dụng")
     if data.get("kind") not in _VALID_KINDS:
