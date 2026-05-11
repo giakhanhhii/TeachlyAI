@@ -90,14 +90,16 @@ export function isAiModeActive(type) {
 /**
  * Fetch AI-generated content for a single content type.
  * @param {"slide"|"quiz"|"flashcard"} type
+ * @param {string} [topic] - topic from the form; if provided the AI generates content about it
  * @returns {Promise<any>}
  */
-export async function fetchAiContent(type) {
+export async function fetchAiContent(type, topic) {
   const url = `${getApiOrigin()}/api/ai-generate`;
+  const payload = topic ? { type, topic } : { type };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     let detail = "";
