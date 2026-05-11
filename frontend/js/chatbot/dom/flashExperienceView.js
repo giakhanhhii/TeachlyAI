@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";

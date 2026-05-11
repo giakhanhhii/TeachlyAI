@@ -63,7 +63,6 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
-  if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
 
   const total = Math.max(1, questions.length);
