@@ -292,9 +292,10 @@ def generate_autofill_quiz(recent: list[str] | None = None) -> dict[str, Any]:
     return data
 
 
-def generate_autofill_flash() -> dict[str, Any]:
+def generate_autofill_flash(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a flashcard autofill (no full content)."""
-    raw = _call_openai(_AUTOFILL_FLASH_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_FLASH_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_flash")
     data.setdefault("list", "Từ vựng tiếng Anh học thuật")
     data["back"] = "Nghĩa tiếng Việt, Phiên âm, Ví dụ"
@@ -303,10 +304,11 @@ def generate_autofill_flash() -> dict[str, Any]:
     return data
 
 
-def generate_autofill_fullset() -> dict[str, Any]:
+def generate_autofill_fullset(recent: list[str] | None = None) -> dict[str, Any]:
     """Return form field values for a fullset autofill (no full content)."""
     _VALID_LEVELS = {"Mất gốc", "Cơ bản", "Khá", "Nâng cao"}
-    raw = _call_openai(_AUTOFILL_FULLSET_SYSTEM, "Generate a fresh autofill JSON now.", max_tokens=120)
+    avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(recent)}" if recent else ""
+    raw = _call_openai(_AUTOFILL_FULLSET_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_fullset")
     data.setdefault("topic", "Từ vựng tiếng Anh học thuật")
     if data.get("level") not in _VALID_LEVELS:
