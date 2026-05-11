@@ -42,8 +42,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
-  /* DEV-ONLY: source badge — remove after deploy */
-  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
+  if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
 
   const total = Math.max(1, questions.length);

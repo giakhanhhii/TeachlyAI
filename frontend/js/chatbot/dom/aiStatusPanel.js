@@ -43,6 +43,7 @@ function badgeMock(cur, total) {
 export function mountAiStatusPanel() {
   let openKeyOk = null;
   let panelOpen = false;
+  let _contentSrc = null;
 
   // --- Trigger button ---
   const trigger = document.createElement("button");
@@ -87,11 +88,11 @@ export function mountAiStatusPanel() {
   }
 
   function updateTrigger() {
-    const hasAi = anyModeActive();
-    trigger.className = "ai-sp-trigger" + (hasAi ? " ai-sp-trigger--ai" : " ai-sp-trigger--mock");
-    trigger.innerHTML = hasAi
-      ? '<span class="ai-sp-trigger-dot"></span>AI'
-      : '<span class="ai-sp-trigger-dot"></span>Mock';
+    const isAi = _contentSrc !== null ? _contentSrc === "ai" : anyModeActive();
+    trigger.className = "ai-sp-trigger" + (isAi ? " ai-sp-trigger--ai" : " ai-sp-trigger--mock");
+    trigger.innerHTML = isAi
+      ? '<span class="ai-sp-trigger-dot"></span>⚡ AI'
+      : '<span class="ai-sp-trigger-dot"></span>📦 Mock';
   }
 
   function renderPanel() {
@@ -197,6 +198,12 @@ export function mountAiStatusPanel() {
       updateTrigger();
       if (panelOpen) renderPanel();
     }
+  });
+
+  // Experience views dispatch this to reflect actual content source on the trigger
+  document.addEventListener("teachly:content-src", (e) => {
+    _contentSrc = typeof e.detail === "string" ? e.detail : null;
+    updateTrigger();
   });
 
   // Initial render

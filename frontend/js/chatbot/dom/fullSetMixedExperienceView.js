@@ -170,8 +170,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
-  /* DEV-ONLY: source badge — remove after deploy */
-  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
+  if (restoredSteps.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   const topBar = createExperienceTopBar({ title: titleText }).bar;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {
