@@ -6,12 +6,12 @@
 export function computeQuizCardSubmit(guided, cardType, payload) {
   if (guided.kind === "quiz" && guided.step === "await_pdf_meta" && cardType === "quiz_pdf_meta") {
     const pdfFn = guided.data && guided.data.pdfFileName ? String(guided.data.pdfFileName) : "";
-    const topic = [payload.name, "Từ PDF"].filter(Boolean).join(" — ") || "—";
+    const topic = [payload.name, "Từ file"].filter(Boolean).join(" — ") || "—";
     const notes = [
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
       payload.style ? `Phong cách: ${payload.style}` : "",
       payload.notes ? `Ghi chú: ${payload.notes}` : "",
-      pdfFn ? `Tệp PDF: ${pdfFn}` : "",
+      pdfFn ? `Tệp: ${pdfFn}` : "",
     ]
       .filter(Boolean)
       .join(" | ");
@@ -20,6 +20,7 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
       count: payload.count || "—",
       notes: notes || "—",
       ...(payload.presetId ? { presetId: payload.presetId } : {}),
+      ...(guided.data?.pdfFile instanceof File ? { __pdfFile: guided.data.pdfFile } : {}),
     };
     return {
       handled: true,
@@ -27,7 +28,7 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
       effects: [
         {
           type: "pushUser",
-          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Quiz — PDF] ${payload.name || "—"} — ${meta.count} câu`,
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Quiz — file] ${payload.name || "—"} — ${meta.count} câu`,
         },
         { type: "showQuiz", meta },
       ],
