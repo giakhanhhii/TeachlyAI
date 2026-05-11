@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
