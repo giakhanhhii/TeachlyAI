@@ -17,17 +17,17 @@ const SOURCE_ACTIONS_BY_KIND = {
     { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
   ],
   quiz: [
-    { label: "Tải lên PDF", value: "quiz_pdf" },
+    { label: "Tải lên file", value: "quiz_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
     { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
   ],
   flash: [
-    { label: "Tải lên PDF", value: "flash_pdf" },
+    { label: "Tải lên file", value: "flash_pdf" },
     { label: "Nhập từ vựng trực tiếp", value: "flash_vocab" },
     { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
   ],
   thptqg_fulltest: [
-    { label: "Tải lên PDF", value: "quiz_pdf" },
+    { label: "Tải lên file", value: "quiz_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
     { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
   ],
@@ -60,15 +60,15 @@ export function isContinueSourcePromptMessage(message) {
   return String(message.text || "") === MSG_CONTINUE_SOURCE && Array.isArray(message.actions) && message.actions.length > 0;
 }
 
-/** Tin nhắn bot trước form meta PDF (slide / quiz / flash). */
+/** Tin nhắn bot trước form meta file (slide / quiz / flash). */
 export function pdfMetaFormIntro(/** @type {"slide"|"quiz"|"flash"} */ kind) {
   if (kind === "slide") {
-    return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:";
+    return "Bạn đã chọn tệp. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:";
   }
   if (kind === "quiz") {
-    return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:";
+    return "Bạn đã chọn tệp. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:";
   }
-  return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:";
+  return "Bạn đã chọn tệp. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:";
 }
 
 /**
