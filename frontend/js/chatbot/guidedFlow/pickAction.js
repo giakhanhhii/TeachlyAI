@@ -68,12 +68,22 @@ function handleSingleModePick(guided, value, pdfFile) {
   if (value === sourceValue) {
     if (pdfFile) {
       const fileName = pdfFile.name;
+      const showType = kind === "slide" ? "showSlide" : kind === "quiz" ? "showQuiz" : "showFlash";
+      const meta = kind === "flash"
+        ? { source: fileName, count: "20", extra: `Nguồn: file | Tệp: ${fileName}`, __pdfFile: pdfFile }
+        : {
+            topic: fileName,
+            count: "10",
+            notes: `Nguồn: file | Tệp: ${fileName}`,
+            ...(kind === "slide" ? { slideTemplate: "" } : {}),
+            __pdfFile: pdfFile,
+          };
       return {
         handled: true,
-        guided: { kind, step: "await_pdf_meta", data: { pdfFileName: fileName, pdfFile } },
+        guided: null,
         effects: [
           { type: "pushUser", text: `Tải lên file — ${fileName}` },
-          { type: "pushBot", text: pdfMetaFormIntro(kind), cardType: metaCardType },
+          { type: showType, meta },
         ],
       };
     }
