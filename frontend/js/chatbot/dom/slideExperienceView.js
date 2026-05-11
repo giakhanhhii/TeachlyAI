@@ -96,8 +96,9 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const initialMeta = initial?.meta && typeof initial.meta === "object" ? initial.meta : null;
   const effectiveMeta = initialMeta || meta;
   const isRestore = Boolean(initialSlides);
-  const _devSrc = (!isRestore && isAiModeActive("slide")) ? "ai" : "mock"; /* DEV-ONLY */
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+  const _devSrc = (!isRestore && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   const raw = _devSrc === "ai"
     ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
     : await fetchMockResource("slide");

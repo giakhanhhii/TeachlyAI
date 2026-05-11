@@ -114,8 +114,9 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   let flashRaw;
   let _devSrc = "mock"; /* DEV-ONLY */
   if (restoredCards.length === 0) {
-    _devSrc = isAiModeActive("flash") ? "ai" : "mock"; /* DEV-ONLY */
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
+    const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+    _devSrc = (isAiModeActive("flash") || !_isAutoTopic) ? "ai" : "mock"; /* DEV-ONLY */
     flashRaw = _devSrc === "ai"
       ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
       : await fetchMockResource("flashcard");

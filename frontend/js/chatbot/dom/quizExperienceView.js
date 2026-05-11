@@ -17,8 +17,9 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
-  const _devSrc = (!isRestore && isAiModeActive("quiz")) ? "ai" : "mock"; /* DEV-ONLY */
   const _aiTopic = meta?.source || meta?.topic || undefined;
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+  const _devSrc = (!isRestore && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   const raw = _devSrc === "ai"
     ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
     : await fetchMockResource("quiz");
