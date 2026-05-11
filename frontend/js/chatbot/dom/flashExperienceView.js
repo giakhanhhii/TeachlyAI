@@ -154,6 +154,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-flash";
+  /* DEV-ONLY: source badge — remove after deploy */
+  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
 
   const topBar = createExperienceTopBar({
     title: titleText,
