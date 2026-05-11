@@ -75,9 +75,10 @@ export function createSlideFormCard(deps) {
       return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("slide");
+        const ai = await fetchAiAutofillTopic("slide", getAiAutofillHistory("slide"));
         presetId = "";
         docText.value = String(ai.topic ?? "");
+        addAiAutofillHistory("slide", ai.topic);
         if (ai.count) count.value = String(clamp(toPositiveInt(ai.count, 10), 5, 30));
         if (ai.structure) structure.value = String(ai.structure);
         notes.value = String(ai.notes ?? "");
