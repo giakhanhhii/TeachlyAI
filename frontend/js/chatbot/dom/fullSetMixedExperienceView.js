@@ -93,7 +93,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let cards = [];
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-  const _devSrc = (!steps.length && (isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     const _loadEl = _devSrc === "ai" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
