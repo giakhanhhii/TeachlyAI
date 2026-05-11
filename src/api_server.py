@@ -135,6 +135,7 @@ class SlideExportIn(BaseModel):
 
 class AiGenerateIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flashcard|fullset)$")
+    topic: str | None = Field(default=None, max_length=300)
 
 
 class AiAutofillIn(BaseModel):
