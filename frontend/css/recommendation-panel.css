@@ -1,0 +1,88 @@
+/* DEV-ONLY: remove this file (and its <link> in index.html) before deploy */
+#rec-panel {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  font-family: monospace;
+  font-size: 11px;
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  min-width: 220px;
+  max-width: 300px;
+  overflow: hidden;
+}
+
+.rec-panel__toggle {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  width: 100%;
+  text-align: left;
+}
+
+.rec-panel__toggle:hover {
+  background: #4f46e5;
+}
+
+.rec-panel--collapsed .rec-panel__body {
+  display: none;
+}
+
+.rec-panel__body {
+  padding: 8px 10px 10px;
+  line-height: 1.7;
+  border-top: 1px solid #334155;
+}
+
+.rec-panel__status {
+  color: #94a3b8;
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+.rec-panel__status--ready {
+  color: #86efac;
+  font-style: normal;
+}
+
+.rec-panel__status--loading {
+  color: #fcd34d;
+  font-style: italic;
+}
+
+.rec-panel__log {
+  color: #94a3b8;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #1e3a5f;
+  padding-bottom: 6px;
+}
+
+.rec-panel__log b {
+  color: #cbd5e1;
+}
+
+.rec-panel__suggestions {
+  color: #fde68a;
+  line-height: 1.5;
+}
+
+.rec-panel__suggestions b {
+  color: #e2e8f0;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.rec-panel__suggestions small {
+  color: #64748b;
+  display: block;
+  margin-bottom: 4px;
+}
