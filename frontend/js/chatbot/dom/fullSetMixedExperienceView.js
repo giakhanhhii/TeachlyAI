@@ -93,9 +93,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let cards = [];
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-  const _devSrc = (!steps.length && (isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
+    const _loadEl = _devSrc === "ai" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
     if (_devSrc === "ai") {
       const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
@@ -107,6 +108,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     } else {
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
     }
+    _loadEl?.remove();
     incrementPlayCount("fullset");
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);
     const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
@@ -168,8 +170,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
-  /* DEV-ONLY: source badge — remove after deploy */
-  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
+  if (restoredSteps.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   const topBar = createExperienceTopBar({ title: titleText }).bar;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {

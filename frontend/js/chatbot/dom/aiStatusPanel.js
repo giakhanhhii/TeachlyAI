@@ -6,15 +6,14 @@
 
 import { getApiOrigin } from "../config.js";
 import { AI_THRESHOLD, STORAGE_KEY, getPlayCounts } from "../services/aiContentApi.js";
-import { autofillCounters } from "./cards/flowCardShared.js";
-import { AUTOFILL_MOCK_LENGTHS } from "../data/sampleFlowData.js";
+import { AUTOFILL_MOCK_LENGTHS, getMockPos, resetAutofillState } from "../data/sampleFlowData.js";
 
 /** @type {["slide","quiz","flash","fullset"]} */
 const TYPES = ["slide", "quiz", "flash", "fullset"];
 const LABELS = { slide: "Slide", quiz: "Quiz", flash: "Flash", fullset: "Full Set" };
 
 function isAutofillAi(type) {
-  return autofillCounters[type] >= (AUTOFILL_MOCK_LENGTHS[type] ?? Infinity);
+  return getMockPos(type) >= (AUTOFILL_MOCK_LENGTHS[type] ?? Infinity);
 }
 
 function anyModeActive() {
@@ -38,12 +37,13 @@ function badgeAi() {
 }
 
 function badgeMock(cur, total) {
-  return `<span class="ai-sp-badge ai-sp-badge--mock">${cur}/${total}</span>`;
+  return `<span class="ai-sp-badge ai-sp-badge--mock">${parseInt(cur, 10) || 0}/${parseInt(total, 10) || 0}</span>`;
 }
 
 export function mountAiStatusPanel() {
   let openKeyOk = null;
   let panelOpen = false;
+  let _contentSrc = null;
 
   // --- Trigger button ---
   const trigger = document.createElement("button");
@@ -61,6 +61,17 @@ export function mountAiStatusPanel() {
   panel.setAttribute("aria-label", "Trạng thái dữ liệu Mock / AI");
   document.body.appendChild(panel);
 
+  // Delegated listeners — attached once so renderPanel re-renders don't pile up handlers
+  panel.addEventListener("click", (e) => {
+    if (e.target.closest(".ai-sp-close")) closePanel();
+    if (e.target.closest(".ai-sp-reset")) {
+      localStorage.removeItem(STORAGE_KEY);
+      resetAutofillState();
+      updateTrigger();
+      renderPanel();
+    }
+  });
+
   // --- Fetch backend status once ---
   async function fetchBackendStatus() {
     try {
@@ -77,11 +88,11 @@ export function mountAiStatusPanel() {
   }
 
   function updateTrigger() {
-    const hasAi = anyModeActive();
-    trigger.className = "ai-sp-trigger" + (hasAi ? " ai-sp-trigger--ai" : " ai-sp-trigger--mock");
-    trigger.innerHTML = hasAi
-      ? '<span class="ai-sp-trigger-dot"></span>AI'
-      : '<span class="ai-sp-trigger-dot"></span>Mock';
+    const isAi = _contentSrc !== null ? _contentSrc === "ai" : anyModeActive();
+    trigger.className = "ai-sp-trigger" + (isAi ? " ai-sp-trigger--ai" : " ai-sp-trigger--mock");
+    trigger.innerHTML = isAi
+      ? '<span class="ai-sp-trigger-dot"></span>⚡ AI'
+      : '<span class="ai-sp-trigger-dot"></span>📦 Mock';
   }
 
   function renderPanel() {
@@ -119,7 +130,7 @@ export function mountAiStatusPanel() {
 
     // Autofill rows
     const autofillRows = TYPES.map((t) => {
-      const cur = autofillCounters[t] || 0;
+      const cur = getMockPos(t);
       const total = AUTOFILL_MOCK_LENGTHS[t] || 0;
       const isAi = cur >= total;
       return `<div class="ai-sp-row">
@@ -150,12 +161,6 @@ export function mountAiStatusPanel() {
       </div>
     `;
 
-    panel.querySelector(".ai-sp-close").addEventListener("click", closePanel);
-    panel.querySelector(".ai-sp-reset").addEventListener("click", () => {
-      localStorage.removeItem(STORAGE_KEY);
-      updateTrigger();
-      renderPanel();
-    });
   }
 
   function openPanel() {
@@ -193,6 +198,12 @@ export function mountAiStatusPanel() {
       updateTrigger();
       if (panelOpen) renderPanel();
     }
+  });
+
+  // Experience views dispatch this to reflect actual content source on the trigger
+  document.addEventListener("teachly:content-src", (e) => {
+    _contentSrc = typeof e.detail === "string" ? e.detail : null;
+    updateTrigger();
   });
 
   // Initial render

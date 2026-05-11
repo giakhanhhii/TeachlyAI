@@ -115,11 +115,13 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   let _devSrc = "mock"; /* DEV-ONLY */
   if (restoredCards.length === 0) {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
-    const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-    _devSrc = (isAiModeActive("flash") || !_isAutoTopic) ? "ai" : "mock"; /* DEV-ONLY */
+    const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
+    _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+    const _loadEl = _devSrc === "ai" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
     flashRaw = _devSrc === "ai"
       ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
       : await fetchMockResource("flashcard");
+    _loadEl?.remove();
     incrementPlayCount("flash");
   }
   const data =
@@ -156,8 +158,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-flash";
-  /* DEV-ONLY: source badge — remove after deploy */
-  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
+  if (restoredCards.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
 
   const topBar = createExperienceTopBar({
     title: titleText,

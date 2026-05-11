@@ -1,10 +1,8 @@
-import { SAMPLES_SLIDE, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
+import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
-  autofillCounters,
-  resetAutofillCounter,
   getAiAutofillHistory,
   addAiAutofillHistory,
   clamp,
@@ -21,7 +19,6 @@ import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createSlideFormCard(deps) {
-  resetAutofillCounter("slide");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
 
@@ -62,16 +59,15 @@ export function createSlideFormCard(deps) {
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
   addAutofillBtn(root, async () => {
-    const idx = autofillCounters.slide++;
-    if (idx < AUTOFILL_MOCK_LENGTHS.slide) {
-      const s = SAMPLES_SLIDE[idx];
-      presetId = String(s.id ?? "");
-      docText.value = String(s.t ?? "");
-      count.value = String(clamp(toPositiveInt(s.c, 10), 5, 30));
-      structure.value = String(s.s ?? "");
-      style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
+    const sample = consumeNextMock("slide");
+    if (sample) {
+      presetId = String(sample.id ?? "");
+      docText.value = String(sample.t ?? "");
+      count.value = String(clamp(toPositiveInt(sample.c, 10), 5, 30));
+      structure.value = String(sample.s ?? "");
+      style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, sample.y, SLIDE_TEMPLATE_DEFAULT);
       styleMobileSelect.sync();
-      notes.value = String(s.n ?? "");
+      notes.value = String(sample.n ?? "");
       return "mock";
     } else {
       try {
@@ -84,14 +80,14 @@ export function createSlideFormCard(deps) {
         notes.value = String(ai.notes ?? "");
         return "ai";
       } catch {
-        const s = SAMPLES_SLIDE[idx % SAMPLES_SLIDE.length];
-        presetId = String(s.id ?? "");
-        docText.value = String(s.t ?? "");
-        count.value = String(clamp(toPositiveInt(s.c, 10), 5, 30));
-        structure.value = String(s.s ?? "");
-        style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
+        const fb = getAnyMock("slide");
+        presetId = String(fb.id ?? "");
+        docText.value = String(fb.t ?? "");
+        count.value = String(clamp(toPositiveInt(fb.c, 10), 5, 30));
+        structure.value = String(fb.s ?? "");
+        style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, fb.y, SLIDE_TEMPLATE_DEFAULT);
         styleMobileSelect.sync();
-        notes.value = String(s.n ?? "");
+        notes.value = String(fb.n ?? "");
         return "mock";
       }
     }

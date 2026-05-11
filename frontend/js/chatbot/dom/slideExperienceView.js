@@ -97,11 +97,13 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const effectiveMeta = initialMeta || meta;
   const isRestore = Boolean(initialSlides);
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
-  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-  const _devSrc = (!isRestore && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || effectiveMeta?.__autoMode === "1";
+  const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
   const raw = _devSrc === "ai"
     ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
     : await fetchMockResource("slide");
+  _loadEl?.remove();
   if (!isRestore) incrementPlayCount("slide");
   const data = prepareSlideSessionData(raw, effectiveMeta);
   const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
@@ -115,8 +117,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-slide";
-  /* DEV-ONLY: source badge — remove after deploy */
-  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
+  if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   const teardownObserver = new MutationObserver(() => {
     if (!shell.isConnected) {
       slideUiAbort.abort();

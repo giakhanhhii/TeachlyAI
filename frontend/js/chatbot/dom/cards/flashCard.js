@@ -1,9 +1,7 @@
-import { SAMPLES_FLASH, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
+import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
-  autofillCounters,
-  resetAutofillCounter,
   getAiAutofillHistory,
   addAiAutofillHistory,
   clamp,
@@ -22,7 +20,6 @@ function randomFlashAutofillCount() {
 }
 
 export function createFlashcardFormCard(deps) {
-  resetAutofillCounter("flash");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
@@ -50,14 +47,13 @@ export function createFlashcardFormCard(deps) {
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
   addAutofillBtn(root, async () => {
-    const idx = autofillCounters.flash++;
-    if (idx < AUTOFILL_MOCK_LENGTHS.flash) {
-      const s = SAMPLES_FLASH[idx];
-      presetId = String(s.id ?? "");
-      list.value = String(s.l ?? "");
-      back.value = String(s.b ?? "");
+    const sample = consumeNextMock("flash");
+    if (sample) {
+      presetId = String(sample.id ?? "");
+      list.value = String(sample.l ?? "");
+      back.value = String(sample.b ?? "");
       count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
-      notes.value = String(s.n ?? "");
+      notes.value = String(sample.n ?? "");
       return "mock";
     } else {
       try {
@@ -70,12 +66,12 @@ export function createFlashcardFormCard(deps) {
         notes.value = String(ai.notes ?? "");
         return "ai";
       } catch {
-        const s = SAMPLES_FLASH[idx % SAMPLES_FLASH.length];
-        presetId = String(s.id ?? "");
-        list.value = String(s.l ?? "");
-        back.value = String(s.b ?? "");
+        const fb = getAnyMock("flash");
+        presetId = String(fb.id ?? "");
+        list.value = String(fb.l ?? "");
+        back.value = String(fb.b ?? "");
         count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
-        notes.value = String(s.n ?? "");
+        notes.value = String(fb.n ?? "");
         return "mock";
       }
     }

@@ -18,11 +18,13 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
   const _aiTopic = meta?.source || meta?.topic || undefined;
-  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-  const _devSrc = (!isRestore && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
+  const _devSrc = (!isRestore && !meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
   const raw = _devSrc === "ai"
     ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
     : await fetchMockResource("quiz");
+  _loadEl?.remove();
   if (!isRestore) incrementPlayCount("quiz");
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";
@@ -40,8 +42,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
-  /* DEV-ONLY: source badge — remove after deploy */
-  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
+  if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
 
   const total = Math.max(1, questions.length);
