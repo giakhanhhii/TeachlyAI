@@ -428,24 +428,19 @@
 /* ── DEV-ONLY: Source badges (autofill form + experience views) ─────────── */
 /* Remove this entire block after deploy */
 
-.flow-autofill-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-}
-
 .dev-src-tag {
   display: inline-flex;
   align-items: center;
+  position: absolute;
+  top: 14px;
+  right: 52px; /* sits left of the magic-wand button at right: 12px */
   padding: 2px 8px;
   border-radius: 99px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.3px;
   pointer-events: none;
+  z-index: 100;
 }
 
 .dev-src-tag--mock {
@@ -463,7 +458,7 @@
 /* Content experience badge */
 .dev-src-badge {
   position: absolute;
-  top: 10px;
+  top: 54px; /* below the ~48px exp-topbar */
   right: 10px;
   z-index: 50;
   display: inline-flex;
