@@ -1,4 +1,5 @@
 import { restoreCurrentSessionExperience as restoreExperienceFromSession } from "../services/experienceService.js";
+import { takePendingPdfFile } from "../pdfPrefillStore.js";
 import { createExperienceHistoryService } from "../services/experienceHistoryService.js";
 import { createExperienceResumeService } from "../services/experienceResumeService.js";
 import {
@@ -254,6 +255,11 @@ export function createExperienceController(deps) {
    */
   async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "", historyOpts) {
     const safeSpec = spec && typeof spec === "object" ? { ...spec } : {};
+    if (safeSpec.__pdfPending === "1") {
+      const pendingFile = takePendingPdfFile();
+      if (pendingFile) safeSpec.__pdfFile = pendingFile;
+      delete safeSpec.__pdfPending;
+    }
     const experienceId =
       forcedExperienceId || resumeService.readExperienceIdFromMeta(safeSpec) || resumeService.generateExperienceId();
     const scopedSpec = resumeService.withExperienceIdMeta(safeSpec, experienceId);

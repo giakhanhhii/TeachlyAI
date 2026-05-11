@@ -1,5 +1,5 @@
 export const MSG_START_SOURCE =
-  "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/DOCX/MD/TXT) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
+  "Chào bạn! Bạn đã có tài liệu sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
 export const MSG_CONTINUE_SOURCE = "Bạn muốn tiếp tục theo cách nào?";
 export const CONTINUE_SOURCE_PROMPT_KEY = "continue_source_prompt";
 

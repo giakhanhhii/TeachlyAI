@@ -94,7 +94,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
-  const _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
+  let _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile) {
@@ -113,6 +113,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         return;
       }
       _loadEl.remove();
+      _devSrc = "ai";
     } else if (_devSrc === "ai") {
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })();
       const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
