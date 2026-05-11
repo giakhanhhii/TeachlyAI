@@ -233,7 +233,7 @@ export function createPickPdfGateCard(deps) {
     err.style.display = "none";
     const f = input.files && input.files[0];
     if (!f) {
-      err.textContent = "Vui lòng chọn một tệp PDF.";
+      err.textContent = "Vui lòng chọn một tệp hợp lệ (PDF, DOCX, Markdown, TXT).";
       err.style.display = "block";
       return;
     }
