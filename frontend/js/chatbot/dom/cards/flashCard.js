@@ -2,8 +2,6 @@ import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
-  autofillCounters,
-  resetAutofillCounter,
   getAiAutofillHistory,
   addAiAutofillHistory,
   clamp,
@@ -22,7 +20,6 @@ function randomFlashAutofillCount() {
 }
 
 export function createFlashcardFormCard(deps) {
-  resetAutofillCounter("flash");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
