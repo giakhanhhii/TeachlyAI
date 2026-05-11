@@ -115,8 +115,9 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   let _devSrc = "mock"; /* DEV-ONLY */
   if (restoredCards.length === 0) {
     _devSrc = isAiModeActive("flash") ? "ai" : "mock"; /* DEV-ONLY */
+    const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     flashRaw = _devSrc === "ai"
-      ? await fetchAiContent("flashcard").catch(() => fetchMockResource("flashcard"))
+      ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
       : await fetchMockResource("flashcard");
     incrementPlayCount("flash");
   }
