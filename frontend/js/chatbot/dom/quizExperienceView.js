@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { beginDwell } from "../services/dwellStore.js";
 import { getFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
@@ -67,6 +68,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const titleText = data.title || "Ôn tập trắc nghiệm";
   const questions = Array.isArray(data.questions) ? data.questions : [];
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
+  if (!isRestore) beginDwell(meta?.topic || meta?.source || titleText, "quiz");
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;

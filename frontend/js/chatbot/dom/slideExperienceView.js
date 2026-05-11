@@ -145,6 +145,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const data = prepareSlideSessionData(raw, effectiveMeta);
   const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
   let slides = initialSlides ? initialSlides.slice() : Array.isArray(data.slides) ? data.slides : [];
+  if (!isRestore) beginDwell(effectiveMeta?.topic || effectiveMeta?.source || deckTitle, "slide");
   const sessionMeta =
     initialMeta
     || (data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta);
