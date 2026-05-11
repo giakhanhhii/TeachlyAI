@@ -128,12 +128,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
       });
+      if (root._genStamp !== _genStamp) return;
       rawSlide = aiBundle.slide;
       rawQuiz = aiBundle.quiz;
       rawFlash = aiBundle.flashcard;
       _loadEl.remove();
     } else {
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+      if (root._genStamp !== _genStamp) return;
     }
     incrementPlayCount("fullset");
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);

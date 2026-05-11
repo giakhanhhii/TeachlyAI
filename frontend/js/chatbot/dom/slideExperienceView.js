@@ -129,6 +129,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     raw = _devSrc === "ai"
       ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
       : await fetchMockResource("slide");
+    if (root._genStamp !== _genStamp) return;
     _loadEl?.remove();
     if (!isRestore) incrementPlayCount("slide");
     if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));

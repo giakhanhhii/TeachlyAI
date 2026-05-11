@@ -851,11 +851,14 @@ export function init() {
       }
       renderChatListUI();
       renderMessages();
-      await restoreCurrentSessionExperience();
-      writeAppNavigationState("push", resolveCurrentPhase());
     } finally {
       isSwitchingSession = false;
     }
+    // Mount experience outside the switch lock so rapid session switches aren't blocked.
+    // Concurrent mounts are safe: the _genStamp stamp on layerView.body ensures only the
+    // most recent mount writes to the DOM.
+    await restoreCurrentSessionExperience();
+    writeAppNavigationState("push", resolveCurrentPhase());
   }, onSessionDeleted: async () => {
     setGuidedState(null);
     experienceController.resetResumeState();

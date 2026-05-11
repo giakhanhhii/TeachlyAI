@@ -147,6 +147,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       flashRaw = _devSrc === "ai"
         ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
         : await fetchMockResource("flashcard");
+      if (experienceBody._genStamp !== _genStamp) return;
       _loadEl?.remove();
       incrementPlayCount("flash");
       document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));

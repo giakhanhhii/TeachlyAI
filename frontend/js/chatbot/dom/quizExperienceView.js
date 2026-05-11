@@ -51,6 +51,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     raw = _devSrc === "ai"
       ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
       : await fetchMockResource("quiz");
+    if (root._genStamp !== _genStamp) return;
     _loadEl?.remove();
     if (!isRestore) incrementPlayCount("quiz");
     if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));

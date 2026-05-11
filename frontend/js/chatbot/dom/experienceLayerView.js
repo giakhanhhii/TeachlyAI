@@ -15,6 +15,7 @@ export function createExperienceLayerView(els) {
       experienceLayer.classList.remove("visible");
       experienceLayer.setAttribute("aria-hidden", "true");
       experienceBody.innerHTML = "";
+      experienceBody._genStamp = null;
       chatPhase.style.display = "";
     },
     prepareShow() {

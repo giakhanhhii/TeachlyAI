@@ -379,18 +379,24 @@ Rules:
 Schema:
 {"title":"<quiz title>","questions":[{"id":"q1","text":"<question>","options":["<A>","<B>","<C>","<D>"],"correctIndex":0,"hint":"<hint>"},...]}"""
 
-_DOC_FLASH_SYSTEM = """You are an English flashcard creator for Vietnamese students.
+_DOC_FLASH_SYSTEM = """You are an English vocabulary flashcard creator for Vietnamese students.
 You are given an excerpt from an uploaded document (Markdown format).
-Your job is to extract key vocabulary or concepts from the document and create flashcards.
+Your job is to pick the most useful ENGLISH VOCABULARY WORDS from the document — words that a student should learn and remember.
 
 Rules:
-- Exactly 20 cards (or as many as requested)
-- Each card: "front" (English word/phrase from the document, max 4 words), "phonetic" (IPA), "back" (Vietnamese or English definition, max 12 words), "hint" (usage note from the document, max 8 words)
-- Focus on words/phrases that appear in the document
+- Exactly as many cards as requested (default 20)
+- Pick ONLY real English vocabulary: nouns, verbs, adjectives, adverbs, collocations, idioms, or key topic phrases
+- NEVER create cards for grammar terms, tense names (e.g. "Present simple", "Past perfect"), or meta-linguistic labels (e.g. "auxiliary verb", "modal verb", "clause")
+- Each card:
+  - "front": the English word or short phrase (max 4 words)
+  - "phonetic": IPA transcription
+  - "back": SHORT Vietnamese meaning (max 10 words) — translate the word, do NOT define grammar
+  - "hint": a short example sentence or collocate (max 10 words)
+- Prioritise topic-specific vocabulary that reflects the subject matter of the document
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<definition>","hint":"<usage note>"},...]}"""
+{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<example>"},...]}"""
 
 _DOC_CHAR_LIMIT = 12_000  # chars of document sent to model (well within gpt-4o-mini context)
 
