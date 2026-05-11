@@ -63,16 +63,15 @@ export function createQuizFormCard(deps) {
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
   addAutofillBtn(root, async () => {
-    const idx = autofillCounters.quiz++;
-    if (idx < AUTOFILL_MOCK_LENGTHS.quiz) {
-      const item = SAMPLES_QUIZ[idx];
-      presetId = String(item.id ?? "");
-      srcText.value = String(item.s ?? "");
-      kind.value = String(item.k ?? "");
-      qn.value = String(toPositiveInt(item.q, 20));
-      level.value = normalizeFullsetLevelAutofill(item.d);
+    const sample = consumeNextMock("quiz");
+    if (sample) {
+      presetId = String(sample.id ?? "");
+      srcText.value = String(sample.s ?? "");
+      kind.value = String(sample.k ?? "");
+      qn.value = String(toPositiveInt(sample.q, 20));
+      level.value = normalizeFullsetLevelAutofill(sample.d);
       levelMobileSelect.sync();
-      notes.value = String(item.n ?? "");
+      notes.value = String(sample.n ?? "");
       return "mock";
     } else {
       try {
@@ -89,14 +88,14 @@ export function createQuizFormCard(deps) {
         notes.value = String(ai.notes ?? "");
         return "ai";
       } catch {
-        const item = SAMPLES_QUIZ[idx % SAMPLES_QUIZ.length];
-        presetId = String(item.id ?? "");
-        srcText.value = String(item.s ?? "");
-        kind.value = String(item.k ?? "");
-        qn.value = String(toPositiveInt(item.q, 20));
-        level.value = normalizeFullsetLevelAutofill(item.d);
+        const fb = getAnyMock("quiz");
+        presetId = String(fb.id ?? "");
+        srcText.value = String(fb.s ?? "");
+        kind.value = String(fb.k ?? "");
+        qn.value = String(toPositiveInt(fb.q, 20));
+        level.value = normalizeFullsetLevelAutofill(fb.d);
         levelMobileSelect.sync();
-        notes.value = String(item.n ?? "");
+        notes.value = String(fb.n ?? "");
         return "mock";
       }
     }
