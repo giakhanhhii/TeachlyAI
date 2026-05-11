@@ -79,9 +79,10 @@ export function createQuizFormCard(deps) {
       return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("quiz");
+        const ai = await fetchAiAutofillTopic("quiz", getAiAutofillHistory("quiz"));
         presetId = "";
         srcText.value = String(ai.source ?? "");
+        addAiAutofillHistory("quiz", ai.source);
         if (ai.kind) kind.value = String(ai.kind);
         if (ai.count) qn.value = String(toPositiveInt(ai.count, 20));
         if (ai.difficulty) {

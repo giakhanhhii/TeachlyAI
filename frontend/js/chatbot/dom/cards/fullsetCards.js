@@ -28,6 +28,7 @@ import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createFullsetTopicCard(deps) {
+  resetAutofillCounter("fullset");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
@@ -116,8 +117,9 @@ export function createFullsetTopicCard(deps) {
       return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("fullset");
+        const ai = await fetchAiAutofillTopic("fullset", getAiAutofillHistory("fullset"));
         topic.value = String(ai.topic ?? "");
+        addAiAutofillHistory("fullset", ai.topic);
         if (ai.level) {
           level.value = normalizeFullsetLevelAutofill(ai.level);
           levelMobileSelect.sync();

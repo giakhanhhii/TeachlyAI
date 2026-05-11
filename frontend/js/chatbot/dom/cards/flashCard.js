@@ -22,6 +22,7 @@ function randomFlashAutofillCount() {
 }
 
 export function createFlashcardFormCard(deps) {
+  resetAutofillCounter("flash");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
 
@@ -60,9 +61,10 @@ export function createFlashcardFormCard(deps) {
       return "mock";
     } else {
       try {
-        const ai = await fetchAiAutofillTopic("flash");
+        const ai = await fetchAiAutofillTopic("flash", getAiAutofillHistory("flash"));
         presetId = "";
         list.value = String(ai.list ?? "");
+        addAiAutofillHistory("flash", ai.list);
         back.value = String(ai.back ?? "Nghĩa tiếng Việt, Phiên âm, Ví dụ");
         count.value = String(clamp(toPositiveInt(ai.count, 20), 1, 40));
         notes.value = String(ai.notes ?? "");
