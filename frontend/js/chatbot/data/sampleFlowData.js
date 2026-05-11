@@ -40,4 +40,12 @@ shuffle(SAMPLES_FULLSET);
 shuffle(SAMPLES_SLIDE);
 shuffle(SAMPLES_FLASH);
 
+/** Number of mock samples per type — autofill uses AI once counter reaches these. */
+export const AUTOFILL_MOCK_LENGTHS = {
+  slide: SAMPLES_SLIDE.length,
+  quiz: SAMPLES_QUIZ.length,
+  flash: SAMPLES_FLASH.length,
+  fullset: SAMPLES_FULLSET.length,
+};
+
 export { SAMPLES_FULLSET, SAMPLES_SLIDE, SAMPLES_QUIZ, SAMPLES_FLASH };

@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent } from "../services/aiContentApi.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -91,7 +92,19 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let questions = [];
   let cards = [];
   if (!steps.length) {
-    const [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+    let rawSlide, rawQuiz, rawFlash;
+    if (isAiModeActive("fullset")) {
+      const aiBundle = await fetchAiFullsetContent().catch(async () => {
+        const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+        return { slide: s, quiz: q, flashcard: f };
+      });
+      rawSlide = aiBundle.slide;
+      rawQuiz = aiBundle.quiz;
+      rawFlash = aiBundle.flashcard;
+    } else {
+      [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+    }
+    incrementPlayCount("fullset");
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);
     const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
     const flashData = prepareFlashSessionData(rawFlash, flashMeta);

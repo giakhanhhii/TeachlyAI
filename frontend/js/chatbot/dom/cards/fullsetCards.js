@@ -1,4 +1,4 @@
-import { SAMPLES_FULLSET } from "../../data/sampleFlowData.js";
+import { SAMPLES_FULLSET, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
 import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
 import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
@@ -22,6 +22,7 @@ import {
 } from "./flowCardShared.js";
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
+import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -95,18 +96,51 @@ export function createFullsetTopicCard(deps) {
   if (typeof prefill.flash === "string" || Number.isFinite(Number(prefill.flash))) flash.value = String(prefill.flash);
   if (typeof prefill.extra === "string") extra.value = prefill.extra;
 
-  addAutofillBtn(root, () => {
-    const s = SAMPLES_FULLSET[autofillCounters.fullset++ % SAMPLES_FULLSET.length];
-    const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
-    topic.value = String(s.t ?? "");
-    level.value = normalizeFullsetLevelAutofill(s.l);
-    levelMobileSelect.sync();
-    slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
-    slideTemplateMobileSelect.sync();
-    slides.value = String(sn);
-    quiz.value = String(qn);
-    flash.value = String(fn);
-    extra.value = String(s.e ?? "");
+  addAutofillBtn(root, async () => {
+    const idx = autofillCounters.fullset++;
+    if (idx < AUTOFILL_MOCK_LENGTHS.fullset) {
+      const s = SAMPLES_FULLSET[idx];
+      const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
+      topic.value = String(s.t ?? "");
+      level.value = normalizeFullsetLevelAutofill(s.l);
+      levelMobileSelect.sync();
+      slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
+      slideTemplateMobileSelect.sync();
+      slides.value = String(sn);
+      quiz.value = String(qn);
+      flash.value = String(fn);
+      extra.value = String(s.e ?? "");
+    } else {
+      try {
+        const ai = await fetchAiAutofillTopic("fullset");
+        topic.value = String(ai.topic ?? "");
+        if (ai.level) {
+          level.value = normalizeFullsetLevelAutofill(ai.level);
+          levelMobileSelect.sync();
+        }
+        const { sn, qn, fn } = normalizeFullsetCounts(
+          String(ai.slides ?? 10),
+          String(ai.quiz ?? 20),
+          String(ai.flash ?? 10),
+        );
+        slides.value = String(sn);
+        quiz.value = String(qn);
+        flash.value = String(fn);
+        extra.value = String(ai.extra ?? "");
+      } catch {
+        const s = SAMPLES_FULLSET[idx % SAMPLES_FULLSET.length];
+        const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
+        topic.value = String(s.t ?? "");
+        level.value = normalizeFullsetLevelAutofill(s.l);
+        levelMobileSelect.sync();
+        slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
+        slideTemplateMobileSelect.sync();
+        slides.value = String(sn);
+        quiz.value = String(qn);
+        flash.value = String(fn);
+        extra.value = String(s.e ?? "");
+      }
+    }
   });
 
   const err = el("div", "flow-err");

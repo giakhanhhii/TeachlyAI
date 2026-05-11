@@ -110,14 +110,28 @@ export function showPartialFillConfirm(root, errEl, onYes) {
   root.appendChild(wrap);
 }
 
+const SPINNER_SVG = `<svg class="flow-autofill-spinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="31.4 31.4" transform="rotate(-90 12 12)"/></svg>`;
+
 export function addAutofillBtn(root, callback) {
   const btn = el("button", "flow-autofill-btn");
   btn.type = "button";
   btn.title = "Tự động điền dữ liệu mẫu (AI)";
   btn.innerHTML = MAGIC_WAND_SVG;
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", async (e) => {
     e.preventDefault();
-    callback();
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add("is-loading");
+    btn.innerHTML = SPINNER_SVG;
+    try {
+      await callback();
+    } catch (err) {
+      console.warn("[autofill] callback error", err);
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove("is-loading");
+      btn.innerHTML = MAGIC_WAND_SVG;
+    }
   });
   root.appendChild(btn);
 }

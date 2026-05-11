@@ -1,4 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
@@ -110,10 +111,17 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const restoredCards = normalizeFlashCards(initial?.cardsSnapshot);
+  let flashRaw;
+  if (restoredCards.length === 0) {
+    flashRaw = isAiModeActive("flash")
+      ? await fetchAiContent("flashcard").catch(() => fetchMockResource("flashcard"))
+      : await fetchMockResource("flashcard");
+    incrementPlayCount("flash");
+  }
   const data =
     restoredCards.length > 0
       ? { title: typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : "Flashcard", cards: restoredCards }
-      : prepareFlashSessionData(await fetchMockResource("flashcard"), meta);
+      : prepareFlashSessionData(flashRaw, meta);
   const titleText = data.title || "Flashcard";
   const cards = normalizeFlashCards(data.cards);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
