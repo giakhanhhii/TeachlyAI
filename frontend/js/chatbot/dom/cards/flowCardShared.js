@@ -113,7 +113,6 @@ export function showPartialFillConfirm(root, errEl, onYes) {
 const SPINNER_SVG = `<svg class="flow-autofill-spinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="31.4 31.4" transform="rotate(-90 12 12)"/></svg>`;
 
 export function addAutofillBtn(root, callback) {
-  const wrap = el("div", "flow-autofill-wrap");
   const btn = el("button", "flow-autofill-btn");
   btn.type = "button";
   btn.title = "Tự động điền dữ liệu mẫu (AI)";
@@ -145,9 +144,8 @@ export function addAutofillBtn(root, callback) {
     }
   });
 
-  wrap.appendChild(btn);
-  wrap.appendChild(srcTag);
-  root.appendChild(wrap);
+  root.appendChild(btn);
+  root.appendChild(srcTag);
 }
 
 export function randomCountSkipPdf(countMax) {
