@@ -3,8 +3,6 @@ import { DEFAULT_DIFFICULTY } from "../../constants.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
-  autofillCounters,
-  resetAutofillCounter,
   getAiAutofillHistory,
   addAiAutofillHistory,
   el,
@@ -20,7 +18,6 @@ import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createQuizFormCard(deps) {
-  resetAutofillCounter("quiz");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
 
