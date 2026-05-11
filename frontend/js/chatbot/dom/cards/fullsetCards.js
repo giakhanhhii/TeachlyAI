@@ -110,6 +110,7 @@ export function createFullsetTopicCard(deps) {
       quiz.value = String(qn);
       flash.value = String(fn);
       extra.value = String(s.e ?? "");
+      return "mock";
     } else {
       try {
         const ai = await fetchAiAutofillTopic("fullset");
@@ -127,6 +128,7 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(ai.extra ?? "");
+        return "ai";
       } catch {
         const s = SAMPLES_FULLSET[idx % SAMPLES_FULLSET.length];
         const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
@@ -139,6 +141,7 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(s.e ?? "");
+        return "mock";
       }
     }
   });
