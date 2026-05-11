@@ -408,6 +408,23 @@
   height: 16px;
 }
 
+.flow-autofill-btn.is-loading {
+  cursor: wait;
+  opacity: 0.8;
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important;
+}
+
+.flow-autofill-spinner {
+  width: 16px;
+  height: 16px;
+  animation: autofill-spin 0.75s linear infinite;
+}
+
+@keyframes autofill-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Flash vocab: in-textarea red highlight (mirror layer behind transparent text) */
 .flow-vocab-editor-stack {
   position: relative;
