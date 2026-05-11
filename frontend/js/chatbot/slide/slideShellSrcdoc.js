@@ -2383,6 +2383,15 @@ function injectShellPreviewFit(doc) {
       letter-spacing: normal !important;
       line-height: 1.5 !important;
     }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .content-area:not(:has(.table-layout)) {
+      justify-content: center !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .two-column.tiled > div {
+      justify-content: center !important;
+    }
+    body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .tiled-content .tile {
+      justify-content: center !important;
+    }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
       width: min(920px, 100%) !important;
       margin: 0 auto !important;
