@@ -6,8 +6,6 @@ import {
   MSG_SKIP_PDF_HAS_FILE,
   MSG_AUTO_CONFIRM_PDF,
   addAutofillBtn,
-  autofillCounters,
-  resetAutofillCounter,
   getAiAutofillHistory,
   addAiAutofillHistory,
   coerceSelectThemeValue,
@@ -28,7 +26,6 @@ import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 
 export function createFullsetTopicCard(deps) {
-  resetAutofillCounter("fullset");
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Full Set"));
 
