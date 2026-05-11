@@ -47,6 +47,9 @@ import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventMa
 import * as autoModeStore from "./services/autoModeStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
+import { endDwell, shouldRecommend, getLastN } from "./services/dwellStore.js";
+import { fetchRecommendations } from "./services/aiContentApi.js";
+import { mountRecommendPanel, updateRecommendPanel } from "./dom/recommendationPanel.js";
 
 /** @type {any} */
 let guided = null;
@@ -93,6 +96,8 @@ export function init() {
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
   mountAiStatusPanel();
+  mountRecommendPanel();
+  window.addEventListener("beforeunload", () => endDwell());
   initializeBrowserBackBridge();
   let currentHistoryNavSeq =
     Number.isFinite(Number(history.state?.[HISTORY_NAV_SEQ_KEY])) ? Math.floor(Number(history.state[HISTORY_NAV_SEQ_KEY])) : 0;
@@ -837,6 +842,16 @@ export function init() {
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
     if (isSwitchingSession) return;
     isSwitchingSession = true;
+    const _dwellCount = endDwell();
+    if (_dwellCount > 0 && shouldRecommend()) {
+      const _history = getLastN(5);
+      updateRecommendPanel({ status: "loading", log: _history });
+      fetchRecommendations(_history)
+        .then(data => updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5) }))
+        .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5) }));
+    } else {
+      updateRecommendPanel({ status: "recording", log: getLastN(5) });
+    }
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
