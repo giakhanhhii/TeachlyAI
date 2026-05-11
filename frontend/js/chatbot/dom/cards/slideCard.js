@@ -68,6 +68,7 @@ export function createSlideFormCard(deps) {
       style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
       styleMobileSelect.sync();
       notes.value = String(s.n ?? "");
+      return "mock";
     } else {
       try {
         const ai = await fetchAiAutofillTopic("slide");
@@ -76,6 +77,7 @@ export function createSlideFormCard(deps) {
         if (ai.count) count.value = String(clamp(toPositiveInt(ai.count, 10), 5, 30));
         if (ai.structure) structure.value = String(ai.structure);
         notes.value = String(ai.notes ?? "");
+        return "ai";
       } catch {
         const s = SAMPLES_SLIDE[idx % SAMPLES_SLIDE.length];
         presetId = String(s.id ?? "");
@@ -85,6 +87,7 @@ export function createSlideFormCard(deps) {
         style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.y, SLIDE_TEMPLATE_DEFAULT);
         styleMobileSelect.sync();
         notes.value = String(s.n ?? "");
+        return "mock";
       }
     }
   });
