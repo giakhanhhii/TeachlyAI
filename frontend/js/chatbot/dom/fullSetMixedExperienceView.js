@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { beginDwell } from "../services/dwellStore.js";
 import { getFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
@@ -206,7 +207,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
-  if (restoredSteps.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+  if (restoredSteps.length === 0) {
+    document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    beginDwell(spec?.topic || titleText, "fullset");
+  }
   const topBar = createExperienceTopBar({ title: titleText }).bar;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {
