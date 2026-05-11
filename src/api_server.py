@@ -436,13 +436,14 @@ def ai_autofill(body: AiAutofillIn):
         )
     try:
         kind = body.type
+        recent = [str(t) for t in (body.recent or []) if t][:12]
         if kind == "slide":
-            return generate_autofill_slide()
+            return generate_autofill_slide(recent=recent)
         if kind == "quiz":
-            return generate_autofill_quiz()
+            return generate_autofill_quiz(recent=recent)
         if kind == "flash":
-            return generate_autofill_flash()
-        return generate_autofill_fullset()
+            return generate_autofill_flash(recent=recent)
+        return generate_autofill_fullset(recent=recent)
     except ValueError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:
