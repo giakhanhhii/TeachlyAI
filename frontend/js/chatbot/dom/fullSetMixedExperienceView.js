@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent } from "../services/aiContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";

@@ -178,7 +178,6 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-flash";
-  if (restoredCards.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
 
   const topBar = createExperienceTopBar({
     title: titleText,
