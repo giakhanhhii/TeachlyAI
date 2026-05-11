@@ -97,8 +97,9 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const effectiveMeta = initialMeta || meta;
   const isRestore = Boolean(initialSlides);
   const _devSrc = (!isRestore && isAiModeActive("slide")) ? "ai" : "mock"; /* DEV-ONLY */
+  const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
   const raw = _devSrc === "ai"
-    ? await fetchAiContent("slide").catch(() => fetchMockResource("slide"))
+    ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
     : await fetchMockResource("slide");
   if (!isRestore) incrementPlayCount("slide");
   const data = prepareSlideSessionData(raw, effectiveMeta);
