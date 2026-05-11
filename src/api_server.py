@@ -20,7 +20,7 @@ import tempfile
 from pathlib import Path
 from anthropic import Anthropic
 from openai import OpenAI
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
