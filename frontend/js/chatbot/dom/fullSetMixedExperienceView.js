@@ -96,6 +96,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const _devSrc = (!steps.length && (isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
+    const _loadEl = _devSrc === "ai" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
     if (_devSrc === "ai") {
       const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
@@ -107,6 +108,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     } else {
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
     }
+    _loadEl?.remove();
     incrementPlayCount("fullset");
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);
     const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
