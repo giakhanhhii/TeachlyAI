@@ -222,39 +222,39 @@ def generate_fullset_content() -> dict[str, Any]:
 # Autofill helpers — lightweight calls that return form field values only
 # ---------------------------------------------------------------------------
 
-_AUTOFILL_SLIDE_SYSTEM = """You generate form autofill data for an English learning slide deck creation form (Vietnamese THPT students).
+_AUTOFILL_SLIDE_SYSTEM = """You generate form autofill data for an English slide deck creation form for Vietnamese grade-12 / THPT students.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
 {"topic": "<English topic in Vietnamese, 3-8 words>", "count": 10, "structure": "Giới thiệu → Ví dụ → Luyện tập", "notes": ""}
 Rules:
-- topic: a specific, useful English grammar/vocabulary/skill topic (in Vietnamese). Must be fresh and varied.
+- topic: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel, social media…), reading skills (main idea, inference, paraphrase, causal relationships…), or cloze skills (collocations, phrasal verbs, linking words…). Must be fresh each call.
 - count: integer between 10 and 15
 - structure: 3 short Vietnamese steps joined by " → "
 - notes: empty string"""
 
-_AUTOFILL_QUIZ_SYSTEM = """You generate form autofill data for an English quiz creation form (Vietnamese THPT students).
+_AUTOFILL_QUIZ_SYSTEM = """You generate form autofill data for an English quiz creation form for Vietnamese grade-12 / THPT students.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
 {"source": "<English topic in Vietnamese>", "kind": "<quiz type>", "count": 20, "difficulty": "<level>", "notes": ""}
 Rules:
-- source: a specific English grammar/vocabulary/skill topic (in Vietnamese)
+- source: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health…), reading comprehension, pronunciation, or communication functions. Must be fresh each call.
 - kind: one of exactly: Từ vựng | Ngữ pháp | Phát âm | Đọc hiểu | Giao tiếp
 - count: 15 or 20
 - difficulty: one of exactly: Mất gốc | Cơ bản | Khá | Nâng cao
 - notes: empty string"""
 
-_AUTOFILL_FLASH_SYSTEM = """You generate form autofill data for a flashcard creation form (Vietnamese THPT English learners).
+_AUTOFILL_FLASH_SYSTEM = """You generate form autofill data for a flashcard creation form for Vietnamese grade-12 / THPT English learners.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
-{"list": "<topic description in Vietnamese, 1-2 sentences>", "back": "Nghĩa tiếng Việt, Phiên âm, Ví dụ", "count": 20, "notes": ""}
+{"list": "<topic description in Vietnamese, 1 sentence>", "back": "Nghĩa tiếng Việt, Phiên âm, Ví dụ", "count": 20, "notes": ""}
 Rules:
-- list: 1 sentence describing the specific English vocabulary topic to cover (in Vietnamese)
+- list: 1 sentence in Vietnamese describing the specific English vocabulary topic to cover. Choose creatively and randomly from: urbanisation & city life, endangered languages & culture, AI & robotics, environment & climate, health & medicine, travel & tourism, social media, phrasal verbs, collocations, word formation, idioms, academic vocabulary. Must be fresh each call.
 - back: always exactly the string "Nghĩa tiếng Việt, Phiên âm, Ví dụ"
 - count: always 20
 - notes: empty string"""
 
-_AUTOFILL_FULLSET_SYSTEM = """You generate form autofill data for a full-set (slide + quiz + flashcard) creation form (Vietnamese THPT English learners).
+_AUTOFILL_FULLSET_SYSTEM = """You generate form autofill data for a full-set (slide + quiz + flashcard) creation form for Vietnamese grade-12 / THPT English learners.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
 {"topic": "<English topic in Vietnamese>", "level": "<level>", "slides": 10, "quiz": 20, "flash": 10, "extra": ""}
 Rules:
-- topic: a specific English grammar/vocabulary/skill topic (in Vietnamese)
+- topic: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel…), or reading/cloze skills. Must be fresh each call.
 - level: one of exactly: Mất gốc | Cơ bản | Khá | Nâng cao
 - slides + quiz + flash must be <= 40 and each >= 1
 - extra: empty string"""
