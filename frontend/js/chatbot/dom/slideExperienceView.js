@@ -113,6 +113,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-slide";
+  /* DEV-ONLY: source badge — remove after deploy */
+  { const _b = document.createElement("div"); _b.className = `dev-src-badge dev-src-badge--${_devSrc}`; _b.textContent = _devSrc === "ai" ? "⚡ AI" : "📦 Mock"; shell.appendChild(_b); }
   const teardownObserver = new MutationObserver(() => {
     if (!shell.isConnected) {
       slideUiAbort.abort();
