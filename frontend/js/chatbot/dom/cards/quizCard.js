@@ -72,6 +72,7 @@ export function createQuizFormCard(deps) {
       level.value = normalizeFullsetLevelAutofill(item.d);
       levelMobileSelect.sync();
       notes.value = String(item.n ?? "");
+      return "mock";
     } else {
       try {
         const ai = await fetchAiAutofillTopic("quiz");
@@ -84,6 +85,7 @@ export function createQuizFormCard(deps) {
           levelMobileSelect.sync();
         }
         notes.value = String(ai.notes ?? "");
+        return "ai";
       } catch {
         const item = SAMPLES_QUIZ[idx % SAMPLES_QUIZ.length];
         presetId = String(item.id ?? "");
@@ -93,6 +95,7 @@ export function createQuizFormCard(deps) {
         level.value = normalizeFullsetLevelAutofill(item.d);
         levelMobileSelect.sync();
         notes.value = String(item.n ?? "");
+        return "mock";
       }
     }
   });
