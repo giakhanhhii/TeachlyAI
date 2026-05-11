@@ -52,6 +52,7 @@ from .ai_content_generate import (
     generate_quiz_from_document,
     generate_flash_from_document,
     generate_fullset_from_document,
+    generate_topic_recommendations,
     TOPIC_POOL,
 )
 from .utils.file_extractor import (
