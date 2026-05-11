@@ -409,6 +409,17 @@ def ai_generate(body: AiGenerateIn):
         ) from exc
 
 
+@app.get("/api/status")
+def api_status():
+    """Lightweight config status — returns which API keys are set (no secrets exposed)."""
+    return {
+        "openai_key_ok": bool(OPENAI_API_KEY),
+        "anthropic_key_ok": bool(ANTHROPIC_API_KEY),
+        "ai_content_model": "gpt-4o-mini",
+        "ai_threshold_plays": 3,
+    }
+
+
 @app.post("/api/ai-autofill")
 def ai_autofill(body: AiAutofillIn):
     """Return AI-generated form field values for autofill (slide/quiz/flash/fullset).

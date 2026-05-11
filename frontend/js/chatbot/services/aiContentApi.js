@@ -14,14 +14,14 @@ import { getApiOrigin } from "../config.js";
 /** @typedef {"slide"|"quiz"|"flash"|"fullset"} ContentType */
 
 /** Number of plays before AI generation activates for a content type. */
-const AI_THRESHOLD = 3;
+export const AI_THRESHOLD = 3;
 
-const STORAGE_KEY = "teachly_play_counts";
+export const STORAGE_KEY = "teachly_play_counts";
 
 /**
  * @returns {{ slide: number, quiz: number, flash: number, fullset: number }}
  */
-function getPlayCounts() {
+export function getPlayCounts() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {

@@ -46,6 +46,7 @@ import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
+import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
 
 /** @type {any} */
 let guided = null;
@@ -91,6 +92,7 @@ export function init() {
 
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
+  mountAiStatusPanel();
   initializeBrowserBackBridge();
   let currentHistoryNavSeq =
     Number.isFinite(Number(history.state?.[HISTORY_NAV_SEQ_KEY])) ? Math.floor(Number(history.state[HISTORY_NAV_SEQ_KEY])) : 0;
