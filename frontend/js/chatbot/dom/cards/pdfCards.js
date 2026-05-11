@@ -178,12 +178,12 @@ export function createPickPdfGateCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Chọn tệp"));
   root.appendChild(
-    el("p", "flow-hint", "Hỗ trợ: PDF, DOCX, Markdown (.md), TXT — tối đa 20 trang. Chọn tệp rồi nhấn Tiếp tục."),
+    el("p", "flow-hint", "Hỗ trợ: PDF, DOCX, MD, TXT, ảnh (JPG, PNG, WEBP…) — tối đa 20 trang / 10 MB. Chọn tệp rồi nhấn Tiếp tục."),
   );
 
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = ".pdf,.md,.txt,.docx,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  input.accept = ".pdf,.md,.txt,.docx,.jpg,.jpeg,.png,.webp,.gif,.bmp,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*";
   input.style.display = "none";
 
   const name = el("span", "flow-file-name", "Chưa chọn tệp");

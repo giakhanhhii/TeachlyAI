@@ -332,13 +332,13 @@ export function createFullsetPdfCard(deps) {
   const hint = el(
     "p",
     "flow-hint",
-    "Hỗ trợ: PDF, DOCX, Markdown (.md), TXT — tối đa 20 trang. Teachly sẽ dùng AI để tạo Full Set từ nội dung tài liệu.",
+    "Hỗ trợ: PDF, DOCX, MD, TXT, ảnh (JPG, PNG, WEBP…) — tối đa 20 trang / 10 MB. Teachly sẽ dùng AI để tạo Full Set từ nội dung tài liệu.",
   );
   root.appendChild(hint);
 
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = ".pdf,.md,.txt,.docx,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  input.accept = ".pdf,.md,.txt,.docx,.jpg,.jpeg,.png,.webp,.gif,.bmp,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*";
   input.style.display = "none";
 
   const name = el("span", "flow-file-name", "Chưa chọn tệp");

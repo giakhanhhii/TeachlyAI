@@ -442,7 +442,7 @@ async def file_upload(
         raise HTTPException(status_code=413, detail="Tệp quá lớn (tối đa 20 MB).")
 
     try:
-        document_text = extract_text(contents, file.filename or "")
+        document_text = extract_text(contents, file.filename or "", openai_api_key=OPENAI_API_KEY)
     except UnsupportedFormatError as exc:
         raise HTTPException(status_code=415, detail=str(exc)) from exc
     except PageLimitError as exc:
