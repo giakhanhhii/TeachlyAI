@@ -140,6 +140,7 @@ class AiGenerateIn(BaseModel):
 
 class AiAutofillIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flash|fullset)$")
+    recent: list[str] = Field(default_factory=list)
 
 
 def _flash_translate_config_ok() -> bool:

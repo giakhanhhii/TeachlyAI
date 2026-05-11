@@ -118,14 +118,16 @@ export async function fetchAiContent(type, topic) {
  * Fetch AI-generated form autofill data for a content type.
  * Returns lightweight form field values (topic, count, etc.) — not full content.
  * @param {"slide"|"quiz"|"flash"|"fullset"} type
+ * @param {string[]} [recent] - recently generated topics to avoid repeating
  * @returns {Promise<any>}
  */
-export async function fetchAiAutofillTopic(type) {
+export async function fetchAiAutofillTopic(type, recent = []) {
   const url = `${getApiOrigin()}/api/ai-autofill`;
+  const payload = recent.length ? { type, recent } : { type };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     let detail = "";
