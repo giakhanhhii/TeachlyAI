@@ -669,5 +669,25 @@ if SLIDE_HTML_DIR.is_dir():
         name="slide_html",
     )
 
+
+class RecommendRequest(BaseModel):
+    history: list[dict]
+
+
+@app.post("/api/recommend-topics")
+def api_recommend_topics(req: RecommendRequest):
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=503, detail="API key chưa được cấu hình")
+    if not req.history:
+        raise HTTPException(status_code=422, detail="history is empty")
+    try:
+        return generate_topic_recommendations(req.history[-5:])
+    except (ValueError, KeyError) as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("Recommendation generation failed")
+        raise HTTPException(status_code=502, detail=str(exc) or "Lỗi gợi ý chủ đề.") from exc
+
+
 if FRONTEND_DIR.is_dir():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
