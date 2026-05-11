@@ -379,10 +379,11 @@ def ai_generate(body: AiGenerateIn):
 
     try:
         kind = body.type
+        form_topic = (body.topic or "").strip() or None
         if kind == "fullset":
-            return generate_fullset_content()
-        topic = _random.choice(TOPIC_POOL)
-        logger.info("AI generate: type=%s topic=%s", kind, topic)
+            return generate_fullset_content(topic=form_topic)
+        topic = form_topic or _random.choice(TOPIC_POOL)
+        logger.info("AI generate: type=%s topic=%s (from_form=%s)", kind, topic, bool(form_topic))
         if kind == "slide":
             return generate_slide_content(topic)
         if kind == "quiz":
