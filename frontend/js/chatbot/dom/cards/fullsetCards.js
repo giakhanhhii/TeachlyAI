@@ -98,19 +98,18 @@ export function createFullsetTopicCard(deps) {
   if (typeof prefill.extra === "string") extra.value = prefill.extra;
 
   addAutofillBtn(root, async () => {
-    const idx = autofillCounters.fullset++;
-    if (idx < AUTOFILL_MOCK_LENGTHS.fullset) {
-      const s = SAMPLES_FULLSET[idx];
-      const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
-      topic.value = String(s.t ?? "");
-      level.value = normalizeFullsetLevelAutofill(s.l);
+    const sample = consumeNextMock("fullset");
+    if (sample) {
+      const { sn, qn, fn } = normalizeFullsetCounts(sample.s, sample.q, sample.f);
+      topic.value = String(sample.t ?? "");
+      level.value = normalizeFullsetLevelAutofill(sample.l);
       levelMobileSelect.sync();
-      slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
+      slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, sample.m, SLIDE_TEMPLATE_DEFAULT);
       slideTemplateMobileSelect.sync();
       slides.value = String(sn);
       quiz.value = String(qn);
       flash.value = String(fn);
-      extra.value = String(s.e ?? "");
+      extra.value = String(sample.e ?? "");
       return "mock";
     } else {
       try {
@@ -132,17 +131,17 @@ export function createFullsetTopicCard(deps) {
         extra.value = String(ai.extra ?? "");
         return "ai";
       } catch {
-        const s = SAMPLES_FULLSET[idx % SAMPLES_FULLSET.length];
-        const { sn, qn, fn } = normalizeFullsetCounts(s.s, s.q, s.f);
-        topic.value = String(s.t ?? "");
-        level.value = normalizeFullsetLevelAutofill(s.l);
+        const fb = getAnyMock("fullset");
+        const { sn, qn, fn } = normalizeFullsetCounts(fb.s, fb.q, fb.f);
+        topic.value = String(fb.t ?? "");
+        level.value = normalizeFullsetLevelAutofill(fb.l);
         levelMobileSelect.sync();
-        slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, s.m, SLIDE_TEMPLATE_DEFAULT);
+        slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, fb.m, SLIDE_TEMPLATE_DEFAULT);
         slideTemplateMobileSelect.sync();
         slides.value = String(sn);
         quiz.value = String(qn);
         flash.value = String(fn);
-        extra.value = String(s.e ?? "");
+        extra.value = String(fb.e ?? "");
         return "mock";
       }
     }
