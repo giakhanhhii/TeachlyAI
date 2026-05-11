@@ -116,6 +116,11 @@ def _call_openai(system: str, user: str, max_tokens: int) -> str:
     return resp.choices[0].message.content or ""
 
 
+def _sanitize_topic(topic: str) -> str:
+    """Collapse whitespace/control chars and cap length to block prompt injection."""
+    return " ".join(topic.split())[:200]
+
+
 def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
     text = raw.strip()
     # Strip markdown fences if model included them despite instructions
@@ -132,6 +137,7 @@ def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
 
 def generate_slide_content(topic: str) -> dict[str, Any]:
     """Generate a 10-slide deck about topic. Returns mock-compatible JSON."""
+    topic = _sanitize_topic(topic)
     user_msg = f"Topic: {topic}\nGenerate the slide deck JSON now."
     raw = _call_openai(_SLIDE_SYSTEM, user_msg, max_tokens=1800)
     data = _parse_json_response(raw, "slide")
