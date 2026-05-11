@@ -97,7 +97,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const effectiveMeta = initialMeta || meta;
   const isRestore = Boolean(initialSlides);
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
-  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || effectiveMeta?.__autoMode === "1";
   const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
   const raw = _devSrc === "ai"
