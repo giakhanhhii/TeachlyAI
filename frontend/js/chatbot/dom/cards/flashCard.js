@@ -1,4 +1,4 @@
-import { SAMPLES_FLASH, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
+import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
