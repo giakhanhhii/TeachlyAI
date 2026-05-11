@@ -3216,24 +3216,60 @@ function fillContentSlots(root, title, bullets, options = {}) {
     });
     return;
   }
+  // Expand friendly table to 5 body rows for better fill (50-70% target)
+  if (isFriendly) {
+    const slide = getRootSlideElement(root);
+    const tbody = slide?.querySelector(".table-layout table tbody");
+    if (tbody) {
+      const existingRows = Array.from(tbody.querySelectorAll(":scope > tr"));
+      const targetRows = 5;
+      if (existingRows.length > 0 && existingRows.length < targetRows) {
+        const templateRow = existingRows[existingRows.length - 1];
+        for (let i = existingRows.length; i < targetRows; i++) {
+          const newRow = templateRow.cloneNode(true);
+          newRow.querySelectorAll("td, th").forEach((cell) => { cell.textContent = ""; });
+          tbody.appendChild(newRow);
+        }
+      }
+    }
+  }
   const prepareFriendlyTableBullets = () => {
     if (!isFriendly || !themeTextBudget) return null;
     const slide = getRootSlideElement(root);
     if (!slide?.querySelector(".table-layout table")) return null;
-    const bodyRowCount = slide.querySelectorAll(".table-layout table tbody tr").length || 3;
-    return bullets.map((bullet) => {
-      const parts = String(bullet || "")
-        .split(/\n+/).map((p) => p.trim()).filter(Boolean);
-      if (!parts.length) return bullet;
-      const header = compactSlideTextValue(parts[0], themeTextBudget.headline);
-      const details = parts.slice(1)
-        .map((p) => flattenSlideTextForCompact(p))
-        .map((p) => p.replace(/^(?:ý|y)\s*\d+\s*(?:->|:|-)\s*/iu, "").trim())
-        .filter(Boolean)
-        .slice(0, bodyRowCount)
-        .map((p) => compactSlideTextValue(p, themeTextBudget.detail))
-        .filter(Boolean);
-      return [header, ...details].join("\n");
+    const colCount = slide.querySelectorAll(".table-layout table thead th").length || 3;
+    const bodyRowCount = slide.querySelectorAll(".table-layout table tbody tr").length || 5;
+    const usedBullets = bullets.slice(0, colCount);
+    return usedBullets.map((bullet) => {
+      const raw = flattenSlideTextForCompact(String(bullet || ""));
+      const words = raw.split(/\s+/).filter(Boolean);
+      if (words.length < 2) return raw;
+      // Split into header (first ~20% of words, or at colon) + bodyRowCount cell parts
+      let headerWords, detailWords;
+      const colonIdx = raw.indexOf(":");
+      const firstSevenLen = words.slice(0, 7).join(" ").length;
+      if (colonIdx > 2 && colonIdx <= firstSevenLen) {
+        headerWords = raw.slice(0, colonIdx).trim();
+        detailWords = raw.slice(colonIdx + 1).trim().split(/\s+/).filter(Boolean);
+      } else {
+        const headerCount = Math.max(2, Math.min(5, Math.ceil(words.length * 0.2)));
+        headerWords = words.slice(0, headerCount).join(" ");
+        detailWords = words.slice(headerCount);
+      }
+      headerWords = compactSlideTextValue(headerWords, themeTextBudget.headline);
+      if (!detailWords.length) return headerWords;
+      const wordsPerRow = Math.ceil(detailWords.length / bodyRowCount);
+      const rowParts = [];
+      for (let i = 0; i < bodyRowCount; i++) {
+        const slice = detailWords.slice(i * wordsPerRow, (i + 1) * wordsPerRow);
+        if (slice.length) {
+          rowParts.push(compactSlideTextValue(slice.join(" "), themeTextBudget.detail));
+        }
+      }
+      while (rowParts.length < bodyRowCount && rowParts.length > 0) {
+        rowParts.push(rowParts[Math.floor((rowParts.length - 1) / 2)]);
+      }
+      return [headerWords, ...rowParts].join("\n");
     });
   };
   const tableBullets = prepareFriendlyTableBullets() ?? compactStructuredSlideColumns(bullets, themeTextBudget);
