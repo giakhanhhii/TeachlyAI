@@ -18,7 +18,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
   const _aiTopic = meta?.source || meta?.topic || undefined;
-  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
   const _devSrc = (!isRestore && !meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
   const raw = _devSrc === "ai"
