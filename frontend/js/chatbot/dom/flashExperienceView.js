@@ -116,7 +116,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   if (restoredCards.length === 0) {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-    _devSrc = (isAiModeActive("flash") || !_isAutoTopic) ? "ai" : "mock"; /* DEV-ONLY */
+    _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
     const _loadEl = _devSrc === "ai" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
     flashRaw = _devSrc === "ai"
       ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
