@@ -37,7 +37,7 @@ function badgeAi() {
 }
 
 function badgeMock(cur, total) {
-  return `<span class="ai-sp-badge ai-sp-badge--mock">${cur}/${total}</span>`;
+  return `<span class="ai-sp-badge ai-sp-badge--mock">${parseInt(cur, 10) || 0}/${parseInt(total, 10) || 0}</span>`;
 }
 
 export function mountAiStatusPanel() {
@@ -149,13 +149,6 @@ export function mountAiStatusPanel() {
       </div>
     `;
 
-    panel.querySelector(".ai-sp-close").addEventListener("click", closePanel);
-    panel.querySelector(".ai-sp-reset").addEventListener("click", () => {
-      localStorage.removeItem(STORAGE_KEY);
-      resetAutofillState();
-      updateTrigger();
-      renderPanel();
-    });
   }
 
   function openPanel() {
