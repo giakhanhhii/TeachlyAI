@@ -1,5 +1,7 @@
 import { restoreCurrentSessionExperience as restoreExperienceFromSession } from "../services/experienceService.js";
 import { takePendingPdfFile } from "../pdfPrefillStore.js";
+import { fetchAiFileContent } from "../services/aiContentApi.js";
+import { startFetch } from "../services/backgroundFetchStore.js";
 import { createExperienceHistoryService } from "../services/experienceHistoryService.js";
 import { createExperienceResumeService } from "../services/experienceResumeService.js";
 import {
@@ -262,6 +264,11 @@ export function createExperienceController(deps) {
     }
     const experienceId =
       forcedExperienceId || resumeService.readExperienceIdFromMeta(safeSpec) || resumeService.generateExperienceId();
+    if (safeSpec.__pdfFile instanceof File) {
+      startFetch(experienceId, fetchAiFileContent("fullset", safeSpec.__pdfFile, { notes: safeSpec.extra || "" }));
+      safeSpec.__bgFetchId = experienceId;
+      delete safeSpec.__pdfFile;
+    }
     const scopedSpec = resumeService.withExperienceIdMeta(safeSpec, experienceId);
     resumeService.rememberOpenFullSetMixedForBack(bundleTitle || "Full set", scopedSpec, experienceId);
     persistActiveExperience();

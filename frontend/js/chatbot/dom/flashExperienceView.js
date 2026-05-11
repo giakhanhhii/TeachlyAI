@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
@@ -108,6 +109,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   hookFlashSpeechVoicesOnce();
   const experienceBody = layerView.body;
   if (typeof experienceBody._kbAbort === "function") { experienceBody._kbAbort(); delete experienceBody._kbAbort; }
+  const _genStamp = Symbol();
+  experienceBody._genStamp = _genStamp;
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const restoredCards = normalizeFlashCards(initial?.cardsSnapshot);
@@ -117,12 +120,16 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
     const _uploadFile = meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
-    if (_uploadFile) {
+    const _bgFetch = !_uploadFile && meta?.__bgFetchId ? getFetch(String(meta.__bgFetchId)) : null;
+    if (_uploadFile || _bgFetch) {
       experienceBody.innerHTML = "";
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
       try {
-        flashRaw = await fetchAiFileContent("flashcard", _uploadFile, { count: Number(meta?.count) || 20, notes: meta?.extra || "" });
+        flashRaw = _bgFetch
+          ? await _bgFetch.promise
+          : await fetchAiFileContent("flashcard", _uploadFile, { count: Number(meta?.count) || 20, notes: meta?.extra || "" });
       } catch (err) {
+        if (experienceBody._genStamp !== _genStamp) return;
         _loadEl.remove();
         experienceBody.innerHTML = "";
         const box = document.createElement("div"); box.className = "exp-upload-error";
@@ -130,6 +137,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         experienceBody.appendChild(box);
         return;
       }
+      if (experienceBody._genStamp !== _genStamp) return;
       _loadEl.remove();
       _devSrc = "ai";
       incrementPlayCount("flash");

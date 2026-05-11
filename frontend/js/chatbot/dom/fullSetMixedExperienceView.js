@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -73,6 +74,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   hookFlashSpeechVoicesOnce();
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
+  const _genStamp = Symbol();
+  root._genStamp = _genStamp;
   root.innerHTML = "";
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
@@ -94,17 +97,21 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
+  const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
   let _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
-    if (_uploadFile) {
+    if (_uploadFile || _bgFetch) {
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Tạo slide, câu hỏi và flashcard từ tài liệu</span>'; root.appendChild(w); return w; })();
       try {
-        const aiBundle = await fetchAiFileContent("fullset", _uploadFile, { notes: spec.extra || "" });
+        const aiBundle = _bgFetch
+          ? await _bgFetch.promise
+          : await fetchAiFileContent("fullset", _uploadFile, { notes: spec.extra || "" });
         rawSlide = aiBundle.slide;
         rawQuiz = aiBundle.quiz;
         rawFlash = aiBundle.flashcard;
       } catch (err) {
+        if (root._genStamp !== _genStamp) return;
         _loadEl.remove();
         root.innerHTML = "";
         const box = document.createElement("div"); box.className = "exp-upload-error";
@@ -112,6 +119,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         root.appendChild(box);
         return;
       }
+      if (root._genStamp !== _genStamp) return;
       _loadEl.remove();
       _devSrc = "ai";
     } else if (_devSrc === "ai") {

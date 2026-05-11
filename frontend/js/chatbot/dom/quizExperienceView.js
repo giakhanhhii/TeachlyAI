@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
@@ -16,17 +17,23 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   layerView.prepareShow();
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
+  const _genStamp = Symbol();
+  root._genStamp = _genStamp;
   const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
   const _aiTopic = meta?.source || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
   const _uploadFile = !isRestore && meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
+  const _bgFetch = !isRestore && !_uploadFile && meta?.__bgFetchId ? getFetch(String(meta.__bgFetchId)) : null;
   let raw;
-  if (_uploadFile) {
+  if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
     const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang câu hỏi, vui lòng đợi</span>'; root.appendChild(w); return w; })();
     try {
-      raw = await fetchAiFileContent("quiz", _uploadFile, { count: Number(meta?.count) || 10, notes: meta?.notes || "" });
+      raw = _bgFetch
+        ? await _bgFetch.promise
+        : await fetchAiFileContent("quiz", _uploadFile, { count: Number(meta?.count) || 10, notes: meta?.notes || "" });
     } catch (err) {
+      if (root._genStamp !== _genStamp) return;
       _loadEl.remove();
       root.innerHTML = "";
       const box = document.createElement("div"); box.className = "exp-upload-error";
@@ -34,6 +41,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       root.appendChild(box);
       return;
     }
+    if (root._genStamp !== _genStamp) return;
     _loadEl.remove();
     if (!isRestore) incrementPlayCount("quiz");
     if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));

@@ -1,5 +1,6 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -91,6 +92,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const slideUiAbort = new AbortController();
   const uiSignal = slideUiAbort.signal;
   root.__slideExperienceAbort = slideUiAbort;
+  const _genStamp = Symbol();
+  root._genStamp = _genStamp;
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const initialSlides = Array.isArray(initial?.slides) ? initial.slides : null;
   const initialMeta = initial?.meta && typeof initial.meta === "object" ? initial.meta : null;
@@ -99,13 +102,17 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || effectiveMeta?.__autoMode === "1";
   const _uploadFile = !isRestore && effectiveMeta?.__pdfFile instanceof File ? effectiveMeta.__pdfFile : null;
+  const _bgFetch = !isRestore && !_uploadFile && effectiveMeta?.__bgFetchId ? getFetch(String(effectiveMeta.__bgFetchId)) : null;
   let raw;
-  if (_uploadFile) {
+  if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
     const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang slide, vui lòng đợi</span>'; root.appendChild(w); return w; })();
     try {
-      raw = await fetchAiFileContent("slide", _uploadFile, { count: Number(effectiveMeta?.count) || 10, notes: effectiveMeta?.notes || "" });
+      raw = _bgFetch
+        ? await _bgFetch.promise
+        : await fetchAiFileContent("slide", _uploadFile, { count: Number(effectiveMeta?.count) || 10, notes: effectiveMeta?.notes || "" });
     } catch (err) {
+      if (root._genStamp !== _genStamp) return;
       _loadEl.remove();
       root.innerHTML = "";
       const box = document.createElement("div"); box.className = "exp-upload-error";
@@ -113,6 +120,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       root.appendChild(box);
       return;
     }
+    if (root._genStamp !== _genStamp) return;
     _loadEl.remove();
     if (!isRestore) incrementPlayCount("slide");
   } else {
