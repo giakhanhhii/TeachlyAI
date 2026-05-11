@@ -116,13 +116,33 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   if (restoredCards.length === 0) {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
-    _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-    const _loadEl = _devSrc === "ai" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
-    flashRaw = _devSrc === "ai"
-      ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
-      : await fetchMockResource("flashcard");
-    _loadEl?.remove();
-    incrementPlayCount("flash");
+    const _uploadFile = meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
+    if (_uploadFile) {
+      experienceBody.innerHTML = "";
+      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
+      try {
+        flashRaw = await fetchAiFileContent("flashcard", _uploadFile, { count: Number(meta?.count) || 20, notes: meta?.extra || "" });
+      } catch (err) {
+        _loadEl.remove();
+        experienceBody.innerHTML = "";
+        const box = document.createElement("div"); box.className = "exp-upload-error";
+        box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
+        experienceBody.appendChild(box);
+        return;
+      }
+      _loadEl.remove();
+      _devSrc = "ai";
+      incrementPlayCount("flash");
+    } else {
+      _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _loadEl = _devSrc === "ai" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
+      flashRaw = _devSrc === "ai"
+        ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
+        : await fetchMockResource("flashcard");
+      _loadEl?.remove();
+      incrementPlayCount("flash");
+      document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    }
   }
   const data =
     restoredCards.length > 0
