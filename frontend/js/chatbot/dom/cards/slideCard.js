@@ -1,10 +1,8 @@
-import { SAMPLES_SLIDE, AUTOFILL_MOCK_LENGTHS } from "../../data/sampleFlowData.js";
+import { consumeNextMock, getAnyMock } from "../../data/sampleFlowData.js";
 import { SLIDE_TEMPLATE_DEFAULT, SLIDE_TEMPLATE_OPTIONS } from "../../data/slideTemplateOptions.js";
 import {
   MSG_SKIP_USE_SUBMIT,
   addAutofillBtn,
-  autofillCounters,
-  resetAutofillCounter,
   getAiAutofillHistory,
   addAiAutofillHistory,
   clamp,

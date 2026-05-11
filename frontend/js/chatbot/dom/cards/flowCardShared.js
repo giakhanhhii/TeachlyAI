@@ -1,21 +1,7 @@
 import { randomIntInclusive } from "../../services/sessionContentPrep.js";
-import { reshuffleType } from "../../data/sampleFlowData.js";
 
-export const autofillCounters = {
-  fullset: 0,
-  slide: 0,
-  quiz: 0,
-  flash: 0,
-  meta: 0,
-};
-
-/** Re-shuffle samples for a type and reset its counter — call when a new form card opens. */
-export function resetAutofillCounter(type) {
-  if (type in autofillCounters) {
-    autofillCounters[type] = 0;
-    reshuffleType(type);
-  }
-}
+/** @deprecated Autofill position is now persisted in localStorage via sampleFlowData — no-op. */
+export function resetAutofillCounter(_type) {}
 
 const _MAX_HISTORY = 12;
 const _aiAutofillHistory = { slide: /** @type {string[]} */([]), quiz: /** @type {string[]} */([]), flash: /** @type {string[]} */([]), fullset: /** @type {string[]} */([]) };

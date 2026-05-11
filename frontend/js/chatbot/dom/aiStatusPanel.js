@@ -6,15 +6,14 @@
 
 import { getApiOrigin } from "../config.js";
 import { AI_THRESHOLD, STORAGE_KEY, getPlayCounts } from "../services/aiContentApi.js";
-import { autofillCounters } from "./cards/flowCardShared.js";
-import { AUTOFILL_MOCK_LENGTHS } from "../data/sampleFlowData.js";
+import { AUTOFILL_MOCK_LENGTHS, getMockPos, resetAutofillState } from "../data/sampleFlowData.js";
 
 /** @type {["slide","quiz","flash","fullset"]} */
 const TYPES = ["slide", "quiz", "flash", "fullset"];
 const LABELS = { slide: "Slide", quiz: "Quiz", flash: "Flash", fullset: "Full Set" };
 
 function isAutofillAi(type) {
-  return autofillCounters[type] >= (AUTOFILL_MOCK_LENGTHS[type] ?? Infinity);
+  return getMockPos(type) >= (AUTOFILL_MOCK_LENGTHS[type] ?? Infinity);
 }
 
 function anyModeActive() {
@@ -119,7 +118,7 @@ export function mountAiStatusPanel() {
 
     // Autofill rows
     const autofillRows = TYPES.map((t) => {
-      const cur = autofillCounters[t] || 0;
+      const cur = getMockPos(t);
       const total = AUTOFILL_MOCK_LENGTHS[t] || 0;
       const isAi = cur >= total;
       return `<div class="ai-sp-row">
@@ -153,6 +152,7 @@ export function mountAiStatusPanel() {
     panel.querySelector(".ai-sp-close").addEventListener("click", closePanel);
     panel.querySelector(".ai-sp-reset").addEventListener("click", () => {
       localStorage.removeItem(STORAGE_KEY);
+      resetAutofillState();
       updateTrigger();
       renderPanel();
     });

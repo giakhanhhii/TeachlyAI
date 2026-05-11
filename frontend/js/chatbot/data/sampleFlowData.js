@@ -24,9 +24,7 @@ const SAMPLES_FULLSET = DIRECT_SLIDE_AUTOFILL_SAMPLES.slice(0, 40).map((sample, 
 }));
 
 const SAMPLES_SLIDE = DIRECT_SLIDE_AUTOFILL_SAMPLES.slice();
-
 const SAMPLES_QUIZ = DIRECT_QUIZ_AUTOFILL_SAMPLES.slice();
-
 const SAMPLES_FLASH = DIRECT_FLASH_AUTOFILL_SAMPLES.slice();
 
 function shuffle(arr) {
@@ -36,10 +34,6 @@ function shuffle(arr) {
   }
 }
 
-shuffle(SAMPLES_FULLSET);
-shuffle(SAMPLES_SLIDE);
-shuffle(SAMPLES_FLASH);
-
 /** Number of mock samples per type — autofill uses AI once counter reaches these. */
 export const AUTOFILL_MOCK_LENGTHS = {
   slide: SAMPLES_SLIDE.length,
@@ -48,12 +42,102 @@ export const AUTOFILL_MOCK_LENGTHS = {
   fullset: SAMPLES_FULLSET.length,
 };
 
-/** Re-shuffle the samples for a given type in-place (call when opening a new flow card). */
-export function reshuffleType(type) {
-  if (type === "slide") shuffle(SAMPLES_SLIDE);
-  else if (type === "quiz") shuffle(SAMPLES_QUIZ);
-  else if (type === "flash") shuffle(SAMPLES_FLASH);
-  else if (type === "fullset") shuffle(SAMPLES_FULLSET);
+// ── Persistent autofill state (localStorage) ────────────────────────────────
+const _LS_POS = "teachly_af_pos_";
+const _LS_ORD = "teachly_af_ord_";
+
+function _loadPos(type) {
+  try {
+    const v = parseInt(localStorage.getItem(_LS_POS + type) || "0", 10);
+    return Number.isFinite(v) && v >= 0 ? v : 0;
+  } catch { return 0; }
 }
+
+function _savePos(type, pos) {
+  try { localStorage.setItem(_LS_POS + type, String(pos)); } catch {}
+}
+
+function _loadOrder(type, len) {
+  try {
+    const raw = localStorage.getItem(_LS_ORD + type);
+    if (!raw) return null;
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr) || arr.length !== len) return null;
+    if (!arr.every((v) => Number.isInteger(v) && v >= 0 && v < len)) return null;
+    return arr;
+  } catch { return null; }
+}
+
+function _saveOrder(type, order) {
+  try { localStorage.setItem(_LS_ORD + type, JSON.stringify(order)); } catch {}
+}
+
+function _samplesOf(type) {
+  if (type === "slide") return SAMPLES_SLIDE;
+  if (type === "quiz") return SAMPLES_QUIZ;
+  if (type === "flash") return SAMPLES_FLASH;
+  return SAMPLES_FULLSET;
+}
+
+const _orders = /** @type {Record<string, number[]>} */ ({});
+const _positions = /** @type {Record<string, number>} */ ({});
+
+["slide", "quiz", "flash", "fullset"].forEach((type) => {
+  const samples = _samplesOf(type);
+  const stored = _loadOrder(type, samples.length);
+  if (stored) {
+    _orders[type] = stored;
+  } else {
+    const order = samples.map((_, i) => i);
+    shuffle(order);
+    _saveOrder(type, order);
+    _orders[type] = order;
+  }
+  _positions[type] = Math.min(_loadPos(type), samples.length);
+});
+
+/** Current position in the persistent autofill sequence for a type. */
+export function getMockPos(type) { return _positions[type] ?? 0; }
+
+/**
+ * Advance the persistent autofill sequence by one and return the next mock sample.
+ * Returns null when all mock samples for this type have been used → caller should use AI.
+ */
+export function consumeNextMock(type) {
+  const samples = _samplesOf(type);
+  const pos = _positions[type] ?? 0;
+  if (pos >= samples.length) return null;
+  const sample = samples[_orders[type][pos]];
+  _positions[type] = pos + 1;
+  _savePos(type, pos + 1);
+  return sample;
+}
+
+/**
+ * Return any mock sample at the current position (wrapping) without advancing.
+ * Used as AI-fallback filler when fetchAiAutofillTopic throws.
+ */
+export function getAnyMock(type) {
+  const samples = _samplesOf(type);
+  const order = _orders[type];
+  const pos = (_positions[type] ?? 0) % samples.length;
+  return samples[order[pos]];
+}
+
+/** Reset autofill position and re-shuffle order for all types (called by Reset button). */
+export function resetAutofillState() {
+  ["slide", "quiz", "flash", "fullset"].forEach((type) => {
+    const samples = _samplesOf(type);
+    const order = samples.map((_, i) => i);
+    shuffle(order);
+    _saveOrder(type, order);
+    _orders[type] = order;
+    _positions[type] = 0;
+    _savePos(type, 0);
+  });
+}
+
+/** @deprecated Shuffling is now handled by the persistent order — this is a no-op. */
+export function reshuffleType(_type) {}
 
 export { SAMPLES_FULLSET, SAMPLES_SLIDE, SAMPLES_QUIZ, SAMPLES_FLASH };
