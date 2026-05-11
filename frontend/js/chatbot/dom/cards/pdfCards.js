@@ -176,18 +176,18 @@ export function createFlashPdfMetaCard(onSubmit) {
 
 export function createPickPdfGateCard(deps) {
   const root = el("div", "flow-card");
-  root.appendChild(el("div", "flow-card-title", "Chọn tệp PDF"));
+  root.appendChild(el("div", "flow-card-title", "Chọn tệp"));
   root.appendChild(
-    el("p", "flow-hint", "Chọn một tệp .pdf, sau đó nhấn Tiếp tục. Teachly sẽ hiển thị biểu mẫu chi tiết ở bước sau."),
+    el("p", "flow-hint", "Hỗ trợ: PDF, DOCX, Markdown (.md), TXT — tối đa 20 trang. Chọn tệp rồi nhấn Tiếp tục."),
   );
 
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = ".pdf,application/pdf";
+  input.accept = ".pdf,.md,.txt,.docx,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
   input.style.display = "none";
 
   const name = el("span", "flow-file-name", "Chưa chọn tệp");
-  const pick = el("button", "flow-secondary-btn", "Chọn file PDF");
+  const pick = el("button", "flow-secondary-btn", "Chọn file");
   pick.type = "button";
 
   const row = el("div", "flow-file-row");
