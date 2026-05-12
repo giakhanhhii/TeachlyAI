@@ -1032,6 +1032,7 @@ export function init() {
     onBeforeBack: () => {
       if (!autoModeStore.isEnabled() || !_currentAutoExpKind) return false;
       endDwell();
+      const capturedKind = _currentAutoExpKind;
       const autoCount = recommendQueueStore.onExpCompleted();
       if (autoCount === 5) {
         const history = getLastN(5);
@@ -1039,15 +1040,14 @@ export function init() {
         fetchRecommendations(history)
           .then((data) => {
             recommendQueueStore.setRecommendations(data.topics ?? []);
-            recommendQueueStore.startPrefetch(_currentAutoExpKind, autoModeStore.getCounts());
+            recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
             updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5) });
           })
           .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5) }));
       }
       if (recommendQueueStore.shouldAutoAdvance()) {
-        const savedKind = _currentAutoExpKind;
         _currentAutoExpKind = null;
-        void launchAutoMode(savedKind, autoModeStore.getCounts());
+        void launchAutoMode(capturedKind, autoModeStore.getCounts());
         return true;
       }
       return false;
