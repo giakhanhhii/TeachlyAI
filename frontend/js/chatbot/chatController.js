@@ -621,8 +621,8 @@ export function init() {
     const spec = recommendQueueStore.getNextSpec(expKind, counts);
     setCurrentSlot(spec.slot || "");
 
-    if (recommendQueueStore.shouldAutoAdvance()) {
-      const kind = spec.kind || expKind;
+    if (recommendQueueStore.shouldAutoAdvance(expKind)) {
+      const kind = expKind;
       if (kind === "fullset") {
         await openResumeFullSetMixed(
           {
@@ -917,6 +917,7 @@ export function init() {
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
+      setSession(getCurrentSessionId());
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -943,6 +944,7 @@ export function init() {
     layerView.hide();
     renderMessages();
     writeAppNavigationState("replace");
+    setSession(getCurrentSessionId());
   } });
 
   messageHistoryService = createMessageHistoryService({
@@ -1019,6 +1021,7 @@ export function init() {
     onCreateNewChat: () => {
       persistActiveExperience();
       createSession();
+      setSession(getCurrentSessionId());
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1052,26 +1055,26 @@ export function init() {
       const capturedKind = _currentAutoExpKind;
       endDwell();
       updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
-      const autoCount = recommendQueueStore.onExpCompleted();
+      const autoCount = recommendQueueStore.onExpCompleted(capturedKind);
       if (autoCount === 5) {
         const history = getLastN(5, capturedKind);
         updateRecommendPanel({ status: "loading", log: history });
         fetchRecommendations(history, capturedKind)
           .then((data) => {
-            recommendQueueStore.setRecommendations(data.topics ?? []);
+            recommendQueueStore.setRecommendations(data.topics ?? [], capturedKind);
             recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
             updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
           })
           .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
       }
-      if (recommendQueueStore.shouldAutoAdvance()) {
+      if (recommendQueueStore.shouldAutoAdvance(capturedKind)) {
         _currentAutoExpKind = null;
         void launchAutoMode(capturedKind, autoModeStore.getCounts());
         return true;
       }
       return false;
     },
-    onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
+    onInitBaseRendered: () => { setSession(getCurrentSessionId()); console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
       writeAppNavigationState("replace", resolveCurrentPhase());
       console.log("[chatController] init completed");
