@@ -82,9 +82,10 @@ Generate a JSON quiz about the given English topic.
 
 Rules:
 - Exactly 10 questions
-- Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation in Vietnamese or English)
+- Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes in options array
 - Questions test practical knowledge of the topic
+- LANGUAGE RULE (HARD): ALL fields — title, text, options, hint — MUST be written in English. NEVER use Vietnamese in any field. This is an English-learning app; mixing Vietnamese defeats the purpose.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
@@ -95,12 +96,16 @@ Generate a JSON flashcard set about the given English topic.
 
 Rules:
 - Exactly 20 cards
-- Each card: "front" (English word or short phrase, max 4 words), "phonetic" (IPA), "back" (Vietnamese definition OR English definition, max 12 words), "hint" (brief usage note, max 8 words)
-- Keep "back" SHORT — max 12 words
+- Each card:
+  - "front": English word or short phrase (max 4 words) — MUST be in English
+  - "phonetic": IPA transcription
+  - "back": Vietnamese meaning ONLY (max 12 words) — MUST be in Vietnamese, never English
+  - "hint": short English example sentence or usage note (max 8 words) — MUST be in English
+- LANGUAGE RULE (HARD): front and hint MUST be English; back MUST be Vietnamese. No mixing.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<definition>","hint":"<usage note>"},...]}"""
+{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<English example>"},...]}"""
 
 
 def _call_openai(system: str, user: str, max_tokens: int) -> str:
@@ -374,6 +379,7 @@ Rules:
 - Each question: "text" (the question), "options" (4 short choices), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes
 - All questions must be answerable from the document
+- LANGUAGE RULE (HARD): ALL fields — title, text, options, hint — MUST be written in English. NEVER use Vietnamese in any field. This is an English-learning app; mixing Vietnamese defeats the purpose.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
@@ -388,15 +394,16 @@ Rules:
 - Pick ONLY real English vocabulary: nouns, verbs, adjectives, adverbs, collocations, idioms, or key topic phrases
 - NEVER create cards for grammar terms, tense names (e.g. "Present simple", "Past perfect"), or meta-linguistic labels (e.g. "auxiliary verb", "modal verb", "clause")
 - Each card:
-  - "front": the English word or short phrase (max 4 words)
+  - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription
-  - "back": SHORT Vietnamese meaning (max 10 words) — translate the word, do NOT define grammar
-  - "hint": a short example sentence or collocate (max 10 words)
+  - "back": SHORT Vietnamese meaning (max 10 words) — MUST be in Vietnamese, never English
+  - "hint": short English example sentence or collocate (max 10 words) — MUST be in English
+- LANGUAGE RULE (HARD): front and hint MUST be English; back MUST be Vietnamese. No mixing allowed.
 - Prioritise topic-specific vocabulary that reflects the subject matter of the document
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<example>"},...]}"""
+{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<English example>"},...]}"""
 
 _DOC_CHAR_LIMIT = 12_000  # chars of document sent to model (well within gpt-4o-mini context)
 
