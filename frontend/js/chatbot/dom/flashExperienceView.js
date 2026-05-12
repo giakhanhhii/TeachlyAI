@@ -1,5 +1,8 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { beginDwell } from "../services/dwellStore.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
+import { startAiCountdown } from "./experienceLoading.js";
 import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
@@ -108,6 +111,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   hookFlashSpeechVoicesOnce();
   const experienceBody = layerView.body;
   if (typeof experienceBody._kbAbort === "function") { experienceBody._kbAbort(); delete experienceBody._kbAbort; }
+  const _genStamp = Symbol();
+  experienceBody._genStamp = _genStamp;
 
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const restoredCards = normalizeFlashCards(initial?.cardsSnapshot);
@@ -116,13 +121,45 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   if (restoredCards.length === 0) {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
-    _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-    const _loadEl = _devSrc === "ai" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
-    flashRaw = _devSrc === "ai"
-      ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
-      : await fetchMockResource("flashcard");
-    _loadEl?.remove();
-    incrementPlayCount("flash");
+    const _uploadFile = meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
+    const _bgFetch = !_uploadFile && meta?.__bgFetchId ? getFetch(String(meta.__bgFetchId)) : null;
+    if (_uploadFile || _bgFetch) {
+      experienceBody.innerHTML = "";
+      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
+      const _stopCountdown = startAiCountdown(_loadEl, 15);
+      try {
+        flashRaw = _bgFetch
+          ? await _bgFetch.promise
+          : await fetchAiFileContent("flashcard", _uploadFile, { count: Number(meta?.count) || 20, notes: meta?.extra || "" });
+      } catch (err) {
+        _stopCountdown();
+        if (experienceBody._genStamp !== _genStamp) return;
+        _loadEl.remove();
+        experienceBody.innerHTML = "";
+        const box = document.createElement("div"); box.className = "exp-upload-error";
+        box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
+        experienceBody.appendChild(box);
+        return;
+      }
+      _stopCountdown();
+      if (experienceBody._genStamp !== _genStamp) return;
+      _loadEl.remove();
+      _devSrc = "ai";
+      incrementPlayCount("flash");
+    } else {
+      _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _loadLabel = _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải nội dung…";
+      const _loadEl = (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })();
+      const _stopCountdown = _devSrc === "ai" ? startAiCountdown(_loadEl, 15) : null;
+      flashRaw = _devSrc === "ai"
+        ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
+        : await fetchMockResource("flashcard");
+      _stopCountdown?.();
+      if (experienceBody._genStamp !== _genStamp) return;
+      _loadEl?.remove();
+      incrementPlayCount("flash");
+      document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    }
   }
   const data =
     restoredCards.length > 0
@@ -132,6 +169,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   const cards = normalizeFlashCards(data.cards);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
   const totalCards = cards.length;
+  if (restoredCards.length === 0) beginDwell(meta?.source || meta?.list || meta?.topic || titleText, "flash");
   const cardKeys = buildCardKeys(cards);
   const cardKeySet = new Set(cardKeys);
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
@@ -158,7 +196,6 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-flash";
-  if (restoredCards.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
 
   const topBar = createExperienceTopBar({
     title: titleText,

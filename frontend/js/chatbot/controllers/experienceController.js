@@ -1,4 +1,7 @@
 import { restoreCurrentSessionExperience as restoreExperienceFromSession } from "../services/experienceService.js";
+import { takePendingPdfFile } from "../pdfPrefillStore.js";
+import { fetchAiFileContent } from "../services/aiContentApi.js";
+import { startFetch } from "../services/backgroundFetchStore.js";
 import { createExperienceHistoryService } from "../services/experienceHistoryService.js";
 import { createExperienceResumeService } from "../services/experienceResumeService.js";
 import {
@@ -254,8 +257,18 @@ export function createExperienceController(deps) {
    */
   async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "", historyOpts) {
     const safeSpec = spec && typeof spec === "object" ? { ...spec } : {};
+    if (safeSpec.__pdfPending === "1") {
+      const pendingFile = takePendingPdfFile();
+      if (pendingFile) safeSpec.__pdfFile = pendingFile;
+      delete safeSpec.__pdfPending;
+    }
     const experienceId =
       forcedExperienceId || resumeService.readExperienceIdFromMeta(safeSpec) || resumeService.generateExperienceId();
+    if (safeSpec.__pdfFile instanceof File) {
+      startFetch(experienceId, fetchAiFileContent("fullset", safeSpec.__pdfFile, { notes: safeSpec.extra || "" }));
+      safeSpec.__bgFetchId = experienceId;
+      delete safeSpec.__pdfFile;
+    }
     const scopedSpec = resumeService.withExperienceIdMeta(safeSpec, experienceId);
     resumeService.rememberOpenFullSetMixedForBack(bundleTitle || "Full set", scopedSpec, experienceId);
     persistActiveExperience();

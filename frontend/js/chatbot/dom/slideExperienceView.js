@@ -1,5 +1,8 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiContent } from "../services/aiContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { beginDwell } from "../services/dwellStore.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
+import { startAiCountdown } from "./experienceLoading.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -91,6 +94,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const slideUiAbort = new AbortController();
   const uiSignal = slideUiAbort.signal;
   root.__slideExperienceAbort = slideUiAbort;
+  const _genStamp = Symbol();
+  root._genStamp = _genStamp;
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const initialSlides = Array.isArray(initial?.slides) ? initial.slides : null;
   const initialMeta = initial?.meta && typeof initial.meta === "object" ? initial.meta : null;
@@ -98,16 +103,49 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const isRestore = Boolean(initialSlides);
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || effectiveMeta?.__autoMode === "1";
-  const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-  const _loadEl = _devSrc === "ai" ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
-  const raw = _devSrc === "ai"
-    ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
-    : await fetchMockResource("slide");
-  _loadEl?.remove();
-  if (!isRestore) incrementPlayCount("slide");
+  const _uploadFile = !isRestore && effectiveMeta?.__pdfFile instanceof File ? effectiveMeta.__pdfFile : null;
+  const _bgFetch = !isRestore && !_uploadFile && effectiveMeta?.__bgFetchId ? getFetch(String(effectiveMeta.__bgFetchId)) : null;
+  let raw;
+  if (_uploadFile || _bgFetch) {
+    root.innerHTML = "";
+    const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang slide, vui lòng đợi</span>'; root.appendChild(w); return w; })();
+    const _stopCountdown = startAiCountdown(_loadEl, 20);
+    try {
+      raw = _bgFetch
+        ? await _bgFetch.promise
+        : await fetchAiFileContent("slide", _uploadFile, { count: Number(effectiveMeta?.count) || 10, notes: effectiveMeta?.notes || "" });
+    } catch (err) {
+      _stopCountdown();
+      if (root._genStamp !== _genStamp) return;
+      _loadEl.remove();
+      root.innerHTML = "";
+      const box = document.createElement("div"); box.className = "exp-upload-error";
+      box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
+      root.appendChild(box);
+      return;
+    }
+    _stopCountdown();
+    if (root._genStamp !== _genStamp) return;
+    _loadEl.remove();
+    if (!isRestore) incrementPlayCount("slide");
+  } else {
+    const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+    const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
+    const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
+    const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
+    raw = _devSrc === "ai"
+      ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
+      : await fetchMockResource("slide");
+    _stopCountdown?.();
+    if (root._genStamp !== _genStamp) return;
+    _loadEl?.remove();
+    if (!isRestore) incrementPlayCount("slide");
+    if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+  }
   const data = prepareSlideSessionData(raw, effectiveMeta);
   const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
   let slides = initialSlides ? initialSlides.slice() : Array.isArray(data.slides) ? data.slides : [];
+  if (!isRestore) beginDwell(effectiveMeta?.topic || effectiveMeta?.source || deckTitle, "slide");
   const sessionMeta =
     initialMeta
     || (data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta);
@@ -117,7 +155,6 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-slide";
-  if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
   const teardownObserver = new MutationObserver(() => {
     if (!shell.isConnected) {
       slideUiAbort.abort();

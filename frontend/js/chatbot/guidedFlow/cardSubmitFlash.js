@@ -13,8 +13,8 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
       payload.style ? `Phong cách: ${payload.style}` : "",
       payload.notes ? `Ghi chú: ${payload.notes}` : "",
-      pdfFn ? `Tệp PDF: ${pdfFn}` : "",
-      "Nguồn: PDF",
+      pdfFn ? `Tệp: ${pdfFn}` : "",
+      "Nguồn: file",
     ]
       .filter(Boolean)
       .join(" | ");
@@ -22,12 +22,13 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       source: payload.name || "—",
       count: payload.count || "—",
       extra: extra || "—",
+      ...(guided.data?.pdfFile instanceof File ? { __pdfFile: guided.data.pdfFile } : {}),
     };
     return {
       handled: true,
       guided: null,
       effects: [
-        { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard — PDF] ${meta.source} — ${meta.count} thẻ` },
+        { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard — file] ${meta.source} — ${meta.count} thẻ` },
         { type: "showFlash", meta },
       ],
     };

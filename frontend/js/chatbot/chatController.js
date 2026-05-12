@@ -47,6 +47,9 @@ import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventMa
 import * as autoModeStore from "./services/autoModeStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
+import { endDwell, shouldRecommend, getLastN } from "./services/dwellStore.js";
+import { fetchRecommendations } from "./services/aiContentApi.js";
+import { mountRecommendPanel, updateRecommendPanel } from "./dom/recommendationPanel.js";
 
 /** @type {any} */
 let guided = null;
@@ -93,6 +96,8 @@ export function init() {
   const apiUrl = getChatApiUrl();
   console.log("[chatController] DOM references resolved");
   mountAiStatusPanel();
+  mountRecommendPanel();
+  window.addEventListener("beforeunload", () => endDwell());
   initializeBrowserBackBridge();
   let currentHistoryNavSeq =
     Number.isFinite(Number(history.state?.[HISTORY_NAV_SEQ_KEY])) ? Math.floor(Number(history.state[HISTORY_NAV_SEQ_KEY])) : 0;
@@ -619,6 +624,14 @@ export function init() {
    * @param {"fullset"|"quiz"|"slide"|"flashcard"|"flash"} flowKind
    * @param {() => void | Promise<void>} onCustom - called to proceed with the normal guided flow
    */
+  function syncToggleUI(enabled) {
+    const toggleBtn = document.querySelector(".auto-mode-toggle");
+    if (!toggleBtn) return;
+    toggleBtn.setAttribute("aria-pressed", enabled ? "true" : "false");
+    const lbl = toggleBtn.querySelector(".toggle-label");
+    if (lbl) lbl.textContent = enabled ? "Tạo Auto" : "Tạo Custom";
+  }
+
   function handleFlowWithAutoMode(flowKind, onCustom) {
     const expKind = toExpKind(flowKind);
 
@@ -645,6 +658,7 @@ export function init() {
     const savedChoice = autoModeStore.getNeverAskChoice();
     if (savedChoice === "auto") {
       autoModeStore.enable();
+      syncToggleUI(true);
       openCountSelector();
       return;
     }
@@ -661,6 +675,7 @@ export function init() {
       onAuto: (neverAsk) => {
         if (neverAsk) autoModeStore.setNeverAskChoice("auto");
         autoModeStore.enable();
+        syncToggleUI(true);
         openCountSelector();
       },
     });
@@ -837,6 +852,16 @@ export function init() {
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
     if (isSwitchingSession) return;
     isSwitchingSession = true;
+    const _dwellCount = endDwell();
+    if (_dwellCount > 0 && shouldRecommend()) {
+      const _history = getLastN(5);
+      updateRecommendPanel({ status: "loading", log: _history });
+      fetchRecommendations(_history)
+        .then(data => updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5) }))
+        .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5) }));
+    } else {
+      updateRecommendPanel({ status: "recording", log: getLastN(5) });
+    }
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
@@ -851,11 +876,14 @@ export function init() {
       }
       renderChatListUI();
       renderMessages();
-      await restoreCurrentSessionExperience();
-      writeAppNavigationState("push", resolveCurrentPhase());
     } finally {
       isSwitchingSession = false;
     }
+    // Mount experience outside the switch lock so rapid session switches aren't blocked.
+    // Concurrent mounts are safe: the _genStamp stamp on layerView.body ensures only the
+    // most recent mount writes to the DOM.
+    await restoreCurrentSessionExperience();
+    writeAppNavigationState("push", resolveCurrentPhase());
   }, onSessionDeleted: async () => {
     setGuidedState(null);
     experienceController.resetResumeState();

@@ -10,8 +10,8 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
       payload.style ? `Mẫu: ${payload.style}` : "",
       payload.notes ? `Ghi chú: ${payload.notes}` : "",
-      pdfFn ? `Tệp PDF: ${pdfFn}` : "",
-      "Nguồn: PDF",
+      pdfFn ? `Tệp: ${pdfFn}` : "",
+      "Nguồn: file",
     ]
       .filter(Boolean)
       .join(" | ");
@@ -23,6 +23,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       structure: String(payload.structure || ""),
       style: String(payload.style || ""),
       ...(payload.presetId ? { presetId: payload.presetId } : {}),
+      ...(guided.data?.pdfFile instanceof File ? { __pdfFile: guided.data.pdfFile } : {}),
     };
     return {
       handled: true,
@@ -30,7 +31,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       effects: [
         {
           type: "pushUser",
-          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide — PDF] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide — file] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
         },
         { type: "showSlide", meta },
       ],

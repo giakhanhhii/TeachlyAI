@@ -26,11 +26,11 @@ function handleFullsetPick(guided, value) {
       handled: true,
       guided: { kind: "fullset", step: "await_pdf_confirm", data: {} },
       effects: [
-        { type: "pushUser", text: "Tải lên PDF" },
+        { type: "pushUser", text: "Tải lên file" },
         {
           type: "pushBot",
           text:
-            "Bạn đã chọn tải lên PDF.\n\nKhi tích hợp xong, Teachly sẽ dùng Chandra OCR2 để chuyển nội dung sang Markdown. Hiện tại bạn chỉ cần chọn tệp bên dưới để hoàn tất bước chuẩn bị trên giao diện.",
+            "Bạn đã chọn tải lên tệp tài liệu.\n\nTeachly sẽ chuyển nội dung sang Markdown và dùng AI để tạo Full Set từ tài liệu của bạn. Hỗ trợ: PDF, DOCX, Markdown (.md), TXT — tối đa 20 trang.",
           cardType: "fullset_pdf",
         },
       ],
@@ -68,12 +68,22 @@ function handleSingleModePick(guided, value, pdfFile) {
   if (value === sourceValue) {
     if (pdfFile) {
       const fileName = pdfFile.name;
+      const showType = kind === "slide" ? "showSlide" : kind === "quiz" ? "showQuiz" : "showFlash";
+      const meta = kind === "flash"
+        ? { source: fileName, count: "20", extra: `Nguồn: file | Tệp: ${fileName}`, __pdfFile: pdfFile }
+        : {
+            topic: fileName,
+            count: "10",
+            notes: `Nguồn: file | Tệp: ${fileName}`,
+            ...(kind === "slide" ? { slideTemplate: "" } : {}),
+            __pdfFile: pdfFile,
+          };
       return {
         handled: true,
-        guided: { kind, step: "await_pdf_meta", data: { pdfFileName: fileName } },
+        guided: null,
         effects: [
-          { type: "pushUser", text: `Tải lên PDF — ${fileName}` },
-          { type: "pushBot", text: pdfMetaFormIntro(kind), cardType: metaCardType },
+          { type: "pushUser", text: `Tải lên file — ${fileName}` },
+          { type: showType, meta },
         ],
       };
     }
@@ -81,7 +91,7 @@ function handleSingleModePick(guided, value, pdfFile) {
       handled: true,
       guided: { kind, step: "await_pdf_file", data: {} },
       effects: [
-        { type: "pushUser", text: "Tải lên PDF" },
+        { type: "pushUser", text: "Tải lên file" },
         { type: "pushBot", text: "", cardType: "pick_pdf_gate" },
       ],
     };

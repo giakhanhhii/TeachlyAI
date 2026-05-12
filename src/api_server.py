@@ -20,7 +20,7 @@ import tempfile
 from pathlib import Path
 from anthropic import Anthropic
 from openai import OpenAI
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -48,7 +48,17 @@ from .ai_content_generate import (
     generate_autofill_quiz,
     generate_autofill_flash,
     generate_autofill_fullset,
+    generate_slide_from_document,
+    generate_quiz_from_document,
+    generate_flash_from_document,
+    generate_fullset_from_document,
+    generate_topic_recommendations,
     TOPIC_POOL,
+)
+from .utils.file_extractor import (
+    extract_text,
+    UnsupportedFormatError,
+    PageLimitError,
 )
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -412,6 +422,63 @@ def ai_generate(body: AiGenerateIn):
         ) from exc
 
 
+@app.post("/api/file-upload")
+async def file_upload(
+    type: str = Form(...),
+    count: int = Form(default=10),
+    notes: str = Form(default=""),
+    file: UploadFile = File(...),
+):
+    """Upload a file (PDF/DOCX/MD/TXT), extract to Markdown, and generate content via AI.
+
+    Returns the same JSON schema as /api/ai-generate.
+    """
+    if not re.match(r"^(slide|quiz|flashcard|fullset)$", type):
+        raise HTTPException(status_code=422, detail="type không hợp lệ (slide/quiz/flashcard/fullset).")
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=503, detail="Chưa cấu hình OPENAI_API_KEY trong .env.")
+
+    contents = await file.read()
+    if len(contents) > 20 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Tệp quá lớn (tối đa 20 MB).")
+
+    try:
+        document_text = extract_text(contents, file.filename or "", openai_api_key=OPENAI_API_KEY)
+    except UnsupportedFormatError as exc:
+        raise HTTPException(status_code=415, detail=str(exc)) from exc
+    except PageLimitError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    logger.info(
+        "File upload: type=%s filename=%s chars=%d count=%d",
+        type, file.filename, len(document_text), count,
+    )
+
+    try:
+        if type == "slide":
+            return generate_slide_from_document(document_text, count, notes)
+        if type == "quiz":
+            return generate_quiz_from_document(document_text, count, notes)
+        if type == "flashcard":
+            return generate_flash_from_document(document_text, count, notes)
+        return generate_fullset_from_document(document_text, notes=notes)
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("AI content generation from file failed (type=%s)", type)
+        code = getattr(exc, "status_code", None)
+        if code == 429:
+            raise HTTPException(status_code=503, detail="OpenAI rate limit. Vui lòng thử lại sau.") from exc
+        if code in (401, 403):
+            raise HTTPException(status_code=503, detail="OpenAI từ chối API key. Kiểm tra .env.") from exc
+        raise HTTPException(
+            status_code=502,
+            detail=(str(exc) or "Lỗi sinh nội dung AI từ tệp.").strip()[:600],
+        ) from exc
+
+
 @app.get("/api/status")
 def api_status():
     """Lightweight config status — returns which API keys are set (no secrets exposed)."""
@@ -601,6 +668,26 @@ if SLIDE_HTML_DIR.is_dir():
         StaticFiles(directory=str(SLIDE_HTML_DIR), html=True),
         name="slide_html",
     )
+
+
+class RecommendRequest(BaseModel):
+    history: list[dict]
+
+
+@app.post("/api/recommend-topics")
+def api_recommend_topics(req: RecommendRequest):
+    if not OPENAI_API_KEY:
+        raise HTTPException(status_code=503, detail="API key chưa được cấu hình")
+    if not req.history:
+        raise HTTPException(status_code=422, detail="history is empty")
+    try:
+        return generate_topic_recommendations(req.history[-5:])
+    except (ValueError, KeyError) as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("Recommendation generation failed")
+        raise HTTPException(status_code=502, detail=str(exc) or "Lỗi gợi ý chủ đề.") from exc
+
 
 if FRONTEND_DIR.is_dir():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")

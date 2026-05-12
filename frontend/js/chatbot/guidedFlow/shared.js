@@ -1,5 +1,5 @@
 export const MSG_START_SOURCE =
-  "Chào bạn! Để bắt đầu, bạn đã có tài liệu (PDF/Văn bản) sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
+  "Chào bạn! Bạn đã có tài liệu sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
 export const MSG_CONTINUE_SOURCE = "Bạn muốn tiếp tục theo cách nào?";
 export const CONTINUE_SOURCE_PROMPT_KEY = "continue_source_prompt";
 
@@ -9,25 +9,25 @@ export const PDF_SOURCE_ACTION_VALUES = new Set(["fullset_pdf", "slide_pdf", "qu
 /** @type {Record<"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest", { label: string, value: string }[]>} */
 const SOURCE_ACTIONS_BY_KIND = {
   fullset: [
-    { label: "Tải lên PDF", value: "fullset_pdf" },
+    { label: "Tải lên file", value: "fullset_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "fullset_topic" },
   ],
   slide: [
-    { label: "Tải lên PDF", value: "slide_pdf" },
+    { label: "Tải lên file", value: "slide_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "slide_topic" },
   ],
   quiz: [
-    { label: "Tải lên PDF", value: "quiz_pdf" },
+    { label: "Tải lên file", value: "quiz_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
     { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
   ],
   flash: [
-    { label: "Tải lên PDF", value: "flash_pdf" },
+    { label: "Tải lên file", value: "flash_pdf" },
     { label: "Nhập từ vựng trực tiếp", value: "flash_vocab" },
     { label: "Nhập chủ đề trực tiếp", value: "flash_topic" },
   ],
   thptqg_fulltest: [
-    { label: "Tải lên PDF", value: "quiz_pdf" },
+    { label: "Tải lên file", value: "quiz_pdf" },
     { label: "Nhập chủ đề trực tiếp", value: "quiz_topic" },
     { label: "Làm full đề THPTQG", value: "quiz_fulltest" },
   ],
@@ -60,15 +60,15 @@ export function isContinueSourcePromptMessage(message) {
   return String(message.text || "") === MSG_CONTINUE_SOURCE && Array.isArray(message.actions) && message.actions.length > 0;
 }
 
-/** Tin nhắn bot trước form meta PDF (slide / quiz / flash). */
+/** Tin nhắn bot trước form meta file (slide / quiz / flash). */
 export function pdfMetaFormIntro(/** @type {"slide"|"quiz"|"flash"} */ kind) {
   if (kind === "slide") {
-    return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:";
+    return "Bạn đã chọn tệp. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bài giảng từ tài liệu của bạn:";
   }
   if (kind === "quiz") {
-    return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:";
+    return "Bạn đã chọn tệp. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ đề từ tài liệu của bạn:";
   }
-  return "Bạn đã chọn tệp PDF. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:";
+  return "Bạn đã chọn tệp. Hoàn thiện tên, số lượng, cấu trúc, phong cách và ghi chú để Teachly chuẩn bị bộ flashcard từ tài liệu của bạn:";
 }
 
 /**

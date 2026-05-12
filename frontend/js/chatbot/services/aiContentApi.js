@@ -143,6 +143,35 @@ export async function fetchAiAutofillTopic(type, recent = []) {
 }
 
 /**
+ * Upload a file (PDF/DOCX/MD/TXT), extract to Markdown, and generate content via AI.
+ * Backend enforces format + page-limit validation and returns Vietnamese error messages.
+ * @param {"slide"|"quiz"|"flashcard"|"fullset"} type
+ * @param {File} file
+ * @param {{ count?: number, notes?: string }} [opts]
+ * @returns {Promise<any>}
+ */
+export async function fetchAiFileContent(type, file, opts = {}) {
+  const url = `${getApiOrigin()}/api/file-upload`;
+  const fd = new FormData();
+  fd.append("type", type);
+  fd.append("file", file);
+  if (opts.count != null) fd.append("count", String(opts.count));
+  if (opts.notes) fd.append("notes", opts.notes);
+  const res = await fetch(url, { method: "POST", body: fd });
+  if (!res.ok) {
+    let detail = "";
+    try {
+      const err = await res.json();
+      detail = err?.detail || "";
+    } catch {
+      // ignore
+    }
+    throw new Error(detail || `File upload (${type}) thất bại (${res.status}).`);
+  }
+  return res.json();
+}
+
+/**
  * Fetch AI-generated fullset content (slide + quiz + flashcard, same topic).
  * @param {string} [topic] - topic from the form; if provided all three types share it
  * @returns {Promise<{ slide: any, quiz: any, flashcard: any, topic: string }>}
@@ -165,5 +194,17 @@ export async function fetchAiFullsetContent(topic) {
     }
     throw new Error(`AI generate (fullset) failed ${res.status}${detail ? ": " + detail : ""}`);
   }
+  return res.json();
+}
+
+/** Fetch AI topic recommendations based on dwell-time history. */
+export async function fetchRecommendations(history) {
+  const url = `${getApiOrigin()}/api/recommend-topics`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ history }),
+  });
+  if (!res.ok) throw new Error(`Recommend failed ${res.status}`);
   return res.json();
 }

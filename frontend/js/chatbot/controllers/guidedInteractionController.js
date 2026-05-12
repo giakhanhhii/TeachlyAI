@@ -7,6 +7,8 @@ import {
 } from "../guidedFlow.js";
 import { setPendingPdfFile } from "../pdfPrefillStore.js";
 import { createFlowActionHandler } from "../services/flowIntegration.js";
+import { fetchAiFileContent } from "../services/aiContentApi.js";
+import { startFetch } from "../services/backgroundFetchStore.js";
 
 /**
  * @returns {Promise<File | null>}
@@ -29,7 +31,7 @@ function pickPdfWithDialog() {
   return new Promise((resolve) => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".pdf,application/pdf";
+    input.accept = ".pdf,.md,.txt,.docx,.jpg,.jpeg,.png,.webp,.gif,.bmp,application/pdf,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*";
 
     let settled = false;
     const done = (/** @type {File | null} */ f) => {
@@ -116,14 +118,29 @@ export function createGuidedInteractionController(deps) {
       });
       else if (e.type === "showQuiz") {
         const scoped = ensureMetaExperienceId(e.meta || {});
+        if (scoped.meta.__pdfFile instanceof File) {
+          startFetch(scoped.experienceId, fetchAiFileContent("quiz", scoped.meta.__pdfFile, { count: Number(scoped.meta.count) || 10, notes: scoped.meta.notes || "" }));
+          scoped.meta.__bgFetchId = scoped.experienceId;
+          delete scoped.meta.__pdfFile;
+        }
         pushQuickResumeDock("quiz", scoped.meta, scoped.experienceId);
         await openSingleExperience("quiz", scoped.meta, "fresh", scoped.experienceId);
       } else if (e.type === "showFlash") {
         const scoped = ensureMetaExperienceId(e.meta || {});
+        if (scoped.meta.__pdfFile instanceof File) {
+          startFetch(scoped.experienceId, fetchAiFileContent("flashcard", scoped.meta.__pdfFile, { count: Number(scoped.meta.count) || 20, notes: scoped.meta.extra || "" }));
+          scoped.meta.__bgFetchId = scoped.experienceId;
+          delete scoped.meta.__pdfFile;
+        }
         pushQuickResumeDock("flash", scoped.meta, scoped.experienceId);
         await openSingleExperience("flash", scoped.meta, "fresh", scoped.experienceId);
       } else if (e.type === "showSlide") {
         const scoped = ensureMetaExperienceId(e.meta || {});
+        if (scoped.meta.__pdfFile instanceof File) {
+          startFetch(scoped.experienceId, fetchAiFileContent("slide", scoped.meta.__pdfFile, { count: Number(scoped.meta.count) || 10, notes: scoped.meta.notes || "" }));
+          scoped.meta.__bgFetchId = scoped.experienceId;
+          delete scoped.meta.__pdfFile;
+        }
         pushQuickResumeDock("slide", scoped.meta, scoped.experienceId);
         await openSingleExperience("slide", scoped.meta, "fresh", scoped.experienceId);
       } else if (e.type === "showThptqgFullTest") {

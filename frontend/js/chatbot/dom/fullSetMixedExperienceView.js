@@ -1,5 +1,8 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent } from "../services/aiContentApi.js";
+import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import { beginDwell } from "../services/dwellStore.js";
+import { getFetch } from "../services/backgroundFetchStore.js";
+import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -73,6 +76,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   hookFlashSpeechVoicesOnce();
   const root = layerView.body;
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
+  const _genStamp = Symbol();
+  root._genStamp = _genStamp;
   root.innerHTML = "";
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
@@ -93,22 +98,54 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let cards = [];
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
-  const _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
+  const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
+  const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
+  let _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
-    const _loadEl = _devSrc === "ai" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
-    if (_devSrc === "ai") {
+    if (_uploadFile || _bgFetch) {
+      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Tạo slide, câu hỏi và flashcard từ tài liệu</span>'; root.appendChild(w); return w; })();
+      const _stopCountdown = startAiCountdown(_loadEl, 35);
+      try {
+        const aiBundle = _bgFetch
+          ? await _bgFetch.promise
+          : await fetchAiFileContent("fullset", _uploadFile, { notes: spec.extra || "" });
+        rawSlide = aiBundle.slide;
+        rawQuiz = aiBundle.quiz;
+        rawFlash = aiBundle.flashcard;
+      } catch (err) {
+        _stopCountdown();
+        if (root._genStamp !== _genStamp) return;
+        _loadEl.remove();
+        root.innerHTML = "";
+        const box = document.createElement("div"); box.className = "exp-upload-error";
+        box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
+        root.appendChild(box);
+        return;
+      }
+      _stopCountdown();
+      if (root._genStamp !== _genStamp) return;
+      _loadEl.remove();
+      _devSrc = "ai";
+    } else if (_devSrc === "ai") {
+      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })();
+      const _stopCountdown = startAiCountdown(_loadEl, 30);
       const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
       });
+      _stopCountdown();
+      if (root._genStamp !== _genStamp) return;
       rawSlide = aiBundle.slide;
       rawQuiz = aiBundle.quiz;
       rawFlash = aiBundle.flashcard;
+      _loadEl.remove();
     } else {
+      const _loadElMock = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">Đang tải nội dung…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })();
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+      if (root._genStamp !== _genStamp) return;
+      _loadElMock.remove();
     }
-    _loadEl?.remove();
     incrementPlayCount("fullset");
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);
     const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
@@ -170,7 +207,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
-  if (restoredSteps.length === 0) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+  if (restoredSteps.length === 0) {
+    document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    beginDwell(spec?.topic || titleText, "fullset");
+  }
   const topBar = createExperienceTopBar({ title: titleText }).bar;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {
