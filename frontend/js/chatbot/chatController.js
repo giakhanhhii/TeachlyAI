@@ -902,6 +902,7 @@ export function init() {
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
+      setDwellSessionId(getCurrentSessionId());
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1004,6 +1005,7 @@ export function init() {
     onCreateNewChat: () => {
       persistActiveExperience();
       createSession();
+      setDwellSessionId(getCurrentSessionId());
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();

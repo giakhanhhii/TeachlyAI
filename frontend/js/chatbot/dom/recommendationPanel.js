@@ -4,6 +4,15 @@ import { getLog, getActiveDwell } from "../services/dwellStore.js";
 let _panelEl = null;
 let _pendingUpdate = null;
 let _liveTimer = null;
+let _currentSlot = "";
+
+/** Update the slot label shown in the REC toggle button (e.g. "warmup #3", "rank1"). */
+export function setCurrentSlot(slot) {
+  _currentSlot = slot || "";
+  if (!_panelEl) return;
+  const toggleBtn = _panelEl.querySelector(".rec-panel__toggle");
+  if (toggleBtn) toggleBtn.textContent = _currentSlot ? `REC [${_currentSlot}]` : "REC";
+}
 
 export function mountRecommendPanel() {
   if (_panelEl) return;
