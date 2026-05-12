@@ -110,6 +110,7 @@ export function resolveChatDomElements() {
  *   restoreCurrentSessionExperience: () => Promise<void>,
  *   onInitBaseRendered?: () => void,
  *   onInitCompleted?: () => void,
+ *   onBeforeBack?: () => boolean,
  * }} deps
  */
 export function setupChatEventManager(deps) {
@@ -143,6 +144,7 @@ export function setupChatEventManager(deps) {
     restoreCurrentSessionExperience,
     onInitBaseRendered,
     onInitCompleted,
+    onBeforeBack,
   } = deps;
 
   const sidebar = document.getElementById("sidebar");
@@ -200,6 +202,7 @@ export function setupChatEventManager(deps) {
   });
 
   backToChatBtn?.addEventListener("click", () => {
+    if (onBeforeBack?.()) return;
     if (canBackToChatFromHistoryState()) {
       history.back();
       return;

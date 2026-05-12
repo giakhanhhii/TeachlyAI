@@ -197,13 +197,17 @@ export async function fetchAiFullsetContent(topic) {
   return res.json();
 }
 
-/** Fetch AI topic recommendations based on dwell-time history. */
-export async function fetchRecommendations(history) {
+/** Fetch AI topic recommendations based on dwell-time history.
+ * @param {Array} history
+ * @param {string} [kind] — if provided, all recommendations will be of this kind
+ */
+export async function fetchRecommendations(history, kind) {
   const url = `${getApiOrigin()}/api/recommend-topics`;
+  const body = kind ? { history, kind } : { history };
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ history }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`Recommend failed ${res.status}`);
   return res.json();

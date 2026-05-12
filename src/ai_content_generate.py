@@ -506,7 +506,7 @@ def generate_fullset_from_document(
 # Recommendation system
 # ---------------------------------------------------------------------------
 
-_RECOMMEND_SYSTEM = """You are a learning topic recommender for a Vietnamese English-learning app.
+_RECOMMEND_SYSTEM_MIXED = """You are a learning topic recommender for a Vietnamese English-learning app.
 You receive a list of the user's recent study sessions with their engagement time (dwellSeconds).
 Higher dwell time means the user was more engaged with that topic.
 
@@ -520,18 +520,42 @@ Your job: Recommend exactly 4 new study topics that:
 Return ONLY valid JSON, no markdown fences, no explanation:
 {"topics":[{"topic":"<English topic name>","kind":"slide"|"quiz"|"flash"|"fullset","reason":"<Vietnamese reason, max 15 words>"},...]}"""
 
+_RECOMMEND_SYSTEM_SAME_KIND = """You are a learning topic recommender for a Vietnamese English-learning app.
+You receive a list of the user's recent study sessions with their engagement time (dwellSeconds).
+Higher dwell time means the user was more engaged with that topic.
 
-def generate_topic_recommendations(history: list[dict]) -> dict:
+Your job: Recommend exactly 4 new study topics that:
+- Are DIFFERENT from every topic already in the history list (no repeats)
+- Are SIMILAR in genre/domain to the topics the user spent the most time on
+- ALL 4 must be of kind: {kind}
+- Are appropriate for Vietnamese high-school English learners (THPT level)
+- Include a short Vietnamese explanation of why you suggest it (max 15 words)
+
+Return ONLY valid JSON, no markdown fences, no explanation:
+{{"topics":[{{"topic":"<English topic name>","kind":"{kind}","reason":"<Vietnamese reason, max 15 words>"}},...]}}\
+"""
+
+
+def generate_topic_recommendations(history: list[dict], kind: str = "") -> dict:
     """
     history: [{ topic, kind, dwellSeconds }] — last 5 items, oldest first.
+    kind: if provided, all recommendations will be of this kind.
     Returns: { topics: [{ topic, kind, reason }] }
     """
+    valid_kinds = {"slide", "quiz", "flash", "fullset"}
+    use_kind = kind.strip() if kind.strip() in valid_kinds else ""
+
+    if use_kind:
+        system = _RECOMMEND_SYSTEM_SAME_KIND.format(kind=use_kind)
+    else:
+        system = _RECOMMEND_SYSTEM_MIXED
+
     lines = []
     for i, h in enumerate(history, 1):
         lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s")
     user_msg = "Lịch sử học gần đây:\n" + "\n".join(lines) + "\n\nĐề xuất 4 chủ đề mới. Trả về JSON ngay."
 
-    raw = _call_openai(_RECOMMEND_SYSTEM, user_msg, max_tokens=600)
+    raw = _call_openai(system, user_msg, max_tokens=600)
     start = raw.find("{")
     end = raw.rfind("}") + 1
     try:
@@ -541,4 +565,8 @@ def generate_topic_recommendations(history: list[dict]) -> dict:
     topics = data.get("topics", [])
     if not isinstance(topics, list):
         topics = []
+    # Ensure kind field is set correctly when requested
+    if use_kind:
+        for t in topics:
+            t["kind"] = use_kind
     return {"topics": topics[:4]}

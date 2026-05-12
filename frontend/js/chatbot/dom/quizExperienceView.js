@@ -51,18 +51,35 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     if (!isRestore) incrementPlayCount("quiz");
     if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
   } else {
-    const _devSrc = (!isRestore && !meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-    const _loadLabel = _devSrc === "ai" ? "AI đang tạo câu hỏi…" : "Đang tải nội dung…";
-    const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
-    const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;
-    raw = _devSrc === "ai"
-      ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
-      : await fetchMockResource("quiz");
-    _stopCountdown?.();
-    if (root._genStamp !== _genStamp) return;
-    _loadEl?.remove();
-    if (!isRestore) incrementPlayCount("quiz");
-    if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    const _prefetchEntry = !isRestore && meta?.__prefetchId ? getFetch(String(meta.__prefetchId)) : null;
+    if (_prefetchEntry) {
+      if (_prefetchEntry.status === "pending") {
+        root.innerHTML = "";
+        const w = document.createElement("div"); w.className = "ai-loading-overlay";
+        w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
+        root.appendChild(w);
+        raw = await _prefetchEntry.promise;
+        if (root._genStamp !== _genStamp) return;
+        w.remove();
+      } else {
+        raw = await _prefetchEntry.promise;
+      }
+      if (!isRestore) incrementPlayCount("quiz");
+      if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
+    } else {
+      const _devSrc = (!isRestore && !meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _loadLabel = _devSrc === "ai" ? "AI đang tạo câu hỏi…" : "Đang tải nội dung…";
+      const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;
+      raw = _devSrc === "ai"
+        ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
+        : await fetchMockResource("quiz");
+      _stopCountdown?.();
+      if (root._genStamp !== _genStamp) return;
+      _loadEl?.remove();
+      if (!isRestore) incrementPlayCount("quiz");
+      if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    }
   }
   const data = prepareQuizSessionData(raw, meta);
   const titleText = data.title || "Ôn tập trắc nghiệm";

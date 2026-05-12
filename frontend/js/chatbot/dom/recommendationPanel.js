@@ -1,8 +1,18 @@
 // DEV-ONLY panel — remove mountRecommendPanel() call and recommendation-panel.css before deploy
-import { getLog } from "../services/dwellStore.js";
+import { getLog, getActiveDwell, getActiveKind } from "../services/dwellStore.js";
 
 let _panelEl = null;
 let _pendingUpdate = null;
+let _liveTimer = null;
+let _currentSlot = "";
+
+/** Update the slot label shown in the REC toggle button (e.g. "warmup #3", "rank1"). */
+export function setCurrentSlot(slot) {
+  _currentSlot = slot || "";
+  if (!_panelEl) return;
+  const toggleBtn = _panelEl.querySelector(".rec-panel__toggle");
+  if (toggleBtn) toggleBtn.textContent = _currentSlot ? `REC [${_currentSlot}]` : "REC";
+}
 
 export function mountRecommendPanel() {
   if (_panelEl) return;
@@ -13,6 +23,7 @@ export function mountRecommendPanel() {
     <button class="rec-panel__toggle" title="Recommendation System — DEV">REC</button>
     <div class="rec-panel__body">
       <div class="rec-panel__status">Đang thu thập dữ liệu…</div>
+      <div class="rec-panel__live"></div>
       <div class="rec-panel__log"></div>
       <div class="rec-panel__suggestions"></div>
     </div>`;
@@ -21,6 +32,12 @@ export function mountRecommendPanel() {
     _panelEl.classList.toggle("rec-panel--collapsed");
     if (!_panelEl.classList.contains("rec-panel--collapsed")) _repaint({});
   });
+  _liveTimer = setInterval(() => {
+    if (!_panelEl || _panelEl.classList.contains("rec-panel--collapsed")) return;
+    const active = getActiveDwell();
+    const liveEl = _panelEl.querySelector(".rec-panel__live");
+    if (liveEl) liveEl.textContent = active ? `⏱ ${active.kind ? "[" + active.kind + "] " : ""}${active.topic} — ${active.seconds}s` : "";
+  }, 1000);
   if (_pendingUpdate) {
     const upd = _pendingUpdate;
     _pendingUpdate = null;
@@ -33,7 +50,7 @@ function _repaint({ status, log, suggestions } = {}) {
   const statusEl = _panelEl.querySelector(".rec-panel__status");
   const logEl = _panelEl.querySelector(".rec-panel__log");
   const sugEl = _panelEl.querySelector(".rec-panel__suggestions");
-  const currentLog = log || getLog();
+  const currentLog = log || getLog(getActiveKind());
 
   if (status === "ready") {
     statusEl.textContent = `✓ Đề xuất sẵn sàng (${currentLog.length} lịch sử)`;
