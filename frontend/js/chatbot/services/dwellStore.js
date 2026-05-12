@@ -60,6 +60,24 @@ export function getLastN(n = 5, kind) {
   return getLog(kind).slice(-n);
 }
 
+/**
+ * Returns top N topics sorted by total accumulated dwell time (most time first).
+ * Aggregates multiple sessions on the same topic into a single entry.
+ * @param {number} n @param {string} [kind]
+ */
+export function getTopTopics(n = 5, kind) {
+  const entries = getLog(kind);
+  const totals = {};
+  for (const e of entries) {
+    const key = `${e.topic}|||${e.kind}`;
+    if (!totals[key]) totals[key] = { topic: e.topic, kind: e.kind, dwellSeconds: 0 };
+    totals[key].dwellSeconds += e.dwellSeconds;
+  }
+  return Object.values(totals)
+    .sort((a, b) => b.dwellSeconds - a.dwellSeconds)
+    .slice(0, n);
+}
+
 /** @param {string} [kind] — omit to clear entire session log, or provide kind to remove only that kind's entries */
 export function clearLog(kind) {
   if (!kind) { localStorage.removeItem(storageKey()); return; }

@@ -48,7 +48,7 @@ import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
-import { endDwell, shouldRecommend, getLastN, getActiveKind, setSession } from "./services/dwellStore.js";
+import { endDwell, shouldRecommend, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
 import { fetchRecommendations } from "./services/aiContentApi.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 
@@ -555,9 +555,9 @@ export function init() {
       endDwell();
       updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       const autoCount = recommendQueueStore.onExpCompleted(capturedKind);
-      if (autoCount === 5) {
-        const _history = getLastN(5, capturedKind);
-        updateRecommendPanel({ status: "loading", log: _history });
+      if (autoCount % 5 === 0) {
+        const _history = getTopTopics(5, capturedKind);
+        updateRecommendPanel({ status: "loading", log: getLastN(5, capturedKind) });
         fetchRecommendations(_history, capturedKind)
           .then((data) => {
             recommendQueueStore.setRecommendations(data.topics ?? [], capturedKind);
@@ -929,10 +929,14 @@ export function init() {
     const _kind = getActiveKind();
     const _dwellCount = endDwell();
     if (_dwellCount > 0 && shouldRecommend(_kind)) {
-      const _history = getLastN(5, _kind);
-      updateRecommendPanel({ status: "loading", log: _history });
+      const _history = getTopTopics(5, _kind);
+      updateRecommendPanel({ status: "loading", log: getLastN(5, _kind) });
       fetchRecommendations(_history, _kind)
-        .then(data => updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, _kind) }))
+        .then(data => {
+          recommendQueueStore.setRecommendations(data.topics ?? [], _kind);
+          recommendQueueStore.startPrefetch(_kind, autoModeStore.getCounts());
+          updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, _kind) });
+        })
         .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) }));
     } else {
       updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
@@ -1079,9 +1083,9 @@ export function init() {
       endDwell();
       updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       const autoCount = recommendQueueStore.onExpCompleted(capturedKind);
-      if (autoCount === 5) {
-        const history = getLastN(5, capturedKind);
-        updateRecommendPanel({ status: "loading", log: history });
+      if (autoCount % 5 === 0) {
+        const history = getTopTopics(5, capturedKind);
+        updateRecommendPanel({ status: "loading", log: getLastN(5, capturedKind) });
         fetchRecommendations(history, capturedKind)
           .then((data) => {
             recommendQueueStore.setRecommendations(data.topics ?? [], capturedKind);

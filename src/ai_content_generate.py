@@ -514,12 +514,12 @@ def generate_fullset_from_document(
 # ---------------------------------------------------------------------------
 
 _RECOMMEND_SYSTEM_MIXED = """You are a learning topic recommender for a Vietnamese English-learning app.
-You receive a list of the user's recent study sessions with their engagement time (dwellSeconds).
-Higher dwell time means the user was more engaged with that topic.
+You receive a ranked list of the user's top studied topics, sorted by TOTAL accumulated time spent (most time first).
+The #1 entry is the topic the user has invested the most time in overall.
 
 Your job: Recommend exactly 4 new study topics that:
 - Are DIFFERENT from every topic already in the history list (no repeats)
-- Are SIMILAR in genre/domain to the topics the user spent the most time on
+- Are CLOSELY related to the TOP 1-2 topics (highest dwellSeconds) — prioritise similarity to the most-studied topic
 - Cover a mix of the 4 content types: slide, quiz, flash, fullset
 - Are appropriate for Vietnamese high-school English learners (THPT level)
 - Include a short Vietnamese explanation of why you suggest it (max 15 words)
@@ -528,12 +528,12 @@ Return ONLY valid JSON, no markdown fences, no explanation:
 {"topics":[{"topic":"<English topic name>","kind":"slide"|"quiz"|"flash"|"fullset","reason":"<Vietnamese reason, max 15 words>"},...]}"""
 
 _RECOMMEND_SYSTEM_SAME_KIND = """You are a learning topic recommender for a Vietnamese English-learning app.
-You receive a list of the user's recent study sessions with their engagement time (dwellSeconds).
-Higher dwell time means the user was more engaged with that topic.
+You receive a ranked list of the user's top studied topics, sorted by TOTAL accumulated time spent (most time first).
+The #1 entry is the topic the user has invested the most time in overall.
 
 Your job: Recommend exactly 4 new study topics that:
 - Are DIFFERENT from every topic already in the history list (no repeats)
-- Are SIMILAR in genre/domain to the topics the user spent the most time on
+- Are CLOSELY related to the TOP 1-2 topics (highest dwellSeconds) — prioritise similarity to the most-studied topic
 - ALL 4 must be of kind: {kind}
 - Are appropriate for Vietnamese high-school English learners (THPT level)
 - Include a short Vietnamese explanation of why you suggest it (max 15 words)
@@ -559,8 +559,8 @@ def generate_topic_recommendations(history: list[dict], kind: str = "") -> dict:
 
     lines = []
     for i, h in enumerate(history, 1):
-        lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s")
-    user_msg = "Lịch sử học gần đây:\n" + "\n".join(lines) + "\n\nĐề xuất 4 chủ đề mới. Trả về JSON ngay."
+        lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s tổng cộng")
+    user_msg = "Chủ đề học nhiều nhất (xếp hạng theo tổng thời gian, #1 = nhiều nhất):\n" + "\n".join(lines) + "\n\nĐề xuất 4 chủ đề mới bám sát chủ đề #1 và #2. Trả về JSON ngay."
 
     raw = _call_openai(system, user_msg, max_tokens=600)
     start = raw.find("{")
