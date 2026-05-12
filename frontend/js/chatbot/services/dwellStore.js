@@ -41,9 +41,12 @@ export function endDwell() {
 /** Returns the kind of the currently active experience (or null). */
 export function getActiveKind() { return _activeKind; }
 
-/** @param {string} [kind] */
+/** @param {string} [kind] — if provided, filters entries to that kind */
 export function getLog(kind) {
-  try { return JSON.parse(localStorage.getItem(storageKey(kind)) || "[]"); } catch { return []; }
+  try {
+    const all = JSON.parse(localStorage.getItem(storageKey()) || "[]");
+    return kind ? all.filter(e => e.kind === kind) : all;
+  } catch { return []; }
 }
 
 /** True when the kind's log length just reached a multiple of RECOMMEND_EVERY. */
@@ -57,13 +60,12 @@ export function getLastN(n = 5, kind) {
   return getLog(kind).slice(-n);
 }
 
-/** @param {string} [kind] — omit to clear all type buckets */
+/** @param {string} [kind] — omit to clear entire session log, or provide kind to remove only that kind's entries */
 export function clearLog(kind) {
-  if (kind) {
-    localStorage.removeItem(storageKey(kind));
-  } else {
-    ["slide", "quiz", "flash", "fullset", "default"].forEach((k) => localStorage.removeItem(storageKey(k)));
-  }
+  if (!kind) { localStorage.removeItem(storageKey()); return; }
+  const remaining = getLog().filter(e => e.kind !== kind);
+  if (remaining.length) localStorage.setItem(storageKey(), JSON.stringify(remaining));
+  else localStorage.removeItem(storageKey());
 }
 
 /** Returns the active experience's elapsed seconds (from 1), or null if none. */
