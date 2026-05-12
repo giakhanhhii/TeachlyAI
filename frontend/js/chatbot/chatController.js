@@ -624,6 +624,14 @@ export function init() {
    * @param {"fullset"|"quiz"|"slide"|"flashcard"|"flash"} flowKind
    * @param {() => void | Promise<void>} onCustom - called to proceed with the normal guided flow
    */
+  function syncToggleUI(enabled) {
+    const toggleBtn = document.querySelector(".auto-mode-toggle");
+    if (!toggleBtn) return;
+    toggleBtn.setAttribute("aria-pressed", enabled ? "true" : "false");
+    const lbl = toggleBtn.querySelector(".toggle-label");
+    if (lbl) lbl.textContent = enabled ? "Tạo Auto" : "Tạo Custom";
+  }
+
   function handleFlowWithAutoMode(flowKind, onCustom) {
     const expKind = toExpKind(flowKind);
 
@@ -650,6 +658,7 @@ export function init() {
     const savedChoice = autoModeStore.getNeverAskChoice();
     if (savedChoice === "auto") {
       autoModeStore.enable();
+      syncToggleUI(true);
       openCountSelector();
       return;
     }
@@ -666,6 +675,7 @@ export function init() {
       onAuto: (neverAsk) => {
         if (neverAsk) autoModeStore.setNeverAskChoice("auto");
         autoModeStore.enable();
+        syncToggleUI(true);
         openCountSelector();
       },
     });

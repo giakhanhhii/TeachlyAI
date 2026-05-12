@@ -208,4 +208,3 @@ export async function fetchRecommendations(history) {
   if (!res.ok) throw new Error(`Recommend failed ${res.status}`);
   return res.json();
 }
-}
