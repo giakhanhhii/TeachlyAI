@@ -48,7 +48,7 @@ import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
-import { endDwell, shouldRecommend, getLastN, getActiveKind } from "./services/dwellStore.js";
+import { endDwell, shouldRecommend, getLastN, getActiveKind, setSession } from "./services/dwellStore.js";
 import { fetchRecommendations } from "./services/aiContentApi.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 
