@@ -48,7 +48,7 @@ import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
-import { endDwell, shouldRecommend, getLastN } from "./services/dwellStore.js";
+import { endDwell, shouldRecommend, getLastN, setSessionId as setDwellSessionId } from "./services/dwellStore.js";
 import { fetchRecommendations } from "./services/aiContentApi.js";
 import { mountRecommendPanel, updateRecommendPanel } from "./dom/recommendationPanel.js";
 
@@ -1057,6 +1057,7 @@ export function init() {
     },
     onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
+      setDwellSessionId(getCurrentSessionId());
       writeAppNavigationState("replace", resolveCurrentPhase());
       console.log("[chatController] init completed");
     },

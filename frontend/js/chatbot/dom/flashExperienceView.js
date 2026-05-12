@@ -580,6 +580,6 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   window.addEventListener("keydown", onGlobalKeydown, true);
 
   experienceBody.appendChild(shell);
-  if (meta?.__devSlot) { const b = document.createElement("div"); b.className = "dev-slot-badge"; b.textContent = meta.__devSlot; experienceBody.appendChild(b); }
+  if (meta?.__devSlot) { const b = document.createElement("div"); b.className = "dev-slot-badge"; b.textContent = meta.__devSlot; b.dataset.slot = meta.__devSlot.startsWith("warmup") ? "warmup" : meta.__devSlot; experienceBody.appendChild(b); }
   renderCard();
 }
