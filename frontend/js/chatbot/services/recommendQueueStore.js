@@ -55,7 +55,8 @@ export function shouldAutoAdvance() { return _autoExpCount >= MOCK_WARMUP; }
  */
 export function getNextSpec(expKind, counts) {
   if (_autoExpCount < MOCK_WARMUP) {
-    return { topic: autoModeStore.pickNextTopic(), kind: expKind, prefetchKey: null, isAi: false };
+    const n = _autoExpCount + 1;
+    return { topic: autoModeStore.pickNextTopic(), kind: expKind, prefetchKey: null, isAi: false, slot: `warmup #${n}` };
   }
 
   if (_phase === "warmup") _phase = "queued";
@@ -71,6 +72,7 @@ export function getNextSpec(expKind, counts) {
       kind: rec?.kind || expKind,
       prefetchKey: isFirstPostWarmup ? PREFETCH_KEY : null,
       isAi: true,
+      slot: "rank1",
     };
   }
   if (slot === "rank2") {
@@ -80,8 +82,9 @@ export function getNextSpec(expKind, counts) {
       kind: rec?.kind || expKind,
       prefetchKey: null,
       isAi: true,
+      slot: "rank2",
     };
   }
   // "unrelated" — random topic; mock threshold naturally serves mock for new topics
-  return { topic: autoModeStore.pickNextTopic(), kind: expKind, prefetchKey: null, isAi: false };
+  return { topic: autoModeStore.pickNextTopic(), kind: expKind, prefetchKey: null, isAi: false, slot: "unrelated" };
 }

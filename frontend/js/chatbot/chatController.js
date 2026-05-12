@@ -615,6 +615,7 @@ export function init() {
             flash: String(counts.flash),
             slideTemplate: autoModeStore.pickRandomTheme(),
             __prefetchId: spec.prefetchKey || "",
+            __devSlot: spec.slot || "",
           },
           `Full Set — ${spec.topic}`,
         );
@@ -623,15 +624,16 @@ export function init() {
       const count = kind === "slide" ? counts.slides : kind === "quiz" ? counts.quiz : counts.flash;
       const meta =
         kind === "flash"
-          ? { source: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "" }
-          : { topic: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "",
+          ? { source: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "", __devSlot: spec.slot || "" }
+          : { topic: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "", __devSlot: spec.slot || "",
               ...(kind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
       await openSingleExperience(kind, meta, "fresh");
       return;
     }
 
     // Warmup (exp 1–7): pick random topic, mock content happens naturally
-    const topic = autoModeStore.pickNextTopic();
+    const spec = recommendQueueStore.getNextSpec(expKind, counts);
+    const topic = spec.topic;
     if (expKind === "fullset") {
       await openResumeFullSetMixed(
         {
@@ -640,6 +642,7 @@ export function init() {
           quiz: String(counts.quiz),
           flash: String(counts.flash),
           slideTemplate: autoModeStore.pickRandomTheme(),
+          __devSlot: spec.slot || "",
         },
         `Full Set — ${topic}`,
       );
@@ -648,8 +651,8 @@ export function init() {
     const count = expKind === "slide" ? counts.slides : expKind === "quiz" ? counts.quiz : counts.flash;
     const meta =
       expKind === "flash"
-        ? { source: topic, count: String(count), __autoMode: "1", __forceMock: "1" }
-        : { topic, count: String(count), __autoMode: "1", __forceMock: "1", ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
+        ? { source: topic, count: String(count), __autoMode: "1", __forceMock: "1", __devSlot: spec.slot || "" }
+        : { topic, count: String(count), __autoMode: "1", __forceMock: "1", __devSlot: spec.slot || "", ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
     await openSingleExperience(expKind, meta, "fresh");
   }
 

@@ -747,6 +747,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   })();
 
   root.appendChild(shell);
+  if (effectiveMeta?.__devSlot) { const b = document.createElement("div"); b.className = "dev-slot-badge"; b.textContent = effectiveMeta.__devSlot; root.appendChild(b); }
   paintSlideChrome();
   if (slides.length === 0) {
     renderSlide();
