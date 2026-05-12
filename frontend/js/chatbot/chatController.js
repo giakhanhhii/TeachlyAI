@@ -1056,7 +1056,7 @@ export function init() {
       if (autoCount === 5) {
         const history = getLastN(5, capturedKind);
         updateRecommendPanel({ status: "loading", log: history });
-        fetchRecommendations(history)
+        fetchRecommendations(history, capturedKind)
           .then((data) => {
             recommendQueueStore.setRecommendations(data.topics ?? []);
             recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
