@@ -14,6 +14,7 @@ export function mountRecommendPanel() {
     <button class="rec-panel__toggle" title="Recommendation System — DEV">REC</button>
     <div class="rec-panel__body">
       <div class="rec-panel__status">Đang thu thập dữ liệu…</div>
+      <div class="rec-panel__live"></div>
       <div class="rec-panel__log"></div>
       <div class="rec-panel__suggestions"></div>
     </div>`;
@@ -22,6 +23,12 @@ export function mountRecommendPanel() {
     _panelEl.classList.toggle("rec-panel--collapsed");
     if (!_panelEl.classList.contains("rec-panel--collapsed")) _repaint({});
   });
+  _liveTimer = setInterval(() => {
+    if (!_panelEl || _panelEl.classList.contains("rec-panel--collapsed")) return;
+    const active = getActiveDwell();
+    const liveEl = _panelEl.querySelector(".rec-panel__live");
+    if (liveEl) liveEl.textContent = active ? `⏱ ${active.kind ? "[" + active.kind + "] " : ""}${active.topic} — ${active.seconds}s` : "";
+  }, 1000);
   if (_pendingUpdate) {
     const upd = _pendingUpdate;
     _pendingUpdate = null;
