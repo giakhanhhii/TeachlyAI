@@ -601,6 +601,36 @@ export function init() {
    * @param {{ slides: number, quiz: number, flash: number }} counts
    */
   async function launchAutoMode(expKind, counts) {
+    _currentAutoExpKind = expKind;
+
+    if (recommendQueueStore.shouldAutoAdvance()) {
+      const spec = recommendQueueStore.getNextSpec(expKind, counts);
+      const kind = spec.kind || expKind;
+      if (kind === "fullset") {
+        await openResumeFullSetMixed(
+          {
+            topic: spec.topic,
+            slides: String(counts.slides),
+            quiz: String(counts.quiz),
+            flash: String(counts.flash),
+            slideTemplate: autoModeStore.pickRandomTheme(),
+            __prefetchId: spec.prefetchKey || "",
+          },
+          `Full Set — ${spec.topic}`,
+        );
+        return;
+      }
+      const count = kind === "slide" ? counts.slides : kind === "quiz" ? counts.quiz : counts.flash;
+      const meta =
+        kind === "flash"
+          ? { source: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "" }
+          : { topic: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "",
+              ...(kind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
+      await openSingleExperience(kind, meta, "fresh");
+      return;
+    }
+
+    // Warmup (exp 1–7): pick random topic, mock content happens naturally
     const topic = autoModeStore.pickNextTopic();
     if (expKind === "fullset") {
       await openResumeFullSetMixed(
@@ -999,6 +1029,29 @@ export function init() {
     handleFlowEntry: (flowKind) =>
       handleFlowWithAutoMode(flowKind, () => flowService.handleFlowEntry(flowKind)),
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
+    onBeforeBack: () => {
+      if (!autoModeStore.isEnabled() || !_currentAutoExpKind) return false;
+      endDwell();
+      const autoCount = recommendQueueStore.onExpCompleted();
+      if (autoCount === 5) {
+        const history = getLastN(5);
+        updateRecommendPanel({ status: "loading", log: history });
+        fetchRecommendations(history)
+          .then((data) => {
+            recommendQueueStore.setRecommendations(data.topics ?? []);
+            recommendQueueStore.startPrefetch(_currentAutoExpKind, autoModeStore.getCounts());
+            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5) });
+          })
+          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5) }));
+      }
+      if (recommendQueueStore.shouldAutoAdvance()) {
+        const savedKind = _currentAutoExpKind;
+        _currentAutoExpKind = null;
+        void launchAutoMode(savedKind, autoModeStore.getCounts());
+        return true;
+      }
+      return false;
+    },
     onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
       writeAppNavigationState("replace", resolveCurrentPhase());
