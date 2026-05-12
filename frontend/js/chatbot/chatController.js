@@ -40,7 +40,7 @@ import {
   HISTORY_CHAT_PHASE,
   HISTORY_EXPERIENCE_PHASE,
 } from "./services/historyService.js";
-import { createFlowService } from "./services/flowService.js";
+import { createFlowService, flowSessionBaseTitle } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
@@ -600,8 +600,30 @@ export function init() {
     experienceController.persistActiveExperience();
   }
 
+  function autoRenameCurrentSession(flowKind) {
+    const cur = getCurrentSession();
+    if (!cur || !/^Đoạn chat\s+\d+$/i.test(cur.title)) return;
+    const base = flowSessionBaseTitle(flowKind);
+    const escaped = base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const rx = new RegExp(`^${escaped}\\s+(\\d+)$`, "i");
+    let max = 0;
+    getSessionsSnapshot().forEach((s) => {
+      const m = String(s?.title || "").match(rx);
+      if (!m) return;
+      const n = Number(m[1]);
+      if (Number.isFinite(n)) max = Math.max(max, n);
+    });
+    cur.title = `${base} ${max + 1}`;
+    renderChatListUI();
+    saveSessions();
+  }
+
   async function openSingleExperience(kind, meta, mode, experienceId) {
     if (!experienceController) return;
+    const flowKind = kind === "flash" ? "flashcard" : kind;
+    if (flowKind === "quiz" || flowKind === "slide" || flowKind === "flashcard") {
+      autoRenameCurrentSession(flowKind);
+    }
     await experienceController.openSingleExperience(kind, meta, mode, experienceId);
   }
 
@@ -755,6 +777,7 @@ export function init() {
 
   async function openResumeFullSetMixed(spec, bundleTitle) {
     if (!experienceController) return;
+    autoRenameCurrentSession("fullset");
     await experienceController.openResumeFullSetMixed(spec, bundleTitle);
   }
 

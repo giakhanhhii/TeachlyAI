@@ -520,7 +520,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     modePresBtn.classList.toggle("is-selected", pres);
     modeScrollBtn.classList.toggle("is-selected", !pres);
     prevArrow.disabled = index <= 0;
-    nextArrow.disabled = !s || index >= total - 1;
+    nextArrow.disabled = !s || (index >= total - 1 && !_isAutoTopic);
     prevArrow.hidden = !pres || !shellReady;
     nextArrow.hidden = !pres || !shellReady;
     fsBtn.hidden = !pres || !shellReady;
@@ -568,7 +568,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   function goNext() {
     if (!slides[index]) return;
-    if (index >= total - 1) return;
+    if (index >= total - 1) {
+      if (_isAutoTopic) deps?.onContinueCreate?.("slide");
+      return;
+    }
     index += 1;
     renderSlide();
   }
