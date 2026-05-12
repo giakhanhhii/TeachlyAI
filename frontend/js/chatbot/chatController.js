@@ -45,6 +45,7 @@ import { createMessageHistoryService } from "./services/messageHistoryService.js
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
+import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
 import { endDwell, shouldRecommend, getLastN } from "./services/dwellStore.js";
@@ -66,6 +67,9 @@ function setGuidedState(next) {
 
 /** Tránh chồng chéo khi chuyển session quá nhanh. */
 let isSwitchingSession = false;
+
+/** Kind of the currently active auto-mode experience ("slide"|"quiz"|"flash"|"fullset"|null). */
+let _currentAutoExpKind = null;
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 const HISTORY_NAV_SEQ_KEY = "__teachlyNavSeq";
