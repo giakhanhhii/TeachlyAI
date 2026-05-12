@@ -5,9 +5,14 @@ const RECOMMEND_EVERY = 5;
 let _activeStart = null;
 let _activeTopic = null;
 let _activeKind = null;
+let _currentSessionId = null;
 
-function storageKey(kind) {
-  return `${BASE_KEY}_${kind || "default"}`;
+export function setSession(id) {
+  _currentSessionId = String(id || "").trim() || null;
+}
+
+function storageKey() {
+  return `${BASE_KEY}_${_currentSessionId || "default"}`;
 }
 
 /** Call when a new experience loads (not a restore). */
@@ -25,12 +30,12 @@ export function endDwell() {
   const kind = _activeKind;
   _activeStart = null;
   if (dwellSeconds < 1) { _activeTopic = null; _activeKind = null; return 0; }
-  const log = getLog(kind);
-  log.push({ topic: _activeTopic, kind, dwellSeconds, ts: new Date().toISOString() });
-  if (log.length > MAX_LOG) log.splice(0, log.length - MAX_LOG);
-  localStorage.setItem(storageKey(kind), JSON.stringify(log));
+  const all = getLog();
+  all.push({ topic: _activeTopic, kind, dwellSeconds, ts: new Date().toISOString() });
+  if (all.length > MAX_LOG) all.splice(0, all.length - MAX_LOG);
+  localStorage.setItem(storageKey(), JSON.stringify(all));
   _activeTopic = null; _activeKind = null;
-  return log.length;
+  return all.filter(e => e.kind === kind).length;
 }
 
 /** Returns the kind of the currently active experience (or null). */
