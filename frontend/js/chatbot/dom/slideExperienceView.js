@@ -129,18 +129,35 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     _loadEl.remove();
     if (!isRestore) incrementPlayCount("slide");
   } else {
-    const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-    const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
-    const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
-    const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
-    raw = _devSrc === "ai"
-      ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
-      : await fetchMockResource("slide");
-    _stopCountdown?.();
-    if (root._genStamp !== _genStamp) return;
-    _loadEl?.remove();
-    if (!isRestore) incrementPlayCount("slide");
-    if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    const _prefetchEntry = !isRestore && effectiveMeta?.__prefetchId ? getFetch(String(effectiveMeta.__prefetchId)) : null;
+    if (_prefetchEntry) {
+      if (_prefetchEntry.status === "pending") {
+        root.innerHTML = "";
+        const w = document.createElement("div"); w.className = "ai-loading-overlay";
+        w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
+        root.appendChild(w);
+        raw = await _prefetchEntry.promise;
+        if (root._genStamp !== _genStamp) return;
+        w.remove();
+      } else {
+        raw = await _prefetchEntry.promise;
+      }
+      if (!isRestore) incrementPlayCount("slide");
+      if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
+    } else {
+      const _devSrc = (!isRestore && !effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
+      const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
+      raw = _devSrc === "ai"
+        ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
+        : await fetchMockResource("slide");
+      _stopCountdown?.();
+      if (root._genStamp !== _genStamp) return;
+      _loadEl?.remove();
+      if (!isRestore) incrementPlayCount("slide");
+      if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+    }
   }
   const data = prepareSlideSessionData(raw, effectiveMeta);
   const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
