@@ -1,8 +1,9 @@
 // DEV-ONLY panel — remove mountRecommendPanel() call and recommendation-panel.css before deploy
-import { getLog } from "../services/dwellStore.js";
+import { getLog, getActiveDwell } from "../services/dwellStore.js";
 
 let _panelEl = null;
 let _pendingUpdate = null;
+let _liveTimer = null;
 
 export function mountRecommendPanel() {
   if (_panelEl) return;

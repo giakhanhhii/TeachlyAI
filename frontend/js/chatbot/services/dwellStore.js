@@ -45,3 +45,13 @@ export function getLastN(n = 5) {
 export function clearLog() {
   localStorage.removeItem(STORAGE_KEY);
 }
+
+/** Returns the active experience's elapsed seconds (from 1), or null if none. */
+export function getActiveDwell() {
+  if (!_activeStart || !_activeTopic) return null;
+  return {
+    topic: _activeTopic,
+    kind: _activeKind,
+    seconds: Math.max(1, Math.round((Date.now() - _activeStart) / 1000)),
+  };
+}
