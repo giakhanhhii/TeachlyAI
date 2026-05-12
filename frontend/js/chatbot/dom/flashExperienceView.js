@@ -164,7 +164,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         incrementPlayCount("flash");
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
       } else {
-        _devSrc = (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+        _devSrc = (!meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
         const _loadLabel = _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải nội dung…";
         const _loadEl = (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })();
         const _stopCountdown = _devSrc === "ai" ? startAiCountdown(_loadEl, 15) : null;

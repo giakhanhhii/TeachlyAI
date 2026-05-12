@@ -67,7 +67,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       if (!isRestore) incrementPlayCount("quiz");
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
-      const _devSrc = (!isRestore && !meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _devSrc = (!isRestore && !meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
       const _loadLabel = _devSrc === "ai" ? "AI đang tạo câu hỏi…" : "Đang tải nội dung…";
       const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
       const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;

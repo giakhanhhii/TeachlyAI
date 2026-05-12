@@ -648,8 +648,8 @@ export function init() {
     const count = expKind === "slide" ? counts.slides : expKind === "quiz" ? counts.quiz : counts.flash;
     const meta =
       expKind === "flash"
-        ? { source: topic, count: String(count), __autoMode: "1" }
-        : { topic, count: String(count), __autoMode: "1", ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
+        ? { source: topic, count: String(count), __autoMode: "1", __forceMock: "1" }
+        : { topic, count: String(count), __autoMode: "1", __forceMock: "1", ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
     await openSingleExperience(expKind, meta, "fresh");
   }
 
