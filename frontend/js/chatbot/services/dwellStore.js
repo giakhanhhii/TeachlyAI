@@ -2,18 +2,12 @@ const BASE_KEY = "teachly_dwell";
 const MAX_LOG = 20;
 const RECOMMEND_EVERY = 5;
 
-let _sessionId = null;
 let _activeStart = null;
 let _activeTopic = null;
 let _activeKind = null;
 
-function storageKey() {
-  return _sessionId ? `${BASE_KEY}_${_sessionId}` : `${BASE_KEY}_default`;
-}
-
-/** Call whenever the active session changes so dwell records are scoped per-session. */
-export function setSessionId(id) {
-  _sessionId = id ? String(id) : null;
+function storageKey(kind) {
+  return `${BASE_KEY}_${kind || "default"}`;
 }
 
 /** Call when a new experience loads (not a restore). */
@@ -28,32 +22,43 @@ export function beginDwell(topic, kind) {
 export function endDwell() {
   if (!_activeStart || !_activeTopic) { _activeStart = null; return 0; }
   const dwellSeconds = Math.round((Date.now() - _activeStart) / 1000);
+  const kind = _activeKind;
   _activeStart = null;
-  if (dwellSeconds < 3) { _activeTopic = null; _activeKind = null; return 0; }
-  const log = getLog();
-  log.push({ topic: _activeTopic, kind: _activeKind, dwellSeconds, ts: new Date().toISOString() });
+  if (dwellSeconds < 1) { _activeTopic = null; _activeKind = null; return 0; }
+  const log = getLog(kind);
+  log.push({ topic: _activeTopic, kind, dwellSeconds, ts: new Date().toISOString() });
   if (log.length > MAX_LOG) log.splice(0, log.length - MAX_LOG);
-  localStorage.setItem(storageKey(), JSON.stringify(log));
+  localStorage.setItem(storageKey(kind), JSON.stringify(log));
   _activeTopic = null; _activeKind = null;
   return log.length;
 }
 
-export function getLog() {
-  try { return JSON.parse(localStorage.getItem(storageKey()) || "[]"); } catch { return []; }
+/** Returns the kind of the currently active experience (or null). */
+export function getActiveKind() { return _activeKind; }
+
+/** @param {string} [kind] */
+export function getLog(kind) {
+  try { return JSON.parse(localStorage.getItem(storageKey(kind)) || "[]"); } catch { return []; }
 }
 
-/** True when log length just reached a multiple of RECOMMEND_EVERY. */
-export function shouldRecommend() {
-  const n = getLog().length;
+/** True when the kind's log length just reached a multiple of RECOMMEND_EVERY. */
+export function shouldRecommend(kind) {
+  const n = getLog(kind).length;
   return n > 0 && n % RECOMMEND_EVERY === 0;
 }
 
-export function getLastN(n = 5) {
-  return getLog().slice(-n);
+/** @param {number} n @param {string} [kind] */
+export function getLastN(n = 5, kind) {
+  return getLog(kind).slice(-n);
 }
 
-export function clearLog() {
-  localStorage.removeItem(storageKey());
+/** @param {string} [kind] — omit to clear all type buckets */
+export function clearLog(kind) {
+  if (kind) {
+    localStorage.removeItem(storageKey(kind));
+  } else {
+    ["slide", "quiz", "flash", "fullset", "default"].forEach((k) => localStorage.removeItem(storageKey(k)));
+  }
 }
 
 /** Returns the active experience's elapsed seconds (from 1), or null if none. */

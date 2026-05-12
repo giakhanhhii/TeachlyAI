@@ -48,9 +48,9 @@ import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
-import { endDwell, shouldRecommend, getLastN, setSessionId as setDwellSessionId } from "./services/dwellStore.js";
+import { endDwell, shouldRecommend, getLastN, getActiveKind } from "./services/dwellStore.js";
 import { fetchRecommendations } from "./services/aiContentApi.js";
-import { mountRecommendPanel, updateRecommendPanel } from "./dom/recommendationPanel.js";
+import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 
 /** @type {any} */
 let guided = null;
@@ -551,6 +551,21 @@ export function init() {
       return;
     }
     if (autoModeStore.isEnabled()) {
+      const capturedKind = _currentAutoExpKind || validKind;
+      endDwell();
+      updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
+      const autoCount = recommendQueueStore.onExpCompleted();
+      if (autoCount === 5) {
+        const _history = getLastN(5, capturedKind);
+        updateRecommendPanel({ status: "loading", log: _history });
+        fetchRecommendations(_history)
+          .then((data) => {
+            recommendQueueStore.setRecommendations(data.topics ?? []);
+            recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
+            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
+          })
+          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
+      }
       await launchAutoMode(validKind, autoModeStore.getCounts());
       return;
     }
@@ -603,8 +618,10 @@ export function init() {
   async function launchAutoMode(expKind, counts) {
     _currentAutoExpKind = expKind;
 
+    const spec = recommendQueueStore.getNextSpec(expKind, counts);
+    setCurrentSlot(spec.slot || "");
+
     if (recommendQueueStore.shouldAutoAdvance()) {
-      const spec = recommendQueueStore.getNextSpec(expKind, counts);
       const kind = spec.kind || expKind;
       if (kind === "fullset") {
         await openResumeFullSetMixed(
@@ -615,7 +632,6 @@ export function init() {
             flash: String(counts.flash),
             slideTemplate: autoModeStore.pickRandomTheme(),
             __prefetchId: spec.prefetchKey || "",
-            __devSlot: spec.slot || "",
           },
           `Full Set — ${spec.topic}`,
         );
@@ -624,15 +640,14 @@ export function init() {
       const count = kind === "slide" ? counts.slides : kind === "quiz" ? counts.quiz : counts.flash;
       const meta =
         kind === "flash"
-          ? { source: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "", __devSlot: spec.slot || "" }
-          : { topic: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "", __devSlot: spec.slot || "",
+          ? { source: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "" }
+          : { topic: spec.topic, count: String(count), __autoMode: "1", __prefetchId: spec.prefetchKey || "",
               ...(kind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
       await openSingleExperience(kind, meta, "fresh");
       return;
     }
 
     // Warmup (exp 1–7): pick random topic, mock content happens naturally
-    const spec = recommendQueueStore.getNextSpec(expKind, counts);
     const topic = spec.topic;
     if (expKind === "fullset") {
       await openResumeFullSetMixed(
@@ -642,7 +657,6 @@ export function init() {
           quiz: String(counts.quiz),
           flash: String(counts.flash),
           slideTemplate: autoModeStore.pickRandomTheme(),
-          __devSlot: spec.slot || "",
         },
         `Full Set — ${topic}`,
       );
@@ -651,8 +665,8 @@ export function init() {
     const count = expKind === "slide" ? counts.slides : expKind === "quiz" ? counts.quiz : counts.flash;
     const meta =
       expKind === "flash"
-        ? { source: topic, count: String(count), __autoMode: "1", __forceMock: "1", __devSlot: spec.slot || "" }
-        : { topic, count: String(count), __autoMode: "1", __forceMock: "1", __devSlot: spec.slot || "", ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
+        ? { source: topic, count: String(count), __autoMode: "1", __forceMock: "1" }
+        : { topic, count: String(count), __autoMode: "1", __forceMock: "1", ...(expKind === "slide" ? { slideTemplate: autoModeStore.pickRandomTheme() } : {}) };
     await openSingleExperience(expKind, meta, "fresh");
   }
 
@@ -889,20 +903,20 @@ export function init() {
   const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
     if (isSwitchingSession) return;
     isSwitchingSession = true;
+    const _kind = getActiveKind();
     const _dwellCount = endDwell();
-    if (_dwellCount > 0 && shouldRecommend()) {
-      const _history = getLastN(5);
+    if (_dwellCount > 0 && shouldRecommend(_kind)) {
+      const _history = getLastN(5, _kind);
       updateRecommendPanel({ status: "loading", log: _history });
       fetchRecommendations(_history)
-        .then(data => updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5) }))
-        .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5) }));
+        .then(data => updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, _kind) }))
+        .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) }));
     } else {
-      updateRecommendPanel({ status: "recording", log: getLastN(5) });
+      updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
     }
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
-      setDwellSessionId(getCurrentSessionId());
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1005,7 +1019,6 @@ export function init() {
     onCreateNewChat: () => {
       persistActiveExperience();
       createSession();
-      setDwellSessionId(getCurrentSessionId());
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1036,19 +1049,20 @@ export function init() {
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
     onBeforeBack: () => {
       if (!autoModeStore.isEnabled() || !_currentAutoExpKind) return false;
-      endDwell();
       const capturedKind = _currentAutoExpKind;
+      endDwell();
+      updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       const autoCount = recommendQueueStore.onExpCompleted();
       if (autoCount === 5) {
-        const history = getLastN(5);
+        const history = getLastN(5, capturedKind);
         updateRecommendPanel({ status: "loading", log: history });
         fetchRecommendations(history)
           .then((data) => {
             recommendQueueStore.setRecommendations(data.topics ?? []);
             recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
-            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5) });
+            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
           })
-          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5) }));
+          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
       }
       if (recommendQueueStore.shouldAutoAdvance()) {
         _currentAutoExpKind = null;
@@ -1059,7 +1073,6 @@ export function init() {
     },
     onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
-      setDwellSessionId(getCurrentSessionId());
       writeAppNavigationState("replace", resolveCurrentPhase());
       console.log("[chatController] init completed");
     },

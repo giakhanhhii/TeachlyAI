@@ -1,5 +1,5 @@
 // DEV-ONLY panel — remove mountRecommendPanel() call and recommendation-panel.css before deploy
-import { getLog, getActiveDwell } from "../services/dwellStore.js";
+import { getLog, getActiveDwell, getActiveKind } from "../services/dwellStore.js";
 
 let _panelEl = null;
 let _pendingUpdate = null;
@@ -50,7 +50,7 @@ function _repaint({ status, log, suggestions } = {}) {
   const statusEl = _panelEl.querySelector(".rec-panel__status");
   const logEl = _panelEl.querySelector(".rec-panel__log");
   const sugEl = _panelEl.querySelector(".rec-panel__suggestions");
-  const currentLog = log || getLog();
+  const currentLog = log || getLog(getActiveKind());
 
   if (status === "ready") {
     statusEl.textContent = `✓ Đề xuất sẵn sàng (${currentLog.length} lịch sử)`;

@@ -202,11 +202,11 @@ export function setupChatEventManager(deps) {
   });
 
   backToChatBtn?.addEventListener("click", () => {
+    if (onBeforeBack?.()) return;
     if (canBackToChatFromHistoryState()) {
       history.back();
       return;
     }
-    if (onBeforeBack?.()) return;
     hideLayer();
     pushResumeDockFromLastOpened();
     scrollToResumeDock();

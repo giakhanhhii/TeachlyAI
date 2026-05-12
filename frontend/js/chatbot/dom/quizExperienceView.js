@@ -312,6 +312,5 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   window.addEventListener("keydown", onGlobalKeydown, true);
 
   root.appendChild(shell);
-  if (meta?.__devSlot) { const b = document.createElement("div"); b.className = "dev-slot-badge"; b.textContent = meta.__devSlot; b.dataset.slot = meta.__devSlot.startsWith("warmup") ? "warmup" : meta.__devSlot; root.appendChild(b); }
   renderQuestion();
 }

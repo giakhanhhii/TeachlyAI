@@ -672,6 +672,7 @@ if SLIDE_HTML_DIR.is_dir():
 
 class RecommendRequest(BaseModel):
     history: list[dict]
+    kind: str = ""
 
 
 @app.post("/api/recommend-topics")
@@ -681,7 +682,7 @@ def api_recommend_topics(req: RecommendRequest):
     if not req.history:
         raise HTTPException(status_code=422, detail="history is empty")
     try:
-        return generate_topic_recommendations(req.history[-5:])
+        return generate_topic_recommendations(req.history[-5:], kind=req.kind)
     except (ValueError, KeyError) as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:
