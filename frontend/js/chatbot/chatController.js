@@ -554,13 +554,13 @@ export function init() {
       const capturedKind = _currentAutoExpKind || validKind;
       endDwell();
       updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
-      const autoCount = recommendQueueStore.onExpCompleted();
+      const autoCount = recommendQueueStore.onExpCompleted(capturedKind);
       if (autoCount === 5) {
         const _history = getLastN(5, capturedKind);
         updateRecommendPanel({ status: "loading", log: _history });
         fetchRecommendations(_history, capturedKind)
           .then((data) => {
-            recommendQueueStore.setRecommendations(data.topics ?? []);
+            recommendQueueStore.setRecommendations(data.topics ?? [], capturedKind);
             recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
             updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
           })
