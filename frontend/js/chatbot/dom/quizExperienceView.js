@@ -9,6 +9,16 @@ import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } fro
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
 
+/** Tiêu đề thanh trên quiz: ưu tiên chủ đề từ meta thay vì title bundle mock. */
+function buildQuizTopTitle(bundleTitle, metaRec) {
+  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (t && t !== "(Teachly tự động)" && t !== "—") return `Trắc nghiệm chủ đề ${t}`;
+  const fallback = String(bundleTitle || "").trim();
+  return fallback || "Ôn tập trắc nghiệm";
+}
+
 /**
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
@@ -82,12 +92,14 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     }
   }
   const data = prepareQuizSessionData(raw, meta);
-  const titleText = data.title || "Ôn tập trắc nghiệm";
-  const questions = Array.isArray(data.questions) ? data.questions : [];
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
-  if (!isRestore) beginDwell(meta?.topic || meta?.source || titleText, "quiz");
-
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  const metaForTitle =
+    initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
+  const titleText = buildQuizTopTitle(data.title || "Ôn tập trắc nghiệm", metaForTitle);
+  const questions = Array.isArray(data.questions) ? data.questions : [];
+  if (!isRestore) beginDwell(metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText, "quiz");
+
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   let correct = 0;
   let wrong = 0;

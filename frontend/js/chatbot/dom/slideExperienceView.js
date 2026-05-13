@@ -713,8 +713,17 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         total = Math.max(1, slides.length);
         index = Math.min(index, Math.max(0, slides.length - 1));
       }
+      const sessionShellSubtitle = (() => {
+        const auto = "(Teachly tự động)";
+        const tt = String(effectiveMeta?.topic ?? meta?.topic ?? "").replace(/\s+/g, " ").trim();
+        if (tt && tt !== auto) return tt;
+        return String(deckTitle || data?.title || "").replace(/\s+/g, " ").trim();
+      })();
       const srcdoc = buildSlideDeckSrcdoc(html, slides, {
         ...meta,
+        topic: String(effectiveMeta?.topic ?? meta?.topic ?? "").trim(),
+        deckTitle: String(deckTitle || "").trim(),
+        sessionShellSubtitle,
         shellYear: String(meta.shellYear || new Date().getFullYear()),
         slideNavMode: "active",
       });

@@ -100,6 +100,16 @@ function buildCardKeys(cards) {
   });
 }
 
+/** Tiêu đề thanh trên flashcard: ưu tiên chủ đề từ meta thay vì title bundle mock. */
+function buildFlashTopTitle(bundleTitle, metaRec) {
+  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (t && t !== "(Teachly tự động)" && t !== "—") return `Flashcard từ vựng chủ đề ${t}`;
+  const fallback = String(bundleTitle || "").trim();
+  return fallback || "Flashcard";
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -183,11 +193,18 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     restoredCards.length > 0
       ? { title: typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : "Flashcard", cards: restoredCards }
       : prepareFlashSessionData(flashRaw, meta);
-  const titleText = data.title || "Flashcard";
   const cards = normalizeFlashCards(data.cards);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
+  const metaForTitle =
+    initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
+  const titleText = buildFlashTopTitle(data.title || "Flashcard", metaForTitle);
   const totalCards = cards.length;
-  if (restoredCards.length === 0) beginDwell(meta?.source || meta?.list || meta?.topic || titleText, "flash");
+  if (restoredCards.length === 0) {
+    beginDwell(
+      metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText,
+      "flash",
+    );
+  }
   const cardKeys = buildCardKeys(cards);
   const cardKeySet = new Set(cardKeys);
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;

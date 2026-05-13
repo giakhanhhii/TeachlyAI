@@ -672,8 +672,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           try {
             const file = resolveSlideShellFilename(spec.slideTemplate);
             const html = await fetchSlideShellHtml(file);
+            const sessionShellSubtitle = (() => {
+              const auto = "(Teachly tự động)";
+              const tt = String(topic || "").replace(/\s+/g, " ").trim();
+              if (tt && tt !== auto && tt !== "—") return tt;
+              return String(titleText || "").replace(/\s+/g, " ").trim();
+            })();
             const srcdoc = buildSlideDeckSrcdoc(html, deckSlides, {
               ...slideMeta,
+              deckTitle: String(titleText || "").trim(),
+              sessionShellSubtitle,
               slideTemplate: String(spec.slideTemplate || ""),
               shellYear: String(new Date().getFullYear()),
               slideNavMode: "active",

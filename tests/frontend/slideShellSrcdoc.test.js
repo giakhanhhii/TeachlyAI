@@ -59,6 +59,33 @@ const COMIC_LIST_SHELL = `
 </html>
 `;
 
+const COMIC_HERO_COVER_TWO_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head><meta charset="UTF-8" /></head>
+  <body class="shell-theme-comic">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide-hero">
+        <div class="comic-panel">
+          <h1 class="comic-title" style="font-size: 80px;">HERO</h1>
+          <ul class="comic-list" data-shell-bullet-count="4">
+            <li>old1</li><li>old2</li><li>old3</li><li>old4</li>
+          </ul>
+        </div>
+      </div>
+      <div class="slide-container" id="slide-body">
+        <h2 class="slide-title">Body</h2>
+        <div class="content-area">
+          <div class="comic-panel">
+            <ul class="comic-list"><li>x</li></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 const COMIC_STRATEGY_SHELL = `
 <!DOCTYPE html>
 <html lang="vi">
@@ -125,6 +152,25 @@ const COMIC_GRID_SHELL = `
               <p>Placeholder detail four</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
+const FRIENDLY_COVER_MIN_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head><meta charset="UTF-8" /></head>
+  <body class="shell-theme-friendly">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <i class="decor-icon decor-1"></i>
+        <div class="title-layout">
+          <h1>Cover title</h1>
+          <p class="subtitle">Old subtitle</p>
+          <ul data-shell="bullets"></ul>
         </div>
       </div>
     </div>
@@ -510,6 +556,56 @@ describe("slideShellSrcdoc.js", () => {
     expect(styleText).toContain("text-align: center !important;");
     expect(styleText).toContain("p.shell-sealife-multiline");
     expect(styleText).toContain("text-align: left !important;");
+  });
+
+  it("friendly title-layout subtitle uses sessionShellSubtitle (topic), not bullet headline fragment", () => {
+    const topic = "Hiện tại hoàn thành và hiện tại hoàn thành tiếp diễn";
+    const srcdoc = buildSlideDeckSrcdoc(
+      FRIENDLY_COVER_MIN_SHELL,
+      [
+        {
+          title: "Giới thiệu — Tổng quan kỳ thi",
+          bullets: [
+            "Bộ slide giả lập theo định hướng ôn 2026, giúp bạn lướt nhanh phân dạng và cách triển khai trong phòng thi.",
+          ],
+        },
+      ],
+      { topic, deckTitle: "Ôn THPT QG", sessionShellSubtitle: topic },
+    );
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const sub = doc.querySelector(".title-layout p.subtitle")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    expect(sub).toBe(topic);
+  });
+
+  it("marks friendly cover slide 0 for centered fallback bullets", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      FRIENDLY_COVER_MIN_SHELL,
+      [{ title: "Tiêu đề", bullets: ["Một", "Hai", "Ba"] }],
+      { shellYear: "2026" },
+    );
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const slide0 = doc.querySelector(".shell-slide-instance[data-shell-slide-index=\"0\"]");
+    expect(slide0?.getAttribute("data-shell-friendly-cover-bullets")).toBe("1");
+    const styleText = doc.querySelector("style[data-slide-shell-fit]")?.textContent || "";
+    expect(styleText).toContain("[data-shell-friendly-cover-bullets=\"1\"]");
+  });
+
+  it("comic hero cover uses one bullet even when template has data-shell-bullet-count from mock", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      COMIC_HERO_COVER_TWO_SHELL,
+      [
+        {
+          title: "Topic Cover",
+          bullets: ["First long bullet text", "Second", "Third", "Fourth"],
+        },
+        { title: "Next", bullets: ["Only"] },
+      ],
+      { shellYear: "2026" },
+    );
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const hero = doc.querySelector(".shell-slide-instance[data-shell-slide-index=\"0\"]");
+    const lis = hero?.querySelectorAll("ul[data-shell=\"bullets\"] li") || [];
+    expect(lis.length).toBe(1);
   });
 
   it("uses concrete reported-question rewriting prompts instead of placeholders", () => {
