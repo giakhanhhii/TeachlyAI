@@ -949,7 +949,7 @@ export function init() {
       setActiveSessionIndex(idx);
       setSession(getCurrentSessionId());
       recommendQueueStore.setSession(getCurrentSessionId());
-      updateRecommendPanel({ status: "recording", log: getLastN(5) });
+      updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -978,7 +978,7 @@ export function init() {
     writeAppNavigationState("replace");
     setSession(getCurrentSessionId());
     recommendQueueStore.setSession(getCurrentSessionId());
-    updateRecommendPanel({ status: "recording", log: getLastN(5) });
+    updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
   } });
 
   messageHistoryService = createMessageHistoryService({
@@ -1057,7 +1057,7 @@ export function init() {
       createSession();
       setSession(getCurrentSessionId());
       recommendQueueStore.setSession(getCurrentSessionId());
-      updateRecommendPanel({ status: "recording", log: getLastN(5) });
+      updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();

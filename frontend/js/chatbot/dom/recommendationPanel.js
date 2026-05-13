@@ -70,10 +70,14 @@ function _repaint({ status, log, suggestions } = {}) {
     logEl.innerHTML = "<i>Chưa có lịch sử</i>";
   }
 
-  if (suggestions?.length) {
-    sugEl.innerHTML = "<b>Gợi ý chủ đề:</b><br>" + suggestions.map(s =>
-      `• [${s.kind}] <b>${s.topic}</b><br><small>${s.reason || ""}</small>`
-    ).join("<br>");
+  if (suggestions !== undefined) {
+    if (suggestions?.length) {
+      sugEl.innerHTML = "<b>Gợi ý chủ đề:</b><br>" + suggestions.map(s =>
+        `• [${s.kind}] <b>${s.topic}</b><br><small>${s.reason || ""}</small>`
+      ).join("<br>");
+    } else {
+      sugEl.innerHTML = "";
+    }
   }
 }
 
