@@ -7,11 +7,39 @@ function normalizeText(value) {
     .trim();
 }
 
-function createSlide(id, title, bullets) {
+/** Rút gọn một dòng để tránh tràn bìa theme 1.thptqg (đa sắc). */
+function clampPlainLine(text, maxChars) {
+  const s = String(text || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!maxChars || !Number.isFinite(maxChars) || s.length <= maxChars) return s;
+  const cut = s.slice(0, Math.max(0, maxChars - 1)).trim();
+  return `${cut.replace(/[,;:\s]+$/u, "")}…`;
+}
+
+/** Tiêu đề ngắn cho bìa — bớt lặp "Từ vựng chủ đề …". */
+function shortTopicLabel(topic) {
+  const t = String(topic || "").trim();
+  if (!t) return "Chủ đề";
+  const m = t.match(/^Từ vựng chủ đề\s+(.+)$/iu);
+  if (m) return `Từ vựng: ${m[1].trim()}`;
+  return clampPlainLine(t, 44);
+}
+
+function createSlide(id, title, bullets, clipOpts) {
+  const titleMax = clipOpts && Number.isFinite(clipOpts.titleMax) ? clipOpts.titleMax : null;
+  const bulletMax = clipOpts && Number.isFinite(clipOpts.bulletMax) ? clipOpts.bulletMax : null;
+  const outTitle = titleMax ? clampPlainLine(title, titleMax) : String(title || "").trim();
+  const outBullets = (Array.isArray(bullets) ? bullets : [])
+    .map((item) => {
+      const line = String(item || "").trim();
+      return bulletMax ? clampPlainLine(line, bulletMax) : line;
+    })
+    .filter(Boolean);
   return {
     id,
-    title,
-    bullets: bullets.map((item) => String(item || "").trim()).filter(Boolean),
+    title: outTitle,
+    bullets: outBullets,
   };
 }
 
@@ -300,35 +328,53 @@ function buildStructureRouteLine(part, index, preset) {
 function buildChapterSlides(preset, chapter, chapterIndex) {
   const base = chapterIndex * 5 + 5;
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
+  const clip = preset.compactCopy ? { titleMax: 78, bulletMax: 132 } : null;
   return [
-    createSlide(tag, `${chapter.name} - Khái niệm`, [
-      buildConceptLine(chapter),
-      buildConceptSupportLine(chapter),
-      chapter.rule,
-      buildConceptExampleLine(chapter),
-      `Ghi chú triển khai: ${preset.notes}`,
-    ]),
+    createSlide(
+      tag,
+      `${chapter.name} - Khái niệm`,
+      [
+        buildConceptLine(chapter),
+        buildConceptSupportLine(chapter),
+        chapter.rule,
+        buildConceptExampleLine(chapter),
+        `Ghi chú triển khai: ${preset.notes}`,
+      ],
+      clip,
+    ),
     createSlide(
       `${preset.id}-${String(base + 1).padStart(2, "0")}`,
       `${chapter.name} - Công thức`,
       buildFormulaSummaryLines(chapter),
+      clip,
     ),
-    createSlide(`${preset.id}-${String(base + 2).padStart(2, "0")}`, `${chapter.name} - Ví dụ`, [
-      buildDetailedExampleLine(chapter),
-      buildSecondExampleLine(chapter),
-      buildDetailedExplanationLine(chapter),
-      buildSelfCheckLine(chapter),
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 2).padStart(2, "0")}`,
+      `${chapter.name} - Ví dụ`,
+      [
+        buildDetailedExampleLine(chapter),
+        buildSecondExampleLine(chapter),
+        buildDetailedExplanationLine(chapter),
+        buildSelfCheckLine(chapter),
+      ],
+      clip,
+    ),
     createSlide(
       `${preset.id}-${String(base + 3).padStart(2, "0")}`,
       `${chapter.name} - Lỗi thường gặp`,
       buildPitfallSlideLines(chapter),
+      clip,
     ),
-    createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
-      buildPracticeTaskLine(chapter),
-      buildPracticeGuideLine(chapter, preset),
-      `Yêu cầu thực hiện: viết đáp án đầy đủ và nêu lý do chọn dạng đúng của ${chapter.name.toLowerCase()}.`,
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 4).padStart(2, "0")}`,
+      `${chapter.name} - Luyện tập`,
+      [
+        buildPracticeTaskLine(chapter),
+        buildPracticeGuideLine(chapter, preset),
+        `Yêu cầu: viết đáp án và nêu lý do (mảng ${String(chapter.name).toLowerCase()}).`,
+      ],
+      clip,
+    ),
   ];
 }
 
@@ -337,6 +383,8 @@ function buildDeckFromBlueprint(preset) {
   const chapterNames = preset.chapters.map((chapter) => chapter.name);
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
+  const coverTitle = preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Tổng quan` : `${preset.topic} - Tổng quan`;
+  const clip = preset.compactCopy ? { titleMax: 76, bulletMax: 128 } : null;
   const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
     ? preset.routeLines.map((line) => {
         const normalized = normalizeRouteLineText(line);
@@ -344,33 +392,60 @@ function buildDeckFromBlueprint(preset) {
       })
     : [
         ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-        `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,
+        preset.compactCopy
+          ? `Mỗi track có ví dụ và bài tập bám chủ đề đã chọn.`
+          : `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,
       ];
   const slides = [
-    createSlide(`${preset.id}-01`, `${preset.topic} - Tổng quan`, [
-      ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
-      `Cấu trúc bài học: ${preset.structure}`,
-    ]),
-    createSlide(`${preset.id}-02`, `${preset.topic} - Mục tiêu`, [
-      `Nhận diện đúng các phần: ${chapterNames.slice(0, 3).join(", ")}.`,
-      `Thuộc công thức trọng tâm: ${chapterRules.join(" | ")}.`,
-      `Luyện theo yêu cầu: ${preset.notes}`,
-    ]),
-    createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
-      ...routeLines,
-    ]),
-    createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
+    createSlide(
+      `${preset.id}-01`,
+      coverTitle,
+      [
+        ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
+        `Cấu trúc: ${preset.structure}`,
+      ],
+      clip,
+    ),
+    createSlide(
+      `${preset.id}-02`,
+      preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Mục tiêu` : `${preset.topic} - Mục tiêu`,
+      [
+        `Phần chính: ${chapterNames.slice(0, 3).join(", ")}.`,
+        `Trọng tâm: ${chapterRules.join(" | ")}.`,
+        `Luyện: ${preset.notes}`,
+      ],
+      clip,
+    ),
+    createSlide(
+      `${preset.id}-03`,
+      preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Lộ trình` : `${preset.topic} - Lộ trình kiến thức`,
+      [...routeLines],
+      clip,
+    ),
+    createSlide(
+      `${preset.id}-04`,
+      preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Ghi nhớ nhanh` : `${preset.topic} - Khung ghi nhớ nhanh`,
+      buildQuickMemoryBullets(preset, chapterRules, chapterExamples),
+      clip,
+    ),
   ];
 
   preset.chapters.forEach((chapter, chapterIndex) => {
     slides.push(...buildChapterSlides(preset, chapter, chapterIndex));
   });
 
-  slides.push(createSlide(`${preset.id}-30`, "Tổng kết", [
-    `Ôn lại các phần chính: ${chapterNames.join(", ")}.`,
-    `Nhắc lại công thức và ví dụ then chốt: ${chapterExamples.join(" | ")}.`,
-    `Bài tập sau giờ học vẫn bám đúng cấu trúc: ${preset.structure}.`,
-  ]));
+  slides.push(
+    createSlide(
+      `${preset.id}-30`,
+      "Tổng kết",
+      [
+        `Ôn lại các phần chính: ${chapterNames.join(", ")}.`,
+        `Nhắc lại công thức và ví dụ then chốt: ${chapterExamples.join(" | ")}.`,
+        `Bài tập sau giờ học vẫn bám đúng cấu trúc: ${preset.structure}.`,
+      ],
+      preset.compactCopy ? { titleMax: 72, bulletMax: 130 } : null,
+    ),
+  );
 
   return slides;
 }
@@ -520,36 +595,51 @@ const RAW_SLIDE_PRESETS = [
     chapters: [
       {
         name: "Bị động cơ bản",
-        focus: "Đưa tân ngữ của câu chủ động lên làm chủ ngữ câu bị động.",
-        rule: "S + be + V3/ed + by agent.",
-        exampleA: "They clean the room every day -> The room is cleaned every day.",
-        exampleB: "She wrote the report -> The report was written.",
-        pitfallA: "Thiếu be trong câu bị động.",
-        pitfallB: "Dùng V2 thay vì V3.",
-        practiceA: "Chuyển 3 câu sang bị động cơ bản.",
-        practiceB: "Xác định tân ngữ trong câu chủ động.",
+        focus: "Đưa tân ngữ của câu chủ động lên làm chủ ngữ câu bị động, chọn dạng be phù hợp với thì câu gốc, rồi đổi động từ chính về V3/ed.",
+        rule: "S + be (am/is/are/was/were) + V3/ed + (by agent — có thể bỏ nếu agent không quan trọng).",
+        exampleA: "They clean the room every day → The room is cleaned every day.",
+        exampleB: "She wrote the report last night → The report was written last night.",
+        detailedExample: "Ví dụ phân tích: Câu chủ động 'The teacher explains the rule' có tân ngữ 'the rule' → tân ngữ lên làm chủ ngữ mới: 'The rule is explained by the teacher.' Chú ý: (1) be đổi theo thì — hiện tại đơn dùng is/am/are, (2) động từ explain → explained (V3), (3) agent 'by the teacher' có thể bỏ nếu không cần thiết. Câu 'The bridge was built in 2010' không có agent vì không cần biết ai xây.",
+        pitfallA: "Thiếu be trong câu bị động: viết *The room cleaned* thay vì *The room is cleaned*.",
+        pitfallB: "Dùng V2 thay vì V3: viết *The report was wrote* thay vì *was written*.",
+        pitfallADetail: "Be là thành phần bắt buộc trong mọi câu bị động — không có be thì câu không phải bị động. Lỗi hay gặp: 'The window broken' (thiếu was/were), 'The task finished' (thiếu has been hoặc was). Mỗi khi chuyển câu sang bị động, kiểm tra ngay: có be chưa, be có đúng thì chưa?",
+        pitfallBDetail: "V3 (past participle) khác với V2 (past simple): write → wrote (V2) / written (V3); make → made (V2) / made (V3 trùng nhau); break → broke (V2) / broken (V3). Sau be trong passive voice LUÔN dùng V3, không bao giờ dùng V2. Học sinh hay nhầm vì V2 quen thuộc hơn khi chia thì quá khứ.",
+        pitfallFix: "Công thức 2 bước kiểm tra: (1) Câu có be không? — nếu không thì sai. (2) Động từ chính có ở dạng V3 không? — nếu đang là V1/V2 thì sai. Cả hai đúng mới là câu bị động hoàn chỉnh.",
+        practiceA: "Chuyển 3 câu chủ động sang bị động cơ bản, giữ nguyên thì của câu gốc.",
+        practiceB: "Xác định tân ngữ trong 4 câu chủ động và giải thích tại sao đây là tân ngữ chứ không phải chủ ngữ.",
+        detailedPractice: "Bài luyện tập: 1. 'The students submit the assignment every week.' → chuyển sang bị động hiện tại đơn. 2. Sửa lỗi: 'The letter was wrote by the secretary.' 3. Giải thích: câu 'The car was repaired.' có cần thêm 'by someone' không, và khi nào thì cần giữ lại agent?",
       },
       {
         name: "Bị động theo thì",
-        focus: "Động từ be thay đổi theo thì của câu gốc.",
-        rule: "Present: is/am/are + V3; Past: was/were + V3; Perfect: has/have been + V3.",
-        exampleA: "The letter has been sent.",
-        exampleB: "The bridge was built in 2010.",
-        pitfallA: "Không giữ đúng thì.",
-        pitfallB: "Nhầm been với being.",
-        practiceA: "Chọn dạng be đúng theo thì.",
-        practiceB: "Viết lại 4 câu ở 4 thì khác nhau.",
+        focus: "Be trong câu bị động phải đổi theo thì của câu gốc — xác định đúng thì trước, sau đó chọn dạng be tương ứng.",
+        rule: "Present simple: is/am/are + V3 | Past simple: was/were + V3 | Present perfect: has/have been + V3 | Future: will be + V3 | Modal: modal + be + V3.",
+        exampleA: "The letter has been sent. (present perfect passive)",
+        exampleB: "The bridge was built in 2010. (past simple passive)",
+        detailedExample: "Ví dụ theo từng thì: Hiện tại đơn: 'English is taught at this school.' Quá khứ đơn: 'The road was repaired last month.' Hiện tại hoàn thành: 'Three books have been published this year.' Tương lai đơn: 'The results will be announced tomorrow.' Mỗi câu đều giữ đúng dạng be theo thì — đây là điểm mấu chốt để câu bị động đúng thì.",
+        pitfallA: "Không giữ đúng thì: chuyển câu present perfect sang bị động nhưng lại dùng was/were thay vì has/have been.",
+        pitfallB: "Nhầm been với being: viết *The letter is been sent* thay vì *has been sent*, hoặc *The task was being done* khi đây chỉ là past simple passive.",
+        pitfallADetail: "Mỗi thì chủ động có đúng một dạng bị động tương ứng — không thể chuyển thì khi đổi sang bị động. 'They have finished the project' → 'The project has been finished' (không phải *was finished*). Học sinh hay nhầm vì quá khứ đơn và hiện tại hoàn thành đều có V3, nhưng be dùng khác nhau hoàn toàn: was/were vs has/have been.",
+        pitfallBDetail: "Been dùng trong perfect passive (has been + V3); being dùng trong continuous passive (is being + V3). Nhầm hai cái này dẫn đến câu sai thì và sai nghĩa: *The project is been finished* không đúng cấu trúc; đúng là *has been finished* (hoàn thành) hoặc *is being finished* (đang hoàn thành).",
+        pitfallFix: "Bảng nhớ nhanh: present simple → is/are + V3; past simple → was/were + V3; present perfect → has/have been + V3; future → will be + V3; continuous → is/are being + V3. Nhìn câu gốc, xác định thì, tra bảng, chọn be.",
+        practiceA: "Chọn dạng be đúng theo thì cho 5 câu bị động.",
+        practiceB: "Viết lại 4 câu ở 4 thì khác nhau (present simple, past simple, present perfect, future simple).",
+        detailedPractice: "Bài luyện tập: 1. 'Scientists discovered a new planet last year.' → chuyển sang past simple passive. 2. Sửa lỗi thì: 'The report is been submitted yesterday.' 3. Chọn dạng đúng: 'The project (finish/has been finished/was being finished) three days ago.' — giải thích lý do chọn.",
       },
       {
         name: "Bị động với modal verbs",
-        focus: "Modal verbs dùng chung một mẫu bị động.",
-        rule: "modal + be + V3/ed.",
-        exampleA: "The form must be submitted today.",
-        exampleB: "The problem can be solved easily.",
-        pitfallA: "Viết modal + V3 trực tiếp.",
-        pitfallB: "Dùng been sau modal trong câu thường.",
-        practiceA: "Hoàn thành câu với should/must/can be + V3.",
-        practiceB: "Sửa lỗi modal passive.",
+        focus: "Câu bị động với modal verbs dùng cấu trúc modal + be + V3 — be không đổi theo thì vì modal đã mang thông tin về thời gian và mức độ.",
+        rule: "modal (must/should/can/may/might/will/would) + be + V3/ed.",
+        exampleA: "The form must be submitted today. (obligation)",
+        exampleB: "The problem can be solved with a different approach.",
+        detailedExample: "Ví dụ theo từng modal: Must be + V3: 'The rules must be followed.' Should be + V3: 'The essay should be proofread before submission.' Can be + V3: 'This mistake can be avoided easily.' May be + V3: 'The meeting may be postponed.' Will be + V3: 'The results will be announced next week.' Tất cả đều dùng be (nguyên mẫu) sau modal — không đổi thành is/was/been.",
+        pitfallA: "Viết modal + V3 trực tiếp mà bỏ be: viết *The form must submitted* thay vì *must be submitted*.",
+        pitfallB: "Dùng been sau modal trong câu bị động thường: viết *The task should been done* thay vì *should be done*.",
+        pitfallADetail: "Modal passive BẮT BUỘC có be giữa modal và V3: modal + be + V3. Be không thể bỏ vì đây là dấu hiệu bị động. Viết *The document must submitted* là sai hoàn toàn về cấu trúc. Cách nhớ: modal passive = modal + be + V3, ba thành phần đều cần thiết.",
+        pitfallBDetail: "been chỉ xuất hiện trong perfect passive: modal + have been + V3 (ví dụ: *should have been done* — tiếc nuối quá khứ). Trong câu modal passive thông thường (hiện tại/tương lai), dùng be, không phải been: *must be done*, *can be fixed*, *will be announced*. Nhầm be và been là một trong những lỗi phổ biến nhất trong bài kiểm tra.",
+        pitfallFix: "Công thức: modal passive thường = modal + be + V3; modal perfect passive = modal + have been + V3. Câu nào cần nói về quá khứ thì mới thêm have been; còn lại luôn dùng be.",
+        practiceA: "Hoàn thành 5 câu với should/must/can/may/will be + V3.",
+        practiceB: "Sửa lỗi trong 4 câu modal passive có lỗi cấu trúc.",
+        detailedPractice: "Bài luyện tập: 1. Chuyển sang modal passive: 'Someone must check the documents before printing.' 2. Sửa lỗi: 'This rule should been applied from the beginning.' 3. Phân biệt: *The fee must be paid* vs *The fee must have been paid* — câu nào nói về hiện tại, câu nào về quá khứ?",
       },
       {
         name: "Bị động tiếp diễn",
@@ -567,14 +657,19 @@ const RAW_SLIDE_PRESETS = [
       },
       {
         name: "Have something done",
-        focus: "Diễn tả việc nhờ hoặc để người khác làm cho mình.",
-        rule: "have/get + object + V3/ed.",
-        exampleA: "She had her hair cut.",
-        exampleB: "We got the printer repaired.",
-        pitfallA: "Nhầm với bị động thông thường.",
-        pitfallB: "Đặt sai object.",
-        practiceA: "Biến đổi 3 câu với have something done.",
-        practiceB: "Phân biệt have somebody do và have something done.",
+        focus: "Diễn tả việc nhờ hoặc thuê người khác làm cho mình — chủ ngữ không tự làm mà sắp xếp/trả tiền cho người khác làm.",
+        rule: "have/get + object + V3/ed (object là vật/việc được làm, không phải người làm).",
+        exampleA: "She had her hair cut. (nhờ thợ cắt, không tự cắt)",
+        exampleB: "We got the printer repaired by the technician.",
+        detailedExample: "Ví dụ phân tích: 'She had her hair cut' — she là chủ ngữ, had là have (quá khứ), her hair là object, cut là V3. Nghĩa: cô ấy nhờ ai đó cắt tóc cho mình. So sánh với bị động thông thường: 'Her hair was cut' — câu bị động thông thường không nhấn vào việc nhờ người. 'I am going to have my phone fixed' — tôi sẽ đem điện thoại đi sửa (nhờ người sửa). 'They got their house painted last summer' — họ thuê người sơn nhà.",
+        pitfallA: "Nhầm với bị động thông thường: viết *My car was repaired* khi muốn nói *I had my car repaired* — hai câu khác nhau về ý nghĩa.",
+        pitfallB: "Đặt sai object hoặc bỏ object: viết *She had cut her hair* (dạng perfect, nghĩa khác) thay vì *She had her hair cut*.",
+        pitfallADetail: "Have something done nhấn vào việc nhờ người — chủ ngữ chủ động sắp xếp cho việc đó xảy ra. Bị động thông thường (*My car was repaired*) chỉ nói việc xảy ra, không nhấn vào ai sắp xếp. Trong bài kiểm tra, ngữ cảnh 'nhờ thợ, thuê người' → dùng have/get something done, không dùng passive đơn thuần.",
+        pitfallBDetail: "Trật tự từ trong have something done là BẮT BUỘC: have/get + OBJECT + V3. Không được đặt V3 trước object: *She had cut her hair* = she herself đã cắt tóc (present perfect, nghĩa hoàn toàn khác). *I got repaired my bike* là sai trật tự — đúng là *I got my bike repaired*. Object phải đứng ngay sau have/get, V3 đứng sau object.",
+        pitfallFix: "Cách tự kiểm tra: sau have/get có phải là object (danh từ/cụm danh từ chỉ vật/việc) không? Tiếp theo có phải là V3 không? Nếu thứ tự là have + V3 + object thì sai — đổi lại thành have + object + V3.",
+        practiceA: "Biến đổi 3 câu sang cấu trúc have something done theo ngữ cảnh nhờ người làm.",
+        practiceB: "Phân biệt: 'She had her nails done' vs 'She had done her nails' — nghĩa khác nhau như thế nào?",
+        detailedPractice: "Bài luyện tập: 1. Viết lại dùng have something done: 'A mechanic repaired my car yesterday.' → 'I ________ yesterday.' 2. Sửa lỗi trật tự từ: 'He got repaired his laptop at the shop.' 3. Phân tích: 'They are having their office renovated' — ai đang làm việc, ai là chủ ngữ thực hiện, và tại sao đây không phải câu bị động thông thường?",
       },
     ],
   },
@@ -1031,62 +1126,91 @@ const RAW_SLIDE_PRESETS = [
     count: "30",
     structure: "Modal hiện tại -> Modal perfect -> Modal passive",
     style: "Vui tươi (Thân thiện)",
-    notes: "Phân biệt must have V3, should have V3 và may/might have V3.",
+    notes: "Phân biệt must have V3, should have V3 và may/might have V3 theo ngữ cảnh câu.",
+    routeLines: [
+      "Track 1: Modal Verbs In The Present\nKnowledge: Tập trung vào cách dùng can, could, must, have to, should và ought to trong câu hiện tại — phân biệt rõ ability, obligation, advice và permission để chọn đúng modal theo ngữ cảnh mà không nhầm lẫn giữa các loại.\nExample: You must wear a helmet (obligation) và You should review your notes (advice) là hai mẫu giúp phân biệt mức độ bắt buộc và lời khuyên; Could you explain this rule? là cách xin phép lịch sự hơn Can you.\nNote: Tuyệt đối không thêm to ngay sau modal, không viết must to go hay should to study; luôn xác định modal đang mang nghĩa gì trước khi đặt vào câu để tránh chọn nhầm giữa must not và do not have to.",
+      "Track 2: Modal Perfect And Modal Passive\nKnowledge: Tập trung vào cấu trúc modal + have + V3 để nói về quá khứ và modal + be + V3 để nói về điều được/nên thực hiện — hai dạng này thường xuất hiện cùng nhau trong bài suy luận và lỗi sai.\nExample: He must have forgotten the meeting là suy luận quá khứ chắc chắn; You should have checked là tiếc nuối quá khứ; The task should be completed today là modal passive chuẩn với be + V3.\nNote: Không viết must had V3 hay should been V3; luôn kiểm tra xem câu đang nói về quá khứ hay hiện tại để chọn đúng giữa must have V3 và must be V3 cho câu passive.",
+    ],
     chapters: [
       {
         name: "Can, could và ability",
-        focus: "Can/could diễn tả khả năng, năng lực hoặc sự cho phép.",
-        rule: "can/could + bare infinitive.",
-        exampleA: "She can solve the problem quickly.",
-        exampleB: "Could you explain this rule again?",
-        pitfallA: "Dùng to sau modal.",
-        pitfallB: "Nhầm ability với deduction.",
-        practiceA: "Chọn can hoặc could theo ngữ cảnh.",
-        practiceB: "Viết 2 câu xin phép lịch sự.",
+        focus: "Can/could diễn tả khả năng, năng lực hoặc sự cho phép tùy ngữ cảnh — can dùng hiện tại, could dùng quá khứ hoặc yêu cầu lịch sự.",
+        rule: "can/could + bare infinitive (không có to); could lịch sự hơn can trong câu đề nghị.",
+        exampleA: "She can solve the problem quickly because she practises every day.",
+        exampleB: "Could you explain this rule again? It is more polite than Can you.",
+        detailedExample: "Ví dụ phân tích: Câu 'She can solve the problem quickly' dùng can để nói về khả năng hiện tại của cô ấy. Câu 'Could you explain this rule again?' dùng could để xin phép hoặc yêu cầu một cách lịch sự hơn — không phải vì đây là quá khứ mà vì could làm giảm tông câu yêu cầu. Khi muốn nói về khả năng trong quá khứ, ta dùng could + V: 'When I was young, I could run very fast.'",
+        pitfallA: "Thêm to sau modal: viết *she can to solve* thay vì she can solve.",
+        pitfallB: "Nhầm ability với deduction: viết *she can be tired* (suy luận) trong khi đúng phải là *she must be tired*.",
+        pitfallADetail: "Lỗi phổ biến nhất là chèn to giữa modal và động từ chính: *You can to go now*, *She could to explain it*. Modal verbs (can, could, must, should, may, might, will, would) luôn đi kèm bare infinitive — tức là động từ nguyên mẫu không có to. Chỉ có ought to là ngoại lệ duy nhất trong nhóm semi-modal.",
+        pitfallBDetail: "Nhiều học sinh viết *She can be the winner* để diễn tả suy luận, nhưng đây là lỗi về chức năng của modal: can không dùng để suy luận về hiện tại. Dùng must be cho suy luận chắc chắn, may be / might be cho suy luận không chắc, và can be chỉ xuất hiện trong câu phủ định hoặc câu hỏi như *Can she really be that tired?*",
+        pitfallFix: "Cách tự kiểm tra: sau modal không bao giờ có to (trừ ought to); trước khi chọn can, hỏi xem câu đang nói về khả năng hay suy luận — nếu suy luận dùng must/may/might thay vì can.",
+        practiceA: "Chọn can hoặc could phù hợp cho từng câu theo ngữ cảnh hiện tại, quá khứ hoặc yêu cầu lịch sự.",
+        practiceB: "Viết 2 câu: một câu dùng can nói về khả năng và một câu dùng could để đề nghị lịch sự.",
+        detailedPractice: "Bài luyện tập: Câu 1: 'When she was five, she ________ (can/could) already read fluently.' Câu 2: '________ (Can/Could) you help me carry this box?' — chọn dạng lịch sự hơn. Câu 3: Phân tích câu 'He can swim across the river' và giải thích vì sao không thêm to sau can.",
       },
       {
         name: "Must và have to",
-        focus: "Must diễn tả bắt buộc hoặc suy luận mạnh; have to thiên về yêu cầu khách quan.",
-        rule: "must + V; have/has to + V.",
-        exampleA: "You must wear a helmet.",
-        exampleB: "She has to submit the form today.",
-        pitfallA: "Nhầm must not với do not have to.",
-        pitfallB: "Không phân biệt obligation và deduction.",
-        practiceA: "Phân loại obligation và deduction.",
-        practiceB: "Chọn must hoặc have to.",
+        focus: "Must diễn tả bắt buộc từ người nói hoặc suy luận chắc chắn; have to thiên về yêu cầu khách quan, quy định bên ngoài không phụ thuộc ý kiến người nói.",
+        rule: "must + V (nội tâm/suy luận); have/has to + V (quy định ngoại cảnh); must not = cấm; do not have to = không cần thiết.",
+        exampleA: "You must wear a helmet. (quy định bạo lực cá nhân hoặc suy luận: He must be tired.)",
+        exampleB: "She has to submit the form today because the deadline is set by the school.",
+        detailedExample: "Ví dụ phân tích: 'You must study harder' — người nói (giáo viên, cha mẹ) đang áp đặt ý muốn của mình. 'You have to show your ID at the gate' — quy định bảo vệ, không phải ý kiến cá nhân. 'He must be exhausted after the marathon' — must dùng để suy luận chắc chắn ở hiện tại, không phải obligation. Phân biệt must not (cấm tuyệt đối: You must not use your phone during the exam) và do not have to (không bắt buộc: You do not have to wear a tie).",
+        pitfallA: "Nhầm must not với do not have to: viết *You must not bring a dictionary* khi muốn nói không cần mang (thực ra là không bị cấm).",
+        pitfallB: "Không phân biệt obligation và deduction: dùng must để nói về quy định bên ngoài thay vì have to, hoặc dùng have to để suy luận thay vì must.",
+        pitfallADetail: "Must not mang nghĩa cấm hoàn toàn: *You must not cheat in the exam* = nghiêm cấm gian lận. Do not have to mang nghĩa không bắt buộc, tùy chọn: *You do not have to attend the extra class* = không bắt buộc dự, nếu muốn thì đến. Nhầm hai cái này dẫn đến nghĩa ngược hoàn toàn — đây là bẫy rất phổ biến trong đề THPT.",
+        pitfallBDetail: "Must để diễn tả suy luận hiện tại chắc chắn: *She must be at home now* (đèn sáng, xe còn đó). Have to không dùng cho suy luận — không viết *She has to be tired* mang nghĩa suy luận. Ngược lại, khi nói về quy định trường học, công ty thì dùng have to tự nhiên hơn must vì đó là quy định khách quan, không phải ý muốn chủ quan của người nói.",
+        pitfallFix: "Cách phân biệt nhanh: must = ý tôi muốn bạn làm hoặc tôi tin chắc điều đó đúng; have to = quy định không phụ thuộc tôi; must not = tôi cấm; do not have to = tôi không bắt buộc bạn.",
+        practiceA: "Phân loại 6 câu: câu nào dùng must (obligation/deduction), câu nào dùng have to (external rule), câu nào dùng must not, câu nào dùng do not have to.",
+        practiceB: "Viết lại câu: 'It is compulsory to wear uniform at school' dùng have to và 'I am certain she is the winner' dùng must.",
+        detailedPractice: "Bài luyện tập: 1. 'You ________ (must not/do not have to) park here — it is a fire exit.' 2. 'Students ________ (must/have to) submit homework by Friday according to school policy.' 3. Phân tích câu 'The lights are on; someone must be home' và giải thích chức năng của must trong câu này.",
       },
       {
         name: "Should và ought to",
-        focus: "Dùng để đưa lời khuyên hoặc kỳ vọng.",
-        rule: "should/ought to + V.",
-        exampleA: "You should review your notes.",
-        exampleB: "Students ought to ask questions.",
-        pitfallA: "Dùng should to V.",
-        pitfallB: "Nhầm lời khuyên với bắt buộc mạnh.",
-        practiceA: "Viết lời khuyên cho 3 tình huống.",
-        practiceB: "Sửa lỗi trong câu có should.",
+        focus: "Should và ought to đều đưa lời khuyên hoặc diễn tả kỳ vọng — should phổ biến hơn trong văn nói; ought to mang tính trang trọng hơn nhưng dùng ít hơn trong tiếng Anh hiện đại.",
+        rule: "should/ought to + V (lời khuyên, kỳ vọng); should not + V (không nên).",
+        exampleA: "You should review your notes before the test to avoid forgetting key rules.",
+        exampleB: "Students ought to ask questions when they are confused instead of guessing.",
+        detailedExample: "Ví dụ phân tích: 'You should eat more vegetables' — lời khuyên nhẹ nhàng, không bắt buộc. 'You ought to apologise' — khuyên nhưng có hàm ý trách móc về mặt đạo đức. So sánh với must: 'You must submit the form' (obligation) vs 'You should submit the form' (suggestion). Should còn dùng trong câu điều kiện: 'Should you need help, call me' = cấu trúc đảo ngữ câu điều kiện loại 1 trang trọng.",
+        pitfallA: "Thêm to sau should: viết *you should to study* thay vì you should study.",
+        pitfallB: "Nhầm lời khuyên với bắt buộc mạnh: dùng should khi tình huống cần must, ví dụ *You should not cheat* khi muốn nói cấm tuyệt đối.",
+        pitfallADetail: "Should là modal verb nên không bao giờ có to sau nó: *She should to practise more* là sai. Ought to là ngoại lệ — ought PHẢI có to: *She ought practise* là sai, đúng là *She ought to practise*. Đây là điểm dễ nhầm khi học sinh học ought to rồi áp dụng nhầm to cho should.",
+        pitfallBDetail: "Should không đủ mạnh để diễn tả cấm đoán nghiêm túc. *You should not cheat* nghĩa là tôi không khuyên bạn gian lận — nghe còn nhẹ nhàng. Trong ngữ cảnh kiểm tra nghiêm túc, dùng *must not* hoặc *are not allowed to*. Ngược lại, dùng must khi muốn khuyên rất mạnh: *You really must see a doctor* nghe cấp bách hơn *You should see a doctor*.",
+        pitfallFix: "Quy tắc nhớ nhanh: should = tôi nghĩ đây là ý hay cho bạn; must = tôi cần bạn làm điều này; should not = không nên; must not = không được phép. Và never thêm to sau should.",
+        practiceA: "Viết lời khuyên cho 3 tình huống: bạn hay quên từ vựng, bạn mắc lỗi ngữ pháp, bạn sợ nói tiếng Anh — dùng should hoặc ought to.",
+        practiceB: "Sửa lỗi trong 4 câu có should: tìm câu dùng sai should/must, câu thêm to sai, câu nhầm should not với must not.",
+        detailedPractice: "Bài luyện tập: 1. Sửa lỗi: 'You should to submit the assignment before Friday.' 2. Chọn should hoặc must: 'Students ________ not use phones during class — it is strictly forbidden.' 3. Viết lại dùng ought to: 'I think you need to apologise to her.'",
       },
       {
         name: "Modal perfect",
-        focus: "Diễn tả suy luận, tiếc nuối hoặc khả năng trong quá khứ.",
-        rule: "modal + have + V3.",
-        exampleA: "He must have forgotten the meeting.",
-        exampleB: "You should have checked the answer.",
-        pitfallA: "Viết must had V3.",
-        pitfallB: "Không bám thời gian quá khứ.",
-        practiceA: "Phân biệt must have và should have.",
-        practiceB: "Hoàn thành 5 câu modal perfect.",
+        focus: "Modal perfect (modal + have + V3) diễn tả suy luận về quá khứ, tiếc nuối về điều không làm, hoặc khả năng đã xảy ra — must/can't have V3 cho suy luận; should/could have V3 cho tiếc nuối.",
+        rule: "must have V3 (suy luận chắc chắn quá khứ); should have V3 (tiếc nuối/chỉ trích quá khứ); could have V3 (khả năng đã có nhưng không làm); may/might have V3 (suy luận không chắc quá khứ).",
+        exampleA: "He must have forgotten the meeting — his phone was off all morning.",
+        exampleB: "You should have checked the answer before submitting the test.",
+        detailedExample: "Ví dụ phân tích: 'She must have left early' — tôi suy luận chắc chắn rằng cô ấy đã đi sớm (xe đã không còn). 'You should have told me earlier' — tiếc nuối hoặc chỉ trích nhẹ vì bạn đã không làm điều đó trong quá khứ. 'He could have passed if he had studied harder' — anh ấy có khả năng đỗ nhưng đã không làm được. 'They might have missed the bus' — có thể họ đã lỡ xe, nhưng tôi không chắc.",
+        pitfallA: "Viết must had V3 hoặc should had V3 thay vì must have V3, should have V3.",
+        pitfallB: "Dùng must have V3 khi ngữ cảnh cần may/might have V3 (không chắc, chỉ là có thể).",
+        pitfallADetail: "Sau modal (must, should, could, may, might) LUÔN dùng have + V3, không bao giờ dùng had: *He must had forgotten* là sai hoàn toàn. Lỗi này xảy ra khi học sinh nhớ 'quá khứ = had' rồi áp vào modal perfect. Nhưng modal perfect đã có have cố định, không thay đổi theo thì: must have forgotten, should have told, could have passed.",
+        pitfallBDetail: "Must have V3 chỉ dùng khi người nói TIN CHẮC: 'The lights are off — they must have gone to bed.' Nếu chỉ đoán thôi, dùng may/might have: 'I am not sure — they might have gone out.' Dùng nhầm must have cho tình huống không chắc làm câu nghe quá tự tin so với thực tế.",
+        pitfallFix: "Bảng nhớ nhanh: must have V3 = chắc chắn đã; can't have V3 = không thể đã; should have V3 = đáng lẽ phải; could have V3 = có thể đã nhưng không; may/might have V3 = có thể đã (không chắc). Không dùng had sau bất kỳ modal nào trong nhóm này.",
+        practiceA: "Phân biệt must have và should have: với 4 tình huống, chọn đúng modal perfect và giải thích lý do.",
+        practiceB: "Hoàn thành 5 câu modal perfect với must, should, could, may, might — mỗi loại một câu.",
+        detailedPractice: "Bài luyện tập: 1. 'She did not come to class. She ________ (must/might) have been sick.' — chọn cái nào nếu bạn chắc chắn, cái nào nếu bạn không chắc. 2. Sửa lỗi: 'You should had told me the truth from the beginning.' 3. Viết câu tiếc nuối: bạn không ôn bài trước kỳ thi — dùng should have V3.",
       },
       {
         name: "Modal passive",
-        focus: "Dùng modal để nói điều nên/cần/có thể được thực hiện.",
-        rule: "modal + be + V3.",
-        exampleA: "The task should be completed today.",
-        exampleB: "The result may be announced tomorrow.",
-        pitfallA: "Quên be.",
-        pitfallB: "Dùng V-ing sau be.",
-        practiceA: "Chuyển 4 câu sang modal passive.",
-        practiceB: "Chọn modal passive phù hợp.",
+        focus: "Modal passive kết hợp modal verb với bị động — dùng khi muốn nói điều gì nên/cần/có thể được thực hiện mà không cần nêu người thực hiện.",
+        rule: "modal + be + V3/ed (hiện tại/tương lai); modal + have been + V3 (quá khứ); không bao giờ dùng V-ing hoặc been V-ing sau modal trong cấu trúc passive.",
+        exampleA: "The task should be completed today. (ai đó phải hoàn thành — không cần nêu tên)",
+        exampleB: "The result may be announced tomorrow by the committee.",
+        detailedExample: "Ví dụ phân tích: 'This form must be submitted before Friday' — modal passive hiện tại, nhấn vào việc form phải được nộp chứ không cần biết ai nộp. 'The bridge should have been repaired last year' — modal perfect passive, tiếc nuối về việc cầu đáng lẽ đã được sửa. 'The documents may be reviewed again' — may be V3 diễn tả khả năng thụ động. So sánh: active *They should complete the task* vs passive *The task should be completed* — cả hai đúng nhưng nhấn vào đối tượng khác nhau.",
+        pitfallA: "Quên be: viết *the task should completed* thay vì should be completed.",
+        pitfallB: "Dùng V-ing sau be: viết *the task should be completing* thay vì should be completed.",
+        pitfallADetail: "Cấu trúc modal passive BẮT BUỘC có be giữa modal và V3: modal + be + V3. Bỏ be là lỗi cấu trúc nghiêm trọng: *The form must submitted* là sai. Học sinh hay bỏ be vì nghĩ modal đã đủ để tạo bị động, nhưng không phải — be là thành phần không thể thiếu trong passive voice.",
+        pitfallBDetail: "Sau modal + be, động từ phải ở dạng V3 (past participle), không phải V-ing: *The report should be writing* là sai, đúng là *The report should be written*. V-ing dùng trong continuous passive (is/are being + V3), không phải modal passive. Nhầm hai dạng này dẫn đến câu sai nghĩa và cấu trúc.",
+        pitfallFix: "Công thức kiểm tra: modal + be + V3. Ba thành phần này không thể thiếu một cái nào. Nếu câu passive có thêm have (quá khứ): modal + have been + V3 — vẫn giữ be, chỉ thêm have vào trước.",
+        practiceA: "Chuyển 4 câu chủ động có modal sang modal passive: should, must, can, may.",
+        practiceB: "Chọn modal passive phù hợp nhất cho từng ngữ cảnh: obligation, advice, possibility, prohibition.",
+        detailedPractice: "Bài luyện tập: 1. Chuyển sang passive: 'Someone must repair the roof before the rainy season.' 2. Sửa lỗi: 'The essay should be writing in formal English.' 3. Viết câu dùng modal perfect passive: đáng lẽ cuộc họp đã phải được thông báo sớm hơn — dùng should have been + V3.",
       },
     ],
   },
@@ -1209,17 +1333,17 @@ function buildExtraSlidePresetId(topic, index) {
 
 function buildAutoChaptersByTopic(topic) {
   const topicText = String(topic || "").trim();
-  const topicLower = topicText.toLocaleLowerCase("vi-VN");
+  const shortL = shortTopicLabel(topicText);
   return AUTO_CHAPTER_TEMPLATES.map((template, index) => ({
-    name: `${template.name} - ${topicText}`,
-    focus: `${template.focusStem} của ${topicLower} trong bài thi.`,
-    rule: `${template.ruleStem} cho ${topicLower}.`,
-    exampleA: `Ví dụ ${index + 1}: Chọn đáp án phù hợp nhất với ${topicLower} trong ngữ cảnh câu.`,
-    exampleB: `Ví dụ ${index + 2}: Viết lại một câu ngắn để kiểm tra mức độ hiểu ${topicLower}.`,
-    pitfallA: `Lỗi ${index + 1}: Chọn đáp án theo cảm tính mà không bám dấu hiệu của ${topicLower}.`,
-    pitfallB: `Lỗi ${index + 2}: Bỏ qua bước đọc lại nghĩa tổng thể khi xử lý ${topicLower}.`,
-    practiceA: `Bài tập ${index + 1}: ${template.practiceStem} với 3 câu liên quan đến ${topicLower}.`,
-    practiceB: `Bài tập ${index + 2}: Tự giải thích vì sao đáp án đúng vẫn bám ${topicLower}.`,
+    name: template.name,
+    focus: `${template.focusStem} (${shortL}).`,
+    rule: `${template.ruleStem} Áp dụng cho chủ đề đã chọn.`,
+    exampleA: `Ví dụ ${index + 1}: Chọn đáp án đúng trong ngữ cảnh.`,
+    exampleB: `Ví dụ ${index + 2}: Viết lại một câu ngắn kiểm tra hiểu bài.`,
+    pitfallA: `Lỗi ${index + 1}: Chọn theo cảm tính, bỏ qua dấu hiệu trong đề.`,
+    pitfallB: `Lỗi ${index + 2}: Đọc vội, không nắm nghĩa tổng thể đoạn.`,
+    practiceA: `Bài ${index + 1}: ${template.practiceStem} (3 câu).`,
+    practiceB: `Bài ${index + 2}: Giải thích vì sao đáp án đúng.`,
   }));
 }
 
@@ -1248,6 +1372,8 @@ function buildExtraSlidePreset(topic, index) {
     notes: EXTRA_SLIDE_NOTES_OPTIONS[index % EXTRA_SLIDE_NOTES_OPTIONS.length],
     chapters: buildAutoChaptersByTopic(topic),
     customDefaultIndexes: buildExtraPresetDefaultIndexes(chapterCount),
+    /** Bìa theme đa sắc (1.thptqg): title/bullet ngắn, tránh tràn. */
+    compactCopy: true,
   };
 }
 
@@ -1290,6 +1416,10 @@ export function findDirectSlidePreset(meta) {
       normalizeText(preset.topic) === topic
       && (!structure || normalizeText(preset.structure) === structure)
       && (!style || normalizeText(preset.style) === style)
+    ))
+    || DIRECT_SLIDE_PRESETS.find((preset) => (
+      normalizeText(preset.topic) === topic
+      && (!structure || normalizeText(preset.structure) === structure)
     ))
     || null
   );

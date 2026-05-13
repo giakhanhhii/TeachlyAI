@@ -294,47 +294,61 @@ export function prepareQuizSessionData(data, meta) {
   };
 }
 
+/**
+ * Thẻ từ JSON nhập tay trong meta (sau trim + giới hạn độ dài), hoặc null.
+ * @param {Record<string, string> | null | undefined} meta
+ * @returns {{ front: string, back: string }[] | null}
+ */
+export function tryParseDirectFlashCardsFromMeta(meta) {
+  const directRaw = meta && typeof meta.__directCardsJson === "string" ? meta.__directCardsJson.trim() : "";
+  if (!directRaw) return null;
+  try {
+    const parsed = JSON.parse(directRaw);
+    if (!Array.isArray(parsed) || !parsed.length) return null;
+    const direct = filterFlashCardsWithinLimit(
+      parsed
+        .map((c) => ({
+          front: String(c?.front ?? "").trim(),
+          back: String(c?.back ?? "").trim(),
+        }))
+        .filter((c) => c.front && c.back),
+    );
+    return direct.length ? direct : null;
+  } catch {
+    return null;
+  }
+}
+
+/** @param {Record<string, string> | null | undefined} meta */
+export function hasDirectFlashCardsFromMeta(meta) {
+  return tryParseDirectFlashCardsFromMeta(meta) !== null;
+}
+
 /** @param {any} data
  * @param {Record<string, string>} meta */
 export function prepareFlashSessionData(data, meta) {
-  const directRaw = meta && typeof meta.__directCardsJson === "string" ? meta.__directCardsJson.trim() : "";
-  if (directRaw) {
-    try {
-      const parsed = JSON.parse(directRaw);
-      if (Array.isArray(parsed) && parsed.length) {
-        const direct = filterFlashCardsWithinLimit(
-          parsed
-          .map((c) => ({
-            front: String(c?.front ?? "").trim(),
-            back: String(c?.back ?? "").trim(),
-          }))
-          .filter((c) => c.front && c.back),
-        );
-        if (direct.length) {
-          const want = parseCountInRange(meta?.count, 1, 500, direct.length);
-          const consumed = parseConsumedKeys(meta?.__consumedKeysJson);
-          const remainingPool = filterPoolByConsumed(direct, flashDedupeKey, consumed);
-          const cards = remainingPool.slice(0, want);
-          const nextConsumedKeysJson = buildNextConsumedKeysJson(direct, cards, flashDedupeKey, consumed);
-          const uniquePoolSize = new Set(direct.map((item) => flashDedupeKey(item)).filter(Boolean)).size;
-          return {
-            ...data,
-            title: `Flashcard — từ nhập tay (${direct.length} thẻ)`,
-            cards,
-            sessionMeta: {
-              ...meta,
-              __offset: "0",
-              __offsetStart: "0",
-              __poolSize: String(uniquePoolSize),
-              __hasMore: nextConsumedKeysJson ? "1" : "0",
-              __consumedKeysJson: nextConsumedKeysJson,
-            },
-          };
-        }
-      }
-    } catch {
-      // fall through to mock pool
-    }
+  const directFromMeta = tryParseDirectFlashCardsFromMeta(meta);
+  if (directFromMeta) {
+    const direct = directFromMeta;
+    const want = parseCountInRange(meta?.count, 1, 500, direct.length);
+    const consumed = parseConsumedKeys(meta?.__consumedKeysJson);
+    const remainingPool = filterPoolByConsumed(direct, flashDedupeKey, consumed);
+    const cards = remainingPool.slice(0, want);
+    const nextConsumedKeysJson = buildNextConsumedKeysJson(direct, cards, flashDedupeKey, consumed);
+    const uniquePoolSize = new Set(direct.map((item) => flashDedupeKey(item)).filter(Boolean)).size;
+    return {
+      ...data,
+      title: `Flashcard — từ nhập tay (${direct.length} thẻ)`,
+      cards,
+      sessionMeta: {
+        ...meta,
+        __offset: "0",
+        __offsetStart: "0",
+        __poolSize: String(uniquePoolSize),
+        __hasMore: nextConsumedKeysJson ? "1" : "0",
+        __consumedKeysJson: nextConsumedKeysJson,
+      },
+    };
   }
 
   const directPreset = findDirectFlashPreset(meta);

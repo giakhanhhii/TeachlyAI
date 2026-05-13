@@ -67,24 +67,26 @@ Generate a JSON slide deck about the given English topic.
 
 Rules:
 - Exactly 10 slides
-- The FIRST slide (s1) title must be the topic itself (verbatim or a very close restatement — this is the cover/title slide)
-- Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
-- Each bullet: 20-30 words, write as a detailed informative sentence with context or examples
-- Keep slide TITLES short (3-6 words) to avoid overflow
-- Content must be genuinely educational about the topic
+- FIRST slide (cover): "title" = ONE short headline (max 10 words, max ~72 characters) that names the topic clearly — do NOT paste the full raw topic string, do NOT stack keywords with slashes, do NOT use ALL CAPS blocks. This title must fit a 16:9 slide header without clipping.
+- FIRST slide: exactly 2 or 3 bullets only; each bullet max 14 words; concise Vietnamese or English matching the topic; do NOT repeat the full topic phrase in every bullet (use "chủ đề", "phần này", or pronouns after the first mention).
+- Slides 2–10: "title" max 8 words; 3 bullets each; each bullet max 18 words (one clear sentence each).
+- No filler like repeating the same long topic label in every bullet.
+- Deck "title" field: short deck name (max 12 words).
+- Content must be genuinely educational about the topic.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<deck title>","slides":[{"id":"s1","title":"<topic>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
+{"title":"<deck title>","slides":[{"id":"s1","title":"<short cover headline>","bullets":["<bullet>","<bullet>"]},...]}"""
 
 _QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
 Generate a JSON quiz about the given English topic.
 
 Rules:
 - Exactly 10 questions
-- Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation in Vietnamese or English)
+- Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes in options array
 - Questions test practical knowledge of the topic
+- LANGUAGE RULE (HARD): ALL fields — title, text, options, hint — MUST be written in English. NEVER use Vietnamese in any field. This is an English-learning app; mixing Vietnamese defeats the purpose.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
@@ -95,12 +97,16 @@ Generate a JSON flashcard set about the given English topic.
 
 Rules:
 - Exactly 20 cards
-- Each card: "front" (English word or short phrase, max 4 words), "phonetic" (IPA), "back" (Vietnamese definition OR English definition, max 12 words), "hint" (brief usage note, max 8 words)
-- Keep "back" SHORT — max 12 words
+- Each card:
+  - "front": English word or short phrase (max 4 words) — MUST be in English
+  - "phonetic": IPA transcription
+  - "back": Vietnamese meaning ONLY (max 12 words) — MUST be in Vietnamese, never English
+  - "hint": short English example sentence or usage note (max 8 words) — MUST be in English
+- LANGUAGE RULE (HARD): front and hint MUST be English; back MUST be Vietnamese. No mixing.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<definition>","hint":"<usage note>"},...]}"""
+{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<English example>"},...]}"""
 
 
 def _call_openai(system: str, user: str, max_tokens: int) -> str:
@@ -120,6 +126,56 @@ def _call_openai(system: str, user: str, max_tokens: int) -> str:
 def _sanitize_topic(topic: str) -> str:
     """Collapse whitespace/control chars and cap length to block prompt injection."""
     return " ".join(topic.split())[:200]
+
+
+def _clamp_line(text: str, max_chars: int) -> str:
+    """Single-line clamp for slide titles and bullets (16:9 safe)."""
+    s = " ".join(str(text or "").split())
+    if len(s) <= max_chars:
+        return s
+    cut = s[: max_chars - 1]
+    if " " in cut:
+        cut = cut.rsplit(" ", 1)[0]
+    return cut.rstrip(" ,;:") + "…"
+
+
+def _short_cover_title(topic: str, *, max_chars: int = 78, max_words: int = 11) -> str:
+    """Cover slide headline — short enough for professional split themes (e.g. 1.thptqg)."""
+    t = " ".join(str(topic or "").split())
+    if not t:
+        return "Chủ đề"
+    words = t.split()
+    if len(words) > max_words:
+        return _clamp_line(" ".join(words[:max_words]), max_chars + 8)
+    if len(t) > max_chars:
+        return _clamp_line(t, max_chars)
+    return t
+
+
+def _normalize_ai_slide_deck(data: dict[str, Any], topic: str) -> None:
+    """Clamp titles/bullets so decks fit slide shells (cover slide overflow)."""
+    slides = data.get("slides")
+    if not isinstance(slides, list):
+        return
+    for idx, s in enumerate(slides):
+        if not isinstance(s, dict):
+            continue
+        tit = s.get("title")
+        max_title = 82 if idx == 0 else 72
+        if isinstance(tit, str) and tit.strip():
+            s["title"] = _clamp_line(tit, max_title)
+        elif idx == 0:
+            s["title"] = _short_cover_title(topic)
+        bullets = s.get("bullets")
+        if not isinstance(bullets, list):
+            continue
+        max_bullets = 3 if idx == 0 else 4
+        max_chars_b = 150 if idx == 0 else 200
+        out: list[str] = []
+        for b in bullets[:max_bullets]:
+            if isinstance(b, str) and b.strip():
+                out.append(_clamp_line(b, max_chars_b))
+        s["bullets"] = out
 
 
 def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
@@ -145,9 +201,6 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
     # Validate basic shape
     if not isinstance(data.get("slides"), list):
         raise ValueError("AI slide response missing 'slides' array")
-    # First slide title = topic (cover slide)
-    if data["slides"]:
-        data["slides"][0]["title"] = topic
     # Ensure ids exist
     for i, s in enumerate(data["slides"]):
         if not s.get("id"):
@@ -155,6 +208,17 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
         # Clamp bullets to 4 per slide
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
+    _normalize_ai_slide_deck(data, topic)
+    # Cover slide: short headline (full topic in deck title / meta — avoids header clip)
+    if data["slides"] and isinstance(data["slides"][0], dict):
+        s0 = data["slides"][0]
+        cur = s0.get("title")
+        if not (isinstance(cur, str) and cur.strip()):
+            s0["title"] = _short_cover_title(topic)
+        elif len(cur) > 82 or len(cur.split()) > 12:
+            s0["title"] = _short_cover_title(topic)
+    if isinstance(data.get("title"), str):
+        data["title"] = _clamp_line(data["title"], 100)
     return data
 
 
@@ -355,15 +419,14 @@ Your job is to read the document and create a slide deck that teaches the KEY co
 
 Rules:
 - Exactly 10 slides (or as many as requested)
-- The FIRST slide (s1) title must be the main topic of the document (cover slide)
-- Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
-- Each bullet: 20-30 words, write as a detailed informative sentence using content from the document
-- Keep slide TITLES short (3-6 words)
+- FIRST slide (cover): short headline title (max 10 words, ~72 characters) summarising the document — no long slash-separated keyword lists, no ALL CAPS blocks; must fit a 16:9 header.
+- FIRST slide: 2–3 bullets only, each max 14 words; do not repeat the same long phrase in every bullet.
+- Other slides: titles max 8 words; 3 bullets each; each bullet max 18 words; one sentence per bullet.
 - Derive all content from the document — do not invent facts not present in it
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<deck title>","slides":[{"id":"s1","title":"<main topic>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
+{"title":"<deck title>","slides":[{"id":"s1","title":"<short headline>","bullets":["<bullet>","<bullet>"]},...]}"""
 
 _DOC_QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
 You are given an excerpt from an uploaded document (Markdown format).
@@ -374,6 +437,7 @@ Rules:
 - Each question: "text" (the question), "options" (4 short choices), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes
 - All questions must be answerable from the document
+- LANGUAGE RULE (HARD): ALL fields — title, text, options, hint — MUST be written in English. NEVER use Vietnamese in any field. This is an English-learning app; mixing Vietnamese defeats the purpose.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
@@ -388,15 +452,16 @@ Rules:
 - Pick ONLY real English vocabulary: nouns, verbs, adjectives, adverbs, collocations, idioms, or key topic phrases
 - NEVER create cards for grammar terms, tense names (e.g. "Present simple", "Past perfect"), or meta-linguistic labels (e.g. "auxiliary verb", "modal verb", "clause")
 - Each card:
-  - "front": the English word or short phrase (max 4 words)
+  - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription
-  - "back": SHORT Vietnamese meaning (max 10 words) — translate the word, do NOT define grammar
-  - "hint": a short example sentence or collocate (max 10 words)
+  - "back": SHORT Vietnamese meaning (max 10 words) — MUST be in Vietnamese, never English
+  - "hint": short English example sentence or collocate (max 10 words) — MUST be in English
+- LANGUAGE RULE (HARD): front and hint MUST be English; back MUST be Vietnamese. No mixing allowed.
 - Prioritise topic-specific vocabulary that reflects the subject matter of the document
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<example>"},...]}"""
+{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<English example>"},...]}"""
 
 _DOC_CHAR_LIMIT = 12_000  # chars of document sent to model (well within gpt-4o-mini context)
 
@@ -422,6 +487,10 @@ def generate_slide_from_document(document_text: str, count: int = 10, notes: str
             s["id"] = f"ai_s{i + 1}"
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
+    topic_hint = str(data.get("title") or "Tài liệu")
+    _normalize_ai_slide_deck(data, topic_hint)
+    if isinstance(data.get("title"), str):
+        data["title"] = _clamp_line(data["title"], 100)
     return data
 
 
@@ -507,12 +576,12 @@ def generate_fullset_from_document(
 # ---------------------------------------------------------------------------
 
 _RECOMMEND_SYSTEM_MIXED = """You are a learning topic recommender for a Vietnamese English-learning app.
-You receive a list of the user's recent study sessions with their engagement time (dwellSeconds).
-Higher dwell time means the user was more engaged with that topic.
+You receive a ranked list of the user's top studied topics, sorted by TOTAL accumulated time spent (most time first).
+The #1 entry is the topic the user has invested the most time in overall.
 
 Your job: Recommend exactly 4 new study topics that:
 - Are DIFFERENT from every topic already in the history list (no repeats)
-- Are SIMILAR in genre/domain to the topics the user spent the most time on
+- Are CLOSELY related to the TOP 1-2 topics (highest dwellSeconds) — prioritise similarity to the most-studied topic
 - Cover a mix of the 4 content types: slide, quiz, flash, fullset
 - Are appropriate for Vietnamese high-school English learners (THPT level)
 - Include a short Vietnamese explanation of why you suggest it (max 15 words)
@@ -521,12 +590,12 @@ Return ONLY valid JSON, no markdown fences, no explanation:
 {"topics":[{"topic":"<English topic name>","kind":"slide"|"quiz"|"flash"|"fullset","reason":"<Vietnamese reason, max 15 words>"},...]}"""
 
 _RECOMMEND_SYSTEM_SAME_KIND = """You are a learning topic recommender for a Vietnamese English-learning app.
-You receive a list of the user's recent study sessions with their engagement time (dwellSeconds).
-Higher dwell time means the user was more engaged with that topic.
+You receive a ranked list of the user's top studied topics, sorted by TOTAL accumulated time spent (most time first).
+The #1 entry is the topic the user has invested the most time in overall.
 
 Your job: Recommend exactly 4 new study topics that:
 - Are DIFFERENT from every topic already in the history list (no repeats)
-- Are SIMILAR in genre/domain to the topics the user spent the most time on
+- Are CLOSELY related to the TOP 1-2 topics (highest dwellSeconds) — prioritise similarity to the most-studied topic
 - ALL 4 must be of kind: {kind}
 - Are appropriate for Vietnamese high-school English learners (THPT level)
 - Include a short Vietnamese explanation of why you suggest it (max 15 words)
@@ -552,8 +621,8 @@ def generate_topic_recommendations(history: list[dict], kind: str = "") -> dict:
 
     lines = []
     for i, h in enumerate(history, 1):
-        lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s")
-    user_msg = "Lịch sử học gần đây:\n" + "\n".join(lines) + "\n\nĐề xuất 4 chủ đề mới. Trả về JSON ngay."
+        lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s tổng cộng")
+    user_msg = "Chủ đề học nhiều nhất (xếp hạng theo tổng thời gian, #1 = nhiều nhất):\n" + "\n".join(lines) + "\n\nĐề xuất 4 chủ đề mới bám sát chủ đề #1 và #2. Trả về JSON ngay."
 
     raw = _call_openai(system, user_msg, max_tokens=600)
     start = raw.find("{")

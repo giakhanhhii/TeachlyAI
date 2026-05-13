@@ -3,7 +3,7 @@
  * Allows background generation to continue while the user navigates between sessions.
  * The Map lives for the page lifetime — no serialization, survives session switches but not page refresh.
  *
- * @typedef {{ status: "pending"|"done"|"error", raw: any, error: any, promise: Promise<any> }} FetchEntry
+ * @typedef {{ status: "pending"|"done"|"error", raw: any, error: any, promise: Promise<any>, startedAt: number }} FetchEntry
  */
 
 /** @type {Map<string, FetchEntry>} */
@@ -17,7 +17,13 @@ const store = new Map();
  */
 export function startFetch(id, promise) {
   /** @type {FetchEntry} */
-  const entry = { status: "pending", raw: null, error: null, promise: /** @type {any} */ (null) };
+  const entry = {
+    status: "pending",
+    raw: null,
+    error: null,
+    promise: /** @type {any} */ (null),
+    startedAt: Date.now(),
+  };
   entry.promise = promise.then((raw) => {
     entry.status = "done";
     entry.raw = raw;

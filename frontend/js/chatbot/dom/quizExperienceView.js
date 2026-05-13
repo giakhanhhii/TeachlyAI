@@ -1,13 +1,23 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
-import { getFetch } from "../services/backgroundFetchStore.js";
+import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
+
+/** Tiêu đề thanh trên quiz: ưu tiên chủ đề từ meta thay vì title bundle mock. */
+function buildQuizTopTitle(bundleTitle, metaRec) {
+  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (t && t !== "(Teachly tự động)" && t !== "—") return `Trắc nghiệm chủ đề ${t}`;
+  const fallback = String(bundleTitle || "").trim();
+  return fallback || "Ôn tập trắc nghiệm";
+}
 
 /**
  * @param {{ body: HTMLElement }} layerView
@@ -30,7 +40,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
     const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang câu hỏi, vui lòng đợi</span>'; root.appendChild(w); return w; })();
-    const _stopCountdown = startAiCountdown(_loadEl, 15);
+    const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
     try {
       raw = _bgFetch
         ? await _bgFetch.promise
@@ -58,7 +68,12 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
         const w = document.createElement("div"); w.className = "ai-loading-overlay";
         w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
         root.appendChild(w);
-        raw = await _prefetchEntry.promise;
+        const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
+        try {
+          raw = await _prefetchEntry.promise;
+        } finally {
+          _stopPrefetchCd();
+        }
         if (root._genStamp !== _genStamp) return;
         w.remove();
       } else {
@@ -68,12 +83,15 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
       const _devSrc = (!isRestore && !meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-      const _loadLabel = _devSrc === "ai" ? "AI đang tạo câu hỏi…" : "Đang tải nội dung…";
-      const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;
-      raw = _devSrc === "ai"
-        ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
-        : await fetchMockResource("quiz");
+      const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz")));
+      const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
+      const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
+      raw = _bgEntry?.status === "done" ? _bgEntry.raw
+          : _bgEntry ? await _bgEntry.promise
+          : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
+          : await fetchMockResource("quiz");
       _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
       _loadEl?.remove();
@@ -82,12 +100,14 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     }
   }
   const data = prepareQuizSessionData(raw, meta);
-  const titleText = data.title || "Ôn tập trắc nghiệm";
-  const questions = Array.isArray(data.questions) ? data.questions : [];
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
-  if (!isRestore) beginDwell(meta?.topic || meta?.source || titleText, "quiz");
-
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  const metaForTitle =
+    initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
+  const titleText = buildQuizTopTitle(data.title || "Ôn tập trắc nghiệm", metaForTitle);
+  const questions = Array.isArray(data.questions) ? data.questions : [];
+  if (!isRestore) beginDwell(metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText, "quiz");
+
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
   let correct = 0;
   let wrong = 0;
@@ -179,7 +199,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       },
     });
 
-    backBtn.disabled = index <= 0;
+    backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
     resultBtn.hidden = true;
     resultBtn.disabled = true;
     nextBtn.disabled = !gradedByIndex[index] && selected === null;
@@ -200,11 +220,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     if (!gradedByIndex[index]) nextBtn.textContent = "Tiếp theo";
     else {
       const isLast = index >= questions.length - 1;
-      nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
-      if (isLast) {
-        resultBtn.hidden = false;
-        resultBtn.disabled = false;
-      }
+      nextBtn.textContent = isLast ? "Xem kết quả" : "Tiếp theo";
     }
     emitState();
   }
@@ -251,7 +267,10 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       renderQuestion();
       return;
     }
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderQuestion();
   });
@@ -272,10 +291,9 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       progress.paint({ total, index, correct, wrong });
       activeStepView?.applyGrading?.(selected);
       const isLast = index >= questions.length - 1;
-      nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
+      nextBtn.textContent = isLast ? "Xem kết quả" : "Tiếp theo";
       if (isLast) {
-        resultBtn.hidden = false;
-        resultBtn.disabled = false;
+        resultBtn.hidden = true;
       }
       nextBtn.disabled = false;
       emitState();
@@ -283,7 +301,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     }
 
     if (index >= questions.length - 1) {
-      deps?.onContinueCreate?.("quiz");
+      reviewFilter = "all";
+      renderReview();
       return;
     }
     index += 1;

@@ -1,7 +1,7 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
-import { getFetch } from "../services/backgroundFetchStore.js";
+import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -105,7 +105,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Tạo slide, câu hỏi và flashcard từ tài liệu</span>'; root.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 35);
+      const _stopCountdown = startAiCountdown(_loadEl, 35, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
       try {
         const aiBundle = _bgFetch
           ? await _bgFetch.promise
@@ -128,18 +128,31 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       _loadEl.remove();
       _devSrc = "ai";
     } else if (_devSrc === "ai") {
-      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 30);
-      const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
+      const _bgKey = spec.__experienceId ? `gen_${spec.__experienceId}` : null;
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
-      });
-      _stopCountdown();
+      }));
+      const _bgEntryFs = _bgKey ? getFetch(_bgKey) : null;
+      const _loadEl = _bgEntryFs?.status !== "done" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 30, _bgEntryFs ? { startedAt: _bgEntryFs.startedAt } : {}) : null;
+      let aiBundle;
+      if (_bgEntryFs?.status === "done") {
+        aiBundle = _bgEntryFs.raw;
+      } else if (_bgEntryFs) {
+        aiBundle = await _bgEntryFs.promise;
+      } else {
+        aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
+          const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+          return { slide: s, quiz: q, flashcard: f };
+        });
+      }
+      _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
       rawSlide = aiBundle.slide;
       rawQuiz = aiBundle.quiz;
       rawFlash = aiBundle.flashcard;
-      _loadEl.remove();
+      _loadEl?.remove();
     } else {
       const _loadElMock = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">Đang tải nội dung…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })();
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
@@ -384,10 +397,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
   function refreshMixedNavChrome() {
     const st = steps[index];
+    const hasPrev = Boolean(deps?.hasPrevAutoExperience?.());
     if (bookmarkFilter) {
       const visibleIndices = getVisibleStepIndices();
       const visibleIndex = visibleIndices.indexOf(index);
-      backBtn.disabled = visibleIndex <= 0;
+      backBtn.disabled = visibleIndex <= 0 && !hasPrev;
       nextBtn.textContent = visibleIndex >= visibleIndices.length - 1 ? "Xem tất cả" : "Tiếp theo";
       return;
     }
@@ -395,10 +409,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       const dl = (st.data.slides || []).length;
       const atFirst = dl === 0 || slideDeckIndex <= 0;
       const atLast = dl > 0 && slideDeckIndex >= dl - 1;
-      backBtn.disabled = index <= 0 && atFirst;
+      backBtn.disabled = index <= 0 && atFirst && !hasPrev;
       nextBtn.textContent = index >= total - 1 && atLast ? "Tiếp tục tạo" : "Tiếp theo";
     } else {
-      backBtn.disabled = index <= 0;
+      backBtn.disabled = index <= 0 && !hasPrev;
       nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     }
   }
@@ -672,8 +686,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           try {
             const file = resolveSlideShellFilename(spec.slideTemplate);
             const html = await fetchSlideShellHtml(file);
+            const sessionShellSubtitle = (() => {
+              const auto = "(Teachly tự động)";
+              const tt = String(topic || "").replace(/\s+/g, " ").trim();
+              if (tt && tt !== auto && tt !== "—") return tt;
+              return String(titleText || "").replace(/\s+/g, " ").trim();
+            })();
             const srcdoc = buildSlideDeckSrcdoc(html, deckSlides, {
               ...slideMeta,
+              deckTitle: String(titleText || "").trim(),
+              sessionShellSubtitle,
               slideTemplate: String(spec.slideTemplate || ""),
               shellYear: String(new Date().getFullYear()),
               slideNavMode: "active",
@@ -915,7 +937,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       activeSlideDeckShell.bumpDeck(-1);
       return;
     }
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderStep();
   });

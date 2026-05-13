@@ -33,9 +33,9 @@ function createNeverAskRow() {
 }
 
 /**
- * Shows a "Bạn muốn tạo bằng cách nào?" popup.
+ * Shows a "Bạn muốn tạo bằng cách nào?" popup (no "Không hỏi lại" — that stays on the count panel).
  * @param {"fullset"|"slide"|"quiz"|"flash"} flowKind
- * @param {{ onCustom: (neverAsk: boolean) => void, onAuto: (neverAsk: boolean) => void }} callbacks
+ * @param {{ onCustom: () => void, onAuto: () => void }} callbacks
  */
 export function showAutoModeChoicePopup(flowKind, { onCustom, onAuto }) {
   const kindLabel = getKindLabel(flowKind);
@@ -61,8 +61,6 @@ export function showAutoModeChoicePopup(flowKind, { onCustom, onAuto }) {
   desc.className = "auto-mode-dialog-desc";
   desc.textContent = `Tạo thủ công hoặc để Teachly tự tạo ${kindLabel} cho bạn.`;
 
-  const { label: neverAskRow, checkbox: neverAskCb } = createNeverAskRow();
-
   const actions = document.createElement("div");
   actions.className = "auto-mode-dialog-actions";
 
@@ -81,17 +79,16 @@ export function showAutoModeChoicePopup(flowKind, { onCustom, onAuto }) {
   dialog.appendChild(icon);
   dialog.appendChild(title);
   dialog.appendChild(desc);
-  dialog.appendChild(neverAskRow);
   dialog.appendChild(actions);
   overlay.appendChild(dialog);
   document.body.appendChild(overlay);
 
   const close = () => overlay.remove();
 
-  customBtn.addEventListener("click", () => { close(); onCustom(neverAskCb.checked); });
-  autoBtn.addEventListener("click", () => { close(); onAuto(neverAskCb.checked); });
+  customBtn.addEventListener("click", () => { close(); onCustom(); });
+  autoBtn.addEventListener("click", () => { close(); onAuto(); });
   overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) { close(); onCustom(false); }
+    if (e.target === overlay) { close(); onCustom(); }
   });
 }
 

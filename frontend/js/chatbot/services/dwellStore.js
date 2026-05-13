@@ -5,9 +5,14 @@ const RECOMMEND_EVERY = 5;
 let _activeStart = null;
 let _activeTopic = null;
 let _activeKind = null;
+let _currentSessionId = null;
 
-function storageKey(kind) {
-  return `${BASE_KEY}_${kind || "default"}`;
+export function setSession(id) {
+  _currentSessionId = String(id || "").trim() || null;
+}
+
+function storageKey() {
+  return `${BASE_KEY}_${_currentSessionId || "default"}`;
 }
 
 /** Call when a new experience loads (not a restore). */
@@ -25,20 +30,23 @@ export function endDwell() {
   const kind = _activeKind;
   _activeStart = null;
   if (dwellSeconds < 1) { _activeTopic = null; _activeKind = null; return 0; }
-  const log = getLog(kind);
-  log.push({ topic: _activeTopic, kind, dwellSeconds, ts: new Date().toISOString() });
-  if (log.length > MAX_LOG) log.splice(0, log.length - MAX_LOG);
-  localStorage.setItem(storageKey(kind), JSON.stringify(log));
+  const all = getLog();
+  all.push({ topic: _activeTopic, kind, dwellSeconds, ts: new Date().toISOString() });
+  if (all.length > MAX_LOG) all.splice(0, all.length - MAX_LOG);
+  localStorage.setItem(storageKey(), JSON.stringify(all));
   _activeTopic = null; _activeKind = null;
-  return log.length;
+  return all.filter(e => e.kind === kind).length;
 }
 
 /** Returns the kind of the currently active experience (or null). */
 export function getActiveKind() { return _activeKind; }
 
-/** @param {string} [kind] */
+/** @param {string} [kind] — if provided, filters entries to that kind */
 export function getLog(kind) {
-  try { return JSON.parse(localStorage.getItem(storageKey(kind)) || "[]"); } catch { return []; }
+  try {
+    const all = JSON.parse(localStorage.getItem(storageKey()) || "[]");
+    return kind ? all.filter(e => e.kind === kind) : all;
+  } catch { return []; }
 }
 
 /** True when the kind's log length just reached a multiple of RECOMMEND_EVERY. */
@@ -52,13 +60,30 @@ export function getLastN(n = 5, kind) {
   return getLog(kind).slice(-n);
 }
 
-/** @param {string} [kind] — omit to clear all type buckets */
-export function clearLog(kind) {
-  if (kind) {
-    localStorage.removeItem(storageKey(kind));
-  } else {
-    ["slide", "quiz", "flash", "fullset", "default"].forEach((k) => localStorage.removeItem(storageKey(k)));
+/**
+ * Returns top N topics sorted by total accumulated dwell time (most time first).
+ * Aggregates multiple sessions on the same topic into a single entry.
+ * @param {number} n @param {string} [kind]
+ */
+export function getTopTopics(n = 5, kind) {
+  const entries = getLog(kind);
+  const totals = {};
+  for (const e of entries) {
+    const key = `${e.topic}|||${e.kind}`;
+    if (!totals[key]) totals[key] = { topic: e.topic, kind: e.kind, dwellSeconds: 0 };
+    totals[key].dwellSeconds += e.dwellSeconds;
   }
+  return Object.values(totals)
+    .sort((a, b) => b.dwellSeconds - a.dwellSeconds)
+    .slice(0, n);
+}
+
+/** @param {string} [kind] — omit to clear entire session log, or provide kind to remove only that kind's entries */
+export function clearLog(kind) {
+  if (!kind) { localStorage.removeItem(storageKey()); return; }
+  const remaining = getLog().filter(e => e.kind !== kind);
+  if (remaining.length) localStorage.setItem(storageKey(), JSON.stringify(remaining));
+  else localStorage.removeItem(storageKey());
 }
 
 /** Returns the active experience's elapsed seconds (from 1), or null if none. */

@@ -40,7 +40,7 @@ import {
   HISTORY_CHAT_PHASE,
   HISTORY_EXPERIENCE_PHASE,
 } from "./services/historyService.js";
-import { createFlowService } from "./services/flowService.js";
+import { createFlowService, flowSessionBaseTitle } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
@@ -48,8 +48,7 @@ import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
-import { endDwell, shouldRecommend, getLastN, getActiveKind } from "./services/dwellStore.js";
-import { fetchRecommendations } from "./services/aiContentApi.js";
+import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 
 /** @type {any} */
@@ -70,6 +69,9 @@ let isSwitchingSession = false;
 
 /** Kind of the currently active auto-mode experience ("slide"|"quiz"|"flash"|"fullset"|null). */
 let _currentAutoExpKind = null;
+
+/** Stack of previous auto-mode experiences for back-navigation. Each entry: { kind, meta, experienceId }. */
+let _autoModeHistory = [];
 
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 const HISTORY_NAV_SEQ_KEY = "__teachlyNavSeq";
@@ -101,6 +103,26 @@ export function init() {
   console.log("[chatController] DOM references resolved");
   mountAiStatusPanel();
   mountRecommendPanel();
+
+  function _buildTopRecs(kind) {
+    return getTopTopics(2, kind).map((t, i) => ({
+      topic: t.topic,
+      kind: t.kind,
+      reason: `Rank ${i + 1}: ${t.dwellSeconds}s`,
+    }));
+  }
+
+  function restoreRecommendPanelForSession() {
+    const recentKind = getLastN(1)[0]?.kind || null;
+    const topRecs = recentKind ? _buildTopRecs(recentKind) : [];
+    if (topRecs.length > 0) {
+      recommendQueueStore.setRecommendations(topRecs, recentKind);
+      updateRecommendPanel({ status: "ready", suggestions: topRecs, log: getLastN(5, recentKind) });
+    } else {
+      updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
+    }
+  }
+
   window.addEventListener("beforeunload", () => endDwell());
   initializeBrowserBackBridge();
   let currentHistoryNavSeq =
@@ -194,7 +216,35 @@ export function init() {
     rerenderMessages: () => renderMessages(),
   });
 
-  const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };
+  function _captureCurrentExpForHistory() {
+    const state = getCurrentExperienceState() || {};
+    const kind = state.kind;
+    if (kind !== "quiz" && kind !== "slide" && kind !== "flash" && kind !== "fullset") return;
+    _autoModeHistory.push({
+      kind,
+      meta: state.meta && typeof state.meta === "object" ? { ...state.meta } : {},
+      experienceId: typeof state.activeExperienceId === "string" ? state.activeExperienceId : "",
+    });
+  }
+
+  function _goBackToPrevAutoModeExperience() {
+    const prev = _autoModeHistory.pop();
+    if (!prev) return;
+    _currentAutoExpKind = /** @type {any} */ (prev.kind);
+    if (prev.kind === "fullset") {
+      const title = prev.meta.topic ? `Full Set — ${prev.meta.topic}` : "Full set";
+      void openResumeFullSetMixed(prev.meta, title);
+      return;
+    }
+    void openSingleExperience(prev.kind, prev.meta, "resume", prev.experienceId);
+  }
+
+  const experienceHooks = {
+    onAiEdit: openChatWithAiDraft,
+    onContinueCreate: continueCreateFromExperience,
+    hasPrevAutoExperience: () => _autoModeHistory.length > 0,
+    onGoBackToPrevExperience: _goBackToPrevAutoModeExperience,
+  };
   experienceController = createExperienceController({
     getCurrentSession,
     getCurrentExperienceState,
@@ -553,19 +603,16 @@ export function init() {
     if (autoModeStore.isEnabled()) {
       const capturedKind = _currentAutoExpKind || validKind;
       endDwell();
-      updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
-      const autoCount = recommendQueueStore.onExpCompleted();
-      if (autoCount === 5) {
-        const _history = getLastN(5, capturedKind);
-        updateRecommendPanel({ status: "loading", log: _history });
-        fetchRecommendations(_history, capturedKind)
-          .then((data) => {
-            recommendQueueStore.setRecommendations(data.topics ?? []);
-            recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
-            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
-          })
-          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
+      recommendQueueStore.onExpCompleted(capturedKind);
+      const _topRecs = _buildTopRecs(capturedKind);
+      recommendQueueStore.setRecommendations(_topRecs, capturedKind);
+      if (_topRecs.length > 0) {
+        recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
+        updateRecommendPanel({ status: "ready", suggestions: _topRecs, log: getLastN(5, capturedKind) });
+      } else {
+        updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       }
+      _captureCurrentExpForHistory();
       await launchAutoMode(validKind, autoModeStore.getCounts());
       return;
     }
@@ -600,8 +647,30 @@ export function init() {
     experienceController.persistActiveExperience();
   }
 
+  function autoRenameCurrentSession(flowKind) {
+    const cur = getCurrentSession();
+    if (!cur || !/^Đoạn chat\s+\d+$/i.test(cur.title)) return;
+    const base = flowSessionBaseTitle(flowKind);
+    const escaped = base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const rx = new RegExp(`^${escaped}\\s+(\\d+)$`, "i");
+    let max = 0;
+    getSessionsSnapshot().forEach((s) => {
+      const m = String(s?.title || "").match(rx);
+      if (!m) return;
+      const n = Number(m[1]);
+      if (Number.isFinite(n)) max = Math.max(max, n);
+    });
+    cur.title = `${base} ${max + 1}`;
+    renderChatListUI();
+    saveSessions();
+  }
+
   async function openSingleExperience(kind, meta, mode, experienceId) {
     if (!experienceController) return;
+    const flowKind = kind === "flash" ? "flashcard" : kind;
+    if (flowKind === "quiz" || flowKind === "slide" || flowKind === "flashcard") {
+      autoRenameCurrentSession(flowKind);
+    }
     await experienceController.openSingleExperience(kind, meta, mode, experienceId);
   }
 
@@ -615,14 +684,15 @@ export function init() {
    * @param {"fullset"|"slide"|"quiz"|"flash"} expKind - already normalized
    * @param {{ slides: number, quiz: number, flash: number }} counts
    */
-  async function launchAutoMode(expKind, counts) {
+  async function launchAutoMode(expKind, counts, { resetHistory = false } = {}) {
+    if (resetHistory) _autoModeHistory = [];
     _currentAutoExpKind = expKind;
 
     const spec = recommendQueueStore.getNextSpec(expKind, counts);
     setCurrentSlot(spec.slot || "");
 
-    if (recommendQueueStore.shouldAutoAdvance()) {
-      const kind = spec.kind || expKind;
+    if (recommendQueueStore.shouldAutoAdvance(expKind)) {
+      const kind = expKind;
       if (kind === "fullset") {
         await openResumeFullSetMixed(
           {
@@ -688,14 +758,14 @@ export function init() {
 
     function openCountSelector() {
       if (autoModeStore.getNeverAskCount()) {
-        void launchAutoMode(expKind, autoModeStore.getCounts());
+        void launchAutoMode(expKind, autoModeStore.getCounts(), { resetHistory: true });
         return;
       }
       showCountSelectorPanel(expKind, autoModeStore.getCounts(), {
         onConfirm: (counts, neverAsk) => {
           autoModeStore.saveCounts(counts);
           if (neverAsk) autoModeStore.setNeverAskCount(true);
-          void launchAutoMode(expKind, counts);
+          void launchAutoMode(expKind, counts, { resetHistory: true });
         },
         onCancel: () => {},
       });
@@ -719,12 +789,10 @@ export function init() {
     }
 
     showAutoModeChoicePopup(expKind, {
-      onCustom: (neverAsk) => {
-        if (neverAsk) autoModeStore.setNeverAskChoice("custom");
+      onCustom: () => {
         void onCustom();
       },
-      onAuto: (neverAsk) => {
-        if (neverAsk) autoModeStore.setNeverAskChoice("auto");
+      onAuto: () => {
         autoModeStore.enable();
         syncToggleUI(true);
         openCountSelector();
@@ -755,6 +823,7 @@ export function init() {
 
   async function openResumeFullSetMixed(spec, bundleTitle) {
     if (!experienceController) return;
+    autoRenameCurrentSession("fullset");
     await experienceController.openResumeFullSetMixed(spec, bundleTitle);
   }
 
@@ -904,21 +973,20 @@ export function init() {
     if (isSwitchingSession) return;
     isSwitchingSession = true;
     const _kind = getActiveKind();
-    const _dwellCount = endDwell();
-    if (_dwellCount > 0 && shouldRecommend(_kind)) {
-      const _history = getLastN(5, _kind);
-      updateRecommendPanel({ status: "loading", log: _history });
-      fetchRecommendations(_history, _kind)
-        .then(data => updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, _kind) }))
-        .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) }));
-    } else {
-      updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
+    endDwell();
+    if (_kind) {
+      const _topRecs = _buildTopRecs(_kind);
+      recommendQueueStore.setRecommendations(_topRecs, _kind);
     }
     try {
       persistActiveExperience();
       setActiveSessionIndex(idx);
+      setSession(getCurrentSessionId());
+      recommendQueueStore.setSession(getCurrentSessionId());
+      restoreRecommendPanelForSession();
       setGuidedState(null);
       experienceController.resetResumeState();
+      _autoModeHistory = [];
       layerView.hide();
       saveSessions();
       try {
@@ -943,6 +1011,9 @@ export function init() {
     layerView.hide();
     renderMessages();
     writeAppNavigationState("replace");
+    setSession(getCurrentSessionId());
+    recommendQueueStore.setSession(getCurrentSessionId());
+    restoreRecommendPanelForSession();
   } });
 
   messageHistoryService = createMessageHistoryService({
@@ -1019,8 +1090,12 @@ export function init() {
     onCreateNewChat: () => {
       persistActiveExperience();
       createSession();
+      setSession(getCurrentSessionId());
+      recommendQueueStore.setSession(getCurrentSessionId());
+      restoreRecommendPanelForSession();
       setGuidedState(null);
       experienceController.resetResumeState();
+      _autoModeHistory = [];
       layerView.hide();
       renderChatListUI();
       renderMessages();
@@ -1051,27 +1126,23 @@ export function init() {
       if (!autoModeStore.isEnabled() || !_currentAutoExpKind) return false;
       const capturedKind = _currentAutoExpKind;
       endDwell();
-      updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
-      const autoCount = recommendQueueStore.onExpCompleted();
-      if (autoCount === 5) {
-        const history = getLastN(5, capturedKind);
-        updateRecommendPanel({ status: "loading", log: history });
-        fetchRecommendations(history, capturedKind)
-          .then((data) => {
-            recommendQueueStore.setRecommendations(data.topics ?? []);
-            recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
-            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
-          })
-          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
+      recommendQueueStore.onExpCompleted(capturedKind);
+      const _topRecs = _buildTopRecs(capturedKind);
+      recommendQueueStore.setRecommendations(_topRecs, capturedKind);
+      if (_topRecs.length > 0) {
+        recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
+        updateRecommendPanel({ status: "ready", suggestions: _topRecs, log: getLastN(5, capturedKind) });
+      } else {
+        updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       }
-      if (recommendQueueStore.shouldAutoAdvance()) {
+      if (recommendQueueStore.shouldAutoAdvance(capturedKind)) {
         _currentAutoExpKind = null;
         void launchAutoMode(capturedKind, autoModeStore.getCounts());
         return true;
       }
       return false;
     },
-    onInitBaseRendered: () => { console.log("[chatController] base state rendered"); },
+    onInitBaseRendered: () => { setSession(getCurrentSessionId()); recommendQueueStore.setSession(getCurrentSessionId()); restoreRecommendPanelForSession(); console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
       writeAppNavigationState("replace", resolveCurrentPhase());
       console.log("[chatController] init completed");

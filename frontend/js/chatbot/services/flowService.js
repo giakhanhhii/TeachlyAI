@@ -20,11 +20,11 @@ function flowToExperienceKind(flowKind) {
 /**
  * @param {"fullset"|"quiz"|"slide"|"flashcard"} flowKind
  */
-function flowSessionBaseTitle(flowKind) {
-  if (flowKind === "fullset") return "Tạo full set";
-  if (flowKind === "quiz") return "Tạo quiz";
-  if (flowKind === "slide") return "Tạo slide";
-  return "Tạo flashcard";
+export function flowSessionBaseTitle(flowKind) {
+  if (flowKind === "fullset") return "Fullset";
+  if (flowKind === "quiz") return "Quiz";
+  if (flowKind === "slide") return "Slide";
+  return "Flashcard";
 }
 
 /**

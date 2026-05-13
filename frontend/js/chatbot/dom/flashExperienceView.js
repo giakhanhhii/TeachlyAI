@@ -1,9 +1,9 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
-import { getFetch } from "../services/backgroundFetchStore.js";
+import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
-import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
+import { prepareFlashSessionData, hasDirectFlashCardsFromMeta } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { fitFlashCardText } from "../services/flashCardTextFit.js";
@@ -100,6 +100,16 @@ function buildCardKeys(cards) {
   });
 }
 
+/** Tiêu đề thanh trên flashcard: ưu tiên chủ đề từ meta thay vì title bundle mock. */
+function buildFlashTopTitle(bundleTitle, metaRec) {
+  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (t && t !== "(Teachly tự động)" && t !== "—") return `Flashcard từ vựng chủ đề ${t}`;
+  const fallback = String(bundleTitle || "").trim();
+  return fallback || "Flashcard";
+}
+
 /**
  * @param {{ body: HTMLElement, prepareShow: () => void }} layerView
  * @param {Record<string, string>} meta
@@ -119,6 +129,9 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   let flashRaw;
   let _devSrc = "mock"; /* DEV-ONLY */
   if (restoredCards.length === 0) {
+    if (hasDirectFlashCardsFromMeta(meta)) {
+      flashRaw = {};
+    } else {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
     const _uploadFile = meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
@@ -126,7 +139,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     if (_uploadFile || _bgFetch) {
       experienceBody.innerHTML = "";
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 15);
+      const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
       try {
         flashRaw = _bgFetch
           ? await _bgFetch.promise
@@ -154,7 +167,12 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
           const w = document.createElement("div"); w.className = "ai-loading-overlay";
           w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
           experienceBody.appendChild(w);
-          flashRaw = await _prefetchEntry.promise;
+          const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
+          try {
+            flashRaw = await _prefetchEntry.promise;
+          } finally {
+            _stopPrefetchCd();
+          }
           if (experienceBody._genStamp !== _genStamp) return;
           w.remove();
         } else {
@@ -165,12 +183,15 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
       } else {
         _devSrc = (!meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-        const _loadLabel = _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải nội dung…";
-        const _loadEl = (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })();
-        const _stopCountdown = _devSrc === "ai" ? startAiCountdown(_loadEl, 15) : null;
-        flashRaw = _devSrc === "ai"
-          ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
-          : await fetchMockResource("flashcard");
+        const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
+        if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard")));
+        const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
+        const _loadEl = (_devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
+        const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
+        flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
+            : _bgEntry ? await _bgEntry.promise
+            : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
+            : await fetchMockResource("flashcard");
         _stopCountdown?.();
         if (experienceBody._genStamp !== _genStamp) return;
         _loadEl?.remove();
@@ -178,16 +199,24 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
       }
     }
+    }
   }
   const data =
     restoredCards.length > 0
       ? { title: typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : "Flashcard", cards: restoredCards }
       : prepareFlashSessionData(flashRaw, meta);
-  const titleText = data.title || "Flashcard";
   const cards = normalizeFlashCards(data.cards);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
+  const metaForTitle =
+    initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
+  const titleText = buildFlashTopTitle(data.title || "Flashcard", metaForTitle);
   const totalCards = cards.length;
-  if (restoredCards.length === 0) beginDwell(meta?.source || meta?.list || meta?.topic || titleText, "flash");
+  if (restoredCards.length === 0) {
+    beginDwell(
+      metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText,
+      "flash",
+    );
+  }
   const cardKeys = buildCardKeys(cards);
   const cardKeySet = new Set(cardKeys);
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
@@ -505,7 +534,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     hint.textContent = bookmarkFilter
       ? "Đang xem các flashcard đã bookmark. Chạm bookmark lần nữa để bỏ khỏi danh sách này."
       : "Nhấn vào thẻ để lật. Dùng Tiếp theo để sang thẻ khác.";
-    backBtn.disabled = safeVisibleIndex <= 0;
+    backBtn.disabled = safeVisibleIndex <= 0 && !deps?.hasPrevAutoExperience?.();
     otherBtn.hidden = bookmarkFilter || safeVisibleIndex < visibleTotal - 1;
     nextBtn.textContent = bookmarkFilter
       ? safeVisibleIndex >= visibleTotal - 1
@@ -537,7 +566,10 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   backBtn.addEventListener("click", () => {
     const { visibleIndices, visibleIndex } = syncVisibleState(index);
-    if (visibleIndex <= 0) return;
+    if (visibleIndex <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index = visibleIndices[visibleIndex - 1];
     renderCard();
   });

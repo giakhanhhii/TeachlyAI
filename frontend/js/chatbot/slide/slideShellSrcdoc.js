@@ -490,6 +490,15 @@ function resolveSlideShellThemeKey(root, opts = {}) {
   }
   if (classList?.contains("shell-theme-friendly")) return "friendly";
   if (classList?.contains("shell-theme-academic")) return "academic";
+  // Cover của 3.friendly: đôi khi clone trong DocumentFragment vẫn gắn đúng ownerDocument;
+  // nếu body thiếu class (bản shell cũ / tối giản), nhận diện theo bố cục để vẫn gán dòng chủ đề.
+  if (
+    slide?.querySelector?.(".title-layout") &&
+    slide?.querySelector?.("p.subtitle") &&
+    slide?.querySelector?.(".decor-icon")
+  ) {
+    return "friendly";
+  }
   return "";
 }
 
@@ -789,6 +798,18 @@ function getComicTextBudget(root) {
       detail: { maxChars: 34, maxSentences: 1, maxWords: 7 },
     };
   }
+  // Hero / bìa: một panel Bangers + list — không có .slide-title; chữ phải ngắn hơn slide comic-list thường
+  if (
+    slide.querySelector(".comic-list") &&
+    !slide.querySelector(".slide-title") &&
+    !slide.querySelector(".two-column .comic-list") &&
+    !slide.querySelector(".comic-grid-2 .comic-list")
+  ) {
+    return {
+      headline: { maxWords: 4, maxChars: 22 },
+      detail: { maxChars: 38, maxSentences: 1, maxWords: 6 },
+    };
+  }
   if (slide.querySelector(".comic-list") && slide.querySelector("img, .image-wrapper")) {
     return {
       headline: { maxWords: 5, maxChars: 32 },
@@ -1064,8 +1085,8 @@ function resolveComicBulletCount(root, ul, desiredCount, templateItemCount, bull
   const slide = root instanceof Element ? root : null;
   const availableCount = Math.max(1, bulletCount || templateItemCount || desiredCount || 1);
   const boundedCount = (fallback, max) => Math.min(max, Math.max(1, templateItemCount || fallback, availableCount));
-  if (desiredCount > 0) return Math.min(desiredCount, 4);
   if (slide?.querySelector(".comic-title") && !slide.querySelector(".slide-title")) return 1;
+  if (desiredCount > 0) return Math.min(desiredCount, 4);
   if (ul.closest(".comic-grid-3, .strategy-strip, .check-grid, .timeline")) return 1;
   if (ul.closest(".two-column, .comic-grid-2")) return boundedCount(4, 4);
   if (slide?.querySelector("img, .image-wrapper")) return boundedCount(3, 3);
@@ -2392,6 +2413,33 @@ function injectShellPreviewFit(doc) {
     body.shell-theme-friendly .shell-slide-instance[data-shell-authored-slide="1"] .tiled-content .tile {
       justify-content: center !important;
     }
+    /* Bìa friendly (slide 0, AI/mock): bullet fallback dưới tiêu đề luôn căn giữa */
+    .shell-slide-instance[data-shell-friendly-cover-bullets="1"] .shell-dynamic-body {
+      display: flex !important;
+      justify-content: center !important;
+      width: 100% !important;
+      margin-top: 10px !important;
+      flex-shrink: 0 !important;
+    }
+    .shell-slide-instance[data-shell-friendly-cover-bullets="1"] ul[data-shell="bullets"] {
+      list-style: disc !important;
+      list-style-position: inside !important;
+      padding-left: 0 !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      max-width: min(1000px, 100%) !important;
+      width: 100% !important;
+      text-align: center !important;
+      align-self: center !important;
+    }
+    .shell-slide-instance[data-shell-friendly-cover-bullets="1"] ul[data-shell="bullets"] li {
+      text-align: center !important;
+      margin-bottom: 12px !important;
+      padding-left: 0 !important;
+      list-style-position: inside !important;
+    }
     body.shell-theme-space-bright .shell-slide-instance[data-shell-authored-slide="1"] ul[data-shell="bullets"] {
       width: min(920px, 100%) !important;
       margin: 0 auto !important;
@@ -3111,7 +3159,7 @@ function relocateThemeStickersUnderSlideContent(slideRoot) {
  * @param {ParentNode} root
  * @param {string} title
  * @param {string[]} bullets
- * @param {{ forceSpaceBright?: boolean }} [options]
+ * @param {{ forceSpaceBright?: boolean, topic?: string, shellTopic?: string, deckTitle?: string, sessionShellSubtitle?: string }} [options]
  */
 function fillContentSlots(root, title, bullets, options = {}) {
   const slideRoot = getRootSlideElement(root);
@@ -3121,6 +3169,15 @@ function fillContentSlots(root, title, bullets, options = {}) {
   const isSpaceBright = themeKey === "space-bright";
   const isSpaceBlack = themeKey === "space-black";
   const isFriendly = themeKey === "friendly";
+  /** Dòng phụ dưới tiêu đề trang bìa friendly — ưu tiên chủ đề người dùng, không dùng bullet bị cắt 5 từ. */
+  const friendlyDeckSubtitle = (() => {
+    if (!isFriendly) return "";
+    const direct = String(options.sessionShellSubtitle ?? "").replace(/\s+/g, " ").trim();
+    if (direct) return direct;
+    const t = String(options.topic || options.shellTopic || "").replace(/\s+/g, " ").trim();
+    if (t && t !== "(Teachly tự động)") return t;
+    return String(options.deckTitle || "").replace(/\s+/g, " ").trim();
+  })();
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
   const titleSeed = (isComic || isSealife) ? buildSlideTitleSeed(title) : title;
   const normalizeForThemeCompact = (value, kind = "detail") => {
@@ -3162,6 +3219,12 @@ function fillContentSlots(root, title, bullets, options = {}) {
     root.querySelector("[data-shell=\"title\"]") ||
     (isComic ? root.querySelector("h2.slide-title, h1.comic-title, .comic-title, h1, h2") : null);
   if (titleEl) titleEl.textContent = renderTitle;
+  if (friendlyDeckSubtitle && slideRoot) {
+    const deckSubEl = slideRoot.querySelector(".title-layout p.subtitle");
+    if (deckSubEl instanceof HTMLElement) {
+      setShellTextContent(deckSubEl, friendlyDeckSubtitle);
+    }
+  }
   const ul = root.querySelector("ul[data-shell=\"bullets\"]");
   if (ul) {
     const noBulletTitles = new Set([
@@ -3276,16 +3339,19 @@ function fillContentSlots(root, title, bullets, options = {}) {
   if (fillStructuredTableColumns(root, tableBullets)) {
     return;
   }
-  const targets = isSpaceBright ? getSpaceBrightPrimaryTextTargets(
-    root,
-    Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
-      (a, b) =>
-        Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
-    ),
-  ) : Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
+  const shellTextTargetsSorted = Array.from(root.querySelectorAll("[data-shell-text-target]")).sort(
     (a, b) =>
       Number(a.getAttribute("data-shell-text-target") || 0) - Number(b.getAttribute("data-shell-text-target") || 0),
   );
+  const shellTextTargetsFiltered =
+    friendlyDeckSubtitle
+      ? shellTextTargetsSorted.filter(
+          (node) => !(node instanceof HTMLElement && node.matches(".title-layout p.subtitle")),
+        )
+      : shellTextTargetsSorted;
+  const targets = isSpaceBright
+    ? getSpaceBrightPrimaryTextTargets(root, shellTextTargetsFiltered)
+    : shellTextTargetsFiltered;
   if (targets.length) {
     if (
       isSealife &&
@@ -3455,6 +3521,27 @@ function enforceSpaceBlackWordCap(slideRoot) {
 }
 
 /**
+ * Slide bìa friendly (title-layout + bullet fallback): đánh dấu để CSS căn giữa nội dung dưới tiêu đề.
+ * @param {Element} slideEl
+ * @param {Document} doc
+ * @param {number} slideIndex
+ */
+function markFriendlyCoverCenteredBullets(slideEl, doc, slideIndex) {
+  if (slideIndex !== 0 || !(slideEl instanceof HTMLElement)) return;
+  const friendlyDoc =
+    Boolean(doc.body?.classList?.contains("shell-theme-friendly")) ||
+    Boolean(
+      slideEl.querySelector(".title-layout") &&
+        slideEl.querySelector("p.subtitle") &&
+        slideEl.querySelector(".decor-icon"),
+    );
+  if (!friendlyDoc) return;
+  if (!slideEl.querySelector(".title-layout")) return;
+  if (!slideEl.querySelector('ul[data-shell="bullets"]')) return;
+  slideEl.setAttribute("data-shell-friendly-cover-bullets", "1");
+}
+
+/**
  * Builds full HTML for iframe srcdoc: clones `layout-content` per slide.
  * @param {string} shellHtml raw shell file
  * @param {{ title?: string, bullets?: string[] }[]} slides
@@ -3505,6 +3592,15 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
 
   const list = Array.isArray(slides) ? slides : [];
   const bodyTemplates = endingTemplate ? variantTemplates.filter((tpl) => tpl !== endingTemplate) : variantTemplates;
+  const autoTopic = "(Teachly tự động)";
+  const rawTopic = String(meta?.topic ?? "").replace(/\s+/g, " ").trim();
+  const deckLine = String(meta?.deckTitle ?? "").replace(/\s+/g, " ").trim();
+  const metaTitleLine = String(meta?.title ?? "").replace(/\s+/g, " ").trim();
+  const sessionShellSubtitle =
+    String(meta?.sessionShellSubtitle ?? "").replace(/\s+/g, " ").trim()
+    || (rawTopic && rawTopic !== autoTopic ? rawTopic : "")
+    || deckLine
+    || metaTitleLine;
   list.forEach((s, i) => {
     const isLastSlide = i === list.length - 1;
     const bodyIndex = coverTemplate ? i - 1 : i;
@@ -3526,13 +3622,16 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     if (isAuthoredSlide) {
       first.setAttribute("data-shell-authored-slide", "1");
     }
-    fillContentSlots(
-      frag,
-      String(s?.title || ""),
-      Array.isArray(s?.bullets) ? s.bullets.map(String) : [],
-      { forceSpaceBright: isSpaceBrightTheme },
-    );
-    if (first instanceof Element) relocateThemeStickersUnderSlideContent(first);
+    fillContentSlots(frag, String(s?.title || ""), Array.isArray(s?.bullets) ? s.bullets.map(String) : [], {
+      forceSpaceBright: isSpaceBrightTheme,
+      topic: rawTopic,
+      deckTitle: deckLine,
+      sessionShellSubtitle,
+    });
+    if (first instanceof Element) {
+      markFriendlyCoverCenteredBullets(first, doc, i);
+      relocateThemeStickersUnderSlideContent(first);
+    }
     master.appendChild(frag);
     if (isSpaceBrightTheme && first instanceof Element) {
       backfillSpaceBrightEmptyExampleBoxes(

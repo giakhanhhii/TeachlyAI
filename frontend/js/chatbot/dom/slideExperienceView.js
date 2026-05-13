@@ -1,7 +1,7 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
-import { getFetch } from "../services/backgroundFetchStore.js";
+import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
@@ -109,7 +109,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
     const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang slide, vui lòng đợi</span>'; root.appendChild(w); return w; })();
-    const _stopCountdown = startAiCountdown(_loadEl, 20);
+    const _stopCountdown = startAiCountdown(_loadEl, 20, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
     try {
       raw = _bgFetch
         ? await _bgFetch.promise
@@ -136,7 +136,12 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         const w = document.createElement("div"); w.className = "ai-loading-overlay";
         w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
         root.appendChild(w);
-        raw = await _prefetchEntry.promise;
+        const _stopPrefetchCd = startAiCountdown(w, 20, { startedAt: _prefetchEntry.startedAt });
+        try {
+          raw = await _prefetchEntry.promise;
+        } finally {
+          _stopPrefetchCd();
+        }
         if (root._genStamp !== _genStamp) return;
         w.remove();
       } else {
@@ -146,12 +151,15 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
       const _devSrc = (!isRestore && !effectiveMeta?.presetId && effectiveMeta?.__forceMock !== "1" && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
-      const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
-      const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
-      raw = _devSrc === "ai"
-        ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
-        : await fetchMockResource("slide");
+      const _bgKey = (_devSrc === "ai" && effectiveMeta?.__experienceId) ? `gen_${effectiveMeta.__experienceId}` : null;
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide")));
+      const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
+      const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 20, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
+      raw = _bgEntry?.status === "done" ? _bgEntry.raw
+          : _bgEntry ? await _bgEntry.promise
+          : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
+          : await fetchMockResource("slide");
       _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
       _loadEl?.remove();
@@ -519,8 +527,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     modeScrollBtn.setAttribute("aria-pressed", pres ? "false" : "true");
     modePresBtn.classList.toggle("is-selected", pres);
     modeScrollBtn.classList.toggle("is-selected", !pres);
-    prevArrow.disabled = index <= 0;
-    nextArrow.disabled = !s || index >= total - 1;
+    prevArrow.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
+    nextArrow.disabled = !s || (index >= total - 1 && !_isAutoTopic);
     prevArrow.hidden = !pres || !shellReady;
     nextArrow.hidden = !pres || !shellReady;
     fsBtn.hidden = !pres || !shellReady;
@@ -561,14 +569,20 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   });
 
   function goPrev() {
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderSlide();
   }
 
   function goNext() {
     if (!slides[index]) return;
-    if (index >= total - 1) return;
+    if (index >= total - 1) {
+      if (_isAutoTopic) deps?.onContinueCreate?.("slide");
+      return;
+    }
     index += 1;
     renderSlide();
   }
@@ -649,7 +663,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   function paintNav() {
     const s = slides[index];
     progress.paint({ total, index, correct: 0, wrong: 0 });
-    backBtn.disabled = index <= 0;
+    backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
     otherBtn.hidden = index < total - 1;
     nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     nextBtn.disabled = !s;
@@ -677,7 +691,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   }
 
   backBtn.addEventListener("click", () => {
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderSlide();
   });
@@ -710,8 +727,17 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         total = Math.max(1, slides.length);
         index = Math.min(index, Math.max(0, slides.length - 1));
       }
+      const sessionShellSubtitle = (() => {
+        const auto = "(Teachly tự động)";
+        const tt = String(effectiveMeta?.topic ?? meta?.topic ?? "").replace(/\s+/g, " ").trim();
+        if (tt && tt !== auto) return tt;
+        return String(deckTitle || data?.title || "").replace(/\s+/g, " ").trim();
+      })();
       const srcdoc = buildSlideDeckSrcdoc(html, slides, {
         ...meta,
+        topic: String(effectiveMeta?.topic ?? meta?.topic ?? "").trim(),
+        deckTitle: String(deckTitle || "").trim(),
+        sessionShellSubtitle,
         shellYear: String(meta.shellYear || new Date().getFullYear()),
         slideNavMode: "active",
       });

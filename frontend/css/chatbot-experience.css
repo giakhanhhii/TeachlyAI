@@ -198,6 +198,36 @@
 }
 
 
+.exp-ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #1976d2;
+  background: #fff;
+  color: #1565c0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.exp-ai-btn:hover:not(:disabled) {
+  background: #1976d2;
+  color: #fff;
+}
+
+.exp-ai-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.exp-ai-btn .exp-icon-svg {
+  color: inherit;
+}
+
 .exp-icon-btn {
   display: flex;
   align-items: center;
