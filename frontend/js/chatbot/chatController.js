@@ -48,8 +48,7 @@ import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
-import { endDwell, shouldRecommend, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
-import { fetchRecommendations } from "./services/aiContentApi.js";
+import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 
 /** @type {any} */
@@ -102,13 +101,22 @@ export function init() {
   mountAiStatusPanel();
   mountRecommendPanel();
 
+  function _buildTopRecs(kind) {
+    return getTopTopics(2, kind).map((t, i) => ({
+      topic: t.topic,
+      kind: t.kind,
+      reason: `Rank ${i + 1}: ${t.dwellSeconds}s`,
+    }));
+  }
+
   function restoreRecommendPanelForSession() {
     const recentKind = getLastN(1)[0]?.kind || null;
-    const savedRecs = recentKind ? recommendQueueStore.getRecommendations(recentKind) : [];
-    if (savedRecs.length > 0) {
-      updateRecommendPanel({ status: "ready", suggestions: savedRecs, log: getLastN(5, recentKind) });
+    const topRecs = recentKind ? _buildTopRecs(recentKind) : [];
+    if (topRecs.length > 0) {
+      recommendQueueStore.setRecommendations(topRecs, recentKind);
+      updateRecommendPanel({ status: "ready", suggestions: topRecs, log: getLastN(5, recentKind) });
     } else {
-      restoreRecommendPanelForSession();
+      updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
     }
   }
 
@@ -564,18 +572,14 @@ export function init() {
     if (autoModeStore.isEnabled()) {
       const capturedKind = _currentAutoExpKind || validKind;
       endDwell();
-      updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
-      const autoCount = recommendQueueStore.onExpCompleted(capturedKind);
-      if (autoCount % 5 === 0) {
-        const _history = getTopTopics(5, capturedKind);
-        updateRecommendPanel({ status: "loading", log: getLastN(5, capturedKind) });
-        fetchRecommendations(_history, capturedKind)
-          .then((data) => {
-            recommendQueueStore.setRecommendations(data.topics ?? [], capturedKind);
-            recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
-            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
-          })
-          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
+      recommendQueueStore.onExpCompleted(capturedKind);
+      const _topRecs = _buildTopRecs(capturedKind);
+      recommendQueueStore.setRecommendations(_topRecs, capturedKind);
+      if (_topRecs.length > 0) {
+        recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
+        updateRecommendPanel({ status: "ready", suggestions: _topRecs, log: getLastN(5, capturedKind) });
+      } else {
+        updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       }
       await launchAutoMode(validKind, autoModeStore.getCounts());
       return;
@@ -936,24 +940,10 @@ export function init() {
     if (isSwitchingSession) return;
     isSwitchingSession = true;
     const _kind = getActiveKind();
-    const _dwellCount = endDwell();
-    const _prevSessionId = getCurrentSessionId();
-    if (_dwellCount > 0 && shouldRecommend(_kind)) {
-      const _history = getTopTopics(5, _kind);
-      updateRecommendPanel({ status: "loading", log: getLastN(5, _kind) });
-      fetchRecommendations(_history, _kind)
-        .then(data => {
-          if (getCurrentSessionId() !== _prevSessionId) return;
-          recommendQueueStore.setRecommendations(data.topics ?? [], _kind);
-          recommendQueueStore.startPrefetch(_kind, autoModeStore.getCounts());
-          updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, _kind) });
-        })
-        .catch(() => {
-          if (getCurrentSessionId() !== _prevSessionId) return;
-          updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
-        });
-    } else {
-      updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
+    endDwell();
+    if (_kind) {
+      const _topRecs = _buildTopRecs(_kind);
+      recommendQueueStore.setRecommendations(_topRecs, _kind);
     }
     try {
       persistActiveExperience();
@@ -1101,18 +1091,14 @@ export function init() {
       if (!autoModeStore.isEnabled() || !_currentAutoExpKind) return false;
       const capturedKind = _currentAutoExpKind;
       endDwell();
-      updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
-      const autoCount = recommendQueueStore.onExpCompleted(capturedKind);
-      if (autoCount % 5 === 0) {
-        const history = getTopTopics(5, capturedKind);
-        updateRecommendPanel({ status: "loading", log: getLastN(5, capturedKind) });
-        fetchRecommendations(history, capturedKind)
-          .then((data) => {
-            recommendQueueStore.setRecommendations(data.topics ?? [], capturedKind);
-            recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
-            updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, capturedKind) });
-          })
-          .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) }));
+      recommendQueueStore.onExpCompleted(capturedKind);
+      const _topRecs = _buildTopRecs(capturedKind);
+      recommendQueueStore.setRecommendations(_topRecs, capturedKind);
+      if (_topRecs.length > 0) {
+        recommendQueueStore.startPrefetch(capturedKind, autoModeStore.getCounts());
+        updateRecommendPanel({ status: "ready", suggestions: _topRecs, log: getLastN(5, capturedKind) });
+      } else {
+        updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       }
       if (recommendQueueStore.shouldAutoAdvance(capturedKind)) {
         _currentAutoExpKind = null;
