@@ -989,7 +989,7 @@ export function init() {
     writeAppNavigationState("replace");
     setSession(getCurrentSessionId());
     recommendQueueStore.setSession(getCurrentSessionId());
-    updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
+    restoreRecommendPanelForSession();
   } });
 
   messageHistoryService = createMessageHistoryService({
