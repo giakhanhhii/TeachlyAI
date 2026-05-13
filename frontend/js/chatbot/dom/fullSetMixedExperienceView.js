@@ -6,12 +6,13 @@ import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
-import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav } from "../slide/slideShellSrcdoc.js";
+import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav, setSlideVisualEditMode } from "../slide/slideShellSrcdoc.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
+import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
 
 function cloneMixedStep(step) {
   if (!step || typeof step !== "object") return null;
@@ -509,6 +510,24 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         fsBtn.innerHTML =
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m10-18h3a2 2 0 0 1 2 2v3M3 8V5a2 2 0 0 1 2-2h3"/></svg>';
 
+        let visualEditOn = false;
+        const visualEditBtn = document.createElement("button");
+        visualEditBtn.type = "button";
+        visualEditBtn.className = "exp-slide-visual-edit-btn";
+        visualEditBtn.disabled = true;
+        visualEditBtn.hidden = true;
+        visualEditBtn.title = "Chỉnh sửa trên slide (kéo, màu, font, ảnh)";
+        visualEditBtn.setAttribute("aria-label", "Chế độ chỉnh sửa slide");
+        visualEditBtn.setAttribute("aria-pressed", "false");
+        visualEditBtn.innerHTML = `<svg class="exp-slide-visual-edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg><span>Sửa</span>`;
+        visualEditBtn.addEventListener("click", () => {
+          if (!shellReady) return;
+          visualEditOn = !visualEditOn;
+          visualEditBtn.classList.toggle("is-active", visualEditOn);
+          visualEditBtn.setAttribute("aria-pressed", visualEditOn ? "true" : "false");
+          setSlideVisualEditMode(iframe, visualEditOn);
+        }, { signal: uiSignal });
+
         const prevArrow = document.createElement("button");
         prevArrow.type = "button";
         prevArrow.className = "exp-slide-arrow exp-slide-arrow--prev";
@@ -533,7 +552,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         iframeFrame.className = "exp-slide-shell-frame";
 
         iframeFrame.appendChild(iframe);
-        viewport.append(iframeFrame, prevArrow, nextArrow, fsBtn);
+        viewport.append(iframeFrame, visualEditBtn, prevArrow, nextArrow, fsBtn);
         host.append(loading, deckHint, modeBar, viewport);
         stage.appendChild(host);
 
@@ -621,6 +640,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           prevArrow.hidden = !pres || !shellReady;
           nextArrow.hidden = !pres || !shellReady;
           fsBtn.hidden = !pres || !shellReady;
+          visualEditBtn.hidden = !pres || !shellReady;
           modeBar.hidden = !shellReady;
           paintDeckHint();
         }
@@ -718,6 +738,17 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
             iframe.style.aspectRatio = "auto";
             iframe.style.display = "";
             shellReady = true;
+            visualEditBtn.disabled = false;
+            window.addEventListener("message", (e) => {
+              if (!e.data || e.data.type !== "a20-slide-edit" || e.data.action !== "open-image-picker") return;
+              if (e.source !== iframe.contentWindow) return;
+              const mountEl = isFauxFs() ? viewport : document.body;
+              openSlideImagePicker((url) => {
+                try {
+                  iframe.contentWindow?.postMessage({ type: "a20-slide-edit", action: "set-image-url", url }, "*");
+                } catch (_) {}
+              }, mountEl);
+            }, { signal: uiSignal });
             const captureDeckScroll = () => {
               if (!shellReady || viewMode !== "presentation") return;
               readDeckScrollState();

@@ -96,6 +96,29 @@ export function resolveFullsetInitialState(currentExperienceState, spec, experie
 }
 
 /**
+ * @param {any} initialState
+ * @param {"slide"|"quiz"|"flash"|""} targetKind
+ */
+export function retargetFullsetInitialState(initialState, targetKind = "") {
+  if (!initialState || typeof initialState !== "object" || !targetKind) return initialState;
+  const steps = Array.isArray(initialState.stepsSnapshot) ? initialState.stepsSnapshot : [];
+  if (!steps.length) return initialState;
+  const expectedStepKind =
+    targetKind === "slide" ? "slide_deck" : targetKind === "quiz" ? "quiz" : targetKind === "flash" ? "flash" : "";
+  if (!expectedStepKind) return initialState;
+  const targetIndex = steps.findIndex((step) => step?.kind === expectedStepKind);
+  if (targetIndex < 0) return initialState;
+  return {
+    ...initialState,
+    index: targetIndex,
+    slideDeckIndex: targetKind === "slide" ? 0 : Number(initialState.slideDeckIndex || 0),
+    reviewMode: false,
+    reviewFilter: "all",
+    bookmarkFilter: false,
+  };
+}
+
+/**
  * @param {string} rawKind
  */
 export function normalizeExperienceKind(rawKind) {
