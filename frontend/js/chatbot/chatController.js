@@ -926,16 +926,21 @@ export function init() {
     isSwitchingSession = true;
     const _kind = getActiveKind();
     const _dwellCount = endDwell();
+    const _prevSessionId = getCurrentSessionId();
     if (_dwellCount > 0 && shouldRecommend(_kind)) {
       const _history = getTopTopics(5, _kind);
       updateRecommendPanel({ status: "loading", log: getLastN(5, _kind) });
       fetchRecommendations(_history, _kind)
         .then(data => {
+          if (getCurrentSessionId() !== _prevSessionId) return;
           recommendQueueStore.setRecommendations(data.topics ?? [], _kind);
           recommendQueueStore.startPrefetch(_kind, autoModeStore.getCounts());
           updateRecommendPanel({ status: "ready", suggestions: data.topics, log: getLastN(5, _kind) });
         })
-        .catch(() => updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) }));
+        .catch(() => {
+          if (getCurrentSessionId() !== _prevSessionId) return;
+          updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
+        });
     } else {
       updateRecommendPanel({ status: "recording", log: getLastN(5, _kind) });
     }
@@ -943,6 +948,8 @@ export function init() {
       persistActiveExperience();
       setActiveSessionIndex(idx);
       setSession(getCurrentSessionId());
+      recommendQueueStore.setSession(getCurrentSessionId());
+      updateRecommendPanel({ status: "recording", log: getLastN(5) });
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -970,6 +977,8 @@ export function init() {
     renderMessages();
     writeAppNavigationState("replace");
     setSession(getCurrentSessionId());
+    recommendQueueStore.setSession(getCurrentSessionId());
+    updateRecommendPanel({ status: "recording", log: getLastN(5) });
   } });
 
   messageHistoryService = createMessageHistoryService({
@@ -1047,6 +1056,8 @@ export function init() {
       persistActiveExperience();
       createSession();
       setSession(getCurrentSessionId());
+      recommendQueueStore.setSession(getCurrentSessionId());
+      updateRecommendPanel({ status: "recording", log: getLastN(5) });
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1099,7 +1110,7 @@ export function init() {
       }
       return false;
     },
-    onInitBaseRendered: () => { setSession(getCurrentSessionId()); console.log("[chatController] base state rendered"); },
+    onInitBaseRendered: () => { setSession(getCurrentSessionId()); recommendQueueStore.setSession(getCurrentSessionId()); console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
       writeAppNavigationState("replace", resolveCurrentPhase());
       console.log("[chatController] init completed");
