@@ -101,6 +101,17 @@ export function init() {
   console.log("[chatController] DOM references resolved");
   mountAiStatusPanel();
   mountRecommendPanel();
+
+  function restoreRecommendPanelForSession() {
+    const recentKind = getLastN(1)[0]?.kind || null;
+    const savedRecs = recentKind ? recommendQueueStore.getRecommendations(recentKind) : [];
+    if (savedRecs.length > 0) {
+      updateRecommendPanel({ status: "ready", suggestions: savedRecs, log: getLastN(5, recentKind) });
+    } else {
+      restoreRecommendPanelForSession();
+    }
+  }
+
   window.addEventListener("beforeunload", () => endDwell());
   initializeBrowserBackBridge();
   let currentHistoryNavSeq =
@@ -949,7 +960,7 @@ export function init() {
       setActiveSessionIndex(idx);
       setSession(getCurrentSessionId());
       recommendQueueStore.setSession(getCurrentSessionId());
-      updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
+      restoreRecommendPanelForSession();
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1057,7 +1068,7 @@ export function init() {
       createSession();
       setSession(getCurrentSessionId());
       recommendQueueStore.setSession(getCurrentSessionId());
-      updateRecommendPanel({ status: "recording", log: getLastN(5), suggestions: [] });
+      restoreRecommendPanelForSession();
       setGuidedState(null);
       experienceController.resetResumeState();
       layerView.hide();
@@ -1110,7 +1121,7 @@ export function init() {
       }
       return false;
     },
-    onInitBaseRendered: () => { setSession(getCurrentSessionId()); recommendQueueStore.setSession(getCurrentSessionId()); console.log("[chatController] base state rendered"); },
+    onInitBaseRendered: () => { setSession(getCurrentSessionId()); recommendQueueStore.setSession(getCurrentSessionId()); restoreRecommendPanelForSession(); console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
       writeAppNavigationState("replace", resolveCurrentPhase());
       console.log("[chatController] init completed");

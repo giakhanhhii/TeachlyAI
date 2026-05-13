@@ -56,6 +56,9 @@ function _s(kind) {
   return _kindState[k];
 }
 
+/** Returns the saved recommendations for a kind (empty array if none). */
+export function getRecommendations(kind) { return _s(kind).recs; }
+
 export function reset(kind) {
   if (kind) { delete _kindState[kind || "default"]; }
   else { Object.keys(_kindState).forEach(k => delete _kindState[k]); }
