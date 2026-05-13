@@ -1,12 +1,12 @@
 const LS_KEY = "teachly_auto_mode_v1";
 
 const SLIDE_THEMES = [
-  "Chuyên nghiệp (đa sắc)",
-  "Tối giản (Học thuật)",
-  "Vui tươi (Thân thiện)",
-  "Vũ trụ sáng (Trẻ trung)",
-  "Vũ trụ tối (Huyền bí)",
-  "Biển cả",
+  "Professional (Multicolor)",
+  "Minimal (Academic)",
+  "Friendly (Warm)",
+  "Space Light",
+  "Space Dark",
+  "Sea Life",
   "Comic",
 ];
 
@@ -17,34 +17,34 @@ export function pickRandomTheme() {
 
 export const DEFAULT_COUNTS = { slides: 15, quiz: 15, flash: 10 };
 
-// Vietnamese topic names that match EXTRA_SLIDE_TOPIC_LIST in directSlidePresets.js
+// Topic names that match EXTRA_SLIDE_TOPIC_LIST in directSlidePresets.js
 // so findDirectSlidePreset() can find a matching preset and use ordered chapter rendering.
 const ALL_TOPICS = [
-  "Hiện tại hoàn thành và hiện tại hoàn thành tiếp diễn",
-  "Câu ước và giả định",
-  "Gerund và Infinitive",
-  "Cấu trúc đảo ngữ trong tiếng Anh",
-  "Mệnh đề trạng ngữ chỉ thời gian và điều kiện",
-  "Liên từ và cụm nối ý",
+  "Present perfect and present perfect continuous",
+  "Wishes and hypothetical structures",
+  "Gerunds and infinitives",
+  "Inversion in English",
+  "Time and condition adverb clauses",
+  "Conjunctions and linking expressions",
   "Prepositions and Collocations",
-  "Chức năng giao tiếp thường gặp",
-  "Viết lại câu đồng nghĩa",
-  "Sửa lỗi sai ngữ pháp",
-  "Từ vựng chủ đề Công nghệ",
-  "Từ vựng chủ đề Môi trường",
-  "Từ vựng chủ đề Giáo dục",
-  "Từ vựng chủ đề Sức khỏe",
-  "Từ vựng chủ đề Du lịch",
-  "Từ vựng chủ đề Văn hóa và lễ hội",
-  "Từ vựng chủ đề Nghề nghiệp",
-  "Kỹ năng đọc tìm ý chính",
-  "Kỹ năng đọc suy luận",
-  "Word Stress trong đề THPT",
-  "Phát âm đuôi -ed và -s/-es",
-  "Nguyên âm dễ nhầm lẫn",
-  "Mixed Grammar Review cho THPTQG",
-  "Chiến lược làm bài ngữ pháp",
-  "Chiến lược làm bài đọc hiểu",
+  "Common communication functions",
+  "Sentence transformation",
+  "Grammar error correction",
+  "Vocabulary: Technology",
+  "Vocabulary: Environment",
+  "Vocabulary: Education",
+  "Vocabulary: Health",
+  "Vocabulary: Travel",
+  "Vocabulary: Culture and festivals",
+  "Vocabulary: Careers",
+  "Reading for main ideas",
+  "Reading for inference",
+  "Word stress for exam items",
+  "Pronunciation of -ed and -s endings",
+  "Confusing vowel sounds",
+  "Mixed grammar review",
+  "Grammar test strategies",
+  "Reading test strategies",
 ];
 
 function loadState() {

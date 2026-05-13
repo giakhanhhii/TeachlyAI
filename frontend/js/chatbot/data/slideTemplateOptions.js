@@ -1,22 +1,22 @@
 /** 7 mẫu giao diện slide — dùng chung form Slide và Full Set */
 export const SLIDE_TEMPLATE_OPTIONS = [
-  "Chuyên nghiệp (đa sắc)",
-  "Tối giản (Học thuật)",
-  "Vui tươi (Thân thiện)",
-  "Vũ trụ sáng (Trẻ trung)",
-  "Vũ trụ tối (Huyền bí)",
-  "Biển cả",
+  "Professional (Multicolor)",
+  "Minimal (Academic)",
+  "Friendly (Warm)",
+  "Space Light",
+  "Space Dark",
+  "Sea Life",
   "Comic",
 ];
 
-export const SLIDE_TEMPLATE_DEFAULT = "Vui tươi (Thân thiện)";
+export const SLIDE_TEMPLATE_DEFAULT = "Friendly (Warm)";
 
 const SLIDE_TEMPLATE_MOBILE_LABELS = new Map([
-  ["Chuyên nghiệp (đa sắc)", "Chuyên nghiệp"],
-  ["Tối giản (Học thuật)", "Tối giản"],
-  ["Vui tươi (Thân thiện)", "Vui tươi"],
-  ["Vũ trụ sáng (Trẻ trung)", "Vũ trụ sáng"],
-  ["Vũ trụ tối (Huyền bí)", "Vũ trụ tối"],
+  ["Professional (Multicolor)", "Professional"],
+  ["Minimal (Academic)", "Minimal"],
+  ["Friendly (Warm)", "Friendly"],
+  ["Space Light", "Space Light"],
+  ["Space Dark", "Space Dark"],
 ]);
 
 export function getSlideTemplateOptionLabel(value, opts = {}) {
