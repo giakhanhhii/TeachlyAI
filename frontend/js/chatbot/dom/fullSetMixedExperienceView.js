@@ -397,10 +397,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
   function refreshMixedNavChrome() {
     const st = steps[index];
+    const hasPrev = Boolean(deps?.hasPrevAutoExperience?.());
     if (bookmarkFilter) {
       const visibleIndices = getVisibleStepIndices();
       const visibleIndex = visibleIndices.indexOf(index);
-      backBtn.disabled = visibleIndex <= 0;
+      backBtn.disabled = visibleIndex <= 0 && !hasPrev;
       nextBtn.textContent = visibleIndex >= visibleIndices.length - 1 ? "Xem tất cả" : "Tiếp theo";
       return;
     }
@@ -408,10 +409,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       const dl = (st.data.slides || []).length;
       const atFirst = dl === 0 || slideDeckIndex <= 0;
       const atLast = dl > 0 && slideDeckIndex >= dl - 1;
-      backBtn.disabled = index <= 0 && atFirst;
+      backBtn.disabled = index <= 0 && atFirst && !hasPrev;
       nextBtn.textContent = index >= total - 1 && atLast ? "Tiếp tục tạo" : "Tiếp theo";
     } else {
-      backBtn.disabled = index <= 0;
+      backBtn.disabled = index <= 0 && !hasPrev;
       nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     }
   }
@@ -936,7 +937,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       activeSlideDeckShell.bumpDeck(-1);
       return;
     }
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderStep();
   });

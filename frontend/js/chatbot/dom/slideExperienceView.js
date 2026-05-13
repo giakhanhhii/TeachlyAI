@@ -522,7 +522,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     modeScrollBtn.setAttribute("aria-pressed", pres ? "false" : "true");
     modePresBtn.classList.toggle("is-selected", pres);
     modeScrollBtn.classList.toggle("is-selected", !pres);
-    prevArrow.disabled = index <= 0;
+    prevArrow.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
     nextArrow.disabled = !s || (index >= total - 1 && !_isAutoTopic);
     prevArrow.hidden = !pres || !shellReady;
     nextArrow.hidden = !pres || !shellReady;
@@ -564,7 +564,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   });
 
   function goPrev() {
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderSlide();
   }
