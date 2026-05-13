@@ -714,8 +714,9 @@ export function init() {
         return;
       }
       showCountSelectorPanel(expKind, autoModeStore.getCounts(), {
-        onConfirm: (counts) => {
+        onConfirm: (counts, neverAsk) => {
           autoModeStore.saveCounts(counts);
+          if (neverAsk) autoModeStore.setNeverAskCount(true);
           void launchAutoMode(expKind, counts);
         },
         onCancel: () => {},
@@ -740,10 +741,12 @@ export function init() {
     }
 
     showAutoModeChoicePopup(expKind, {
-      onCustom: () => {
+      onCustom: (neverAsk) => {
+        if (neverAsk) autoModeStore.setNeverAskChoice("custom");
         void onCustom();
       },
-      onAuto: () => {
+      onAuto: (neverAsk) => {
+        if (neverAsk) autoModeStore.setNeverAskChoice("auto");
         autoModeStore.enable();
         syncToggleUI(true);
         openCountSelector();

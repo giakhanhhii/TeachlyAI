@@ -134,7 +134,7 @@ export function setNeverAskChoice(choice) {
 }
 
 /**
- * Returns whether the count selector should be skipped (legacy preference from localStorage).
+ * Returns whether the count selector should be skipped (user ticked "Không hỏi lại").
  * @returns {boolean}
  */
 export function getNeverAskCount() {
