@@ -7,11 +7,39 @@ function normalizeText(value) {
     .trim();
 }
 
-function createSlide(id, title, bullets) {
+/** Rút gọn một dòng để tránh tràn bìa theme 1.thptqg (đa sắc). */
+function clampPlainLine(text, maxChars) {
+  const s = String(text || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!maxChars || !Number.isFinite(maxChars) || s.length <= maxChars) return s;
+  const cut = s.slice(0, Math.max(0, maxChars - 1)).trim();
+  return `${cut.replace(/[,;:\s]+$/u, "")}…`;
+}
+
+/** Tiêu đề ngắn cho bìa — bớt lặp "Từ vựng chủ đề …". */
+function shortTopicLabel(topic) {
+  const t = String(topic || "").trim();
+  if (!t) return "Chủ đề";
+  const m = t.match(/^Từ vựng chủ đề\s+(.+)$/iu);
+  if (m) return `Từ vựng: ${m[1].trim()}`;
+  return clampPlainLine(t, 44);
+}
+
+function createSlide(id, title, bullets, clipOpts) {
+  const titleMax = clipOpts && Number.isFinite(clipOpts.titleMax) ? clipOpts.titleMax : null;
+  const bulletMax = clipOpts && Number.isFinite(clipOpts.bulletMax) ? clipOpts.bulletMax : null;
+  const outTitle = titleMax ? clampPlainLine(title, titleMax) : String(title || "").trim();
+  const outBullets = (Array.isArray(bullets) ? bullets : [])
+    .map((item) => {
+      const line = String(item || "").trim();
+      return bulletMax ? clampPlainLine(line, bulletMax) : line;
+    })
+    .filter(Boolean);
   return {
     id,
-    title,
-    bullets: bullets.map((item) => String(item || "").trim()).filter(Boolean),
+    title: outTitle,
+    bullets: outBullets,
   };
 }
 
@@ -300,35 +328,53 @@ function buildStructureRouteLine(part, index, preset) {
 function buildChapterSlides(preset, chapter, chapterIndex) {
   const base = chapterIndex * 5 + 5;
   const tag = `${preset.id}-${String(base).padStart(2, "0")}`;
+  const clip = preset.compactCopy ? { titleMax: 78, bulletMax: 132 } : null;
   return [
-    createSlide(tag, `${chapter.name} - Khái niệm`, [
-      buildConceptLine(chapter),
-      buildConceptSupportLine(chapter),
-      chapter.rule,
-      buildConceptExampleLine(chapter),
-      `Ghi chú triển khai: ${preset.notes}`,
-    ]),
+    createSlide(
+      tag,
+      `${chapter.name} - Khái niệm`,
+      [
+        buildConceptLine(chapter),
+        buildConceptSupportLine(chapter),
+        chapter.rule,
+        buildConceptExampleLine(chapter),
+        `Ghi chú triển khai: ${preset.notes}`,
+      ],
+      clip,
+    ),
     createSlide(
       `${preset.id}-${String(base + 1).padStart(2, "0")}`,
       `${chapter.name} - Công thức`,
       buildFormulaSummaryLines(chapter),
+      clip,
     ),
-    createSlide(`${preset.id}-${String(base + 2).padStart(2, "0")}`, `${chapter.name} - Ví dụ`, [
-      buildDetailedExampleLine(chapter),
-      buildSecondExampleLine(chapter),
-      buildDetailedExplanationLine(chapter),
-      buildSelfCheckLine(chapter),
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 2).padStart(2, "0")}`,
+      `${chapter.name} - Ví dụ`,
+      [
+        buildDetailedExampleLine(chapter),
+        buildSecondExampleLine(chapter),
+        buildDetailedExplanationLine(chapter),
+        buildSelfCheckLine(chapter),
+      ],
+      clip,
+    ),
     createSlide(
       `${preset.id}-${String(base + 3).padStart(2, "0")}`,
       `${chapter.name} - Lỗi thường gặp`,
       buildPitfallSlideLines(chapter),
+      clip,
     ),
-    createSlide(`${preset.id}-${String(base + 4).padStart(2, "0")}`, `${chapter.name} - Luyện tập`, [
-      buildPracticeTaskLine(chapter),
-      buildPracticeGuideLine(chapter, preset),
-      `Yêu cầu thực hiện: viết đáp án đầy đủ và nêu lý do chọn dạng đúng của ${chapter.name.toLowerCase()}.`,
-    ]),
+    createSlide(
+      `${preset.id}-${String(base + 4).padStart(2, "0")}`,
+      `${chapter.name} - Luyện tập`,
+      [
+        buildPracticeTaskLine(chapter),
+        buildPracticeGuideLine(chapter, preset),
+        `Yêu cầu: viết đáp án và nêu lý do (mảng ${String(chapter.name).toLowerCase()}).`,
+      ],
+      clip,
+    ),
   ];
 }
 
@@ -337,6 +383,8 @@ function buildDeckFromBlueprint(preset) {
   const chapterNames = preset.chapters.map((chapter) => chapter.name);
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
+  const coverTitle = preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Tổng quan` : `${preset.topic} - Tổng quan`;
+  const clip = preset.compactCopy ? { titleMax: 76, bulletMax: 128 } : null;
   const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
     ? preset.routeLines.map((line) => {
         const normalized = normalizeRouteLineText(line);
@@ -344,33 +392,60 @@ function buildDeckFromBlueprint(preset) {
       })
     : [
         ...structureParts.map((part, index) => buildStructureRouteLine(part, index, preset)),
-        `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,
+        preset.compactCopy
+          ? `Mỗi track có ví dụ và bài tập bám chủ đề đã chọn.`
+          : `Note: Mỗi Track Đều Dùng Ví Dụ Và Bài Tập Đúng Phạm Vi ${preset.topic}.`,
       ];
   const slides = [
-    createSlide(`${preset.id}-01`, `${preset.topic} - Tổng quan`, [
-      ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
-      `Cấu trúc bài học: ${preset.structure}`,
-    ]),
-    createSlide(`${preset.id}-02`, `${preset.topic} - Mục tiêu`, [
-      `Nhận diện đúng các phần: ${chapterNames.slice(0, 3).join(", ")}.`,
-      `Thuộc công thức trọng tâm: ${chapterRules.join(" | ")}.`,
-      `Luyện theo yêu cầu: ${preset.notes}`,
-    ]),
-    createSlide(`${preset.id}-03`, `${preset.topic} - Lộ trình kiến thức`, [
-      ...routeLines,
-    ]),
-    createSlide(`${preset.id}-04`, `${preset.topic} - Khung ghi nhớ nhanh`, buildQuickMemoryBullets(preset, chapterRules, chapterExamples)),
+    createSlide(
+      `${preset.id}-01`,
+      coverTitle,
+      [
+        ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
+        `Cấu trúc: ${preset.structure}`,
+      ],
+      clip,
+    ),
+    createSlide(
+      `${preset.id}-02`,
+      preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Mục tiêu` : `${preset.topic} - Mục tiêu`,
+      [
+        `Phần chính: ${chapterNames.slice(0, 3).join(", ")}.`,
+        `Trọng tâm: ${chapterRules.join(" | ")}.`,
+        `Luyện: ${preset.notes}`,
+      ],
+      clip,
+    ),
+    createSlide(
+      `${preset.id}-03`,
+      preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Lộ trình` : `${preset.topic} - Lộ trình kiến thức`,
+      [...routeLines],
+      clip,
+    ),
+    createSlide(
+      `${preset.id}-04`,
+      preset.compactCopy ? `${shortTopicLabel(preset.topic)} — Ghi nhớ nhanh` : `${preset.topic} - Khung ghi nhớ nhanh`,
+      buildQuickMemoryBullets(preset, chapterRules, chapterExamples),
+      clip,
+    ),
   ];
 
   preset.chapters.forEach((chapter, chapterIndex) => {
     slides.push(...buildChapterSlides(preset, chapter, chapterIndex));
   });
 
-  slides.push(createSlide(`${preset.id}-30`, "Tổng kết", [
-    `Ôn lại các phần chính: ${chapterNames.join(", ")}.`,
-    `Nhắc lại công thức và ví dụ then chốt: ${chapterExamples.join(" | ")}.`,
-    `Bài tập sau giờ học vẫn bám đúng cấu trúc: ${preset.structure}.`,
-  ]));
+  slides.push(
+    createSlide(
+      `${preset.id}-30`,
+      "Tổng kết",
+      [
+        `Ôn lại các phần chính: ${chapterNames.join(", ")}.`,
+        `Nhắc lại công thức và ví dụ then chốt: ${chapterExamples.join(" | ")}.`,
+        `Bài tập sau giờ học vẫn bám đúng cấu trúc: ${preset.structure}.`,
+      ],
+      preset.compactCopy ? { titleMax: 72, bulletMax: 130 } : null,
+    ),
+  );
 
   return slides;
 }
@@ -1258,17 +1333,17 @@ function buildExtraSlidePresetId(topic, index) {
 
 function buildAutoChaptersByTopic(topic) {
   const topicText = String(topic || "").trim();
-  const topicLower = topicText.toLocaleLowerCase("vi-VN");
+  const shortL = shortTopicLabel(topicText);
   return AUTO_CHAPTER_TEMPLATES.map((template, index) => ({
-    name: `${template.name} - ${topicText}`,
-    focus: `${template.focusStem} của ${topicLower} trong bài thi.`,
-    rule: `${template.ruleStem} cho ${topicLower}.`,
-    exampleA: `Ví dụ ${index + 1}: Chọn đáp án phù hợp nhất với ${topicLower} trong ngữ cảnh câu.`,
-    exampleB: `Ví dụ ${index + 2}: Viết lại một câu ngắn để kiểm tra mức độ hiểu ${topicLower}.`,
-    pitfallA: `Lỗi ${index + 1}: Chọn đáp án theo cảm tính mà không bám dấu hiệu của ${topicLower}.`,
-    pitfallB: `Lỗi ${index + 2}: Bỏ qua bước đọc lại nghĩa tổng thể khi xử lý ${topicLower}.`,
-    practiceA: `Bài tập ${index + 1}: ${template.practiceStem} với 3 câu liên quan đến ${topicLower}.`,
-    practiceB: `Bài tập ${index + 2}: Tự giải thích vì sao đáp án đúng vẫn bám ${topicLower}.`,
+    name: template.name,
+    focus: `${template.focusStem} (${shortL}).`,
+    rule: `${template.ruleStem} Áp dụng cho chủ đề đã chọn.`,
+    exampleA: `Ví dụ ${index + 1}: Chọn đáp án đúng trong ngữ cảnh.`,
+    exampleB: `Ví dụ ${index + 2}: Viết lại một câu ngắn kiểm tra hiểu bài.`,
+    pitfallA: `Lỗi ${index + 1}: Chọn theo cảm tính, bỏ qua dấu hiệu trong đề.`,
+    pitfallB: `Lỗi ${index + 2}: Đọc vội, không nắm nghĩa tổng thể đoạn.`,
+    practiceA: `Bài ${index + 1}: ${template.practiceStem} (3 câu).`,
+    practiceB: `Bài ${index + 2}: Giải thích vì sao đáp án đúng.`,
   }));
 }
 
@@ -1297,6 +1372,8 @@ function buildExtraSlidePreset(topic, index) {
     notes: EXTRA_SLIDE_NOTES_OPTIONS[index % EXTRA_SLIDE_NOTES_OPTIONS.length],
     chapters: buildAutoChaptersByTopic(topic),
     customDefaultIndexes: buildExtraPresetDefaultIndexes(chapterCount),
+    /** Bìa theme đa sắc (1.thptqg): title/bullet ngắn, tránh tràn. */
+    compactCopy: true,
   };
 }
 

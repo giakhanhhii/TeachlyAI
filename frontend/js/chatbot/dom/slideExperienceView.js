@@ -149,9 +149,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       const _bgKey = (_devSrc === "ai" && effectiveMeta?.__experienceId) ? `gen_${effectiveMeta.__experienceId}` : null;
       if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide")));
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-      const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
-      const _loadEl = (!isRestore && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
+      const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 20) : null;
       raw = _bgEntry?.status === "done" ? _bgEntry.raw
           : _bgEntry ? await _bgEntry.promise
           : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
@@ -656,7 +655,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   function paintNav() {
     const s = slides[index];
     progress.paint({ total, index, correct: 0, wrong: 0 });
-    backBtn.disabled = index <= 0;
+    backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
     otherBtn.hidden = index < total - 1;
     nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     nextBtn.disabled = !s;
@@ -684,7 +683,10 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   }
 
   backBtn.addEventListener("click", () => {
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderSlide();
   });

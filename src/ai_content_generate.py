@@ -67,15 +67,16 @@ Generate a JSON slide deck about the given English topic.
 
 Rules:
 - Exactly 10 slides
-- The FIRST slide (s1) title must be the topic itself (verbatim or a very close restatement — this is the cover/title slide)
-- Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
-- Each bullet: 20-30 words, write as a detailed informative sentence with context or examples
-- Keep slide TITLES short (3-6 words) to avoid overflow
-- Content must be genuinely educational about the topic
+- FIRST slide (cover): "title" = ONE short headline (max 10 words, max ~72 characters) that names the topic clearly — do NOT paste the full raw topic string, do NOT stack keywords with slashes, do NOT use ALL CAPS blocks. This title must fit a 16:9 slide header without clipping.
+- FIRST slide: exactly 2 or 3 bullets only; each bullet max 14 words; concise Vietnamese or English matching the topic; do NOT repeat the full topic phrase in every bullet (use "chủ đề", "phần này", or pronouns after the first mention).
+- Slides 2–10: "title" max 8 words; 3 bullets each; each bullet max 18 words (one clear sentence each).
+- No filler like repeating the same long topic label in every bullet.
+- Deck "title" field: short deck name (max 12 words).
+- Content must be genuinely educational about the topic.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<deck title>","slides":[{"id":"s1","title":"<topic>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
+{"title":"<deck title>","slides":[{"id":"s1","title":"<short cover headline>","bullets":["<bullet>","<bullet>"]},...]}"""
 
 _QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
 Generate a JSON quiz about the given English topic.
@@ -127,6 +128,56 @@ def _sanitize_topic(topic: str) -> str:
     return " ".join(topic.split())[:200]
 
 
+def _clamp_line(text: str, max_chars: int) -> str:
+    """Single-line clamp for slide titles and bullets (16:9 safe)."""
+    s = " ".join(str(text or "").split())
+    if len(s) <= max_chars:
+        return s
+    cut = s[: max_chars - 1]
+    if " " in cut:
+        cut = cut.rsplit(" ", 1)[0]
+    return cut.rstrip(" ,;:") + "…"
+
+
+def _short_cover_title(topic: str, *, max_chars: int = 78, max_words: int = 11) -> str:
+    """Cover slide headline — short enough for professional split themes (e.g. 1.thptqg)."""
+    t = " ".join(str(topic or "").split())
+    if not t:
+        return "Chủ đề"
+    words = t.split()
+    if len(words) > max_words:
+        return _clamp_line(" ".join(words[:max_words]), max_chars + 8)
+    if len(t) > max_chars:
+        return _clamp_line(t, max_chars)
+    return t
+
+
+def _normalize_ai_slide_deck(data: dict[str, Any], topic: str) -> None:
+    """Clamp titles/bullets so decks fit slide shells (cover slide overflow)."""
+    slides = data.get("slides")
+    if not isinstance(slides, list):
+        return
+    for idx, s in enumerate(slides):
+        if not isinstance(s, dict):
+            continue
+        tit = s.get("title")
+        max_title = 82 if idx == 0 else 72
+        if isinstance(tit, str) and tit.strip():
+            s["title"] = _clamp_line(tit, max_title)
+        elif idx == 0:
+            s["title"] = _short_cover_title(topic)
+        bullets = s.get("bullets")
+        if not isinstance(bullets, list):
+            continue
+        max_bullets = 3 if idx == 0 else 4
+        max_chars_b = 150 if idx == 0 else 200
+        out: list[str] = []
+        for b in bullets[:max_bullets]:
+            if isinstance(b, str) and b.strip():
+                out.append(_clamp_line(b, max_chars_b))
+        s["bullets"] = out
+
+
 def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
     text = raw.strip()
     # Strip markdown fences if model included them despite instructions
@@ -150,9 +201,6 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
     # Validate basic shape
     if not isinstance(data.get("slides"), list):
         raise ValueError("AI slide response missing 'slides' array")
-    # First slide title = topic (cover slide)
-    if data["slides"]:
-        data["slides"][0]["title"] = topic
     # Ensure ids exist
     for i, s in enumerate(data["slides"]):
         if not s.get("id"):
@@ -160,6 +208,17 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
         # Clamp bullets to 4 per slide
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
+    _normalize_ai_slide_deck(data, topic)
+    # Cover slide: short headline (full topic in deck title / meta — avoids header clip)
+    if data["slides"] and isinstance(data["slides"][0], dict):
+        s0 = data["slides"][0]
+        cur = s0.get("title")
+        if not (isinstance(cur, str) and cur.strip()):
+            s0["title"] = _short_cover_title(topic)
+        elif len(cur) > 82 or len(cur.split()) > 12:
+            s0["title"] = _short_cover_title(topic)
+    if isinstance(data.get("title"), str):
+        data["title"] = _clamp_line(data["title"], 100)
     return data
 
 
@@ -360,15 +419,14 @@ Your job is to read the document and create a slide deck that teaches the KEY co
 
 Rules:
 - Exactly 10 slides (or as many as requested)
-- The FIRST slide (s1) title must be the main topic of the document (cover slide)
-- Each slide: "title" (3-6 words) and "bullets" (array of 3-4 items)
-- Each bullet: 20-30 words, write as a detailed informative sentence using content from the document
-- Keep slide TITLES short (3-6 words)
+- FIRST slide (cover): short headline title (max 10 words, ~72 characters) summarising the document — no long slash-separated keyword lists, no ALL CAPS blocks; must fit a 16:9 header.
+- FIRST slide: 2–3 bullets only, each max 14 words; do not repeat the same long phrase in every bullet.
+- Other slides: titles max 8 words; 3 bullets each; each bullet max 18 words; one sentence per bullet.
 - Derive all content from the document — do not invent facts not present in it
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<deck title>","slides":[{"id":"s1","title":"<main topic>","bullets":["<bullet>","<bullet>","<bullet>"]},...]}"""
+{"title":"<deck title>","slides":[{"id":"s1","title":"<short headline>","bullets":["<bullet>","<bullet>"]},...]}"""
 
 _DOC_QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
 You are given an excerpt from an uploaded document (Markdown format).
@@ -429,6 +487,10 @@ def generate_slide_from_document(document_text: str, count: int = 10, notes: str
             s["id"] = f"ai_s{i + 1}"
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
+    topic_hint = str(data.get("title") or "Tài liệu")
+    _normalize_ai_slide_deck(data, topic_hint)
+    if isinstance(data.get("title"), str):
+        data["title"] = _clamp_line(data["title"], 100)
     return data
 
 

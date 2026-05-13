@@ -70,6 +70,9 @@ let isSwitchingSession = false;
 /** Kind of the currently active auto-mode experience ("slide"|"quiz"|"flash"|"fullset"|null). */
 let _currentAutoExpKind = null;
 
+/** Stack of previous auto-mode experiences for back-navigation. Each entry: { kind, meta, experienceId }. */
+let _autoModeHistory = [];
+
 const REMOTE_MESSAGE_PAGE_SIZE = 20;
 const HISTORY_NAV_SEQ_KEY = "__teachlyNavSeq";
 const HISTORY_SESSION_ID_KEY = "__teachlySessionId";
@@ -213,7 +216,30 @@ export function init() {
     rerenderMessages: () => renderMessages(),
   });
 
-  const experienceHooks = { onAiEdit: openChatWithAiDraft, onContinueCreate: continueCreateFromExperience };
+  function _captureCurrentExpForHistory() {
+    const state = getCurrentExperienceState() || {};
+    const kind = state.kind;
+    if (kind !== "quiz" && kind !== "slide" && kind !== "flash") return;
+    _autoModeHistory.push({
+      kind,
+      meta: state.meta && typeof state.meta === "object" ? { ...state.meta } : {},
+      experienceId: typeof state.activeExperienceId === "string" ? state.activeExperienceId : "",
+    });
+  }
+
+  function _goBackToPrevAutoModeExperience() {
+    const prev = _autoModeHistory.pop();
+    if (!prev) return;
+    _currentAutoExpKind = /** @type {any} */ (prev.kind);
+    void openSingleExperience(prev.kind, prev.meta, "resume", prev.experienceId);
+  }
+
+  const experienceHooks = {
+    onAiEdit: openChatWithAiDraft,
+    onContinueCreate: continueCreateFromExperience,
+    hasPrevAutoExperience: () => _autoModeHistory.length > 0,
+    onGoBackToPrevExperience: _goBackToPrevAutoModeExperience,
+  };
   experienceController = createExperienceController({
     getCurrentSession,
     getCurrentExperienceState,
@@ -581,6 +607,7 @@ export function init() {
       } else {
         updateRecommendPanel({ status: "recording", log: getLastN(5, capturedKind) });
       }
+      _captureCurrentExpForHistory();
       await launchAutoMode(validKind, autoModeStore.getCounts());
       return;
     }
@@ -652,7 +679,8 @@ export function init() {
    * @param {"fullset"|"slide"|"quiz"|"flash"} expKind - already normalized
    * @param {{ slides: number, quiz: number, flash: number }} counts
    */
-  async function launchAutoMode(expKind, counts) {
+  async function launchAutoMode(expKind, counts, { resetHistory = false } = {}) {
+    if (resetHistory) _autoModeHistory = [];
     _currentAutoExpKind = expKind;
 
     const spec = recommendQueueStore.getNextSpec(expKind, counts);
@@ -725,14 +753,14 @@ export function init() {
 
     function openCountSelector() {
       if (autoModeStore.getNeverAskCount()) {
-        void launchAutoMode(expKind, autoModeStore.getCounts());
+        void launchAutoMode(expKind, autoModeStore.getCounts(), { resetHistory: true });
         return;
       }
       showCountSelectorPanel(expKind, autoModeStore.getCounts(), {
         onConfirm: (counts, neverAsk) => {
           autoModeStore.saveCounts(counts);
           if (neverAsk) autoModeStore.setNeverAskCount(true);
-          void launchAutoMode(expKind, counts);
+          void launchAutoMode(expKind, counts, { resetHistory: true });
         },
         onCancel: () => {},
       });
@@ -953,6 +981,7 @@ export function init() {
       restoreRecommendPanelForSession();
       setGuidedState(null);
       experienceController.resetResumeState();
+      _autoModeHistory = [];
       layerView.hide();
       saveSessions();
       try {
@@ -1061,6 +1090,7 @@ export function init() {
       restoreRecommendPanelForSession();
       setGuidedState(null);
       experienceController.resetResumeState();
+      _autoModeHistory = [];
       layerView.hide();
       renderChatListUI();
       renderMessages();

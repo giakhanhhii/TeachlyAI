@@ -3,7 +3,7 @@ import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent 
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
-import { prepareFlashSessionData } from "../services/sessionContentPrep.js";
+import { prepareFlashSessionData, hasDirectFlashCardsFromMeta } from "../services/sessionContentPrep.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { fitFlashCardText } from "../services/flashCardTextFit.js";
@@ -129,6 +129,9 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   let flashRaw;
   let _devSrc = "mock"; /* DEV-ONLY */
   if (restoredCards.length === 0) {
+    if (hasDirectFlashCardsFromMeta(meta)) {
+      flashRaw = {};
+    } else {
     const _aiTopic = meta?.list || meta?.source || meta?.topic || undefined;
     const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
     const _uploadFile = meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
@@ -178,9 +181,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
         if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard")));
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-        const _loadLabel = _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải nội dung…";
-        const _loadEl = _bgEntry?.status !== "done" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })() : null;
-        const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;
+        const _loadEl = (_devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
+        const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15) : null;
         flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
             : _bgEntry ? await _bgEntry.promise
             : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
@@ -191,6 +193,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         incrementPlayCount("flash");
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
       }
+    }
     }
   }
   const data =
@@ -526,7 +529,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     hint.textContent = bookmarkFilter
       ? "Đang xem các flashcard đã bookmark. Chạm bookmark lần nữa để bỏ khỏi danh sách này."
       : "Nhấn vào thẻ để lật. Dùng Tiếp theo để sang thẻ khác.";
-    backBtn.disabled = safeVisibleIndex <= 0;
+    backBtn.disabled = safeVisibleIndex <= 0 && !deps?.hasPrevAutoExperience?.();
     otherBtn.hidden = bookmarkFilter || safeVisibleIndex < visibleTotal - 1;
     nextBtn.textContent = bookmarkFilter
       ? safeVisibleIndex >= visibleTotal - 1
@@ -558,7 +561,10 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   backBtn.addEventListener("click", () => {
     const { visibleIndices, visibleIndex } = syncVisibleState(index);
-    if (visibleIndex <= 0) return;
+    if (visibleIndex <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index = visibleIndices[visibleIndex - 1];
     renderCard();
   });

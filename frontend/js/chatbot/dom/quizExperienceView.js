@@ -81,9 +81,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
       if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz")));
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-      const _loadLabel = _devSrc === "ai" ? "AI đang tạo câu hỏi…" : "Đang tải nội dung…";
-      const _loadEl = (!isRestore && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;
+      const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15) : null;
       raw = _bgEntry?.status === "done" ? _bgEntry.raw
           : _bgEntry ? await _bgEntry.promise
           : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
@@ -195,7 +194,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       },
     });
 
-    backBtn.disabled = index <= 0;
+    backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
     resultBtn.hidden = true;
     resultBtn.disabled = true;
     nextBtn.disabled = !gradedByIndex[index] && selected === null;
@@ -216,11 +215,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     if (!gradedByIndex[index]) nextBtn.textContent = "Tiếp theo";
     else {
       const isLast = index >= questions.length - 1;
-      nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
-      if (isLast) {
-        resultBtn.hidden = false;
-        resultBtn.disabled = false;
-      }
+      nextBtn.textContent = isLast ? "Xem kết quả" : "Tiếp theo";
     }
     emitState();
   }
@@ -267,7 +262,10 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       renderQuestion();
       return;
     }
-    if (index <= 0) return;
+    if (index <= 0) {
+      deps?.onGoBackToPrevExperience?.();
+      return;
+    }
     index -= 1;
     renderQuestion();
   });
@@ -288,10 +286,9 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       progress.paint({ total, index, correct, wrong });
       activeStepView?.applyGrading?.(selected);
       const isLast = index >= questions.length - 1;
-      nextBtn.textContent = isLast ? "Tiếp tục tạo" : "Tiếp theo";
+      nextBtn.textContent = isLast ? "Xem kết quả" : "Tiếp theo";
       if (isLast) {
-        resultBtn.hidden = false;
-        resultBtn.disabled = false;
+        resultBtn.hidden = true;
       }
       nextBtn.disabled = false;
       emitState();
@@ -299,7 +296,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     }
 
     if (index >= questions.length - 1) {
-      deps?.onContinueCreate?.("quiz");
+      reviewFilter = "all";
+      renderReview();
       return;
     }
     index += 1;
