@@ -29,6 +29,7 @@ from starlette.background import BackgroundTask
 
 from .config import (
     ANTHROPIC_API_KEY,
+    DATABASE_URL,
     DEFAULT_MODEL,
     FLASH_TRANSLATE_OPENAI_MODEL,
     LLM_PROVIDER,
@@ -278,7 +279,7 @@ def _cleanup_export_dir(path: Path) -> None:
 
 
 app = FastAPI(title="Teachly Local", version="0.1.0")
-db = DatabaseManager(REPO_ROOT / "data" / "teachly.sqlite3")
+db = DatabaseManager(DATABASE_URL)
 
 app.add_middleware(
     CORSMiddleware,
