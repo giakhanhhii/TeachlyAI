@@ -105,7 +105,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Tạo slide, câu hỏi và flashcard từ tài liệu</span>'; root.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 35);
+      const _stopCountdown = startAiCountdown(_loadEl, 35, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
       try {
         const aiBundle = _bgFetch
           ? await _bgFetch.promise
@@ -135,7 +135,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       }));
       const _bgEntryFs = _bgKey ? getFetch(_bgKey) : null;
       const _loadEl = _bgEntryFs?.status !== "done" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 30) : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 30, _bgEntryFs ? { startedAt: _bgEntryFs.startedAt } : {}) : null;
       let aiBundle;
       if (_bgEntryFs?.status === "done") {
         aiBundle = _bgEntryFs.raw;

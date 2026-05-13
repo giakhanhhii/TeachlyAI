@@ -40,7 +40,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
     const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang câu hỏi, vui lòng đợi</span>'; root.appendChild(w); return w; })();
-    const _stopCountdown = startAiCountdown(_loadEl, 15);
+    const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
     try {
       raw = _bgFetch
         ? await _bgFetch.promise
@@ -68,7 +68,12 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
         const w = document.createElement("div"); w.className = "ai-loading-overlay";
         w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
         root.appendChild(w);
-        raw = await _prefetchEntry.promise;
+        const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
+        try {
+          raw = await _prefetchEntry.promise;
+        } finally {
+          _stopPrefetchCd();
+        }
         if (root._genStamp !== _genStamp) return;
         w.remove();
       } else {
@@ -82,7 +87,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz")));
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
       const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15) : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
       raw = _bgEntry?.status === "done" ? _bgEntry.raw
           : _bgEntry ? await _bgEntry.promise
           : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))

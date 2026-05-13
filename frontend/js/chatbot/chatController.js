@@ -219,7 +219,7 @@ export function init() {
   function _captureCurrentExpForHistory() {
     const state = getCurrentExperienceState() || {};
     const kind = state.kind;
-    if (kind !== "quiz" && kind !== "slide" && kind !== "flash") return;
+    if (kind !== "quiz" && kind !== "slide" && kind !== "flash" && kind !== "fullset") return;
     _autoModeHistory.push({
       kind,
       meta: state.meta && typeof state.meta === "object" ? { ...state.meta } : {},
@@ -231,6 +231,11 @@ export function init() {
     const prev = _autoModeHistory.pop();
     if (!prev) return;
     _currentAutoExpKind = /** @type {any} */ (prev.kind);
+    if (prev.kind === "fullset") {
+      const title = prev.meta.topic ? `Full Set — ${prev.meta.topic}` : "Full set";
+      void openResumeFullSetMixed(prev.meta, title);
+      return;
+    }
     void openSingleExperience(prev.kind, prev.meta, "resume", prev.experienceId);
   }
 

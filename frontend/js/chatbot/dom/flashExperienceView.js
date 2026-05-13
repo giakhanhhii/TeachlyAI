@@ -139,7 +139,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     if (_uploadFile || _bgFetch) {
       experienceBody.innerHTML = "";
       const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 15);
+      const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
       try {
         flashRaw = _bgFetch
           ? await _bgFetch.promise
@@ -167,7 +167,12 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
           const w = document.createElement("div"); w.className = "ai-loading-overlay";
           w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
           experienceBody.appendChild(w);
-          flashRaw = await _prefetchEntry.promise;
+          const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
+          try {
+            flashRaw = await _prefetchEntry.promise;
+          } finally {
+            _stopPrefetchCd();
+          }
           if (experienceBody._genStamp !== _genStamp) return;
           w.remove();
         } else {
@@ -182,7 +187,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard")));
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
         const _loadEl = (_devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
-        const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15) : null;
+        const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
         flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
             : _bgEntry ? await _bgEntry.promise
             : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
