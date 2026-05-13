@@ -1284,6 +1284,40 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       r = lockTextBoxForCornerResize(selected);
     }
     var cs = window.getComputedStyle(selected);
+    var startCssW = Math.max(1, selected.offsetWidth || r.width);
+    var startCssH = Math.max(1, selected.offsetHeight || r.height);
+    var wCssPerClient = startCssW / Math.max(r.width, 1e-6);
+    var hCssPerClient = startCssH / Math.max(r.height, 1e-6);
+    /** Góc đối diện (client) + khoảng cách lúc pointerdown — resize góc kiểu Canva */
+    var anchorCX = null;
+    var anchorCY = null;
+    var startDiag = 0;
+    if (h === "se") {
+      anchorCX = r.left;
+      anchorCY = r.top;
+    } else if (h === "nw") {
+      anchorCX = r.right;
+      anchorCY = r.bottom;
+    } else if (h === "ne") {
+      anchorCX = r.left;
+      anchorCY = r.bottom;
+    } else if (h === "sw") {
+      anchorCX = r.right;
+      anchorCY = r.top;
+    }
+    if (anchorCX != null && anchorCY != null) {
+      startDiag = Math.hypot(e.clientX - anchorCX, e.clientY - anchorCY);
+      if (startDiag < 14) startDiag = 14;
+    }
+    /** Bù vị trí bấm so với cạnh đang kéo — cạnh bám sát chuột */
+    var eGrabOff = 0;
+    var wGrabOff = 0;
+    var nGrabOff = 0;
+    var sGrabOff = 0;
+    if (h === "e") eGrabOff = e.clientX - r.right;
+    else if (h === "w") wGrabOff = e.clientX - r.left;
+    else if (h === "n") nGrabOff = e.clientY - r.top;
+    else if (h === "s") sGrabOff = e.clientY - r.bottom;
     resizeState = {
       handle: h,
       captureEl: e.currentTarget,
@@ -1291,6 +1325,17 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
       startY: e.clientY,
       startW: r.width,
       startH: r.height,
+      startCssW: startCssW,
+      startCssH: startCssH,
+      wCssPerClient: wCssPerClient,
+      hCssPerClient: hCssPerClient,
+      anchorCX: anchorCX,
+      anchorCY: anchorCY,
+      startDiag: startDiag,
+      eGrabOff: eGrabOff,
+      wGrabOff: wGrabOff,
+      nGrabOff: nGrabOff,
+      sGrabOff: sGrabOff,
       startRectLeft: r.left,
       startRectRight: r.right,
       startRectTop: r.top,
@@ -1312,34 +1357,34 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     var kind = resizeState.kind;
     var sw = resizeState.startW;
     var sh = resizeState.startH;
+    var startCssW = resizeState.startCssW || sw;
+    var startCssH = resizeState.startCssH || sh;
+    var wCpc = resizeState.wCssPerClient || 1;
+    var hCpc = resizeState.hCssPerClient || 1;
 
     if (h === "nw" || h === "ne" || h === "sw" || h === "se") {
-      var d = 0;
-      if (h === "se") d = (dx + dy) / 2;
-      else if (h === "nw") d = (-dx - dy) / 2;
-      else if (h === "ne") d = (dx - dy) / 2;
-      else if (h === "sw") d = (-dx + dy) / 2;
       var bx = resizeState.startDataEditX;
       var by = resizeState.startDataEditY;
-      var nwC;
-      var nhC;
-      if (h === "se") {
-        nwC = Math.max(32, sw + dx);
-        nhC = Math.max(24, sh + dy);
-      } else if (h === "nw") {
-        nwC = Math.max(32, sw - dx);
-        nhC = Math.max(24, sh - dy);
-      } else if (h === "ne") {
-        nwC = Math.max(32, sw + dx);
-        nhC = Math.max(24, sh - dy);
+      var ax = resizeState.anchorCX;
+      var ay = resizeState.anchorCY;
+      var d0 = resizeState.startDiag;
+      var s = 1;
+      if (ax != null && ay != null && d0 > 0) {
+        var d1 = Math.hypot(e.clientX - ax, e.clientY - ay);
+        var rawS = d1 / Math.max(d0, 1e-6);
+        /** Giảm gain quanh 1 — bớt nhạy / giật so với (dx+dy)/2 */
+        s = Math.max(0.12, Math.min(6.5, 1 + (rawS - 1) * 0.68));
       } else {
-        nwC = Math.max(32, sw - dx);
-        nhC = Math.max(24, sh + dy);
+        var d = 0;
+        if (h === "se") d = (dx + dy) / 2;
+        else if (h === "nw") d = (-dx - dy) / 2;
+        else if (h === "ne") d = (dx - dy) / 2;
+        else if (h === "sw") d = (-dx + dy) / 2;
+        s = Math.max(0.12, Math.min(6.5, 1 + d / 280));
       }
       if (kind === "text") {
-        var rawTextScale = Math.max(nwC / Math.max(sw, 1), nhC / Math.max(sh, 1));
-        var textScale = Math.max(0.35, Math.min(4, rawTextScale));
-        var scaledWidth = Math.max(32, sw * textScale);
+        var textScale = Math.max(0.35, Math.min(4, s));
+        var scaledWidth = Math.max(32, startCssW * textScale);
         el.style.width = scaledWidth + "px";
         el.style.maxWidth = scaledWidth + "px";
         el.style.minHeight = "0";
@@ -1353,8 +1398,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         return;
       } else if (kind === "sticker") {
         var sfSticker = resizeState.startFont || 16;
-        var rawStickerScale = Math.max(nwC / Math.max(sw, 1), nhC / Math.max(sh, 1));
-        var stickerScale = Math.max(0.35, Math.min(4.5, rawStickerScale));
+        var stickerScale = Math.max(0.35, Math.min(4.5, s));
         var nextFont = Math.max(8, Math.min(520, sfSticker * stickerScale));
         el.style.setProperty("width", "auto", "important");
         el.style.setProperty("height", "auto", "important");
@@ -1362,9 +1406,7 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         placeCornerAnchored(el, h, bx, by, sw, sh);
         return;
       } else if (kind === "img") {
-        var s = 1 + d / 200;
-        s = Math.max(0.15, Math.min(6, s));
-        var nw = Math.max(24, Math.min(2000, sw * s));
+        var nw = Math.max(24, Math.min(2000, startCssW * s));
         el.style.width = nw + "px";
         el.style.height = "auto";
         if (el.naturalWidth && el.naturalHeight) {
@@ -1373,10 +1415,8 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
         }
         placeCornerAnchored(el, h, bx, by, sw, sh);
       } else {
-        var sc2 = 1 + d / 220;
-        sc2 = Math.max(0.25, Math.min(4, sc2));
-        el.style.width = Math.max(40, sw * sc2) + "px";
-        el.style.height = Math.max(40, sh * sc2) + "px";
+        el.style.width = Math.max(40, startCssW * s) + "px";
+        el.style.height = Math.max(40, startCssH * s) + "px";
         el.style.boxSizing = "border-box";
         placeCornerAnchored(el, h, bx, by, sw, sh);
       }
@@ -1384,14 +1424,24 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
     }
 
     if (h === "e" || h === "w") {
-      /* Chỉ dùng delta so với lúc nhấn — tránh lệch tọa độ khi slide/iframe có transform scale */
-      var nw2 = h === "e" ? Math.max(32, sw + dx) : Math.max(32, sw - dx);
+      var newWclient;
+      var nlx = null;
+      if (h === "e") {
+        var grabE = resizeState.eGrabOff != null ? resizeState.eGrabOff : resizeState.startX - resizeState.startRectRight;
+        var newRight = e.clientX - grabE;
+        newWclient = Math.max(32, newRight - resizeState.startRectLeft);
+      } else {
+        var grabW = resizeState.wGrabOff != null ? resizeState.wGrabOff : resizeState.startX - resizeState.startRectLeft;
+        var newLeft = e.clientX - grabW;
+        newWclient = Math.max(32, resizeState.startRectRight - newLeft);
+        nlx = resizeState.startDataEditX + (newLeft - resizeState.startRectLeft) * wCpc;
+      }
+      var nw2 = newWclient * wCpc;
       if (kind === "text") {
         el.style.boxSizing = "border-box";
         el.style.minWidth = "0";
       }
-      if (h === "w") {
-        var nlx = resizeState.startDataEditX + dx;
+      if (h === "w" && nlx != null) {
         el.setAttribute("data-edit-x", String(nlx));
         el.style.left = nlx + "px";
       }
@@ -1410,13 +1460,24 @@ export const SLIDE_VISUAL_EDITOR_JS = `(function(){
 
     if (h === "n" || h === "s") {
       if (kind === "text") return;
-      var nh2 = h === "s" ? Math.max(24, sh + dy) : Math.max(24, sh - dy);
-      if (h === "n") {
-        var nty = resizeState.startDataEditY + dy;
+      var nh2;
+      var nty = null;
+      if (h === "s") {
+        var grabS = resizeState.sGrabOff != null ? resizeState.sGrabOff : resizeState.startY - resizeState.startRectBottom;
+        var newBot = e.clientY - grabS;
+        nh2 = Math.max(24, newBot - resizeState.startRectTop);
+      } else {
+        var grabN = resizeState.nGrabOff != null ? resizeState.nGrabOff : resizeState.startY - resizeState.startRectTop;
+        var newTop = e.clientY - grabN;
+        nh2 = Math.max(24, resizeState.startRectBottom - newTop);
+        nty = resizeState.startDataEditY + (newTop - resizeState.startRectTop) * hCpc;
+      }
+      var nhCss = nh2 * hCpc;
+      if (h === "n" && nty != null) {
         el.setAttribute("data-edit-y", String(nty));
         el.style.top = nty + "px";
       }
-      el.style.height = nh2 + "px";
+      el.style.height = nhCss + "px";
       el.style.boxSizing = "border-box";
       if (kind === "img") {
         el.style.width = "auto";
