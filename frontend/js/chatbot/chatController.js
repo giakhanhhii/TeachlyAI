@@ -741,12 +741,10 @@ export function init() {
     }
 
     showAutoModeChoicePopup(expKind, {
-      onCustom: (neverAsk) => {
-        if (neverAsk) autoModeStore.setNeverAskChoice("custom");
+      onCustom: () => {
         void onCustom();
       },
-      onAuto: (neverAsk) => {
-        if (neverAsk) autoModeStore.setNeverAskChoice("auto");
+      onAuto: () => {
         autoModeStore.enable();
         syncToggleUI(true);
         openCountSelector();
