@@ -128,18 +128,31 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       _loadEl.remove();
       _devSrc = "ai";
     } else if (_devSrc === "ai") {
-      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 30);
-      const aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
+      const _bgKey = spec.__experienceId ? `gen_${spec.__experienceId}` : null;
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
-      });
-      _stopCountdown();
+      }));
+      const _bgEntryFs = _bgKey ? getFetch(_bgKey) : null;
+      const _loadEl = _bgEntryFs?.status !== "done" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
+      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 30) : null;
+      let aiBundle;
+      if (_bgEntryFs?.status === "done") {
+        aiBundle = _bgEntryFs.raw;
+      } else if (_bgEntryFs) {
+        aiBundle = await _bgEntryFs.promise;
+      } else {
+        aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
+          const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
+          return { slide: s, quiz: q, flashcard: f };
+        });
+      }
+      _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
       rawSlide = aiBundle.slide;
       rawQuiz = aiBundle.quiz;
       rawFlash = aiBundle.flashcard;
-      _loadEl.remove();
+      _loadEl?.remove();
     } else {
       const _loadElMock = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">Đang tải nội dung…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })();
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);

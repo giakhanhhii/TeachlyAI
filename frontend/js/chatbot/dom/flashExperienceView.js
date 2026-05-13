@@ -175,12 +175,16 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
       } else {
         _devSrc = (!meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+        const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
+        if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard")));
+        const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
         const _loadLabel = _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải nội dung…";
-        const _loadEl = (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })();
-        const _stopCountdown = _devSrc === "ai" ? startAiCountdown(_loadEl, 15) : null;
-        flashRaw = _devSrc === "ai"
-          ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
-          : await fetchMockResource("flashcard");
+        const _loadEl = _bgEntry?.status !== "done" ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; experienceBody.appendChild(w); return w; })() : null;
+        const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 15) : null;
+        flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
+            : _bgEntry ? await _bgEntry.promise
+            : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
+            : await fetchMockResource("flashcard");
         _stopCountdown?.();
         if (experienceBody._genStamp !== _genStamp) return;
         _loadEl?.remove();

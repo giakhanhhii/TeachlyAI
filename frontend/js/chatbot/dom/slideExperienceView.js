@@ -146,12 +146,16 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
       const _devSrc = (!isRestore && !effectiveMeta?.presetId && effectiveMeta?.__forceMock !== "1" && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _bgKey = (_devSrc === "ai" && effectiveMeta?.__experienceId) ? `gen_${effectiveMeta.__experienceId}` : null;
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide")));
+      const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
       const _loadLabel = _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải nội dung…";
-      const _loadEl = !isRestore ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
+      const _loadEl = (!isRestore && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = `<div class="ai-loading-ring"></div><span class="ai-loading-label">${_loadLabel}</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>`; root.appendChild(w); return w; })() : null;
       const _stopCountdown = (_loadEl && _devSrc === "ai") ? startAiCountdown(_loadEl, 20) : null;
-      raw = _devSrc === "ai"
-        ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
-        : await fetchMockResource("slide");
+      raw = _bgEntry?.status === "done" ? _bgEntry.raw
+          : _bgEntry ? await _bgEntry.promise
+          : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
+          : await fetchMockResource("slide");
       _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
       _loadEl?.remove();
