@@ -9,6 +9,7 @@ import {
   computeCompleted,
   fullsetResumeItemsFromSpec,
   normalizeExperienceKind,
+  retargetFullsetInitialState,
   resolveFullsetInitialState,
   resolveSingleInitialState,
 } from "../services/experienceStateService.js";
@@ -254,8 +255,9 @@ export function createExperienceController(deps) {
    * @param {string} bundleTitle
    * @param {string} [forcedExperienceId]
    * @param {{ mode?: "push" | "replace", canBackToChat?: boolean }} [historyOpts]
+   * @param {"slide"|"quiz"|"flash"|""} [targetKind]
    */
-  async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "", historyOpts) {
+  async function openResumeFullSetMixed(spec, bundleTitle, forcedExperienceId = "", historyOpts, targetKind = "") {
     const safeSpec = spec && typeof spec === "object" ? { ...spec } : {};
     if (safeSpec.__pdfPending === "1") {
       const pendingFile = takePendingPdfFile();
@@ -274,7 +276,10 @@ export function createExperienceController(deps) {
     persistActiveExperience();
     ensureExperienceHistoryEntry(resolveHistoryOpts(historyOpts));
     layerView.prepareShow();
-    const initialState = resolveFullsetInitialState(getCurrentExperienceState(), scopedSpec, experienceId);
+    const initialState = retargetFullsetInitialState(
+      resolveFullsetInitialState(getCurrentExperienceState(), scopedSpec, experienceId),
+      targetKind,
+    );
     await mountFullSetMixedExperience(
       layerView,
       { title: bundleTitle || "Full set", spec: scopedSpec },
