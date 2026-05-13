@@ -821,10 +821,10 @@ export function init() {
     await experienceController.openResumeOpenAll(items, bundleTitle);
   }
 
-  async function openResumeFullSetMixed(spec, bundleTitle) {
+  async function openResumeFullSetMixed(spec, bundleTitle, targetKind = "") {
     if (!experienceController) return;
     autoRenameCurrentSession("fullset");
-    await experienceController.openResumeFullSetMixed(spec, bundleTitle);
+    await experienceController.openResumeFullSetMixed(spec, bundleTitle, "", undefined, targetKind);
   }
 
   async function restoreCurrentSessionExperience() {
@@ -837,7 +837,7 @@ export function init() {
     messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
     onResumeExperience: (item) => void openResumeExperience(item),
     onResumeOpenAll: (items, bundleTitle) => void openResumeOpenAll(items, bundleTitle),
-    onResumeOpenFullSetMixed: (spec, bundleTitle) => void openResumeFullSetMixed(spec, bundleTitle),
+    onResumeOpenFullSetMixed: (spec, bundleTitle, targetKind) => void openResumeFullSetMixed(spec, bundleTitle, targetKind),
     onFlowAction: (...args) => guidedController.onFlowAction(...args),
     onFlowCardSubmit: (cardType, payload, cardRoot) => guidedController.handleFlowCardSubmit(cardType, payload, cardRoot),
   });
