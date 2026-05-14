@@ -3281,6 +3281,8 @@ function fillContentSlots(root, title, bullets, options = {}) {
     })();
     const compactCount = isComic
       ? resolveComicBulletCount(slideRoot || root, ul, desiredCount, templateItemCount, bullets.length)
+      : isDefaultCompactCover
+        ? Math.min(3, Math.max(1, bullets.length || 1))
       : desiredCount > 0
         ? desiredCount
         : isSpaceBlack
@@ -3289,7 +3291,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
             ? templateItemCount
             : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      isSpaceBright || isSpaceBlack || isComic
+      isSpaceBright || isSpaceBlack || isComic || isDefaultCompactCover
         ? buildSlideBulletItems(renderTitle, bullets, compactCount)
         : desiredCount > 0
           ? buildSlideBulletItems(renderTitle, bullets, desiredCount)
