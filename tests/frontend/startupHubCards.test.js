@@ -46,4 +46,25 @@ describe("startupHub auto mode onboarding", () => {
     expect(secondToggle.getAttribute("aria-pressed")).toBe("false");
     expect(second.querySelector(".auto-mode-custom-hint")).toBeNull();
   });
+
+  it("persists the explicit toggle choice so card clicks follow the selected mode", () => {
+    autoModeStore.setNeverAskChoice("auto");
+    autoModeStore.enable();
+
+    const hub = createStartupHubElement(() => {});
+    document.body.appendChild(hub);
+
+    const toggle = /** @type {HTMLButtonElement} */ (hub.querySelector(".auto-mode-toggle"));
+    toggle.click();
+
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    expect(autoModeStore.isEnabled()).toBe(false);
+    expect(autoModeStore.getNeverAskChoice()).toBe("custom");
+
+    toggle.click();
+
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(autoModeStore.isEnabled()).toBe(true);
+    expect(autoModeStore.getNeverAskChoice()).toBe("auto");
+  });
 });
