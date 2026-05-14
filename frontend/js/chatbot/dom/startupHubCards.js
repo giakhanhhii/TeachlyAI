@@ -228,7 +228,7 @@ export function createStartupHubElement(onPick) {
     toggle.innerHTML = `<span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">${isOn ? "Tạo Auto" : "Tạo Custom"}</span>`;
     toggle.addEventListener("click", () => {
       const wasOn = toggle.getAttribute("aria-pressed") === "true";
-      const next = autoModeStore.toggle();
+      const next = autoModeStore.setExplicitMode(!wasOn);
       syncAutoModeToggle(toggle, next);
       if (wasOn && !next && autoModeStore.consumeCustomHintFlag()) {
         showCustomModeHint();

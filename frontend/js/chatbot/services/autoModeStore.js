@@ -103,6 +103,21 @@ export function disable() {
   saveState({ ...getState(), enabled: false });
 }
 
+/**
+ * Sets the current mode explicitly and stores that choice so card clicks follow it.
+ * @param {boolean} enabled
+ * @returns {boolean}
+ */
+export function setExplicitMode(enabled) {
+  const next = Boolean(enabled);
+  saveState({
+    ...getState(),
+    enabled: next,
+    neverAskChoice: next ? "auto" : "custom",
+  });
+  return next;
+}
+
 /** Toggles enabled state. Returns new enabled value. */
 export function toggle() {
   const state = getState();

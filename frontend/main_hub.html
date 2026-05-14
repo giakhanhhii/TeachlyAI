@@ -428,7 +428,11 @@
         var raw = localStorage.getItem(LS_KEY);
         if (!raw) return false;
         var parsed = JSON.parse(raw);
-        return Boolean(parsed && parsed.enabled);
+        if (!parsed || typeof parsed !== "object") return false;
+        if (typeof parsed.enabled === "boolean") return parsed.enabled;
+        if (parsed.neverAskChoice === "auto") return true;
+        if (parsed.neverAskChoice === "custom") return false;
+        return false;
       } catch (_) { return false; }
     }
 
@@ -438,6 +442,7 @@
         var state = {};
         try { state = JSON.parse(raw) || {}; } catch (_) {}
         state.enabled = val;
+        state.neverAskChoice = val ? "auto" : "custom";
         localStorage.setItem(LS_KEY, JSON.stringify(state));
       } catch (_) {}
     }
