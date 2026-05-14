@@ -61,6 +61,7 @@ from .utils.file_extractor import (
     UnsupportedFormatError,
     PageLimitError,
 )
+from .utils.upload_safety import ensure_safe_upload_content, UploadSafetyViolation
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -453,6 +454,18 @@ async def file_upload(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    try:
+        ensure_safe_upload_content(document_text, notes=notes)
+    except UploadSafetyViolation as exc:
+        logger.warning(
+            "Blocked unsafe upload: type=%s filename=%s category=%s matches=%s",
+            type,
+            file.filename,
+            exc.category,
+            ",".join(exc.matched_terms[:6]),
+        )
+        raise HTTPException(status_code=403, detail=exc.public_detail) from exc
 
     logger.info(
         "File upload: type=%s filename=%s chars=%d count=%d",

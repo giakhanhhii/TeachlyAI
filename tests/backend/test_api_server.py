@@ -181,3 +181,74 @@ def test_export_slide_pdf_surfaces_script_failure(client_with_temp_db):
 
     assert response.status_code == 500
     assert response.json()["detail"] == "render failed"
+
+
+def test_file_upload_blocks_explicit_nsfw_content(client_with_temp_db):
+    client, _, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        api_server,
+        "extract_text",
+        lambda *_args, **_kwargs: "This upload contains porn and blowjob scenes.",
+    )
+
+    response = client.post(
+        "/api/file-upload",
+        data={"type": "slide", "count": "10", "notes": ""},
+        files={"file": ("unsafe.txt", b"ignored", "text/plain")},
+    )
+
+    assert response.status_code == 403
+    assert "nội dung người lớn" in response.json()["detail"]
+
+
+def test_file_upload_blocks_illegal_instruction_content(client_with_temp_db):
+    client, _, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        api_server,
+        "extract_text",
+        lambda *_args, **_kwargs: "Step by step tutorial on how to make a bomb at home.",
+    )
+
+    response = client.post(
+        "/api/file-upload",
+        data={"type": "quiz", "count": "8", "notes": ""},
+        files={"file": ("unsafe.txt", b"ignored", "text/plain")},
+    )
+
+    assert response.status_code == 403
+    assert "bất hợp pháp" in response.json()["detail"]
+
+
+def test_file_upload_allows_normal_educational_content(client_with_temp_db):
+    client, _, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        api_server,
+        "extract_text",
+        lambda *_args, **_kwargs: (
+            "Illegal logging harms biodiversity in the Amazon rainforest. "
+            "Students should discuss conservation and climate solutions."
+        ),
+    )
+    monkeypatch.setattr(
+        api_server,
+        "generate_slide_from_document",
+        lambda document_text, count, notes: {
+            "slides": [{"title": "Climate", "bullets": [document_text[:20], str(count), notes]}]
+        },
+    )
+
+    response = client.post(
+        "/api/file-upload",
+        data={"type": "slide", "count": "6", "notes": "Focus on reading skills"},
+        files={"file": ("safe.txt", b"ignored", "text/plain")},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["slides"][0]["title"] == "Climate"
