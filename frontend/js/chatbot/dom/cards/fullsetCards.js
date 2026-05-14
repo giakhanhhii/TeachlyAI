@@ -33,6 +33,9 @@ export function createFullsetTopicCard(deps) {
   const titleEl = el("div", "flow-card-title", buildFormTitle("fullset"));
   root.appendChild(titleEl);
   const autofillIntent = createAutofillIntentTracker();
+  const refreshTitle = () => {
+    titleEl.textContent = buildFormTitle("fullset", topic.value);
+  };
 
   const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
   root.appendChild(wrapField("Chủ đề", topic, "Nhập tên bài học"));
@@ -101,7 +104,8 @@ export function createFullsetTopicCard(deps) {
   if (typeof prefill.quiz === "string" || Number.isFinite(Number(prefill.quiz))) quiz.value = String(prefill.quiz);
   if (typeof prefill.flash === "string" || Number.isFinite(Number(prefill.flash))) flash.value = String(prefill.flash);
   if (typeof prefill.extra === "string") extra.value = prefill.extra;
-  titleEl.textContent = buildFormTitle("fullset", topic.value);
+  refreshTitle();
+  topic.addEventListener("input", refreshTitle);
 
   function currentAutofillComparableState() {
     return {
@@ -128,6 +132,7 @@ export function createFullsetTopicCard(deps) {
       quiz.value = String(qn);
       flash.value = String(fn);
       extra.value = String(sample.e ?? "");
+      refreshTitle();
       autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
@@ -148,6 +153,7 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(ai.extra ?? "");
+        refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
@@ -162,6 +168,7 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(fb.e ?? "");
+        refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }

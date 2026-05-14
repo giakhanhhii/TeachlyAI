@@ -26,6 +26,9 @@ export function createFlashcardFormCard(deps) {
   const titleEl = el("div", "flow-card-title", buildFormTitle("flash"));
   root.appendChild(titleEl);
   const autofillIntent = createAutofillIntentTracker();
+  const refreshTitle = () => {
+    titleEl.textContent = buildFormTitle("flash", list.value, deps?.prefill?.source);
+  };
 
   const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);
   root.appendChild(wrapField("Danh sách từ / Chủ đề", list, "Có thể bỏ qua — Teachly sẽ gợi ý theo ghi chú của bạn."));
@@ -49,7 +52,8 @@ export function createFlashcardFormCard(deps) {
   if (typeof prefill.back === "string") back.value = prefill.back;
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
-  titleEl.textContent = buildFormTitle("flash", list.value, prefill.source);
+  refreshTitle();
+  list.addEventListener("input", refreshTitle);
 
   function currentAutofillComparableState() {
     return {
@@ -68,6 +72,7 @@ export function createFlashcardFormCard(deps) {
       back.value = String(sample.b ?? "");
       count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
       notes.value = String(sample.n ?? "");
+      refreshTitle();
       autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
@@ -79,6 +84,7 @@ export function createFlashcardFormCard(deps) {
         back.value = String(ai.back ?? "Nghĩa tiếng Việt, Phiên âm, Ví dụ");
         count.value = String(clamp(toPositiveInt(ai.count, 20), 1, 40));
         notes.value = String(ai.notes ?? "");
+        refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
@@ -88,6 +94,7 @@ export function createFlashcardFormCard(deps) {
         back.value = String(fb.b ?? "");
         count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
         notes.value = String(fb.n ?? "");
+        refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }
