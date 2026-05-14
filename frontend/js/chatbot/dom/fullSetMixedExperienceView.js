@@ -177,7 +177,6 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let questions = [];
   let cards = [];
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
-  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
   const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
   const _forceAi = spec.__forceAi === "1";
