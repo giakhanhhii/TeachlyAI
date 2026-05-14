@@ -7,60 +7,6 @@ function syncAutoModeToggle(toggle, enabled) {
   if (label) label.textContent = enabled ? "Tạo Auto" : "Tạo Custom";
 }
 
-function showStartupModeChoiceDialog({ onCustom, onAuto }) {
-  const existing = document.querySelector(".auto-mode-overlay");
-  if (existing) return;
-  const overlay = document.createElement("div");
-  overlay.className = "auto-mode-overlay";
-
-  const dialog = document.createElement("div");
-  dialog.className = "auto-mode-dialog";
-  dialog.setAttribute("role", "dialog");
-  dialog.setAttribute("aria-modal", "true");
-  dialog.setAttribute("aria-label", "Chọn cách tạo nội dung mặc định");
-
-  const icon = document.createElement("div");
-  icon.className = "auto-mode-dialog-icon";
-  icon.textContent = "✨";
-
-  const title = document.createElement("h3");
-  title.className = "auto-mode-dialog-title";
-  title.textContent = "Bạn muốn tạo bằng cách nào?";
-
-  const desc = document.createElement("p");
-  desc.className = "auto-mode-dialog-desc";
-  desc.textContent = "Tạo thủ công hoặc để Teachly tự tạo Slide cho bạn.";
-
-  const actions = document.createElement("div");
-  actions.className = "auto-mode-dialog-actions";
-
-  const customBtn = document.createElement("button");
-  customBtn.type = "button";
-  customBtn.className = "auto-mode-btn auto-mode-btn-custom";
-  customBtn.textContent = "Tạo custom";
-
-  const autoBtn = document.createElement("button");
-  autoBtn.type = "button";
-  autoBtn.className = "auto-mode-btn auto-mode-btn-auto";
-  autoBtn.textContent = "✨ Để Teachly tạo";
-
-  actions.appendChild(customBtn);
-  actions.appendChild(autoBtn);
-  dialog.append(icon, title, desc, actions);
-  overlay.appendChild(dialog);
-  document.body.appendChild(overlay);
-
-  const close = () => overlay.remove();
-  customBtn.addEventListener("click", () => {
-    close();
-    onCustom?.();
-  });
-  autoBtn.addEventListener("click", () => {
-    close();
-    onAuto?.();
-  });
-}
-
 /**
  * Main Hub card grid for empty chat — mirrors `frontend/main_hub.html` structure & SVGs.
  * @param {(flow: "fullset"|"slide"|"quiz"|"flashcard") => void} onPick
@@ -289,23 +235,6 @@ export function createStartupHubElement(onPick) {
       }
     });
     headlineArea.insertBefore(toggle, headlineArea.firstChild);
-
-    if (!autoModeStore.getNeverAskChoice()) {
-      requestAnimationFrame(() => {
-        showStartupModeChoiceDialog({
-          onCustom: () => {
-            autoModeStore.disable();
-            autoModeStore.setNeverAskChoice("custom");
-            syncAutoModeToggle(toggle, false);
-          },
-          onAuto: () => {
-            autoModeStore.enable();
-            autoModeStore.setNeverAskChoice("auto");
-            syncAutoModeToggle(toggle, true);
-          },
-        });
-      });
-    }
   }
 
   ["fullset", "slide", "quiz", "flashcard"].forEach((flow) => {
