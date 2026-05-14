@@ -11,12 +11,12 @@ describe("startupHub auto mode onboarding", () => {
     document.body.innerHTML = "";
   });
 
-  it("defaults to auto without showing the chooser before a card click", () => {
+  it("defaults to custom without showing the chooser before a card click", () => {
     const hub = createStartupHubElement(() => {});
     document.body.appendChild(hub);
 
     const toggle = /** @type {HTMLButtonElement} */ (hub.querySelector(".auto-mode-toggle"));
-    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
     expect(document.querySelector(".auto-mode-overlay")).toBeNull();
     expect(autoModeStore.getNeverAskChoice()).toBeNull();
   });

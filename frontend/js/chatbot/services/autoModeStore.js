@@ -74,7 +74,9 @@ function getState() {
       ? s.enabled
       : neverAskChoice === "custom"
         ? false
-        : true;
+        : neverAskChoice === "auto"
+          ? true
+          : false;
   return {
     enabled: resolvedEnabled,
     counts: {
