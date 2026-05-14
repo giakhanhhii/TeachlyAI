@@ -555,7 +555,7 @@ def export_slide_pdf(body: SlideExportIn):
     payload_path = temp_dir / "payload.json"
     output_path = temp_dir / file_name
     script_path = REPO_ROOT / "scripts" / "export_slide_pdf.mjs"
-    node_runtime = _resolve_node_runtime()
+    node_runtime = resolve_node_runtime(REPO_ROOT)
     if not node_runtime:
         _cleanup_export_dir(temp_dir)
         raise HTTPException(
