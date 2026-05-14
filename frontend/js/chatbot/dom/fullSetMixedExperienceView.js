@@ -13,6 +13,7 @@ import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } fro
 import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
 import { finalizePendingQuizAnswer, findNextStepIndexByKind } from "../services/quizSubmitFlow.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
+import { resolveFullsetContentSource } from "../services/fullsetAutoMode.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
 import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
@@ -181,7 +182,15 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
   const _forceAi = spec.__forceAi === "1";
   const _forceMock = spec.__forceMock === "1";
-  let _devSrc = (!steps.length && !_forceMock && (_forceAi || isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _isAutoMode = spec.__autoMode === "1";
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || _isAutoMode;
+  let _devSrc = resolveFullsetContentSource({
+    forceAi: _forceAi,
+    forceMock: _forceMock,
+    autoMode: _isAutoMode,
+    aiModeActive: isAiModeActive("fullset"),
+    topic: _isAutoTopic ? "" : _aiTopic,
+  }); /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {

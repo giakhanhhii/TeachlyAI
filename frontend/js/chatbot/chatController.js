@@ -46,6 +46,7 @@ import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
+import { buildAutoModeFullsetSpec } from "./services/fullsetAutoMode.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
 import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
@@ -696,14 +697,10 @@ export function init() {
       const kind = expKind;
       if (kind === "fullset") {
         await openResumeFullSetMixed(
-          {
-            topic: spec.topic,
-            slides: String(counts.slides),
-            quiz: String(counts.quiz),
-            flash: String(counts.flash),
-            slideTemplate: autoModeStore.pickRandomTheme(),
-            __prefetchId: spec.prefetchKey || "",
-          },
+          buildAutoModeFullsetSpec(spec.topic, counts, autoModeStore.pickRandomTheme(), {
+            prefetchKey: spec.prefetchKey || "",
+            isAi: spec.isAi === true,
+          }),
           buildExperienceTitle("fullset", spec.topic),
         );
         return;
@@ -722,13 +719,7 @@ export function init() {
     const topic = spec.topic;
     if (expKind === "fullset") {
       await openResumeFullSetMixed(
-        {
-          topic,
-          slides: String(counts.slides),
-          quiz: String(counts.quiz),
-          flash: String(counts.flash),
-          slideTemplate: autoModeStore.pickRandomTheme(),
-        },
+        buildAutoModeFullsetSpec(topic, counts, autoModeStore.pickRandomTheme(), { isWarmup: true }),
         buildExperienceTitle("fullset", topic),
       );
       return;
