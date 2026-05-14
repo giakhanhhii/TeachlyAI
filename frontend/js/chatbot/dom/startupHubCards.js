@@ -90,18 +90,18 @@ export function createStartupHubElement(onPick) {
           <polygon points="150,116 175,52 200,116" fill="#0d3b0d" opacity="0.35" />
           <path d="M44 18 L46 10 L48 18 L56 20 L48 22 L46 30 L44 22 L36 20 Z" fill="#ffffff" opacity="0.95" />
           <path d="M156 36 L158 30 L160 36 L166 38 L160 40 L158 46 L156 40 L150 38 Z" fill="#fffde7" opacity="0.9" />
-          <rect x="32" y="18" width="136" height="80" rx="16" fill="#ffffff" opacity="0.22" />
-          <rect x="38" y="24" width="124" height="72" rx="14" fill="url(#${svgIdPrefix}-slide-screen-glow)" stroke="#2e7d32" stroke-width="2.5" />
-          <rect x="49" y="34" width="92" height="7" rx="3.5" fill="#43a047" opacity="0.92" />
-          <rect x="49" y="47" width="58" height="25" rx="6" fill="#c8e6c9" />
-          <polygon points="56,70 68,50 78,61 88,55 101,70" fill="#43a047" />
-          <circle cx="91" cy="52" r="6" fill="#fff59d" />
-          <rect x="115" y="48" width="24" height="24" rx="5" fill="#e8f5e9" />
-          <rect x="120" y="58" width="5" height="14" rx="2.5" fill="#66bb6a" />
-          <rect x="128" y="53" width="5" height="19" rx="2.5" fill="#43a047" />
-          <rect x="136" y="49" width="5" height="23" rx="2.5" fill="#2e7d32" />
-          <rect x="49" y="79" width="88" height="4" rx="2" fill="#a5d6a7" opacity="0.98" />
-          <rect x="49" y="86" width="72" height="4" rx="2" fill="#c5e1a5" opacity="0.98" />
+          <rect x="34" y="14" width="132" height="88" rx="18" fill="#ffffff" opacity="0.22" />
+          <rect x="40" y="20" width="120" height="80" rx="16" fill="url(#${svgIdPrefix}-slide-screen-glow)" stroke="#2e7d32" stroke-width="2.5" />
+          <rect x="50" y="31" width="90" height="7" rx="3.5" fill="#43a047" opacity="0.92" />
+          <rect x="50" y="44" width="56" height="28" rx="6" fill="#c8e6c9" />
+          <polygon points="56,71 69,48 79,60 88,54 101,71" fill="#43a047" />
+          <circle cx="90" cy="51" r="6" fill="#fff59d" />
+          <rect x="114" y="45" width="24" height="28" rx="5" fill="#e8f5e9" />
+          <rect x="119" y="57" width="5" height="16" rx="2.5" fill="#66bb6a" />
+          <rect x="127" y="51" width="5" height="22" rx="2.5" fill="#43a047" />
+          <rect x="135" y="46" width="5" height="27" rx="2.5" fill="#2e7d32" />
+          <rect x="50" y="80" width="86" height="4" rx="2" fill="#a5d6a7" opacity="0.98" />
+          <rect x="50" y="88" width="70" height="4" rx="2" fill="#c5e1a5" opacity="0.98" />
         </svg>
         <div class="card-body">
           <div class="card-title">Tạo slide</div>
