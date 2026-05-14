@@ -1,6 +1,7 @@
 export function finalizePendingQuizAnswer(selected, correctIndex, alreadyGraded = false) {
   if (alreadyGraded) return null;
   if (!Number.isFinite(Number(correctIndex))) return null;
+  if (selected == null || selected === "") return null;
   if (!Number.isFinite(Number(selected))) return null;
   const picked = Math.floor(Number(selected));
   return {
