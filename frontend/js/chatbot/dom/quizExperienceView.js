@@ -5,6 +5,7 @@ import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
+import { finalizePendingQuizAnswer } from "../services/quizSubmitFlow.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
@@ -175,11 +176,14 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const submitBtn = createPrimaryNavButton({ label: "Nộp bài", disabled: false });
+  submitBtn.classList.add("exp-submit-btn");
   const resultBtn = createPrimaryNavButton({ label: "Xem kết quả", disabled: false });
   resultBtn.classList.add("exp-back-btn");
   resultBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
   footer.appendChild(backBtn);
+  footer.appendChild(submitBtn);
   footer.appendChild(resultBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
@@ -204,6 +208,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     });
 
     backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
+    submitBtn.hidden = false;
+    submitBtn.disabled = false;
     resultBtn.hidden = true;
     resultBtn.disabled = true;
     nextBtn.disabled = !gradedByIndex[index] && selected === null;
@@ -211,6 +217,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
     if (!activeStepView?.hasQuestion) {
       backBtn.disabled = true;
+      submitBtn.disabled = false;
       nextBtn.textContent = "—";
       nextBtn.disabled = true;
       refreshScore();
@@ -316,6 +323,18 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   resultBtn.addEventListener("click", () => {
     if (reviewMode) return;
     reviewMode = true;
+    reviewFilter = "all";
+    renderReview();
+  });
+
+  submitBtn.addEventListener("click", () => {
+    if (reviewMode) return;
+    const q = questions[index];
+    const finalized = finalizePendingQuizAnswer(selected, q?.correctIndex, gradedByIndex[index]);
+    if (finalized) {
+      gradedByIndex[index] = true;
+      selectedByIndex[index] = finalized.picked;
+    }
     reviewFilter = "all";
     renderReview();
   });
