@@ -114,7 +114,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
-  shell.appendChild(createExperienceTopBar({ title: titleText }).bar);
+  shell.appendChild(createExperienceTopBar({ title: titleText, onShare: deps?.onShareCurrentExperience }).bar);
 
   const total = Math.max(1, questions.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });

@@ -10,7 +10,14 @@ import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav, setSlideVisualEditMode } from "../slide/slideShellSrcdoc.js";
 import { exportSlideDeckToPdf, triggerPdfDownload } from "../services/slideExportApi.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
-import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
+import {
+  buildQuizStepOrder,
+  initMixedQuizTracking,
+  recomputeMixedQuizScore,
+  quizCorrectOptionIndex,
+  quizOptionList,
+  resolveMixedSlideDeckArrowAction,
+} from "../services/fullSetMixedService.js";
 import { finalizePendingQuizAnswer, findNextStepIndexByKind } from "../services/quizSubmitFlow.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { resolveFullsetContentSource } from "../services/fullsetAutoMode.js";
@@ -317,6 +324,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
   const topBarChrome = createExperienceTopBar({
     title: titleText,
+    onShare: deps?.onShareCurrentExperience,
     actionButton: {
       label: "Tải xuống PDF",
       title: "Tải toàn bộ slide của fullset dưới dạng PDF",
@@ -1210,18 +1218,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       if (activeSlideDeckShell.getViewMode() !== "presentation") return;
       if (performance.now() < activeSlideDeckShell.getSuppressNavUntil()) return;
       e.preventDefault();
-      if (e.key === "ArrowLeft") {
-        if (slideDeckIndex <= 0) {
-          if (!backBtn.disabled) backBtn.click();
-        } else {
-          activeSlideDeckShell.bumpDeck(-1);
-        }
-      } else {
-        if (slideDeckIndex >= activeSlideDeckShell.deckLen - 1) {
-          if (!nextBtn.disabled) nextBtn.click();
-        } else {
-          activeSlideDeckShell.bumpDeck(1);
-        }
+      const action = resolveMixedSlideDeckArrowAction(e.key, slideDeckIndex, activeSlideDeckShell.deckLen);
+      if (action === "deck-prev") activeSlideDeckShell.bumpDeck(-1);
+      else if (action === "deck-next") activeSlideDeckShell.bumpDeck(1);
+      else if (action === "step-prev") {
+        if (!backBtn.disabled) backBtn.click();
+      } else if (!nextBtn.disabled) {
+        nextBtn.click();
       }
       return;
     }

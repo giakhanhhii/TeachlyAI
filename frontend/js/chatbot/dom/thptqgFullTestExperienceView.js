@@ -536,7 +536,10 @@ export async function mountThptqgFullTestExperience(layerView, meta, deps, opts 
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-thptqg";
-  shell.appendChild(createExperienceTopBar({ title: meta.catalogTitle || bundle.catalog.title }).bar);
+  shell.appendChild(createExperienceTopBar({
+    title: meta.catalogTitle || bundle.catalog.title,
+    onShare: deps?.onShareCurrentExperience,
+  }).bar);
 
   const stage = document.createElement("div");
   stage.className = "exp-stage";

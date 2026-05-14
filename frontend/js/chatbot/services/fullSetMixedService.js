@@ -132,3 +132,19 @@ export function buildMixedWrongExplanation(question, pickedIndex) {
   return `Bạn chọn "${pickedText || "không chọn"}" nên chưa đúng. Đáp án đúng là "${correctText}". ${base}`;
 }
 
+/**
+ * @param {"ArrowLeft"|"ArrowRight"} key
+ * @param {number} slideIndex
+ * @param {number} deckLen
+ * @returns {"deck-prev"|"deck-next"|"step-prev"|"step-next"}
+ */
+export function resolveMixedSlideDeckArrowAction(key, slideIndex, deckLen) {
+  const safeDeckLen = Math.max(0, Math.floor(Number(deckLen) || 0));
+  const safeIndex = Math.max(0, Math.floor(Number(slideIndex) || 0));
+
+  if (key === "ArrowLeft") {
+    return safeIndex <= 0 ? "step-prev" : "deck-prev";
+  }
+  return safeIndex >= safeDeckLen - 1 ? "step-next" : "deck-next";
+}
+

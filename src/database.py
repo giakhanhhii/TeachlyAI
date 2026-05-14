@@ -45,6 +45,18 @@ class DatabaseManager:
                     CREATE INDEX IF NOT EXISTS idx_messages_thread_id_id
                     ON messages(thread_id, id DESC);
                 """)
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS shared_experiences (
+                        share_id TEXT PRIMARY KEY,
+                        title TEXT NOT NULL,
+                        payload JSONB NOT NULL,
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                    );
+                """)
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_shared_experiences_created_at
+                    ON shared_experiences(created_at DESC);
+                """)
             conn.commit()
         finally:
             self._release(conn)
@@ -196,3 +208,48 @@ class DatabaseManager:
             }
             for r in rows
         ]
+
+    def create_shared_experience(self, title: str, payload: dict) -> str:
+        share_id = uuid.uuid4().hex
+        conn = self._conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO shared_experiences (share_id, title, payload)
+                    VALUES (%s, %s, %s);
+                    """,
+                    (share_id, title, psycopg2.extras.Json(payload)),
+                )
+            conn.commit()
+            return share_id
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            self._release(conn)
+
+    def get_shared_experience(self, share_id: str) -> dict | None:
+        conn = self._conn()
+        try:
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    """
+                    SELECT share_id, title, payload, created_at
+                    FROM shared_experiences
+                    WHERE share_id = %s
+                    LIMIT 1;
+                    """,
+                    (share_id,),
+                )
+                row = cur.fetchone()
+        finally:
+            self._release(conn)
+        if not row:
+            return None
+        return {
+            "share_id": str(row["share_id"]),
+            "title": str(row["title"]),
+            "payload": row["payload"] if isinstance(row["payload"], dict) else {},
+            "created_at": str(row["created_at"]),
+        }

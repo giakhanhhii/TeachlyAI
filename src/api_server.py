@@ -146,6 +146,11 @@ class SlideExportIn(BaseModel):
     srcdoc: str = Field(..., min_length=1, max_length=2_000_000)
 
 
+class ShareExperienceIn(BaseModel):
+    title: str = Field(default="Bài chia sẻ", max_length=240)
+    experienceState: dict[str, object] = Field(...)
+
+
 class AiGenerateIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flashcard|fullset)$")
     topic: str | None = Field(default=None, max_length=300)
@@ -614,6 +619,35 @@ def export_slide_pdf(body: SlideExportIn):
         filename=file_name,
         background=BackgroundTask(_cleanup_export_dir, temp_dir),
     )
+
+
+@app.post("/api/shared-experiences")
+def create_shared_experience(body: ShareExperienceIn):
+    experience_state = body.experienceState if isinstance(body.experienceState, dict) else {}
+    if not experience_state.get("resume"):
+        raise HTTPException(status_code=422, detail="Không có experience hợp lệ để chia sẻ.")
+    payload_json = json.dumps(experience_state, ensure_ascii=False)
+    if len(payload_json.encode("utf-8")) > 2_000_000:
+        raise HTTPException(status_code=413, detail="Bài chia sẻ quá lớn, vui lòng thử với nội dung ngắn hơn.")
+    share_id = db.create_shared_experience(body.title.strip() or "Bài chia sẻ", experience_state)
+    return {"share_id": share_id}
+
+
+@app.get("/api/shared-experiences/{share_id}")
+def get_shared_experience(share_id: str):
+    safe_share_id = re.sub(r"[^a-fA-F0-9]", "", str(share_id or "").strip())
+    if len(safe_share_id) < 8:
+        raise HTTPException(status_code=404, detail="Không tìm thấy bài chia sẻ.")
+    row = db.get_shared_experience(safe_share_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="Không tìm thấy bài chia sẻ.")
+    payload = row.get("payload") if isinstance(row, dict) else {}
+    return {
+        "share_id": row["share_id"],
+        "title": row["title"],
+        "experienceState": payload if isinstance(payload, dict) else {},
+        "created_at": row["created_at"],
+    }
 
 
 @app.post("/api/chat", response_model=ChatOut)
