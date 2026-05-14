@@ -1,4 +1,5 @@
 import { getSourceActions } from "./shared.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 
 /**
  * @param {any} guided
@@ -49,7 +50,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           type: "pushBot",
           text: "Teachly đã nhận tệp. Nhấn nút bên dưới để bắt đầu tạo Full Set từ tài liệu của bạn.",
           resumeDock: {
-            title: `Full Set — ${name}`,
+            title: buildExperienceTitle("fullset", name),
             experienceId,
             fullsetMixed: spec,
             items: [],
@@ -90,7 +91,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         ? globalThis.crypto.randomUUID()
         : `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const resumeDock = {
-      title: `Full set — ${topic}`,
+      title: buildExperienceTitle("fullset", topic),
       experienceId,
       fullsetMixed: {
         topic,
@@ -117,7 +118,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
             ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:slide`,
-          title: `Slide — ${topic}`,
+          title: buildExperienceTitle("slide", topic),
           openedAt,
         },
         {
@@ -133,7 +134,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
             ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:quiz`,
-          title: `Trắc nghiệm — ${topic}`,
+          title: buildExperienceTitle("quiz", topic),
           openedAt,
         },
         {
@@ -148,7 +149,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
             ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:flash`,
-          title: `Flashcard — ${topic}`,
+          title: buildExperienceTitle("flash", topic),
           openedAt,
         },
       ],

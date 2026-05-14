@@ -3,6 +3,7 @@ import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileC
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -92,7 +93,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const quizMeta = { topic, count: spec.quiz, notes: "Full set (demo mock)" };
   const flashMeta = { source: topic, count: spec.flash, extra: "Full set (demo mock)" };
   const restoredSteps = cloneMixedSteps(initial?.stepsSnapshot);
-  let titleText = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : bundle.title || "Full set — ôn tập trộn";
+  let titleText = buildExperienceTitle(
+    "fullset",
+    spec.topic,
+    typeof initial?.title === "string" ? initial.title : "",
+    bundle.title,
+  );
   /** @type {{ kind: "slide_deck"|"quiz"|"flash", data: any }[]} */
   let steps = restoredSteps;
   let slides = [];
@@ -167,7 +173,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);
     const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
     const flashData = prepareFlashSessionData(rawFlash, flashMeta);
-    titleText = quizData.title || slideData.title || bundle.title || "Full set — ôn tập trộn";
+    titleText = buildExperienceTitle("fullset", spec.topic, quizData.title, slideData.title, bundle.title);
     slides = Array.isArray(slideData.slides) ? slideData.slides : [];
     questions = Array.isArray(quizData.questions) ? quizData.questions : [];
     cards = Array.isArray(flashData.cards) ? flashData.cards : [];
