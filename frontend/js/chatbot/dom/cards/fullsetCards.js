@@ -25,10 +25,17 @@ import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 import { setPendingPdfFile } from "../../pdfPrefillStore.js";
+import { buildFormTitle } from "../../services/contentTitles.js";
+import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
-  root.appendChild(el("div", "flow-card-title", "Form Full Set"));
+  const titleEl = el("div", "flow-card-title", buildFormTitle("fullset"));
+  root.appendChild(titleEl);
+  const autofillIntent = createAutofillIntentTracker();
+  const refreshTitle = () => {
+    titleEl.textContent = buildFormTitle("fullset", topic.value);
+  };
 
   const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
   root.appendChild(wrapField("Chủ đề", topic, "Nhập tên bài học"));
@@ -97,6 +104,20 @@ export function createFullsetTopicCard(deps) {
   if (typeof prefill.quiz === "string" || Number.isFinite(Number(prefill.quiz))) quiz.value = String(prefill.quiz);
   if (typeof prefill.flash === "string" || Number.isFinite(Number(prefill.flash))) flash.value = String(prefill.flash);
   if (typeof prefill.extra === "string") extra.value = prefill.extra;
+  refreshTitle();
+  topic.addEventListener("input", refreshTitle);
+
+  function currentAutofillComparableState() {
+    return {
+      topic: topic.value,
+      level: level.value,
+      slideTemplate: slideTemplate.value,
+      slides: slides.value,
+      quiz: quiz.value,
+      flash: flash.value,
+      extra: extra.value,
+    };
+  }
 
   addAutofillBtn(root, async () => {
     const sample = consumeNextMock("fullset");
@@ -111,6 +132,8 @@ export function createFullsetTopicCard(deps) {
       quiz.value = String(qn);
       flash.value = String(fn);
       extra.value = String(sample.e ?? "");
+      refreshTitle();
+      autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
       try {
@@ -130,6 +153,8 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(ai.extra ?? "");
+        refreshTitle();
+        autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
         const fb = getAnyMock("fullset");
@@ -143,6 +168,8 @@ export function createFullsetTopicCard(deps) {
         quiz.value = String(qn);
         flash.value = String(fn);
         extra.value = String(fb.e ?? "");
+        refreshTitle();
+        autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }
     }
@@ -296,7 +323,7 @@ export function createFullsetTopicCard(deps) {
     if (t && lv && stpl && slideRaw && quizRaw && flashRaw) {
       submit.disabled = true;
       skip.disabled = true;
-      deps.onSubmit({
+      deps.onSubmit(autofillIntent.applyToPayload({
         topic: t,
         level: lv,
         slideTemplate: stpl,
@@ -304,13 +331,13 @@ export function createFullsetTopicCard(deps) {
         quiz: resolvedCounts.quiz,
         flash: resolvedCounts.flash,
         extra: extraValue,
-      });
+      }, currentAutofillComparableState()));
       return;
     }
     showPartialFillConfirm(root, err, () => {
       submit.disabled = true;
       skip.disabled = true;
-      deps.onSubmit({
+      deps.onSubmit(autofillIntent.applyToPayload({
         topic: t || "(Teachly tự động)",
         level: lv || DEFAULT_DIFFICULTY,
         slideTemplate: stpl || SLIDE_TEMPLATE_DEFAULT,
@@ -318,7 +345,7 @@ export function createFullsetTopicCard(deps) {
         quiz: resolvedCounts.quiz,
         flash: resolvedCounts.flash,
         extra: extraValue,
-      });
+      }, currentAutofillComparableState()));
     });
   });
 

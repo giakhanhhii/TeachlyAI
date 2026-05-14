@@ -17,10 +17,17 @@ import {
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
+import { buildFormTitle } from "../../services/contentTitles.js";
+import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 export function createSlideFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
-  root.appendChild(el("div", "flow-card-title", "Form tạo slide bài giảng"));
+  const titleEl = el("div", "flow-card-title", buildFormTitle("slide"));
+  root.appendChild(titleEl);
+  const autofillIntent = createAutofillIntentTracker();
+  const refreshTitle = () => {
+    titleEl.textContent = buildFormTitle("slide", docText.value);
+  };
 
   const docText = flowTextarea("Nhập tên bài học / chủ đề…", 2);
   const docBlock = el("div", "flow-field");
@@ -57,6 +64,18 @@ export function createSlideFormCard(deps) {
     styleMobileSelect.sync();
   }
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
+  refreshTitle();
+  docText.addEventListener("input", refreshTitle);
+
+  function currentAutofillComparableState() {
+    return {
+      topic: docText.value,
+      count: count.value,
+      structure: structure.value,
+      style: style.value,
+      notes: notes.value,
+    };
+  }
 
   addAutofillBtn(root, async () => {
     const sample = consumeNextMock("slide");
@@ -68,6 +87,8 @@ export function createSlideFormCard(deps) {
       style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, sample.y, SLIDE_TEMPLATE_DEFAULT);
       styleMobileSelect.sync();
       notes.value = String(sample.n ?? "");
+      refreshTitle();
+      autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
       try {
@@ -78,6 +99,8 @@ export function createSlideFormCard(deps) {
         if (ai.count) count.value = String(clamp(toPositiveInt(ai.count, 10), 5, 30));
         if (ai.structure) structure.value = String(ai.structure);
         notes.value = String(ai.notes ?? "");
+        refreshTitle();
+        autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
         const fb = getAnyMock("slide");
@@ -88,6 +111,8 @@ export function createSlideFormCard(deps) {
         style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, fb.y, SLIDE_TEMPLATE_DEFAULT);
         styleMobileSelect.sync();
         notes.value = String(fb.n ?? "");
+        refreshTitle();
+        autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }
     }
@@ -162,27 +187,27 @@ export function createSlideFormCard(deps) {
     if (topic && sty && countRaw) {
       submit.disabled = true;
       skip.disabled = true;
-      deps.onSubmit({
+      deps.onSubmit(autofillIntent.applyToPayload({
         topic,
         count: useCount,
         structure: structureValue,
         style: sty,
         notes: notesValue,
         presetId,
-      });
+      }, currentAutofillComparableState()));
       return;
     }
     showPartialFillConfirm(root, err, () => {
       submit.disabled = true;
       skip.disabled = true;
-      deps.onSubmit({
+      deps.onSubmit(autofillIntent.applyToPayload({
         topic: topic || "(Teachly tự động)",
         count: useCount,
         structure: structureValue,
         style: sty || SLIDE_TEMPLATE_DEFAULT,
         notes: notesValue,
         presetId,
-      });
+      }, currentAutofillComparableState()));
     });
   });
 

@@ -378,6 +378,16 @@
   background: #dfe5e9;
 }
 
+.exp-submit-btn {
+  background: #fff4e5;
+  color: #9a5b00;
+  border: 1px solid #ffd08a;
+}
+
+.exp-submit-btn:hover:not(:disabled) {
+  background: #ffe8c2;
+}
+
 .exp-empty {
   color: var(--muted);
   text-align: center;
@@ -523,7 +533,8 @@
   }
 
   .exp-footer-bar .exp-next-btn,
-  .exp-footer-bar .exp-back-btn {
+  .exp-footer-bar .exp-back-btn,
+  .exp-footer-bar .exp-submit-btn {
     width: 100%;
     justify-content: center;
   }

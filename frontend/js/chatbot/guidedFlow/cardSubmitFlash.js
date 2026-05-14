@@ -50,6 +50,8 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       notes: payload.notes || "",
       presetId: payload.presetId || "",
       extra: extra || "—",
+      ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+      ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
     };
     return {
       handled: true,

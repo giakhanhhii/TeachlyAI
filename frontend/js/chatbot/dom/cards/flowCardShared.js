@@ -131,10 +131,6 @@ export function addAutofillBtn(root, callback) {
   btn.title = "Tự động điền dữ liệu mẫu (AI)";
   btn.innerHTML = MAGIC_WAND_SVG;
 
-  /* DEV-ONLY source tag — remove after deploy */
-  const srcTag = el("span", "dev-src-tag");
-  srcTag.hidden = true;
-
   btn.addEventListener("click", async (e) => {
     e.preventDefault();
     if (btn.disabled) return;
@@ -142,12 +138,7 @@ export function addAutofillBtn(root, callback) {
     btn.classList.add("is-loading");
     btn.innerHTML = SPINNER_SVG;
     try {
-      const src = await callback();
-      if (src === "mock" || src === "ai") {
-        srcTag.hidden = false;
-        srcTag.className = `dev-src-tag dev-src-tag--${src}`;
-        srcTag.textContent = src === "ai" ? "⚡ AI" : "📦 Mock";
-      }
+      await callback();
     } catch (err) {
       console.warn("[autofill] callback error", err);
     } finally {
@@ -158,7 +149,6 @@ export function addAutofillBtn(root, callback) {
   });
 
   root.appendChild(btn);
-  root.appendChild(srcTag);
 }
 
 export function randomCountSkipPdf(countMax) {

@@ -1,11 +1,13 @@
+import { buildExperienceTitle } from "./contentTitles.js";
+
 /**
  * @param {"quiz"|"slide"|"flash"|"thptqg_fulltest"} kind
  * @param {Record<string, string>} meta
  */
 export function buildResumeTitle(kind, meta) {
-  if (kind === "quiz") return `Trắc nghiệm — ${meta.topic || "Bộ đề"}`;
-  if (kind === "slide") return `Slide — ${meta.topic || "Bài giảng"}`;
-  if (kind === "flash") return `Flashcard — ${meta.source || "Bộ thẻ"}`;
+  if (kind === "quiz") return buildExperienceTitle("quiz", meta.source, meta.topic);
+  if (kind === "slide") return buildExperienceTitle("slide", meta.topic);
+  if (kind === "flash") return buildExperienceTitle("flash", meta.source, meta.topic);
   if (kind === "thptqg_fulltest") return `Full đề THPTQG — ${meta.testTitle || meta.catalogTitle || "Simulation test"}`;
   return "Học liệu";
 }
@@ -96,6 +98,29 @@ export function resolveFullsetInitialState(currentExperienceState, spec, experie
 }
 
 /**
+ * @param {any} initialState
+ * @param {"slide"|"quiz"|"flash"|""} targetKind
+ */
+export function retargetFullsetInitialState(initialState, targetKind = "") {
+  if (!initialState || typeof initialState !== "object" || !targetKind) return initialState;
+  const steps = Array.isArray(initialState.stepsSnapshot) ? initialState.stepsSnapshot : [];
+  if (!steps.length) return initialState;
+  const expectedStepKind =
+    targetKind === "slide" ? "slide_deck" : targetKind === "quiz" ? "quiz" : targetKind === "flash" ? "flash" : "";
+  if (!expectedStepKind) return initialState;
+  const targetIndex = steps.findIndex((step) => step?.kind === expectedStepKind);
+  if (targetIndex < 0) return initialState;
+  return {
+    ...initialState,
+    index: targetIndex,
+    slideDeckIndex: targetKind === "slide" ? 0 : Number(initialState.slideDeckIndex || 0),
+    reviewMode: false,
+    reviewFilter: "all",
+    bookmarkFilter: false,
+  };
+}
+
+/**
  * @param {string} rawKind
  */
 export function normalizeExperienceKind(rawKind) {
@@ -130,7 +155,7 @@ export function fullsetResumeItemsFromSpec(spec, openedAtIso) {
         ...(slideExperienceId ? { __experienceId: slideExperienceId } : {}),
       },
       ...(slideExperienceId ? { experienceId: slideExperienceId } : {}),
-      title: `Slide — ${topic}`,
+      title: buildExperienceTitle("slide", topic),
       openedAt: t,
     },
     {
@@ -142,7 +167,7 @@ export function fullsetResumeItemsFromSpec(spec, openedAtIso) {
         ...(quizExperienceId ? { __experienceId: quizExperienceId } : {}),
       },
       ...(quizExperienceId ? { experienceId: quizExperienceId } : {}),
-      title: `Trắc nghiệm — ${topic}`,
+      title: buildExperienceTitle("quiz", topic),
       openedAt: t,
     },
     {
@@ -154,7 +179,7 @@ export function fullsetResumeItemsFromSpec(spec, openedAtIso) {
         ...(flashExperienceId ? { __experienceId: flashExperienceId } : {}),
       },
       ...(flashExperienceId ? { experienceId: flashExperienceId } : {}),
-      title: `Flashcard — ${topic}`,
+      title: buildExperienceTitle("flash", topic),
       openedAt: t,
     },
   ];

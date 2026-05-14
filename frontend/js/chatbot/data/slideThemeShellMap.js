@@ -3,12 +3,12 @@
  * Fallback: 4.space-bright.html (fix_plan).
  */
 export const SLIDE_THEME_TO_SHELL_FILE = Object.freeze({
-  "Chuyên nghiệp (đa sắc)": "1.thptqg.html",
-  "Tối giản (Học thuật)": "2.on_thi_tn_thpt_2026.html",
-  "Vui tươi (Thân thiện)": "3.friendly.html",
-  "Vũ trụ sáng (Trẻ trung)": "4.space-bright.html",
-  "Vũ trụ tối (Huyền bí)": "6.space-black.html",
-  "Biển cả": "7.sealife.html",
+  "Professional (Multicolor)": "1.thptqg.html",
+  "Minimal (Academic)": "2.on_thi_tn_thpt_2026.html",
+  "Friendly (Warm)": "3.friendly.html",
+  "Space Light": "4.space-bright.html",
+  "Space Dark": "6.space-black.html",
+  "Sea Life": "7.sealife.html",
   "Comic": "8.comic.html",
 });
 

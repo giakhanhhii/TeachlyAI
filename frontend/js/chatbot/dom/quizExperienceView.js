@@ -5,19 +5,11 @@ import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
+import { finalizePendingQuizAnswer } from "../services/quizSubmitFlow.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
-
-/** Tiêu đề thanh trên quiz: ưu tiên chủ đề từ meta thay vì title bundle mock. */
-function buildQuizTopTitle(bundleTitle, metaRec) {
-  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (t && t !== "(Teachly tự động)" && t !== "—") return `Trắc nghiệm chủ đề ${t}`;
-  const fallback = String(bundleTitle || "").trim();
-  return fallback || "Ôn tập trắc nghiệm";
-}
 
 /**
  * @param {{ body: HTMLElement }} layerView
@@ -32,6 +24,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const _genStamp = Symbol();
   root._genStamp = _genStamp;
   const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
+  const _forceAi = meta?.__forceAi === "1";
+  const _forceMock = meta?.__forceMock === "1";
   const _aiTopic = meta?.source || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || meta?.__autoMode === "1";
   const _uploadFile = !isRestore && meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
@@ -82,15 +76,17 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       if (!isRestore) incrementPlayCount("quiz");
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
-      const _devSrc = (!isRestore && !meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("quiz") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _devSrc = _forceMock
+        ? "mock"
+        : ((!isRestore && (_forceAi || (!meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)))) ? "ai" : "mock"); /* DEV-ONLY */
       const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz")));
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic, meta).catch(() => fetchMockResource("quiz")));
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
       const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
       const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
       raw = _bgEntry?.status === "done" ? _bgEntry.raw
           : _bgEntry ? await _bgEntry.promise
-          : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic).catch(() => fetchMockResource("quiz"))
+          : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic, meta).catch(() => fetchMockResource("quiz"))
           : await fetchMockResource("quiz");
       _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
@@ -104,7 +100,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const metaForTitle =
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
-  const titleText = buildQuizTopTitle(data.title || "Ôn tập trắc nghiệm", metaForTitle);
+  const titleText = buildExperienceTitle("quiz", metaForTitle?.source, metaForTitle?.topic, data.title);
   const questions = Array.isArray(data.questions) ? data.questions : [];
   if (!isRestore) beginDwell(metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText, "quiz");
 
@@ -171,11 +167,14 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const submitBtn = createPrimaryNavButton({ label: "Nộp bài", disabled: false });
+  submitBtn.classList.add("exp-submit-btn");
   const resultBtn = createPrimaryNavButton({ label: "Xem kết quả", disabled: false });
   resultBtn.classList.add("exp-back-btn");
   resultBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
   footer.appendChild(backBtn);
+  footer.appendChild(submitBtn);
   footer.appendChild(resultBtn);
   footer.appendChild(nextBtn);
   shell.appendChild(footer);
@@ -200,6 +199,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     });
 
     backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
+    submitBtn.hidden = false;
+    submitBtn.disabled = false;
     resultBtn.hidden = true;
     resultBtn.disabled = true;
     nextBtn.disabled = !gradedByIndex[index] && selected === null;
@@ -207,6 +208,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
 
     if (!activeStepView?.hasQuestion) {
       backBtn.disabled = true;
+      submitBtn.disabled = false;
       nextBtn.textContent = "—";
       nextBtn.disabled = true;
       refreshScore();
@@ -312,6 +314,18 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   resultBtn.addEventListener("click", () => {
     if (reviewMode) return;
     reviewMode = true;
+    reviewFilter = "all";
+    renderReview();
+  });
+
+  submitBtn.addEventListener("click", () => {
+    if (reviewMode) return;
+    const q = questions[index];
+    const finalized = finalizePendingQuizAnswer(selected, q?.correctIndex, gradedByIndex[index]);
+    if (finalized) {
+      gradedByIndex[index] = true;
+      selectedByIndex[index] = finalized.picked;
+    }
     reviewFilter = "all";
     renderReview();
   });

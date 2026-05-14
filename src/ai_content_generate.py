@@ -63,26 +63,27 @@ TOPIC_POOL: list[str] = [
 ]
 
 _SLIDE_SYSTEM = """You are an English learning content creator for Vietnamese students.
-Generate a JSON slide deck about the given English topic.
+Generate a JSON slide deck about the given English topic and follow the requested form constraints.
 
 Rules:
-- Exactly 10 slides
+- Use exactly the requested number of slides. If no count is requested, use 10 slides.
 - FIRST slide (cover): "title" = ONE short headline (max 10 words, max ~72 characters) that names the topic clearly — do NOT paste the full raw topic string, do NOT stack keywords with slashes, do NOT use ALL CAPS blocks. This title must fit a 16:9 slide header without clipping.
-- FIRST slide: exactly 2 or 3 bullets only; each bullet max 14 words; concise Vietnamese or English matching the topic; do NOT repeat the full topic phrase in every bullet (use "chủ đề", "phần này", or pronouns after the first mention).
-- Slides 2–10: "title" max 8 words; 3 bullets each; each bullet max 18 words (one clear sentence each).
+- FIRST slide: exactly 2 or 3 bullets only; each bullet max 14 words; concise English only; do NOT repeat the full topic phrase in every bullet.
+- Slides 2+: "title" max 8 words; 3 bullets each; each bullet max 18 words (one clear sentence each).
 - No filler like repeating the same long topic label in every bullet.
 - Deck "title" field: short deck name (max 12 words).
 - Content must be genuinely educational about the topic.
+- LANGUAGE RULE (HARD): ALL fields — deck title, slide titles, bullets — MUST be written in English. NEVER use Vietnamese in any field.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
 {"title":"<deck title>","slides":[{"id":"s1","title":"<short cover headline>","bullets":["<bullet>","<bullet>"]},...]}"""
 
 _QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
-Generate a JSON quiz about the given English topic.
+Generate a JSON quiz about the given English topic and follow the requested form constraints.
 
 Rules:
-- Exactly 10 questions
+- Use exactly the requested number of questions. If no count is requested, use 10 questions.
 - Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes in options array
 - Questions test practical knowledge of the topic
@@ -93,20 +94,20 @@ Schema:
 {"title":"<quiz title>","questions":[{"id":"q1","text":"<question>","options":["<A>","<B>","<C>","<D>"],"correctIndex":0,"hint":"<hint>"},...]}"""
 
 _FLASH_SYSTEM = """You are an English flashcard creator for Vietnamese students.
-Generate a JSON flashcard set about the given English topic.
+Generate a JSON flashcard set about the given English topic and follow the requested form constraints.
 
 Rules:
-- Exactly 20 cards
+- Use exactly the requested number of cards. If no count is requested, use 20 cards.
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription
-  - "back": Vietnamese meaning ONLY (max 12 words) — MUST be in Vietnamese, never English
+  - "back": short English meaning or definition (max 12 words) — MUST be in English
   - "hint": short English example sentence or usage note (max 8 words) — MUST be in English
-- LANGUAGE RULE (HARD): front and hint MUST be English; back MUST be Vietnamese. No mixing.
+- LANGUAGE RULE (HARD): front, back, hint, and title MUST all be English. No Vietnamese is allowed anywhere.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<English example>"},...]}"""
+{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<English meaning>","hint":"<English example>"},...]}"""
 
 
 def _call_openai(system: str, user: str, max_tokens: int) -> str:
@@ -128,6 +129,30 @@ def _sanitize_topic(topic: str) -> str:
     return " ".join(topic.split())[:200]
 
 
+def _sanitize_note(value: Any, *, max_len: int = 300) -> str:
+    return " ".join(str(value or "").split())[:max_len]
+
+
+def _sanitize_multiline(value: Any, *, max_len: int = 500) -> str:
+    lines = [line.strip() for line in str(value or "").replace("\r", "\n").split("\n")]
+    cleaned = [line for line in lines if line]
+    return "\n".join(cleaned)[:max_len]
+
+
+def _coerce_int(value: Any, default: int, minimum: int, maximum: int) -> int:
+    try:
+        num = int(value)
+    except (TypeError, ValueError):
+        return default
+    return max(minimum, min(maximum, num))
+
+
+def _append_form_line(lines: list[str], label: str, value: str) -> None:
+    text = _sanitize_note(value)
+    if text:
+        lines.append(f"{label}: {text}")
+
+
 def _clamp_line(text: str, max_chars: int) -> str:
     """Single-line clamp for slide titles and bullets (16:9 safe)."""
     s = " ".join(str(text or "").split())
@@ -143,7 +168,7 @@ def _short_cover_title(topic: str, *, max_chars: int = 78, max_words: int = 11) 
     """Cover slide headline — short enough for professional split themes (e.g. 1.thptqg)."""
     t = " ".join(str(topic or "").split())
     if not t:
-        return "Chủ đề"
+        return "Topic"
     words = t.split()
     if len(words) > max_words:
         return _clamp_line(" ".join(words[:max_words]), max_chars + 8)
@@ -192,11 +217,24 @@ def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
         raise ValueError(f"Model returned invalid JSON for {kind}") from exc
 
 
-def generate_slide_content(topic: str) -> dict[str, Any]:
+def generate_slide_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate a 10-slide deck about topic. Returns mock-compatible JSON."""
+    form = form or {}
     topic = _sanitize_topic(topic)
-    user_msg = f"Topic: {topic}\nGenerate the slide deck JSON now."
-    raw = _call_openai(_SLIDE_SYSTEM, user_msg, max_tokens=1800)
+    count = _coerce_int(form.get("count"), 10, 5, 30)
+    structure = _sanitize_multiline(form.get("structure"))
+    style = _sanitize_note(form.get("style") or form.get("slideTemplate"))
+    notes = _sanitize_multiline(form.get("notes"))
+    user_lines = [
+        f"Topic: {topic}",
+        f"Slide count: {count}",
+    ]
+    _append_form_line(user_lines, "Preferred structure", structure)
+    _append_form_line(user_lines, "Visual template name", style)
+    _append_form_line(user_lines, "Extra notes", notes)
+    user_lines.append("Generate the slide deck JSON now.")
+    user_msg = "\n".join(user_lines)
+    raw = _call_openai(_SLIDE_SYSTEM, user_msg, max_tokens=min(4096, max(1800, 240 + count * 140)))
     data = _parse_json_response(raw, "slide")
     # Validate basic shape
     if not isinstance(data.get("slides"), list):
@@ -208,6 +246,8 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
         # Clamp bullets to 4 per slide
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
+    if len(data["slides"]) > count:
+        data["slides"] = data["slides"][:count]
     _normalize_ai_slide_deck(data, topic)
     # Cover slide: short headline (full topic in deck title / meta — avoids header clip)
     if data["slides"] and isinstance(data["slides"][0], dict):
@@ -222,14 +262,29 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
     return data
 
 
-def generate_quiz_content(topic: str) -> dict[str, Any]:
+def generate_quiz_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate a 10-question quiz about topic. Returns mock-compatible JSON."""
+    form = form or {}
     topic = _sanitize_topic(topic)
-    user_msg = f"Topic: {topic}\nGenerate the quiz JSON now."
-    raw = _call_openai(_QUIZ_SYSTEM, user_msg, max_tokens=2400)
+    count = _coerce_int(form.get("count"), 10, 1, 40)
+    kind = _sanitize_note(form.get("kind"))
+    difficulty = _sanitize_note(form.get("difficulty") or form.get("level"))
+    notes = _sanitize_multiline(form.get("notes") or form.get("extra"))
+    user_lines = [
+        f"Topic: {topic}",
+        f"Question count: {count}",
+    ]
+    _append_form_line(user_lines, "Quiz focus", kind)
+    _append_form_line(user_lines, "Difficulty", difficulty)
+    _append_form_line(user_lines, "Extra notes", notes)
+    user_lines.append("Generate the quiz JSON now.")
+    user_msg = "\n".join(user_lines)
+    raw = _call_openai(_QUIZ_SYSTEM, user_msg, max_tokens=min(4096, max(2400, 300 + count * 150)))
     data = _parse_json_response(raw, "quiz")
     if not isinstance(data.get("questions"), list):
         raise ValueError("AI quiz response missing 'questions' array")
+    if len(data["questions"]) > count:
+        data["questions"] = data["questions"][:count]
     for i, q in enumerate(data["questions"]):
         if not q.get("id"):
             q["id"] = f"ai_q{i + 1}"
@@ -244,21 +299,35 @@ def generate_quiz_content(topic: str) -> dict[str, Any]:
     return data
 
 
-def generate_flash_content(topic: str) -> dict[str, Any]:
+def generate_flash_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate 20 flashcards about topic. Returns mock-compatible JSON."""
+    form = form or {}
     topic = _sanitize_topic(topic)
-    user_msg = f"Topic: {topic}\nGenerate the flashcard JSON now."
-    raw = _call_openai(_FLASH_SYSTEM, user_msg, max_tokens=2800)
+    count = _coerce_int(form.get("count"), 20, 1, 40)
+    basis = _sanitize_multiline(form.get("basis") or form.get("back"))
+    notes = _sanitize_multiline(form.get("notes") or form.get("extra"))
+    user_lines = [
+        f"Topic or vocabulary basis: {topic}",
+        f"Card count: {count}",
+    ]
+    _append_form_line(user_lines, "Back-side information preference", basis)
+    _append_form_line(user_lines, "Extra notes", notes)
+    user_lines.append("If a vocabulary list is implied, stay close to it when choosing card terms.")
+    user_lines.append("Generate the flashcard JSON now.")
+    user_msg = "\n".join(user_lines)
+    raw = _call_openai(_FLASH_SYSTEM, user_msg, max_tokens=min(4096, max(2800, 320 + count * 95)))
     data = _parse_json_response(raw, "flashcard")
     if not isinstance(data.get("cards"), list):
         raise ValueError("AI flashcard response missing 'cards' array")
+    if len(data["cards"]) > count:
+        data["cards"] = data["cards"][:count]
     for i, c in enumerate(data["cards"]):
         if not c.get("id"):
             c["id"] = f"ai_c{i + 1}"
     return data
 
 
-def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
+def generate_fullset_content(topic: str | None = None, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate slide + quiz + flashcard for the SAME topic.
 
     If *topic* is provided (from the form), use it; otherwise pick randomly from TOPIC_POOL.
@@ -266,6 +335,7 @@ def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
     Returns:
         {"slide": {...}, "quiz": {...}, "flashcard": {...}, "topic": str}
     """
+    form = form or {}
     if topic:
         topic = _sanitize_topic(topic)
     if not topic:
@@ -274,14 +344,33 @@ def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
 
     import concurrent.futures
 
+    shared_level = _sanitize_note(form.get("level"))
+    shared_extra = _sanitize_multiline(form.get("extra"))
+    slide_form = {
+        "count": form.get("slides"),
+        "slideTemplate": form.get("slideTemplate"),
+        "style": form.get("slideTemplate"),
+        "notes": shared_extra,
+    }
+    quiz_form = {
+        "count": form.get("quiz"),
+        "difficulty": shared_level,
+        "notes": shared_extra,
+    }
+    flash_form = {
+        "count": form.get("flash"),
+        "notes": shared_extra,
+        "extra": shared_extra,
+    }
+
     def _gen_slide() -> dict[str, Any]:
-        return generate_slide_content(topic)
+        return generate_slide_content(topic, form=slide_form)
 
     def _gen_quiz() -> dict[str, Any]:
-        return generate_quiz_content(topic)
+        return generate_quiz_content(topic, form=quiz_form)
 
     def _gen_flash() -> dict[str, Any]:
-        return generate_flash_content(topic)
+        return generate_flash_content(topic, form=flash_form)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
         f_slide = pool.submit(_gen_slide)
@@ -305,12 +394,13 @@ def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
 
 _AUTOFILL_SLIDE_SYSTEM = """You generate form autofill data for an English slide deck creation form for Vietnamese grade-12 / THPT students.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
-{"topic": "<English topic in Vietnamese, 3-8 words>", "count": 10, "structure": "Giới thiệu → Ví dụ → Luyện tập", "notes": ""}
+{"topic": "<English topic, 3-8 words>", "count": 10, "structure": "Overview -> Examples -> Practice", "notes": ""}
 Rules:
-- topic: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel, social media…), reading skills (main idea, inference, paraphrase, causal relationships…), or cloze skills (collocations, phrasal verbs, linking words…). Must be fresh each call.
+- topic: a specific grade-12 English topic written in English. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel, social media…), reading skills (main idea, inference, paraphrase, causal relationships…), or cloze skills (collocations, phrasal verbs, linking words…). Must be fresh each call.
 - count: integer between 10 and 15
-- structure: 3 short Vietnamese steps joined by " → "
-- notes: empty string"""
+- structure: 3 short English steps joined by " -> "
+- notes: short English note or empty string
+- LANGUAGE RULE (HARD): topic, structure, and notes MUST be English only."""
 
 _AUTOFILL_QUIZ_SYSTEM = """You generate form autofill data for an English quiz creation form for Vietnamese grade-12 / THPT students.
 Return ONLY valid JSON matching this schema exactly — no markdown, no explanation:
@@ -346,9 +436,9 @@ def generate_autofill_slide(recent: list[str] | None = None) -> dict[str, Any]:
     avoid = f"\nDo NOT repeat any of these recent topics: {', '.join(_sanitize_topic(t) for t in recent)}" if recent else ""
     raw = _call_openai(_AUTOFILL_SLIDE_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_slide")
-    data.setdefault("topic", "Phrasal verbs thông dụng")
+    data.setdefault("topic", "Common phrasal verbs")
     data["count"] = max(10, min(15, int(data.get("count") or 10)))
-    data.setdefault("structure", "Giới thiệu → Ví dụ → Luyện tập")
+    data.setdefault("structure", "Overview -> Examples -> Practice")
     data["notes"] = ""
     return data
 
@@ -423,6 +513,7 @@ Rules:
 - FIRST slide: 2–3 bullets only, each max 14 words; do not repeat the same long phrase in every bullet.
 - Other slides: titles max 8 words; 3 bullets each; each bullet max 18 words; one sentence per bullet.
 - Derive all content from the document — do not invent facts not present in it
+- LANGUAGE RULE (HARD): ALL fields — deck title, slide titles, bullets — MUST be written in English. NEVER use Vietnamese in any field.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
@@ -454,14 +545,14 @@ Rules:
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription
-  - "back": SHORT Vietnamese meaning (max 10 words) — MUST be in Vietnamese, never English
+  - "back": short English meaning or definition (max 10 words) — MUST be in English
   - "hint": short English example sentence or collocate (max 10 words) — MUST be in English
-- LANGUAGE RULE (HARD): front and hint MUST be English; back MUST be Vietnamese. No mixing allowed.
+- LANGUAGE RULE (HARD): front, back, hint, and title MUST all be English. No Vietnamese is allowed anywhere.
 - Prioritise topic-specific vocabulary that reflects the subject matter of the document
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<Vietnamese meaning>","hint":"<English example>"},...]}"""
+{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<English meaning>","hint":"<English example>"},...]}"""
 
 _DOC_CHAR_LIMIT = 12_000  # chars of document sent to model (well within gpt-4o-mini context)
 
@@ -487,7 +578,7 @@ def generate_slide_from_document(document_text: str, count: int = 10, notes: str
             s["id"] = f"ai_s{i + 1}"
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
-    topic_hint = str(data.get("title") or "Tài liệu")
+    topic_hint = str(data.get("title") or "Document")
     _normalize_ai_slide_deck(data, topic_hint)
     if isinstance(data.get("title"), str):
         data["title"] = _clamp_line(data["title"], 100)
@@ -562,7 +653,7 @@ def generate_fullset_from_document(
         flash_data = f_flash.result()
 
     # Derive a topic label from the slide deck title
-    topic = str(slide_data.get("title") or "Tài liệu tải lên")
+    topic = str(slide_data.get("title") or "Uploaded document")
     return {
         "slide": slide_data,
         "quiz": quiz_data,
@@ -584,10 +675,10 @@ Your job: Recommend exactly 4 new study topics that:
 - Are CLOSELY related to the TOP 1-2 topics (highest dwellSeconds) — prioritise similarity to the most-studied topic
 - Cover a mix of the 4 content types: slide, quiz, flash, fullset
 - Are appropriate for Vietnamese high-school English learners (THPT level)
-- Include a short Vietnamese explanation of why you suggest it (max 15 words)
+- Include a short English explanation of why you suggest it (max 15 words)
 
 Return ONLY valid JSON, no markdown fences, no explanation:
-{"topics":[{"topic":"<English topic name>","kind":"slide"|"quiz"|"flash"|"fullset","reason":"<Vietnamese reason, max 15 words>"},...]}"""
+{"topics":[{"topic":"<English topic name>","kind":"slide"|"quiz"|"flash"|"fullset","reason":"<English reason, max 15 words>"},...]}"""
 
 _RECOMMEND_SYSTEM_SAME_KIND = """You are a learning topic recommender for a Vietnamese English-learning app.
 You receive a ranked list of the user's top studied topics, sorted by TOTAL accumulated time spent (most time first).
@@ -598,10 +689,10 @@ Your job: Recommend exactly 4 new study topics that:
 - Are CLOSELY related to the TOP 1-2 topics (highest dwellSeconds) — prioritise similarity to the most-studied topic
 - ALL 4 must be of kind: {kind}
 - Are appropriate for Vietnamese high-school English learners (THPT level)
-- Include a short Vietnamese explanation of why you suggest it (max 15 words)
+- Include a short English explanation of why you suggest it (max 15 words)
 
 Return ONLY valid JSON, no markdown fences, no explanation:
-{{"topics":[{{"topic":"<English topic name>","kind":"{kind}","reason":"<Vietnamese reason, max 15 words>"}},...]}}\
+{{"topics":[{{"topic":"<English topic name>","kind":"{kind}","reason":"<English reason, max 15 words>"}},...]}}\
 """
 
 
@@ -621,8 +712,8 @@ def generate_topic_recommendations(history: list[dict], kind: str = "") -> dict:
 
     lines = []
     for i, h in enumerate(history, 1):
-        lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s tổng cộng")
-    user_msg = "Chủ đề học nhiều nhất (xếp hạng theo tổng thời gian, #1 = nhiều nhất):\n" + "\n".join(lines) + "\n\nĐề xuất 4 chủ đề mới bám sát chủ đề #1 và #2. Trả về JSON ngay."
+        lines.append(f"{i}. [{h.get('kind', '?')}] {h.get('topic', '?')} — {h.get('dwellSeconds', 0)}s total")
+    user_msg = "Most-studied topics ranked by total time (#1 = highest):\n" + "\n".join(lines) + "\n\nRecommend 4 new topics closely related to #1 and #2. Return JSON now."
 
     raw = _call_openai(system, user_msg, max_tokens=600)
     start = raw.find("{")

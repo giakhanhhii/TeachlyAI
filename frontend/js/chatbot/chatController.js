@@ -46,10 +46,11 @@ import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
-import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
+import { showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
 import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
+import { buildExperienceTitle } from "./services/contentTitles.js";
 
 /** @type {any} */
 let guided = null;
@@ -232,7 +233,7 @@ export function init() {
     if (!prev) return;
     _currentAutoExpKind = /** @type {any} */ (prev.kind);
     if (prev.kind === "fullset") {
-      const title = prev.meta.topic ? `Full Set — ${prev.meta.topic}` : "Full set";
+      const title = buildExperienceTitle("fullset", prev.meta.topic);
       void openResumeFullSetMixed(prev.meta, title);
       return;
     }
@@ -703,7 +704,7 @@ export function init() {
             slideTemplate: autoModeStore.pickRandomTheme(),
             __prefetchId: spec.prefetchKey || "",
           },
-          `Full Set — ${spec.topic}`,
+          buildExperienceTitle("fullset", spec.topic),
         );
         return;
       }
@@ -728,7 +729,7 @@ export function init() {
           flash: String(counts.flash),
           slideTemplate: autoModeStore.pickRandomTheme(),
         },
-        `Full Set — ${topic}`,
+        buildExperienceTitle("fullset", topic),
       );
       return;
     }
@@ -787,17 +788,7 @@ export function init() {
       void onCustom();
       return;
     }
-
-    showAutoModeChoicePopup(expKind, {
-      onCustom: () => {
-        void onCustom();
-      },
-      onAuto: () => {
-        autoModeStore.enable();
-        syncToggleUI(true);
-        openCountSelector();
-      },
-    });
+    void onCustom();
   }
 
   guidedController = createGuidedInteractionController({
@@ -821,10 +812,10 @@ export function init() {
     await experienceController.openResumeOpenAll(items, bundleTitle);
   }
 
-  async function openResumeFullSetMixed(spec, bundleTitle) {
+  async function openResumeFullSetMixed(spec, bundleTitle, targetKind = "") {
     if (!experienceController) return;
     autoRenameCurrentSession("fullset");
-    await experienceController.openResumeFullSetMixed(spec, bundleTitle);
+    await experienceController.openResumeFullSetMixed(spec, bundleTitle, "", undefined, targetKind);
   }
 
   async function restoreCurrentSessionExperience() {
@@ -837,7 +828,7 @@ export function init() {
     messagesInnerEl: /** @type {HTMLElement} */ (messagesInner),
     onResumeExperience: (item) => void openResumeExperience(item),
     onResumeOpenAll: (items, bundleTitle) => void openResumeOpenAll(items, bundleTitle),
-    onResumeOpenFullSetMixed: (spec, bundleTitle) => void openResumeFullSetMixed(spec, bundleTitle),
+    onResumeOpenFullSetMixed: (spec, bundleTitle, targetKind) => void openResumeFullSetMixed(spec, bundleTitle, targetKind),
     onFlowAction: (...args) => guidedController.onFlowAction(...args),
     onFlowCardSubmit: (cardType, payload, cardRoot) => guidedController.handleFlowCardSubmit(cardType, payload, cardRoot),
   });

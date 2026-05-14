@@ -29,6 +29,7 @@ from starlette.background import BackgroundTask
 
 from .config import (
     ANTHROPIC_API_KEY,
+    DATABASE_URL,
     DEFAULT_MODEL,
     FLASH_TRANSLATE_OPENAI_MODEL,
     LLM_PROVIDER,
@@ -146,6 +147,7 @@ class SlideExportIn(BaseModel):
 class AiGenerateIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flashcard|fullset)$")
     topic: str | None = Field(default=None, max_length=300)
+    form: dict[str, object] = Field(default_factory=dict)
 
 
 class AiAutofillIn(BaseModel):
@@ -278,7 +280,7 @@ def _cleanup_export_dir(path: Path) -> None:
 
 
 app = FastAPI(title="Teachly Local", version="0.1.0")
-db = DatabaseManager(REPO_ROOT / "data" / "teachly.sqlite3")
+db = DatabaseManager(DATABASE_URL)
 
 app.add_middleware(
     CORSMiddleware,
@@ -391,16 +393,17 @@ def ai_generate(body: AiGenerateIn):
     try:
         kind = body.type
         form_topic = (body.topic or "").strip() or None
+        form = body.form if isinstance(body.form, dict) else {}
         if kind == "fullset":
-            return generate_fullset_content(topic=form_topic)
+            return generate_fullset_content(topic=form_topic, form=form)
         topic = form_topic or _random.choice(TOPIC_POOL)
         logger.info("AI generate: type=%s topic=%s (from_form=%s)", kind, topic, bool(form_topic))
         if kind == "slide":
-            return generate_slide_content(topic)
+            return generate_slide_content(topic, form=form)
         if kind == "quiz":
-            return generate_quiz_content(topic)
+            return generate_quiz_content(topic, form=form)
         if kind == "flashcard":
-            return generate_flash_content(topic)
+            return generate_flash_content(topic, form=form)
     except ValueError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:

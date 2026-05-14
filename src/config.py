@@ -20,6 +20,7 @@ class Config:
 
     anthropic_api_key: str
     openai_api_key: str
+    database_url: str
     default_model: str
     log_level: str
     output_dir: Path
@@ -50,6 +51,7 @@ class Config:
         return cls(
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", "").strip(),
             openai_api_key=os.getenv("OPENAI_API_KEY", "").strip(),
+            database_url=os.getenv("DATABASE_URL", "").strip(),
             default_model=os.getenv("DEFAULT_MODEL", "claude-sonnet-4-20250514").strip(),
             log_level=os.getenv("LOG_LEVEL", "INFO").strip(),
             output_dir=output_dir,
@@ -67,6 +69,7 @@ class Config:
 _CONFIG = Config.load()
 ANTHROPIC_API_KEY = _CONFIG.anthropic_api_key
 OPENAI_API_KEY = _CONFIG.openai_api_key
+DATABASE_URL = _CONFIG.database_url
 DEFAULT_MODEL = _CONFIG.default_model
 LOG_LEVEL = _CONFIG.log_level
 OUTPUT_DIR = str(_CONFIG.output_dir)

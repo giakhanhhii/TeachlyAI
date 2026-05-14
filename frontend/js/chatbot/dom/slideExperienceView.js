@@ -4,6 +4,7 @@ import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -100,6 +101,8 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   const initialSlides = Array.isArray(initial?.slides) ? initial.slides : null;
   const initialMeta = initial?.meta && typeof initial.meta === "object" ? initial.meta : null;
   const effectiveMeta = initialMeta || meta;
+  const _forceAi = effectiveMeta?.__forceAi === "1";
+  const _forceMock = effectiveMeta?.__forceMock === "1";
   const isRestore = Boolean(initialSlides);
   const _aiTopic = effectiveMeta?.topic || meta?.topic || undefined;
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || effectiveMeta?.__autoMode === "1";
@@ -150,15 +153,17 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       if (!isRestore) incrementPlayCount("slide");
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
-      const _devSrc = (!isRestore && !effectiveMeta?.presetId && effectiveMeta?.__forceMock !== "1" && (isAiModeActive("slide") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+      const _devSrc = _forceMock
+        ? "mock"
+        : ((!isRestore && (_forceAi || (!effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)))) ? "ai" : "mock"); /* DEV-ONLY */
       const _bgKey = (_devSrc === "ai" && effectiveMeta?.__experienceId) ? `gen_${effectiveMeta.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide")));
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic, effectiveMeta).catch(() => fetchMockResource("slide")));
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
       const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
       const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 20, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
       raw = _bgEntry?.status === "done" ? _bgEntry.raw
           : _bgEntry ? await _bgEntry.promise
-          : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic).catch(() => fetchMockResource("slide"))
+          : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic, effectiveMeta).catch(() => fetchMockResource("slide"))
           : await fetchMockResource("slide");
       _stopCountdown?.();
       if (root._genStamp !== _genStamp) return;
@@ -168,7 +173,13 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     }
   }
   const data = prepareSlideSessionData(raw, effectiveMeta);
-  const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
+  const deckTitle = buildExperienceTitle(
+    "slide",
+    effectiveMeta?.topic,
+    initial?.meta?.topic,
+    typeof initial?.title === "string" ? initial.title : "",
+    data.title,
+  );
   let slides = initialSlides ? initialSlides.slice() : Array.isArray(data.slides) ? data.slides : [];
   if (!isRestore) beginDwell(effectiveMeta?.topic || effectiveMeta?.source || deckTitle, "slide");
   const sessionMeta =

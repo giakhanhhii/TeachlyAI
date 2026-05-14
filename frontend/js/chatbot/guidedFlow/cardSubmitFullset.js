@@ -1,4 +1,5 @@
 import { getSourceActions } from "./shared.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 
 /**
  * @param {any} guided
@@ -49,7 +50,7 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           type: "pushBot",
           text: "Teachly đã nhận tệp. Nhấn nút bên dưới để bắt đầu tạo Full Set từ tài liệu của bạn.",
           resumeDock: {
-            title: `Full Set — ${name}`,
+            title: buildExperienceTitle("fullset", name),
             experienceId,
             fullsetMixed: spec,
             items: [],
@@ -71,13 +72,26 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
 
     const topic = payload.topic || "—";
+    const sharedExtra = String(payload.extra || "");
+    const slideNotes = [
+      payload.slideTemplate ? `Mẫu slide: ${payload.slideTemplate}` : "",
+      sharedExtra ? `Yêu cầu thêm: ${sharedExtra}` : "",
+    ]
+      .filter(Boolean)
+      .join(" | ");
+    const quizNotes = [
+      payload.level ? `Trình độ: ${payload.level}` : "",
+      sharedExtra ? `Ghi chú: ${sharedExtra}` : "",
+    ]
+      .filter(Boolean)
+      .join(" | ");
     const openedAt = new Date().toISOString();
     const experienceId =
       globalThis.crypto && typeof globalThis.crypto.randomUUID === "function"
         ? globalThis.crypto.randomUUID()
         : `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const resumeDock = {
-      title: `Full set — ${topic}`,
+      title: buildExperienceTitle("fullset", topic),
       experienceId,
       fullsetMixed: {
         topic,
@@ -88,6 +102,8 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         flash: String(payload.flash || "0"),
         extra: String(payload.extra || ""),
         __experienceId: experienceId,
+        ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+        ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
       },
       items: [
         {
@@ -96,26 +112,29 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
             topic,
             count: String(payload.slides || "—"),
             slideTemplate: String(payload.slideTemplate || ""),
-            notes:
-              payload.slideTemplate
-                ? `Mẫu slide: ${payload.slideTemplate} | Full set (demo mock)`
-                : "Full set (demo mock)",
+            notes: slideNotes || "—",
             __experienceId: `${experienceId}:slide`,
+            ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+            ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:slide`,
-          title: `Slide — ${topic}`,
+          title: buildExperienceTitle("slide", topic),
           openedAt,
         },
         {
           kind: "quiz",
           meta: {
             topic,
+            source: topic,
             count: String(payload.quiz || "—"),
-            notes: "Full set (demo mock)",
+            notes: quizNotes || "—",
+            difficulty: String(payload.level || ""),
             __experienceId: `${experienceId}:quiz`,
+            ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+            ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:quiz`,
-          title: `Trắc nghiệm — ${topic}`,
+          title: buildExperienceTitle("quiz", topic),
           openedAt,
         },
         {
@@ -123,11 +142,14 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           meta: {
             source: topic,
             count: String(payload.flash || "—"),
-            extra: "Full set (demo mock)",
+            notes: sharedExtra,
+            extra: sharedExtra || "—",
             __experienceId: `${experienceId}:flash`,
+            ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+            ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:flash`,
-          title: `Flashcard — ${topic}`,
+          title: buildExperienceTitle("flash", topic),
           openedAt,
         },
       ],

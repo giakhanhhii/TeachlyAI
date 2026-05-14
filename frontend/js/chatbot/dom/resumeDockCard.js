@@ -62,7 +62,7 @@ function createLine(item, onOpen) {
  * @param {ResumeDockItem | { items?: ResumeDockItem[], title?: string, fullsetMixed?: FullSetMixedSpec }} dock
  * @param {(item: ResumeDockItem) => void} onOpen
  * @param {(items: ResumeDockItem[], bundleTitle: string) => void} [onOpenAll]
- * @param {(spec: FullSetMixedSpec, bundleTitle: string) => void} [onOpenFullSetMixed]
+ * @param {(spec: FullSetMixedSpec, bundleTitle: string, targetKind?: "slide"|"quiz"|"flash") => void} [onOpenFullSetMixed]
  * @returns {HTMLElement}
  */
 export function createResumeDockCard(dock, onOpen, onOpenAll, onOpenFullSetMixed) {
@@ -92,9 +92,17 @@ export function createResumeDockCard(dock, onOpen, onOpenAll, onOpenFullSetMixed
     head.className = "resume-dock-bundle-head";
     head.textContent = bundleTitle;
     main.appendChild(head);
-    if (Array.isArray(dock.items) && dock.items.length && typeof onOpen === "function") {
+    if (Array.isArray(dock.items) && dock.items.length) {
       dock.items.forEach((it) => {
-        main.appendChild(createLine(it, onOpen));
+        const openItem = () => {
+          const targetKind = it?.kind === "slide" || it?.kind === "quiz" || it?.kind === "flash" ? it.kind : "";
+          if (targetKind && typeof onOpenFullSetMixed === "function") {
+            onOpenFullSetMixed(dock.fullsetMixed, bundleTitle, targetKind);
+            return;
+          }
+          if (typeof onOpen === "function") onOpen(it);
+        };
+        main.appendChild(createLine(it, openItem));
       });
     }
     root.appendChild(main);

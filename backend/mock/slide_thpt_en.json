@@ -1,46 +1,96 @@
 {
-  "_replace_note": "Slide ôn: cấu trúc đề, cách làm bài, từ vựng — bản giả lập THPT QG Tiếng Anh (định hướng 2026). Shape: title + slides[]. Viết câu đủ dài, hạn chế 'A: B' ngắn để theme friendly (tách tại dấu :) không bị trống.",
-  "title": "Ôn THPT QG Tiếng Anh — định hướng & cách làm bài (2026)",
+  "_replace_note": "Mock English exam-prep slide deck for Grade 12 learners. Shape: title + slides[]. Keep full-sentence bullets so friendly themes have enough text to render well.",
+  "title": "English Exam Prep - Strategy and Core Skills (2026)",
   "slides": [
-    { "id": "s1", "title": "Giới thiệu — Tổng quan kỳ thi", "bullets": ["Định hướng ôn 2026 — bộ slide giả lập giúp bạn lướt nhanh phân dạng và cách triển khai trong phòng thi.", "Mục tiêu ôn tập — nắm rõ từng khối kiến thức, giữ nhịp làm bài ổn định và có chiến lược soát lỗi trước khi nộp bài.", "Đề thi thường gồm 50 câu trắc nghiệm trong 60 phút; cần phân bổ thời gian hợp lý cho đọc hiểu dài và các câu suy luận.", "Ưu tiên luyện theo chủ đề (ngữ pháp, từ vựng, đọc hiểu) rồi ghép thành đề tổng hợp để quen áp lực thời gian thật."] },
-    { "id": "s2", "title": "Cấu trúc đề thi tham khảo", "bullets": ["Khối phát âm và trọng âm thường khoảng bốn câu; ôn kỹ quy tắc đọc đuôi -s/-ed và nhận diện trọng âm ở từ hai đến bốn âm tiết.", "Phần ngữ pháp kết hợp từ vựng chiếm phần lớn điểm số (khoảng mười lăm đến hai mươi câu), đòi hỏi hiểu ngữ cảnh chứ không học vẹt công thức.", "Đọc hiểu gồm hai bài với năm và bảy câu; cần kỹ năng skim nắm ý chính rồi scan tìm bằng chứng cho từng lựa chọn.", "Phần điền từ và sửa lỗi sai kiểm tra mạch văn, collocation và hòa hợp chủ vị — đọc cả câu/đoạn trước khi chọn đáp án."] },
-    { "id": "s3", "title": "Phân bổ thời gian hiệu quả", "bullets": ["Câu nhận diện nhanh (từ loại, cố định) nên xử lý dưới ba mươi giây mỗi câu để dành thời gian cho đoạn đọc hiểu.", "Câu trung bình về ngữ pháp và paraphrase nên khoảng một phút; nếu kẹt hơn chín mươi giây, đánh dấu và quay lại sau.", "Hai bài đọc hiểu nên dành mười đến mười lăm phút tổng; đọc chủ đề câu đầu, chủ điểm đoạn giữa và kết luận trước khi làm chi tiết.", "Giữ năm phút cuối để kiểm tra phiếu, mã đề và các câu đã đánh dấu; không để trống ô vì đề trắc nghiệm không trừ điểm."] },
-    { "id": "s4", "title": "Chiến lược làm bài cơ bản", "bullets": ["Làm lần lượt các câu tự tin trước, gom câu khó để xử lý khi đã có cảm giác an toàn về thời gian.", "Luôn chọn một đáp án; dùng loại trừ khi hai phương án còn lại gần nghĩa, đối chiếu lại manh mối trong câu/đoạn.", "Với câu đồng nghĩa—trái nghĩa, gạch bỏ các lựa chọn sai ngữ cảnh trước khi so sánh hai đáp án còn lại.", "Ghi nhớ một vài tín hiệu bẫy (not, except, only, unless) để tránh đọc vội và chọn nhầm ý phủ định."] },
-    { "id": "s5", "title": "Chuyên đề 1: Các thì (Tenses) - Phần 1", "bullets": ["Hiện tại đơn diễn tả thói quen và sự thật hiển nhiên; hiện tại tiếp diễn nhấn hành động đang diễn ra tại thời điểm nói hoặc quanh mốc thời gian.", "Hiện tại hoàn thành liên kết quá khứ với hiện tại; since gắn mốc bắt đầu, for gắn khoảng thời gian kéo dài.", "Dấu hiệu thời gian (always, yet, just, recently) và trạng từ tần suất giúp phân biệt nhanh giữa các thì gần nghĩa.", "Khi câu có hai mốc thời gian, xác định hành động nào nền tảng và hành động nào xen vào để chọn đúng thì."] },
-    { "id": "s6", "title": "Chuyên đề 1: Các thì (Tenses) - Phần 2", "bullets": ["Quá khứ đơn mô tả hành động đã chấm dứt tại mốc rõ ràng; quá khứ hoàn thành nhấn hành động xảy ra trước một hành động khác trong quá khứ.", "Tương lai đơn cho lịch trình hoặc quyết định tại chỗ; tương lai hoàn thành cho việc sẽ hoàn tất trước một mốc tương lai.", "Phối hợp thì trong câu ghép và câu tường thuật đòi hỏi lùi thì nhất quán theo mốc thời gian của mệnh đề chính.", "Ôn các cấu trúc by the time, before, after, until vì chúng thường kéo theo quá khứ hoàn thành hoặc tương lai hoàn thành."] },
-    { "id": "s7", "title": "Chuyên đề 2: Câu điều kiện (Conditionals)", "bullets": ["Loại một diễn tả điều có thể xảy ra ở hiện tại hoặc tương lai, dùng if + hiện tại và will/can/may ở mệnh đề chính.", "Loại hai mô tả tình huống trái với thực tế hiện tại, dùng quá khứ đơn hoặc were trong if và would/could ở mệnh đề chính.", "Loại ba diễn tả điều không thể đổi trong quá khứ, dùng if + had + PII và would have + PII để nói về hệ quả giả định.", "Wish và unless thường đi kèm lùi thì tương tự câu điều kiện; cần phân biệt unless với if not để tránh nhầm nghĩa phủ định."] },
-    { "id": "s8", "title": "Chuyên đề 3: Câu bị động (Passive Voice)", "bullets": ["Cấu trúc nền tả là be + past participle, căn chỉnh thì của be theo chủ ngữ mới sau khi đổi từ chủ động.", "Động từ khuyết thiếu (can, must, should) dùng bị động hoàn chỉnh với be + PII hoặc cấu trúc have something done tùy ngữ cảnh.", "Các động từ tri giác (say, believe, think, report) thường xuất hiện dạng It is said that… hoặc S + be believed to… trong đề.", "Chú ý hai tân ngữ và cách chuyển sang bị động với give/show/send để không đảo nhầm tác nhân và đối tượng."] },
-    { "id": "s9", "title": "Chuyên đề 4: Mệnh đề quan hệ (Relative Clauses)", "bullets": ["Who/whom cho người, which/that cho vật, whose cho sở hữu; that thường thay which trong mệnh đề xác định.", "Mệnh đề không xác định có dấu phẩy tách ra, không dùng that; cần giữ đúng ngữ pháp sau dấu phẩy.", "Rút gọn chủ động bằng V-ing và bị động bằng V3 khi đại từ quan hệ trùng chủ ngữ với mệnh đề phía trước.", "Prep + whom/which đưa giới từ lên đầu trong văn phong trang trọng, thường gặp trong câu hỏi đảo hoặc điền từ."] },
-    { "id": "s10", "title": "Chuyên đề 5: Câu tường thuật (Reported Speech)", "bullets": ["Lùi thì khi động từ giới thiệu ở quá khứ (said/told/asked), trừ khi nội dung là chân lý hiện tại hoặc lịch cố định tương lai.", "Đổi this→that, here→there, today→that day và các cụm tương tự để giữ mạch thời gian nhất quán.", "Câu hỏi yes/no dùng if/whether; câu hỏi Wh- giữ từ hỏi và trật tự phụ thuộc sau động từ hỏi.", "Mệnh lệnh và đề nghị chuyển sang told/asked + to V hoặc suggest + V-ing tùy động từ gốc."] },
-    { "id": "s11", "title": "Chuyên đề 6: So sánh (Comparisons)", "bullets": ["So sánh bằng as…as và not as/so…as; so sánh hơn với -er/more và nhất với -est/most, kèm much/even/far để nhấn mức độ.", "Cấu trúc The more… the more… và The + so sánh nhất + noun cần đồng dạng song song hai về hai bên.", "Một số tính từ bất quy tắc (good/better/best, bad/worse/worst) và danh từ đếm được/ không đếm được với less/fewer.", "Tránh lặp so sánh kép sai (double comparative) và đảm bảo chỉ so sánh đúng nhóm từ (tính từ với tính từ, trạng từ với trạng từ)."] },
-    { "id": "s12", "title": "Chuyên đề 7: Đảo ngữ (Inversion)", "bullets": ["Never, rarely, seldom, hardly… when, no sooner… than đòi hỏi đảo trợ động từ hoặc đảo be lên trước chủ ngữ.", "Only after, only when, not only… but also có thể kích hoạt đảo một phần; cần giữ đúng dạng trợ động từ khớp thì.", "Đảo với So + adj + be và Such + noun phrase + be để nhấn mạnh mức độ, thường gặp trong viết học thuật và paraphrase.", "Đảo trong câu điều kiện loại ba với Had I known… ít gặp hơn nhưng vẫn xuất hiện trong câu hỏi khó."] },
-    { "id": "s13", "title": "Chuyên đề 8: Câu hỏi đuôi (Tag Questions)", "bullets": ["Đại từ trong tag trùng chủ ngữ câu chính; trợ động từ phản chiếu thì và sự khẳng định/phủ định của mệnh đề trước.", "Trường hợp đặc biệt với I am (aren't I?), Let's (shall we?), nobody/everyone (they) cần học thuộc mẫu.", "Câu mệnh lệnh dùng will you / won't you tùy sắc thái; câu phủ định mời lịch sự dùng will you.", "Ngữ điệu hỏi thật hay hỏi xác nhận phụ thuộc vào intonation; trong trắc nghiệm tập trung vào dạng từ đúng."] },
-    { "id": "s14", "title": "Chuyên đề 9: Danh động từ & Động từ nguyên mẫu", "bullets": ["Một số động từ chỉ bám theo V-ing (enjoy, avoid, mind), một số chỉ to V (agree, decide, hope, refuse).", "Động từ đổi nghĩa theo V-ing và to V như stop, remember, try, need — cần ví dụ minh họa cho từng nghĩa.", "Cấu trúc can't help, feel like, it's no use + V-ing thường là bẫy nếu chỉ học danh sách tĩnh.", "Sau giới từ luôn là V-ing; sau make/let/help có quy tắc bare infinitive riêng cần nhớ kỹ."] },
-    { "id": "s15", "title": "Chuyên đề 10: Giới từ (Prepositions)", "bullets": ["Thời gian in/on/at cho khoảng, ngày cụ thể và mốc giờ; at night nhưng in the morning trừ khi có this/last/every.", "Nơi chốn at/in/on the corner, arrive at/in, depend on, afraid of — học theo cụm collocation hơn là dịch từng từ.", "Tính từ + giới từ cố định (interested in, good at, keen on) là dạng điền từ rất thường gặp.", "Phân biệt between/among, by/until, during/for để tránh lỗi logic thời gian trong đoạn điền từ."] },
-    { "id": "s16", "title": "Chuyên đề 11: Liên từ (Conjunctions)", "bullets": ["Because + mệnh đề khác because of + cụm danh từ; although + mệnh đề khác despite/in spite of + V-ing hoặc noun.", "However, therefore, moreover là discourse markers — chú ý dấu câu và vị trí trong câu ghép.", "Neither… nor và either… or bắt buộc hòa hợp chủ vị theo thành phần gần động từ nhất.", "Not only… but also có thể kích hoạt đảo ngữ khi not only mở đầu câu."] },
-    { "id": "s17", "title": "Chủ điểm từ vựng 1: Giáo dục", "bullets": ["Curriculum và syllabus chỉ khung chương trình; literacy nhấn khả năng đọc viết cơ bản và digital literacy.", "Compulsory education, prestigious school, graduate with honours là cụm hay gặp trong đoạn về học đường.", "Distance learning và lifelong learning thường xuất hiện trong bài đọc về công nghệ và cơ hội nghề nghiệp.", "Paraphrase qualification, certificate, enrollment để nhanh chóng khớp đáp án đồng nghĩa trong đề."] },
-    { "id": "s18", "title": "Chủ điểm từ vựng 2: Môi trường", "bullets": ["Emission, carbon footprint và renewable energy là trục từ vựng của đoạn về biến đổi khí hậu.", "Biodiversity, habitat loss, conserve và restore thường đi cùng trong bài về bảo tồn.", "Pollution levels, ozone layer, sustainable development tạo mạch liên kết paraphrase dễ nhận ra.", "Collocation cut emissions, raise awareness, tackle climate crisis hay xuất hiện dạng gap-fill."] },
-    { "id": "s19", "title": "Chủ điểm từ vựng 3: Công nghệ & AI", "bullets": ["Artificial intelligence, machine learning và automation là nhóm từ lõi cho bài công nghệ.", "Cybersecurity, data breach, privacy concern thường đối lập với convenience và innovation.", "Upgrade firmware, seamless interface, user experience là cụm collocation trong quảng cáo sản phẩm.", "Đề có thể hỏi nghĩa bóng của disrupt, deploy, integrate trong ngữ cảnh doanh nghiệp."] },
-    { "id": "s20", "title": "Chủ điểm từ vựng 4: Xã hội & Sức khỏe", "bullets": ["Prejudice, discrimination và inequality thường cùng chủ đề công bằng xã hội.", "Ethical dilemma, resilient community, public health policy tạo mạch học thuật dễ skim.", "Pandemic, immune system, mental well-being là cụm sức khỏe tổng hợp hay gặp.", "Integration, marginalize và vulnerable groups thường xuất hiện trong đoạn tranh luận."] },
-    { "id": "s21", "title": "Dạng bài: Phát âm (Phonetics)", "bullets": ["Đuôi -s/-es phụ thuộc âm cuối (/s/, /z/, /ʃ/…); đuôi -ed có /t/, /d/, /ɪd/ — luyện đọc to nhóm từ.", "Nguyên âm dài/ngắn (ship/sheep, full/fool) là bẫy phổ biến trong câu hỏi phát âm khác nhau.", "Nối âm và ngọng âm nhẹ trong cụm từ giúp nghe đúng dạng bài listening minh họa (nếu có).", "Ghi chú IPA ngắn bên cạnh từ khó khi ôn để não bộ nhận diện nhanh hơn trong phòng thi."] },
-    { "id": "s22", "title": "Dạng bài: Trọng âm (Stress)", "bullets": ["Hai âm tiết thường nhấn âm đầu nếu là danh từ/ tính từ Germanic, trừ một loạt ngoại lệ (hotel, police…).", "Ba âm tiết trở lên cần nhớ quy tắc hậu tố -tion, -ic, -ity, -ive làm lệch trọng âm.", "Danh từ ghép và từ có tiền tố re-, de-, pre- có quy tắc nhấn riêng; ôn theo nhóm.", "Stress ảnh hưởng nghĩa từ (record động từ/danh từ) — đọc kỹ loại từ trong câu hỏi."] },
-    { "id": "s23", "title": "Dạng bài: Tìm lỗi sai (Error Correction)", "bullets": ["Rà soát chủ vị và danh từ tập hợp (each of, one of the…) vì đây là lỗi tần suất cao.", "Đại từ, tính từ sở hữu và mạch tham chiếu (this/these) thường sai khi đoạn dài.", "Song song cấu trúc (not only A but also B) đòi hỏi cùng loại từ/cụm sau cả hai nhánh.", "Đọc cả câu sau khi sửa để đảm bảo không tạo lỗi mới về thì hoặc giới từ."] },
-    { "id": "s24", "title": "Dạng bài: Đồng nghĩa - Trái nghĩa", "bullets": ["Luôn neo nghĩa vào câu gốc; một từ có thể đồng nghĩa trong ngữ cảnh này nhưng không trong ngữ cảnh khác.", "Đề thường ghi rõ CLOSEST in meaning hoặc OPPOSITE — khoanh đúng yêu cầu trước khi đọc đáp án.", "Các cặp near-synonym (say/tell, rise/arise) là bẫy khi chỉ nhìn nghĩa từ điển.", "Dùng elimination với các lựa chọn quá rộng hoặc quá hẹp so với ngữ cảnh."] },
-    { "id": "s25", "title": "Dạng bài: Điền từ vào đoạn văn", "bullets": ["Xác định chỗ trống cần danh từ, động từ, tính từ hay trạng từ bằng từ loại xung quanh và mạch nghĩa.", "Collocation quyết định đáp án đúng nhiều hơn nghĩa đơn lẻ; đọc cả cụm hai ba chữ trước và sau.", "Liên kết đoạn (however, for example, as a result) có thể là ô trống cần discourse marker.", "Sau khi điền xong, đọc lại đoạn như một bài hoàn chỉnh để kiểm tra ngữ pháp và logic."] },
-    { "id": "s26", "title": "Dạng bài: Đọc hiểu - Ý chính", "bullets": ["Skimming — đọc tiêu đề, câu chủ đề đoạn đầu, chủ điểm đoạn giữa và câu kết để nắm thesis.", "Ý chính không phải chi tiết nhỏ nhất; tránh chọn đáp án chỉ đúng một ví dụ phụ.", "Tác giả có thể nêu vấn đề rồi đưa giải pháp; nhận diện pivot words (however, yet) để không lẫn hai phần.", "Khi hai đáp án đều hợp lý, chọn ý bao quát toàn bài hơn là ý chỉ đúng một đoạn."] },
-    { "id": "s27", "title": "Dạng bài: Đọc hiểu - Chi tiết", "bullets": ["Scanning — khoanh từ khóa trong đề rồi tìm đoạn có synonym hoặc paraphrase trong bài.", "Đối chiếu số liệu, tên riêng, ngày tháng chính xác từng ký tự để tránh bẫy almost-true.", "Câu hỏi NOT/EXCEPT đòi hỏi kiểm tra từng phương án một cách có hệ thống.", "Gạch chân manh mối trong bài ngay khi đọc để tiết kiệm thời gian quay lại."] },
-    { "id": "s28", "title": "Dạng bài: Đọc hiểu - Suy luận & Đại từ", "bullets": ["Suy luận (infer) cần bằng chứng gián tiếp; không chọn đáp án quá tuyệt đối nếu bài không khẳng định.", "Đại từ it/they/this thay thế cho cụm danh từ nào — đọc câu trước và sau hai ba câu.", "Thái độ tác giả (neutral, critical, supportive) thường nằm ở tính từ mang sắc thái và modal verbs.", "Paraphrase câu hỏi sang tiếng Việt nhanh giúp não bộ khớp ý với đoạn tiếng Anh."] },
-    { "id": "s29", "title": "Dạng bài: Viết lại câu", "bullets": ["Chủ động ↔ bị động giữ nghĩa và thì; chú ý by-agent có thể bị lược trong đề.", "Tường thuật lời nói trực tiếp sang gián tiếp với động từ said/told/asked và lùi thì.", "Câu so sánh, câu ước, câu điều kiện thường giữ nguyên nghĩa nhưng đổi cấu trúc từ khóa gợi ý.", "Giữ các danh từ riêng và số liệu không đổi trừ khi đề yêu cầu thay thế cụ thể."] },
-    { "id": "s30", "title": "Dạng bài: Kết hợp hai câu", "bullets": ["Dùng mệnh đề quan hệ để gộp khi hai câu cùng chủ thể hoặc có từ lặp lại rõ ràng.", "Liên từ và trạng từ nối (however, therefore, because) giúp giữ logic nhân-quả khi gộp.", "Rút gọn bằng phân từ (Having finished…, Seen from…) nếu đề cho phép và đúng chủ thể.", "Đọc câu ghép sau cùng để đảm bảo không thừa/khuyết thành phần so với hai câu gốc."] },
-    { "id": "s31", "title": "Những bẫy thường gặp trong đề thi", "bullets": ["Make vs do với collocation cố định (make progress, do homework) — không dịch word-by-word từ tiếng Việt.", "Say/tell/speak/talk khác nhau về giới từ và tân ngữ; tell cần người nghe xác định.", "Tính từ -ing/-ed mô tả bản chất vs cảm xúc (boring/bored); chủ ngữ là sự vật hay con người quyết định dạng.", "Little/a little, few/a few thay đổi nghĩa hoàn toàn; much/many phụ thuộc danh từ đếm được."] },
-    { "id": "s32", "title": "Cụm động từ phổ biến (Phrasal Verbs)", "bullets": ["Take off (cất cánh), take on (đảm nhận), take after (giống) — học theo cụm ví dụ ngắn.", "Give up (từ bỏ), give in (nhượng bộ), give away (tiết lộ/cho không) dễ nhầm nếu chỉ nhớ một nghĩa.", "Go on (tiếp tục), go out (tắt/ra ngoài), go over (ôn lại) thường trong cloze có ngữ cảnh.", "Viết một câu story nhỏ dùng 8–10 phrasal verbs để não bộ nhớ theo bối cảnh."] },
-    { "id": "s33", "title": "Cụm từ cố định (Collocations)", "bullets": ["Make a decision, make an effort; do business, do harm — gom nhóm theo động từ trung tâm.", "Take responsibility, take part in, pay attention to, run a risk là cụm academic writing.", "Strong collocations (launch a campaign, address an issue) hay xuất hiện trong đoạn đọc nửa học thuật.", "Tránh dịch từng từ sang tiếng Việt khiến chọn sai đáp án gần nghĩa."] },
-    { "id": "s34", "title": "Thành ngữ thường gặp (Idioms)", "bullets": ["Piece of cake (dễ), once in a blue moon (hiếm) — nắm nghĩa bóng, không dịch literal.", "Actions speak louder than words; break a leg (chúc may) là cụm giao tiếp đa dạng.", "Under the weather (khỏe kém), hit the books (ôn bài) thường trong bài informal.", "Học idiom kèm ví dụ một dòng để nhớ ngữ cảnh sử dụng."] },
-    { "id": "s35", "title": "Luyện tập: Đọc biểu đồ & bảng biểu", "bullets": ["Từ xu hướng rise/increase, fall/decrease, remain stable, fluctuate dùng mô tả đường và cột.", "So sánh phần trăm và số tuyệt đối — chú ý đơn vị (million vs thousand) trong đề.", "Mô tả tóm tắt nên có chủ đề + điểm nổi bật + xu hướng tổng thể trong hai ba câu.", "Luyện viết một đoạn mô tả chart trong năm phút để quen cấu trúc topic sentence."] },
-    { "id": "s36", "title": "Tâm lý phòng thi", "bullets": ["Gặp câu khó — hít thở, bỏ qua tạm thời và làm các câu tự tin để lấy đà.", "Tập trung vào đề bản in, không so bánh với bạn bên cạnh để tránh loãng ý.", "Chia nhỏ thời gian theo từng phần đề; nhắc nhở bản thân mỗi mười lăm phút.", "Tự khẳng định ngắn trước giờ vào phòng (đã chuẩn bị đủ) giúp giảm cortisol."] },
-    { "id": "s37", "title": "Kỹ thuật tô phiếu đáp án", "bullets": ["Tô đậm, kín ô tròn; tránh gạch chéo nhiều lần gây máy không đọc được.", "Chiến lược làm theo trang hoặc theo phần — chọn một và nhất quán để không sót ô.", "Kiểm tra mã đề, số báo danh và các câu đã đánh dấu review trong năm phút cuối.", "Mang theo tẩy sạch và bút chì HB/2B theo quy định điểm thi."] },
-    { "id": "s38", "title": "Ôn tập nước rút", "bullets": ["Rà lại sổ tay lỗi sai cá nhân thay vì học mới nội dung rộng trong tuần cuối.", "Làm đề theo giờ thật, sau đó phân loại lỗi theo dạng bài để ôn có trọng tâm.", "Ngủ đủ bảy tiếng trước ngày thi; não xử lý ngôn ngữ kém hơn khi thiếu ngủ.", "Giữ nhịp ăn uống quen thuộc, tránh đồ lạ gây khó chịu dạ dày."] },
-    { "id": "s39", "title": "Checklist trước ngày thi", "bullets": ["Chuẩn bị giấy tờ tùy thân, thiệp báo danh, bút chì, tẩy, đồng hồ đeo tay (nếu được phép).", "Đi khảo sát địa điểm thi trước một lần để ước thời gian di chuyển và chỗ gửi xe.", "Đặt báo thức dự phòng; sạc điện thoại nhưng nhớ quy định cất máy khi vào phòng.", "Tối trước ngày thi chỉ ôn light review — không học khuya làm giảm tập trung."] },
-    { "id": "s40", "title": "Lời chúc & Động lực", "bullets": ["Bạn đã đầu tư thời gian và công sức — hãy tin vào quá trình và bình tĩnh thể hiện.", "Mỗi đề thi chỉ là một snapshot; quan trọng là chiến lược dài hơi và thái độ học hỏi.", "Giữ nhịp thở đều khi chuông khai mạc; đọc kỹ phần hướng dẫn trước khi lật đề.", "Chúc bạn đạt kết quả xứng đáng với nỗ lực và mở được cánh cửa mong muốn."] }
+    {
+      "id": "s1",
+      "title": "Exam Overview",
+      "bullets": [
+        "This mock deck gives a fast overview of the English exam format and major skill groups.",
+        "The goal is to build control over grammar, vocabulary, reading, and test timing.",
+        "Students should combine topic review with full timed practice to improve exam stamina."
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "Question Types",
+      "bullets": [
+        "Common sections include pronunciation, stress, grammar, vocabulary, error correction, and reading comprehension.",
+        "Reading tasks often require both detail scanning and broader inference about purpose or attitude.",
+        "Sentence transformation and paraphrase items test structure control rather than simple word memorisation."
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "Time Management",
+      "bullets": [
+        "Quick recognition items should take less time so more minutes remain for long reading passages.",
+        "If one question blocks you for too long, mark it and move on before returning later.",
+        "Reserve the final minutes to check the answer sheet, question numbers, and skipped items."
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "Tense Control",
+      "bullets": [
+        "Use time signals such as since, for, by the time, and recently to narrow the tense choice.",
+        "When two time points appear, decide which action happened first before selecting the verb form.",
+        "Contrast similar forms carefully, especially the past simple, present perfect, and past perfect."
+      ]
+    },
+    {
+      "id": "s5",
+      "title": "Conditionals",
+      "bullets": [
+        "Type 1 describes real future possibility, while Type 2 describes an unreal present or future situation.",
+        "Type 3 focuses on unreal past results and usually includes had + V3 and would have + V3.",
+        "Mixed conditionals connect a past cause with a present result and require careful time logic."
+      ]
+    },
+    {
+      "id": "s6",
+      "title": "Passive Voice",
+      "bullets": [
+        "A passive sentence needs the correct be form plus a past participle to match the original tense.",
+        "Modal passives follow the pattern modal + be + V3, while perfect passives use have been + V3.",
+        "Check whether the doer matters before keeping or removing the by-agent."
+      ]
+    },
+    {
+      "id": "s7",
+      "title": "Relative Clauses",
+      "bullets": [
+        "Who and whom refer to people, which refers to things, and whose shows possession.",
+        "Where and when replace place and time phrases more naturally than repeating prepositions.",
+        "Reduced relative clauses use V-ing, V3, or to V depending on meaning and structure."
+      ]
+    },
+    {
+      "id": "s8",
+      "title": "Vocabulary Strategy",
+      "bullets": [
+        "Learn words in collocations because natural combinations often decide the correct answer.",
+        "Group vocabulary by theme such as education, environment, technology, and public health.",
+        "When solving synonym or antonym items, anchor the meaning to the sentence context first."
+      ]
+    },
+    {
+      "id": "s9",
+      "title": "Reading Skills",
+      "bullets": [
+        "Skim headings, topic sentences, and conclusion lines before answering detailed questions.",
+        "Scan for paraphrases instead of exact word matches because the passage often restates ideas.",
+        "For inference questions, choose the option that is supported indirectly rather than dramatically overstated."
+      ]
+    },
+    {
+      "id": "s10",
+      "title": "Final Review",
+      "bullets": [
+        "Review your personal mistake log instead of trying to learn too many brand-new rules at the end.",
+        "Practice under real timing and classify mistakes by grammar, vocabulary, reading, or strategy.",
+        "Steady preparation, calm checking, and clear time control usually produce the best results."
+      ]
+    }
   ]
 }

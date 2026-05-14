@@ -33,7 +33,7 @@ function isSourceSelectionAction(rawValue) {
  *   onFlowCardSubmit?: (cardType: string, payload: Record<string, string>, cardRoot: HTMLElement) => void,
  *   onResumeExperience?: (item: { kind: string, meta: Record<string, string> }) => void,
  *   onResumeOpenAll?: (items: { kind: string, meta: Record<string, string>, title?: string }[], bundleTitle: string) => void,
- *   onResumeOpenFullSetMixed?: (spec: Record<string, string>, bundleTitle: string) => void,
+ *   onResumeOpenFullSetMixed?: (spec: Record<string, string>, bundleTitle: string, targetKind?: "slide"|"quiz"|"flash") => void,
  * }} opts
  */
 export function createMessageView(opts) {

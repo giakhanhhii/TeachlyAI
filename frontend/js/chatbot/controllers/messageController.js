@@ -17,6 +17,10 @@ import { resumeDockGroupKey, resumeDockSignature } from "../utils/serialization.
 export function createMessageController(deps) {
   const { getCurrentSession, saveSessions, getMessageView, postChat, apiUrl, sendBtn, inputEl, onConversationMutation, rerenderMessages } = deps;
 
+  function shouldRerenderFromEmptyConversation(messages) {
+    return !Array.isArray(messages) || messages.length === 0;
+  }
+
   /**
    * @param {boolean} next
    */
@@ -38,9 +42,12 @@ export function createMessageController(deps) {
    */
   function pushUser(text) {
     const current = getCurrentSession();
-    getMessageView().addMessage("user", text);
+    const shouldRerender = shouldRerenderFromEmptyConversation(current.messages);
+    if (!Array.isArray(current.messages)) current.messages = [];
     current.messages.push({ role: "user", text });
     saveSessions();
+    if (shouldRerender) rerenderMessages?.();
+    else getMessageView().addMessage("user", text);
     onConversationMutation?.("replace");
   }
 
@@ -50,6 +57,7 @@ export function createMessageController(deps) {
    */
   function pushBot(text, opts) {
     const current = getCurrentSession();
+    const shouldRerenderFromEmpty = shouldRerenderFromEmptyConversation(current.messages);
     /** @type {{ label: string, value: string }[]} */
     let actions = [];
     /** @type {string | undefined} */
@@ -100,11 +108,7 @@ export function createMessageController(deps) {
         nextMessages.push(message);
       });
       current.messages = nextMessages;
-      if (removedDuplicateResume) {
-        rerenderMessages?.();
-      }
     }
-    getMessageView().addMessage("bot", text, { actions, cardType, resumeDock, cardProps });
     const entry = { role: "bot", text };
     if (actions.length) entry.actions = actions;
     if (cardType) entry.cardType = cardType;
@@ -114,6 +118,11 @@ export function createMessageController(deps) {
     const prevStoredMessages = Array.isArray(current.messages) ? current.messages : [];
     current.messages = [...prevStoredMessages, entry];
     saveSessions();
+    if (removedDuplicateResume || shouldRerenderFromEmpty) {
+      rerenderMessages?.();
+    } else {
+      getMessageView().addMessage("bot", text, { actions, cardType, resumeDock, cardProps });
+    }
     onConversationMutation?.("replace");
   }
 
@@ -131,12 +140,14 @@ export function createMessageController(deps) {
     try {
       const current = getCurrentSession();
       const msgView = getMessageView();
-      msgView.addMessage("user", prompt);
+      const shouldRerender = shouldRerenderFromEmptyConversation(current.messages);
       if (!Array.isArray(current.messages)) current.messages = [];
       current.messages.push({ role: "user", text: prompt });
       current.messagesLoaded = true;
       current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
       saveSessions();
+      if (shouldRerender) rerenderMessages?.();
+      else msgView.addMessage("user", prompt);
       onConversationMutation?.("replace");
       inputEl.value = "";
       const thinking = msgView.addThinkingBubble();

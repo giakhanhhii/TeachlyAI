@@ -3,15 +3,18 @@ import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileC
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
-import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav } from "../slide/slideShellSrcdoc.js";
+import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav, setSlideVisualEditMode } from "../slide/slideShellSrcdoc.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
+import { finalizePendingQuizAnswer, findNextStepIndexByKind } from "../services/quizSubmitFlow.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
+import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
 
 function cloneMixedStep(step) {
   if (!step || typeof step !== "object") return null;
@@ -90,7 +93,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const quizMeta = { topic, count: spec.quiz, notes: "Full set (demo mock)" };
   const flashMeta = { source: topic, count: spec.flash, extra: "Full set (demo mock)" };
   const restoredSteps = cloneMixedSteps(initial?.stepsSnapshot);
-  let titleText = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : bundle.title || "Full set — ôn tập trộn";
+  let titleText = buildExperienceTitle(
+    "fullset",
+    spec.topic,
+    typeof initial?.title === "string" ? initial.title : "",
+    bundle.title,
+  );
   /** @type {{ kind: "slide_deck"|"quiz"|"flash", data: any }[]} */
   let steps = restoredSteps;
   let slides = [];
@@ -100,7 +108,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
   const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
-  let _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
+  const _forceAi = spec.__forceAi === "1";
+  const _forceMock = spec.__forceMock === "1";
+  let _devSrc = (!steps.length && !_forceMock && (_forceAi || isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {
@@ -129,7 +139,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       _devSrc = "ai";
     } else if (_devSrc === "ai") {
       const _bgKey = spec.__experienceId ? `gen_${spec.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic).catch(async () => {
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic, spec).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
       }));
@@ -142,7 +152,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       } else if (_bgEntryFs) {
         aiBundle = await _bgEntryFs.promise;
       } else {
-        aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
+        aiBundle = await fetchAiFullsetContent(_aiTopic, spec).catch(async () => {
           const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
           return { slide: s, quiz: q, flashcard: f };
         });
@@ -163,7 +173,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);
     const quizData = prepareQuizSessionData(rawQuiz, quizMeta);
     const flashData = prepareFlashSessionData(rawFlash, flashMeta);
-    titleText = quizData.title || slideData.title || bundle.title || "Full set — ôn tập trộn";
+    titleText = buildExperienceTitle("fullset", spec.topic, quizData.title, slideData.title, bundle.title);
     slides = Array.isArray(slideData.slides) ? slideData.slides : [];
     questions = Array.isArray(quizData.questions) ? quizData.questions : [];
     cards = Array.isArray(flashData.cards) ? flashData.cards : [];
@@ -254,8 +264,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const submitBtn = createPrimaryNavButton({ label: "Nộp bài", disabled: false });
+  submitBtn.classList.add("exp-submit-btn");
+  submitBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
   footer.appendChild(backBtn);
+  footer.appendChild(submitBtn);
   footer.appendChild(nextBtn);
   function refreshScore() {
     const score = recomputeMixedQuizScore(quizCountedByStep, quizCorrectByStep);
@@ -364,6 +378,29 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     footer.hidden = false;
     renderStep();
   }
+  function submitMixedQuizNow() {
+    const step = steps[index];
+    if (reviewMode || step?.kind !== "quiz") return;
+    const finalized = finalizePendingQuizAnswer(quizSelected, quizCorrectOptionIndex(step.data), quizCountedByStep[index]);
+    if (finalized) {
+      quizSelected = finalized.picked;
+      quizSelectedByStep[index] = finalized.picked;
+      quizRevealed = true;
+      quizRevealedByStep[index] = true;
+      quizCountedByStep[index] = true;
+      quizCorrectByStep[index] = finalized.isCorrect;
+    }
+    refreshScore();
+    const flashIndex = findNextStepIndexByKind(steps, index, "flash");
+    if (flashIndex >= 0) {
+      index = flashIndex;
+      renderStep();
+      return;
+    }
+    reviewMode = true;
+    reviewFilter = "all";
+    renderReview();
+  }
   function renderReview() {
     slideUiAbort?.abort();
     slideUiAbort = null;
@@ -447,6 +484,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       repaintCurrentProgress();
       return;
     }
+    submitBtn.hidden = step.kind !== "quiz";
+    submitBtn.disabled = false;
     stage.appendChild(createStepBadge(step.kind));
     if (step.kind === "slide_deck") {
       shell.classList.add("exp-shell-slide");
@@ -509,6 +548,24 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         fsBtn.innerHTML =
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m10-18h3a2 2 0 0 1 2 2v3M3 8V5a2 2 0 0 1 2-2h3"/></svg>';
 
+        let visualEditOn = false;
+        const visualEditBtn = document.createElement("button");
+        visualEditBtn.type = "button";
+        visualEditBtn.className = "exp-slide-visual-edit-btn";
+        visualEditBtn.disabled = true;
+        visualEditBtn.hidden = true;
+        visualEditBtn.title = "Chỉnh sửa trên slide (kéo, màu, font, ảnh)";
+        visualEditBtn.setAttribute("aria-label", "Chế độ chỉnh sửa slide");
+        visualEditBtn.setAttribute("aria-pressed", "false");
+        visualEditBtn.innerHTML = `<svg class="exp-slide-visual-edit-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg><span>Sửa</span>`;
+        visualEditBtn.addEventListener("click", () => {
+          if (!shellReady) return;
+          visualEditOn = !visualEditOn;
+          visualEditBtn.classList.toggle("is-active", visualEditOn);
+          visualEditBtn.setAttribute("aria-pressed", visualEditOn ? "true" : "false");
+          setSlideVisualEditMode(iframe, visualEditOn);
+        }, { signal: uiSignal });
+
         const prevArrow = document.createElement("button");
         prevArrow.type = "button";
         prevArrow.className = "exp-slide-arrow exp-slide-arrow--prev";
@@ -533,7 +590,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         iframeFrame.className = "exp-slide-shell-frame";
 
         iframeFrame.appendChild(iframe);
-        viewport.append(iframeFrame, prevArrow, nextArrow, fsBtn);
+        viewport.append(iframeFrame, visualEditBtn, prevArrow, nextArrow, fsBtn);
         host.append(loading, deckHint, modeBar, viewport);
         stage.appendChild(host);
 
@@ -621,6 +678,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           prevArrow.hidden = !pres || !shellReady;
           nextArrow.hidden = !pres || !shellReady;
           fsBtn.hidden = !pres || !shellReady;
+          visualEditBtn.hidden = !pres || !shellReady;
           modeBar.hidden = !shellReady;
           paintDeckHint();
         }
@@ -718,6 +776,17 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
             iframe.style.aspectRatio = "auto";
             iframe.style.display = "";
             shellReady = true;
+            visualEditBtn.disabled = false;
+            window.addEventListener("message", (e) => {
+              if (!e.data || e.data.type !== "a20-slide-edit" || e.data.action !== "open-image-picker") return;
+              if (e.source !== iframe.contentWindow) return;
+              const mountEl = isFauxFs() ? viewport : document.body;
+              openSlideImagePicker((url) => {
+                try {
+                  iframe.contentWindow?.postMessage({ type: "a20-slide-edit", action: "set-image-url", url }, "*");
+                } catch (_) {}
+              }, mountEl);
+            }, { signal: uiSignal });
             const captureDeckScroll = () => {
               if (!shellReady || viewMode !== "presentation") return;
               readDeckScrollState();
@@ -917,6 +986,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     }
     index += 1;
     renderStep();
+  });
+  submitBtn.addEventListener("click", () => {
+    submitMixedQuizNow();
   });
   backBtn.addEventListener("click", () => {
     if (reviewMode) {
