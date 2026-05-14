@@ -25,11 +25,13 @@ import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 import { setPendingPdfFile } from "../../pdfPrefillStore.js";
+import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
-  root.appendChild(el("div", "flow-card-title", "Form Full Set"));
+  const titleEl = el("div", "flow-card-title", buildFormTitle("fullset"));
+  root.appendChild(titleEl);
   const autofillIntent = createAutofillIntentTracker();
 
   const topic = flowTextarea("VD: Ôn tập đọc hiểu — chủ đề môi trường", 2);
@@ -99,6 +101,7 @@ export function createFullsetTopicCard(deps) {
   if (typeof prefill.quiz === "string" || Number.isFinite(Number(prefill.quiz))) quiz.value = String(prefill.quiz);
   if (typeof prefill.flash === "string" || Number.isFinite(Number(prefill.flash))) flash.value = String(prefill.flash);
   if (typeof prefill.extra === "string") extra.value = prefill.extra;
+  titleEl.textContent = buildFormTitle("fullset", topic.value);
 
   function currentAutofillComparableState() {
     return {

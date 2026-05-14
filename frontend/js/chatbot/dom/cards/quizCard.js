@@ -16,12 +16,17 @@ import {
 } from "./flowCardShared.js";
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
+import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 export function createQuizFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
-  root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
+  const titleEl = el("div", "flow-card-title", buildFormTitle("quiz"));
+  root.appendChild(titleEl);
   const autofillIntent = createAutofillIntentTracker();
+  const refreshTitle = () => {
+    titleEl.textContent = buildFormTitle("quiz", srcText.value);
+  };
 
   const srcText = flowTextarea("Nhập chủ đề / chuyên đề…", 2);
   const src = el("div", "flow-field");
@@ -63,6 +68,8 @@ export function createQuizFormCard(deps) {
     levelMobileSelect.sync();
   }
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
+  refreshTitle();
+  srcText.addEventListener("input", refreshTitle);
 
   function currentAutofillComparableState() {
     return {
@@ -84,6 +91,7 @@ export function createQuizFormCard(deps) {
       level.value = normalizeFullsetLevelAutofill(sample.d);
       levelMobileSelect.sync();
       notes.value = String(sample.n ?? "");
+      refreshTitle();
       autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
@@ -99,6 +107,7 @@ export function createQuizFormCard(deps) {
           levelMobileSelect.sync();
         }
         notes.value = String(ai.notes ?? "");
+        refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
@@ -110,6 +119,7 @@ export function createQuizFormCard(deps) {
         level.value = normalizeFullsetLevelAutofill(fb.d);
         levelMobileSelect.sync();
         notes.value = String(fb.n ?? "");
+        refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }

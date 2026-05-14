@@ -13,6 +13,7 @@ import {
   wrapField,
 } from "./flowCardShared.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
+import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 function randomFlashAutofillCount() {
@@ -22,7 +23,8 @@ function randomFlashAutofillCount() {
 
 export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
-  root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
+  const titleEl = el("div", "flow-card-title", buildFormTitle("flash"));
+  root.appendChild(titleEl);
   const autofillIntent = createAutofillIntentTracker();
 
   const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);
@@ -47,6 +49,7 @@ export function createFlashcardFormCard(deps) {
   if (typeof prefill.back === "string") back.value = prefill.back;
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
+  titleEl.textContent = buildFormTitle("flash", list.value, prefill.source);
 
   function currentAutofillComparableState() {
     return {
