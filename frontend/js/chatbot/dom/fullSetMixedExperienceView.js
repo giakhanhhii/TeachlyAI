@@ -101,7 +101,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
   const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
-  let _devSrc = (!steps.length && isAiModeActive("fullset")) ? "ai" : "mock"; /* DEV-ONLY */
+  const _forceAi = spec.__forceAi === "1";
+  const _forceMock = spec.__forceMock === "1";
+  let _devSrc = (!steps.length && !_forceMock && (_forceAi || isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {
@@ -130,7 +132,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       _devSrc = "ai";
     } else if (_devSrc === "ai") {
       const _bgKey = spec.__experienceId ? `gen_${spec.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic).catch(async () => {
+      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic, spec).catch(async () => {
         const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
         return { slide: s, quiz: q, flashcard: f };
       }));
@@ -143,7 +145,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       } else if (_bgEntryFs) {
         aiBundle = await _bgEntryFs.promise;
       } else {
-        aiBundle = await fetchAiFullsetContent(_aiTopic).catch(async () => {
+        aiBundle = await fetchAiFullsetContent(_aiTopic, spec).catch(async () => {
           const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
           return { slide: s, quiz: q, flashcard: f };
         });

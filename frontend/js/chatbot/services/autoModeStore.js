@@ -78,6 +78,7 @@ function getState() {
     usedTopics: Array.isArray(s?.usedTopics) ? s.usedTopics.filter((t) => typeof t === "string") : [],
     neverAskChoice: s?.neverAskChoice === "custom" || s?.neverAskChoice === "auto" ? s.neverAskChoice : null,
     neverAskCount: Boolean(s?.neverAskCount),
+    seenCustomHint: Boolean(s?.seenCustomHint),
   };
 }
 
@@ -147,6 +148,18 @@ export function getNeverAskCount() {
  */
 export function setNeverAskCount(value) {
   saveState({ ...getState(), neverAskCount: Boolean(value) });
+}
+
+/**
+ * Returns true only the first time the user switches into Custom mode.
+ * Subsequent calls return false.
+ * @returns {boolean}
+ */
+export function consumeCustomHintFlag() {
+  const state = getState();
+  if (state.seenCustomHint) return false;
+  saveState({ ...state, seenCustomHint: true });
+  return true;
 }
 
 /**

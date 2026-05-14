@@ -128,6 +128,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   const restoredCards = normalizeFlashCards(initial?.cardsSnapshot);
   let flashRaw;
   let _devSrc = "mock"; /* DEV-ONLY */
+  const _forceAi = meta?.__forceAi === "1";
+  const _forceMock = meta?.__forceMock === "1";
   if (restoredCards.length === 0) {
     if (hasDirectFlashCardsFromMeta(meta)) {
       flashRaw = {};
@@ -182,15 +184,17 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         incrementPlayCount("flash");
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
       } else {
-        _devSrc = (!meta?.presetId && meta?.__forceMock !== "1" && (isAiModeActive("flash") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+        _devSrc = _forceMock
+          ? "mock"
+          : ((_forceAi || (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic))) ? "ai" : "mock"); /* DEV-ONLY */
         const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
-        if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard")));
+        if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic, meta).catch(() => fetchMockResource("flashcard")));
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
         const _loadEl = (_devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
         const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
         flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
             : _bgEntry ? await _bgEntry.promise
-            : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic).catch(() => fetchMockResource("flashcard"))
+            : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic, meta).catch(() => fetchMockResource("flashcard"))
             : await fetchMockResource("flashcard");
         _stopCountdown?.();
         if (experienceBody._genStamp !== _genStamp) return;

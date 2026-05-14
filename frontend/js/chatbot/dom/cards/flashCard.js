@@ -13,6 +13,7 @@ import {
   wrapField,
 } from "./flowCardShared.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
+import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 function randomFlashAutofillCount() {
   if (Math.random() < 0.6) return 20;
@@ -22,6 +23,7 @@ function randomFlashAutofillCount() {
 export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Flashcard từ vựng"));
+  const autofillIntent = createAutofillIntentTracker();
 
   const list = flowTextarea("Dán danh sách từ hoặc mô tả chủ đề… (có thể bỏ trống)", 4);
   root.appendChild(wrapField("Danh sách từ / Chủ đề", list, "Có thể bỏ qua — Teachly sẽ gợi ý theo ghi chú của bạn."));
@@ -46,6 +48,15 @@ export function createFlashcardFormCard(deps) {
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
+  function currentAutofillComparableState() {
+    return {
+      list: list.value,
+      back: back.value,
+      count: count.value,
+      notes: notes.value,
+    };
+  }
+
   addAutofillBtn(root, async () => {
     const sample = consumeNextMock("flash");
     if (sample) {
@@ -54,6 +65,7 @@ export function createFlashcardFormCard(deps) {
       back.value = String(sample.b ?? "");
       count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
       notes.value = String(sample.n ?? "");
+      autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
       try {
@@ -64,6 +76,7 @@ export function createFlashcardFormCard(deps) {
         back.value = String(ai.back ?? "Nghĩa tiếng Việt, Phiên âm, Ví dụ");
         count.value = String(clamp(toPositiveInt(ai.count, 20), 1, 40));
         notes.value = String(ai.notes ?? "");
+        autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
         const fb = getAnyMock("flash");
@@ -72,6 +85,7 @@ export function createFlashcardFormCard(deps) {
         back.value = String(fb.b ?? "");
         count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
         notes.value = String(fb.n ?? "");
+        autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }
     }
@@ -143,27 +157,27 @@ export function createFlashcardFormCard(deps) {
       showPartialFillConfirm(root, err, () => {
         submit.disabled = true;
         skip.disabled = true;
-        deps.onSubmit({
+        deps.onSubmit(autofillIntent.applyToPayload({
           list: "",
           back: "",
           count: useCount,
           aiImage: "Không",
           notes: "",
           presetId,
-        });
+        }, currentAutofillComparableState()));
       });
       return;
     }
     submit.disabled = true;
     skip.disabled = true;
-    deps.onSubmit({
+    deps.onSubmit(autofillIntent.applyToPayload({
       list: lst,
       back: bk,
       count: useCount,
       aiImage: "Không",
       notes: nt,
       presetId,
-    });
+    }, currentAutofillComparableState()));
   });
 
   return root;

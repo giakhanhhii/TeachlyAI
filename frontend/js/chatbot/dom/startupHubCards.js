@@ -191,6 +191,26 @@ export function createStartupHubElement(onPick) {
   // Inject auto mode toggle above the instruction text
   const headlineArea = wrap.querySelector(".headline-area");
   if (headlineArea) {
+    let hintTimer = 0;
+    let hintEl = null;
+    function showCustomModeHint() {
+      if (hintTimer) {
+        clearTimeout(hintTimer);
+        hintTimer = 0;
+      }
+      hintEl?.remove();
+      hintEl = document.createElement("p");
+      hintEl.className = "auto-mode-custom-hint";
+      hintEl.textContent = "Custom mode giúp bạn kiểm soát kỹ hơn. Nếu muốn nhanh hơn, hãy thử Để Teachly tạo.";
+      headlineArea.insertBefore(hintEl, toggle.nextSibling);
+      requestAnimationFrame(() => hintEl?.classList.add("is-visible"));
+      hintTimer = window.setTimeout(() => {
+        hintEl?.classList.remove("is-visible");
+        window.setTimeout(() => hintEl?.remove(), 260);
+        hintTimer = 0;
+      }, 3200);
+    }
+
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "auto-mode-toggle";
@@ -199,10 +219,14 @@ export function createStartupHubElement(onPick) {
     toggle.title = "Bật/tắt chế độ Teachly tự tạo";
     toggle.innerHTML = `<span class="toggle-track"><span class="toggle-thumb"></span></span><span class="toggle-label">${isOn ? "Tạo Auto" : "Tạo Custom"}</span>`;
     toggle.addEventListener("click", () => {
+      const wasOn = toggle.getAttribute("aria-pressed") === "true";
       const next = autoModeStore.toggle();
       toggle.setAttribute("aria-pressed", next ? "true" : "false");
       const lbl = toggle.querySelector(".toggle-label");
       if (lbl) lbl.textContent = next ? "Tạo Auto" : "Tạo Custom";
+      if (wasOn && !next && autoModeStore.consumeCustomHintFlag()) {
+        showCustomModeHint();
+      }
     });
     headlineArea.insertBefore(toggle, headlineArea.firstChild);
   }

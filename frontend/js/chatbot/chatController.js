@@ -46,7 +46,7 @@ import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
-import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
+import { showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
 import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
@@ -787,17 +787,7 @@ export function init() {
       void onCustom();
       return;
     }
-
-    showAutoModeChoicePopup(expKind, {
-      onCustom: () => {
-        void onCustom();
-      },
-      onAuto: () => {
-        autoModeStore.enable();
-        syncToggleUI(true);
-        openCountSelector();
-      },
-    });
+    void onCustom();
   }
 
   guidedController = createGuidedInteractionController({

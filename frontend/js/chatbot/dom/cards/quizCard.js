@@ -16,10 +16,12 @@ import {
 } from "./flowCardShared.js";
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
+import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 export function createQuizFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
   root.appendChild(el("div", "flow-card-title", "Form Quiz (THPTQG)"));
+  const autofillIntent = createAutofillIntentTracker();
 
   const srcText = flowTextarea("Nhập chủ đề / chuyên đề…", 2);
   const src = el("div", "flow-field");
@@ -62,6 +64,16 @@ export function createQuizFormCard(deps) {
   }
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
 
+  function currentAutofillComparableState() {
+    return {
+      source: srcText.value,
+      kind: kind.value,
+      count: qn.value,
+      difficulty: level.value,
+      notes: notes.value,
+    };
+  }
+
   addAutofillBtn(root, async () => {
     const sample = consumeNextMock("quiz");
     if (sample) {
@@ -72,6 +84,7 @@ export function createQuizFormCard(deps) {
       level.value = normalizeFullsetLevelAutofill(sample.d);
       levelMobileSelect.sync();
       notes.value = String(sample.n ?? "");
+      autofillIntent.remember(currentAutofillComparableState());
       return "mock";
     } else {
       try {
@@ -86,6 +99,7 @@ export function createQuizFormCard(deps) {
           levelMobileSelect.sync();
         }
         notes.value = String(ai.notes ?? "");
+        autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
         const fb = getAnyMock("quiz");
@@ -96,6 +110,7 @@ export function createQuizFormCard(deps) {
         level.value = normalizeFullsetLevelAutofill(fb.d);
         levelMobileSelect.sync();
         notes.value = String(fb.n ?? "");
+        autofillIntent.remember(currentAutofillComparableState());
         return "mock";
       }
     }
@@ -172,27 +187,27 @@ export function createQuizFormCard(deps) {
     if (t && k && lv && countRaw) {
       submit.disabled = true;
       skip.disabled = true;
-      deps.onSubmit({
+      deps.onSubmit(autofillIntent.applyToPayload({
         source: t,
         kind: k,
         count: useCount,
         difficulty: lv,
         notes: notesValue,
         presetId,
-      });
+      }, currentAutofillComparableState()));
       return;
     }
     showPartialFillConfirm(root, err, () => {
       submit.disabled = true;
       skip.disabled = true;
-      deps.onSubmit({
+      deps.onSubmit(autofillIntent.applyToPayload({
         source: t || "(Teachly tự động)",
         kind: k || "Ôn tập THPTQG",
         count: useCount,
         difficulty: lv || DEFAULT_DIFFICULTY,
         notes: notesValue,
         presetId,
-      });
+      }, currentAutofillComparableState()));
     });
   });
 

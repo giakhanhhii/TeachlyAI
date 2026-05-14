@@ -63,13 +63,13 @@ TOPIC_POOL: list[str] = [
 ]
 
 _SLIDE_SYSTEM = """You are an English learning content creator for Vietnamese students.
-Generate a JSON slide deck about the given English topic.
+Generate a JSON slide deck about the given English topic and follow the requested form constraints.
 
 Rules:
-- Exactly 10 slides
+- Use exactly the requested number of slides. If no count is requested, use 10 slides.
 - FIRST slide (cover): "title" = ONE short headline (max 10 words, max ~72 characters) that names the topic clearly — do NOT paste the full raw topic string, do NOT stack keywords with slashes, do NOT use ALL CAPS blocks. This title must fit a 16:9 slide header without clipping.
 - FIRST slide: exactly 2 or 3 bullets only; each bullet max 14 words; concise English only; do NOT repeat the full topic phrase in every bullet.
-- Slides 2–10: "title" max 8 words; 3 bullets each; each bullet max 18 words (one clear sentence each).
+- Slides 2+: "title" max 8 words; 3 bullets each; each bullet max 18 words (one clear sentence each).
 - No filler like repeating the same long topic label in every bullet.
 - Deck "title" field: short deck name (max 12 words).
 - Content must be genuinely educational about the topic.
@@ -80,10 +80,10 @@ Schema:
 {"title":"<deck title>","slides":[{"id":"s1","title":"<short cover headline>","bullets":["<bullet>","<bullet>"]},...]}"""
 
 _QUIZ_SYSTEM = """You are an English learning quiz creator for Vietnamese students.
-Generate a JSON quiz about the given English topic.
+Generate a JSON quiz about the given English topic and follow the requested form constraints.
 
 Rules:
-- Exactly 10 questions
+- Use exactly the requested number of questions. If no count is requested, use 10 questions.
 - Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes in options array
 - Questions test practical knowledge of the topic
@@ -94,10 +94,10 @@ Schema:
 {"title":"<quiz title>","questions":[{"id":"q1","text":"<question>","options":["<A>","<B>","<C>","<D>"],"correctIndex":0,"hint":"<hint>"},...]}"""
 
 _FLASH_SYSTEM = """You are an English flashcard creator for Vietnamese students.
-Generate a JSON flashcard set about the given English topic.
+Generate a JSON flashcard set about the given English topic and follow the requested form constraints.
 
 Rules:
-- Exactly 20 cards
+- Use exactly the requested number of cards. If no count is requested, use 20 cards.
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription
@@ -127,6 +127,30 @@ def _call_openai(system: str, user: str, max_tokens: int) -> str:
 def _sanitize_topic(topic: str) -> str:
     """Collapse whitespace/control chars and cap length to block prompt injection."""
     return " ".join(topic.split())[:200]
+
+
+def _sanitize_note(value: Any, *, max_len: int = 300) -> str:
+    return " ".join(str(value or "").split())[:max_len]
+
+
+def _sanitize_multiline(value: Any, *, max_len: int = 500) -> str:
+    lines = [line.strip() for line in str(value or "").replace("\r", "\n").split("\n")]
+    cleaned = [line for line in lines if line]
+    return "\n".join(cleaned)[:max_len]
+
+
+def _coerce_int(value: Any, default: int, minimum: int, maximum: int) -> int:
+    try:
+        num = int(value)
+    except (TypeError, ValueError):
+        return default
+    return max(minimum, min(maximum, num))
+
+
+def _append_form_line(lines: list[str], label: str, value: str) -> None:
+    text = _sanitize_note(value)
+    if text:
+        lines.append(f"{label}: {text}")
 
 
 def _clamp_line(text: str, max_chars: int) -> str:
@@ -193,11 +217,24 @@ def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
         raise ValueError(f"Model returned invalid JSON for {kind}") from exc
 
 
-def generate_slide_content(topic: str) -> dict[str, Any]:
+def generate_slide_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate a 10-slide deck about topic. Returns mock-compatible JSON."""
+    form = form or {}
     topic = _sanitize_topic(topic)
-    user_msg = f"Topic: {topic}\nGenerate the slide deck JSON now."
-    raw = _call_openai(_SLIDE_SYSTEM, user_msg, max_tokens=1800)
+    count = _coerce_int(form.get("count"), 10, 5, 30)
+    structure = _sanitize_multiline(form.get("structure"))
+    style = _sanitize_note(form.get("style") or form.get("slideTemplate"))
+    notes = _sanitize_multiline(form.get("notes"))
+    user_lines = [
+        f"Topic: {topic}",
+        f"Slide count: {count}",
+    ]
+    _append_form_line(user_lines, "Preferred structure", structure)
+    _append_form_line(user_lines, "Visual template name", style)
+    _append_form_line(user_lines, "Extra notes", notes)
+    user_lines.append("Generate the slide deck JSON now.")
+    user_msg = "\n".join(user_lines)
+    raw = _call_openai(_SLIDE_SYSTEM, user_msg, max_tokens=min(4096, max(1800, 240 + count * 140)))
     data = _parse_json_response(raw, "slide")
     # Validate basic shape
     if not isinstance(data.get("slides"), list):
@@ -209,6 +246,8 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
         # Clamp bullets to 4 per slide
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
+    if len(data["slides"]) > count:
+        data["slides"] = data["slides"][:count]
     _normalize_ai_slide_deck(data, topic)
     # Cover slide: short headline (full topic in deck title / meta — avoids header clip)
     if data["slides"] and isinstance(data["slides"][0], dict):
@@ -223,14 +262,29 @@ def generate_slide_content(topic: str) -> dict[str, Any]:
     return data
 
 
-def generate_quiz_content(topic: str) -> dict[str, Any]:
+def generate_quiz_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate a 10-question quiz about topic. Returns mock-compatible JSON."""
+    form = form or {}
     topic = _sanitize_topic(topic)
-    user_msg = f"Topic: {topic}\nGenerate the quiz JSON now."
-    raw = _call_openai(_QUIZ_SYSTEM, user_msg, max_tokens=2400)
+    count = _coerce_int(form.get("count"), 10, 1, 40)
+    kind = _sanitize_note(form.get("kind"))
+    difficulty = _sanitize_note(form.get("difficulty") or form.get("level"))
+    notes = _sanitize_multiline(form.get("notes") or form.get("extra"))
+    user_lines = [
+        f"Topic: {topic}",
+        f"Question count: {count}",
+    ]
+    _append_form_line(user_lines, "Quiz focus", kind)
+    _append_form_line(user_lines, "Difficulty", difficulty)
+    _append_form_line(user_lines, "Extra notes", notes)
+    user_lines.append("Generate the quiz JSON now.")
+    user_msg = "\n".join(user_lines)
+    raw = _call_openai(_QUIZ_SYSTEM, user_msg, max_tokens=min(4096, max(2400, 300 + count * 150)))
     data = _parse_json_response(raw, "quiz")
     if not isinstance(data.get("questions"), list):
         raise ValueError("AI quiz response missing 'questions' array")
+    if len(data["questions"]) > count:
+        data["questions"] = data["questions"][:count]
     for i, q in enumerate(data["questions"]):
         if not q.get("id"):
             q["id"] = f"ai_q{i + 1}"
@@ -245,21 +299,35 @@ def generate_quiz_content(topic: str) -> dict[str, Any]:
     return data
 
 
-def generate_flash_content(topic: str) -> dict[str, Any]:
+def generate_flash_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate 20 flashcards about topic. Returns mock-compatible JSON."""
+    form = form or {}
     topic = _sanitize_topic(topic)
-    user_msg = f"Topic: {topic}\nGenerate the flashcard JSON now."
-    raw = _call_openai(_FLASH_SYSTEM, user_msg, max_tokens=2800)
+    count = _coerce_int(form.get("count"), 20, 1, 40)
+    basis = _sanitize_multiline(form.get("basis") or form.get("back"))
+    notes = _sanitize_multiline(form.get("notes") or form.get("extra"))
+    user_lines = [
+        f"Topic or vocabulary basis: {topic}",
+        f"Card count: {count}",
+    ]
+    _append_form_line(user_lines, "Back-side information preference", basis)
+    _append_form_line(user_lines, "Extra notes", notes)
+    user_lines.append("If a vocabulary list is implied, stay close to it when choosing card terms.")
+    user_lines.append("Generate the flashcard JSON now.")
+    user_msg = "\n".join(user_lines)
+    raw = _call_openai(_FLASH_SYSTEM, user_msg, max_tokens=min(4096, max(2800, 320 + count * 95)))
     data = _parse_json_response(raw, "flashcard")
     if not isinstance(data.get("cards"), list):
         raise ValueError("AI flashcard response missing 'cards' array")
+    if len(data["cards"]) > count:
+        data["cards"] = data["cards"][:count]
     for i, c in enumerate(data["cards"]):
         if not c.get("id"):
             c["id"] = f"ai_c{i + 1}"
     return data
 
 
-def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
+def generate_fullset_content(topic: str | None = None, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate slide + quiz + flashcard for the SAME topic.
 
     If *topic* is provided (from the form), use it; otherwise pick randomly from TOPIC_POOL.
@@ -267,6 +335,7 @@ def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
     Returns:
         {"slide": {...}, "quiz": {...}, "flashcard": {...}, "topic": str}
     """
+    form = form or {}
     if topic:
         topic = _sanitize_topic(topic)
     if not topic:
@@ -275,14 +344,33 @@ def generate_fullset_content(topic: str | None = None) -> dict[str, Any]:
 
     import concurrent.futures
 
+    shared_level = _sanitize_note(form.get("level"))
+    shared_extra = _sanitize_multiline(form.get("extra"))
+    slide_form = {
+        "count": form.get("slides"),
+        "slideTemplate": form.get("slideTemplate"),
+        "style": form.get("slideTemplate"),
+        "notes": shared_extra,
+    }
+    quiz_form = {
+        "count": form.get("quiz"),
+        "difficulty": shared_level,
+        "notes": shared_extra,
+    }
+    flash_form = {
+        "count": form.get("flash"),
+        "notes": shared_extra,
+        "extra": shared_extra,
+    }
+
     def _gen_slide() -> dict[str, Any]:
-        return generate_slide_content(topic)
+        return generate_slide_content(topic, form=slide_form)
 
     def _gen_quiz() -> dict[str, Any]:
-        return generate_quiz_content(topic)
+        return generate_quiz_content(topic, form=quiz_form)
 
     def _gen_flash() -> dict[str, Any]:
-        return generate_flash_content(topic)
+        return generate_flash_content(topic, form=flash_form)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
         f_slide = pool.submit(_gen_slide)

@@ -48,6 +48,8 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
       ...(payload.source ? { source: payload.source } : {}),
       ...(payload.difficulty ? { difficulty: payload.difficulty } : {}),
       ...(payload.presetId ? { presetId: payload.presetId } : {}),
+      ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+      ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
     };
     return {
       handled: true,

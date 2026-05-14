@@ -18,6 +18,14 @@ export const AI_THRESHOLD = 3;
 
 export const STORAGE_KEY = "teachly_play_counts";
 
+function serializeAiForm(form) {
+  if (!form || typeof form !== "object") return undefined;
+  const canCheckFile = typeof File !== "undefined";
+  return Object.fromEntries(
+    Object.entries(form).filter(([, value]) => !(canCheckFile && value instanceof File)),
+  );
+}
+
 /**
  * @returns {{ slide: number, quiz: number, flash: number, fullset: number }}
  */
@@ -91,11 +99,15 @@ export function isAiModeActive(type) {
  * Fetch AI-generated content for a single content type.
  * @param {"slide"|"quiz"|"flashcard"} type
  * @param {string} [topic] - topic from the form; if provided the AI generates content about it
+ * @param {Record<string, any>} [form] - extra form fields to guide generation
  * @returns {Promise<any>}
  */
-export async function fetchAiContent(type, topic) {
+export async function fetchAiContent(type, topic, form) {
   const url = `${getApiOrigin()}/api/ai-generate`;
-  const payload = topic ? { type, topic } : { type };
+  const payload = { type };
+  if (topic) payload.topic = topic;
+  const serializedForm = serializeAiForm(form);
+  if (serializedForm) payload.form = serializedForm;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -174,11 +186,15 @@ export async function fetchAiFileContent(type, file, opts = {}) {
 /**
  * Fetch AI-generated fullset content (slide + quiz + flashcard, same topic).
  * @param {string} [topic] - topic from the form; if provided all three types share it
+ * @param {Record<string, any>} [form] - extra form fields to guide generation
  * @returns {Promise<{ slide: any, quiz: any, flashcard: any, topic: string }>}
  */
-export async function fetchAiFullsetContent(topic) {
+export async function fetchAiFullsetContent(topic, form) {
   const url = `${getApiOrigin()}/api/ai-generate`;
-  const payload = topic ? { type: "fullset", topic } : { type: "fullset" };
+  const payload = { type: "fullset" };
+  if (topic) payload.topic = topic;
+  const serializedForm = serializeAiForm(form);
+  if (serializedForm) payload.form = serializedForm;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

@@ -71,6 +71,19 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
     if (payload.extra) lines.push(`Yêu cầu thêm: ${payload.extra}`);
 
     const topic = payload.topic || "—";
+    const sharedExtra = String(payload.extra || "");
+    const slideNotes = [
+      payload.slideTemplate ? `Mẫu slide: ${payload.slideTemplate}` : "",
+      sharedExtra ? `Yêu cầu thêm: ${sharedExtra}` : "",
+    ]
+      .filter(Boolean)
+      .join(" | ");
+    const quizNotes = [
+      payload.level ? `Trình độ: ${payload.level}` : "",
+      sharedExtra ? `Ghi chú: ${sharedExtra}` : "",
+    ]
+      .filter(Boolean)
+      .join(" | ");
     const openedAt = new Date().toISOString();
     const experienceId =
       globalThis.crypto && typeof globalThis.crypto.randomUUID === "function"
@@ -88,6 +101,8 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
         flash: String(payload.flash || "0"),
         extra: String(payload.extra || ""),
         __experienceId: experienceId,
+        ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+        ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
       },
       items: [
         {
@@ -96,11 +111,10 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
             topic,
             count: String(payload.slides || "—"),
             slideTemplate: String(payload.slideTemplate || ""),
-            notes:
-              payload.slideTemplate
-                ? `Mẫu slide: ${payload.slideTemplate} | Full set (demo mock)`
-                : "Full set (demo mock)",
+            notes: slideNotes || "—",
             __experienceId: `${experienceId}:slide`,
+            ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+            ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:slide`,
           title: `Slide — ${topic}`,
@@ -110,9 +124,13 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           kind: "quiz",
           meta: {
             topic,
+            source: topic,
             count: String(payload.quiz || "—"),
-            notes: "Full set (demo mock)",
+            notes: quizNotes || "—",
+            difficulty: String(payload.level || ""),
             __experienceId: `${experienceId}:quiz`,
+            ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+            ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:quiz`,
           title: `Trắc nghiệm — ${topic}`,
@@ -123,8 +141,11 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
           meta: {
             source: topic,
             count: String(payload.flash || "—"),
-            extra: "Full set (demo mock)",
+            notes: sharedExtra,
+            extra: sharedExtra || "—",
             __experienceId: `${experienceId}:flash`,
+            ...(payload.__forceAi === "1" ? { __forceAi: "1" } : {}),
+            ...(payload.__forceMock === "1" ? { __forceMock: "1" } : {}),
           },
           experienceId: `${experienceId}:flash`,
           title: `Flashcard — ${topic}`,

@@ -281,6 +281,24 @@
   transform: translateX(16px);
 }
 
+.chat-startup-hub .auto-mode-custom-hint {
+  margin: -2px auto 12px;
+  max-width: 42ch;
+  padding: 0 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(46, 125, 50, 0.76);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  pointer-events: none;
+}
+
+.chat-startup-hub .auto-mode-custom-hint.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ── Auto Mode overlay / dialog (used in chatbot_ui.html) ── */
 .auto-mode-overlay {
   position: fixed;
@@ -440,6 +458,11 @@
 }
 
 @media (max-width: 520px) {
+  .chat-startup-hub .auto-mode-custom-hint {
+    font-size: 12px;
+    max-width: 30ch;
+  }
+
   .chat-startup-hub .startup-hub-instruction {
     font-size: 20px;
   }
