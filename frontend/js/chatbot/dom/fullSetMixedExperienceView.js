@@ -932,6 +932,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
               shellYear: String(new Date().getFullYear()),
               slideNavMode: "active",
             });
+            lastRenderedSlideSrcdoc = srcdoc;
             if (myGen !== renderStepGen) return;
             const loadPromise = new Promise((resolve) => {
               iframe.addEventListener("load", resolve, { once: true });
