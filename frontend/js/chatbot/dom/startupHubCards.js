@@ -106,6 +106,7 @@ export function createStartupHubElement(onPick) {
         <div class="card-body">
           <div class="card-title">Tạo slide</div>
           <div class="card-desc">Tạo slide theo nội dung của bạn</div>
+          <div class="badge badge-new badge-spacer" aria-hidden="true">MỚI</div>
         </div>
       </button>
       <button type="button" class="card" data-flow="quiz" aria-label="Tạo quiz">
