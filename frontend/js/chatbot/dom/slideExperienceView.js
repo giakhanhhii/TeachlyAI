@@ -4,6 +4,7 @@ import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
@@ -172,7 +173,13 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     }
   }
   const data = prepareSlideSessionData(raw, effectiveMeta);
-  const deckTitle = typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : data.title || "Bộ slide";
+  const deckTitle = buildExperienceTitle(
+    "slide",
+    effectiveMeta?.topic,
+    initial?.meta?.topic,
+    typeof initial?.title === "string" ? initial.title : "",
+    data.title,
+  );
   let slides = initialSlides ? initialSlides.slice() : Array.isArray(data.slides) ? data.slides : [];
   if (!isRestore) beginDwell(effectiveMeta?.topic || effectiveMeta?.source || deckTitle, "slide");
   const sessionMeta =

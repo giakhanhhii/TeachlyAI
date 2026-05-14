@@ -4,6 +4,7 @@ import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareFlashSessionData, hasDirectFlashCardsFromMeta } from "../services/sessionContentPrep.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { fitFlashCardText } from "../services/flashCardTextFit.js";
@@ -98,16 +99,6 @@ function buildCardKeys(cards) {
     counts.set(fingerprint, nextCount);
     return `${fingerprint}#${nextCount}`;
   });
-}
-
-/** Tiêu đề thanh trên flashcard: ưu tiên chủ đề từ meta thay vì title bundle mock. */
-function buildFlashTopTitle(bundleTitle, metaRec) {
-  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (t && t !== "(Teachly tự động)" && t !== "—") return `Flashcard từ vựng chủ đề ${t}`;
-  const fallback = String(bundleTitle || "").trim();
-  return fallback || "Flashcard";
 }
 
 /**
@@ -213,7 +204,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
   const metaForTitle =
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
-  const titleText = buildFlashTopTitle(data.title || "Flashcard", metaForTitle);
+  const titleText = buildExperienceTitle("flash", metaForTitle?.list, metaForTitle?.source, metaForTitle?.topic, data.title);
   const totalCards = cards.length;
   if (restoredCards.length === 0) {
     beginDwell(

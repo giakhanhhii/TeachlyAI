@@ -5,20 +5,11 @@ import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { startAiCountdown } from "./experienceLoading.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
+import { buildExperienceTitle } from "../services/contentTitles.js";
 import { finalizePendingQuizAnswer } from "../services/quizSubmitFlow.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
-
-/** Tiêu đề thanh trên quiz: ưu tiên chủ đề từ meta thay vì title bundle mock. */
-function buildQuizTopTitle(bundleTitle, metaRec) {
-  const t = String(metaRec?.list || metaRec?.source || metaRec?.topic || "")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (t && t !== "(Teachly tự động)" && t !== "—") return `Trắc nghiệm chủ đề ${t}`;
-  const fallback = String(bundleTitle || "").trim();
-  return fallback || "Ôn tập trắc nghiệm";
-}
 
 /**
  * @param {{ body: HTMLElement }} layerView
@@ -109,7 +100,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const metaForTitle =
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
-  const titleText = buildQuizTopTitle(data.title || "Ôn tập trắc nghiệm", metaForTitle);
+  const titleText = buildExperienceTitle("quiz", metaForTitle?.source, metaForTitle?.topic, data.title);
   const questions = Array.isArray(data.questions) ? data.questions : [];
   if (!isRestore) beginDwell(metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText, "quiz");
 
