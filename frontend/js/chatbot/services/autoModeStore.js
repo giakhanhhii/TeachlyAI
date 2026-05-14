@@ -68,15 +68,22 @@ function saveState(state) {
 
 function getState() {
   const s = loadState();
+  const neverAskChoice = s?.neverAskChoice === "custom" || s?.neverAskChoice === "auto" ? s.neverAskChoice : null;
+  const resolvedEnabled =
+    typeof s?.enabled === "boolean"
+      ? s.enabled
+      : neverAskChoice === "custom"
+        ? false
+        : true;
   return {
-    enabled: Boolean(s?.enabled),
+    enabled: resolvedEnabled,
     counts: {
       slides: Number.isFinite(Number(s?.counts?.slides)) ? Math.max(5, Number(s.counts.slides)) : DEFAULT_COUNTS.slides,
       quiz: Number.isFinite(Number(s?.counts?.quiz)) ? Math.max(5, Number(s.counts.quiz)) : DEFAULT_COUNTS.quiz,
       flash: Number.isFinite(Number(s?.counts?.flash)) ? Math.max(5, Number(s.counts.flash)) : DEFAULT_COUNTS.flash,
     },
     usedTopics: Array.isArray(s?.usedTopics) ? s.usedTopics.filter((t) => typeof t === "string") : [],
-    neverAskChoice: s?.neverAskChoice === "custom" || s?.neverAskChoice === "auto" ? s.neverAskChoice : null,
+    neverAskChoice,
     neverAskCount: Boolean(s?.neverAskCount),
     seenCustomHint: Boolean(s?.seenCustomHint),
   };
