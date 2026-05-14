@@ -9,6 +9,7 @@ import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav, setSlideVisualEditMode } from "../slide/slideShellSrcdoc.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
+import { finalizePendingQuizAnswer, findNextStepIndexByKind } from "../services/quizSubmitFlow.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
@@ -257,8 +258,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   footer.className = "exp-footer-bar";
   const backBtn = createPrimaryNavButton({ label: "Quay lại", disabled: true });
   backBtn.classList.add("exp-back-btn");
+  const submitBtn = createPrimaryNavButton({ label: "Nộp bài", disabled: false });
+  submitBtn.classList.add("exp-submit-btn");
+  submitBtn.hidden = true;
   const nextBtn = createPrimaryNavButton({ label: "Tiếp theo", disabled: true });
   footer.appendChild(backBtn);
+  footer.appendChild(submitBtn);
   footer.appendChild(nextBtn);
   function refreshScore() {
     const score = recomputeMixedQuizScore(quizCountedByStep, quizCorrectByStep);
@@ -367,6 +372,29 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     footer.hidden = false;
     renderStep();
   }
+  function submitMixedQuizNow() {
+    const step = steps[index];
+    if (reviewMode || step?.kind !== "quiz") return;
+    const finalized = finalizePendingQuizAnswer(quizSelected, quizCorrectOptionIndex(step.data), quizCountedByStep[index]);
+    if (finalized) {
+      quizSelected = finalized.picked;
+      quizSelectedByStep[index] = finalized.picked;
+      quizRevealed = true;
+      quizRevealedByStep[index] = true;
+      quizCountedByStep[index] = true;
+      quizCorrectByStep[index] = finalized.isCorrect;
+    }
+    refreshScore();
+    const flashIndex = findNextStepIndexByKind(steps, index, "flash");
+    if (flashIndex >= 0) {
+      index = flashIndex;
+      renderStep();
+      return;
+    }
+    reviewMode = true;
+    reviewFilter = "all";
+    renderReview();
+  }
   function renderReview() {
     slideUiAbort?.abort();
     slideUiAbort = null;
@@ -450,6 +478,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       repaintCurrentProgress();
       return;
     }
+    submitBtn.hidden = step.kind !== "quiz";
+    submitBtn.disabled = false;
     stage.appendChild(createStepBadge(step.kind));
     if (step.kind === "slide_deck") {
       shell.classList.add("exp-shell-slide");
@@ -950,6 +980,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     }
     index += 1;
     renderStep();
+  });
+  submitBtn.addEventListener("click", () => {
+    submitMixedQuizNow();
   });
   backBtn.addEventListener("click", () => {
     if (reviewMode) {
