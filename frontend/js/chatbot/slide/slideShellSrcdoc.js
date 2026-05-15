@@ -2167,6 +2167,26 @@ function injectShellPreviewFit(doc) {
       aspect-ratio: 1 / 1 !important;
       border-radius: 50% !important;
     }
+    .shell-slide-instance .image-wrapper {
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
+    .shell-slide-instance .image-wrapper img[data-shell-autofill-image="1"] {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 100% !important;
+      min-height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      aspect-ratio: auto !important;
+      background: transparent !important;
+    }
     .shell-slide-instance .content-area {
       max-width: 100% !important;
       width: 100% !important;
@@ -3499,14 +3519,24 @@ function collectSlideImageWrappers(slideRoot) {
  * @param {HTMLImageElement} img
  * @param {{ url: string, alt: string } | null | undefined} image
  * @param {any} slide
+ * @param {string[]} [fallbackUrls]
  */
-function applySlideImageToNode(img, image, slide) {
+function applySlideImageToNode(img, image, slide, fallbackUrls = []) {
   if (!(img instanceof HTMLImageElement) || !image?.url) return;
   img.src = String(image.url || "").trim();
   img.alt = String(image.alt || slide?.imageAlt || slide?.title || "Slide illustration").trim();
   img.setAttribute("loading", "eager");
   img.setAttribute("decoding", "async");
   img.setAttribute("referrerpolicy", "no-referrer");
+  img.setAttribute("data-shell-autofill-image", "1");
+  const safeFallbackUrls = Array.isArray(fallbackUrls)
+    ? fallbackUrls.map((url) => String(url || "").trim()).filter(Boolean)
+    : [];
+  img.setAttribute("data-shell-fallback-urls", JSON.stringify(safeFallbackUrls));
+  img.setAttribute(
+    "onerror",
+    "try{var list=JSON.parse(this.getAttribute('data-shell-fallback-urls')||'[]');if(Array.isArray(list)&&list.length){var next=list.shift();this.setAttribute('data-shell-fallback-urls',JSON.stringify(list));if(next&&this.src!==next){this.src=next;return;}}}catch(_){ }this.removeAttribute('onerror');",
+  );
 }
 
 /**
@@ -3566,13 +3596,17 @@ function fillSlideImageSlots(root, slide, options = {}) {
     },
   );
   if (!images.length) return;
+  const fallbackUrls = images.map((image) => String(image?.url || "").trim()).filter(Boolean);
   wrappers.forEach((wrapper, index) => {
     let img = wrapper.querySelector("img");
     if (!(img instanceof HTMLImageElement)) {
       img = wrapper.ownerDocument.createElement("img");
       wrapper.appendChild(img);
     }
-    applySlideImageToNode(img, images[index % images.length], slide);
+    const primary = images[index % images.length];
+    const primaryUrl = String(primary?.url || "").trim();
+    const remainingFallbacks = fallbackUrls.filter((url) => url && url !== primaryUrl);
+    applySlideImageToNode(img, primary, slide, remainingFallbacks);
   });
 }
 

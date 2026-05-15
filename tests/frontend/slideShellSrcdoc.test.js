@@ -622,9 +622,14 @@ describe("slideShellSrcdoc.js", () => {
 
     const doc = new DOMParser().parseFromString(srcdoc, "text/html");
     const img = doc.querySelector(".image-wrapper img");
+    const styleText = doc.querySelector("style[data-slide-shell-fit]")?.textContent || "";
 
     expect(img?.getAttribute("src") || "").toContain("images.unsplash.com/");
     expect(img?.getAttribute("alt") || "").not.toBe("");
+    expect(img?.getAttribute("data-shell-autofill-image")).toBe("1");
+    expect(img?.getAttribute("data-shell-fallback-urls") || "").not.toBe("");
+    expect(styleText).toContain('.image-wrapper img[data-shell-autofill-image="1"]');
+    expect(styleText).toContain("object-fit: cover !important;");
   });
 
   it("keeps the centered icon on summary slides for both space themes instead of injecting images", () => {
