@@ -11,6 +11,9 @@ const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
  *  quizSelectedByStep: (number | null)[],
  *  quizCountedByStep: boolean[],
  *  quizCorrectByStep: boolean[],
+ *  bookmarkedStepKeys: string[],
+ *  stepKeys: string[],
+ *  bookmarkFilter: boolean,
  *  reviewFilter: "all" | "wrong",
  *  correct: number,
  *  wrong: number,
@@ -29,6 +32,9 @@ export function renderFullSetMixedReviewView(params) {
     quizSelectedByStep,
     quizCountedByStep,
     quizCorrectByStep,
+    bookmarkedStepKeys,
+    stepKeys,
+    bookmarkFilter,
     reviewFilter,
     correct,
     wrong,
@@ -101,9 +107,11 @@ export function renderFullSetMixedReviewView(params) {
 
   const list = document.createElement("div");
   list.className = "quiz-review-list";
+  const bookmarkedKeySet = new Set(Array.isArray(bookmarkedStepKeys) ? bookmarkedStepKeys.map(String) : []);
   const visibleStepIndexes = [];
   for (let i = 0; i < quizStepIndexes.length; i += 1) {
     const stepIndex = quizStepIndexes[i];
+    if (bookmarkFilter && !bookmarkedKeySet.has(String(stepKeys[stepIndex] || ""))) continue;
     if (reviewFilter === "wrong" && quizCorrectByStep[stepIndex]) continue;
     visibleStepIndexes.push(stepIndex);
   }
@@ -111,7 +119,11 @@ export function renderFullSetMixedReviewView(params) {
   if (!visibleStepIndexes.length) {
     const empty = document.createElement("p");
     empty.className = "exp-empty";
-    empty.textContent = reviewFilter === "wrong" ? "Tuyệt vời! Bạn không có câu sai." : "Chưa có dữ liệu để hiển thị.";
+    empty.textContent = bookmarkFilter
+      ? (reviewFilter === "wrong"
+          ? "Không có câu quiz đã bookmark nào thuộc nhóm câu sai."
+          : "Chưa có câu quiz nào được bookmark.")
+      : (reviewFilter === "wrong" ? "Tuyệt vời! Bạn không có câu sai." : "Chưa có dữ liệu để hiển thị.");
     list.appendChild(empty);
   } else {
     visibleStepIndexes.forEach((stepIndex) => {

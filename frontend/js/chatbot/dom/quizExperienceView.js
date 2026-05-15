@@ -23,7 +23,9 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const _genStamp = Symbol();
   root._genStamp = _genStamp;
-  const isRestore = Boolean(opts.initialState && typeof opts.initialState === "object");
+  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
+  const initialQuestions = Array.isArray(initial?.questionsSnapshot) ? initial.questionsSnapshot : null;
+  const isRestore = Boolean(initialQuestions);
   const _forceAi = meta?.__forceAi === "1";
   const _forceMock = meta?.__forceMock === "1";
   const _aiTopic = meta?.source || meta?.topic || undefined;
@@ -31,73 +33,80 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   const _uploadFile = !isRestore && meta?.__pdfFile instanceof File ? meta.__pdfFile : null;
   const _bgFetch = !isRestore && !_uploadFile && meta?.__bgFetchId ? getFetch(String(meta.__bgFetchId)) : null;
   let raw;
-  if (_uploadFile || _bgFetch) {
-    root.innerHTML = "";
-    const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang câu hỏi, vui lòng đợi</span>'; root.appendChild(w); return w; })();
-    const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
-    try {
-      raw = _bgFetch
-        ? await _bgFetch.promise
-        : await fetchAiFileContent("quiz", _uploadFile, { count: Number(meta?.count) || 10, notes: meta?.notes || "" });
-    } catch (err) {
+  if (!isRestore) {
+    if (_uploadFile || _bgFetch) {
+      root.innerHTML = "";
+      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang câu hỏi, vui lòng đợi</span>'; root.appendChild(w); return w; })();
+      const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
+      try {
+        raw = _bgFetch
+          ? await _bgFetch.promise
+          : await fetchAiFileContent("quiz", _uploadFile, { count: Number(meta?.count) || 10, notes: meta?.notes || "" });
+      } catch (err) {
+        _stopCountdown();
+        if (root._genStamp !== _genStamp) return;
+        _loadEl.remove();
+        root.innerHTML = "";
+        const box = document.createElement("div"); box.className = "exp-upload-error";
+        box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
+        root.appendChild(box);
+        return;
+      }
       _stopCountdown();
       if (root._genStamp !== _genStamp) return;
       _loadEl.remove();
-      root.innerHTML = "";
-      const box = document.createElement("div"); box.className = "exp-upload-error";
-      box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
-      root.appendChild(box);
-      return;
-    }
-    _stopCountdown();
-    if (root._genStamp !== _genStamp) return;
-    _loadEl.remove();
-    if (!isRestore) incrementPlayCount("quiz");
-    if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
-  } else {
-    const _prefetchEntry = !isRestore && meta?.__prefetchId ? getFetch(String(meta.__prefetchId)) : null;
-    if (_prefetchEntry) {
-      if (_prefetchEntry.status === "pending") {
-        root.innerHTML = "";
-        const w = document.createElement("div"); w.className = "ai-loading-overlay";
-        w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
-        root.appendChild(w);
-        const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
-        try {
-          raw = await _prefetchEntry.promise;
-        } finally {
-          _stopPrefetchCd();
-        }
-        if (root._genStamp !== _genStamp) return;
-        w.remove();
-      } else {
-        raw = await _prefetchEntry.promise;
-      }
-      if (!isRestore) incrementPlayCount("quiz");
-      if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
+      incrementPlayCount("quiz");
+      document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
     } else {
-      const _devSrc = _forceMock
-        ? "mock"
-        : ((!isRestore && (_forceAi || (!meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)))) ? "ai" : "mock"); /* DEV-ONLY */
-      const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic, meta).catch(() => fetchMockResource("quiz")));
-      const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-      const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
-      raw = _bgEntry?.status === "done" ? _bgEntry.raw
-          : _bgEntry ? await _bgEntry.promise
-          : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic, meta).catch(() => fetchMockResource("quiz"))
-          : await fetchMockResource("quiz");
-      _stopCountdown?.();
-      if (root._genStamp !== _genStamp) return;
-      _loadEl?.remove();
-      if (!isRestore) incrementPlayCount("quiz");
-      if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+      const _prefetchEntry = meta?.__prefetchId ? getFetch(String(meta.__prefetchId)) : null;
+      if (_prefetchEntry) {
+        if (_prefetchEntry.status === "pending") {
+          root.innerHTML = "";
+          const w = document.createElement("div"); w.className = "ai-loading-overlay";
+          w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
+          root.appendChild(w);
+          const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
+          try {
+            raw = await _prefetchEntry.promise;
+          } finally {
+            _stopPrefetchCd();
+          }
+          if (root._genStamp !== _genStamp) return;
+          w.remove();
+        } else {
+          raw = await _prefetchEntry.promise;
+        }
+        incrementPlayCount("quiz");
+        document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: "ai" }));
+      } else {
+        const _devSrc = _forceMock
+          ? "mock"
+          : ((_forceAi || (!meta?.presetId && (isAiModeActive("quiz") || !_isAutoTopic)))) ? "ai" : "mock"; /* DEV-ONLY */
+        const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
+        if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("quiz", _aiTopic, meta).catch(() => fetchMockResource("quiz")));
+        const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
+        const _loadEl = (_devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo câu hỏi…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
+        const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
+        raw = _bgEntry?.status === "done" ? _bgEntry.raw
+            : _bgEntry ? await _bgEntry.promise
+            : _devSrc === "ai" ? await fetchAiContent("quiz", _aiTopic, meta).catch(() => fetchMockResource("quiz"))
+            : await fetchMockResource("quiz");
+        _stopCountdown?.();
+        if (root._genStamp !== _genStamp) return;
+        _loadEl?.remove();
+        incrementPlayCount("quiz");
+        document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
+      }
     }
   }
-  const data = prepareQuizSessionData(raw, meta);
+  const data = initialQuestions
+    ? {
+        title: typeof initial?.title === "string" ? initial.title : "",
+        questions: initialQuestions,
+        sessionMeta: initial?.meta && typeof initial.meta === "object" ? initial.meta : meta,
+      }
+    : prepareQuizSessionData(raw, meta);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
-  const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const metaForTitle =
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
   const titleText = buildExperienceTitle("quiz", metaForTitle?.source, metaForTitle?.topic, data.title);
@@ -152,6 +161,10 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       title: titleText,
       total: questions.length,
       index,
+      questionsSnapshot: questions.map((question) => ({
+        ...question,
+        options: Array.isArray(question?.options) ? question.options.slice() : [],
+      })),
       selectedByIndex: [...selectedByIndex],
       gradedByIndex: [...gradedByIndex],
       correct,

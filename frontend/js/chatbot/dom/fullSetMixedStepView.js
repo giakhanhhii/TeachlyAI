@@ -172,11 +172,13 @@ export function renderFlashStep(stage, card, opts = {}) {
  *  question: any,
  *  selected: number | null,
  *  revealed: boolean,
- *  onPick: (index: number) => void
+ *  onPick: (index: number) => void,
+ *  isBookmarked?: boolean,
+ *  onToggleBookmark?: (event: MouseEvent) => void,
  * }} params
  */
 export function renderQuizStep(stage, params) {
-  const { index, question, selected, revealed, onPick } = params;
+  const { index, question, selected, revealed, onPick, isBookmarked = false, onToggleBookmark } = params;
   const opts = quizOptionList(question);
   const num = document.createElement("div");
   num.className = "exp-q-number";
@@ -218,6 +220,19 @@ export function renderQuizStep(stage, params) {
   hintToggle.type = "button";
   hintToggle.className = "exp-hint-toggle";
   hintToggle.innerHTML = `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
+  const bookmarkBtn = document.createElement("button");
+  bookmarkBtn.type = "button";
+  bookmarkBtn.className = "exp-hint-toggle exp-mixed-quiz-bookmark-btn";
+  bookmarkBtn.innerHTML = `${BOOKMARK_SVG}<span>${isBookmarked ? "Đã bookmark" : "Bookmark câu này"}</span>`;
+  bookmarkBtn.setAttribute("aria-pressed", isBookmarked ? "true" : "false");
+  bookmarkBtn.setAttribute("aria-label", isBookmarked ? "Bỏ bookmark câu hỏi" : "Bookmark câu hỏi");
+  bookmarkBtn.title = isBookmarked ? "Bỏ bookmark câu hỏi" : "Bookmark câu hỏi";
+  bookmarkBtn.classList.toggle("active", isBookmarked);
+  bookmarkBtn.hidden = typeof onToggleBookmark !== "function";
+  bookmarkBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    onToggleBookmark?.(event);
+  });
   const hintPanel = document.createElement("div");
   hintPanel.className = "exp-hint-panel";
   hintPanel.hidden = true;
@@ -237,6 +252,7 @@ export function renderQuizStep(stage, params) {
 
   stage.appendChild(optsWrap);
   stage.appendChild(pickHint);
+  stage.appendChild(bookmarkBtn);
   stage.appendChild(hintToggle);
   stage.appendChild(hintPanel);
 
