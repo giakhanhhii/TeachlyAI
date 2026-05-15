@@ -10,9 +10,49 @@ const SLIDE_THEMES = [
   "Comic",
 ];
 
-/** Returns a random slide theme label. */
+function shuffleThemeBag(themes, lastTheme = "") {
+  const bag = Array.isArray(themes) ? themes.slice() : [];
+  for (let i = bag.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = bag[i];
+    bag[i] = bag[j];
+    bag[j] = t;
+  }
+  if (bag.length > 1 && lastTheme && bag[0] === lastTheme) {
+    const swapIndex = bag.findIndex((theme, index) => index > 0 && theme !== lastTheme);
+    if (swapIndex > 0) {
+      const t = bag[0];
+      bag[0] = bag[swapIndex];
+      bag[swapIndex] = t;
+    }
+  }
+  return bag;
+}
+
+function sanitizeThemeBag(rawBag, lastTheme = "") {
+  const seen = new Set();
+  const bag = (Array.isArray(rawBag) ? rawBag : [])
+    .map((theme) => String(theme || "").trim())
+    .filter((theme) => SLIDE_THEMES.includes(theme))
+    .filter((theme) => {
+      if (seen.has(theme)) return false;
+      seen.add(theme);
+      return true;
+    });
+  return bag.length ? bag : shuffleThemeBag(SLIDE_THEMES, lastTheme);
+}
+
+/** Returns a random non-repeating slide theme label until all 7 themes are used. */
 export function pickRandomTheme() {
-  return SLIDE_THEMES[Math.floor(Math.random() * SLIDE_THEMES.length)];
+  const state = getState();
+  const bag = sanitizeThemeBag(state.themeBag, state.lastTheme);
+  const [picked, ...rest] = bag;
+  saveState({
+    ...state,
+    themeBag: rest,
+    lastTheme: picked,
+  });
+  return picked || SLIDE_THEMES[0];
 }
 
 export const DEFAULT_COUNTS = { slides: 15, quiz: 15, flash: 10 };
@@ -85,6 +125,8 @@ function getState() {
       flash: Number.isFinite(Number(s?.counts?.flash)) ? Math.max(5, Number(s.counts.flash)) : DEFAULT_COUNTS.flash,
     },
     usedTopics: Array.isArray(s?.usedTopics) ? s.usedTopics.filter((t) => typeof t === "string") : [],
+    themeBag: sanitizeThemeBag(s?.themeBag, s?.lastTheme),
+    lastTheme: typeof s?.lastTheme === "string" && SLIDE_THEMES.includes(s.lastTheme) ? s.lastTheme : "",
     neverAskChoice,
     neverAskCount: Boolean(s?.neverAskCount),
     seenCustomHint: Boolean(s?.seenCustomHint),
