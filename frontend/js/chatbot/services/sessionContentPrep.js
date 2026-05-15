@@ -422,6 +422,7 @@ export function prepareSlideSessionData(data, meta) {
     const slides = enrichSlidesWithMockImages(selected, {
       topic: meta?.topic || directPreset.topic,
       deckTitle: directPreset.topic,
+      themeLabel: meta?.slideTemplate,
     });
     return {
       title: `Slide bài giảng — ${directPreset.topic}`,
@@ -447,6 +448,7 @@ export function prepareSlideSessionData(data, meta) {
     {
       topic: meta?.topic,
       deckTitle: data?.title,
+      themeLabel: meta?.slideTemplate,
     },
   );
   return {

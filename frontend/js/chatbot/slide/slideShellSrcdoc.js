@@ -3512,13 +3512,14 @@ function applySlideImageToNode(img, image, slide) {
 /**
  * @param {ParentNode} root
  * @param {any} slide
- * @param {{ topic?: string, deckTitle?: string, usedImageIds?: Set<string> }} [options]
+ * @param {{ topic?: string, deckTitle?: string, themeLabel?: string, themeKey?: string, usedImageIds?: Set<string> }} [options]
  */
 function fillSlideImageSlots(root, slide, options = {}) {
   const slideRoot = getRootSlideElement(root);
   if (!(slideRoot instanceof Element)) return;
   const wrappers = collectSlideImageWrappers(slideRoot);
   if (!wrappers.length) return;
+  const themeKey = options.themeKey || resolveSlideShellThemeKey(slideRoot);
   const images = pickMockImagesForSlide(
     {
       ...slide,
@@ -3529,6 +3530,8 @@ function fillSlideImageSlots(root, slide, options = {}) {
       count: wrappers.length,
       topic: options.topic,
       deckTitle: options.deckTitle,
+      themeLabel: options.themeLabel,
+      themeKey,
       usedImageIds: options.usedImageIds,
     },
   );
@@ -3717,6 +3720,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     fillSlideImageSlots(frag, s, {
       topic: rawTopic,
       deckTitle: deckLine || metaTitleLine,
+      themeLabel: meta?.slideTemplate,
       usedImageIds,
     });
     if (first instanceof Element) {

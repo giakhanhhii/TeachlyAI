@@ -82,6 +82,11 @@ const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
     alt: "Whale tail above the ocean",
   },
   {
+    id: "ocean-diver",
+    url: "https://images.unsplash.com/photo-1551244072-5d12893278ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    alt: "Scuba diver exploring the blue ocean",
+  },
+  {
     id: "ocean-school",
     url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     alt: "School of fish moving together underwater",
@@ -104,6 +109,29 @@ const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
 ]);
 
 const IMAGE_BY_ID = new Map(SLIDE_MOCK_IMAGE_LIBRARY.map((item) => [item.id, item]));
+
+const THEME_IMAGE_RULES = Object.freeze([
+  {
+    test: /\b(?:sea life|sealife|shell-theme-sealife|ocean|sea|marine)\b/i,
+    imageIds: ["ocean-diver", "ocean-whale", "ocean-school"],
+  },
+  {
+    test: /\b(?:space light|space dark|space-bright|space-black|space|galaxy|planet|astronomy|universe)\b/i,
+    imageIds: ["space-galaxy", "space-earth", "space-ring"],
+  },
+  {
+    test: /\b(?:comic|shell-theme-comic)\b/i,
+    imageIds: ["teacher-speaking", "travel-journey", "digital-laptop"],
+  },
+  {
+    test: /\b(?:friendly|warm|shell-theme-friendly)\b/i,
+    imageIds: ["travel-journey", "workplace-team", "forest-climate"],
+  },
+  {
+    test: /\b(?:professional|multicolor|academic|minimal)\b/i,
+    imageIds: ["workplace-team", "digital-laptop", "forest-climate"],
+  },
+]);
 
 const IMAGE_RULES = Object.freeze([
   {
@@ -161,11 +189,11 @@ const IMAGE_RULES = Object.freeze([
 ]);
 
 const FALLBACK_IMAGE_IDS = Object.freeze([
+  "travel-journey",
+  "forest-climate",
+  "digital-laptop",
+  "workplace-team",
   "study-roadmap",
-  "grammar-notes",
-  "reading-strategy",
-  "exam-practice",
-  "vocab-collocations",
 ]);
 
 function normalizeSlideImageText(slide, options = {}) {
@@ -175,6 +203,8 @@ function normalizeSlideImageText(slide, options = {}) {
     ...bullets,
     String(options.topic || ""),
     String(options.deckTitle || ""),
+    String(options.themeLabel || ""),
+    String(options.themeKey || ""),
   ]
     .join(" \n ")
     .replace(/\s+/g, " ")
@@ -191,6 +221,10 @@ function buildCandidateImageIds(text) {
     ordered.push(id);
   };
 
+  THEME_IMAGE_RULES.forEach((rule) => {
+    if (!rule.test.test(text)) return;
+    rule.imageIds.forEach(push);
+  });
   IMAGE_RULES.forEach((rule) => {
     if (!rule.test.test(text)) return;
     rule.imageIds.forEach(push);
@@ -206,13 +240,15 @@ function pickLibraryEntryById(id) {
 
 /**
  * @param {any} slide
- * @param {{ count?: number, topic?: string, deckTitle?: string, usedImageIds?: Set<string> }} [options]
+ * @param {{ count?: number, topic?: string, deckTitle?: string, themeLabel?: string, themeKey?: string, usedImageIds?: Set<string> }} [options]
  * @returns {{ id: string, url: string, alt: string }[]}
  */
 export function pickMockImagesForSlide(slide, options = {}) {
   const count = Math.max(1, Math.floor(Number(options.count) || 1));
   const text = normalizeSlideImageText(slide, options);
   const usedImageIds = options.usedImageIds instanceof Set ? options.usedImageIds : new Set();
+  const existingImageUrl = String(slide?.imageUrl || "").trim();
+  const existingImageAlt = String(slide?.imageAlt || slide?.title || "Slide illustration").trim();
   const candidates = buildCandidateImageIds(text);
   const ranked = candidates
     .map((id) => ({
@@ -223,9 +259,17 @@ export function pickMockImagesForSlide(slide, options = {}) {
     .map((item) => item.id);
 
   const picks = [];
+  if (existingImageUrl) {
+    picks.push({
+      id: `direct:${existingImageUrl}`,
+      url: existingImageUrl,
+      alt: existingImageAlt,
+    });
+  }
   for (const id of ranked) {
     const entry = pickLibraryEntryById(id);
     if (!entry) continue;
+    if (existingImageUrl && entry.url === existingImageUrl) continue;
     picks.push(entry);
     usedImageIds.add(entry.id);
     if (picks.length >= count) break;
@@ -243,7 +287,7 @@ export function pickMockImagesForSlide(slide, options = {}) {
 
 /**
  * @param {any} slide
- * @param {{ topic?: string, deckTitle?: string, usedImageIds?: Set<string> }} [options]
+ * @param {{ topic?: string, deckTitle?: string, themeLabel?: string, themeKey?: string, usedImageIds?: Set<string> }} [options]
  * @returns {any}
  */
 export function enrichSlideWithMockImage(slide, options = {}) {
@@ -266,7 +310,7 @@ export function enrichSlideWithMockImage(slide, options = {}) {
 
 /**
  * @param {any[]} slides
- * @param {{ topic?: string, deckTitle?: string }} [options]
+ * @param {{ topic?: string, deckTitle?: string, themeLabel?: string, themeKey?: string }} [options]
  * @returns {any[]}
  */
 export function enrichSlidesWithMockImages(slides, options = {}) {
