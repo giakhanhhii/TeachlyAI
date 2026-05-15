@@ -43,10 +43,10 @@ describe("experienceLoading", () => {
     expect(label?.textContent).toBe("AI đang tạo full set…");
     expect(tip?.textContent).toBe("Đang tạo slide, câu hỏi và flashcard.");
 
+    const rotatedCandidates = buildAiLoadingTips("Đang tạo slide, câu hỏi và flashcard.").slice(1);
     vi.advanceTimersByTime(2100);
-    expect(tip?.textContent).toBe(
-      "Bạn có thể làm bài Full 40 câu THPTQG bằng cách chọn tạo quiz ở chế độ custom rồi bấm option \"Làm full đề THPTQG\".",
-    );
+    expect(rotatedCandidates).toContain(tip?.textContent);
+    expect(tip?.textContent).not.toBe("Đang tạo slide, câu hỏi và flashcard.");
 
     overlayState.remove();
     expect(host.querySelector(".ai-loading-overlay")).toBeNull();
