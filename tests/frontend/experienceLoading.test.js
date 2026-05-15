@@ -1,39 +1,54 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { startAiCountdown } from "../../frontend/js/chatbot/dom/experienceLoading.js";
+import {
+  buildAiLoadingTips,
+  createAiLoadingOverlay,
+} from "../../frontend/js/chatbot/dom/experienceLoading.js";
 
 describe("experienceLoading", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-05-14T10:00:00.000Z"));
-  });
-
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
+    document.body.innerHTML = "";
   });
 
-  it("shows elapsed wait time instead of counting down from the estimate", () => {
-    const overlay = document.createElement("div");
+  it("keeps the contextual tip first and appends helpful product suggestions", () => {
+    vi.spyOn(Math, "random").mockReturnValue(0);
 
-    const stop = startAiCountdown(overlay, 30);
-    const label = overlay.querySelector(".ai-loading-countdown");
+    const tips = buildAiLoadingTips("Đang tạo quiz theo tài liệu của bạn.");
 
-    expect(label?.textContent).toBe("Đã chờ ~0s");
-
-    vi.advanceTimersByTime(13_000);
-
-    expect(label?.textContent).toBe("Đã chờ ~13s");
-    stop();
+    expect(tips[0]).toBe("Đang tạo quiz theo tài liệu của bạn.");
+    expect(tips).toContain(
+      "Bạn có thể làm bài Full 40 câu THPTQG bằng cách chọn tạo quiz ở chế độ custom rồi bấm option \"Làm full đề THPTQG\".",
+    );
   });
 
-  it("reuses the fetch start time when startedAt is provided", () => {
-    const overlay = document.createElement("div");
-    const startedAt = Date.now() - 8_000;
+  it("renders a loading overlay and rotates to another tip over time", () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, "random").mockReturnValue(0);
 
-    const stop = startAiCountdown(overlay, 5, { startedAt });
-    const label = overlay.querySelector(".ai-loading-countdown");
+    const host = document.createElement("div");
+    document.body.appendChild(host);
 
-    expect(label?.textContent).toBe("Đã chờ ~8s • sắp xong…");
-    stop();
+    const overlayState = createAiLoadingOverlay(host, {
+      label: "AI đang tạo full set…",
+      tip: "Đang tạo slide, câu hỏi và flashcard.",
+      estimatedSeconds: 12,
+      rotateEveryMs: 2000,
+    });
+
+    const label = host.querySelector(".ai-loading-label");
+    const tip = host.querySelector(".ai-loading-tip");
+
+    expect(label?.textContent).toBe("AI đang tạo full set…");
+    expect(tip?.textContent).toBe("Đang tạo slide, câu hỏi và flashcard.");
+
+    vi.advanceTimersByTime(2100);
+    expect(tip?.textContent).toBe(
+      "Bạn có thể làm bài Full 40 câu THPTQG bằng cách chọn tạo quiz ở chế độ custom rồi bấm option \"Làm full đề THPTQG\".",
+    );
+
+    overlayState.remove();
+    expect(host.querySelector(".ai-loading-overlay")).toBeNull();
   });
 });

@@ -2,7 +2,7 @@ import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
-import { startAiCountdown } from "./experienceLoading.js";
+import { createAiLoadingOverlay } from "./experienceLoading.js";
 import { prepareFlashSessionData, hasDirectFlashCardsFromMeta } from "../services/sessionContentPrep.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
@@ -131,25 +131,27 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     const _bgFetch = !_uploadFile && meta?.__bgFetchId ? getFetch(String(meta.__bgFetchId)) : null;
     if (_uploadFile || _bgFetch) {
       experienceBody.innerHTML = "";
-      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang flashcard, vui lòng đợi</span>'; experienceBody.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 15, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
+      const loadingState = createAiLoadingOverlay(experienceBody, {
+        label: "AI đang đọc tài liệu…",
+        tip: "Chuyển nội dung sang flashcard, vui lòng đợi.",
+        estimatedSeconds: 15,
+        startedAt: _bgFetch?.startedAt,
+      });
       try {
         flashRaw = _bgFetch
           ? await _bgFetch.promise
           : await fetchAiFileContent("flashcard", _uploadFile, { count: Number(meta?.count) || 20, notes: meta?.extra || "" });
       } catch (err) {
-        _stopCountdown();
+        loadingState.remove();
         if (experienceBody._genStamp !== _genStamp) return;
-        _loadEl.remove();
         experienceBody.innerHTML = "";
         const box = document.createElement("div"); box.className = "exp-upload-error";
         box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
         experienceBody.appendChild(box);
         return;
       }
-      _stopCountdown();
       if (experienceBody._genStamp !== _genStamp) return;
-      _loadEl.remove();
+      loadingState.remove();
       _devSrc = "ai";
       incrementPlayCount("flash");
     } else {
@@ -157,17 +159,18 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       if (_prefetchEntry) {
         if (_prefetchEntry.status === "pending") {
           experienceBody.innerHTML = "";
-          const w = document.createElement("div"); w.className = "ai-loading-overlay";
-          w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
-          experienceBody.appendChild(w);
-          const _stopPrefetchCd = startAiCountdown(w, 15, { startedAt: _prefetchEntry.startedAt });
+          const loadingState = createAiLoadingOverlay(experienceBody, {
+            label: "AI đang tạo flashcard…",
+            tip: "Vui lòng đợi trong giây lát.",
+            estimatedSeconds: 15,
+            startedAt: _prefetchEntry.startedAt,
+          });
           try {
             flashRaw = await _prefetchEntry.promise;
           } finally {
-            _stopPrefetchCd();
+            loadingState.remove();
           }
           if (experienceBody._genStamp !== _genStamp) return;
-          w.remove();
         } else {
           flashRaw = await _prefetchEntry.promise;
         }
@@ -181,15 +184,23 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
         const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
         if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic, meta).catch(() => fetchMockResource("flashcard")));
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-        const _loadEl = (_devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { experienceBody.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo flashcard…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; experienceBody.appendChild(w); return w; })() : null;
-        const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 15, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
+        const loadingState = (_devSrc === "ai" && _bgEntry?.status !== "done")
+          ? (() => {
+              experienceBody.innerHTML = "";
+              return createAiLoadingOverlay(experienceBody, {
+                label: "AI đang tạo flashcard…",
+                tip: "Vui lòng đợi trong giây lát.",
+                estimatedSeconds: 15,
+                startedAt: _bgEntry?.startedAt,
+              });
+            })()
+          : null;
         flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
             : _bgEntry ? await _bgEntry.promise
             : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic, meta).catch(() => fetchMockResource("flashcard"))
             : await fetchMockResource("flashcard");
-        _stopCountdown?.();
+        loadingState?.remove();
         if (experienceBody._genStamp !== _genStamp) return;
-        _loadEl?.remove();
         incrementPlayCount("flash");
         document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
       }

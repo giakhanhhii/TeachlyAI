@@ -2,7 +2,7 @@ import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
-import { startAiCountdown } from "./experienceLoading.js";
+import { createAiLoadingOverlay } from "./experienceLoading.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -201,8 +201,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {
-      const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Tạo slide, câu hỏi và flashcard từ tài liệu</span>'; root.appendChild(w); return w; })();
-      const _stopCountdown = startAiCountdown(_loadEl, 35, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
+      const loadingState = createAiLoadingOverlay(root, {
+        label: "AI đang đọc tài liệu…",
+        tip: "Tạo slide, câu hỏi và flashcard từ tài liệu.",
+        estimatedSeconds: 35,
+        startedAt: _bgFetch?.startedAt,
+      });
       try {
         const aiBundle = _bgFetch
           ? await _bgFetch.promise
@@ -211,18 +215,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         rawQuiz = aiBundle.quiz;
         rawFlash = aiBundle.flashcard;
       } catch (err) {
-        _stopCountdown();
+        loadingState.remove();
         if (root._genStamp !== _genStamp) return;
-        _loadEl.remove();
         root.innerHTML = "";
         const box = document.createElement("div"); box.className = "exp-upload-error";
         box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
         root.appendChild(box);
         return;
       }
-      _stopCountdown();
       if (root._genStamp !== _genStamp) return;
-      _loadEl.remove();
+      loadingState.remove();
       _devSrc = "ai";
     } else if (_devSrc === "ai") {
       const _bgKey = spec.__experienceId ? `gen_${spec.__experienceId}` : null;
@@ -231,8 +233,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         return { slide: s, quiz: q, flashcard: f };
       }));
       const _bgEntryFs = _bgKey ? getFetch(_bgKey) : null;
-      const _loadEl = _bgEntryFs?.status !== "done" ? (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo full set…</span><span class="ai-loading-tip">Đang tạo slide, câu hỏi và flashcard</span>'; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 30, _bgEntryFs ? { startedAt: _bgEntryFs.startedAt } : {}) : null;
+      const loadingState = _bgEntryFs?.status !== "done"
+        ? createAiLoadingOverlay(root, {
+            label: "AI đang tạo full set…",
+            tip: "Đang tạo slide, câu hỏi và flashcard.",
+            estimatedSeconds: 30,
+            startedAt: _bgEntryFs?.startedAt,
+          })
+        : null;
       let aiBundle;
       if (_bgEntryFs?.status === "done") {
         aiBundle = _bgEntryFs.raw;
@@ -244,17 +252,20 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           return { slide: s, quiz: q, flashcard: f };
         });
       }
-      _stopCountdown?.();
+      loadingState?.remove();
       if (root._genStamp !== _genStamp) return;
       rawSlide = aiBundle.slide;
       rawQuiz = aiBundle.quiz;
       rawFlash = aiBundle.flashcard;
-      _loadEl?.remove();
     } else {
-      const _loadElMock = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">Đang tải nội dung…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })();
+      const loadingState = createAiLoadingOverlay(root, {
+        label: "Đang tải nội dung…",
+        tip: "Vui lòng đợi trong giây lát.",
+        estimatedSeconds: 8,
+      });
       [rawSlide, rawQuiz, rawFlash] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
       if (root._genStamp !== _genStamp) return;
-      _loadElMock.remove();
+      loadingState.remove();
     }
     incrementPlayCount("fullset");
     const slideData = prepareSlideSessionData(rawSlide, slideMeta);

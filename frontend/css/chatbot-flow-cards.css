@@ -466,6 +466,8 @@
   font-size: 13px;
   color: #9ca3af;
   text-align: center;
+  line-height: 1.55;
+  max-width: 520px;
 }
 
 .ai-loading-countdown {

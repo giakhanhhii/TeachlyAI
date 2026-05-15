@@ -2,7 +2,7 @@ import { fetchMockResource } from "../services/mockContentApi.js";
 import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
-import { startAiCountdown } from "./experienceLoading.js";
+import { createAiLoadingOverlay } from "./experienceLoading.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
@@ -111,42 +111,45 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
   let raw;
   if (_uploadFile || _bgFetch) {
     root.innerHTML = "";
-    const _loadEl = (() => { const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang đọc tài liệu…</span><span class="ai-loading-tip">Chuyển nội dung sang slide, vui lòng đợi</span>'; root.appendChild(w); return w; })();
-    const _stopCountdown = startAiCountdown(_loadEl, 20, _bgFetch ? { startedAt: _bgFetch.startedAt } : {});
+    const loadingState = createAiLoadingOverlay(root, {
+      label: "AI đang đọc tài liệu…",
+      tip: "Chuyển nội dung sang slide, vui lòng đợi.",
+      estimatedSeconds: 20,
+      startedAt: _bgFetch?.startedAt,
+    });
     try {
       raw = _bgFetch
         ? await _bgFetch.promise
         : await fetchAiFileContent("slide", _uploadFile, { count: Number(effectiveMeta?.count) || 10, notes: effectiveMeta?.notes || "" });
     } catch (err) {
-      _stopCountdown();
+      loadingState.remove();
       if (root._genStamp !== _genStamp) return;
-      _loadEl.remove();
       root.innerHTML = "";
       const box = document.createElement("div"); box.className = "exp-upload-error";
       box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
       root.appendChild(box);
       return;
     }
-    _stopCountdown();
     if (root._genStamp !== _genStamp) return;
-    _loadEl.remove();
+    loadingState.remove();
     if (!isRestore) incrementPlayCount("slide");
   } else {
     const _prefetchEntry = !isRestore && effectiveMeta?.__prefetchId ? getFetch(String(effectiveMeta.__prefetchId)) : null;
     if (_prefetchEntry) {
       if (_prefetchEntry.status === "pending") {
         root.innerHTML = "";
-        const w = document.createElement("div"); w.className = "ai-loading-overlay";
-        w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>';
-        root.appendChild(w);
-        const _stopPrefetchCd = startAiCountdown(w, 20, { startedAt: _prefetchEntry.startedAt });
+        const loadingState = createAiLoadingOverlay(root, {
+          label: "AI đang tạo slide…",
+          tip: "Vui lòng đợi trong giây lát.",
+          estimatedSeconds: 20,
+          startedAt: _prefetchEntry.startedAt,
+        });
         try {
           raw = await _prefetchEntry.promise;
         } finally {
-          _stopPrefetchCd();
+          loadingState.remove();
         }
         if (root._genStamp !== _genStamp) return;
-        w.remove();
       } else {
         raw = await _prefetchEntry.promise;
       }
@@ -159,15 +162,23 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
       const _bgKey = (_devSrc === "ai" && effectiveMeta?.__experienceId) ? `gen_${effectiveMeta.__experienceId}` : null;
       if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic, effectiveMeta).catch(() => fetchMockResource("slide")));
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-      const _loadEl = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done") ? (() => { root.innerHTML = ""; const w = document.createElement("div"); w.className = "ai-loading-overlay"; w.innerHTML = '<div class="ai-loading-ring"></div><span class="ai-loading-label">AI đang tạo slide…</span><span class="ai-loading-tip">Vui lòng đợi trong giây lát</span>'; root.appendChild(w); return w; })() : null;
-      const _stopCountdown = _loadEl ? startAiCountdown(_loadEl, 20, _bgEntry ? { startedAt: _bgEntry.startedAt } : {}) : null;
+      const loadingState = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done")
+        ? (() => {
+            root.innerHTML = "";
+            return createAiLoadingOverlay(root, {
+              label: "AI đang tạo slide…",
+              tip: "Vui lòng đợi trong giây lát.",
+              estimatedSeconds: 20,
+              startedAt: _bgEntry?.startedAt,
+            });
+          })()
+        : null;
       raw = _bgEntry?.status === "done" ? _bgEntry.raw
           : _bgEntry ? await _bgEntry.promise
           : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic, effectiveMeta).catch(() => fetchMockResource("slide"))
           : await fetchMockResource("slide");
-      _stopCountdown?.();
+      loadingState?.remove();
       if (root._genStamp !== _genStamp) return;
-      _loadEl?.remove();
       if (!isRestore) incrementPlayCount("slide");
       if (!isRestore) document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
     }
