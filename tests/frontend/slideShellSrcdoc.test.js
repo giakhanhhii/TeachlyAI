@@ -302,6 +302,60 @@ const EMPTY_IMAGE_SLOT_SHELL = `
 </html>
 `;
 
+const SPACE_SUMMARY_IMAGE_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Space Summary Shell 2026</title>
+  </head>
+  <body class="shell-theme-space-black">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="slide-title">Placeholder title</h2>
+        <div class="content-area">
+          <div class="two-column">
+            <div class="text-column">
+              <p>Placeholder detail</p>
+            </div>
+            <div class="image-wrapper">
+              <div class="space-icon">ICON</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
+const SPACE_BRIGHT_SUMMARY_IMAGE_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Space Bright Summary Shell 2026</title>
+  </head>
+  <body class="shell-theme-space-bright">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="slide-title">Placeholder title</h2>
+        <div class="content-area">
+          <div class="two-column">
+            <div class="text-column">
+              <p>Placeholder detail</p>
+            </div>
+            <div class="image-wrapper">
+              <div class="space-icon">ICON</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 const SEA_LIFE_PRACTICE_SHELL = `
 <!DOCTYPE html>
 <html lang="vi">
@@ -571,6 +625,37 @@ describe("slideShellSrcdoc.js", () => {
 
     expect(img?.getAttribute("src") || "").toContain("images.unsplash.com/");
     expect(img?.getAttribute("alt") || "").not.toBe("");
+  });
+
+  it("keeps the centered icon on summary slides for both space themes instead of injecting images", () => {
+    const darkSrcdoc = buildSlideDeckSrcdoc(
+      SPACE_SUMMARY_IMAGE_SHELL,
+      [
+        {
+          title: "Summary",
+          bullets: ["Review the main sections."],
+        },
+      ],
+      { shellYear: "2026", slideTemplate: "Space Dark" },
+    );
+    const brightSrcdoc = buildSlideDeckSrcdoc(
+      SPACE_BRIGHT_SUMMARY_IMAGE_SHELL,
+      [
+        {
+          title: "Summary",
+          bullets: ["Review the main sections."],
+        },
+      ],
+      { shellYear: "2026", slideTemplate: "Space Light" },
+    );
+
+    const darkDoc = new DOMParser().parseFromString(darkSrcdoc, "text/html");
+    const brightDoc = new DOMParser().parseFromString(brightSrcdoc, "text/html");
+
+    expect(darkDoc.querySelector(".image-wrapper img")).toBeNull();
+    expect(brightDoc.querySelector(".image-wrapper img")).toBeNull();
+    expect(darkDoc.querySelector(".image-wrapper .space-icon")?.textContent).toContain("ICON");
+    expect(brightDoc.querySelector(".image-wrapper .space-icon")?.textContent).toContain("ICON");
   });
 
   it("formats Sea Life practice cards into three labeled lines", () => {

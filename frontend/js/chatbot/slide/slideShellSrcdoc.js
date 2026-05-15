@@ -3510,9 +3510,35 @@ function applySlideImageToNode(img, image, slide) {
 }
 
 /**
+ * @param {any} slide
+ * @returns {boolean}
+ */
+function isLikelySummarySlideForImagePolicy(slide) {
+  const title = String(slide?.title || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  if (!title) return false;
+  return /(summary|conclusion|review|final review|tổng kết|tong ket|kết luận|ket luan|goodbye|you'?re ready)/i.test(title);
+}
+
+/**
+ * @param {{ themeLabel?: string, themeKey?: string }} options
+ * @returns {boolean}
+ */
+function isSpaceThemeForImagePolicy(options = {}) {
+  const text = [String(options.themeKey || ""), String(options.themeLabel || "")]
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  return /(space-bright|space-black|space light|space dark)/i.test(text);
+}
+
+/**
  * @param {ParentNode} root
  * @param {any} slide
- * @param {{ topic?: string, deckTitle?: string, themeLabel?: string, themeKey?: string, usedImageIds?: Set<string> }} [options]
+ * @param {{ topic?: string, deckTitle?: string, themeLabel?: string, themeKey?: string, usedImageIds?: Set<string>, isEndingSlide?: boolean }} [options]
  */
 function fillSlideImageSlots(root, slide, options = {}) {
   const slideRoot = getRootSlideElement(root);
@@ -3520,6 +3546,10 @@ function fillSlideImageSlots(root, slide, options = {}) {
   const wrappers = collectSlideImageWrappers(slideRoot);
   if (!wrappers.length) return;
   const themeKey = options.themeKey || resolveSlideShellThemeKey(slideRoot);
+  const skipSpaceSummaryImage =
+    (isSpaceThemeForImagePolicy({ ...options, themeKey }) || themeKey === "space-bright" || themeKey === "space-black") &&
+    (options.isEndingSlide || isLikelySummarySlideForImagePolicy(slide));
+  if (skipSpaceSummaryImage) return;
   const images = pickMockImagesForSlide(
     {
       ...slide,
@@ -3721,6 +3751,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
       topic: rawTopic,
       deckTitle: deckLine || metaTitleLine,
       themeLabel: meta?.slideTemplate,
+      isEndingSlide: Boolean(endingTemplate && pick === endingTemplate),
       usedImageIds,
     });
     if (first instanceof Element) {
