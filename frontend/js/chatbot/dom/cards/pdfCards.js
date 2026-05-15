@@ -178,7 +178,7 @@ export function createPickPdfGateCard(deps) {
   const root = el("div", "flow-card");
   root.appendChild(el("div", "flow-card-title", "Chọn tệp"));
   root.appendChild(
-    el("p", "flow-hint", "Hỗ trợ: PDF, DOCX, MD, TXT, ảnh (JPG, PNG, WEBP…) — tối đa 20 trang / 10 MB. Chọn tệp rồi nhấn Tiếp tục."),
+    el("p", "flow-hint", "Hỗ trợ: PDF, DOCX, MD, TXT, ảnh (JPG, PNG, WEBP…) — tối đa 20 trang / 10 MB. Ảnh cần có chữ rõ. Chọn tệp rồi nhấn Tiếp tục."),
   );
 
   const input = document.createElement("input");
@@ -233,7 +233,7 @@ export function createPickPdfGateCard(deps) {
     err.style.display = "none";
     const f = input.files && input.files[0];
     if (!f) {
-      err.textContent = "Vui lòng chọn một tệp hợp lệ (PDF, DOCX, Markdown, TXT).";
+      err.textContent = "Vui lòng chọn một tệp hợp lệ (PDF, DOCX, Markdown, TXT hoặc ảnh có chữ rõ).";
       err.style.display = "block";
       return;
     }
