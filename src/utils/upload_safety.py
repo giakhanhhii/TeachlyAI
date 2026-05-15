@@ -120,6 +120,116 @@ OBSCENE_TERMS = (
     "dit me",
 )
 
+TEACHING_RELEVANT_TERMS = (
+    "english",
+    "tieng anh",
+    "grammar",
+    "ngu phap",
+    "vocabulary",
+    "tu vung",
+    "pronunciation",
+    "phat am",
+    "reading",
+    "doc hieu",
+    "listening",
+    "speaking",
+    "writing",
+    "lesson",
+    "bai giang",
+    "bai hoc",
+    "worksheet",
+    "exercise",
+    "bai tap",
+    "practice",
+    "luyen tap",
+    "on tap",
+    "revision",
+    "student",
+    "students",
+    "hoc sinh",
+    "teacher",
+    "giao vien",
+    "classroom",
+    "question",
+    "questions",
+    "cau hoi",
+    "answer",
+    "answers",
+    "dap an",
+    "multiple choice",
+    "choose the best answer",
+    "fill in the blank",
+    "passage",
+    "paragraph",
+    "dialogue",
+    "sentence",
+    "definition",
+    "example",
+    "examples",
+    "topic",
+    "unit",
+    "tense",
+    "passive voice",
+    "reported speech",
+    "relative clause",
+    "relative clauses",
+    "conditionals",
+    "word formation",
+    "collocation",
+    "collocations",
+    "idiom",
+    "idioms",
+    "synonym",
+    "antonym",
+    "thpt",
+    "ielts",
+    "toeic",
+)
+
+DASHBOARD_UI_TERMS = (
+    "dashboard",
+    "analytics",
+    "metric",
+    "metrics",
+    "kpi",
+    "overview",
+    "conversion",
+    "ctr",
+    "impressions",
+    "clicks",
+    "sessions",
+    "bounce rate",
+    "active users",
+    "monthly recurring revenue",
+    "mrr",
+    "arr",
+    "revenue",
+    "profit",
+    "sales",
+    "orders",
+    "customers",
+    "traffic",
+    "funnel",
+    "retention",
+    "engagement",
+    "signups",
+    "installs",
+    "workspace",
+    "admin panel",
+    "profile",
+    "settings",
+    "notification",
+    "notifications",
+    "search",
+    "filter",
+    "export",
+    "login",
+    "logout",
+    "password",
+    "username",
+    "email",
+)
+
 
 @dataclass(frozen=True)
 class UploadSafetyViolation(Exception):
@@ -151,8 +261,12 @@ def _collect_matches(normalized_text: str, phrases: tuple[str, ...], limit: int 
 
 
 def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
-    combined = "\n".join(part for part in (notes, document_text) if str(part or "").strip())
+    safe_document = str(document_text or "")
+    safe_notes = str(notes or "")
+    combined = "\n".join(part for part in (safe_notes, safe_document) if part.strip())
     normalized = _normalize_text(combined[:MAX_SCAN_CHARS])
+    normalized_document = _normalize_text(safe_document[:MAX_SCAN_CHARS])
+    normalized_notes = _normalize_text(safe_notes[:MAX_SCAN_CHARS])
     if normalized == " ":
         return
 
@@ -222,4 +336,29 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
                 "Vui lòng tải lên tài liệu học tập lành mạnh."
             ),
             matched_terms=obscene_hits,
+        )
+
+    doc_teaching_hits = _collect_matches(normalized_document, TEACHING_RELEVANT_TERMS, limit=8)
+    note_teaching_hits = _collect_matches(normalized_notes, TEACHING_RELEVANT_TERMS, limit=4)
+    dashboard_hits = _collect_matches(normalized_document, DASHBOARD_UI_TERMS, limit=8)
+
+    if not doc_teaching_hits:
+        if len(dashboard_hits) >= 2:
+            raise UploadSafetyViolation(
+                category="non_teaching_content",
+                public_detail=(
+                    "Tệp bị từ chối vì trông giống ảnh giao diện, dashboard hoặc số liệu vận hành, "
+                    "không phải học liệu để dạy/học Tiếng Anh. Vui lòng tải lên bài giảng, bài tập, "
+                    "đề, đoạn đọc, từ vựng hoặc tài liệu giảng dạy liên quan đến Tiếng Anh."
+                ),
+                matched_terms=dashboard_hits,
+            )
+
+        raise UploadSafetyViolation(
+            category="non_teaching_content",
+            public_detail=(
+                "Tệp bị từ chối vì chưa cho thấy đây là học liệu hoặc nội dung giảng dạy Tiếng Anh. "
+                "Vui lòng tải lên bài giảng, bài tập, đề, đoạn đọc, từ vựng hoặc tài liệu phục vụ dạy/học."
+            ),
+            matched_terms=dashboard_hits or note_teaching_hits,
         )

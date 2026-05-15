@@ -272,3 +272,26 @@ def test_file_upload_rejects_document_without_readable_text(client_with_temp_db)
 
     assert response.status_code == 422
     assert "ít nhất 1 trang chứa văn bản rõ ràng" in response.json()["detail"]
+
+
+def test_file_upload_rejects_dashboard_like_uploads(client_with_temp_db):
+    client, _, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        api_server,
+        "extract_text",
+        lambda *_args, **_kwargs: (
+            "Dashboard overview revenue active users conversion rate sessions retention "
+            "search filter export settings."
+        ),
+    )
+
+    response = client.post(
+        "/api/file-upload",
+        data={"type": "slide", "count": "8", "notes": "Focus on reading skills"},
+        files={"file": ("dashboard.png", b"ignored", "image/png")},
+    )
+
+    assert response.status_code == 403
+    assert "dashboard" in response.json()["detail"] or "giảng dạy Tiếng Anh" in response.json()["detail"]
