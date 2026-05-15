@@ -5,6 +5,7 @@ import { filterFlashCardsWithinLimit } from "./flashCardLimits.js";
 import { findDirectQuizPreset } from "../data/directQuizPresets.js";
 import { findDirectFlashPreset } from "../data/directFlashPresets.js";
 import { findDirectSlidePreset, buildPresetSlideIndexes } from "../data/directSlidePresets.js";
+import { enrichSlidesWithMockImages } from "../data/slideMockImageLibrary.js";
 
 /**
  * @param {number} min
@@ -418,9 +419,13 @@ export function prepareSlideSessionData(data, meta) {
 
     const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, selected, slideDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => slideDedupeKey(item)).filter(Boolean)).size;
+    const slides = enrichSlidesWithMockImages(selected, {
+      topic: meta?.topic || directPreset.topic,
+      deckTitle: directPreset.topic,
+    });
     return {
       title: `Slide bài giảng — ${directPreset.topic}`,
-      slides: selected,
+      slides,
       sessionMeta: {
         ...meta,
         __offset: "0",
@@ -437,7 +442,13 @@ export function prepareSlideSessionData(data, meta) {
   const endingSlide = preferredEnding || pool[pool.length - 1] || null;
   const contentPool = pool.filter((slide) => !isLikelyEndingSlide(slide));
   const bodySlides = contentPool.slice(0, Math.max(0, want - 1));
-  const slides = want <= 1 ? (endingSlide ? [endingSlide] : []) : endingSlide ? [...bodySlides, endingSlide] : bodySlides;
+  const slides = enrichSlidesWithMockImages(
+    want <= 1 ? (endingSlide ? [endingSlide] : []) : endingSlide ? [...bodySlides, endingSlide] : bodySlides,
+    {
+      topic: meta?.topic,
+      deckTitle: data?.title,
+    },
+  );
   return {
     ...data,
     slides,
