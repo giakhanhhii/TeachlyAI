@@ -39,8 +39,8 @@ export function bindSidebarSettingsMenu(deps) {
     const unpinnedCount = Math.max(0, Number(getUnpinnedSessionCount()) || 0);
     clearChatsBtn.disabled = unpinnedCount === 0;
     clearChatsBtn.textContent = unpinnedCount > 0
-      ? `Xóa ${unpinnedCount} đoạn chat chưa ghim`
-      : "Không có đoạn chat chưa ghim";
+      ? "Xóa tất cả đoạn chat không ghim"
+      : "Không có đoạn chat không ghim";
   }
 
   function closeMenu() {
@@ -72,7 +72,7 @@ export function bindSidebarSettingsMenu(deps) {
 
   clearChatsBtn.addEventListener("click", async () => {
     if (clearChatsBtn.disabled) return;
-    const ok = window.confirm("Bạn có chắc không? Hành động này sẽ xóa toàn bộ đoạn chat chưa ghim.");
+    const ok = window.confirm("Bạn có chắc không? Hành động này sẽ xóa toàn bộ đoạn chat không ghim.");
     if (!ok) return;
     clearChatsBtn.disabled = true;
     try {
@@ -95,6 +95,7 @@ export function bindSidebarSettingsMenu(deps) {
   });
 
   refreshMenuState();
+  closeMenu();
 
   return {
     refreshMenuState,
