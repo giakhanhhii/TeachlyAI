@@ -277,6 +277,31 @@ const SEA_LIFE_IMAGE_REVERSED_SHELL = `
 </html>
 `;
 
+const EMPTY_IMAGE_SLOT_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Empty Image Shell 2026</title>
+  </head>
+  <body class="shell-theme-friendly">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="slide-title">Placeholder title</h2>
+        <div class="content-area">
+          <div class="two-column">
+            <div class="text-column">
+              <p>Placeholder detail</p>
+            </div>
+            <div class="image-wrapper"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 const SEA_LIFE_PRACTICE_SHELL = `
 <!DOCTYPE html>
 <html lang="vi">
@@ -524,6 +549,28 @@ describe("slideShellSrcdoc.js", () => {
     expect((detailHtml.match(/<br>/g) || []).length).toBeGreaterThanOrEqual(4);
     expect(titleStyle).toContain("left: calc(50% + 25px)");
     expect(titleStyle).toContain("right: 60px");
+  });
+
+  it("fills empty image slots with curated mock images that match the slide topic", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      EMPTY_IMAGE_SLOT_SHELL,
+      [
+        {
+          title: "Time Management",
+          bullets: [
+            "Plan your exam timing before the long reading section.",
+            "Leave a few minutes for final checking.",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const img = doc.querySelector(".image-wrapper img");
+
+    expect(img?.getAttribute("src")).toContain("10765656876879187139");
+    expect(img?.getAttribute("alt")).toMatch(/study roadmap/i);
   });
 
   it("formats Sea Life practice cards into three labeled lines", () => {
