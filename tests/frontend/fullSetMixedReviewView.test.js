@@ -27,6 +27,9 @@ describe("renderFullSetMixedReviewView", () => {
       bookmarkedStepKeys: ["quiz:question two#1"],
       stepKeys: ["slide:0:#1", "quiz:question one#1", "quiz:question two#1"],
       bookmarkFilter: true,
+      bookmarkFilterKind: "quiz",
+      bookmarkedQuizCount: 1,
+      bookmarkedFlashCount: 0,
       reviewFilter: "all",
       correct: 1,
       wrong: 1,
@@ -34,11 +37,62 @@ describe("renderFullSetMixedReviewView", () => {
       onCreateOther: vi.fn(),
       onContinueCreate: vi.fn(),
       onFilterChange: vi.fn(),
+      onBookmarkKindChange: vi.fn(),
     });
 
     const cards = stage.querySelectorAll(".quiz-review-card");
     expect(cards).toHaveLength(1);
     expect(stage.textContent).toContain("Question two");
     expect(stage.textContent).not.toContain("Question one");
+  });
+
+  it("renders flashcard bookmark switchers and bookmarked flashcards on result view", () => {
+    const stage = document.createElement("div");
+    const onBookmarkKindChange = vi.fn();
+
+    renderFullSetMixedReviewView({
+      stage,
+      steps: [
+        { kind: "slide_deck", data: { slides: [] } },
+        {
+          kind: "quiz",
+          data: { text: "Question one", options: ["A1", "B1", "C1", "D1"], correctIndex: 1 },
+        },
+        {
+          kind: "flash",
+          data: { front: "Front one", back: "Back one", phonetic: "/f/", hint: "hint one" },
+        },
+      ],
+      quizStepIndexes: [1],
+      quizOrderByStep: { 1: 1 },
+      quizSelectedByStep: [null, 0, null],
+      quizCountedByStep: [false, true, false],
+      quizCorrectByStep: [false, false, false],
+      bookmarkedStepKeys: ["quiz:question one#1", "flash:front one::back one::/f/::hint one#1"],
+      stepKeys: ["slide:0:#1", "quiz:question one#1", "flash:front one::back one::/f/::hint one#1"],
+      bookmarkFilter: true,
+      bookmarkFilterKind: "flash",
+      bookmarkedQuizCount: 1,
+      bookmarkedFlashCount: 1,
+      reviewFilter: "all",
+      correct: 0,
+      wrong: 1,
+      onBackToStep: vi.fn(),
+      onCreateOther: vi.fn(),
+      onContinueCreate: vi.fn(),
+      onFilterChange: vi.fn(),
+      onBookmarkKindChange,
+    });
+
+    const switcherButtons = [...stage.querySelectorAll(".quiz-review-bookmark-filters .quiz-review-filter-btn")];
+    expect(switcherButtons).toHaveLength(2);
+    expect(stage.textContent).toContain("Bookmark quiz (1)");
+    expect(stage.textContent).toContain("Bookmark flashcard (1)");
+    expect(stage.textContent).toContain("Front one");
+    expect(stage.textContent).toContain("Back one");
+    expect(stage.textContent).not.toContain("Question one");
+
+    switcherButtons[0].click();
+    expect(onBookmarkKindChange).toHaveBeenCalledWith("quiz");
   });
 });

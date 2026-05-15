@@ -160,6 +160,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   if (typeof root._kbAbort === "function") { root._kbAbort(); delete root._kbAbort; }
   const _genStamp = Symbol();
   root._genStamp = _genStamp;
+  const globalUiAbort = new AbortController();
   root.innerHTML = "";
   const initial = opts.initialState && typeof opts.initialState === "object" ? opts.initialState : null;
   const spec = bundle.spec || {};
@@ -277,6 +278,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   if (!cards.length) cards = steps.filter((step) => step?.kind === "flash").map((step) => step.data);
   const stepKeys = buildMixedStepKeys(steps);
   const stepKeySet = new Set(stepKeys);
+  const flashStepIndices = steps.reduce((acc, step, stepIndex) => {
+    if (step?.kind === "flash") acc.push(stepIndex);
+    return acc;
+  }, []);
   const bookmarkableStepIndices = steps.reduce((acc, step, stepIndex) => {
     if (step?.kind === "flash" || step?.kind === "quiz") acc.push(stepIndex);
     return acc;
@@ -284,6 +289,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   const initialBookmarkedStepKeys = Array.isArray(initial?.bookmarkedStepKeys) ? initial.bookmarkedStepKeys.map(String) : [];
   let bookmarkedStepKeys = new Set(initialBookmarkedStepKeys.filter((key) => stepKeySet.has(key)));
   let bookmarkFilter = Boolean(initial?.bookmarkFilter) && bookmarkedStepKeys.size > 0;
+  /** @type {"all"|"quiz"|"flash"} */
+  let bookmarkFilterKind =
+    initial?.bookmarkFilterKind === "quiz" || initial?.bookmarkFilterKind === "flash"
+      ? initial.bookmarkFilterKind
+      : "all";
   let lastAllStepKey =
     typeof initial?.lastAllStepKey === "string" && stepKeySet.has(initial.lastAllStepKey)
       ? initial.lastAllStepKey
@@ -356,6 +366,15 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   `;
   const bookmarkFilterBadge = bookmarkFilterBtn.querySelector(".flash-bookmark-filter-badge");
   bookmarkControl.appendChild(bookmarkFilterBtn);
+  const bookmarkMenu = document.createElement("div");
+  bookmarkMenu.className = "flash-bookmark-menu";
+  bookmarkControl.appendChild(bookmarkMenu);
+  bookmarkControl.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+  document.addEventListener("click", () => {
+    closeBookmarkMenu();
+  }, { signal: globalUiAbort.signal });
   topBarRight?.insertBefore(bookmarkControl, topBarRight.firstChild || null);
   shell.appendChild(topBar);
 
@@ -442,6 +461,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   footer.appendChild(backBtn);
   footer.appendChild(submitBtn);
   footer.appendChild(nextBtn);
+  let bookmarkMenuOpen = false;
   function refreshScore() {
     const score = recomputeMixedQuizScore(quizCountedByStep, quizCorrectByStep);
     correct = score.correct;
@@ -455,15 +475,46 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     if (!Number.isFinite(Number(value))) return 0;
     return Math.min(Math.max(0, Math.floor(Number(value))), Math.max(0, steps.length - 1));
   }
-  function getVisibleStepIndices() {
-    if (!bookmarkFilter) return steps.map((_, stepIndex) => stepIndex);
+  function getBookmarkedStepIndexesByKind(kind = "all") {
+    if (kind === "quiz") return quizStepIndexes.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    if (kind === "flash") return flashStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
     return bookmarkableStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
   }
+  function getAvailableBookmarkKinds() {
+    /** @type {("quiz"|"flash")[]} */
+    const kinds = [];
+    if (getBookmarkedStepIndexesByKind("quiz").length > 0) kinds.push("quiz");
+    if (getBookmarkedStepIndexesByKind("flash").length > 0) kinds.push("flash");
+    return kinds;
+  }
+  function normalizeBookmarkFilterKind() {
+    const availableKinds = getAvailableBookmarkKinds();
+    if (availableKinds.length === 0) {
+      bookmarkFilterKind = "all";
+      return;
+    }
+    if (bookmarkFilterKind === "all") return;
+    if (!availableKinds.includes(bookmarkFilterKind)) {
+      bookmarkFilterKind = availableKinds[0];
+    }
+  }
+  function getVisibleStepIndices() {
+    if (!bookmarkFilter) return steps.map((_, stepIndex) => stepIndex);
+    normalizeBookmarkFilterKind();
+    return getBookmarkedStepIndexesByKind(bookmarkFilterKind);
+  }
   function getBookmarkedQuizStepIndexes() {
-    return quizStepIndexes.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    return getBookmarkedStepIndexesByKind("quiz");
+  }
+  function getBookmarkedFlashStepIndexes() {
+    return getBookmarkedStepIndexesByKind("flash");
   }
   function getBookmarkCountForCurrentView() {
-    return reviewMode ? getBookmarkedQuizStepIndexes().length : bookmarkedStepKeys.size;
+    if (!reviewMode) return bookmarkedStepKeys.size;
+    if (!bookmarkFilter) return bookmarkedStepKeys.size;
+    if (bookmarkFilterKind === "flash") return getBookmarkedFlashStepIndexes().length;
+    if (bookmarkFilterKind === "quiz") return getBookmarkedQuizStepIndexes().length;
+    return bookmarkedStepKeys.size;
   }
   function resolveNearestVisibleStepIndex(visibleIndices, preferredIndex) {
     const safePreferred = clampStepIndex(preferredIndex);
@@ -473,7 +524,10 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     return Number.isFinite(nextVisible) ? nextVisible : visibleIndices[visibleIndices.length - 1];
   }
   function syncVisibleState(preferredIndex = index) {
-    if (bookmarkFilter && bookmarkedStepKeys.size === 0) bookmarkFilter = false;
+    if (bookmarkFilter) {
+      normalizeBookmarkFilterKind();
+      if (getBookmarkedStepIndexesByKind(bookmarkFilterKind).length === 0) bookmarkFilter = false;
+    }
     const visibleIndices = getVisibleStepIndices();
     if (!visibleIndices.length) {
       index = 0;
@@ -487,6 +541,55 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     void topBar.offsetWidth;
     topBar.classList.add("flash-bookmark-feedback");
   }
+  function closeBookmarkMenu() {
+    bookmarkMenuOpen = false;
+    bookmarkMenu.classList.remove("open");
+  }
+  function openBookmarkMenu() {
+    bookmarkMenuOpen = true;
+    bookmarkMenu.classList.add("open");
+  }
+  function applyBookmarkFilter(kind) {
+    bookmarkFilter = true;
+    bookmarkFilterKind = kind;
+    normalizeBookmarkFilterKind();
+    const visibleBookmarks = getBookmarkedStepIndexesByKind(bookmarkFilterKind);
+    const resumeBookmarkIndex =
+      lastBookmarkStepKey && bookmarkedStepKeys.has(lastBookmarkStepKey) && visibleBookmarks.includes(stepKeys.indexOf(lastBookmarkStepKey))
+        ? stepKeys.indexOf(lastBookmarkStepKey)
+        : -1;
+    const firstBookmarkedIndex = visibleBookmarks[0];
+    if (resumeBookmarkIndex >= 0) index = resumeBookmarkIndex;
+    else if (Number.isFinite(firstBookmarkedIndex)) index = firstBookmarkedIndex;
+    if (reviewMode) renderReview();
+    else renderStep();
+  }
+  function rebuildBookmarkMenu() {
+    const availableKinds = getAvailableBookmarkKinds();
+    bookmarkMenu.innerHTML = "";
+    if (reviewMode || availableKinds.length < 2) {
+      closeBookmarkMenu();
+      return;
+    }
+    const options = [
+      { kind: "all", label: `Tất cả bookmark (${bookmarkedStepKeys.size})` },
+      ...(availableKinds.includes("quiz") ? [{ kind: "quiz", label: `Bookmark quiz (${getBookmarkedQuizStepIndexes().length})` }] : []),
+      ...(availableKinds.includes("flash") ? [{ kind: "flash", label: `Bookmark flashcard (${getBookmarkedFlashStepIndexes().length})` }] : []),
+    ];
+    options.forEach((option) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `flash-bookmark-menu-item${bookmarkFilter && bookmarkFilterKind === option.kind ? " active" : ""}`;
+      btn.textContent = option.label;
+      btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        closeBookmarkMenu();
+        applyBookmarkFilter(option.kind);
+      });
+      bookmarkMenu.appendChild(btn);
+    });
+    bookmarkMenu.classList.toggle("open", bookmarkMenuOpen);
+  }
   function restoreAllViewIndex() {
     const resumeAllIndex = lastAllStepKey ? stepKeys.indexOf(lastAllStepKey) : -1;
     if (resumeAllIndex >= 0) index = resumeAllIndex;
@@ -495,11 +598,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     const bookmarkCount = getBookmarkCountForCurrentView();
     const hasBookmarks = bookmarkCount > 0;
     bookmarkControl.classList.toggle("has-bookmarks", hasBookmarks);
-    if (!hasBookmarks) bookmarkFilter = false;
+    if (!hasBookmarks) {
+      bookmarkFilter = false;
+      bookmarkFilterKind = "all";
+      closeBookmarkMenu();
+    }
     bookmarkFilterBtn.classList.toggle("active", bookmarkFilter);
     bookmarkFilterBtn.disabled = !hasBookmarks;
     if (bookmarkFilterBadge) bookmarkFilterBadge.textContent = String(bookmarkCount);
     if (reviewMode) {
+      closeBookmarkMenu();
       bookmarkFilterBtn.title = bookmarkFilter
         ? `Đang xem ${bookmarkCount} câu quiz đã bookmark. Bấm lần nữa để quay lại tất cả.`
         : `Chỉ xem ${bookmarkCount} câu quiz đã bookmark`;
@@ -508,6 +616,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     bookmarkFilterBtn.title = bookmarkFilter
       ? `Đang xem ${bookmarkCount} mục đã bookmark. Bấm lần nữa để quay lại tất cả.`
       : `Chỉ xem ${bookmarkCount} mục đã bookmark`;
+    rebuildBookmarkMenu();
   }
   function paintBookmarkedProgressSegments(visibleIndices) {
     const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
@@ -568,6 +677,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       stepsSnapshot: cloneMixedSteps(steps),
       bookmarkedStepKeys: [...bookmarkedStepKeys],
       bookmarkFilter,
+      bookmarkFilterKind,
       lastAllStepKey,
       lastBookmarkStepKey,
     });
@@ -625,6 +735,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       bookmarkedStepKeys: [...bookmarkedStepKeys],
       stepKeys,
       bookmarkFilter,
+      bookmarkFilterKind,
+      bookmarkedQuizCount: getBookmarkedQuizStepIndexes().length,
+      bookmarkedFlashCount: getBookmarkedFlashStepIndexes().length,
       reviewFilter,
       correct,
       wrong,
@@ -633,6 +746,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       onContinueCreate: () => deps?.onContinueCreate?.("fullset", { preset: "same" }),
       onFilterChange: (filter) => {
         reviewFilter = filter;
+        renderReview();
+      },
+      onBookmarkKindChange: (kind) => {
+        if (kind !== "quiz" && kind !== "flash") return;
+        bookmarkFilter = true;
+        bookmarkFilterKind = kind;
         renderReview();
       },
     });
@@ -1092,23 +1211,35 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     emitState();
   }
   bookmarkFilterBtn.addEventListener("click", () => {
-    const availableBookmarkIndexes = reviewMode ? getBookmarkedQuizStepIndexes() : getVisibleStepIndices().filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
-    if (availableBookmarkIndexes.length === 0) return;
+    const availableKinds = getAvailableBookmarkKinds();
+    const availableBookmarkIndexes = reviewMode
+      ? (bookmarkFilterKind === "flash" ? getBookmarkedFlashStepIndexes() : getBookmarkedQuizStepIndexes())
+      : getBookmarkedStepIndexesByKind("all");
+    if (availableBookmarkIndexes.length === 0 && availableKinds.length === 0) return;
     if (bookmarkFilter) {
       bookmarkFilter = false;
+      bookmarkFilterKind = "all";
+      closeBookmarkMenu();
       restoreAllViewIndex();
       if (reviewMode) renderReview();
       else renderStep();
       return;
     }
-    bookmarkFilter = true;
-    const resumeBookmarkIndex =
-      lastBookmarkStepKey && bookmarkedStepKeys.has(lastBookmarkStepKey) ? stepKeys.indexOf(lastBookmarkStepKey) : -1;
-    const firstBookmarkedIndex = availableBookmarkIndexes[0];
-    if (resumeBookmarkIndex >= 0) index = resumeBookmarkIndex;
-    else if (Number.isFinite(firstBookmarkedIndex)) index = firstBookmarkedIndex;
-    if (reviewMode) renderReview();
-    else renderStep();
+    if (reviewMode) {
+      bookmarkFilter = true;
+      if (availableKinds.length === 1) bookmarkFilterKind = availableKinds[0];
+      else if (bookmarkFilterKind === "all") bookmarkFilterKind = "quiz";
+      renderReview();
+      return;
+    }
+    if (availableKinds.length > 1) {
+      bookmarkMenuOpen = !bookmarkMenuOpen;
+      rebuildBookmarkMenu();
+      if (bookmarkMenuOpen) openBookmarkMenu();
+      else closeBookmarkMenu();
+      return;
+    }
+    applyBookmarkFilter(availableKinds[0] || "all");
   });
   nextBtn.addEventListener("click", () => {
     if (reviewMode) {
@@ -1267,8 +1398,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       if (!nextBtn.disabled) nextBtn.click();
     }
   }
-  root._kbAbort = () => window.removeEventListener("keydown", onGlobalKeydown, true);
-  window.addEventListener("keydown", onGlobalKeydown, true);
+  root._kbAbort = () => globalUiAbort.abort();
+  window.addEventListener("keydown", onGlobalKeydown, { capture: true, signal: globalUiAbort.signal });
 
   shell.appendChild(progress.wrap);
   shell.appendChild(stage);
