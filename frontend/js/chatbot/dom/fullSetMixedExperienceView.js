@@ -789,6 +789,23 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       nextBtn.textContent = index >= total - 1 ? "Tiếp tục tạo" : "Tiếp theo";
     }
   }
+
+  function runSlideDeckArrowAction(action) {
+    if (action === "deck-prev") {
+      activeSlideDeckShell?.bumpDeck(-1);
+      return;
+    }
+    if (action === "deck-next") {
+      activeSlideDeckShell?.bumpDeck(1);
+      return;
+    }
+    if (action === "step-prev") {
+      if (!backBtn.disabled) backBtn.click();
+      return;
+    }
+    if (!nextBtn.disabled) nextBtn.click();
+  }
+
   function renderStep() {
     if (reviewMode) {
       renderReview();
@@ -1005,12 +1022,17 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
 
         function paintSlideChrome() {
           const pres = viewMode === "presentation";
+          const prevArrowAction = resolveMixedSlideDeckArrowAction("ArrowLeft", slideDeckIndex, deckSlides.length);
+          const nextArrowAction = resolveMixedSlideDeckArrowAction("ArrowRight", slideDeckIndex, deckSlides.length);
+          const canLeaveDeckBackward = index > 0 || Boolean(deps?.hasPrevAutoExperience?.());
+          const canLeaveDeckForward =
+            index < total - 1 || quizStepIndexes.length > 0 || typeof deps?.onContinueCreate === "function";
           modePresBtn.setAttribute("aria-pressed", pres ? "true" : "false");
           modeScrollBtn.setAttribute("aria-pressed", pres ? "false" : "true");
           modePresBtn.classList.toggle("is-selected", pres);
           modeScrollBtn.classList.toggle("is-selected", !pres);
-          prevArrow.disabled = slideDeckIndex <= 0;
-          nextArrow.disabled = slideDeckIndex >= deckSlides.length - 1;
+          prevArrow.disabled = prevArrowAction === "step-prev" ? !canLeaveDeckBackward : false;
+          nextArrow.disabled = nextArrowAction === "step-next" ? !canLeaveDeckForward : false;
           prevArrow.hidden = !pres || !shellReady;
           nextArrow.hidden = !pres || !shellReady;
           fsBtn.hidden = !pres || !shellReady;
@@ -1042,8 +1064,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         modePresBtn.addEventListener("click", () => applyViewMode("presentation"), { signal: uiSignal });
         modeScrollBtn.addEventListener("click", () => applyViewMode("scroll"), { signal: uiSignal });
 
-        prevArrow.addEventListener("click", () => bumpDeck(-1), { signal: uiSignal });
-        nextArrow.addEventListener("click", () => bumpDeck(1), { signal: uiSignal });
+        prevArrow.addEventListener(
+          "click",
+          () => runSlideDeckArrowAction(resolveMixedSlideDeckArrowAction("ArrowLeft", slideDeckIndex, deckSlides.length)),
+          { signal: uiSignal },
+        );
+        nextArrow.addEventListener(
+          "click",
+          () => runSlideDeckArrowAction(resolveMixedSlideDeckArrowAction("ArrowRight", slideDeckIndex, deckSlides.length)),
+          { signal: uiSignal },
+        );
 
         function isFauxFs() {
           return viewport.classList.contains("exp-slide-viewport--faux-fs");
@@ -1392,14 +1422,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       if (activeSlideDeckShell.getViewMode() !== "presentation") return;
       if (performance.now() < activeSlideDeckShell.getSuppressNavUntil()) return;
       e.preventDefault();
-      const action = resolveMixedSlideDeckArrowAction(e.key, slideDeckIndex, activeSlideDeckShell.deckLen);
-      if (action === "deck-prev") activeSlideDeckShell.bumpDeck(-1);
-      else if (action === "deck-next") activeSlideDeckShell.bumpDeck(1);
-      else if (action === "step-prev") {
-        if (!backBtn.disabled) backBtn.click();
-      } else if (!nextBtn.disabled) {
-        nextBtn.click();
-      }
+      runSlideDeckArrowAction(resolveMixedSlideDeckArrowAction(e.key, slideDeckIndex, activeSlideDeckShell.deckLen));
       return;
     }
     e.preventDefault();
