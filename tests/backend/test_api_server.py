@@ -252,3 +252,23 @@ def test_file_upload_allows_normal_educational_content(client_with_temp_db):
     assert response.status_code == 200
     payload = response.json()
     assert payload["slides"][0]["title"] == "Climate"
+
+
+def test_file_upload_rejects_document_without_readable_text(client_with_temp_db):
+    client, _, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(
+        api_server,
+        "extract_text",
+        lambda *_args, **_kwargs: "[NO_TEXT_DETECTED]",
+    )
+
+    response = client.post(
+        "/api/file-upload",
+        data={"type": "flashcard", "count": "12", "notes": ""},
+        files={"file": ("space.jpg", b"ignored", "image/jpeg")},
+    )
+
+    assert response.status_code == 422
+    assert "ít nhất 1 trang chứa văn bản rõ ràng" in response.json()["detail"]
