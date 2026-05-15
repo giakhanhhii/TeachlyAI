@@ -302,6 +302,42 @@ const EMPTY_IMAGE_SLOT_SHELL = `
 </html>
 `;
 
+const DOUBLE_IMAGE_SLOT_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Double Image Shell 2026</title>
+  </head>
+  <body class="shell-theme-friendly">
+    <div id="presentation-area">
+      <div class="slide-container" id="slide1">
+        <h2 class="slide-title">Placeholder title</h2>
+        <div class="content-area">
+          <div class="two-column">
+            <div class="text-column">
+              <p>Placeholder detail</p>
+            </div>
+            <div class="image-wrapper"></div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-container" id="slide2">
+        <h2 class="slide-title">Placeholder title</h2>
+        <div class="content-area">
+          <div class="two-column">
+            <div class="text-column">
+              <p>Placeholder detail</p>
+            </div>
+            <div class="image-wrapper"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 const SPACE_SUMMARY_IMAGE_SHELL = `
 <!DOCTYPE html>
 <html lang="vi">
@@ -630,6 +666,38 @@ describe("slideShellSrcdoc.js", () => {
     expect(img?.getAttribute("data-shell-fallback-urls") || "").not.toBe("");
     expect(styleText).toContain('.image-wrapper img[data-shell-autofill-image="1"]');
     expect(styleText).toContain("object-fit: cover !important;");
+  });
+
+  it("avoids reusing the same image twice inside one rendered slide session when another option exists", () => {
+    const sharedUrl = "https://example.com/shared-ocean.jpg";
+    const srcdoc = buildSlideDeckSrcdoc(
+      DOUBLE_IMAGE_SLOT_SHELL,
+      [
+        {
+          title: "Recognition signals",
+          bullets: ["Ocean clues and matching practice."],
+          imageUrl: sharedUrl,
+          imageAlt: "Shared ocean image",
+        },
+        {
+          title: "Common pitfalls",
+          bullets: ["Ocean clues and matching practice."],
+          imageUrl: sharedUrl,
+          imageAlt: "Shared ocean image",
+        },
+      ],
+      { shellYear: "2026", slideTemplate: "Sea Life" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const renderedImages = Array.from(doc.querySelectorAll(".shell-slide-instance .image-wrapper img")).map((node) =>
+      node.getAttribute("src") || "",
+    );
+
+    expect(renderedImages).toHaveLength(2);
+    expect(renderedImages[0]).toBe(sharedUrl);
+    expect(renderedImages[1]).not.toBe(sharedUrl);
+    expect(new Set(renderedImages).size).toBe(2);
   });
 
   it("keeps the centered icon on summary slides for both space themes instead of injecting images", () => {

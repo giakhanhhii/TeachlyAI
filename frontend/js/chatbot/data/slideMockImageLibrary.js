@@ -88,6 +88,7 @@ const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
   },
 ]);
 
+const ALL_LIBRARY_IMAGE_IDS = Object.freeze(SLIDE_MOCK_IMAGE_LIBRARY.map((item) => item.id));
 const IMAGE_BY_ID = new Map(SLIDE_MOCK_IMAGE_LIBRARY.map((item) => [item.id, item]));
 
 const THEME_IMAGE_RULES = Object.freeze([
@@ -211,6 +212,7 @@ function buildCandidateImageIds(text) {
     rule.imageIds.forEach(push);
   });
   FALLBACK_IMAGE_IDS.forEach(push);
+  ALL_LIBRARY_IMAGE_IDS.forEach(push);
   return ordered;
 }
 
@@ -230,37 +232,67 @@ export function pickMockImagesForSlide(slide, options = {}) {
   const usedImageIds = options.usedImageIds instanceof Set ? options.usedImageIds : new Set();
   const existingImageUrl = String(slide?.imageUrl || "").trim();
   const existingImageAlt = String(slide?.imageAlt || slide?.title || "Slide illustration").trim();
+  const existingImageKey = existingImageUrl ? `direct:${existingImageUrl}` : "";
   const candidates = buildCandidateImageIds(text);
-  const ranked = candidates
-    .map((id) => ({
-      id,
-      usedPenalty: usedImageIds.has(id) ? 1 : 0,
-    }))
-    .sort((a, b) => a.usedPenalty - b.usedPenalty)
-    .map((item) => item.id);
+  const rankedUnused = candidates.filter((id) => !usedImageIds.has(id));
+  const rankedUsed = candidates.filter((id) => usedImageIds.has(id));
 
   const picks = [];
-  if (existingImageUrl) {
-    picks.push({
-      id: `direct:${existingImageUrl}`,
+  const pickedKeys = new Set();
+  const pushPick = (key, item) => {
+    if (!key || !item?.url || pickedKeys.has(key)) return false;
+    pickedKeys.add(key);
+    picks.push(item);
+    usedImageIds.add(key);
+    return picks.length >= count;
+  };
+
+  if (
+    existingImageUrl &&
+    existingImageKey &&
+    !usedImageIds.has(existingImageKey) &&
+    pushPick(existingImageKey, {
+      id: existingImageKey,
       url: existingImageUrl,
       alt: existingImageAlt,
-    });
+    })
+  ) {
+    return picks;
   }
-  for (const id of ranked) {
+
+  for (const id of rankedUnused) {
     const entry = pickLibraryEntryById(id);
     if (!entry) continue;
     if (existingImageUrl && entry.url === existingImageUrl) continue;
-    picks.push(entry);
-    usedImageIds.add(entry.id);
-    if (picks.length >= count) break;
+    if (pushPick(entry.id, entry)) return picks;
   }
 
-  while (picks.length < count && FALLBACK_IMAGE_IDS.length) {
-    const fallbackId = FALLBACK_IMAGE_IDS[picks.length % FALLBACK_IMAGE_IDS.length];
-    const fallback = pickLibraryEntryById(fallbackId);
-    if (!fallback) break;
-    picks.push(fallback);
+  if (
+    picks.length < count &&
+    existingImageUrl &&
+    existingImageKey &&
+    !pickedKeys.has(existingImageKey) &&
+    pushPick(existingImageKey, {
+      id: existingImageKey,
+      url: existingImageUrl,
+      alt: existingImageAlt,
+    })
+  ) {
+    return picks;
+  }
+
+  for (const id of rankedUsed) {
+    const entry = pickLibraryEntryById(id);
+    if (!entry) continue;
+    if (existingImageUrl && entry.url === existingImageUrl) continue;
+    if (pushPick(entry.id, entry)) return picks;
+  }
+
+  for (const id of ALL_LIBRARY_IMAGE_IDS) {
+    const fallback = pickLibraryEntryById(id);
+    if (!fallback) continue;
+    if (existingImageUrl && fallback.url === existingImageUrl) continue;
+    if (pushPick(fallback.id, fallback)) return picks;
   }
 
   return picks;
@@ -273,12 +305,17 @@ export function pickMockImagesForSlide(slide, options = {}) {
  */
 export function enrichSlideWithMockImage(slide, options = {}) {
   if (!slide || typeof slide !== "object") return slide;
+  const usedImageIds = options.usedImageIds instanceof Set ? options.usedImageIds : null;
   if (typeof slide.imageUrl === "string" && slide.imageUrl.trim()) {
-    return {
-      ...slide,
-      imageUrl: slide.imageUrl.trim(),
-      imageAlt: String(slide.imageAlt || slide.title || "Slide illustration").trim(),
-    };
+    const directKey = `direct:${slide.imageUrl.trim()}`;
+    if (!usedImageIds || !usedImageIds.has(directKey)) {
+      usedImageIds?.add(directKey);
+      return {
+        ...slide,
+        imageUrl: slide.imageUrl.trim(),
+        imageAlt: String(slide.imageAlt || slide.title || "Slide illustration").trim(),
+      };
+    }
   }
   const [pick] = pickMockImagesForSlide(slide, options);
   if (!pick) return { ...slide };
