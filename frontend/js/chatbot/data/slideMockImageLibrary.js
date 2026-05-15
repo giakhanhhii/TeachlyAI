@@ -27,24 +27,9 @@ const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
     alt: "Teacher guiding speaking and pronunciation practice",
   },
   {
-    id: "grammar-notes",
-    url: `https://images.unsplash.com/photo-1456735190827-d1262f71b8a3${SHARED_IMG_PARAMS}`,
-    alt: "Student reviewing English grammar notes",
-  },
-  {
     id: "vocab-collocations",
     url: `https://images.unsplash.com/photo-1517842645767-c639042777db${SHARED_IMG_PARAMS}`,
     alt: "Creative vocabulary and collocation study scene",
-  },
-  {
-    id: "exam-practice",
-    url: `https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8${SHARED_IMG_PARAMS}`,
-    alt: "Student completing an English practice test",
-  },
-  {
-    id: "reading-strategy",
-    url: `https://images.unsplash.com/photo-1507842217343-583bb7270b66${SHARED_IMG_PARAMS}`,
-    alt: "Focused reading and comprehension practice",
   },
   {
     id: "digital-laptop",
@@ -70,11 +55,6 @@ const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
     id: "travel-journey",
     url: `https://images.unsplash.com/photo-1488646953014-85cb44e25828${SHARED_IMG_PARAMS}`,
     alt: "Traveller planning a new journey",
-  },
-  {
-    id: "culture-library",
-    url: `https://images.unsplash.com/photo-1521587760476-6c12a4b040da${SHARED_IMG_PARAMS}`,
-    alt: "Library shelves representing language and cultural learning",
   },
   {
     id: "ocean-whale",
@@ -144,19 +124,19 @@ const IMAGE_RULES = Object.freeze([
   },
   {
     test: /\b(?:reading|passage|skim|skimming|scan|scanning|inference|paraphrase|comprehension|context)\b/i,
-    imageIds: ["reading-strategy", "culture-library", "study-roadmap"],
+    imageIds: ["study-roadmap", "digital-laptop", "teacher-speaking"],
   },
   {
     test: /\b(?:time management|timeline|checklist|review|overview|strategy|strategies|exam|practice|plan|planning|stamina)\b/i,
-    imageIds: ["study-roadmap", "exam-practice", "reading-strategy"],
+    imageIds: ["study-roadmap", "digital-laptop", "travel-journey"],
   },
   {
     test: /\b(?:grammar|tense|tenses|conditional|conditionals|passive|relative|reported speech|modal|clause|clauses|transformation|agreement|articles|determiners|question tags|inversion)\b/i,
-    imageIds: ["grammar-notes", "grammar-puzzle", "exam-practice"],
+    imageIds: ["grammar-puzzle", "teacher-speaking", "study-roadmap"],
   },
   {
     test: /\b(?:technology|artificial intelligence|ai|digital|internet|robot|robotics|innovation|social media|online|cyber|computer)\b/i,
-    imageIds: ["digital-laptop", "workplace-team", "reading-strategy"],
+    imageIds: ["digital-laptop", "workplace-team", "study-roadmap"],
   },
   {
     test: /\b(?:environment|climate|forest|deforestation|sustainable|sustainability|pollution|biodiversity|wildlife|ecology)\b/i,
@@ -168,7 +148,7 @@ const IMAGE_RULES = Object.freeze([
   },
   {
     test: /\b(?:travel|tourism|journey|holiday|destination|trip|leisure)\b/i,
-    imageIds: ["travel-journey", "study-roadmap", "reading-strategy"],
+    imageIds: ["travel-journey", "study-roadmap", "forest-climate"],
   },
   {
     test: /\b(?:career|employment|workplace|interview|job|professional|leadership|teamwork)\b/i,
@@ -176,7 +156,7 @@ const IMAGE_RULES = Object.freeze([
   },
   {
     test: /\b(?:culture|language|heritage|globalisation|exchange|literature|reading list)\b/i,
-    imageIds: ["culture-library", "reading-strategy", "study-roadmap"],
+    imageIds: ["travel-journey", "teacher-speaking", "study-roadmap"],
   },
   {
     test: /\b(?:ocean|sea|marine|underwater|fish|whale)\b/i,
@@ -194,6 +174,7 @@ const FALLBACK_IMAGE_IDS = Object.freeze([
   "digital-laptop",
   "workplace-team",
   "study-roadmap",
+  "teacher-speaking",
 ]);
 
 function normalizeSlideImageText(slide, options = {}) {
