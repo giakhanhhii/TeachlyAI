@@ -20,7 +20,19 @@ export function insertInlineMcLineBreaks(s) {
   t = t.replace(/\s+(?=[a-e]\s-\s)/gi, "\n");
   // Same style with a period: "a. … b. …" (watch for false positives like "e.g.")
   t = t.replace(/\s+(?=[a-e]\.\s)/gi, "\n");
-  return t;
+  return removeStandaloneDashLines(t);
+}
+
+/**
+ * Một số bundle OCR sinh ra dòng chỉ có dấu "-" đứng riêng; bỏ hẳn các dòng này khi render.
+ * @param {string | null | undefined} s
+ */
+export function removeStandaloneDashLines(s) {
+  if (s == null) return s;
+  return String(s)
+    .split(/\r?\n/)
+    .filter((line) => line.trim() !== "-")
+    .join("\n");
 }
 
 /**

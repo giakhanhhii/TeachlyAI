@@ -1,5 +1,5 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { renderQuizStemRichText } from "../services/quizService.js";
+import { removeStandaloneDashLines, renderQuizStemRichText } from "../services/quizService.js";
 import { createExperienceTopBar } from "./experienceChrome.js";
 
 const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
@@ -246,7 +246,11 @@ function normalizeTestProgressById(input) {
 
 function splitEmbeddedInstructionContext(group) {
   const rawInstruction = String(group?.instruction || "").trim();
-  const rawContext = Array.isArray(group?.context) ? group.context.map((line) => String(line || "").trim()).filter(Boolean) : [];
+  const rawContext = Array.isArray(group?.context)
+    ? group.context
+      .map((line) => removeStandaloneDashLines(String(line || "")).trim())
+      .filter(Boolean)
+    : [];
   if (rawContext.length || !rawInstruction) {
     return {
       instruction: rawInstruction,
@@ -264,7 +268,7 @@ function splitEmbeddedInstructionContext(group) {
 
   return {
     instruction: embeddedPassageMatch[1].trim(),
-    context: [embeddedPassageMatch[2].trim()],
+    context: [removeStandaloneDashLines(embeddedPassageMatch[2]).trim()].filter(Boolean),
   };
 }
 
@@ -457,7 +461,8 @@ function renderPassageParagraph(target, text, focus, paragraphIndex, paragraphCo
   }
   const focusList = Array.isArray(focus) ? focus : focus ? [focus] : [];
   const effectiveFocus = focusList.filter((item) => !item?.paragraphNumber || item.paragraphNumber === paragraphIndex + 1);
-  const lines = String(text || "").split("\n");
+  const normalizedText = removeStandaloneDashLines(String(text || ""));
+  const lines = normalizedText ? normalizedText.split("\n") : [];
   lines.forEach((line, lineIndex) => {
     appendHighlightedPassageLine(target, line, effectiveFocus);
     if (lineIndex < lines.length - 1) {

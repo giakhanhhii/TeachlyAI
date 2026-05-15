@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { emphasizePromptReferences } from "../../frontend/js/chatbot/dom/thptqgFullTestExperienceView.js";
-import { insertInlineMcLineBreaks, renderQuizStemRichText } from "../../frontend/js/chatbot/services/quizService.js";
+import {
+  insertInlineMcLineBreaks,
+  removeStandaloneDashLines,
+  renderQuizStemRichText,
+} from "../../frontend/js/chatbot/services/quizService.js";
 
 describe("quizService rich text formatting", () => {
   it("splits inline lowercase arrangement labels onto separate lines", () => {
@@ -19,6 +23,11 @@ describe("quizService rich text formatting", () => {
     expect(heading?.textContent).toBe("Main note");
     expect(target.textContent).toBe("Main noteBody line");
     expect(target.innerHTML).not.toContain("# Main note");
+  });
+
+  it("removes lines that only contain a standalone dash", () => {
+    expect(removeStandaloneDashLines("Line one\n-\nLine two")).toBe("Line one\nLine two");
+    expect(insertInlineMcLineBreaks("a. First line\n-\nb. Second line")).toBe("a. First line\nb. Second line");
   });
 
   it("does not treat contractions as quoted prompt focus", () => {
