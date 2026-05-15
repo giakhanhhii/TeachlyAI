@@ -8,8 +8,8 @@ const AI_SVG = `<svg class="exp-icon-svg" width="20" height="20" viewBox="0 0 24
 const DOWNLOAD_SVG = `<svg class="exp-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>`;
 
 /**
- * @param {{ title: string, onAiEdit?: () => void, actionButton?: { label: string, title?: string, ariaLabel?: string, onClick?: () => void, icon?: "ai"|"download", className?: string } }} p
- * @returns {{ bar: HTMLDivElement, actionButton: HTMLButtonElement | null }}
+ * @param {{ title: string, onAiEdit?: () => void, onShare?: () => void | Promise<void>, actionButton?: { label: string, title?: string, ariaLabel?: string, onClick?: () => void, icon?: "ai"|"download", className?: string } }} p
+ * @returns {{ bar: HTMLDivElement, actionButton: HTMLButtonElement | null, shareButton: HTMLButtonElement }}
  */
 export function createExperienceTopBar(p) {
   const bar = document.createElement("div");
@@ -50,15 +50,26 @@ export function createExperienceTopBar(p) {
   const share = document.createElement("button");
   share.type = "button";
   share.className = "exp-icon-btn";
-  share.title = "Chia sẻ (sắp có)";
+  share.title = p.onShare ? "Chia sẻ bài học" : "Chia sẻ (sắp có)";
   share.setAttribute("aria-label", "Chia sẻ");
   share.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
-  share.disabled = true;
+  share.disabled = typeof p.onShare !== "function";
+  if (typeof p.onShare === "function") {
+    share.addEventListener("click", async () => {
+      if (share.disabled) return;
+      share.disabled = true;
+      try {
+        await p.onShare?.();
+      } finally {
+        share.disabled = false;
+      }
+    });
+  }
   right.appendChild(share);
 
   bar.appendChild(left);
   bar.appendChild(right);
-  return { bar, actionButton };
+  return { bar, actionButton, shareButton: share };
 }
 
 /**

@@ -61,6 +61,8 @@ from .utils.file_extractor import (
     UnsupportedFormatError,
     PageLimitError,
 )
+from .utils.node_runtime import resolve_node_runtime
+from .utils.upload_safety import ensure_safe_upload_content, UploadSafetyViolation
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -142,6 +144,11 @@ class FlashTranslateBatchOut(BaseModel):
 class SlideExportIn(BaseModel):
     title: str = Field(default="teachly-slides", max_length=240)
     srcdoc: str = Field(..., min_length=1, max_length=2_000_000)
+
+
+class ShareExperienceIn(BaseModel):
+    title: str = Field(default="Bài chia sẻ", max_length=240)
+    experienceState: dict[str, object] = Field(...)
 
 
 class AiGenerateIn(BaseModel):
@@ -454,6 +461,18 @@ async def file_upload(
     except RuntimeError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
+    try:
+        ensure_safe_upload_content(document_text, notes=notes)
+    except UploadSafetyViolation as exc:
+        logger.warning(
+            "Blocked unsafe upload: type=%s filename=%s category=%s matches=%s",
+            type,
+            file.filename,
+            exc.category,
+            ",".join(exc.matched_terms[:6]),
+        )
+        raise HTTPException(status_code=403, detail=exc.public_detail) from exc
+
     logger.info(
         "File upload: type=%s filename=%s chars=%d count=%d",
         type, file.filename, len(document_text), count,
@@ -541,6 +560,13 @@ def export_slide_pdf(body: SlideExportIn):
     payload_path = temp_dir / "payload.json"
     output_path = temp_dir / file_name
     script_path = REPO_ROOT / "scripts" / "export_slide_pdf.mjs"
+    node_runtime = resolve_node_runtime(REPO_ROOT)
+    if not node_runtime:
+        _cleanup_export_dir(temp_dir)
+        raise HTTPException(
+            status_code=503,
+            detail="Không tìm thấy Node.js để tạo PDF slide.",
+        )
 
     try:
         payload_path.write_text(
@@ -548,7 +574,7 @@ def export_slide_pdf(body: SlideExportIn):
             encoding="utf-8",
         )
         result = subprocess.run(
-            ["node", str(script_path), str(payload_path), str(output_path)],
+            [node_runtime, str(script_path), str(payload_path), str(output_path)],
             cwd=str(REPO_ROOT),
             capture_output=True,
             text=True,
@@ -593,6 +619,35 @@ def export_slide_pdf(body: SlideExportIn):
         filename=file_name,
         background=BackgroundTask(_cleanup_export_dir, temp_dir),
     )
+
+
+@app.post("/api/shared-experiences")
+def create_shared_experience(body: ShareExperienceIn):
+    experience_state = body.experienceState if isinstance(body.experienceState, dict) else {}
+    if not experience_state.get("resume"):
+        raise HTTPException(status_code=422, detail="Không có experience hợp lệ để chia sẻ.")
+    payload_json = json.dumps(experience_state, ensure_ascii=False)
+    if len(payload_json.encode("utf-8")) > 2_000_000:
+        raise HTTPException(status_code=413, detail="Bài chia sẻ quá lớn, vui lòng thử với nội dung ngắn hơn.")
+    share_id = db.create_shared_experience(body.title.strip() or "Bài chia sẻ", experience_state)
+    return {"share_id": share_id}
+
+
+@app.get("/api/shared-experiences/{share_id}")
+def get_shared_experience(share_id: str):
+    safe_share_id = re.sub(r"[^a-fA-F0-9]", "", str(share_id or "").strip())
+    if len(safe_share_id) < 8:
+        raise HTTPException(status_code=404, detail="Không tìm thấy bài chia sẻ.")
+    row = db.get_shared_experience(safe_share_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="Không tìm thấy bài chia sẻ.")
+    payload = row.get("payload") if isinstance(row, dict) else {}
+    return {
+        "share_id": row["share_id"],
+        "title": row["title"],
+        "experienceState": payload if isinstance(payload, dict) else {},
+        "created_at": row["created_at"],
+    }
 
 
 @app.post("/api/chat", response_model=ChatOut)

@@ -901,6 +901,29 @@ function getAcademicTextBudget() {
   };
 }
 
+function isDefaultCoverLikeSlide(root) {
+  const slide = getRootSlideElement(root);
+  return !!slide?.querySelector?.(".title-group, .section-center");
+}
+
+function getDefaultCoverTextBudget(root) {
+  const slide = getRootSlideElement(root);
+  if (!slide) return null;
+  if (slide.querySelector(".title-group")) {
+    return {
+      headline: { maxWords: 4, maxChars: 30 },
+      detail:   { maxChars: 60, maxSentences: 1, maxWords: 10 },
+    };
+  }
+  if (slide.querySelector(".section-center")) {
+    return {
+      headline: { maxWords: 5, maxChars: 34 },
+      detail:   { maxChars: 86, maxSentences: 2, maxWords: 14 },
+    };
+  }
+  return null;
+}
+
 function getSlideShellThemeTextBudget(root, themeKey) {
   if (themeKey === "comic") return getComicTextBudget(root);
   if (themeKey === "space-bright") return getSpaceBrightTextBudget(root);
@@ -908,6 +931,7 @@ function getSlideShellThemeTextBudget(root, themeKey) {
   if (themeKey === "sealife") return getSealifeTextBudget(root);
   if (themeKey === "friendly") return getFriendlyTextBudget(root);
   if (themeKey === "academic") return getAcademicTextBudget();
+  if (!themeKey) return getDefaultCoverTextBudget(root);
   return null;
 }
 
@@ -3179,7 +3203,9 @@ function fillContentSlots(root, title, bullets, options = {}) {
     return String(options.deckTitle || "").replace(/\s+/g, " ").trim();
   })();
   const themeTextBudget = getSlideShellThemeTextBudget(slideRoot || root, themeKey);
-  const titleSeed = (isComic || isSealife) ? buildSlideTitleSeed(title) : title;
+  const isDefaultCompactCover = !themeKey && isDefaultCoverLikeSlide(slideRoot || root);
+  const shouldCompactTitle = !!themeTextBudget && (isComic || isSealife || isDefaultCompactCover);
+  const titleSeed = shouldCompactTitle ? buildSlideTitleSeed(title) : title;
   const normalizeForThemeCompact = (value, kind = "detail") => {
     if (isComic) {
       const normalized = simplifyComicTextSeed(value);
@@ -3192,7 +3218,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
     return normalized;
   };
   const renderTitle =
-    (isComic || isSealife) && themeTextBudget
+    shouldCompactTitle && themeTextBudget
       ? capitalizeSlideLead(
           compactSlideTextValue(normalizeForThemeCompact(titleSeed, "headline"), themeTextBudget.headline),
         )
@@ -3255,6 +3281,8 @@ function fillContentSlots(root, title, bullets, options = {}) {
     })();
     const compactCount = isComic
       ? resolveComicBulletCount(slideRoot || root, ul, desiredCount, templateItemCount, bullets.length)
+      : isDefaultCompactCover
+        ? Math.min(3, Math.max(1, bullets.length || 1))
       : desiredCount > 0
         ? desiredCount
         : isSpaceBlack
@@ -3263,7 +3291,7 @@ function fillContentSlots(root, title, bullets, options = {}) {
             ? templateItemCount
             : Math.min(3, Math.max(1, bullets.length || 1));
     const items =
-      isSpaceBright || isSpaceBlack || isComic
+      isSpaceBright || isSpaceBlack || isComic || isDefaultCompactCover
         ? buildSlideBulletItems(renderTitle, bullets, compactCount)
         : desiredCount > 0
           ? buildSlideBulletItems(renderTitle, bullets, desiredCount)

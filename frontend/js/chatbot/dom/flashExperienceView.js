@@ -241,6 +241,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   const topBar = createExperienceTopBar({
     title: titleText,
+    onShare: deps?.onShareCurrentExperience,
   }).bar;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {

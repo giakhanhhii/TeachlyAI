@@ -46,11 +46,13 @@ import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
-import { showCountSelectorPanel } from "./dom/autoModePanel.js";
+import { buildAutoModeFullsetSpec } from "./services/fullsetAutoMode.js";
+import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
 import { mountAiStatusPanel } from "./dom/aiStatusPanel.js";
 import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./services/dwellStore.js";
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 import { buildExperienceTitle } from "./services/contentTitles.js";
+import { createSharedExperienceLink, fetchSharedExperience } from "./services/sharedExperienceApi.js";
 
 /** @type {any} */
 let guided = null;
@@ -245,6 +247,7 @@ export function init() {
     onContinueCreate: continueCreateFromExperience,
     hasPrevAutoExperience: () => _autoModeHistory.length > 0,
     onGoBackToPrevExperience: _goBackToPrevAutoModeExperience,
+    onShareCurrentExperience: shareCurrentExperience,
   };
   experienceController = createExperienceController({
     getCurrentSession,
@@ -648,6 +651,85 @@ export function init() {
     experienceController.persistActiveExperience();
   }
 
+  async function shareCurrentExperience() {
+    persistActiveExperience();
+    const snapshot = exportCurrentSessionState();
+    const experienceState = snapshot?.experienceState;
+    if (!experienceState || typeof experienceState !== "object" || !experienceState.resume) {
+      window.alert("Chỉ có thể chia sẻ khi đang mở một bài học.");
+      return;
+    }
+    const title =
+      typeof experienceState.resume?.title === "string" && experienceState.resume.title.trim()
+        ? experienceState.resume.title.trim()
+        : typeof snapshot?.title === "string" && snapshot.title.trim()
+          ? snapshot.title.trim()
+          : "Bài chia sẻ";
+    const { url } = await createSharedExperienceLink({ title, experienceState });
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+        return;
+      } catch (err) {
+        if (err && typeof err === "object" && err.name === "AbortError") return;
+      }
+    }
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url);
+      window.alert("Đã sao chép link chia sẻ.");
+      return;
+    }
+    window.prompt("Sao chép link chia sẻ này", url);
+  }
+
+  function clearShareParamFromUrl() {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("share")) return;
+    url.searchParams.delete("share");
+    history.replaceState(history.state, "", url.toString());
+  }
+
+  async function tryOpenSharedExperienceFromUrl() {
+    const shareId = new URL(window.location.href).searchParams.get("share");
+    if (!shareId) return false;
+    try {
+      const shared = await fetchSharedExperience(shareId);
+      const experienceState = shared?.experienceState;
+      if (!experienceState || typeof experienceState !== "object" || !experienceState.resume) {
+        throw new Error("Liên kết chia sẻ không chứa bài học hợp lệ.");
+      }
+      persistActiveExperience();
+      createSession({
+        title:
+          typeof shared?.title === "string" && shared.title.trim()
+            ? shared.title.trim()
+            : "Bài chia sẻ",
+        experienceState,
+      });
+      setSession(getCurrentSessionId());
+      recommendQueueStore.setSession(getCurrentSessionId());
+      restoreRecommendPanelForSession();
+      setGuidedState(null);
+      experienceController.resetResumeState();
+      _autoModeHistory = [];
+      layerView.hide();
+      renderChatListUI();
+      renderMessages();
+      saveSessions();
+      await restoreCurrentSessionExperience();
+      clearShareParamFromUrl();
+      writeAppNavigationState("replace", resolveCurrentPhase());
+      return true;
+    } catch (err) {
+      console.error("[share] failed to open shared experience", err);
+      window.alert(err instanceof Error ? err.message : "Không thể mở bài chia sẻ.");
+      clearShareParamFromUrl();
+      return false;
+    }
+  }
+
   function autoRenameCurrentSession(flowKind) {
     const cur = getCurrentSession();
     if (!cur || !/^Đoạn chat\s+\d+$/i.test(cur.title)) return;
@@ -696,14 +778,10 @@ export function init() {
       const kind = expKind;
       if (kind === "fullset") {
         await openResumeFullSetMixed(
-          {
-            topic: spec.topic,
-            slides: String(counts.slides),
-            quiz: String(counts.quiz),
-            flash: String(counts.flash),
-            slideTemplate: autoModeStore.pickRandomTheme(),
-            __prefetchId: spec.prefetchKey || "",
-          },
+          buildAutoModeFullsetSpec(spec.topic, counts, autoModeStore.pickRandomTheme(), {
+            prefetchKey: spec.prefetchKey || "",
+            isAi: spec.isAi === true,
+          }),
           buildExperienceTitle("fullset", spec.topic),
         );
         return;
@@ -722,13 +800,7 @@ export function init() {
     const topic = spec.topic;
     if (expKind === "fullset") {
       await openResumeFullSetMixed(
-        {
-          topic,
-          slides: String(counts.slides),
-          quiz: String(counts.quiz),
-          flash: String(counts.flash),
-          slideTemplate: autoModeStore.pickRandomTheme(),
-        },
+        buildAutoModeFullsetSpec(topic, counts, autoModeStore.pickRandomTheme(), { isWarmup: true }),
         buildExperienceTitle("fullset", topic),
       );
       return;
@@ -788,7 +860,20 @@ export function init() {
       void onCustom();
       return;
     }
-    void onCustom();
+    showAutoModeChoicePopup(expKind, {
+      onCustom: () => {
+        autoModeStore.disable();
+        autoModeStore.setNeverAskChoice("custom");
+        syncToggleUI(false);
+        void onCustom();
+      },
+      onAuto: () => {
+        autoModeStore.enable();
+        autoModeStore.setNeverAskChoice("auto");
+        syncToggleUI(true);
+        openCountSelector();
+      },
+    });
   }
 
   guidedController = createGuidedInteractionController({
@@ -1136,6 +1221,7 @@ export function init() {
     onInitBaseRendered: () => { setSession(getCurrentSessionId()); recommendQueueStore.setSession(getCurrentSessionId()); restoreRecommendPanelForSession(); console.log("[chatController] base state rendered"); },
     onInitCompleted: () => {
       writeAppNavigationState("replace", resolveCurrentPhase());
+      void tryOpenSharedExperienceFromUrl();
       console.log("[chatController] init completed");
     },
   });

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import random
+import re
 from typing import Any
 
 from .flash_translate_clients import get_openai_flash_client
@@ -203,6 +204,82 @@ def _normalize_ai_slide_deck(data: dict[str, Any], topic: str) -> None:
         s["bullets"] = out
 
 
+def _normalize_option_text(value: Any) -> str:
+    return " ".join(str(value or "").strip().lower().split())
+
+
+def _clamp_quiz_index(value: int) -> int:
+    return max(0, min(3, int(value)))
+
+
+def _index_from_choice_token(raw: Any, *, prefer_zero_based: bool) -> int | None:
+    if isinstance(raw, bool):
+        return None
+    if isinstance(raw, int):
+        if prefer_zero_based:
+            return _clamp_quiz_index(raw)
+        if 1 <= raw <= 4:
+            return raw - 1
+        if 0 <= raw <= 3:
+            return raw
+        return _clamp_quiz_index(raw)
+    text = str(raw or "").strip()
+    if not text:
+        return None
+    upper = text.upper()
+    if upper in {"A", "B", "C", "D"}:
+        return ord(upper) - ord("A")
+    if text.isdigit():
+        num = int(text)
+        if prefer_zero_based and 0 <= num <= 3:
+            return num
+        if 1 <= num <= 4:
+            return num - 1
+        if 0 <= num <= 3:
+            return num
+        return _clamp_quiz_index(num)
+    match = re.search(r"\b(?:OPTION|ANSWER|CHOICE|CORRECT)\s*[:\-]?\s*([ABCD]|[1-4])\b", upper)
+    if match:
+        token = match.group(1)
+        if token in {"A", "B", "C", "D"}:
+            return ord(token) - ord("A")
+        return int(token) - 1
+    match = re.match(r"^\s*([ABCD])(?:[\).\:\-\s]|$)", upper)
+    if match:
+        return ord(match.group(1)) - ord("A")
+    return None
+
+
+def _resolve_quiz_correct_index(question: dict[str, Any]) -> int:
+    options_raw = question.get("options")
+    options = options_raw if isinstance(options_raw, list) else []
+    normalized_options = [_normalize_option_text(opt) for opt in options[:4]]
+
+    for field_name, prefer_zero_based in (
+        ("correctIndex", True),
+        ("correct_index", True),
+        ("correctAnswer", False),
+        ("correct_answer", False),
+        ("correctOption", False),
+        ("correct_option", False),
+        ("answer", False),
+    ):
+        value = question.get(field_name)
+        if value is None:
+            continue
+        inferred = _index_from_choice_token(value, prefer_zero_based=prefer_zero_based)
+        if inferred is not None:
+            return inferred
+        normalized_value = _normalize_option_text(value)
+        if normalized_value:
+            for idx, option_text in enumerate(normalized_options):
+                if normalized_value == option_text:
+                    return idx
+                if normalized_value.endswith(option_text) and option_text:
+                    return idx
+    return 0
+
+
 def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
     text = raw.strip()
     # Strip markdown fences if model included them despite instructions
@@ -292,10 +369,7 @@ def generate_quiz_content(topic: str, form: dict[str, Any] | None = None) -> dic
         opts = q.get("options") or []
         if len(opts) > 4:
             q["options"] = opts[:4]
-        if isinstance(q.get("correctIndex"), int):
-            q["correctIndex"] = max(0, min(3, q["correctIndex"]))
-        else:
-            q["correctIndex"] = 0
+        q["correctIndex"] = _resolve_quiz_correct_index(q)
     return data
 
 
@@ -598,10 +672,7 @@ def generate_quiz_from_document(document_text: str, count: int = 10, notes: str 
         opts = q.get("options") or []
         if len(opts) > 4:
             q["options"] = opts[:4]
-        if isinstance(q.get("correctIndex"), int):
-            q["correctIndex"] = max(0, min(3, q["correctIndex"]))
-        else:
-            q["correctIndex"] = 0
+        q["correctIndex"] = _resolve_quiz_correct_index(q)
     return data
 
 

@@ -178,6 +178,23 @@ const FRIENDLY_COVER_MIN_SHELL = `
 </html>
 `;
 
+const MULTICOLOR_COVER_MIN_SHELL = `
+<!DOCTYPE html>
+<html lang="vi">
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <div id="presentation-area">
+      <div class="slide-container theme-1 layout-diagonal" id="slide1">
+        <div class="title-group">
+          <h1>Placeholder title</h1>
+          <h2>MÔN TIẾNG ANH 2026</h2>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
 const SEA_LIFE_MIXED_SHELL = `
 <!DOCTYPE html>
 <html lang="vi">
@@ -606,6 +623,47 @@ describe("slideShellSrcdoc.js", () => {
     const hero = doc.querySelector(".shell-slide-instance[data-shell-slide-index=\"0\"]");
     const lis = hero?.querySelectorAll("ul[data-shell=\"bullets\"] li") || [];
     expect(lis.length).toBe(1);
+  });
+
+  it("keeps multicolor cover titles and fallback bullets compact on authored title slides", () => {
+    const srcdoc = buildSlideDeckSrcdoc(
+      MULTICOLOR_COVER_MIN_SHELL,
+      [
+        {
+          title: "Grammar test strategies - Overview",
+          bullets: [
+            "Core knowledge: Understand the definition and purpose of this language point (Grammar test strategies).",
+            "Recognition signals: Notice the key clues inside the sentence (Grammar test strategies).",
+            "Essential patterns: Lock in the core formula and sentence pattern (Grammar test strategies).",
+            "Structure: Core idea -> Key signals -> Context practice",
+          ],
+        },
+      ],
+      { shellYear: "2026" },
+    );
+
+    const doc = new DOMParser().parseFromString(srcdoc, "text/html");
+    const title = doc.querySelector(".title-group h1")?.textContent?.replace(/\s+/g, " ").trim() || "";
+    const bullets = Array.from(doc.querySelectorAll(".title-group ul[data-shell=\"bullets\"] li")).map((node) =>
+      node.textContent.replace(/\s+/g, " ").trim(),
+    );
+
+    expect(title).toBe("Grammar test strategies");
+    expect(bullets).toHaveLength(3);
+    bullets.forEach((item) => {
+      expect(item.length).toBeLessThanOrEqual(60);
+    });
+  });
+
+  it("keeps compact extra-slide preset covers short for multicolor shells", () => {
+    const preset = DIRECT_SLIDE_PRESETS.find((item) => item.topic === "Grammar test strategies");
+    const cover = preset?.slides?.[0];
+
+    expect(cover?.title).toBe("Grammar test strategies");
+    expect(cover?.bullets).toHaveLength(3);
+    cover?.bullets.forEach((line) => {
+      expect(line.length).toBeLessThanOrEqual(64);
+    });
   });
 
   it("uses concrete reported-question rewriting prompts instead of placeholders", () => {

@@ -3,15 +3,27 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import * as autoModeStore from "../../frontend/js/chatbot/services/autoModeStore.js";
 import { createStartupHubElement } from "../../frontend/js/chatbot/dom/startupHubCards.js";
 
-describe("startupHub custom hint", () => {
+describe("startupHub auto mode onboarding", () => {
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
     localStorage.clear();
     document.body.innerHTML = "";
   });
 
+  it("defaults to custom without showing the chooser before a card click", () => {
+    const hub = createStartupHubElement(() => {});
+    document.body.appendChild(hub);
+
+    const toggle = /** @type {HTMLButtonElement} */ (hub.querySelector(".auto-mode-toggle"));
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    expect(document.querySelector(".auto-mode-overlay")).toBeNull();
+    expect(autoModeStore.getNeverAskChoice()).toBeNull();
+  });
+
   it("shows the custom hint only the first time users switch from auto to custom", () => {
     vi.useFakeTimers();
+    autoModeStore.setNeverAskChoice("auto");
     autoModeStore.enable();
 
     const first = createStartupHubElement(() => {});
@@ -33,5 +45,26 @@ describe("startupHub custom hint", () => {
 
     expect(secondToggle.getAttribute("aria-pressed")).toBe("false");
     expect(second.querySelector(".auto-mode-custom-hint")).toBeNull();
+  });
+
+  it("persists the explicit toggle choice so card clicks follow the selected mode", () => {
+    autoModeStore.setNeverAskChoice("auto");
+    autoModeStore.enable();
+
+    const hub = createStartupHubElement(() => {});
+    document.body.appendChild(hub);
+
+    const toggle = /** @type {HTMLButtonElement} */ (hub.querySelector(".auto-mode-toggle"));
+    toggle.click();
+
+    expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    expect(autoModeStore.isEnabled()).toBe(false);
+    expect(autoModeStore.getNeverAskChoice()).toBe("custom");
+
+    toggle.click();
+
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(autoModeStore.isEnabled()).toBe(true);
+    expect(autoModeStore.getNeverAskChoice()).toBe("auto");
   });
 });

@@ -260,6 +260,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
 
   const topBar = createExperienceTopBar({
     title: deckTitle,
+    onShare: deps?.onShareCurrentExperience,
     actionButton: {
       label: "Tải xuống PDF",
       title: "Tải toàn bộ bộ slide dưới dạng PDF",

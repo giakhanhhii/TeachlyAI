@@ -26,6 +26,27 @@ function shortTopicLabel(topic) {
   return clampPlainLine(t, 44);
 }
 
+function trimCompactFocusTail(value) {
+  return String(value || "")
+    .replace(/\s*\([^()]+\)\s*\.?$/u, "")
+    .replace(/[.]+$/u, "")
+    .trim();
+}
+
+function buildCompactCoverBullets(preset) {
+  const chapterLines = (Array.isArray(preset?.chapters) ? preset.chapters : [])
+    .slice(0, 3)
+    .map((chapter) => {
+      const name = String(chapter?.name || "").trim();
+      const focus = trimCompactFocusTail(chapter?.focus);
+      if (name && focus) return clampPlainLine(`${name}: ${focus}.`, 64);
+      if (focus) return clampPlainLine(focus, 64);
+      return "";
+    })
+    .filter(Boolean);
+  return chapterLines.length ? chapterLines : [shortTopicLabel(preset?.topic)];
+}
+
 function createSlide(id, title, bullets, clipOpts) {
   const titleMax = clipOpts && Number.isFinite(clipOpts.titleMax) ? clipOpts.titleMax : null;
   const bulletMax = clipOpts && Number.isFinite(clipOpts.bulletMax) ? clipOpts.bulletMax : null;
@@ -418,7 +439,7 @@ function buildDeckFromBlueprint(preset) {
   const chapterNames = preset.chapters.map((chapter) => chapter.name);
   const chapterRules = preset.chapters.slice(0, 3).map((chapter) => chapter.rule);
   const chapterExamples = preset.chapters.slice(0, 3).map((chapter) => chapter.exampleA);
-  const coverTitle = preset.compactCopy ? `${shortTopicLabel(preset.topic)} - Overview` : `${preset.topic} - Overview`;
+  const coverTitle = preset.compactCopy ? shortTopicLabel(preset.topic) : `${preset.topic} - Overview`;
   const clip = preset.compactCopy ? { titleMax: 76, bulletMax: 128 } : null;
   const routeLines = Array.isArray(preset.routeLines) && preset.routeLines.length
     ? preset.routeLines.map((line) => {
@@ -435,10 +456,12 @@ function buildDeckFromBlueprint(preset) {
     createSlide(
       `${preset.id}-01`,
       coverTitle,
-      [
-        ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
-        `Structure: ${preset.structure}`,
-      ],
+      preset.compactCopy
+        ? buildCompactCoverBullets(preset)
+        : [
+            ...preset.chapters.slice(0, 3).map((chapter) => `${chapter.name}: ${chapter.focus}`),
+            `Structure: ${preset.structure}`,
+          ],
       clip,
     ),
     createSlide(

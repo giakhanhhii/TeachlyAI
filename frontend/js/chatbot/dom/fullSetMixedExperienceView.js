@@ -8,13 +8,92 @@ import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionDat
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
 import { fetchSlideShellHtml } from "../slide/slideShellLoad.js";
 import { buildSlideDeckSrcdoc, setSlideShellNavMode, syncShellSlideNav, setSlideVisualEditMode } from "../slide/slideShellSrcdoc.js";
+import { exportSlideDeckToPdf, triggerPdfDownload } from "../services/slideExportApi.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
-import { buildQuizStepOrder, initMixedQuizTracking, recomputeMixedQuizScore, quizCorrectOptionIndex, quizOptionList } from "../services/fullSetMixedService.js";
+import {
+  buildQuizStepOrder,
+  initMixedQuizTracking,
+  recomputeMixedQuizScore,
+  quizCorrectOptionIndex,
+  quizOptionList,
+  resolveMixedSlideDeckArrowAction,
+} from "../services/fullSetMixedService.js";
 import { finalizePendingQuizAnswer, findNextStepIndexByKind } from "../services/quizSubmitFlow.js";
 import { hookFlashSpeechVoicesOnce } from "../services/speechService.js";
+import { resolveFullsetContentSource } from "../services/fullsetAutoMode.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
 import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
+
+function buildPdfDownloadLabel(title) {
+  return title && String(title).trim() ? `${String(title).trim()}.pdf` : "teachly-slides.pdf";
+}
+
+function serializeSlideExportDocument(doc) {
+  const exportDoc = doc.cloneNode(true);
+  if (!(exportDoc instanceof Document) || !exportDoc.documentElement) return "";
+
+  exportDoc.body?.classList.remove("slide-visual-edit-on");
+  exportDoc
+    .querySelectorAll(
+      'style[data-slide-visual-editor], script[data-slide-visual-editor], .slide-visual-edit-toolbar, .slide-visual-edit-handles, [data-edit-flow-spacer="1"]',
+    )
+    .forEach((node) => node.remove());
+  exportDoc.querySelectorAll("[contenteditable]").forEach((node) => node.removeAttribute("contenteditable"));
+  exportDoc
+    .querySelectorAll("[data-edit-selected], [data-edit-text-active], [data-edit-flow-spacer], [spellcheck]")
+    .forEach((node) => {
+      node.removeAttribute("data-edit-selected");
+      node.removeAttribute("data-edit-text-active");
+      node.removeAttribute("data-edit-flow-spacer");
+      node.removeAttribute("spellcheck");
+    });
+  const master = exportDoc.querySelector("#slides-master-container");
+  if (master) {
+    master.setAttribute("data-nav-mode", "scroll");
+  }
+  exportDoc.querySelectorAll(".shell-slide-instance").forEach((node) => node.classList.add("active"));
+  return `<!DOCTYPE html>\n${exportDoc.documentElement.outerHTML}`;
+}
+
+function getMixedStepRenderCount(step) {
+  if (step?.kind === "slide_deck") {
+    const slideCount = Array.isArray(step.data?.slides) ? step.data.slides.length : 0;
+    return Math.max(0, slideCount);
+  }
+  return step ? 1 : 0;
+}
+
+function buildMixedProgressSlots(steps) {
+  const slots = [];
+  steps.forEach((step, stepIndex) => {
+    const count = getMixedStepRenderCount(step);
+    if (step?.kind === "slide_deck") {
+      for (let i = 0; i < count; i += 1) {
+        slots.push({ stepIndex, slideIndex: i });
+      }
+      return;
+    }
+    if (count > 0) slots.push({ stepIndex, slideIndex: 0 });
+  });
+  return slots;
+}
+
+function resolveMixedProgressIndex(steps, stepIndex, slideDeckIndex) {
+  let logicalIndex = 0;
+  for (let i = 0; i < steps.length; i += 1) {
+    const step = steps[i];
+    const count = getMixedStepRenderCount(step);
+    if (i === stepIndex) {
+      if (step?.kind === "slide_deck") {
+        return logicalIndex + Math.min(Math.max(0, slideDeckIndex), Math.max(0, count - 1));
+      }
+      return logicalIndex;
+    }
+    logicalIndex += count;
+  }
+  return 0;
+}
 
 function cloneMixedStep(step) {
   if (!step || typeof step !== "object") return null;
@@ -105,12 +184,19 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let questions = [];
   let cards = [];
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
-  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)";
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
   const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
   const _forceAi = spec.__forceAi === "1";
   const _forceMock = spec.__forceMock === "1";
-  let _devSrc = (!steps.length && !_forceMock && (_forceAi || isAiModeActive("fullset") || !_isAutoTopic)) ? "ai" : "mock"; /* DEV-ONLY */
+  const _isAutoMode = spec.__autoMode === "1";
+  const _isAutoTopic = !_aiTopic || _aiTopic === "(Teachly tự động)" || _isAutoMode;
+  let _devSrc = resolveFullsetContentSource({
+    forceAi: _forceAi,
+    forceMock: _forceMock,
+    autoMode: _isAutoMode,
+    aiModeActive: isAiModeActive("fullset"),
+    topic: _isAutoTopic ? "" : _aiTopic,
+  }); /* DEV-ONLY */
   if (!steps.length) {
     let rawSlide, rawQuiz, rawFlash;
     if (_uploadFile || _bgFetch) {
@@ -191,8 +277,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   if (!cards.length) cards = steps.filter((step) => step?.kind === "flash").map((step) => step.data);
   const stepKeys = buildMixedStepKeys(steps);
   const stepKeySet = new Set(stepKeys);
-  const flashStepIndices = steps.reduce((acc, step, stepIndex) => {
-    if (step?.kind === "flash") acc.push(stepIndex);
+  const bookmarkableStepIndices = steps.reduce((acc, step, stepIndex) => {
+    if (step?.kind === "flash" || step?.kind === "quiz") acc.push(stepIndex);
     return acc;
   }, []);
   const initialBookmarkedStepKeys = Array.isArray(initial?.bookmarkedStepKeys) ? initial.bookmarkedStepKeys.map(String) : [];
@@ -228,13 +314,29 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     : 0;
   /** Sau khi iframe slide_deck load xong — dùng cho nút footer / đồng bộ. */
   let activeSlideDeckShell = null;
+  let exportInFlight = false;
+  let lastRenderedSlideSrcdoc = "";
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
   if (restoredSteps.length === 0) {
     document.dispatchEvent(new CustomEvent("teachly:content-src", { detail: _devSrc }));
     beginDwell(spec?.topic || titleText, "fullset");
   }
-  const topBar = createExperienceTopBar({ title: titleText }).bar;
+  const topBarChrome = createExperienceTopBar({
+    title: titleText,
+    onShare: deps?.onShareCurrentExperience,
+    actionButton: {
+      label: "Tải xuống PDF",
+      title: "Tải toàn bộ slide của fullset dưới dạng PDF",
+      ariaLabel: "Tải toàn bộ slide của fullset dưới dạng PDF",
+      icon: "download",
+      onClick: () => {
+        void handlePdfDownload();
+      },
+    },
+  });
+  const topBar = topBarChrome.bar;
+  const exportBtn = topBarChrome.actionButton;
   topBar.classList.add("exp-topbar-flash");
   topBar.addEventListener("animationend", (event) => {
     if (event.target === topBar) topBar.classList.remove("flash-bookmark-feedback");
@@ -256,6 +358,75 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   bookmarkControl.appendChild(bookmarkFilterBtn);
   topBarRight?.insertBefore(bookmarkControl, topBarRight.firstChild || null);
   shell.appendChild(topBar);
+
+  function setExportButtonBusy(busy) {
+    if (!exportBtn) return;
+    exportBtn.disabled = busy;
+    exportBtn.setAttribute("aria-busy", busy ? "true" : "false");
+    const label = exportBtn.querySelector("span");
+    if (label) {
+      label.textContent = busy ? " Đang tạo PDF..." : " Tải xuống PDF";
+    }
+  }
+
+  async function buildFullsetExportSrcdoc() {
+    const iframeDoc = activeSlideDeckShell?.iframe?.contentDocument;
+    if (iframeDoc?.documentElement) {
+      const current = serializeSlideExportDocument(iframeDoc);
+      if (current) return current;
+    }
+    if (lastRenderedSlideSrcdoc) return lastRenderedSlideSrcdoc;
+    if (!slides.length) return "";
+
+    const file = resolveSlideShellFilename(spec.slideTemplate);
+    const html = await fetchSlideShellHtml(file);
+    const sessionShellSubtitle = (() => {
+      const auto = "(Teachly tự động)";
+      const tt = String(topic || "").replace(/\s+/g, " ").trim();
+      if (tt && tt !== auto && tt !== "—") return tt;
+      return String(titleText || "").replace(/\s+/g, " ").trim();
+    })();
+    const srcdoc = buildSlideDeckSrcdoc(html, slides, {
+      ...slideMeta,
+      deckTitle: String(titleText || "").trim(),
+      sessionShellSubtitle,
+      slideTemplate: String(spec.slideTemplate || ""),
+      shellYear: String(new Date().getFullYear()),
+      slideNavMode: "scroll",
+    });
+    lastRenderedSlideSrcdoc = srcdoc;
+    return srcdoc;
+  }
+
+  async function handlePdfDownload() {
+    if (exportInFlight) return;
+    if (!slides.length) {
+      window.alert("Fullset này chưa có slide để tải xuống.");
+      return;
+    }
+
+    exportInFlight = true;
+    setExportButtonBusy(true);
+    try {
+      const srcdoc = await buildFullsetExportSrcdoc();
+      if (!srcdoc) {
+        window.alert("Chưa sẵn sàng để tải PDF. Hãy đợi slide tải xong rồi thử lại.");
+        return;
+      }
+      const { blob, fileName } = await exportSlideDeckToPdf({
+        title: titleText,
+        srcdoc,
+      });
+      triggerPdfDownload(blob, fileName || buildPdfDownloadLabel(titleText));
+    } catch (err) {
+      console.error("[fullset-export] pdf export failed", err);
+      window.alert(err instanceof Error ? err.message : "Không thể tạo PDF lúc này.");
+    } finally {
+      exportInFlight = false;
+      setExportButtonBusy(false);
+    }
+  }
+
   const total = Math.max(1, steps.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
   const stage = document.createElement("div");
@@ -286,7 +457,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
   function getVisibleStepIndices() {
     if (!bookmarkFilter) return steps.map((_, stepIndex) => stepIndex);
-    return flashStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    return bookmarkableStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+  }
+  function getBookmarkedQuizStepIndexes() {
+    return quizStepIndexes.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+  }
+  function getBookmarkCountForCurrentView() {
+    return reviewMode ? getBookmarkedQuizStepIndexes().length : bookmarkedStepKeys.size;
   }
   function resolveNearestVisibleStepIndex(visibleIndices, preferredIndex) {
     const safePreferred = clampStepIndex(preferredIndex);
@@ -315,34 +492,60 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     if (resumeAllIndex >= 0) index = resumeAllIndex;
   }
   function renderBookmarkChrome() {
-    const bookmarkCount = bookmarkedStepKeys.size;
+    const bookmarkCount = getBookmarkCountForCurrentView();
     const hasBookmarks = bookmarkCount > 0;
     bookmarkControl.classList.toggle("has-bookmarks", hasBookmarks);
     if (!hasBookmarks) bookmarkFilter = false;
     bookmarkFilterBtn.classList.toggle("active", bookmarkFilter);
     bookmarkFilterBtn.disabled = !hasBookmarks;
     if (bookmarkFilterBadge) bookmarkFilterBadge.textContent = String(bookmarkCount);
+    if (reviewMode) {
+      bookmarkFilterBtn.title = bookmarkFilter
+        ? `Đang xem ${bookmarkCount} câu quiz đã bookmark. Bấm lần nữa để quay lại tất cả.`
+        : `Chỉ xem ${bookmarkCount} câu quiz đã bookmark`;
+      return;
+    }
     bookmarkFilterBtn.title = bookmarkFilter
-      ? `Đang xem ${bookmarkCount} flashcard đã bookmark. Bấm lần nữa để quay lại tất cả.`
-      : `Chỉ xem ${bookmarkCount} flashcard đã bookmark`;
+      ? `Đang xem ${bookmarkCount} mục đã bookmark. Bấm lần nữa để quay lại tất cả.`
+      : `Chỉ xem ${bookmarkCount} mục đã bookmark`;
   }
   function paintBookmarkedProgressSegments(visibleIndices) {
     const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
     const currentVisibleIndex = visibleIndices.indexOf(index);
     segments.forEach((segment, segmentIndex) => {
       const baseIndex = visibleIndices[segmentIndex];
-      const isBookmarkedFlash =
-        Number.isFinite(baseIndex) && steps[baseIndex]?.kind === "flash" && bookmarkedStepKeys.has(stepKeys[baseIndex]);
-      const shouldHighlight = bookmarkFilter ? segmentIndex <= currentVisibleIndex : Boolean(isBookmarkedFlash);
-      segment.classList.toggle("bookmarked", Boolean(isBookmarkedFlash && shouldHighlight));
+      const isBookmarkedStep =
+        Number.isFinite(baseIndex)
+        && (steps[baseIndex]?.kind === "flash" || steps[baseIndex]?.kind === "quiz")
+        && bookmarkedStepKeys.has(stepKeys[baseIndex]);
+      const shouldHighlight = bookmarkFilter ? segmentIndex <= currentVisibleIndex : Boolean(isBookmarkedStep);
+      segment.classList.toggle("bookmarked", Boolean(isBookmarkedStep && shouldHighlight));
     });
   }
   function repaintCurrentProgress() {
-    const visibleIndices = bookmarkFilter ? getVisibleStepIndices() : steps.map((_, stepIndex) => stepIndex);
-    const visibleTotal = Math.max(1, visibleIndices.length);
-    const visibleIndex = Math.max(0, visibleIndices.indexOf(index));
-    progress.paint({ total: visibleTotal, index: visibleIndex, correct, wrong });
-    paintBookmarkedProgressSegments(visibleIndices);
+    if (bookmarkFilter) {
+      const visibleIndices = getVisibleStepIndices();
+      const visibleTotal = Math.max(1, visibleIndices.length);
+      const visibleIndex = Math.max(0, visibleIndices.indexOf(index));
+      progress.paint({ total: visibleTotal, index: visibleIndex, correct, wrong });
+      paintBookmarkedProgressSegments(visibleIndices);
+      return;
+    }
+
+    const progressSlots = buildMixedProgressSlots(steps);
+    const logicalTotal = Math.max(1, progressSlots.length);
+    const logicalIndex = Math.max(0, resolveMixedProgressIndex(steps, index, slideDeckIndex));
+    progress.paint({ total: logicalTotal, index: logicalIndex, correct, wrong });
+    const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
+    segments.forEach((segment, segmentIndex) => {
+      const slot = progressSlots[segmentIndex];
+      const isBookmarkedStep =
+        slot
+        && (steps[slot.stepIndex]?.kind === "flash" || steps[slot.stepIndex]?.kind === "quiz")
+        && bookmarkedStepKeys.has(stepKeys[slot.stepIndex]);
+      const shouldHighlight = segmentIndex <= logicalIndex;
+      segment.classList.toggle("bookmarked", Boolean(isBookmarkedStep && shouldHighlight));
+    });
   }
   function emitState() {
     if (typeof opts.onStateChange !== "function") return;
@@ -419,6 +622,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       quizSelectedByStep,
       quizCountedByStep,
       quizCorrectByStep,
+      bookmarkedStepKeys: [...bookmarkedStepKeys],
+      stepKeys,
+      bookmarkFilter,
       reviewFilter,
       correct,
       wrong,
@@ -697,6 +903,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           syncViewModeToIframe();
           syncShellSlideNav(iframe, slideDeckIndex, readDeckScrollState());
           paintSlideChrome();
+          repaintCurrentProgress();
           emitState();
           restoreOuterScrollSoon();
           refreshMixedNavChrome();
@@ -758,6 +965,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
               shellYear: String(new Date().getFullYear()),
               slideNavMode: "active",
             });
+            lastRenderedSlideSrcdoc = srcdoc;
             if (myGen !== renderStepGen) return;
             const loadPromise = new Promise((resolve) => {
               iframe.addEventListener("load", resolve, { once: true });
@@ -858,6 +1066,18 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         question: step.data,
         selected: quizSelected,
         revealed: !!quizRevealedByStep[index],
+        isBookmarked: bookmarkedStepKeys.has(stepKeys[index]),
+        onToggleBookmark: (event) => {
+          event.stopPropagation();
+          const key = stepKeys[index];
+          const wasBookmarked = bookmarkedStepKeys.has(key);
+          if (wasBookmarked) bookmarkedStepKeys.delete(key);
+          else {
+            bookmarkedStepKeys.add(key);
+            triggerTopbarBookmarkFeedback();
+          }
+          renderStep();
+        },
         onPick: (pickedIndex) => {
           quizSelected = pickedIndex;
           quizSelectedByStep[index] = pickedIndex;
@@ -872,20 +1092,23 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     emitState();
   }
   bookmarkFilterBtn.addEventListener("click", () => {
-    if (bookmarkedStepKeys.size === 0) return;
+    const availableBookmarkIndexes = reviewMode ? getBookmarkedQuizStepIndexes() : getVisibleStepIndices().filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    if (availableBookmarkIndexes.length === 0) return;
     if (bookmarkFilter) {
       bookmarkFilter = false;
       restoreAllViewIndex();
-      renderStep();
+      if (reviewMode) renderReview();
+      else renderStep();
       return;
     }
     bookmarkFilter = true;
     const resumeBookmarkIndex =
       lastBookmarkStepKey && bookmarkedStepKeys.has(lastBookmarkStepKey) ? stepKeys.indexOf(lastBookmarkStepKey) : -1;
-    const firstBookmarkedIndex = flashStepIndices.find((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    const firstBookmarkedIndex = availableBookmarkIndexes[0];
     if (resumeBookmarkIndex >= 0) index = resumeBookmarkIndex;
     else if (Number.isFinite(firstBookmarkedIndex)) index = firstBookmarkedIndex;
-    renderStep();
+    if (reviewMode) renderReview();
+    else renderStep();
   });
   nextBtn.addEventListener("click", () => {
     if (reviewMode) {
@@ -1027,18 +1250,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       if (activeSlideDeckShell.getViewMode() !== "presentation") return;
       if (performance.now() < activeSlideDeckShell.getSuppressNavUntil()) return;
       e.preventDefault();
-      if (e.key === "ArrowLeft") {
-        if (slideDeckIndex <= 0) {
-          if (!backBtn.disabled) backBtn.click();
-        } else {
-          activeSlideDeckShell.bumpDeck(-1);
-        }
-      } else {
-        if (slideDeckIndex >= activeSlideDeckShell.deckLen - 1) {
-          if (!nextBtn.disabled) nextBtn.click();
-        } else {
-          activeSlideDeckShell.bumpDeck(1);
-        }
+      const action = resolveMixedSlideDeckArrowAction(e.key, slideDeckIndex, activeSlideDeckShell.deckLen);
+      if (action === "deck-prev") activeSlideDeckShell.bumpDeck(-1);
+      else if (action === "deck-next") activeSlideDeckShell.bumpDeck(1);
+      else if (action === "step-prev") {
+        if (!backBtn.disabled) backBtn.click();
+      } else if (!nextBtn.disabled) {
+        nextBtn.click();
       }
       return;
     }

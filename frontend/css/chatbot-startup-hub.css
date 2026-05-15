@@ -161,6 +161,11 @@
   border: 1.5px solid #c5e1a5;
 }
 
+.chat-startup-hub .badge-spacer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Full-width row in messages column */
 .msg-row-startup-hub {
   display: block;

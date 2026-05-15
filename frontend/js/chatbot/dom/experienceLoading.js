@@ -1,8 +1,8 @@
 /**
- * Appends an animated countdown to a loading overlay element and starts ticking.
+ * Appends a loading timer to a loading overlay element and starts ticking.
  * Uses wall-clock time when `startedAt` is set (e.g. from `backgroundFetchStore`) so the
- * label stays correct if the overlay is torn down and remounted while the same fetch runs.
- * Returns a stop function — call it when the loading is done (success or error).
+ * label reflects the real wait time if the overlay is torn down and remounted while the
+ * same fetch runs. Returns a stop function — call it when the loading is done.
  *
  * @param {HTMLElement} overlayEl
  * @param {number} estimatedSeconds
@@ -20,12 +20,11 @@ export function startAiCountdown(overlayEl, estimatedSeconds, opts = {}) {
 
   function update() {
     const elapsed = Math.floor((Date.now() - anchor) / 1000);
-    const remaining = total - elapsed;
-    if (remaining > 0) {
-      countEl.textContent = `Ước tính còn ~${remaining}s`;
-    } else {
-      countEl.textContent = "Sắp xong…";
-    }
+    const safeElapsed = Math.max(0, elapsed);
+    countEl.textContent =
+      safeElapsed < total
+        ? `Đã chờ ~${safeElapsed}s`
+        : `Đã chờ ~${safeElapsed}s • sắp xong…`;
   }
 
   update();

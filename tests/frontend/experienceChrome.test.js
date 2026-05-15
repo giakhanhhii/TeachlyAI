@@ -22,4 +22,20 @@ describe("experienceChrome.js", () => {
     actionButton.click();
     expect(onAiEdit).toHaveBeenCalledTimes(1);
   });
+
+  it("enables the share button when a share handler is provided", async () => {
+    const onShare = vi.fn().mockResolvedValue(undefined);
+
+    const { shareButton } = createExperienceTopBar({
+      title: "Bo slide",
+      onShare,
+    });
+
+    expect(shareButton.disabled).toBe(false);
+
+    shareButton.click();
+    await Promise.resolve();
+
+    expect(onShare).toHaveBeenCalledTimes(1);
+  });
 });
