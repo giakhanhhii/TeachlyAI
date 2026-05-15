@@ -60,6 +60,8 @@ from .utils.file_extractor import (
     extract_text,
     UnsupportedFormatError,
     PageLimitError,
+    EmptyDocumentError,
+    ensure_document_has_text,
 )
 from .utils.node_runtime import resolve_node_runtime
 from .utils.upload_safety import ensure_safe_upload_content, UploadSafetyViolation
@@ -454,9 +456,12 @@ async def file_upload(
 
     try:
         document_text = extract_text(contents, file.filename or "", openai_api_key=OPENAI_API_KEY)
+        document_text = ensure_document_has_text(document_text)
     except UnsupportedFormatError as exc:
         raise HTTPException(status_code=415, detail=str(exc)) from exc
     except PageLimitError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except EmptyDocumentError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

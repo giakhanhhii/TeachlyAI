@@ -359,7 +359,7 @@ export function createFullsetPdfCard(deps) {
   const hint = el(
     "p",
     "flow-hint",
-    "Hỗ trợ: PDF, DOCX, MD, TXT, ảnh (JPG, PNG, WEBP…) — tối đa 20 trang / 10 MB. Teachly sẽ dùng AI để tạo Full Set từ nội dung tài liệu.",
+    "Hỗ trợ: PDF, DOCX, MD, TXT, ảnh (JPG, PNG, WEBP…) — tối đa 20 trang / 10 MB. Ảnh cần có chữ rõ để Teachly đọc và tạo Full Set.",
   );
   root.appendChild(hint);
 
@@ -443,7 +443,7 @@ export function createFullsetPdfCard(deps) {
     err.style.display = "none";
     const f = input.files && input.files[0];
     if (!f) {
-      err.textContent = "Vui lòng chọn một tệp hợp lệ (PDF, DOCX, Markdown, TXT).";
+      err.textContent = "Vui lòng chọn một tệp hợp lệ (PDF, DOCX, Markdown, TXT hoặc ảnh có chữ rõ).";
       err.style.display = "block";
       return;
     }

@@ -3,7 +3,9 @@ from __future__ import annotations
 import io
 import logging
 import os
+import re
 import tempfile
+import unicodedata
 import xml.etree.ElementTree as ElementTree
 import zipfile
 from pathlib import Path
@@ -16,6 +18,7 @@ ALL_SUPPORTED_EXTENSIONS = SUPPORTED_EXTENSIONS | IMAGE_EXTENSIONS
 MAX_PAGES = 20
 MAX_CHARS = 40_000  # ~20 pages at ~2 000 chars/page
 MAX_IMAGE_BYTES = 10 * 1024 * 1024  # 10 MB for images
+NO_TEXT_DETECTED_SENTINEL = "[NO_TEXT_DETECTED]"
 
 IMAGE_MIME = {
     ".jpg": "image/jpeg",
@@ -33,6 +36,70 @@ class UnsupportedFormatError(ValueError):
 
 class PageLimitError(ValueError):
     pass
+
+
+class EmptyDocumentError(ValueError):
+    pass
+
+
+def _normalize_signal_text(text: str) -> str:
+    value = unicodedata.normalize("NFKD", str(text or "").casefold())
+    return "".join(ch for ch in value if not unicodedata.combining(ch))
+
+
+def _strip_non_content_lines(text: str) -> str:
+    cleaned_lines: list[str] = []
+    for raw_line in str(text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if re.fullmatch(r"(?:#+\s*)?(?:trang|page)\s+\d+", line, flags=re.IGNORECASE):
+            continue
+        if re.fullmatch(r"[-|:\s]+", line):
+            continue
+        cleaned_lines.append(raw_line)
+    return "\n".join(cleaned_lines).strip()
+
+
+def has_meaningful_document_text(text: str) -> bool:
+    cleaned = _strip_non_content_lines(text)
+    if not cleaned:
+        return False
+
+    normalized = _normalize_signal_text(cleaned)
+    if _normalize_signal_text(NO_TEXT_DETECTED_SENTINEL) in normalized:
+        return False
+
+    signal_chars = sum(1 for ch in normalized if ch.isalnum())
+    if signal_chars == 0:
+        return False
+
+    low_signal_markers = (
+        "khong tim thay van ban",
+        "khong co van ban",
+        "khong co chu",
+        "khong chua van ban",
+        "khong chua chu",
+        "no text detected",
+        "no readable text",
+        "no visible text",
+        "no text found",
+        "image contains no text",
+    )
+    if signal_chars <= 120 and any(marker in normalized for marker in low_signal_markers):
+        return False
+
+    return True
+
+
+def ensure_document_has_text(text: str) -> str:
+    cleaned = _strip_non_content_lines(text)
+    if has_meaningful_document_text(cleaned):
+        return cleaned[:MAX_CHARS]
+    raise EmptyDocumentError(
+        "Không tìm thấy trang nào có chữ hoặc nội dung đủ rõ để tạo bài. "
+        "Vui lòng dùng tài liệu có ít nhất 1 trang chứa văn bản rõ ràng."
+    )
 
 
 def _pdf_page_count_pdfplumber(path: Path) -> int:
@@ -142,7 +209,8 @@ def _extract_image(file_bytes: bytes, ext: str, openai_api_key: str) -> str:
                         "text": (
                             "Trích xuất toàn bộ văn bản có trong ảnh này. "
                             "Giữ nguyên cấu trúc, tiêu đề, danh sách và bảng biểu nếu có. "
-                            "Chỉ trả về văn bản đã trích xuất, không giải thích thêm."
+                            f"Nếu ảnh không có chữ hoặc không đọc được chữ, chỉ trả về đúng chuỗi {NO_TEXT_DETECTED_SENTINEL}. "
+                            "Không mô tả cảnh vật hay giải thích thêm."
                         ),
                     },
                 ],
