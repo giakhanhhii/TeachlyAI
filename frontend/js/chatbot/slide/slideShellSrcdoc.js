@@ -1,5 +1,6 @@
 import { SLIDE_PAD_PX_DEFAULT } from "../constants.js";
 import { SLIDE_VISUAL_EDITOR_CSS, SLIDE_VISUAL_EDITOR_JS } from "./slideVisualEditorIframe.js";
+import { pickMockImagesForSlide } from "../data/slideMockImageLibrary.js";
 
 const slideShellScrollViewportSyncJobs = new WeakMap();
 const slideShellActiveViewportSyncJobs = new WeakMap();
@@ -3487,6 +3488,62 @@ function fillContentSlots(root, title, bullets, options = {}) {
 }
 
 /**
+ * @param {Element} slideRoot
+ * @returns {HTMLDivElement[]}
+ */
+function collectSlideImageWrappers(slideRoot) {
+  return Array.from(slideRoot.querySelectorAll(".image-wrapper")).filter((node) => node instanceof HTMLDivElement);
+}
+
+/**
+ * @param {HTMLImageElement} img
+ * @param {{ url: string, alt: string } | null | undefined} image
+ * @param {any} slide
+ */
+function applySlideImageToNode(img, image, slide) {
+  if (!(img instanceof HTMLImageElement) || !image?.url) return;
+  img.src = String(image.url || "").trim();
+  img.alt = String(image.alt || slide?.imageAlt || slide?.title || "Slide illustration").trim();
+  img.setAttribute("loading", "eager");
+  img.setAttribute("decoding", "async");
+  img.setAttribute("referrerpolicy", "no-referrer");
+}
+
+/**
+ * @param {ParentNode} root
+ * @param {any} slide
+ * @param {{ topic?: string, deckTitle?: string, usedImageIds?: Set<string> }} [options]
+ */
+function fillSlideImageSlots(root, slide, options = {}) {
+  const slideRoot = getRootSlideElement(root);
+  if (!(slideRoot instanceof Element)) return;
+  const wrappers = collectSlideImageWrappers(slideRoot);
+  if (!wrappers.length) return;
+  const images = pickMockImagesForSlide(
+    {
+      ...slide,
+      imageUrl: typeof slide?.imageUrl === "string" ? slide.imageUrl : "",
+      imageAlt: typeof slide?.imageAlt === "string" ? slide.imageAlt : "",
+    },
+    {
+      count: wrappers.length,
+      topic: options.topic,
+      deckTitle: options.deckTitle,
+      usedImageIds: options.usedImageIds,
+    },
+  );
+  if (!images.length) return;
+  wrappers.forEach((wrapper, index) => {
+    let img = wrapper.querySelector("img");
+    if (!(img instanceof HTMLImageElement)) {
+      img = wrapper.ownerDocument.createElement("img");
+      wrapper.appendChild(img);
+    }
+    applySlideImageToNode(img, images[index % images.length], slide);
+  });
+}
+
+/**
  * Hard word-cap post-pass for space-black theme.
  * Runs after fillContentSlots to ensure no text node in content areas
  * exceeds layout-specific word limits, regardless of fill path taken.
@@ -3629,6 +3686,7 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
     || (rawTopic && rawTopic !== autoTopic ? rawTopic : "")
     || deckLine
     || metaTitleLine;
+  const usedImageIds = new Set();
   list.forEach((s, i) => {
     const isLastSlide = i === list.length - 1;
     const bodyIndex = coverTemplate ? i - 1 : i;
@@ -3655,6 +3713,11 @@ export function buildSlideDeckSrcdoc(shellHtml, slides, meta) {
       topic: rawTopic,
       deckTitle: deckLine,
       sessionShellSubtitle,
+    });
+    fillSlideImageSlots(frag, s, {
+      topic: rawTopic,
+      deckTitle: deckLine || metaTitleLine,
+      usedImageIds,
     });
     if (first instanceof Element) {
       markFriendlyCoverCenteredBullets(first, doc, i);
