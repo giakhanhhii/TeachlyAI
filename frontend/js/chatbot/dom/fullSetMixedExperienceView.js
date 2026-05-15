@@ -277,8 +277,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   if (!cards.length) cards = steps.filter((step) => step?.kind === "flash").map((step) => step.data);
   const stepKeys = buildMixedStepKeys(steps);
   const stepKeySet = new Set(stepKeys);
-  const flashStepIndices = steps.reduce((acc, step, stepIndex) => {
-    if (step?.kind === "flash") acc.push(stepIndex);
+  const bookmarkableStepIndices = steps.reduce((acc, step, stepIndex) => {
+    if (step?.kind === "flash" || step?.kind === "quiz") acc.push(stepIndex);
     return acc;
   }, []);
   const initialBookmarkedStepKeys = Array.isArray(initial?.bookmarkedStepKeys) ? initial.bookmarkedStepKeys.map(String) : [];
@@ -457,7 +457,13 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   }
   function getVisibleStepIndices() {
     if (!bookmarkFilter) return steps.map((_, stepIndex) => stepIndex);
-    return flashStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    return bookmarkableStepIndices.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+  }
+  function getBookmarkedQuizStepIndexes() {
+    return quizStepIndexes.filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+  }
+  function getBookmarkCountForCurrentView() {
+    return reviewMode ? getBookmarkedQuizStepIndexes().length : bookmarkedStepKeys.size;
   }
   function resolveNearestVisibleStepIndex(visibleIndices, preferredIndex) {
     const safePreferred = clampStepIndex(preferredIndex);
@@ -486,26 +492,34 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     if (resumeAllIndex >= 0) index = resumeAllIndex;
   }
   function renderBookmarkChrome() {
-    const bookmarkCount = bookmarkedStepKeys.size;
+    const bookmarkCount = getBookmarkCountForCurrentView();
     const hasBookmarks = bookmarkCount > 0;
     bookmarkControl.classList.toggle("has-bookmarks", hasBookmarks);
     if (!hasBookmarks) bookmarkFilter = false;
     bookmarkFilterBtn.classList.toggle("active", bookmarkFilter);
     bookmarkFilterBtn.disabled = !hasBookmarks;
     if (bookmarkFilterBadge) bookmarkFilterBadge.textContent = String(bookmarkCount);
+    if (reviewMode) {
+      bookmarkFilterBtn.title = bookmarkFilter
+        ? `Đang xem ${bookmarkCount} câu quiz đã bookmark. Bấm lần nữa để quay lại tất cả.`
+        : `Chỉ xem ${bookmarkCount} câu quiz đã bookmark`;
+      return;
+    }
     bookmarkFilterBtn.title = bookmarkFilter
-      ? `Đang xem ${bookmarkCount} flashcard đã bookmark. Bấm lần nữa để quay lại tất cả.`
-      : `Chỉ xem ${bookmarkCount} flashcard đã bookmark`;
+      ? `Đang xem ${bookmarkCount} mục đã bookmark. Bấm lần nữa để quay lại tất cả.`
+      : `Chỉ xem ${bookmarkCount} mục đã bookmark`;
   }
   function paintBookmarkedProgressSegments(visibleIndices) {
     const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
     const currentVisibleIndex = visibleIndices.indexOf(index);
     segments.forEach((segment, segmentIndex) => {
       const baseIndex = visibleIndices[segmentIndex];
-      const isBookmarkedFlash =
-        Number.isFinite(baseIndex) && steps[baseIndex]?.kind === "flash" && bookmarkedStepKeys.has(stepKeys[baseIndex]);
-      const shouldHighlight = bookmarkFilter ? segmentIndex <= currentVisibleIndex : Boolean(isBookmarkedFlash);
-      segment.classList.toggle("bookmarked", Boolean(isBookmarkedFlash && shouldHighlight));
+      const isBookmarkedStep =
+        Number.isFinite(baseIndex)
+        && (steps[baseIndex]?.kind === "flash" || steps[baseIndex]?.kind === "quiz")
+        && bookmarkedStepKeys.has(stepKeys[baseIndex]);
+      const shouldHighlight = bookmarkFilter ? segmentIndex <= currentVisibleIndex : Boolean(isBookmarkedStep);
+      segment.classList.toggle("bookmarked", Boolean(isBookmarkedStep && shouldHighlight));
     });
   }
   function repaintCurrentProgress() {
@@ -525,12 +539,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
     segments.forEach((segment, segmentIndex) => {
       const slot = progressSlots[segmentIndex];
-      const isBookmarkedFlash =
+      const isBookmarkedStep =
         slot
-        && steps[slot.stepIndex]?.kind === "flash"
+        && (steps[slot.stepIndex]?.kind === "flash" || steps[slot.stepIndex]?.kind === "quiz")
         && bookmarkedStepKeys.has(stepKeys[slot.stepIndex]);
       const shouldHighlight = segmentIndex <= logicalIndex;
-      segment.classList.toggle("bookmarked", Boolean(isBookmarkedFlash && shouldHighlight));
+      segment.classList.toggle("bookmarked", Boolean(isBookmarkedStep && shouldHighlight));
     });
   }
   function emitState() {
@@ -608,6 +622,9 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       quizSelectedByStep,
       quizCountedByStep,
       quizCorrectByStep,
+      bookmarkedStepKeys: [...bookmarkedStepKeys],
+      stepKeys,
+      bookmarkFilter,
       reviewFilter,
       correct,
       wrong,
@@ -1049,6 +1066,18 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
         question: step.data,
         selected: quizSelected,
         revealed: !!quizRevealedByStep[index],
+        isBookmarked: bookmarkedStepKeys.has(stepKeys[index]),
+        onToggleBookmark: (event) => {
+          event.stopPropagation();
+          const key = stepKeys[index];
+          const wasBookmarked = bookmarkedStepKeys.has(key);
+          if (wasBookmarked) bookmarkedStepKeys.delete(key);
+          else {
+            bookmarkedStepKeys.add(key);
+            triggerTopbarBookmarkFeedback();
+          }
+          renderStep();
+        },
         onPick: (pickedIndex) => {
           quizSelected = pickedIndex;
           quizSelectedByStep[index] = pickedIndex;
@@ -1063,20 +1092,23 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     emitState();
   }
   bookmarkFilterBtn.addEventListener("click", () => {
-    if (bookmarkedStepKeys.size === 0) return;
+    const availableBookmarkIndexes = reviewMode ? getBookmarkedQuizStepIndexes() : getVisibleStepIndices().filter((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    if (availableBookmarkIndexes.length === 0) return;
     if (bookmarkFilter) {
       bookmarkFilter = false;
       restoreAllViewIndex();
-      renderStep();
+      if (reviewMode) renderReview();
+      else renderStep();
       return;
     }
     bookmarkFilter = true;
     const resumeBookmarkIndex =
       lastBookmarkStepKey && bookmarkedStepKeys.has(lastBookmarkStepKey) ? stepKeys.indexOf(lastBookmarkStepKey) : -1;
-    const firstBookmarkedIndex = flashStepIndices.find((stepIndex) => bookmarkedStepKeys.has(stepKeys[stepIndex]));
+    const firstBookmarkedIndex = availableBookmarkIndexes[0];
     if (resumeBookmarkIndex >= 0) index = resumeBookmarkIndex;
     else if (Number.isFinite(firstBookmarkedIndex)) index = firstBookmarkedIndex;
-    renderStep();
+    if (reviewMode) renderReview();
+    else renderStep();
   });
   nextBtn.addEventListener("click", () => {
     if (reviewMode) {
