@@ -3,47 +3,47 @@ const SHARED_IMG_PARAMS = "?ixlib=rb-4.0.3&auto=format&fit=crop&w=1400&q=80";
 const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
   {
     id: "study-roadmap",
-    url: "https://googleusercontent.com/image_collection/image_retrieval/10765656876879187139",
+    url: `https://images.unsplash.com/photo-1455390582262-044cdead277a${SHARED_IMG_PARAMS}`,
     alt: "Study roadmap with branching choices",
   },
   {
     id: "grammar-puzzle",
-    url: "https://googleusercontent.com/image_collection/image_retrieval/2054416027796229719",
+    url: `https://images.unsplash.com/photo-1503676260728-1c00da094a0b${SHARED_IMG_PARAMS}`,
     alt: "Puzzle pieces representing grammar logic and structure",
   },
   {
     id: "listening-headphones",
-    url: "https://googleusercontent.com/image_collection/image_retrieval/2014306043275268686",
+    url: `https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f${SHARED_IMG_PARAMS}`,
     alt: "Student using headphones for listening practice",
   },
   {
     id: "pronunciation-dictionary",
-    url: "https://googleusercontent.com/image_collection/image_retrieval/9473999578258509077",
+    url: `https://images.unsplash.com/photo-1516979187457-637abb4f9353${SHARED_IMG_PARAMS}`,
     alt: "Dictionary and pronunciation reference tools",
   },
   {
     id: "teacher-speaking",
-    url: "https://googleusercontent.com/image_collection/image_retrieval/8025461012094306138",
+    url: `https://images.unsplash.com/photo-1513258496099-48168024aec0${SHARED_IMG_PARAMS}`,
     alt: "Teacher guiding speaking and pronunciation practice",
   },
   {
     id: "grammar-notes",
-    url: "http://googleusercontent.com/image_collection/image_retrieval/8627692394658615937",
+    url: `https://images.unsplash.com/photo-1456735190827-d1262f71b8a3${SHARED_IMG_PARAMS}`,
     alt: "Student reviewing English grammar notes",
   },
   {
     id: "vocab-collocations",
-    url: "http://googleusercontent.com/image_collection/image_retrieval/12833023248803355754",
+    url: `https://images.unsplash.com/photo-1517842645767-c639042777db${SHARED_IMG_PARAMS}`,
     alt: "Creative vocabulary and collocation study scene",
   },
   {
     id: "exam-practice",
-    url: "http://googleusercontent.com/image_collection/image_retrieval/8823889217355802728",
+    url: `https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8${SHARED_IMG_PARAMS}`,
     alt: "Student completing an English practice test",
   },
   {
     id: "reading-strategy",
-    url: "https://googleusercontent.com/image_collection/image_retrieval/14492178941924633294",
+    url: `https://images.unsplash.com/photo-1507842217343-583bb7270b66${SHARED_IMG_PARAMS}`,
     alt: "Focused reading and comprehension practice",
   },
   {
@@ -88,17 +88,17 @@ const SLIDE_MOCK_IMAGE_LIBRARY = Object.freeze([
   },
   {
     id: "space-galaxy",
-    url: "http://googleusercontent.com/image_collection/image_retrieval/2770169822737605625",
+    url: `https://images.unsplash.com/photo-1462331940025-496dfbfc7564${SHARED_IMG_PARAMS}`,
     alt: "Spiral galaxy in deep space",
   },
   {
     id: "space-earth",
-    url: "http://googleusercontent.com/image_collection/image_retrieval/3613803679487870787",
+    url: `https://images.unsplash.com/photo-1446776811953-b23d57bd21aa${SHARED_IMG_PARAMS}`,
     alt: "Illustrated Earth in space",
   },
   {
     id: "space-ring",
-    url: "http://googleusercontent.com/image_collection/image_retrieval/12155399755018968705",
+    url: `https://images.unsplash.com/photo-1614728894747-a83421789f10${SHARED_IMG_PARAMS}`,
     alt: "Ringed planet floating in space",
   },
 ]);
