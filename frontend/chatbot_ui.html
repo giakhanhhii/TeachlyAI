@@ -51,7 +51,49 @@
 
       <div class="chat-list-title">Đoạn chat</div>
       <div class="chat-list" id="chatList"></div>
-      <div class="muted" id="threadLabel" style="margin-top: auto; padding-bottom: 8px;"></div>
+      <div class="sidebar-footer">
+        <div class="muted sidebar-thread-label" id="threadLabel"></div>
+        <div class="sidebar-user-shell" id="sidebarUserShell">
+          <div class="sidebar-user-card">
+            <div class="sidebar-user-main">
+              <div class="sidebar-user-avatar" aria-hidden="true">U</div>
+              <div class="sidebar-user-copy">
+                <div class="sidebar-user-name">User</div>
+                <div class="sidebar-user-subtitle">Quản lý đoạn chat</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="sidebar-user-settings"
+              id="sidebarSettingsBtn"
+              title="Cài đặt"
+              aria-label="Cài đặt"
+              aria-expanded="false"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.92 4.6H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.39.34.9.53 1.42.53H21a2 2 0 1 1 0 4h-.18c-.52 0-1.03.19-1.42.47z"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="sidebar-settings-menu" id="sidebarSettingsMenu" hidden>
+            <div class="sidebar-settings-row">
+              <div class="sidebar-settings-copy">
+                <div class="sidebar-settings-title">Recommendation system</div>
+                <div class="sidebar-settings-note">Bật để hiện menu REC như hiện tại</div>
+              </div>
+              <label class="sidebar-switch" for="recommendPanelToggle">
+                <input type="checkbox" id="recommendPanelToggle" />
+                <span class="sidebar-switch-slider" aria-hidden="true"></span>
+              </label>
+            </div>
+            <button type="button" class="sidebar-danger-btn" id="clearUnpinnedChatsBtn">
+              Xóa đoạn chat chưa ghim
+            </button>
+          </div>
+        </div>
+      </div>
     </aside>
     <main class="main">
       <div class="top">

@@ -326,6 +326,30 @@ export function deleteSession(idx) {
   return true;
 }
 
+export function deleteUnpinnedSessions() {
+  ensureSessions();
+  const activeSessionId = getCurrentSessionId();
+  const nextSessions = sessions.filter((session) => Boolean(session?.pinned));
+  const deletedCount = sessions.length - nextSessions.length;
+
+  if (!deletedCount) {
+    return {
+      deletedCount: 0,
+      activeSessionRemoved: false,
+    };
+  }
+
+  sessions = nextSessions.length ? nextSessions : [makeDefaultSession(0)];
+  const nextActiveIndex = sessions.findIndex((session) => session?.sessionId === activeSessionId);
+  const activeSessionRemoved = nextActiveIndex < 0;
+
+  activeSession = activeSessionRemoved ? 0 : nextActiveIndex;
+  return {
+    deletedCount,
+    activeSessionRemoved,
+  };
+}
+
 export function getCurrentExperienceState() {
   const s = getCurrentSession();
   if (!s || typeof s !== "object") return null;

@@ -102,6 +102,8 @@
   flex-direction: column;
   gap: 6px;
   overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .chat-list-load-more {
@@ -251,6 +253,201 @@
   display: flex;
 }
 
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-thread-label {
+  padding-bottom: 2px;
+}
+
+.sidebar-user-shell {
+  position: relative;
+}
+
+.sidebar-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 35, 58, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 24px rgba(140, 160, 120, 0.1);
+}
+
+.sidebar-user-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.sidebar-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f39ac4, #e77ab0);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.sidebar-user-copy {
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+
+.sidebar-user-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-settings {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #6d7280;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-user-settings:hover,
+.sidebar-user-settings[aria-expanded="true"] {
+  background: rgba(16, 35, 58, 0.06);
+  color: var(--text);
+}
+
+.sidebar-settings-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 10px);
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgba(16, 35, 58, 0.1);
+  box-shadow: 0 18px 34px rgba(16, 35, 58, 0.16);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 50;
+}
+
+.sidebar-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.sidebar-settings-copy {
+  min-width: 0;
+}
+
+.sidebar-settings-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sidebar-settings-note {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.sidebar-switch {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.sidebar-switch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.sidebar-switch-slider {
+  width: 46px;
+  height: 28px;
+  border-radius: 999px;
+  background: #d8e1ec;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.sidebar-switch-slider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(16, 35, 58, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.sidebar-switch input:checked + .sidebar-switch-slider {
+  background: var(--green);
+}
+
+.sidebar-switch input:checked + .sidebar-switch-slider::after {
+  transform: translateX(18px);
+}
+
+.sidebar-danger-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(220, 38, 38, 0.08);
+  color: #b42318;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-danger-btn:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.14);
+}
+
+.sidebar-danger-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .sidebar.collapsed .new-chat {
   background: transparent;
   color: var(--text);
@@ -270,6 +467,31 @@
 
 .sidebar.collapsed .new-chat:hover {
   background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar.collapsed .sidebar-footer {
+  align-items: center;
+}
+
+.sidebar.collapsed .sidebar-user-copy,
+.sidebar.collapsed .sidebar-settings-menu {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-user-card {
+  width: 50px;
+  min-height: 50px;
+  justify-content: center;
+  padding: 8px;
+}
+
+.sidebar.collapsed .sidebar-user-main {
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.sidebar.collapsed .sidebar-user-settings {
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -326,5 +548,10 @@
 
   .chat-list {
     padding-right: 2px;
+  }
+
+  .sidebar-settings-menu {
+    left: 0;
+    right: 0;
   }
 }

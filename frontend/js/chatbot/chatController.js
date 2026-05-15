@@ -14,6 +14,7 @@ import {
   renameSession,
   togglePinSession,
   deleteSession,
+  deleteUnpinnedSessions,
   setCurrentExperienceState,
   getSessionByIndex,
   setSessionMessages,
@@ -53,6 +54,8 @@ import { endDwell, getLastN, getTopTopics, getActiveKind, setSession } from "./s
 import { mountRecommendPanel, updateRecommendPanel, setCurrentSlot } from "./dom/recommendationPanel.js";
 import { buildExperienceTitle } from "./services/contentTitles.js";
 import { createSharedExperienceLink, fetchSharedExperience } from "./services/sharedExperienceApi.js";
+import { bindSidebarSettingsMenu } from "./controllers/sidebarSettingsController.js";
+import { isRecommendPanelVisible, setRecommendPanelVisible } from "./services/recommendPanelPrefs.js";
 
 /** @type {any} */
 let guided = null;
@@ -97,7 +100,27 @@ export function init() {
   console.log("[chatController] init started");
   const domEls = resolveChatDomElements();
   if (!domEls) return;
-  const { messages, messagesInner, form, input, sendBtn, threadLabel, chatList, newChatBtn, chatPhase, experienceLayer, experienceBody, backToChatBtn, toggleSidebarBtn, topHomeBtn } = domEls;
+  const {
+    messages,
+    messagesInner,
+    form,
+    input,
+    sendBtn,
+    threadLabel,
+    chatList,
+    newChatBtn,
+    chatPhase,
+    experienceLayer,
+    experienceBody,
+    backToChatBtn,
+    toggleSidebarBtn,
+    topHomeBtn,
+    sidebarUserShell,
+    sidebarSettingsBtn,
+    sidebarSettingsMenu,
+    recommendPanelToggle,
+    clearUnpinnedChatsBtn,
+  } = domEls;
   const topBar = /** @type {HTMLElement | null} */ (document.querySelector(".top"));
   const topTitleEl = /** @type {HTMLElement | null} */ (document.querySelector(".top-title"));
   const messageScroller = /** @type {HTMLElement} */ (messages);
@@ -939,6 +962,34 @@ export function init() {
     messageHistoryService.renderMessages();
   }
 
+  async function handleDeleteUnpinnedChats() {
+    persistActiveExperience();
+    const result = deleteUnpinnedSessions();
+    if (!result.deletedCount) return result;
+
+    if (result.activeSessionRemoved) {
+      setGuidedState(null);
+      experienceController.resetResumeState();
+      _autoModeHistory = [];
+      layerView.hide();
+      setSession(getCurrentSessionId());
+      recommendQueueStore.setSession(getCurrentSessionId());
+      restoreRecommendPanelForSession();
+      try {
+        await ensureSessionMessagesLoaded();
+      } catch {
+        // Keep local cache if remote loading fails.
+      }
+      renderMessages();
+    }
+
+    renderChatListUI();
+    updateThreadLabel();
+    saveSessions();
+    writeAppNavigationState("replace", resolveCurrentPhase());
+    return result;
+  }
+
   function estimateExperienceProgressRichness(progress) {
     if (!progress || typeof progress !== "object") return -1;
     let score = 0;
@@ -1092,6 +1143,29 @@ export function init() {
     restoreRecommendPanelForSession();
   } });
 
+  let sidebarSettingsController = null;
+  if (
+    sidebarUserShell instanceof HTMLElement
+    && sidebarSettingsBtn instanceof HTMLButtonElement
+    && sidebarSettingsMenu instanceof HTMLElement
+    && recommendPanelToggle instanceof HTMLInputElement
+    && clearUnpinnedChatsBtn instanceof HTMLButtonElement
+  ) {
+    sidebarSettingsController = bindSidebarSettingsMenu({
+      shellEl: sidebarUserShell,
+      settingsBtn: sidebarSettingsBtn,
+      settingsMenu: sidebarSettingsMenu,
+      recommendToggle: recommendPanelToggle,
+      clearChatsBtn: clearUnpinnedChatsBtn,
+      getRecommendPanelVisible: () => isRecommendPanelVisible(),
+      onRecommendPanelVisibleChange: (next) => {
+        setRecommendPanelVisible(next);
+      },
+      getUnpinnedSessionCount: () => getSessionsSnapshot().filter((session) => !session?.pinned).length,
+      onDeleteUnpinnedChats: () => handleDeleteUnpinnedChats(),
+    });
+  }
+
   messageHistoryService = createMessageHistoryService({
     pageSize: REMOTE_MESSAGE_PAGE_SIZE,
     messagesInner: /** @type {HTMLElement} */ (messagesInner),
@@ -1227,4 +1301,5 @@ export function init() {
   });
 
   writeAppNavigationState("replace", resolveCurrentPhase());
+  sidebarSettingsController?.refreshMenuState?.();
 }

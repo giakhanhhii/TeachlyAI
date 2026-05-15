@@ -31,6 +31,11 @@ export function resolveChatDomElements() {
   const backToChatBtn = document.getElementById("backToChatBtn");
   const toggleSidebarBtn = document.getElementById("toggleSidebar");
   const topHomeBtn = document.getElementById("topHomeBtn");
+  const sidebarUserShell = document.getElementById("sidebarUserShell");
+  const sidebarSettingsBtn = document.getElementById("sidebarSettingsBtn");
+  const sidebarSettingsMenu = document.getElementById("sidebarSettingsMenu");
+  const recommendPanelToggle = document.getElementById("recommendPanelToggle");
+  const clearUnpinnedChatsBtn = document.getElementById("clearUnpinnedChatsBtn");
 
   const requiredEls = {
     messages,
@@ -53,7 +58,16 @@ export function resolveChatDomElements() {
     return null;
   }
 
-  const optionalEls = { backToChatBtn, toggleSidebarBtn, topHomeBtn };
+  const optionalEls = {
+    backToChatBtn,
+    toggleSidebarBtn,
+    topHomeBtn,
+    sidebarUserShell,
+    sidebarSettingsBtn,
+    sidebarSettingsMenu,
+    recommendPanelToggle,
+    clearUnpinnedChatsBtn,
+  };
   const missingOptionalIds = Object.entries(optionalEls)
     .filter(([, el]) => !el)
     .map(([name]) => name);
@@ -76,6 +90,11 @@ export function resolveChatDomElements() {
     backToChatBtn,
     toggleSidebarBtn,
     topHomeBtn,
+    sidebarUserShell,
+    sidebarSettingsBtn,
+    sidebarSettingsMenu,
+    recommendPanelToggle,
+    clearUnpinnedChatsBtn,
   };
 }
 

@@ -72,4 +72,47 @@ describe("sessionStore.js", () => {
     expect(savedSessions[1].title).toBe("New Session");
     expect(savedActiveIndex).toBe("1");
   });
+
+  it("deletes only unpinned sessions and keeps the pinned active session", async () => {
+    const store = await importSessionStore();
+
+    store.ensureSessions();
+    const firstSessionId = store.getCurrentSession().sessionId;
+    store.createSession({ title: "Pinned session" });
+    const pinnedIndex = store.getActiveSessionIndex();
+    store.togglePinSession(pinnedIndex);
+    store.createSession({ title: "Draft session" });
+    store.setActiveSessionIndex(pinnedIndex);
+
+    const result = store.deleteUnpinnedSessions();
+    const sessions = store.getSessionsSnapshot();
+
+    expect(result).toEqual({
+      deletedCount: 2,
+      activeSessionRemoved: false,
+    });
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0].title).toBe("Pinned session");
+    expect(sessions[0].pinned).toBe(true);
+    expect(store.getCurrentSession().sessionId).not.toBe(firstSessionId);
+    expect(store.getCurrentSession().title).toBe("Pinned session");
+  });
+
+  it("creates a fresh default session when all sessions are unpinned", async () => {
+    const store = await importSessionStore();
+
+    store.ensureSessions();
+    store.createSession({ title: "Another draft" });
+
+    const result = store.deleteUnpinnedSessions();
+    const sessions = store.getSessionsSnapshot();
+
+    expect(result).toEqual({
+      deletedCount: 2,
+      activeSessionRemoved: true,
+    });
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0].title).toBe("Đoạn chat 1");
+    expect(sessions[0].pinned).toBe(false);
+  });
 });

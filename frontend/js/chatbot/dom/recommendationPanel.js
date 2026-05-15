@@ -1,10 +1,15 @@
 // DEV-ONLY panel — remove mountRecommendPanel() call and recommendation-panel.css before deploy
 import { getLog, getActiveDwell, getActiveKind } from "../services/dwellStore.js";
+import {
+  isRecommendPanelVisible,
+  subscribeRecommendPanelVisibility,
+} from "../services/recommendPanelPrefs.js";
 
 let _panelEl = null;
 let _pendingUpdate = null;
 let _liveTimer = null;
 let _currentSlot = "";
+let _unsubscribeVisibility = null;
 
 /** Update the slot label shown in the REC toggle button (e.g. "warmup #3", "rank1"). */
 export function setCurrentSlot(slot) {
@@ -28,12 +33,18 @@ export function mountRecommendPanel() {
       <div class="rec-panel__suggestions"></div>
     </div>`;
   document.body.appendChild(_panelEl);
+  syncRecommendPanelVisibility(isRecommendPanelVisible());
+  if (!_unsubscribeVisibility) {
+    _unsubscribeVisibility = subscribeRecommendPanelVisibility((visible) => {
+      syncRecommendPanelVisibility(visible);
+    });
+  }
   _panelEl.querySelector(".rec-panel__toggle").addEventListener("click", () => {
     _panelEl.classList.toggle("rec-panel--collapsed");
     if (!_panelEl.classList.contains("rec-panel--collapsed")) _repaint({});
   });
   _liveTimer = setInterval(() => {
-    if (!_panelEl || _panelEl.classList.contains("rec-panel--collapsed")) return;
+    if (!_panelEl || _panelEl.hidden || _panelEl.classList.contains("rec-panel--collapsed")) return;
     const active = getActiveDwell();
     const liveEl = _panelEl.querySelector(".rec-panel__live");
     if (liveEl) liveEl.textContent = active ? `⏱ ${active.kind ? "[" + active.kind + "] " : ""}${active.topic} — ${active.seconds}s` : "";
@@ -42,6 +53,14 @@ export function mountRecommendPanel() {
     const upd = _pendingUpdate;
     _pendingUpdate = null;
     updateRecommendPanel(upd);
+  }
+}
+
+function syncRecommendPanelVisibility(visible) {
+  if (!_panelEl) return;
+  _panelEl.hidden = !visible;
+  if (visible && !_panelEl.classList.contains("rec-panel--collapsed")) {
+    _repaint({});
   }
 }
 
