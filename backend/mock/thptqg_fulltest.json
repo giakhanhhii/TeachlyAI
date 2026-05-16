@@ -11352,8 +11352,8 @@
             "c-d-e-b-a",
             "c-a-e-d-b"
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D (c-a-e-d-b) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 0,
+          "explanation": "Đoạn đúng là c-d-a-e-b: nêu quan điểm đàn ông nên chia sẻ việc nhà, giải thích lợi ích với con cái, mở rộng sang sự đồng cảm với vợ, nêu hệ quả được tôn trọng hơn và kết luận về gia đình cân bằng.",
           "explanationEvidence": "Cau 9: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11412,8 +11412,8 @@
             "c-a-b",
             "b-c-a"
           ],
-          "correctIndex": 1,
-          "explanation": "Thứ tự B giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 3,
+          "explanation": "Giới thiệu hợp lý phải là b-c-a: giáo viên giới thiệu Jessica trước, Jessica chào cả lớp sau đó, rồi Nam mới bày tỏ sự hào hứng và xin chụp ảnh cùng robot.",
           "explanationEvidence": "Cau 13: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
