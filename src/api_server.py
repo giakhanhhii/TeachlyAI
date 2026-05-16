@@ -65,6 +65,7 @@ from .utils.file_extractor import (
 )
 from .utils.node_runtime import resolve_node_runtime
 from .utils.upload_safety import ensure_safe_upload_content, UploadSafetyViolation
+from .chat_scope_policy import TEACHLY_CHAT_SYSTEM, evaluate_chat_scope
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -83,13 +84,6 @@ MOCK_FILES = {
     "slide": "slide_thpt_en.json",
     "thptqg_fulltest": "thptqg_fulltest.json",
 }
-
-TEACHLY_SYSTEM = """Bạn là Teachly AI, trợ lý hỗ trợ giáo viên và học sinh ôn Tiếng Anh THPT QG (Việt Nam).
-Trả lời rõ ràng, thân thiện; ưu tiên tiếng Việt khi người dùng dùng tiếng Việt.
-Khi người dùng cần **bộ slide** (hoặc bạn sinh nội dung slide), chỉ trả về **một JSON** dạng mảng các đối tượng nhỏ gọn:
-[{"title":"...","bullets":["...","..."]}, ...]
-Không bọc markdown, không HTML/CSS, không nhãn hiệu hay font — giao diện do ứng dụng áp mẫu có sẵn.
-Nếu được hỏi về quiz, flashcard hoặc hình ảnh minh họa, gợi ý cấu trúc nội dung hữu ích (không cần tạo file thật trừ khi được mô tả rõ công cụ ngoài chat)."""
 
 class ChatIn(BaseModel):
     message: str = Field(..., min_length=1, max_length=32000)
@@ -219,7 +213,7 @@ def _get_client() -> Anthropic | OpenAI:
 def _run_reply(client: Anthropic | OpenAI, history: list[dict]) -> str:
     if isinstance(client, OpenAI):
         # OpenAI expects system prompt as a message
-        messages = [{"role": "system", "content": TEACHLY_SYSTEM}] + history
+        messages = [{"role": "system", "content": TEACHLY_CHAT_SYSTEM}] + history
         response = client.chat.completions.create(
             model=DEFAULT_MODEL,
             messages=messages,
@@ -231,7 +225,7 @@ def _run_reply(client: Anthropic | OpenAI, history: list[dict]) -> str:
         response = client.messages.create(
             model=DEFAULT_MODEL,
             max_tokens=4096,
-            system=TEACHLY_SYSTEM,
+            system=TEACHLY_CHAT_SYSTEM,
             messages=history,
         )
         parts: list[str] = []
@@ -661,13 +655,20 @@ def chat(body: ChatIn):
     if not text:
         raise HTTPException(status_code=400, detail="Tin nhắn trống.")
 
-    client = _get_client()
-
     tid, user_message_id = db.append_message(body.thread_id, "user", text)
-    history = db.get_recent_history(tid, limit=20, through_message_id=user_message_id)
+    decision = evaluate_chat_scope(text)
+    if not decision.allowed:
+        reply = decision.reply or "Mình chưa thể trả lời nội dung này."
+        db.append_message(tid, "assistant", reply)
+        return ChatOut(thread_id=tid, reply=reply)
 
     try:
+        client = _get_client()
+        history = db.get_recent_history(tid, limit=20, through_message_id=user_message_id)
         reply = _run_reply(client, history)
+    except HTTPException:
+        db.delete_message_by_id(user_message_id)
+        raise
     except Exception as e:
         logger.exception("Chat error")
         db.delete_message_by_id(user_message_id)

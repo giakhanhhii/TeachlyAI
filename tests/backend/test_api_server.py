@@ -42,7 +42,7 @@ def test_health_reports_expected_shape(client_with_temp_db):
 def test_chat_success_persists_user_and_assistant_messages(client_with_temp_db):
     client, temp_db, _ = client_with_temp_db
 
-    response = client.post("/api/chat", json={"message": "Xin chao backend"})
+    response = client.post("/api/chat", json={"message": "Cách học từ vựng tiếng Anh hiệu quả?"})
 
     assert response.status_code == 200
     payload = response.json()
@@ -52,7 +52,45 @@ def test_chat_success_persists_user_and_assistant_messages(client_with_temp_db):
     rows, total = temp_db.get_messages_page(payload["thread_id"], limit=10, offset=0)
     assert total == 2
     assert [row["role"] for row in rows] == ["user", "assistant"]
-    assert [row["content"] for row in rows] == ["Xin chao backend", "Mocked assistant reply"]
+    assert [row["content"] for row in rows] == ["Cách học từ vựng tiếng Anh hiệu quả?", "Mocked assistant reply"]
+
+
+def test_chat_feature_help_question_still_calls_model(client_with_temp_db):
+    client, temp_db, _ = client_with_temp_db
+
+    response = client.post("/api/chat", json={"message": "Card slide trên web này dùng như thế nào?"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["reply"] == "Mocked assistant reply"
+
+    rows, total = temp_db.get_messages_page(payload["thread_id"], limit=10, offset=0)
+    assert total == 2
+    assert [row["content"] for row in rows] == [
+        "Card slide trên web này dùng như thế nào?",
+        "Mocked assistant reply",
+    ]
+
+
+def test_chat_out_of_scope_returns_refusal_without_calling_model(client_with_temp_db):
+    client, temp_db, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(
+        api_server,
+        "_run_reply",
+        lambda *_args, **_kwargs: pytest.fail("Model should not be called for out-of-scope chat"),
+    )
+
+    response = client.post("/api/chat", json={"message": "Giải giúp mình bài toán đạo hàm này."})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert "Mình chỉ hỗ trợ về dạy và học Tiếng Anh" in payload["reply"]
+
+    rows, total = temp_db.get_messages_page(payload["thread_id"], limit=10, offset=0)
+    assert total == 2
+    assert rows[0]["content"] == "Giải giúp mình bài toán đạo hàm này."
+    assert "Mình chỉ hỗ trợ về dạy và học Tiếng Anh" in rows[1]["content"]
 
 
 def test_chat_whitespace_input_returns_400(client_with_temp_db):
@@ -83,6 +121,27 @@ def test_chat_failure_removes_just_added_user_message(client_with_temp_db):
     response = client.post("/api/chat", json={"message": "Trigger failure"})
 
     assert response.status_code == 502
+
+    sessions = temp_db.list_sessions(limit=10, offset=0)
+    assert len(sessions) == 1
+    thread_id = sessions[0]["thread_id"]
+    rows, total = temp_db.get_messages_page(thread_id, limit=10, offset=0)
+    assert total == 0
+    assert rows == []
+
+
+def test_chat_get_client_failure_removes_just_added_user_message(client_with_temp_db):
+    client, temp_db, monkeypatch = client_with_temp_db
+
+    monkeypatch.setattr(
+        api_server,
+        "_get_client",
+        lambda: (_ for _ in ()).throw(api_server.HTTPException(status_code=503, detail="Missing key")),
+    )
+
+    response = client.post("/api/chat", json={"message": "Cách học tiếng Anh nhanh hơn?"})
+
+    assert response.status_code == 503
 
     sessions = temp_db.list_sessions(limit=10, offset=0)
     assert len(sessions) == 1

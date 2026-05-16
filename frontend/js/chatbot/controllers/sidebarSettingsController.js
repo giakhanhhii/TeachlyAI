@@ -72,7 +72,9 @@ export function bindSidebarSettingsMenu(deps) {
 
   clearChatsBtn.addEventListener("click", async () => {
     if (clearChatsBtn.disabled) return;
-    const ok = window.confirm("Bạn có chắc không? Hành động này sẽ xóa toàn bộ đoạn chat.");
+    const ok = window.confirm(
+      "Bạn có chắc không, hành động này sẽ xóa toàn bộ đoạn chat chưa ghim.",
+    );
     if (!ok) return;
     clearChatsBtn.disabled = true;
     try {
