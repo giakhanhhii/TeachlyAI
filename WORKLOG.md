@@ -1,85 +1,5 @@
 # Worklog
 
-Ghi lại các quyết định kỹ thuật, phân công, và brainstorming của nhóm.
-
-> Cập nhật **bất cứ khi nào** nhóm ra quyết định kỹ thuật quan trọng hoặc thay đổi hướng đi.
-
----
-
-## Template
-
-### Quyết định kỹ thuật
-
-```markdown
-### [ADR-N] Tiêu đề quyết định — DD/MM/YYYY
-
-**Bối cảnh:** Vấn đề cần giải quyết là gì?
-
-**Các lựa chọn đã xem xét:**
-- Option A: ...
-- Option B: ...
-
-**Quyết định:** Chọn option nào và tại sao.
-
-**Hệ quả:** Những gì bị ảnh hưởng / trade-off.
-```
-
-### Phân công
-
-```markdown
-### Sprint N — DD/MM → DD/MM/YYYY
-
-| Task | Người làm | Deadline | Trạng thái |
-|---|---|---|---|
-| | | | |
-```
-
-### Brainstorming
-
-```markdown
-### Brainstorm: [Chủ đề] — DD/MM/YYYY
-
-**Câu hỏi:** ...
-
-**Các ý tưởng:**
-- Ý tưởng 1: ...
-- Ý tưởng 2: ...
-
-**Kết luận:** ...
-```
-
----
-
-## Ví dụ
-
-### [ADR-1] Dùng TypeScript thay vì Python — 30/03/2026
-
-**Bối cảnh:** Cả nhóm cần chọn 1 ngôn ngữ chính để xây dựng agent. Có 2 thành viên quen Python, 1 thành viên quen TypeScript.
-
-**Các lựa chọn đã xem xét:**
-- **Python**: Ecosystem ML tốt hơn, syntax đơn giản, thành viên quen hơn.
-- **TypeScript**: Type safety, dễ refactor khi project lớn, nhiều library AI mới ra bản TS trước.
-
-**Quyết định:** Chọn TypeScript vì project này focus vào agent architecture, không cần ML library nặng. Type safety sẽ giúp bắt lỗi sớm hơn khi codebase phình ra.
-
-**Hệ quả:** 2 thành viên Python cần học TypeScript cơ bản (ước tính 1 tuần). Sẽ không dùng được `langchain` Python trực tiếp.
-
----
-
-### [ADR-2] Lưu conversation history bằng file JSON — 03/04/2026
-
-**Bối cảnh:** Agent cần nhớ context giữa các lần chạy. Cần chọn storage.
-
-**Các lựa chọn đã xem xét:**
-- **In-memory array**: Đơn giản nhất nhưng mất khi restart.
-- **File JSON**: Persistent, không cần setup, dễ inspect bằng tay.
-- **SQLite**: Có thể query, tốt cho production nhưng overkill cho prototype.
-- **Redis**: Fast nhưng cần chạy thêm service.
-
-**Quyết định:** File JSON cho giai đoạn prototype. Thiết kế interface `MemoryStore` để sau này swap sang SQLite không cần sửa logic agent.
-
-**Hệ quả:** Không query được theo thời gian hay user. Chấp nhận được ở giai đoạn này.
-
 ---
 
 ### Sprint 1 — 31/03 → 06/04/2026
@@ -302,14 +222,17 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 
 ---
 
-### Sprint 6 — 09/05 → 16/05/2026
+### Sprint 6 — 09/05 → 16/05/2026 *(Sprint cuối)*
 
 | Task | Người làm | Deadline | Trạng thái |
 |---|---|---|---|
 | Sửa lỗi theo danh sách mentor duty: UI regression, UX flow, layout quiz / flashcard / slide | Nguyễn Triệu Gia Khánh - 2A202600225 | 12/05 | ✅ Xong |
 | Tinh gọn phần lõi 4 card theo hướng nhanh, ổn định, dễ mở rộng; giảm bớt hướng chưa khớp mục tiêu | Nguyễn Triệu Gia Khánh - 2A202600225 | 14/05 | ✅ Xong |
-| Chuẩn bị sản phẩm ở trạng thái sẵn sàng demo: chốt phiên bản ổn định, kiểm tra golden path | Nguyễn Triệu Gia Khánh - 2A202600225 | 16/05 | ✅ Xong |
-| Test regression từng flow sau mỗi vòng sửa, cập nhật danh sách tính năng đã có / đang lỗi / cần chỉnh | Nguyễn Xuân Hải - 2A202600245 | 16/05 | ✅ Xong |
-| Thư ký mentor duty: ghi nhận nhận xét anh coach, thứ tự ưu tiên sửa, lưu ý khi trình bày sản phẩm | Nguyễn Xuân Hải - 2A202600245 | 16/05 | ✅ Xong |
+| Fix bug popup đăng nhập tạo đè lên session cũ khi khôi phục lịch sử chat | Nguyễn Triệu Gia Khánh - 2A202600225 | 15/05 | ✅ Xong |
+| Dọn dev badge (DEV-ONLY) và các flag thử nghiệm không dùng trong production | Nguyễn Triệu Gia Khánh - 2A202600225 | 15/05 | ✅ Xong |
+| Xác nhận toàn bộ tính năng hoạt động đúng: quiz, flashcard, slide, full set, recommendation, auth, session | Nguyễn Triệu Gia Khánh - 2A202600225 | 16/05 | ✅ Xong |
+| Kiểm tra golden path đầu-cuối: đăng ký → đăng nhập → tạo nội dung → đăng xuất → đăng nhập lại → khôi phục đúng | Nguyễn Triệu Gia Khánh - 2A202600225 | 16/05 | ✅ Xong |
+| Pass test thủ công cuối: xác nhận không còn lỗi ảnh hưởng đến trải nghiệm người dùng | Nguyễn Xuân Hải - 2A202600245 | 16/05 | ✅ Xong |
+| Tổng hợp ghi chú mentor duty lần cuối, xác nhận toàn bộ góp ý anh coach đã được xử lý | Nguyễn Xuân Hải - 2A202600245 | 16/05 | ✅ Xong |
 
 ---

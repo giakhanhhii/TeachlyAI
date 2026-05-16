@@ -67,6 +67,8 @@
 
 #### Đã làm
 - Xây phần backend nền tảng cho Teachly: tổ chức API server, chuẩn hóa luồng gọi từ frontend sang backend để chuẩn bị cho quiz / flashcard / slide / full set.
+- Xây hệ thống đăng ký / đăng nhập người dùng: tạo bảng `users` và `auth_tokens` trong database, các endpoint `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`; mật khẩu được hash, token Bearer lưu phía client.
+- Xây lưu session chat theo từng tài khoản: bảng `user_client_states` lưu toàn bộ danh sách session và active session index của mỗi user dưới dạng JSON; khi đăng nhập lại, frontend gọi `GET /api/auth/state` để khôi phục lịch sử chat đúng với tài khoản.
 - Thiết kế và triển khai guided flow trong giao diện chat: người dùng có thể chọn cách bắt đầu bằng nhập chủ đề trực tiếp hoặc đi qua các form cấu hình riêng cho từng loại nội dung.
 - Hoàn thiện khung chức năng cho 4 card chính gồm `Tạo quiz`, `Tạo flashcard`, `Tạo slide`, `Tạo Full Set`, để cùng dùng chung một trải nghiệm điều hướng và trạng thái trong chat.
 - Hoàn thiện thêm cấu trúc session / sidebar / quản lý đoạn chat để mỗi lần tạo nội dung mới đều có thể theo dõi như một luồng riêng.
@@ -231,5 +233,37 @@
 #### Kế hoạch tuần tới
 - Chốt phiên bản ổn định nhất để sẵn sàng cho review / demo.
 - Tiếp tục bám checklist test, feedback mentor và dọn những lỗi ảnh hưởng trực tiếp đến trải nghiệm người dùng.
+
+---
+
+### Tuần 8 — 16/05/2026 
+
+**Thành viên:** Nguyễn Triệu Gia Khánh - 2A202600225, Nguyễn Xuân Hải - 2A202600245
+
+#### Đã làm
+- Hoàn thiện và xác nhận toàn bộ tính năng hoạt động đúng trên sản phẩm: hệ thống đăng nhập / đăng ký, lưu và khôi phục session theo từng tài khoản, tạo quiz, tạo flashcard, tạo slide (trình chiếu + tải PDF), tạo Full Set, hệ thống recommendation với AI fallback và autofill, upload tài liệu PDF.
+- Kiểm tra lần cuối toàn bộ golden path từ đầu đến cuối: người dùng mới đăng ký → đăng nhập → chọn card → điền form → xem kết quả → tương tác với nội dung → đăng xuất → đăng nhập lại → lịch sử chat khôi phục đúng.
+- Dọn dẹp các flag dev-only (dev badge) và các đoạn code thử nghiệm không dùng trong production; đảm bảo không còn artifact của quá trình phát triển trong build cuối.
+- Sửa nốt các lỗi nhỏ còn sót từ danh sách mentor duty: chuẩn hóa hành vi overflow, căn chỉnh UI trên mobile, xử lý edge case khi AI trả về dữ liệu không đúng định dạng.
+- Bạn Hải thực hiện pass test thủ công cuối cùng trên toàn bộ flow, xác nhận không còn lỗi nào ảnh hưởng đến trải nghiệm người dùng; tổng hợp ghi chú mentor duty lần cuối để đảm bảo mọi góp ý đã được xử lý.
+
+#### Khó nhất tuần này
+- Đảm bảo không có regression sau khi dọn code và sửa các lỗi nhỏ cuối cùng — mỗi thay đổi dù nhỏ vẫn phải test lại toàn bộ flow liên quan.
+- Giữ được sự cân bằng giữa "chỉnh đến đủ tốt để demo" và "không làm bể thứ đang chạy đúng".
+
+#### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Cursor | Rà soát code cuối, phát hiện điểm có thể gây lỗi edge case | Dọn sạch code trước khi submit |
+| Claude Code | Kiểm tra logic flow auth + session restore, hỗ trợ fix bug khi popup đăng nhập tạo đè lên session cũ | Sửa đúng nguyên nhân gốc, không ảnh hưởng flow đã hoạt động |
+
+#### Học được
+- Một sản phẩm "xong" không chỉ có nghĩa là tính năng chạy được — còn là không còn lỗi nhìn thấy được, không còn code thừa, và người dùng mới có thể dùng thông suốt từ đầu đến cuối mà không cần hướng dẫn thêm.
+- Việc phân vai rõ ràng trong suốt dự án (Khánh xây dựng, Hải test và ghi chép) giúp nhóm phủ được cả hai mặt kỹ thuật lẫn chất lượng sản phẩm mà không bị chồng chéo.
+- Ở giai đoạn cuối, tốc độ ra quyết định ("sửa hay để nguyên") quan trọng không kém chất lượng từng quyết định — chần chừ quá lâu ở lỗi nhỏ dễ ăn hết thời gian còn lại.
+
+#### Nếu làm lại, sẽ làm khác
+- Giữ một checklist tính năng cố định từ tuần 4–5 và test theo checklist đó mỗi sprint thay vì test theo trí nhớ — sẽ giảm được thời gian pass cuối đáng kể.
+- Tách môi trường dev và production rõ ràng hơn từ sớm để không phải dọn dev artifact vào tuần cuối.
 
 ---

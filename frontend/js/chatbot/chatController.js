@@ -944,12 +944,14 @@ export async function init() {
   }
 
   async function handleFlowWithAutoMode(flowKind, onCustom) {
+    const wasAuthenticated = !!getCurrentAuthUser();
     const user = await ensureAuthenticated({
       initialMode: "login",
       title: "Đăng nhập hoặc đăng ký để mở bài giảng",
       subtitle: "Sau khi đăng nhập, hồ sơ và tên người dùng sẽ hiển thị ở thanh bên trái.",
     });
     if (!user) return;
+    if (!wasAuthenticated) return;
     const expKind = toExpKind(flowKind);
 
     function openCountSelector() {

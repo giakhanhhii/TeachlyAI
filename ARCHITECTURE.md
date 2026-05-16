@@ -10,7 +10,8 @@ Current architecture style:
 
 - Single web application
 - Static frontend + API backend
-- PostgreSQL persistence for user sessions and shared experiences
+- PostgreSQL persistence for user accounts, auth tokens, session state, chat messages, and shared experiences
+- Per-account session restoration on login
 - AI/LLM orchestration inside backend services
 - External provider calls to OpenAI and Anthropic
 
@@ -36,13 +37,16 @@ Responsibilities:
 - Manage guided flow and form states
 - Call backend APIs for generation, upload, chat, translation, recommendations, and export
 - Display quiz/flashcard/slide/full-set experiences
+- Handle user registration, login, and logout via auth dialog
+- Persist auth token and user profile in localStorage; validate on app load via `/api/auth/me`
+- Restore per-account chat session history from server on login via `/api/auth/state`
 - Maintain lightweight browser-side state such as play counts and UI preferences
 
 Key frontend areas:
 
 - `controllers/`: app orchestration
-- `services/`: API clients, history, recommendation, experience services
-- `dom/`: view rendering for cards, chat, quiz, flashcards, slides
+- `services/`: API clients, history, recommendation, experience, auth services
+- `dom/`: view rendering for cards, chat, quiz, flashcards, slides, auth dialog
 - `slide/`: slide shell and visual editor helpers
 
 ### Backend/API
@@ -56,6 +60,8 @@ Responsibilities:
 - Serve static frontend files
 - Expose all REST API endpoints
 - Validate requests with Pydantic
+- Handle user registration, login, logout, and token validation (`/api/auth/*`)
+- Persist and restore per-account client session state (`/api/auth/state`)
 - Route generation requests to AI services
 - Enforce upload safety and chat scope policy
 - Read mock content when needed
@@ -75,12 +81,18 @@ Technology:
 
 Current tables:
 
+- `users`
+- `auth_tokens`
+- `user_client_states`
 - `sessions`
 - `messages`
 - `shared_experiences`
 
 Stored data:
 
+- User accounts: username and bcrypt password hash
+- Bearer auth tokens (stored as SHA-256 hash, linked to user)
+- Per-user client session state (active session list and active index) as JSONB
 - Chat thread identifiers
 - Chat messages and timestamps
 - Shared experience payloads as JSONB
@@ -119,17 +131,19 @@ flowchart LR
 
     FE --> API["FastAPI Backend\nsrc/api_server.py"]
 
+    API --> AUTH["Auth Layer\n/api/auth/register\n/api/auth/login\n/api/auth/logout\n/api/auth/me\n/api/auth/state"]
     API --> AI["AI Service Layer\nsrc/ai_content_generate.py"]
-    API --> DB["PostgreSQL\nsessions / messages / shared_experiences"]
+    API --> DB["PostgreSQL\nusers / auth_tokens / user_client_states\nsessions / messages / shared_experiences"]
     API --> MOCK["Mock Bundles\nbackend/mock/*.json"]
     API --> EXTRACT["File Extraction + OCR\nsrc/utils/file_extractor.py\nocr_helper.py"]
     API --> EXPORT["Slide PDF Export\nscripts/export_slide_pdf.mjs"]
 
+    AUTH --> DB
     AI --> OAI["OpenAI API"]
     AI --> ANT["Anthropic API"]
 
-    FE -->|Fetch/POST| API
-    API -->|JSON / files / share IDs| FE
+    FE -->|Fetch/POST + Bearer token| API
+    API -->|JSON / files / share IDs / session state| FE
 ```
 
 ## 4. Main Data Flows
@@ -179,6 +193,24 @@ flowchart LR
 4. Script renders/export slides to PDF.
 5. Backend returns the generated PDF file to the frontend.
 
+### Flow F: User registration and login
+
+1. User clicks a content card while unauthenticated.
+2. Frontend shows the auth dialog (login/register popup).
+3. On register: frontend sends `POST /api/auth/register`; backend hashes password and stores user in `users`.
+4. On login: frontend sends `POST /api/auth/login`; backend verifies password hash, generates a random Bearer token, stores its SHA-256 hash in `auth_tokens`, and returns the token.
+5. Frontend saves the token and user profile to `localStorage` via `authStore.js`.
+6. Auth state change fires all `subscribeAuth` listeners in the frontend.
+7. Frontend calls `GET /api/auth/state` to load the user's saved session list from `user_client_states`.
+8. Session history is restored and rendered; user can then interact normally.
+9. On logout: frontend calls `POST /api/auth/logout`; backend deletes the token hash from `auth_tokens`; frontend clears `localStorage` before saving current session state.
+
+### Flow G: Per-account session persistence
+
+1. While the user is logged in, any change to the session list or active session triggers a debounced `PUT /api/auth/state`.
+2. Backend upserts the full session state JSON into `user_client_states` for the current user.
+3. On next login (any device/session), `GET /api/auth/state` returns the saved state and the frontend restores the exact session list and active session index.
+
 ## 5. Detailed Backend Modules
 
 ### `src/api_server.py`
@@ -187,6 +219,7 @@ flowchart LR
 - Route registration
 - Static file mounting
 - Health and status endpoints
+- Auth endpoints: `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`, `/api/auth/state` (GET + PUT)
 - Chat, generation, upload, sharing, and export endpoints
 
 ### `src/ai_content_generate.py`
@@ -239,6 +272,25 @@ Examples:
 
 ```mermaid
 erDiagram
+    users {
+        text id PK
+        text username
+        text password_hash
+        timestamptz created_at
+    }
+
+    auth_tokens {
+        text token_hash PK
+        text user_id FK
+        timestamptz created_at
+    }
+
+    user_client_states {
+        text user_id PK
+        jsonb payload
+        timestamptz updated_at
+    }
+
     sessions {
         text thread_id PK
         timestamptz created_at
@@ -260,6 +312,8 @@ erDiagram
         timestamptz created_at
     }
 
+    users ||--o{ auth_tokens : "has tokens"
+    users ||--o| user_client_states : "has state"
     sessions ||--o{ messages : contains
 ```
 
