@@ -11,6 +11,35 @@ import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } fro
 import { renderQuizStepView } from "./quizStepView.js";
 import { renderQuizReviewView } from "./quizReviewView.js";
 
+const BOOKMARK_SVG = `
+  <svg class="flash-bookmark-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M7 3.75h10a1.25 1.25 0 0 1 1.25 1.25v15.22L12 16.6 5.75 20.22V5A1.25 1.25 0 0 1 7 3.75z" />
+  </svg>
+`;
+
+function buildQuestionFingerprint(question) {
+  const id = String(question?.id || "").trim();
+  if (id) return `id:${id}`;
+  const stem = String(question?.text || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+  const options = Array.isArray(question?.options)
+    ? question.options.map((option) => String(option || "").replace(/\s+/g, " ").trim().toLowerCase()).join("::")
+    : "";
+  return `${stem}##${options}`;
+}
+
+function buildQuestionKeys(questions) {
+  const counts = new Map();
+  return (Array.isArray(questions) ? questions : []).map((question) => {
+    const fingerprint = buildQuestionFingerprint(question);
+    const nextCount = (counts.get(fingerprint) || 0) + 1;
+    counts.set(fingerprint, nextCount);
+    return `${fingerprint}#${nextCount}`;
+  });
+}
+
 /**
  * @param {{ body: HTMLElement }} layerView
  * @param {Record<string, string>} meta
@@ -122,6 +151,8 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
   const titleText = buildExperienceTitle("quiz", metaForTitle?.source, metaForTitle?.topic, data.title);
   const questions = Array.isArray(data.questions) ? data.questions : [];
+  const questionKeys = buildQuestionKeys(questions);
+  const questionKeySet = new Set(questionKeys);
   if (!isRestore) beginDwell(metaForTitle?.source || metaForTitle?.list || metaForTitle?.topic || titleText, "quiz");
 
   let index = Number.isFinite(Number(initial?.index)) ? Math.floor(Number(initial.index)) : 0;
@@ -131,10 +162,42 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   let reviewMode = false;
   /** @type {"all"|"wrong"} */
   let reviewFilter = "all";
+  const initialBookmarkedQuestionKeys = Array.isArray(initial?.bookmarkedQuestionKeys)
+    ? initial.bookmarkedQuestionKeys.map(String)
+    : [];
+  let bookmarkedQuestionKeys = new Set(initialBookmarkedQuestionKeys.filter((key) => questionKeySet.has(key)));
+  let bookmarkFilter = Boolean(initial?.bookmarkFilter) && bookmarkedQuestionKeys.size > 0;
+  let lastAllQuestionKey =
+    typeof initial?.lastAllQuestionKey === "string" && questionKeySet.has(initial.lastAllQuestionKey)
+      ? initial.lastAllQuestionKey
+      : questionKeys[index] || "";
+  let lastBookmarkQuestionKey =
+    typeof initial?.lastBookmarkQuestionKey === "string" && questionKeySet.has(initial.lastBookmarkQuestionKey)
+      ? initial.lastBookmarkQuestionKey
+      : "";
 
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz";
-  shell.appendChild(createExperienceTopBar({ title: titleText, onShare: deps?.onShareCurrentExperience }).bar);
+  const topBar = createExperienceTopBar({ title: titleText, onShare: deps?.onShareCurrentExperience }).bar;
+  topBar.classList.add("exp-topbar-flash");
+  topBar.addEventListener("animationend", (event) => {
+    if (event.target === topBar) topBar.classList.remove("flash-bookmark-feedback");
+  });
+  const topBarRight = topBar.querySelector(".exp-topbar-right");
+  const bookmarkControl = document.createElement("div");
+  bookmarkControl.className = "flash-bookmark-control";
+  const bookmarkFilterBtn = document.createElement("button");
+  bookmarkFilterBtn.type = "button";
+  bookmarkFilterBtn.className = "flash-bookmark-filter-btn";
+  bookmarkFilterBtn.innerHTML = `
+    ${BOOKMARK_SVG}
+    <span class="flash-bookmark-filter-text">Bookmark</span>
+    <span class="flash-bookmark-filter-badge">0</span>
+  `;
+  const bookmarkFilterBadge = bookmarkFilterBtn.querySelector(".flash-bookmark-filter-badge");
+  bookmarkControl.appendChild(bookmarkFilterBtn);
+  topBarRight?.insertBefore(bookmarkControl, topBarRight.firstChild || null);
+  shell.appendChild(topBar);
 
   const total = Math.max(1, questions.length);
   const progress = createProgressRow({ total, index: 0, correct: 0, wrong: 0 });
@@ -180,6 +243,77 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       gradedByIndex: [...gradedByIndex],
       correct,
       wrong,
+      bookmarkedQuestionKeys: [...bookmarkedQuestionKeys],
+      bookmarkFilter,
+      lastAllQuestionKey,
+      lastBookmarkQuestionKey,
+    });
+  }
+
+  function clampQuestionIndex(value) {
+    if (!Number.isFinite(Number(value))) return 0;
+    return Math.min(Math.max(0, Math.floor(Number(value))), Math.max(0, questions.length - 1));
+  }
+
+  function getVisibleIndices() {
+    if (!bookmarkFilter) return questions.map((_, questionIndex) => questionIndex);
+    return questionKeys.reduce((acc, key, questionIndex) => {
+      if (bookmarkedQuestionKeys.has(key)) acc.push(questionIndex);
+      return acc;
+    }, []);
+  }
+
+  function resolveNearestVisibleIndex(visibleIndices, preferredIndex) {
+    const safePreferred = clampQuestionIndex(preferredIndex);
+    if (!visibleIndices.length) return 0;
+    if (visibleIndices.includes(safePreferred)) return safePreferred;
+    const nextVisible = visibleIndices.find((questionIndex) => questionIndex >= safePreferred);
+    return Number.isFinite(nextVisible) ? nextVisible : visibleIndices[visibleIndices.length - 1];
+  }
+
+  function syncVisibleState(preferredIndex = index) {
+    if (bookmarkFilter && bookmarkedQuestionKeys.size === 0) bookmarkFilter = false;
+    const visibleIndices = getVisibleIndices();
+    if (!visibleIndices.length) {
+      index = 0;
+      return { visibleIndices, visibleIndex: -1 };
+    }
+    index = resolveNearestVisibleIndex(visibleIndices, preferredIndex);
+    return { visibleIndices, visibleIndex: visibleIndices.indexOf(index) };
+  }
+
+  function triggerTopbarBookmarkFeedback() {
+    topBar.classList.remove("flash-bookmark-feedback");
+    void topBar.offsetWidth;
+    topBar.classList.add("flash-bookmark-feedback");
+  }
+
+  function renderBookmarkChrome() {
+    const bookmarkCount = bookmarkedQuestionKeys.size;
+    const hasBookmarks = bookmarkCount > 0;
+    bookmarkControl.classList.toggle("has-bookmarks", hasBookmarks);
+    if (!hasBookmarks) bookmarkFilter = false;
+    bookmarkFilterBtn.classList.toggle("active", bookmarkFilter);
+    bookmarkFilterBtn.disabled = !hasBookmarks;
+    if (bookmarkFilterBadge) bookmarkFilterBadge.textContent = String(bookmarkCount);
+    bookmarkFilterBtn.title = bookmarkFilter
+      ? `Đang xem ${bookmarkCount} câu quiz đã bookmark. Bấm lần nữa để quay lại tất cả.`
+      : `Chỉ xem ${bookmarkCount} câu quiz đã bookmark`;
+  }
+
+  function restoreAllViewIndex() {
+    const resumeAllIndex = lastAllQuestionKey ? questionKeys.indexOf(lastAllQuestionKey) : -1;
+    if (resumeAllIndex >= 0) index = resumeAllIndex;
+  }
+
+  function paintBookmarkedProgressSegments(visibleIndices) {
+    const segments = progress.wrap.querySelectorAll(".exp-progress-seg");
+    const currentVisibleIndex = visibleIndices.indexOf(index);
+    segments.forEach((segment, segmentIndex) => {
+      const baseIndex = visibleIndices[segmentIndex];
+      const isBookmarked = Number.isFinite(baseIndex) && bookmarkedQuestionKeys.has(questionKeys[baseIndex]);
+      const shouldHighlight = bookmarkFilter ? segmentIndex <= currentVisibleIndex : Boolean(isBookmarked);
+      segment.classList.toggle("bookmarked", Boolean(isBookmarked && shouldHighlight));
     });
   }
 
@@ -206,14 +340,30 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   function renderQuestion() {
     reviewMode = false;
     footer.hidden = false;
+    const { visibleIndices, visibleIndex } = syncVisibleState(index);
     const q = questions[index];
     selected = index < selectedByIndex.length ? selectedByIndex[index] : null;
+    if (!bookmarkFilter && questionKeys[index]) lastAllQuestionKey = questionKeys[index];
+    if (bookmarkFilter && questionKeys[index]) lastBookmarkQuestionKey = questionKeys[index];
+    renderBookmarkChrome();
     activeStepView = renderQuizStepView({
       stage,
       question: q,
       index,
       selected,
       graded: gradedByIndex[index],
+      isBookmarked: bookmarkedQuestionKeys.has(questionKeys[index]),
+      onToggleBookmark: (event) => {
+        event.stopPropagation();
+        const key = questionKeys[index];
+        const wasBookmarked = bookmarkedQuestionKeys.has(key);
+        if (wasBookmarked) bookmarkedQuestionKeys.delete(key);
+        else {
+          bookmarkedQuestionKeys.add(key);
+          triggerTopbarBookmarkFeedback();
+        }
+        renderQuestion();
+      },
       onSelect: (pickedIndex) => {
         selected = pickedIndex;
         selectedByIndex[index] = pickedIndex;
@@ -222,7 +372,7 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       },
     });
 
-    backBtn.disabled = index <= 0 && !deps?.hasPrevAutoExperience?.();
+    backBtn.disabled = visibleIndex <= 0 && !deps?.hasPrevAutoExperience?.();
     submitBtn.hidden = false;
     submitBtn.disabled = false;
     resultBtn.hidden = true;
@@ -236,16 +386,24 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       nextBtn.textContent = "—";
       nextBtn.disabled = true;
       refreshScore();
-      progress.paint({ total, index, correct, wrong });
+      progress.paint({ total: Math.max(1, visibleIndices.length), index: Math.max(0, visibleIndex), correct, wrong });
+      paintBookmarkedProgressSegments(visibleIndices);
       emitState();
       return;
     }
     refreshScore();
-    progress.paint({ total, index, correct, wrong });
+    progress.paint({
+      total: Math.max(1, bookmarkFilter ? visibleIndices.length : total),
+      index: Math.max(0, bookmarkFilter ? visibleIndex : index),
+      correct,
+      wrong,
+    });
+    paintBookmarkedProgressSegments(bookmarkFilter ? visibleIndices : questions.map((_, questionIndex) => questionIndex));
 
+    const isLastVisible = visibleIndex >= visibleIndices.length - 1;
     if (!gradedByIndex[index]) nextBtn.textContent = "Tiếp theo";
     else {
-      const isLast = index >= questions.length - 1;
+      const isLast = bookmarkFilter ? isLastVisible : index >= questions.length - 1;
       nextBtn.textContent = isLast ? "Xem kết quả" : "Tiếp theo";
     }
     emitState();
@@ -256,13 +414,27 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
     footer.hidden = true;
     activeStepView = null;
     refreshScore();
-    progress.paint({ total, index: Math.max(0, questions.length - 1), correct, wrong });
+    renderBookmarkChrome();
+    const visibleIndices = getVisibleIndices();
+    const reviewIndex = bookmarkFilter
+      ? Math.max(0, visibleIndices.length - 1)
+      : Math.max(0, questions.length - 1);
+    progress.paint({
+      total: Math.max(1, bookmarkFilter ? visibleIndices.length : total),
+      index: reviewIndex,
+      correct,
+      wrong,
+    });
+    paintBookmarkedProgressSegments(bookmarkFilter ? visibleIndices : questions.map((_, questionIndex) => questionIndex));
     renderQuizReviewView({
       stage,
       questions,
       selectedByIndex,
       gradedByIndex,
       reviewFilter,
+      bookmarkFilter,
+      bookmarkedQuestionKeys: [...bookmarkedQuestionKeys],
+      questionKeys,
       correct,
       wrong,
       onFilterChange: (filter) => {
@@ -288,17 +460,43 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
   backBtn.addEventListener("click", () => {
     if (reviewMode) {
       reviewMode = false;
-      index = Math.max(0, questions.length - 1);
+      const visibleIndices = getVisibleIndices();
+      index = bookmarkFilter
+        ? Math.max(0, visibleIndices.length ? visibleIndices[visibleIndices.length - 1] : 0)
+        : Math.max(0, questions.length - 1);
       backBtn.textContent = "Quay lại";
       renderQuestion();
       return;
     }
-    if (index <= 0) {
+    const visibleIndices = getVisibleIndices();
+    const visibleIndex = visibleIndices.indexOf(index);
+    if (visibleIndex <= 0) {
       deps?.onGoBackToPrevExperience?.();
       return;
     }
-    index -= 1;
+    index = visibleIndices[visibleIndex - 1];
     renderQuestion();
+  });
+
+  bookmarkFilterBtn.addEventListener("click", () => {
+    if (bookmarkedQuestionKeys.size === 0) return;
+    if (bookmarkFilter) {
+      bookmarkFilter = false;
+      restoreAllViewIndex();
+      if (reviewMode) renderReview();
+      else renderQuestion();
+      return;
+    }
+    bookmarkFilter = true;
+    const resumeBookmarkIndex =
+      lastBookmarkQuestionKey && bookmarkedQuestionKeys.has(lastBookmarkQuestionKey)
+        ? questionKeys.indexOf(lastBookmarkQuestionKey)
+        : -1;
+    const firstBookmarkedIndex = questionKeys.findIndex((key) => bookmarkedQuestionKeys.has(key));
+    if (resumeBookmarkIndex >= 0) index = resumeBookmarkIndex;
+    else if (firstBookmarkedIndex >= 0) index = firstBookmarkedIndex;
+    if (reviewMode) renderReview();
+    else renderQuestion();
   });
 
   nextBtn.addEventListener("click", () => {
@@ -323,6 +521,19 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       }
       nextBtn.disabled = false;
       emitState();
+      return;
+    }
+
+    const visibleIndices = getVisibleIndices();
+    const visibleIndex = visibleIndices.indexOf(index);
+    if (bookmarkFilter) {
+      if (visibleIndex >= visibleIndices.length - 1) {
+        reviewFilter = "all";
+        renderReview();
+        return;
+      }
+      index = visibleIndices[visibleIndex + 1];
+      renderQuestion();
       return;
     }
 

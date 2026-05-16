@@ -9,6 +9,9 @@ const OPTION_LETTERS = ["A", "B", "C", "D", "E", "F"];
  *  selectedByIndex: (number | null)[],
  *  gradedByIndex: boolean[],
  *  reviewFilter: "all" | "wrong",
+ *  bookmarkFilter?: boolean,
+ *  bookmarkedQuestionKeys?: string[],
+ *  questionKeys?: string[],
  *  correct: number,
  *  wrong: number,
  *  onFilterChange: (filter: "all" | "wrong") => void,
@@ -24,6 +27,9 @@ export function renderQuizReviewView(params) {
     selectedByIndex,
     gradedByIndex,
     reviewFilter,
+    bookmarkFilter = false,
+    bookmarkedQuestionKeys = [],
+    questionKeys = [],
     correct,
     wrong,
     onFilterChange,
@@ -32,6 +38,7 @@ export function renderQuizReviewView(params) {
     onContinueCreate,
   } = params;
   stage.innerHTML = "";
+  const bookmarkedKeySet = new Set(Array.isArray(bookmarkedQuestionKeys) ? bookmarkedQuestionKeys.map(String) : []);
 
   const wrap = document.createElement("div");
   wrap.className = "quiz-review-wrap";
@@ -120,6 +127,7 @@ export function renderQuizReviewView(params) {
   const visibleIndexes = [];
   for (let i = 0; i < questions.length; i += 1) {
     const q = questions[i];
+    if (bookmarkFilter && !bookmarkedKeySet.has(String(questionKeys[i] || ""))) continue;
     const picked = selectedByIndex[i];
     const isWrong = gradedByIndex[i] && picked !== null && picked !== q.correctIndex;
     if (reviewFilter === "wrong" && !isWrong) continue;
@@ -129,7 +137,13 @@ export function renderQuizReviewView(params) {
   if (!visibleIndexes.length) {
     const empty = document.createElement("p");
     empty.className = "exp-empty";
-    empty.textContent = reviewFilter === "wrong" ? "Tuyệt vời! Bạn không có câu sai." : "Chưa có dữ liệu để hiển thị.";
+    empty.textContent = bookmarkFilter
+      ? (reviewFilter === "wrong"
+          ? "Không có câu bookmark nào đang sai."
+          : "Chưa có câu quiz nào được bookmark.")
+      : reviewFilter === "wrong"
+        ? "Tuyệt vời! Bạn không có câu sai."
+        : "Chưa có dữ liệu để hiển thị.";
     list.appendChild(empty);
   } else {
     visibleIndexes.forEach((i) => {
