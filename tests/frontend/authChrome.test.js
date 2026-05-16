@@ -39,7 +39,7 @@ describe("authChrome", () => {
           user: {
             username: "teacher01",
             displayName: "teacher01",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),
@@ -52,7 +52,7 @@ describe("authChrome", () => {
           user: {
             username: "teacher01",
             displayName: "teacher01",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),
@@ -71,7 +71,7 @@ describe("authChrome", () => {
     expect(document.getElementById("topAuthControls")?.hidden).toBe(true);
     expect(document.getElementById("sidebarUserAvatar")?.textContent).toBe("T");
     expect(document.getElementById("sidebarUserName")?.textContent).toBe("teacher01");
-    expect(document.getElementById("sidebarUserSubtitle")?.textContent).toBe("Hồ sơ Teachly");
+    expect(document.getElementById("sidebarUserSubtitle")?.textContent).toBe("Pro");
     expect(document.getElementById("sidebarLogoutBtn")?.hidden).toBe(false);
   });
 });

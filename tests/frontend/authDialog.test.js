@@ -49,7 +49,7 @@ describe("authDialog", () => {
           user: {
             username: "teacher02",
             displayName: "teacher02",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),
@@ -62,7 +62,7 @@ describe("authDialog", () => {
           user: {
             username: "teacher02",
             displayName: "teacher02",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),

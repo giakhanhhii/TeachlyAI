@@ -35,7 +35,7 @@ describe("authStore", () => {
           user: {
             username: "teacher01",
             displayName: "teacher01",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),
@@ -48,7 +48,7 @@ describe("authStore", () => {
           user: {
             username: "teacher01",
             displayName: "teacher01",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),
@@ -70,7 +70,7 @@ describe("authStore", () => {
     expect(getCurrentAuthUser()).toMatchObject({
       username: "teacher01",
       displayName: "teacher01",
-      profileLabel: "Hồ sơ Teachly",
+      profileLabel: "Pro",
       avatarText: "T",
     });
   });

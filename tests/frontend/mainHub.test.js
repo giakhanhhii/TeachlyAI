@@ -35,7 +35,7 @@ describe("mainHub auth gate", () => {
           user: {
             username: "teacher01",
             displayName: "teacher01",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),
@@ -48,7 +48,7 @@ describe("mainHub auth gate", () => {
           user: {
             username: "teacher01",
             displayName: "teacher01",
-            profileLabel: "Hồ sơ Teachly",
+            profileLabel: "Pro",
             avatarText: "T",
           },
         }),

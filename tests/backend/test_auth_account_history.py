@@ -50,7 +50,7 @@ def test_auth_register_login_and_me_roundtrip(client_with_temp_db):
     assert response.status_code == 200
     payload = response.json()
     assert payload["user"]["username"] == "teacher01"
-    assert payload["user"]["profileLabel"] == "Hồ sơ Teachly"
+    assert payload["user"]["profileLabel"] == "Pro"
 
 
 def test_chat_history_isolated_per_account(client_with_temp_db):

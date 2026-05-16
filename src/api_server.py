@@ -250,7 +250,7 @@ def _build_auth_user_payload(user: dict) -> dict[str, str]:
     return {
         "username": username,
         "displayName": display_name,
-        "profileLabel": "Hồ sơ Teachly",
+        "profileLabel": "Pro",
         "avatarText": display_name[:1].upper() or "U",
     }
 

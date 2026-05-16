@@ -30,12 +30,12 @@ function normalizeUser(user) {
   if (!user || typeof user !== "object") return null;
   const username = String(user.username || "").trim();
   const displayName = String(user.displayName || username).trim();
-  const profileLabel = String(user.profileLabel || "Hồ sơ Teachly").trim();
+  const profileLabel = String(user.profileLabel || "Pro").trim();
   if (!username) return null;
   return {
     username,
     displayName: displayName || username,
-    profileLabel: profileLabel || "Hồ sơ Teachly",
+    profileLabel: profileLabel || "Pro",
     avatarText: String(user.avatarText || displayName || username).trim().slice(0, 1).toUpperCase() || "U",
   };
 }
