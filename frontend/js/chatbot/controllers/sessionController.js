@@ -14,6 +14,7 @@
  *   renameSession: (idx: number, title: string) => boolean,
  *   deleteSession: (idx: number) => boolean,
  *   saveSessions: () => void,
+ *   onShareSession?: (idx: number) => void | Promise<void>,
  *   onSessionSelected: (idx: number) => void | Promise<void>,
  *   onSessionDeleted: () => void | Promise<void>,
  * }} deps
@@ -53,6 +54,7 @@ export function renderSessionListUI(deps) {
     renameSession,
     deleteSession,
     saveSessions,
+    onShareSession,
     onSessionSelected,
     onSessionDeleted,
   } = deps;
@@ -115,20 +117,14 @@ export function renderSessionListUI(deps) {
       }
       if (action === "share") {
         actionInFlight = true;
-        const s = getSessionsSnapshot()[idx];
-        const transcript = (s?.messages || [])
-          .map((m) => `${m.role === "user" ? "Bạn" : "Teachly"}: ${m.text || ""}`)
-          .join("\n");
-        const payload = `${s?.title || "Đoạn chat"}\n\n${transcript}`;
-        if (navigator.clipboard?.writeText) {
-          navigator.clipboard.writeText(payload).then(
-            () => window.alert("Đã sao chép nội dung cuộc trò chuyện."),
-            () => window.alert("Không thể sao chép tự động. Vui lòng thử lại."),
-          );
-        } else {
-          window.alert("Trình duyệt không hỗ trợ clipboard.");
-        }
-        actionInFlight = false;
+        void Promise.resolve(onShareSession?.(idx))
+          .catch((err) => {
+            console.error("Share session action failed:", err);
+            window.alert("Không thể chia sẻ đoạn chat này. Vui lòng thử lại.");
+          })
+          .finally(() => {
+            actionInFlight = false;
+          });
       }
     },
   );

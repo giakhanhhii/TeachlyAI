@@ -10,6 +10,7 @@ import {
   setActiveSessionIndex,
   getSessionsSnapshot,
   exportCurrentSessionState,
+  exportSessionStateByIndex,
   createSession,
   renameSession,
   togglePinSession,
@@ -674,9 +675,9 @@ export function init() {
     experienceController.persistActiveExperience();
   }
 
-  async function shareCurrentExperience() {
+  async function shareSessionExperienceAtIndex(idx) {
     persistActiveExperience();
-    const snapshot = exportCurrentSessionState();
+    const snapshot = exportSessionStateByIndex(idx);
     const experienceState = snapshot?.experienceState;
     if (!experienceState || typeof experienceState !== "object" || !experienceState.resume) {
       window.alert("Chỉ có thể chia sẻ khi đang mở một bài học.");
@@ -705,6 +706,10 @@ export function init() {
       return;
     }
     window.prompt("Sao chép link chia sẻ này", url);
+  }
+
+  async function shareCurrentExperience() {
+    await shareSessionExperienceAtIndex(getActiveSessionIndex());
   }
 
   function clearShareParamFromUrl() {
@@ -1096,7 +1101,7 @@ export function init() {
     requestAnimationFrame(() => requestAnimationFrame(run));
   }
 
-  const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onSessionSelected: async (idx) => {
+  const renderChatListUI = createChatSessionListRenderer({ chatListEl: /** @type {HTMLElement} */ (chatList), getSessionsSnapshot, getActiveSessionIndex, togglePinSession, renameSession, deleteSession, saveSessions, onShareSession: (idx) => shareSessionExperienceAtIndex(idx), onSessionSelected: async (idx) => {
     if (isSwitchingSession) return;
     isSwitchingSession = true;
     const _kind = getActiveKind();

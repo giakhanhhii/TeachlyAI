@@ -38,9 +38,6 @@ export function createQuizFormCard(deps) {
   src.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập chủ đề trực tiếp — không cần tải tệp ở bước này."));
   root.appendChild(src);
 
-  const kind = flowTextarea("VD: Phát âm, Ngữ pháp, Đọc hiểu, Từ vựng", 2);
-  root.appendChild(wrapField("Dạng bài", kind));
-
   const qn = el("select", "flow-select");
   appendSelectPlaceholder(qn, "Chọn số lượng câu…");
   appendSelectOptions(qn, QUIZ_COUNT_OPTIONS);
@@ -64,7 +61,6 @@ export function createQuizFormCard(deps) {
   const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
   let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.source === "string") srcText.value = prefill.source;
-  if (typeof prefill.kind === "string") kind.value = prefill.kind;
   if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) {
     qn.value = coerceAllowedCount(prefill.count, QUIZ_COUNT_OPTIONS, "20");
     countMobileSelect.sync();
@@ -80,7 +76,6 @@ export function createQuizFormCard(deps) {
   function currentAutofillComparableState() {
     return {
       source: srcText.value,
-      kind: kind.value,
       count: qn.value,
       difficulty: level.value,
       notes: notes.value,
@@ -92,7 +87,6 @@ export function createQuizFormCard(deps) {
     if (sample) {
       presetId = String(sample.id ?? "");
       srcText.value = String(sample.s ?? "");
-      kind.value = String(sample.k ?? "");
       qn.value = coerceAllowedCount(sample.q, QUIZ_COUNT_OPTIONS, "20");
       level.value = normalizeFullsetLevelAutofill(sample.d);
       countMobileSelect.sync();
@@ -107,7 +101,6 @@ export function createQuizFormCard(deps) {
         presetId = "";
         srcText.value = String(ai.source ?? "");
         addAiAutofillHistory("quiz", ai.source);
-        if (ai.kind) kind.value = String(ai.kind);
         if (ai.count) qn.value = coerceAllowedCount(ai.count, QUIZ_COUNT_OPTIONS, "20");
         if (ai.difficulty) {
           level.value = normalizeFullsetLevelAutofill(ai.difficulty);
@@ -122,7 +115,6 @@ export function createQuizFormCard(deps) {
         const fb = getAnyMock("quiz");
         presetId = String(fb.id ?? "");
         srcText.value = String(fb.s ?? "");
-        kind.value = String(fb.k ?? "");
         qn.value = coerceAllowedCount(fb.q, QUIZ_COUNT_OPTIONS, "20");
         level.value = normalizeFullsetLevelAutofill(fb.d);
         countMobileSelect.sync();
@@ -150,13 +142,11 @@ export function createQuizFormCard(deps) {
 
   function readQuizState() {
     const t = srcText.value.trim();
-    const k = kind.value.trim();
     const lv = level.value;
     const countRaw = qn.value.trim();
     const n = Number(countRaw);
-    const complete =
-      Boolean(t) && QUIZ_COUNT_OPTIONS.includes(countRaw) && Number.isFinite(n) && Boolean(k) && Boolean(lv);
-    return { t, k, n, lv, countRaw, complete };
+    const complete = Boolean(t) && QUIZ_COUNT_OPTIONS.includes(countRaw) && Number.isFinite(n) && Boolean(lv);
+    return { t, n, lv, countRaw, complete };
   }
 
   skip.addEventListener("click", () => {
@@ -172,7 +162,6 @@ export function createQuizFormCard(deps) {
     deps.onSubmit({
       __auto: "1",
       source: "(Teachly tự động)",
-      kind: "Ôn tập THPTQG",
       count: "20",
       difficulty: DEFAULT_DIFFICULTY,
       notes: "",
@@ -193,22 +182,20 @@ export function createQuizFormCard(deps) {
       }
     }
     const t = srcText.value.trim();
-    const k = kind.value.trim();
     const lv = level.value;
     const notesValue = notes.value.trim();
-    const hasAnyInput = Boolean(t || k || lv || countRaw || notesValue);
+    const hasAnyInput = Boolean(t || lv || countRaw || notesValue);
     if (!hasAnyInput) {
       err.textContent = "Vui lòng nhập ít nhất một thông tin hoặc nhấn Bỏ qua.";
       err.style.display = "block";
       return;
     }
     const useCount = countRaw || "20";
-    if (t && k && lv && countRaw) {
+    if (t && lv && countRaw) {
       submit.disabled = true;
       skip.disabled = true;
       deps.onSubmit(autofillIntent.applyToPayload({
         source: t,
-        kind: k,
         count: useCount,
         difficulty: lv,
         notes: notesValue,
@@ -221,7 +208,6 @@ export function createQuizFormCard(deps) {
       skip.disabled = true;
       deps.onSubmit(autofillIntent.applyToPayload({
         source: t || "(Teachly tự động)",
-        kind: k || "Ôn tập THPTQG",
         count: useCount,
         difficulty: lv || DEFAULT_DIFFICULTY,
         notes: notesValue,

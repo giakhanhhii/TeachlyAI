@@ -178,6 +178,13 @@ export function exportCurrentSessionState() {
   return deepCopy(getCurrentSession());
 }
 
+/**
+ * @param {number} idx
+ */
+export function exportSessionStateByIndex(idx) {
+  return deepCopy(getSessionByIndex(idx));
+}
+
 export function exportSessionsState() {
   return {
     sessions: deepCopy(sessions),

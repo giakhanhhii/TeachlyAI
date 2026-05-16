@@ -36,7 +36,7 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
   }
 
   if (guided.kind === "quiz" && guided.step === "await_topic_form" && cardType === "quiz_form") {
-    const topic = [payload.source, payload.kind].filter(Boolean).join(" — ") || "—";
+    const topic = payload.source || "—";
     const notes = [payload.difficulty ? `Trình độ: ${payload.difficulty}` : "", payload.notes ? `Ghi chú: ${payload.notes}` : ""]
       .filter(Boolean)
       .join(" | ");
@@ -44,7 +44,6 @@ export function computeQuizCardSubmit(guided, cardType, payload) {
       topic,
       count: payload.count || "—",
       notes: notes || "—",
-      ...(payload.kind ? { kind: payload.kind } : {}),
       ...(payload.source ? { source: payload.source } : {}),
       ...(payload.difficulty ? { difficulty: payload.difficulty } : {}),
       ...(payload.presetId ? { presetId: payload.presetId } : {}),
