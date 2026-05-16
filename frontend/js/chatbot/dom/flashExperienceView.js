@@ -204,13 +204,14 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
           );
         }
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-        const loadingState = (_devSrc === "ai" && _bgEntry?.status !== "done")
+        const _needsLoading = (_devSrc === "ai" && _bgEntry?.status !== "done") || _devSrc === "mock";
+        const loadingState = _needsLoading
           ? (() => {
               experienceBody.innerHTML = "";
               return createAiLoadingOverlay(experienceBody, {
-                label: "AI đang tạo flashcard…",
+                label: _devSrc === "ai" ? "AI đang tạo flashcard…" : "Đang tải flashcard…",
                 tip: "Vui lòng đợi trong giây lát.",
-                estimatedSeconds: 15,
+                estimatedSeconds: _devSrc === "ai" ? 15 : 3,
                 startedAt: _bgEntry?.startedAt,
               });
             })()

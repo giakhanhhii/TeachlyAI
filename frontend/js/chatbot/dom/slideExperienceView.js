@@ -181,13 +181,14 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         );
       }
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-      const loadingState = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done")
+      const _needsLoading = !isRestore && ((_devSrc === "ai" && _bgEntry?.status !== "done") || _devSrc === "mock");
+      const loadingState = _needsLoading
         ? (() => {
             root.innerHTML = "";
             return createAiLoadingOverlay(root, {
-              label: "AI đang tạo slide…",
+              label: _devSrc === "ai" ? "AI đang tạo slide…" : "Đang tải slide…",
               tip: "Vui lòng đợi trong giây lát.",
-              estimatedSeconds: 20,
+              estimatedSeconds: _devSrc === "ai" ? 20 : 3,
               startedAt: _bgEntry?.startedAt,
             });
           })()

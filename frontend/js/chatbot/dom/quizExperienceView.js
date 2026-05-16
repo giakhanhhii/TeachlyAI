@@ -136,13 +136,14 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
           );
         }
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
-        const loadingState = (_devSrc === "ai" && _bgEntry?.status !== "done")
+        const _needsLoading = (_devSrc === "ai" && _bgEntry?.status !== "done") || _devSrc === "mock";
+        const loadingState = _needsLoading
           ? (() => {
               root.innerHTML = "";
               return createAiLoadingOverlay(root, {
-                label: "AI đang tạo câu hỏi…",
+                label: _devSrc === "ai" ? "AI đang tạo câu hỏi…" : "Đang tải câu hỏi…",
                 tip: "Vui lòng đợi trong giây lát.",
-                estimatedSeconds: 15,
+                estimatedSeconds: _devSrc === "ai" ? 15 : 3,
                 startedAt: _bgEntry?.startedAt,
               });
             })()
