@@ -107,12 +107,16 @@ export function renderQuizStepView(params) {
       : `Hiện gợi ý <span class="exp-chevron" aria-hidden="true">▾</span>`;
   });
 
+  const actionsWrap = document.createElement("div");
+  actionsWrap.className = "exp-quiz-actions-stack";
+  actionsWrap.appendChild(bookmarkBtn);
+  actionsWrap.appendChild(hintToggle);
+
   stage.appendChild(num);
   stage.appendChild(text);
   stage.appendChild(optsWrap);
   stage.appendChild(pickHint);
-  stage.appendChild(bookmarkBtn);
-  stage.appendChild(hintToggle);
+  stage.appendChild(actionsWrap);
   stage.appendChild(hintPanel);
 
   if (graded) applyGradedStyles(buttons, selected, question.correctIndex);
