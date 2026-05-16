@@ -125,9 +125,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 2px;
   width: 100%;
   margin-bottom: 2px;
+}
+
+.exp-quiz-actions-stack .exp-hint-toggle {
+  margin-top: 0;
 }
 
 .exp-mixed-kind-badge {
