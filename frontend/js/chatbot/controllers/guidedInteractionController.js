@@ -63,7 +63,7 @@ function pickPdfWithDialog() {
  * @param {{
  *   getGuided: () => any,
  *   setGuided: (next: any) => void,
- *   pushUser: (text: string) => void,
+ *   pushUser: (text: string, opts?: any) => void,
  *   pushBot: (text: string, opts?: any) => void,
  *   openSingleExperience: (kind: "quiz" | "slide" | "flash" | "thptqg_fulltest", meta: Record<string, string>, mode: "fresh" | "resume", experienceId?: string) => Promise<void>,
  *   pushQuickResumeDock: (kind: "quiz" | "slide" | "flash" | "thptqg_fulltest", meta: Record<string, string>, experienceId?: string) => void,
@@ -109,12 +109,13 @@ export function createGuidedInteractionController(deps) {
 
   async function applyEffects(effects) {
     for (const e of effects) {
-      if (e.type === "pushUser") pushUser(e.text);
+      if (e.type === "pushUser") pushUser(e.text, { experienceId: e.experienceId });
       else if (e.type === "pushBot") pushBot(e.text, {
         actions: e.actions,
         cardType: e.cardType,
         resumeDock: e.resumeDock,
         messageKey: e.messageKey,
+        experienceId: e.experienceId,
       });
       else if (e.type === "showQuiz") {
         const scoped = ensureMetaExperienceId(e.meta || {});

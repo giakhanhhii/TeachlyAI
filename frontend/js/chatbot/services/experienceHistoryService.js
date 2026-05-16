@@ -182,6 +182,45 @@ export function createExperienceHistoryService(deps) {
     saveSessions();
   }
 
+  /**
+   * @param {string} experienceId
+   */
+  function discardExperience(experienceId) {
+    const target = typeof experienceId === "string" ? experienceId.trim() : "";
+    const currentState = getCurrentExperienceState();
+    if (!target || !currentState || typeof currentState !== "object") return false;
+
+    let changed = false;
+    const nextState = { ...currentState };
+
+    if (nextState.resume && typeof nextState.resume === "object" && String(nextState.resume.experienceId || "") === target) {
+      delete nextState.resume;
+      changed = true;
+    }
+
+    if (nextState.activeExperienceId === target) {
+      delete nextState.kind;
+      delete nextState.meta;
+      delete nextState.progress;
+      delete nextState.completed;
+      delete nextState.activeExperienceId;
+      changed = true;
+    }
+
+    if (nextState.historyById && typeof nextState.historyById === "object" && nextState.historyById[target]) {
+      const nextHistory = { ...nextState.historyById };
+      delete nextHistory[target];
+      if (Object.keys(nextHistory).length) nextState.historyById = nextHistory;
+      else delete nextState.historyById;
+      changed = true;
+    }
+
+    if (!changed) return false;
+    setCurrentExperienceState(Object.keys(nextState).length ? nextState : null);
+    saveSessions();
+    return true;
+  }
+
   return {
     readPersistedActiveExperience,
     persistActiveExperience,
@@ -189,5 +228,6 @@ export function createExperienceHistoryService(deps) {
     updateSingleExperienceProgress,
     seedFullsetHubState,
     updateFullsetProgress,
+    discardExperience,
   };
 }

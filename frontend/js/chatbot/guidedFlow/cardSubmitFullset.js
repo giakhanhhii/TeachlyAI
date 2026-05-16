@@ -43,13 +43,13 @@ export function computeFullsetCardSubmit(guided, cardType, payload) {
     };
     return {
       handled: true,
-      guided: null,
-      effects: [
-        { type: "pushUser", text: `Đã chọn tệp: ${name}` },
-        {
-          type: "pushBot",
-          text: "Teachly đã nhận tệp. Nhấn nút bên dưới để bắt đầu tạo Full Set từ tài liệu của bạn.",
-          resumeDock: {
+        guided: null,
+        effects: [
+          { type: "pushUser", text: `Đã chọn tệp: ${name}`, experienceId },
+          {
+            type: "pushBot",
+            text: "Teachly đã nhận tệp. Nhấn nút bên dưới để bắt đầu tạo Full Set từ tài liệu của bạn.",
+            resumeDock: {
             title: buildExperienceTitle("fullset", name),
             experienceId,
             fullsetMixed: spec,

@@ -1,3 +1,5 @@
+import { generateFlowExperienceId } from "./shared.js";
+
 /**
  * @param {any} guided
  * @param {string} cardType
@@ -6,6 +8,10 @@
 export function computeSlideCardSubmit(guided, cardType, payload) {
   if (guided.kind === "slide" && guided.step === "await_pdf_meta" && cardType === "slide_pdf_meta") {
     const pdfFn = guided.data && guided.data.pdfFileName ? String(guided.data.pdfFileName) : "";
+    const experienceId =
+      typeof guided.data?.uploadAttemptId === "string" && guided.data.uploadAttemptId.trim()
+        ? guided.data.uploadAttemptId.trim()
+        : generateFlowExperienceId();
     const notes = [
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
       payload.style ? `Mẫu: ${payload.style}` : "",
@@ -23,6 +29,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
       structure: String(payload.structure || ""),
       style: String(payload.style || ""),
       ...(payload.presetId ? { presetId: payload.presetId } : {}),
+      __experienceId: experienceId,
       ...(guided.data?.pdfFile instanceof File ? { __pdfFile: guided.data.pdfFile } : {}),
     };
     return {
@@ -32,6 +39,7 @@ export function computeSlideCardSubmit(guided, cardType, payload) {
         {
           type: "pushUser",
           text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Slide — file] ${meta.topic} — ${meta.count} slide${meta.notes !== "—" ? ` — ${meta.notes}` : ""}`,
+          experienceId,
         },
         { type: "showSlide", meta },
       ],

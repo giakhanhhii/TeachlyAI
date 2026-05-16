@@ -21,6 +21,36 @@ export function createMessageController(deps) {
     return !Array.isArray(messages) || messages.length === 0;
   }
 
+  function readMessageExperienceId(message) {
+    if (!message || typeof message !== "object") return "";
+    const direct = typeof message.experienceId === "string" ? message.experienceId.trim() : "";
+    if (direct) return direct;
+    const dock = message.resumeDock;
+    if (dock && typeof dock === "object") {
+      const byDock = typeof dock.experienceId === "string" ? dock.experienceId.trim() : "";
+      if (byDock) return byDock;
+      const byFullset =
+        dock.fullsetMixed && typeof dock.fullsetMixed === "object" && typeof dock.fullsetMixed.__experienceId === "string"
+          ? dock.fullsetMixed.__experienceId.trim()
+          : "";
+      if (byFullset) return byFullset;
+    }
+    return "";
+  }
+
+  function isUploadAttemptUserMessage(message) {
+    if (!message || typeof message !== "object" || message.role !== "user") return false;
+    const text = String(message.text || "").trim();
+    if (!text) return false;
+    return (
+      text.startsWith("Đã chọn tệp") ||
+      text.startsWith("Tải lên file") ||
+      text.includes("[Quiz — file]") ||
+      text.includes("[Slide — file]") ||
+      text.includes("[Flashcard — file]")
+    );
+  }
+
   /**
    * @param {boolean} next
    */
@@ -39,12 +69,16 @@ export function createMessageController(deps) {
 
   /**
    * @param {string} text
+   * @param {{ experienceId?: string }} [opts]
    */
-  function pushUser(text) {
+  function pushUser(text, opts = {}) {
     const current = getCurrentSession();
     const shouldRerender = shouldRerenderFromEmptyConversation(current.messages);
     if (!Array.isArray(current.messages)) current.messages = [];
-    current.messages.push({ role: "user", text });
+    const entry = { role: "user", text };
+    const experienceId = typeof opts?.experienceId === "string" ? opts.experienceId.trim() : "";
+    if (experienceId) entry.experienceId = experienceId;
+    current.messages.push(entry);
     saveSessions();
     if (shouldRerender) rerenderMessages?.();
     else getMessageView().addMessage("user", text);
@@ -68,6 +102,8 @@ export function createMessageController(deps) {
     let cardProps;
     /** @type {string | undefined} */
     let messageKey;
+    /** @type {string | undefined} */
+    let experienceId;
     if (Array.isArray(opts)) actions = opts;
     else if (opts && typeof opts === "object") {
       if (Array.isArray(opts.actions)) actions = opts.actions;
@@ -75,6 +111,7 @@ export function createMessageController(deps) {
       if (opts.resumeDock) resumeDock = opts.resumeDock;
       if (opts.cardProps && typeof opts.cardProps === "object") cardProps = opts.cardProps;
       if (typeof opts.messageKey === "string") messageKey = opts.messageKey;
+      if (typeof opts.experienceId === "string" && opts.experienceId.trim()) experienceId = opts.experienceId.trim();
     }
     let removedDuplicateResume = false;
     const resumeGroupKey = resumeDockGroupKey(resumeDock);
@@ -115,6 +152,8 @@ export function createMessageController(deps) {
     if (resumeDock) entry.resumeDock = resumeDock;
     if (cardProps) entry.cardProps = cardProps;
     if (messageKey) entry.messageKey = messageKey;
+    const entryExperienceId = experienceId || readMessageExperienceId(entry);
+    if (entryExperienceId) entry.experienceId = entryExperienceId;
     const prevStoredMessages = Array.isArray(current.messages) ? current.messages : [];
     current.messages = [...prevStoredMessages, entry];
     saveSessions();
@@ -172,5 +211,29 @@ export function createMessageController(deps) {
     }
   }
 
-  return { setSendingState, pushUser, pushBot, sendPrompt };
+  /**
+   * @param {string} experienceId
+   */
+  function removeMessagesByExperienceId(experienceId) {
+    const target = typeof experienceId === "string" ? experienceId.trim() : "";
+    const current = getCurrentSession();
+    if (!target || !Array.isArray(current?.messages) || !current.messages.length) return false;
+    const toRemove = new Set();
+    current.messages.forEach((message, index) => {
+      if (readMessageExperienceId(message) !== target) return;
+      toRemove.add(index);
+      const prev = index > 0 ? current.messages[index - 1] : null;
+      if (isUploadAttemptUserMessage(prev)) {
+        toRemove.add(index - 1);
+      }
+    });
+    if (!toRemove.size) return false;
+    current.messages = current.messages.filter((_, index) => !toRemove.has(index));
+    saveSessions();
+    rerenderMessages?.();
+    onConversationMutation?.("replace");
+    return true;
+  }
+
+  return { setSendingState, pushUser, pushBot, sendPrompt, removeMessagesByExperienceId };
 }

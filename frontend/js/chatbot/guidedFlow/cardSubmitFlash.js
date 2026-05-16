@@ -1,4 +1,5 @@
 import { parseDirectFlashVocabLines } from "./flashVocabParse.js";
+import { generateFlowExperienceId } from "./shared.js";
 import { filterFlashCardsWithinLimit } from "../services/flashCardLimits.js";
 
 /**
@@ -9,6 +10,10 @@ import { filterFlashCardsWithinLimit } from "../services/flashCardLimits.js";
 export function computeFlashCardSubmit(guided, cardType, payload) {
   if (guided.kind === "flash" && guided.step === "await_pdf_meta" && cardType === "flash_pdf_meta") {
     const pdfFn = guided.data && guided.data.pdfFileName ? String(guided.data.pdfFileName) : "";
+    const experienceId =
+      typeof guided.data?.uploadAttemptId === "string" && guided.data.uploadAttemptId.trim()
+        ? guided.data.uploadAttemptId.trim()
+        : generateFlowExperienceId();
     const extra = [
       payload.structure ? `Cấu trúc: ${payload.structure}` : "",
       payload.style ? `Phong cách: ${payload.style}` : "",
@@ -22,13 +27,18 @@ export function computeFlashCardSubmit(guided, cardType, payload) {
       source: payload.name || "—",
       count: payload.count || "—",
       extra: extra || "—",
+      __experienceId: experienceId,
       ...(guided.data?.pdfFile instanceof File ? { __pdfFile: guided.data.pdfFile } : {}),
     };
     return {
       handled: true,
       guided: null,
       effects: [
-        { type: "pushUser", text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard — file] ${meta.source} — ${meta.count} thẻ` },
+        {
+          type: "pushUser",
+          text: `${payload.__auto === "1" ? "[Teachly tự động] " : ""}[Flashcard — file] ${meta.source} — ${meta.count} thẻ`,
+          experienceId,
+        },
         { type: "showFlash", meta },
       ],
     };

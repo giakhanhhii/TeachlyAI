@@ -260,6 +260,18 @@ export function createExperienceResumeService(deps) {
     resumeDockAlreadyPosted = false;
   }
 
+  /**
+   * @param {string} experienceId
+   */
+  function discardExperience(experienceId) {
+    const target = typeof experienceId === "string" ? experienceId.trim() : "";
+    if (!target || !lastOpenedExperience || lastOpenedExperience.bundleBack) return false;
+    if (String(lastOpenedExperience.experienceId || "") !== target) return false;
+    lastOpenedExperience = null;
+    resumeDockAlreadyPosted = false;
+    return true;
+  }
+
   function hasLastOpenedExperience() {
     return Boolean(lastOpenedExperience);
   }
@@ -277,6 +289,7 @@ export function createExperienceResumeService(deps) {
     setLastOpenedExperience,
     getLastOpenedExperience,
     syncLastOpenedExperience,
+    discardExperience,
     resetResumeState,
     hasLastOpenedExperience,
   };

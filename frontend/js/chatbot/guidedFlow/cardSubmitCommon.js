@@ -1,4 +1,4 @@
-import { createSourceChoiceEffect, pdfMetaFormIntro } from "./shared.js";
+import { createSourceChoiceEffect, generateFlowExperienceId, pdfMetaFormIntro } from "./shared.js";
 
 /**
  * @param {any} guided
@@ -30,15 +30,23 @@ export function computePdfGateCardSubmit(guided, cardType, payload) {
   if (!fileName) return { handled: false, guided, effects: [] };
 
   const baseData = guided.data && typeof guided.data === "object" ? guided.data : {};
-  const nextGuided = { ...guided, step: "await_pdf_meta", data: { ...baseData, pdfFileName: fileName } };
+  const uploadAttemptId =
+    typeof baseData.uploadAttemptId === "string" && baseData.uploadAttemptId.trim()
+      ? baseData.uploadAttemptId.trim()
+      : generateFlowExperienceId();
+  const nextGuided = {
+    ...guided,
+    step: "await_pdf_meta",
+    data: { ...baseData, pdfFileName: fileName, uploadAttemptId },
+  };
   const card = guided.kind === "slide" ? "slide_pdf_meta" : guided.kind === "quiz" ? "quiz_pdf_meta" : "flash_pdf_meta";
 
   return {
     handled: true,
     guided: nextGuided,
     effects: [
-      { type: "pushUser", text: `Đã chọn tệp PDF: ${fileName}` },
-      { type: "pushBot", text: pdfMetaFormIntro(guided.kind), cardType: card },
+      { type: "pushUser", text: `Đã chọn tệp PDF: ${fileName}`, experienceId: uploadAttemptId },
+      { type: "pushBot", text: pdfMetaFormIntro(guided.kind), cardType: card, experienceId: uploadAttemptId },
     ],
   };
 }

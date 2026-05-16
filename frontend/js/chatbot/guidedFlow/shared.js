@@ -41,6 +41,13 @@ export function getSourceActions(kind) {
   return SOURCE_ACTIONS_BY_KIND[kind] ? [...SOURCE_ACTIONS_BY_KIND[kind]] : [];
 }
 
+export function generateFlowExperienceId() {
+  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+  return `exp-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 /**
  * @param {"fullset"|"slide"|"quiz"|"flash"|"thptqg_fulltest"} kind
  * @param {string} [text]

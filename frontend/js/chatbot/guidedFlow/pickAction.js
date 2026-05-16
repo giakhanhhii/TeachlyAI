@@ -1,4 +1,4 @@
-import { pdfMetaFormIntro } from "./shared.js";
+import { generateFlowExperienceId, pdfMetaFormIntro } from "./shared.js";
 
 /**
  * @param {any} guided
@@ -69,20 +69,22 @@ function handleSingleModePick(guided, value, pdfFile) {
     if (pdfFile) {
       const fileName = pdfFile.name;
       const showType = kind === "slide" ? "showSlide" : kind === "quiz" ? "showQuiz" : "showFlash";
+      const experienceId = generateFlowExperienceId();
       const meta = kind === "flash"
-        ? { source: fileName, count: "20", extra: `Nguồn: file | Tệp: ${fileName}`, __pdfFile: pdfFile }
+        ? { source: fileName, count: "20", extra: `Nguồn: file | Tệp: ${fileName}`, __pdfFile: pdfFile, __experienceId: experienceId }
         : {
             topic: fileName,
             count: "10",
             notes: `Nguồn: file | Tệp: ${fileName}`,
             ...(kind === "slide" ? { slideTemplate: "" } : {}),
             __pdfFile: pdfFile,
+            __experienceId: experienceId,
           };
       return {
         handled: true,
         guided: null,
         effects: [
-          { type: "pushUser", text: `Tải lên file — ${fileName}` },
+          { type: "pushUser", text: `Tải lên file — ${fileName}`, experienceId },
           { type: showType, meta },
         ],
       };
