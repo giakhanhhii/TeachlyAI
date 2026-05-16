@@ -2,6 +2,8 @@
 
 **Website:** https://a20-app-082.fly.dev
 
+# Dashboard
+
 Teachly is a web application that helps Vietnamese high-school students study English through AI-assisted learning experiences. The product focuses on THPT/grade-12 learning flows and lets users create `slide`, `quiz`, `flashcard`, and `full set` study content from a topic or from an uploaded document.
 
 ## Project Goal

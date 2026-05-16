@@ -54,17 +54,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 60px;
+    margin-top: 26px;
     position: relative;
     z-index: 2;
   }
 
   .main-hub-topbar {
-    position: relative;
+    position: absolute;
+    top: 20px;
+    right: 28px;
     z-index: 3;
     display: flex;
     justify-content: flex-end;
-    padding: 20px 28px 0;
+    padding: 0;
   }
 
   .main-hub-auth-anchor {
@@ -75,6 +77,10 @@
   }
 
   .headline-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
     text-align: center;
     padding-top: 0;
     width: 100%;
@@ -86,7 +92,7 @@
     color: #1b5e20;
     letter-spacing: -1.5px;
     line-height: 1.1;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
   }
 
@@ -100,7 +106,7 @@
     display: flex;
     gap: 32px;
     justify-content: center;
-    padding: 60px 48px;
+    padding: 42px 48px 60px;
     flex-wrap: wrap;
     align-items: stretch;
   }
@@ -206,7 +212,7 @@
 
   @media (max-width: 768px) {
     .hero-area {
-      margin-top: 32px;
+      margin-top: 68px;
       padding: 0 16px;
     }
 
@@ -224,11 +230,12 @@
       flex-direction: column;
       align-items: center;
       gap: 18px;
-      padding: 28px 16px 40px;
+      padding: 24px 16px 40px;
     }
 
     .main-hub-topbar {
-      padding: 16px 16px 0;
+      top: 16px;
+      right: 16px;
     }
 
     .card {
@@ -277,8 +284,8 @@
     font-size: 14px;
     font-weight: 700;
     color: #558b2f;
-    margin-bottom: 16px;
-    transform: translateY(-12px);
+    margin-bottom: 0;
+    transform: none;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
     backdrop-filter: blur(4px);
   }
