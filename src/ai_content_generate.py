@@ -204,6 +204,87 @@ def _normalize_ai_slide_deck(data: dict[str, Any], topic: str) -> None:
         s["bullets"] = out
 
 
+def _clone_slide_item(slide: dict[str, Any], index: int, topic: str) -> dict[str, Any]:
+    bullets_raw = slide.get("bullets")
+    bullets = [str(item).strip() for item in bullets_raw] if isinstance(bullets_raw, list) else []
+    cloned = {
+        "id": f"ai_s{index + 1}",
+        "title": str(slide.get("title") or (_short_cover_title(topic) if index == 0 else f"Practice point {index}")).strip(),
+        "bullets": [bullet for bullet in bullets if bullet],
+    }
+    if not cloned["bullets"]:
+        cloned["bullets"] = (
+            [f"Introduction to {topic}", f"Key ideas to notice", f"Practice with clear examples"]
+            if index == 0
+            else [f"Key idea from {topic}", "Review one useful example", "Recall the main takeaway"]
+        )
+    return cloned
+
+
+def _clone_quiz_item(question: dict[str, Any], index: int, topic: str) -> dict[str, Any]:
+    options_raw = question.get("options")
+    options = [str(item).strip() for item in options_raw] if isinstance(options_raw, list) else []
+    cloned = {
+        "id": f"ai_q{index + 1}",
+        "text": str(question.get("text") or f"Which idea best matches {topic}?").strip(),
+        "options": options[:4] if options else ["Main idea", "Example", "Counterpoint", "Detail"],
+        "hint": str(question.get("hint") or f"Review the key point about {topic}.").strip(),
+    }
+    while len(cloned["options"]) < 4:
+        cloned["options"].append(f"Option {len(cloned['options']) + 1}")
+    cloned["correctIndex"] = _resolve_quiz_correct_index(question if question else cloned)
+    return cloned
+
+
+def _clone_flash_item(card: dict[str, Any], index: int, topic: str) -> dict[str, Any]:
+    cloned = {
+        "id": f"ai_c{index + 1}",
+        "front": str(card.get("front") or f"{topic.split()[0]} term").strip(),
+        "phonetic": str(card.get("phonetic") or "/tɜːm/").strip(),
+        "back": str(card.get("back") or "Useful English meaning").strip(),
+        "hint": str(card.get("hint") or f"Used when discussing {topic}.").strip(),
+    }
+    return cloned
+
+
+def _ensure_exact_items(
+    items: list[Any],
+    count: int,
+    *,
+    kind: str,
+    topic: str,
+) -> list[dict[str, Any]]:
+    safe_count = max(0, int(count))
+    if safe_count == 0:
+        return []
+
+    cleaned = [item for item in items if isinstance(item, dict)]
+    seeds = cleaned[:]
+
+    if kind == "slide":
+        if not seeds:
+            seeds = [_clone_slide_item({}, 0, topic)]
+        out = [_clone_slide_item(item, index, topic) for index, item in enumerate(cleaned[:safe_count])]
+        while len(out) < safe_count:
+            out.append(_clone_slide_item(seeds[len(out) % len(seeds)], len(out), topic))
+        return out
+
+    if kind == "quiz":
+        if not seeds:
+            seeds = [_clone_quiz_item({}, 0, topic)]
+        out = [_clone_quiz_item(item, index, topic) for index, item in enumerate(cleaned[:safe_count])]
+        while len(out) < safe_count:
+            out.append(_clone_quiz_item(seeds[len(out) % len(seeds)], len(out), topic))
+        return out
+
+    if not seeds:
+        seeds = [_clone_flash_item({}, 0, topic)]
+    out = [_clone_flash_item(item, index, topic) for index, item in enumerate(cleaned[:safe_count])]
+    while len(out) < safe_count:
+        out.append(_clone_flash_item(seeds[len(out) % len(seeds)], len(out), topic))
+    return out
+
+
 def _normalize_option_text(value: Any) -> str:
     return " ".join(str(value or "").strip().lower().split())
 
@@ -294,6 +375,102 @@ def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
         raise ValueError(f"Model returned invalid JSON for {kind}") from exc
 
 
+def coerce_autofill_count(value: Any, allowed: list[int], default: int) -> int:
+    if not allowed:
+        return default
+    try:
+        num = int(value)
+    except (TypeError, ValueError):
+        return default
+    if num in allowed:
+        return num
+    return min(allowed, key=lambda candidate: (abs(candidate - num), candidate))
+
+
+def _coerce_fullset_autofill_combo(slide_raw: Any, quiz_raw: Any, flash_raw: Any) -> dict[str, int]:
+    allowed_combos = [
+        {"slides": 10, "quiz": 10, "flash": 10},
+        {"slides": 10, "quiz": 10, "flash": 20},
+        {"slides": 10, "quiz": 20, "flash": 10},
+        {"slides": 20, "quiz": 10, "flash": 10},
+    ]
+    target = {
+        "slides": coerce_autofill_count(slide_raw, [10, 20], 10),
+        "quiz": coerce_autofill_count(quiz_raw, [10, 20], 20),
+        "flash": coerce_autofill_count(flash_raw, [10, 20], 10),
+    }
+    return min(
+        allowed_combos,
+        key=lambda combo: (
+            abs(combo["slides"] - target["slides"]) +
+            abs(combo["quiz"] - target["quiz"]) +
+            abs(combo["flash"] - target["flash"]),
+            combo["slides"] + combo["quiz"] + combo["flash"],
+        ),
+    )
+
+
+def _ensure_ai_slide_count(items: list[Any], count: int, topic: str) -> list[dict[str, Any]]:
+    safe_count = max(0, int(count))
+    cleaned = [item for item in items if isinstance(item, dict)]
+    if not cleaned:
+        cleaned = [{"title": _short_cover_title(topic), "bullets": [f"Introduction to {topic}", "Key ideas", "Practice overview"]}]
+    out: list[dict[str, Any]] = []
+    while len(out) < safe_count:
+        source = cleaned[len(out) % len(cleaned)]
+        clone = {
+            **source,
+            "id": f"ai_s{len(out) + 1}",
+            "bullets": list(source.get("bullets") or []),
+        }
+        out.append(clone)
+    return out[:safe_count]
+
+
+def _ensure_ai_quiz_count(items: list[Any], count: int, topic: str) -> list[dict[str, Any]]:
+    safe_count = max(0, int(count))
+    cleaned = [item for item in items if isinstance(item, dict)]
+    if not cleaned:
+        cleaned = [{
+            "text": f"Which idea best matches {topic}?",
+            "options": ["Main idea", "Example", "Counterpoint", "Detail"],
+            "hint": f"Review the key point about {topic}.",
+            "correctIndex": 0,
+        }]
+    out: list[dict[str, Any]] = []
+    while len(out) < safe_count:
+        source = cleaned[len(out) % len(cleaned)]
+        clone = {
+            **source,
+            "id": f"ai_q{len(out) + 1}",
+            "options": list(source.get("options") or []),
+        }
+        out.append(clone)
+    return out[:safe_count]
+
+
+def _ensure_ai_flash_count(items: list[Any], count: int, topic: str) -> list[dict[str, Any]]:
+    safe_count = max(0, int(count))
+    cleaned = [item for item in items if isinstance(item, dict)]
+    topic_token = (topic.split() or ["topic"])[0]
+    if not cleaned:
+        cleaned = [{
+            "front": f"{topic_token} term",
+            "phonetic": "/tɜːm/",
+            "back": "Useful English meaning",
+            "hint": f"Used when discussing {topic}.",
+        }]
+    out: list[dict[str, Any]] = []
+    while len(out) < safe_count:
+        source = cleaned[len(out) % len(cleaned)]
+        clone = {
+            **source,
+            "id": f"ai_c{len(out) + 1}",
+        }
+        out.append(clone)
+    return out[:safe_count]
+
+
 def generate_slide_content(topic: str, form: dict[str, Any] | None = None) -> dict[str, Any]:
     """Generate a 10-slide deck about topic. Returns mock-compatible JSON."""
     form = form or {}
@@ -316,15 +493,10 @@ def generate_slide_content(topic: str, form: dict[str, Any] | None = None) -> di
     # Validate basic shape
     if not isinstance(data.get("slides"), list):
         raise ValueError("AI slide response missing 'slides' array")
-    # Ensure ids exist
-    for i, s in enumerate(data["slides"]):
-        if not s.get("id"):
-            s["id"] = f"ai_s{i + 1}"
-        # Clamp bullets to 4 per slide
+    data["slides"] = _ensure_ai_slide_count(data["slides"], count, topic)
+    for s in data["slides"]:
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
-    if len(data["slides"]) > count:
-        data["slides"] = data["slides"][:count]
     _normalize_ai_slide_deck(data, topic)
     # Cover slide: short headline (full topic in deck title / meta — avoids header clip)
     if data["slides"] and isinstance(data["slides"][0], dict):
@@ -360,15 +532,14 @@ def generate_quiz_content(topic: str, form: dict[str, Any] | None = None) -> dic
     data = _parse_json_response(raw, "quiz")
     if not isinstance(data.get("questions"), list):
         raise ValueError("AI quiz response missing 'questions' array")
-    if len(data["questions"]) > count:
-        data["questions"] = data["questions"][:count]
-    for i, q in enumerate(data["questions"]):
-        if not q.get("id"):
-            q["id"] = f"ai_q{i + 1}"
+    data["questions"] = _ensure_ai_quiz_count(data["questions"], count, topic)
+    for q in data["questions"]:
         # Clamp options to exactly 4
         opts = q.get("options") or []
         if len(opts) > 4:
             q["options"] = opts[:4]
+        while len(q["options"]) < 4:
+            q["options"].append(f"Option {len(q['options']) + 1}")
         q["correctIndex"] = _resolve_quiz_correct_index(q)
     return data
 
@@ -393,11 +564,7 @@ def generate_flash_content(topic: str, form: dict[str, Any] | None = None) -> di
     data = _parse_json_response(raw, "flashcard")
     if not isinstance(data.get("cards"), list):
         raise ValueError("AI flashcard response missing 'cards' array")
-    if len(data["cards"]) > count:
-        data["cards"] = data["cards"][:count]
-    for i, c in enumerate(data["cards"]):
-        if not c.get("id"):
-            c["id"] = f"ai_c{i + 1}"
+    data["cards"] = _ensure_ai_flash_count(data["cards"], count, topic)
     return data
 
 
@@ -471,7 +638,7 @@ Return ONLY valid JSON matching this schema exactly — no markdown, no explanat
 {"topic": "<English topic, 3-8 words>", "count": 10, "structure": "Overview -> Examples -> Practice", "notes": ""}
 Rules:
 - topic: a specific grade-12 English topic written in English. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel, social media…), reading skills (main idea, inference, paraphrase, causal relationships…), or cloze skills (collocations, phrasal verbs, linking words…). Must be fresh each call.
-- count: integer between 10 and 15
+- count: one of exactly 10, 20, 30
 - structure: 3 short English steps joined by " -> "
 - notes: short English note or empty string
 - LANGUAGE RULE (HARD): topic, structure, and notes MUST be English only."""
@@ -482,7 +649,7 @@ Return ONLY valid JSON matching this schema exactly — no markdown, no explanat
 Rules:
 - source: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health…), reading comprehension, pronunciation, or communication functions. Must be fresh each call.
 - kind: one of exactly: Từ vựng | Ngữ pháp | Phát âm | Đọc hiểu | Giao tiếp
-- count: 15 or 20
+- count: one of exactly 10, 20, 30, 40
 - difficulty: one of exactly: Mất gốc | Cơ bản | Khá | Nâng cao
 - notes: empty string"""
 
@@ -492,7 +659,7 @@ Return ONLY valid JSON matching this schema exactly — no markdown, no explanat
 Rules:
 - list: 1 sentence in Vietnamese describing the specific English vocabulary topic to cover. Choose creatively and randomly from: urbanisation & city life, endangered languages & culture, AI & robotics, environment & climate, health & medicine, travel & tourism, social media, phrasal verbs, collocations, word formation, idioms, academic vocabulary. Must be fresh each call.
 - back: always exactly the string "Nghĩa tiếng Việt, Phiên âm, Ví dụ"
-- count: always 20
+- count: one of exactly 10, 20, 30, 40
 - notes: empty string"""
 
 _AUTOFILL_FULLSET_SYSTEM = """You generate form autofill data for a full-set (slide + quiz + flashcard) creation form for Vietnamese grade-12 / THPT English learners.
@@ -501,7 +668,7 @@ Return ONLY valid JSON matching this schema exactly — no markdown, no explanat
 Rules:
 - topic: a specific grade-12 English topic in Vietnamese. Choose creatively and randomly from grammar (passive voice, conditionals, relative clauses, reported speech, modal verbs, word formation, inversion…), vocabulary (urbanisation, endangered languages, AI & robots, environment, health, travel…), or reading/cloze skills. Must be fresh each call.
 - level: one of exactly: Mất gốc | Cơ bản | Khá | Nâng cao
-- slides + quiz + flash must be <= 40 and each >= 1
+- Choose exactly one valid combination: (10,10,10), (10,10,20), (10,20,10), or (20,10,10)
 - extra: empty string"""
 
 
