@@ -76,6 +76,10 @@
     min-height: 44px;
   }
 
+  .main-hub-content {
+    margin-top: 10px;
+  }
+
   .headline-area {
     text-align: center;
     padding-top: 0;
@@ -234,6 +238,10 @@
       right: 16px;
     }
 
+    .main-hub-content {
+      margin-top: 8px;
+    }
+
     .card {
       width: min(100%, 440px);
       flex: 0 1 100%;
@@ -390,63 +398,65 @@
     <div class="main-hub-auth-anchor" id="mainHubAuthControls" hidden></div>
   </div>
 
-  <div class="hero-area">
-    <!-- Headline -->
-    <div class="headline-area">
-      <button id="autoModeToggle" class="auto-mode-toggle" aria-pressed="false" title="Bật/tắt chế độ Teachly tự tạo">
-        <span class="toggle-track"><span class="toggle-thumb"></span></span>
-        <span class="toggle-label">Tạo Custom</span>
-      </button>
-      <h1>Teachly</h1>
-      <p>Bạn muốn bắt đầu như thế nào?</p>
+  <div class="main-hub-content">
+    <div class="hero-area">
+      <!-- Headline -->
+      <div class="headline-area">
+        <button id="autoModeToggle" class="auto-mode-toggle" aria-pressed="false" title="Bật/tắt chế độ Teachly tự tạo">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label">Tạo Custom</span>
+        </button>
+        <h1>Teachly</h1>
+        <p>Bạn muốn bắt đầu như thế nào?</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Cards -->
-  <div class="cards-row">
-    <!-- Card 1: Tạo Full Set -->
-    <a class="card" href="chatbot_ui.html?flow=fullset">
-      <img class="card-img" src="svg/card-fullset.svg" alt="Full Set" />
-      <div class="card-body">
-        <div class="card-title">Tạo Full Set</div>
-        <div class="card-desc">Tạo bộ 3 slide, quiz, flashcard</div>
-        <div class="badge badge-recommend">
-          <svg width="11" height="11" viewBox="0 0 12 12">
-            <polygon points="6,1 7.5,4.5 11,4.8 8.5,7.2 9.2,11 6,9 2.8,11 3.5,7.2 1,4.8 4.5,4.5" fill="#2e7d32" />
-          </svg>
-          KHUYẾN KHÍCH
+    <!-- Cards -->
+    <div class="cards-row">
+      <!-- Card 1: Tạo Full Set -->
+      <a class="card" href="chatbot_ui.html?flow=fullset">
+        <img class="card-img" src="svg/card-fullset.svg" alt="Full Set" />
+        <div class="card-body">
+          <div class="card-title">Tạo Full Set</div>
+          <div class="card-desc">Tạo bộ 3 slide, quiz, flashcard</div>
+          <div class="badge badge-recommend">
+            <svg width="11" height="11" viewBox="0 0 12 12">
+              <polygon points="6,1 7.5,4.5 11,4.8 8.5,7.2 9.2,11 6,9 2.8,11 3.5,7.2 1,4.8 4.5,4.5" fill="#2e7d32" />
+            </svg>
+            KHUYẾN KHÍCH
+          </div>
         </div>
-      </div>
-    </a>
+      </a>
 
-    <!-- Card 2: Tạo slide — bộ slide trong khung rừng -->
-    <a class="card" href="chatbot_ui.html?flow=slide">
-      <img class="card-img" src="svg/card-slide.svg" alt="Slide" />
-      <div class="card-body">
-        <div class="card-title">Tạo slide</div>
-        <div class="card-desc">Tạo slide theo nội dung của bạn</div>
-        <div class="badge badge-new badge-spacer" aria-hidden="true">MỚI</div>
-      </div>
-    </a>
+      <!-- Card 2: Tạo slide — bộ slide trong khung rừng -->
+      <a class="card" href="chatbot_ui.html?flow=slide">
+        <img class="card-img" src="svg/card-slide.svg" alt="Slide" />
+        <div class="card-body">
+          <div class="card-title">Tạo slide</div>
+          <div class="card-desc">Tạo slide theo nội dung của bạn</div>
+          <div class="badge badge-new badge-spacer" aria-hidden="true">MỚI</div>
+        </div>
+      </a>
 
-    <!-- Card 3: Tạo quiz — phiếu trắc nghiệm trong rừng -->
-    <a class="card" href="chatbot_ui.html?flow=quiz">
-      <img class="card-img" src="svg/card-quiz.svg" alt="Quiz" />
-      <div class="card-body">
-        <div class="card-title">Tạo quiz</div>
-        <div class="card-desc">Tạo quiz cho nội dung thi THPTQG tiếng anh</div>
-        <div class="badge badge-new">MỚI</div>
-      </div>
-    </a>
+      <!-- Card 3: Tạo quiz — phiếu trắc nghiệm trong rừng -->
+      <a class="card" href="chatbot_ui.html?flow=quiz">
+        <img class="card-img" src="svg/card-quiz.svg" alt="Quiz" />
+        <div class="card-body">
+          <div class="card-title">Tạo quiz</div>
+          <div class="card-desc">Tạo quiz cho nội dung thi THPTQG tiếng anh</div>
+          <div class="badge badge-new">MỚI</div>
+        </div>
+      </a>
 
-    <!-- Card 4: Tạo flashcard -->
-    <a class="card" href="chatbot_ui.html?flow=flashcard">
-      <img class="card-img" src="svg/card-flashcard.svg" alt="Flashcard" />
-      <div class="card-body">
-        <div class="card-title">Tạo flashcard</div>
-        <div class="card-desc">Tạo flashcard từ vựng và phát âm chuẩn cho bài giảng của bạn</div>
-      </div>
-    </a>
+      <!-- Card 4: Tạo flashcard -->
+      <a class="card" href="chatbot_ui.html?flow=flashcard">
+        <img class="card-img" src="svg/card-flashcard.svg" alt="Flashcard" />
+        <div class="card-body">
+          <div class="card-title">Tạo flashcard</div>
+          <div class="card-desc">Tạo flashcard từ vựng và phát âm chuẩn cho bài giảng của bạn</div>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 <script>
