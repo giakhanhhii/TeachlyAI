@@ -238,8 +238,55 @@
   border: 1px solid var(--line);
   background: #fff;
   color: var(--muted);
-  cursor: not-allowed;
+  cursor: pointer;
+  opacity: 1;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.exp-icon-btn:hover:not(:disabled):not(.is-loading) {
+  border-color: rgba(25, 118, 210, 0.28);
+  background: #f7fbff;
+  color: #1565c0;
+  box-shadow: 0 8px 18px rgba(21, 101, 192, 0.12);
+  transform: translateY(-1px);
+}
+
+.exp-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.16);
+}
+
+.exp-icon-btn:disabled {
   opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.exp-icon-btn.is-loading {
+  cursor: progress;
+  opacity: 1;
+  color: #1565c0;
+  border-color: rgba(25, 118, 210, 0.24);
+  background: #eef6ff;
+}
+
+.exp-icon-btn.is-loading:disabled {
+  cursor: progress;
+  opacity: 1;
+}
+
+.exp-icon-svg-spinner {
+  animation: expIconSpin 0.8s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes expIconSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .exp-meta-line {

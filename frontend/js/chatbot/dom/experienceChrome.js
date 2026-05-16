@@ -6,6 +6,8 @@ const BOOK_SVG = `<svg class="exp-icon-svg" width="22" height="22" viewBox="0 0 
 
 const AI_SVG = `<svg class="exp-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2l1.09 3.26L16 6.18l-2.91 1.82L12 11l-1.09-3L8 6.18l2.91-1.82L12 2z"/><path d="M5 14l.84 2.53L8 17.3l-2.16 1.35L5 21l-.84-2.35L2 17.3l2.16-1.35L5 14z"/><path d="M19 14l.84 2.53L22 17.3l-2.16 1.35L19 21l-.84-2.35L16 17.3l2.16-1.35L19 14z"/></svg>`;
 const DOWNLOAD_SVG = `<svg class="exp-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>`;
+const SHARE_SVG = `<svg class="exp-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+const LOADING_SVG = `<svg class="exp-icon-svg exp-icon-svg-spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.2" opacity="0.24"></circle><path d="M20 12a8 8 0 0 0-8-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>`;
 
 /**
  * @param {{ title: string, onAiEdit?: () => void, onShare?: () => void | Promise<void>, actionButton?: { label: string, title?: string, ariaLabel?: string, onClick?: () => void, icon?: "ai"|"download", className?: string } }} p
@@ -52,15 +54,23 @@ export function createExperienceTopBar(p) {
   share.className = "exp-icon-btn";
   share.title = p.onShare ? "Chia sẻ bài học" : "Chia sẻ (sắp có)";
   share.setAttribute("aria-label", "Chia sẻ");
-  share.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+  share.innerHTML = SHARE_SVG;
   share.disabled = typeof p.onShare !== "function";
   if (typeof p.onShare === "function") {
     share.addEventListener("click", async () => {
       if (share.disabled) return;
+      share.classList.add("is-loading");
+      share.innerHTML = LOADING_SVG;
+      share.title = "Đang tạo link chia sẻ...";
+      share.setAttribute("aria-busy", "true");
       share.disabled = true;
       try {
         await p.onShare?.();
       } finally {
+        share.classList.remove("is-loading");
+        share.innerHTML = SHARE_SVG;
+        share.title = "Chia sẻ bài học";
+        share.removeAttribute("aria-busy");
         share.disabled = false;
       }
     });
