@@ -64,7 +64,11 @@ from .utils.file_extractor import (
     ensure_document_has_text,
 )
 from .utils.node_runtime import resolve_node_runtime
-from .utils.upload_safety import ensure_safe_upload_content, UploadSafetyViolation
+from .utils.upload_safety import (
+    ensure_safe_generation_prompt,
+    ensure_safe_upload_content,
+    UploadSafetyViolation,
+)
 from .chat_scope_policy import TEACHLY_CHAT_SYSTEM, evaluate_chat_scope
 
 logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -397,6 +401,7 @@ def ai_generate(body: AiGenerateIn):
         kind = body.type
         form_topic = (body.topic or "").strip() or None
         form = body.form if isinstance(body.form, dict) else {}
+        ensure_safe_generation_prompt(form_topic or "", form)
         if kind == "fullset":
             return generate_fullset_content(topic=form_topic, form=form)
         topic = form_topic or _random.choice(TOPIC_POOL)
@@ -407,6 +412,14 @@ def ai_generate(body: AiGenerateIn):
             return generate_quiz_content(topic, form=form)
         if kind == "flashcard":
             return generate_flash_content(topic, form=form)
+    except UploadSafetyViolation as exc:
+        logger.warning(
+            "Blocked unsafe generate request: type=%s category=%s matches=%s",
+            body.type,
+            exc.category,
+            ",".join(exc.matched_terms[:6]),
+        )
+        raise HTTPException(status_code=403, detail=exc.public_detail) from exc
     except ValueError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except Exception as exc:

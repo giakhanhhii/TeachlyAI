@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 import re
 import unicodedata
@@ -260,13 +261,12 @@ def _collect_matches(normalized_text: str, phrases: tuple[str, ...], limit: int 
     return tuple(matches)
 
 
-def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
-    safe_document = str(document_text or "")
-    safe_notes = str(notes or "")
-    combined = "\n".join(part for part in (safe_notes, safe_document) if part.strip())
-    normalized = _normalize_text(combined[:MAX_SCAN_CHARS])
-    normalized_document = _normalize_text(safe_document[:MAX_SCAN_CHARS])
-    normalized_notes = _normalize_text(safe_notes[:MAX_SCAN_CHARS])
+def _build_scan_text(*parts: str) -> str:
+    return "\n".join(str(part or "") for part in parts if str(part or "").strip())
+
+
+def _ensure_no_unsafe_content(*, scan_text: str, subject_label: str, safe_content_hint: str) -> None:
+    normalized = _normalize_text(scan_text[:MAX_SCAN_CHARS])
     if normalized == " ":
         return
 
@@ -277,8 +277,8 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
         raise UploadSafetyViolation(
             category="nsfw",
             public_detail=(
-                "Tệp bị từ chối vì chứa nội dung người lớn hoặc khiêu dâm không phù hợp. "
-                "Vui lòng tải lên tài liệu học tập an toàn và lành mạnh."
+                f"{subject_label} bị từ chối vì chứa nội dung người lớn hoặc khiêu dâm không phù hợp. "
+                f"Vui lòng {safe_content_hint}."
             ),
             matched_terms=nsfw_hits,
         )
@@ -288,8 +288,8 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
         raise UploadSafetyViolation(
             category="terrorism",
             public_detail=(
-                "Tệp bị từ chối vì chứa nội dung khủng bố hoặc cực đoan bạo lực. "
-                "Vui lòng dùng tài liệu học tập an toàn."
+                f"{subject_label} bị từ chối vì chứa nội dung khủng bố hoặc cực đoan bạo lực. "
+                f"Vui lòng {safe_content_hint}."
             ),
             matched_terms=terror_direct_hits,
         )
@@ -299,8 +299,8 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
         raise UploadSafetyViolation(
             category="terrorism",
             public_detail=(
-                "Tệp bị từ chối vì chứa hướng dẫn hoặc nội dung cổ vũ khủng bố/cực đoan bạo lực. "
-                "Vui lòng dùng tài liệu học tập an toàn."
+                f"{subject_label} bị từ chối vì chứa hướng dẫn hoặc nội dung cổ vũ khủng bố/cực đoan bạo lực. "
+                f"Vui lòng {safe_content_hint}."
             ),
             matched_terms=terror_context_hits + instruction_hits,
         )
@@ -310,8 +310,8 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
         raise UploadSafetyViolation(
             category="illegal",
             public_detail=(
-                "Tệp bị từ chối vì chứa hướng dẫn cho hành vi bất hợp pháp hoặc nguy hiểm. "
-                "Vui lòng tải lên tài liệu học tập phù hợp."
+                f"{subject_label} bị từ chối vì chứa hướng dẫn cho hành vi bất hợp pháp hoặc nguy hiểm. "
+                f"Vui lòng {safe_content_hint}."
             ),
             matched_terms=illegal_hits + instruction_hits,
         )
@@ -321,8 +321,8 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
         raise UploadSafetyViolation(
             category="graphic_violence",
             public_detail=(
-                "Tệp bị từ chối vì chứa nội dung bạo lực nguy hiểm hoặc giết chóc không phù hợp. "
-                "Vui lòng tải lên tài liệu học tập an toàn."
+                f"{subject_label} bị từ chối vì chứa nội dung bạo lực nguy hiểm hoặc giết chóc không phù hợp. "
+                f"Vui lòng {safe_content_hint}."
             ),
             matched_terms=violence_hits + instruction_hits,
         )
@@ -332,12 +332,26 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
         raise UploadSafetyViolation(
             category="obscene",
             public_detail=(
-                "Tệp bị từ chối vì chứa nội dung tục tĩu hoặc phản cảm không phù hợp. "
-                "Vui lòng tải lên tài liệu học tập lành mạnh."
+                f"{subject_label} bị từ chối vì chứa nội dung tục tĩu hoặc phản cảm không phù hợp. "
+                f"Vui lòng {safe_content_hint}."
             ),
             matched_terms=obscene_hits,
         )
 
+
+def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
+    safe_document = str(document_text or "")
+    safe_notes = str(notes or "")
+    combined = _build_scan_text(safe_notes, safe_document)
+    _ensure_no_unsafe_content(
+        scan_text=combined,
+        subject_label="Tệp",
+        safe_content_hint="tải lên tài liệu học tập an toàn và lành mạnh",
+    )
+
+    normalized = _normalize_text(combined[:MAX_SCAN_CHARS])
+    normalized_document = _normalize_text(safe_document[:MAX_SCAN_CHARS])
+    normalized_notes = _normalize_text(safe_notes[:MAX_SCAN_CHARS])
     doc_teaching_hits = _collect_matches(normalized_document, TEACHING_RELEVANT_TERMS, limit=8)
     note_teaching_hits = _collect_matches(normalized_notes, TEACHING_RELEVANT_TERMS, limit=4)
     dashboard_hits = _collect_matches(normalized_document, DASHBOARD_UI_TERMS, limit=8)
@@ -362,3 +376,35 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
             ),
             matched_terms=dashboard_hits or note_teaching_hits,
         )
+
+
+def _iter_prompt_fragments(value: object) -> list[str]:
+    if isinstance(value, str):
+        text = value.strip()
+        return [text] if text else []
+    if isinstance(value, Mapping):
+        out: list[str] = []
+        for key, item in value.items():
+            key_text = str(key or "")
+            if key_text.startswith("__") or key_text == "presetId":
+                continue
+            out.extend(_iter_prompt_fragments(item))
+        return out
+    if isinstance(value, (list, tuple, set)):
+        out: list[str] = []
+        for item in value:
+            out.extend(_iter_prompt_fragments(item))
+        return out
+    return []
+
+
+def ensure_safe_generation_prompt(topic: str = "", form: Mapping[str, object] | None = None) -> None:
+    fragments = [str(topic or "").strip()]
+    if isinstance(form, Mapping):
+        fragments.extend(_iter_prompt_fragments(form))
+    combined = _build_scan_text(*fragments)
+    _ensure_no_unsafe_content(
+        scan_text=combined,
+        subject_label="Yêu cầu",
+        safe_content_hint="nhập chủ đề và ghi chú học tập an toàn, lành mạnh",
+    )

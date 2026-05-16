@@ -18,6 +18,55 @@ export const AI_THRESHOLD = 3;
 
 export const STORAGE_KEY = "teachly_play_counts";
 
+export class AiContentApiError extends Error {
+  /**
+   * @param {string} message
+   * @param {{ status?: number, detail?: string }} [opts]
+   */
+  constructor(message, opts = {}) {
+    super(message);
+    this.name = "AiContentApiError";
+    this.status = Number(opts.status) || 0;
+    this.detail = String(opts.detail || "");
+  }
+}
+
+async function readApiErrorDetail(res) {
+  try {
+    const err = await res.json();
+    return String(err?.detail || "").trim();
+  } catch {
+    return "";
+  }
+}
+
+function buildAiApiError(defaultMessage, status, detail) {
+  return new AiContentApiError(detail || defaultMessage, { status, detail });
+}
+
+/**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+export function shouldFallbackToMockAiError(err) {
+  return Number(err && typeof err === "object" ? err.status : 0) !== 403;
+}
+
+/**
+ * @template T
+ * @param {Promise<T>} promise
+ * @param {() => Promise<T>} fallbackFactory
+ * @returns {Promise<T>}
+ */
+export async function withMockFallbackOnAiError(promise, fallbackFactory) {
+  try {
+    return await promise;
+  } catch (err) {
+    if (!shouldFallbackToMockAiError(err)) throw err;
+    return fallbackFactory();
+  }
+}
+
 function serializeAiForm(form) {
   if (!form || typeof form !== "object") return undefined;
   const canCheckFile = typeof File !== "undefined";
@@ -114,14 +163,8 @@ export async function fetchAiContent(type, topic, form) {
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
-    let detail = "";
-    try {
-      const err = await res.json();
-      detail = err?.detail || "";
-    } catch {
-      // ignore
-    }
-    throw new Error(`AI generate (${type}) failed ${res.status}${detail ? ": " + detail : ""}`);
+    const detail = await readApiErrorDetail(res);
+    throw buildAiApiError(`AI generate (${type}) failed ${res.status}.`, res.status, detail);
   }
   return res.json();
 }
@@ -142,14 +185,8 @@ export async function fetchAiAutofillTopic(type, recent = []) {
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
-    let detail = "";
-    try {
-      const err = await res.json();
-      detail = err?.detail || "";
-    } catch {
-      // ignore
-    }
-    throw new Error(`AI autofill (${type}) failed ${res.status}${detail ? ": " + detail : ""}`);
+    const detail = await readApiErrorDetail(res);
+    throw buildAiApiError(`AI autofill (${type}) failed ${res.status}.`, res.status, detail);
   }
   return res.json();
 }
@@ -171,14 +208,8 @@ export async function fetchAiFileContent(type, file, opts = {}) {
   if (opts.notes) fd.append("notes", opts.notes);
   const res = await fetch(url, { method: "POST", body: fd });
   if (!res.ok) {
-    let detail = "";
-    try {
-      const err = await res.json();
-      detail = err?.detail || "";
-    } catch {
-      // ignore
-    }
-    throw new Error(detail || `File upload (${type}) thất bại (${res.status}).`);
+    const detail = await readApiErrorDetail(res);
+    throw buildAiApiError(`File upload (${type}) thất bại (${res.status}).`, res.status, detail);
   }
   return res.json();
 }
@@ -201,14 +232,8 @@ export async function fetchAiFullsetContent(topic, form) {
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
-    let detail = "";
-    try {
-      const err = await res.json();
-      detail = err?.detail || "";
-    } catch {
-      // ignore
-    }
-    throw new Error(`AI generate (fullset) failed ${res.status}${detail ? ": " + detail : ""}`);
+    const detail = await readApiErrorDetail(res);
+    throw buildAiApiError(`AI generate (fullset) failed ${res.status}.`, res.status, detail);
   }
   return res.json();
 }
