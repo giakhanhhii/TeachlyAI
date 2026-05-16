@@ -116,6 +116,39 @@ def test_generate_quiz_content_pads_to_exact_requested_count(monkeypatch):
     assert len(data["questions"]) == 4
 
 
+def test_generate_quiz_content_reviews_and_repairs_ambiguous_answers(monkeypatch):
+    draft_payload = {
+        "title": "Relative clauses quiz",
+        "questions": [
+            {
+                "text": "The woman _______ we met at the conference is a robotics engineer.",
+                "options": ["who", "whom", "whose", "where"],
+                "correctIndex": 1,
+                "hint": "Use whom for object people.",
+            }
+        ],
+    }
+    reviewed_payload = {
+        "questions": [
+            {
+                "id": "q1",
+                "text": "The woman to _______ we spoke at the conference is a robotics engineer.",
+                "options": ["who", "whom", "whose", "where"],
+                "correctIndex": 1,
+                "hint": "After the preposition \"to\", use \"whom\" for a person.",
+            }
+        ]
+    }
+    calls = iter([json.dumps(draft_payload), json.dumps(reviewed_payload)])
+
+    monkeypatch.setattr(ai_content_generate, "_call_openai", lambda *_args, **_kwargs: next(calls))
+
+    data = ai_content_generate.generate_quiz_content("Relative clauses", form={"count": 1})
+
+    assert data["questions"][0]["text"] == "The woman to _______ we spoke at the conference is a robotics engineer."
+    assert data["questions"][0]["correctIndex"] == 1
+
+
 def test_generate_flash_content_pads_to_exact_requested_count(monkeypatch):
     payload = {
         "title": "Energy flashcards",

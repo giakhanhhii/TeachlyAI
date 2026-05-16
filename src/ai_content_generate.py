@@ -87,12 +87,30 @@ Rules:
 - Use exactly the requested number of questions. If no count is requested, use 10 questions.
 - Each question: "text" (the question), "options" (4 short choices A-D), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes in options array
-- Questions test practical knowledge of the topic
+- Questions must test practical knowledge of the topic with ONE objectively correct answer.
+- Avoid ambiguous modern-English cases where two answers may be acceptable.
+- If testing relative clauses or prepositions, make the sentence structure force one answer (for example preposition + whom/which, possessive whose, non-defining which, subject who).
+- The hint must name the grammar rule or the textual evidence that proves the answer.
+- Before returning, silently verify that correctIndex points to the only acceptable answer.
 - LANGUAGE RULE (HARD): ALL fields — title, text, options, hint — MUST be written in English. NEVER use Vietnamese in any field. This is an English-learning app; mixing Vietnamese defeats the purpose.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
 {"title":"<quiz title>","questions":[{"id":"q1","text":"<question>","options":["<A>","<B>","<C>","<D>"],"correctIndex":0,"hint":"<hint>"},...]}"""
+
+_QUIZ_REVIEW_SYSTEM = """You are a strict English quiz reviewer.
+You are given a topic and a draft quiz JSON.
+
+Your job:
+- Verify that each question has exactly one acceptable answer in current standard English.
+- Fix any wrong correctIndex values.
+- Rewrite any ambiguous question, option set, or hint so that only one answer is defensible.
+- Keep the same number of questions and keep all fields in English.
+- Make every hint briefly cite the grammar rule or textual evidence.
+- Prefer objective questions over opinion or vague inference.
+- If a who/whom/which/when/where item is ambiguous, rewrite the sentence so the structure forces one answer.
+- Return ONLY valid JSON with this schema: {"questions":[{"id":"q1","text":"...","options":["...","...","...","..."],"correctIndex":0,"hint":"..."}]}
+"""
 
 _FLASH_SYSTEM = """You are an English flashcard creator for Vietnamese students.
 Generate a JSON flashcard set about the given English topic and follow the requested form constraints.
@@ -401,6 +419,40 @@ def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
         raise ValueError(f"Model returned invalid JSON for {kind}") from exc
 
 
+def _review_quiz_questions_with_ai(
+    questions: list[dict[str, Any]],
+    *,
+    topic: str,
+    document_excerpt: str = "",
+) -> list[dict[str, Any]]:
+    if not questions:
+        return questions
+
+    payload: dict[str, Any] = {"questions": questions}
+    if document_excerpt.strip():
+        payload["document_excerpt"] = document_excerpt[:4000]
+        system = _DOC_QUIZ_REVIEW_SYSTEM
+    else:
+        payload["topic"] = topic
+        system = _QUIZ_REVIEW_SYSTEM
+
+    try:
+        raw = _call_openai(
+            system,
+            json.dumps(payload, ensure_ascii=False),
+            max_tokens=min(4096, 400 + len(questions) * 220),
+            temperature=0.1,
+        )
+        data = _parse_json_response(raw, "quiz_review")
+        reviewed_raw = data.get("questions") if isinstance(data, dict) else None
+        if not isinstance(reviewed_raw, list):
+            return questions
+        return _ensure_exact_items(reviewed_raw, len(questions), kind="quiz", topic=topic)
+    except Exception:
+        logger.warning("AI quiz review step failed; keeping original quiz draft.", exc_info=True)
+        return questions
+
+
 _FLASH_PHONETIC_CACHE: dict[str, str] = {}
 
 
@@ -638,6 +690,7 @@ def generate_quiz_content(topic: str, form: dict[str, Any] | None = None) -> dic
     if not isinstance(data.get("questions"), list):
         raise ValueError("AI quiz response missing 'questions' array")
     data["questions"] = _ensure_ai_quiz_count(data["questions"], count, topic)
+    data["questions"] = _review_quiz_questions_with_ai(data["questions"], topic=topic)
     for q in data["questions"]:
         # Clamp options to exactly 4
         opts = q.get("options") or []
@@ -864,12 +917,28 @@ Rules:
 - Exactly 10 questions (or as many as requested)
 - Each question: "text" (the question), "options" (4 short choices), "correctIndex" (0-3), "hint" (1 sentence explanation)
 - Options must be SHORT (1-5 words each), no A./B./C./D. prefixes
-- All questions must be answerable from the document
+- All questions must be answerable from the document.
+- Each question must have exactly one supported answer.
+- Do not create inference questions unless the passage clearly supports only one choice.
+- The hint must point to the rule or document evidence that makes the answer correct.
+- Before returning, silently verify that correctIndex points to the only supported answer.
 - LANGUAGE RULE (HARD): ALL fields — title, text, options, hint — MUST be written in English. NEVER use Vietnamese in any field. This is an English-learning app; mixing Vietnamese defeats the purpose.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
 {"title":"<quiz title>","questions":[{"id":"q1","text":"<question>","options":["<A>","<B>","<C>","<D>"],"correctIndex":0,"hint":"<hint>"},...]}"""
+
+_DOC_QUIZ_REVIEW_SYSTEM = """You are a strict English reading-quiz reviewer.
+You are given a document excerpt and a draft quiz JSON.
+
+Your job:
+- Verify that every answer is directly supported by the document excerpt.
+- Fix any wrong correctIndex values.
+- Rewrite any ambiguous question, option set, or hint so that only one answer is supported.
+- Keep the same number of questions and keep all fields in English.
+- Make each hint cite the key textual evidence or rule.
+- Return ONLY valid JSON with this schema: {"questions":[{"id":"q1","text":"...","options":["...","...","...","..."],"correctIndex":0,"hint":"..."}]}
+"""
 
 _DOC_FLASH_SYSTEM = """You are an English vocabulary flashcard creator for Vietnamese students.
 You are given an excerpt from an uploaded document (Markdown format).
@@ -930,6 +999,11 @@ def generate_quiz_from_document(document_text: str, count: int = 10, notes: str 
     if not isinstance(data.get("questions"), list):
         raise ValueError("AI quiz response missing 'questions' array")
     data["questions"] = _ensure_ai_quiz_count(data["questions"], count, "Document")
+    data["questions"] = _review_quiz_questions_with_ai(
+        data["questions"],
+        topic="Document",
+        document_excerpt=document_text,
+    )
     for q in data["questions"]:
         opts = q.get("options") or []
         if len(opts) > 4:
