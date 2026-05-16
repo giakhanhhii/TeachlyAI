@@ -1011,7 +1011,7 @@
           "options": [
             "difficulty",
             "difficult",
-            "difficulty",
+            "difficultly",
             "difficulties"
           ],
           "correctIndex": 0,
@@ -9415,13 +9415,13 @@
           "partId": "part-4",
           "prompt": "Question 38.\nHi John,\na. It's fantastic that you've taken the time to recommend those cultural podcasts to me.\nb. I listened to the first one on ancient civilizations, and it was truly insightful.\nc. You know, maybe we could start a discussion group about these topics, what do you think?\nd. Thanks also for introducing me to those documentaries—they've been an amazing supplement to the podcasts!\ne. While I'm busy at the moment preparing for my exam, I'm eager to dive deeper into the content afterward.\nWrite back soon,\nEmily",
           "options": [
-            "a-b-d-c-e",
+            "a-b-d-e-c",
             "b-e-a-d-c",
             "a-d-b-e-c",
             "b-d-a-c-e"
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D (b-d-a-c-e) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 0,
+          "explanation": "Email hợp lý nhất là a-b-d-e-c: mở đầu bằng lời cảm ơn chung, sau đó nói đã nghe podcast đầu tiên, cảm ơn thêm phim tài liệu, giải thích hiện còn bận ôn thi và cuối cùng mới đề xuất lập nhóm thảo luận.",
           "explanationEvidence": "Cau 38: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -9932,8 +9932,8 @@
             "The challenges posed by cultural differences",
             "The importance of preserving traditional cultures"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D đúng vì đoạn văn chỉ nói họ cần trả tiền thuê nhà, biết có hội nghị lớn và khách sạn đã kín chỗ; không hề nói họ đang đi tìm chỗ bed-and-breakfast trong nhà dân cho chính mình.",
           "explanationEvidence": "Cau 19: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10022,8 +10022,8 @@
             "b-c-a-d-e",
             "b-c-d-e-a"
           ],
-          "correctIndex": 2,
-          "explanation": "Đáp án C (b-c-a-d-e) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 3,
+          "explanation": "Thư nên đi theo mạch b-c-d-e-a: báo đã tới Brighton, nói về việc học ở trường ngôn ngữ, thêm chuyện kết bạn mới, nêu kế hoạch đi London rồi mới kết bằng lời hẹn gặp và nhờ hồi âm.",
           "explanationEvidence": "Cau 25: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10052,8 +10052,8 @@
             "a-b-e-c-d",
             "b-a-e-c-d"
           ],
-          "correctIndex": 0,
-          "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 1,
+          "explanation": "Mạch đúng là b-a-c-e-d: câu b giới thiệu chủ đề, a nối tiếp bằng \"To achieve this\", c và e triển khai các cách quản lý thời gian cụ thể, còn d kết lại bằng kết quả tích cực của những thói quen đó.",
           "explanationEvidence": "Cau 27: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10079,11 +10079,11 @@
           "options": [
             "c-a-b-d-e",
             "d-c-b-a-e",
-            "c-a-d-b-e",
+            "c-d-a-b-e",
             "c-b-d-a-e"
           ],
-          "correctIndex": 0,
-          "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 2,
+          "explanation": "Đoạn đúng là c-d-a-b-e: nêu hiện tượng world festivals tác động đến giới trẻ, giải thích lợi ích của các lễ hội này, mở rộng sang việc học hỏi văn hóa, rồi chuyển hướng bằng \"However\" để nêu rủi ro trước khi kết luận cần cân bằng.",
           "explanationEvidence": "Cau 29: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10611,12 +10611,12 @@
           "prompt": "Question 13. a. Mai: You're right. But I'm sure I can. b. Mum: Besides medical knowledge, a surgeon must have physical and mental strength. Most surgeons are also men... c. Mum: I'm afraid I disagree. It's not easy to be a surgeon. d. Mai: Absolutely. That's why we need more women surgeons. We can be as good as men. e. Mum: Mai, Dad and I would like you to be a shop assistant. f. Mai: I'm sorry, but that's not possible. I want to go to medical school and become a surgeon. (Adapted from Global Success)",
           "options": [
             "e-d-c-a-f-b",
-            "e-f-c-a-b-d",
+            "e-f-c-b-a-d",
             "c-a-b-d-e-f",
             "d-c-a-b-f-e"
           ],
-          "correctIndex": 3,
-          "explanation": "Thứ tự D giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 1,
+          "explanation": "Hội thoại hợp lý là e-f-c-b-a-d: bố mẹ nêu mong muốn, Mai nói rõ mục tiêu của mình, mẹ bày tỏ lo ngại, nêu thêm yêu cầu và định kiến của nghề, rồi Mai đáp lại rằng phụ nữ vẫn có thể làm tốt.",
           "explanationEvidence": "Cau 13: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10627,11 +10627,11 @@
           "options": [
             "e-a-f-d-c-b",
             "c-a-f-d-e-b",
-            "c-a-f-d-e-b",
+            "c-a-d-f-e-b",
             "c-d-a-b-e-f"
           ],
-          "correctIndex": 2,
-          "explanation": "Thứ tự C giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 1,
+          "explanation": "Đoạn văn đúng là c-a-f-d-e-b: giới thiệu nghề trước, nói về thử thách hằng ngày, bác bỏ định kiến làm việc một mình, chuyển sang yếu tố hợp tác, rồi kết bằng cảm giác hài lòng và nhận xét nghề vừa đòi hỏi vừa đáng làm.",
           "explanationEvidence": "Cau 14: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10645,8 +10645,8 @@
             "a - b - c - d",
             "d - b - c - a"
           ],
-          "correctIndex": 0,
-          "explanation": "Thứ tự A giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 3,
+          "explanation": "Thứ tự đúng là d-b-c-a: Linda mở đầu bằng lời khen về bài thuyết trình, Hoa đáp lại, Linda bổ sung lời khen về khâu tổ chức và khả năng tiếng Anh, rồi Hoa mới cảm ơn lời khen đó.",
           "explanationEvidence": "Cau 15: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10656,12 +10656,12 @@
           "prompt": "Question 16. Dear Sir or Madam, a. I believe I am perfectly suited for this role. I have a bachelor's degree in IT from the University of Leeds, and I have recently completed a master's in IT management. b. I am very adaptable, reliable and excellent at multitasking, and I have strong communication skills and natural problem-solving abilities. c. I would be very grateful if you would consider me for the position of IT support technician. d. I am available for an interview at any time. I have attached a copy of my CV to this letter for your review. If you have any questions about me, please let me know. e. Last year, I gained valuable experience working part-time at a local computer repair centre, and I also spent six months as a tech support trainee at a major IT firm. f. I am writing to apply for the IT support technician position advertised in the local newspaper on Tuesday 5 th July. g. I can work independently or as a part of a team as I have experience working in a collaborative environment. I look forward to hearing from you soon. Yours faithfully, Ben Watts",
           "options": [
             "f - c - a - b - e - g - d",
-            "f - a - e - b - g - c - d",
+            "f - a - e - b - c - d - g",
             "f - b - a - d - e - c - g",
             "f - g - d - c - a - e - b"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A (f - c - a - b - e - g - d) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 1,
+          "explanation": "Thư xin việc nên theo mạch f-a-e-b-c-d-g: mở bằng câu ứng tuyển, nêu học vấn, kinh nghiệm, kỹ năng, lời đề nghị được xem xét, thông tin CV và phỏng vấn, rồi mới kết thư bằng lời chào cuối.",
           "explanationEvidence": "Cau 16: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10675,8 +10675,8 @@
             "a - b - f - c - e - d",
             "c - e - d - a - b - f"
           ],
-          "correctIndex": 2,
-          "explanation": "Thứ tự C giữ đúng luồng hội thoại hoặc liên kết giữa các câu; các đáp án khác làm mất logic đáp–hỏi hoặc đảo sai trình tự diễn biến.",
+          "correctIndex": 0,
+          "explanation": "Trình tự b-a-e-d-f-c là hợp lý nhất: b giới thiệu chủ đề, a đưa lời khuyên đầu tiên, e nói việc cần làm ở phần mở đầu, d tiếp nối rõ ràng bằng \"Second\", f chốt bằng \"Finally\", và c là câu kết luận.",
           "explanationEvidence": "Cau 17: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10735,8 +10735,8 @@
             "Paragraph 1",
             "Paragraph 4"
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D (Paragraph 4) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 2,
+          "explanation": "Chi tiết nhu cầu chỗ ở tăng tạm thời do hội nghị lớn và khách sạn kín chỗ nằm ngay ở paragraph 1, nên đáp án đúng là Paragraph 1.",
           "explanationEvidence": "Cau 21: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10795,8 +10795,8 @@
             "Airbnb has become more and more successful ever since.",
             "From that moment on Airbnb has been supposed to be smooth sailing."
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 2,
+          "explanation": "Cụm \"went from strength to strength\" diễn tả việc phát triển ngày càng mạnh hơn, nên đáp án đúng là C: Airbnb has become more and more successful ever since.",
           "explanationEvidence": "Cau 25: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
