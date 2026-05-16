@@ -4,22 +4,25 @@ import {
   addAutofillBtn,
   getAiAutofillHistory,
   addAiAutofillHistory,
-  clamp,
+  appendSelectOptions,
+  appendSelectPlaceholder,
+  coerceAllowedCount,
   el,
   flowTextarea,
   removeSkipConfirm,
   showPartialFillConfirm,
-  toPositiveInt,
   wrapField,
 } from "./flowCardShared.js";
+import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
 
 function randomFlashAutofillCount() {
-  if (Math.random() < 0.6) return 20;
-  return 10 + Math.floor(Math.random() * 10);
+  return ["10", "20", "30", "40"][Math.floor(Math.random() * 4)];
 }
+
+const FLASH_COUNT_OPTIONS = ["10", "20", "30", "40"];
 
 export function createFlashcardFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -36,12 +39,11 @@ export function createFlashcardFormCard(deps) {
   const back = flowTextarea("VD: Nghĩa tiếng Việt, Phiên âm, Ví dụ, Từ đồng nghĩa", 2);
   root.appendChild(wrapField("Thông tin mặt trước & sau", back));
 
-  const count = el("input", "flow-input");
-  count.type = "number";
-  count.min = "1";
-  count.max = "40";
-  count.placeholder = "1–40 (mặc định 20)";
-  root.appendChild(wrapField("Số lượng thẻ", count, "Tối đa 40 thẻ mỗi lần tạo."));
+  const count = el("select", "flow-select");
+  appendSelectPlaceholder(count, "Chọn số lượng thẻ…");
+  appendSelectOptions(count, FLASH_COUNT_OPTIONS);
+  const countMobileSelect = mountFlowMobileSelect(count);
+  root.appendChild(wrapField("Số lượng thẻ", countMobileSelect.control, "Chọn sẵn 10, 20, 30 hoặc 40 thẻ."));
 
   const notes = flowTextarea("Ghi chú thêm…", 3);
   root.appendChild(wrapField("Ghi chú thêm", notes));
@@ -50,7 +52,10 @@ export function createFlashcardFormCard(deps) {
   let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.list === "string") list.value = prefill.list;
   if (typeof prefill.back === "string") back.value = prefill.back;
-  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
+  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) {
+    count.value = coerceAllowedCount(prefill.count, FLASH_COUNT_OPTIONS, "20");
+    countMobileSelect.sync();
+  }
   if (typeof prefill.notes === "string") notes.value = prefill.notes;
   refreshTitle();
   list.addEventListener("input", refreshTitle);
@@ -70,7 +75,8 @@ export function createFlashcardFormCard(deps) {
       presetId = String(sample.id ?? "");
       list.value = String(sample.l ?? "");
       back.value = String(sample.b ?? "");
-      count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
+      count.value = randomFlashAutofillCount();
+      countMobileSelect.sync();
       notes.value = String(sample.n ?? "");
       refreshTitle();
       autofillIntent.remember(currentAutofillComparableState());
@@ -82,7 +88,8 @@ export function createFlashcardFormCard(deps) {
         list.value = String(ai.list ?? "");
         addAiAutofillHistory("flash", ai.list);
         back.value = String(ai.back ?? "Nghĩa tiếng Việt, Phiên âm, Ví dụ");
-        count.value = String(clamp(toPositiveInt(ai.count, 20), 1, 40));
+        count.value = coerceAllowedCount(ai.count, FLASH_COUNT_OPTIONS, "20");
+        countMobileSelect.sync();
         notes.value = String(ai.notes ?? "");
         refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
@@ -92,7 +99,8 @@ export function createFlashcardFormCard(deps) {
         presetId = String(fb.id ?? "");
         list.value = String(fb.l ?? "");
         back.value = String(fb.b ?? "");
-        count.value = String(clamp(randomFlashAutofillCount(), 1, 40));
+        count.value = randomFlashAutofillCount();
+        countMobileSelect.sync();
         notes.value = String(fb.n ?? "");
         refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
@@ -121,7 +129,7 @@ export function createFlashcardFormCard(deps) {
     const cv = count.value.trim();
     const n = Number(cv || "20");
     const mainDesc = lst || bk || nt;
-    const complete = Boolean(mainDesc) && Number.isFinite(n) && n >= 1 && n <= 40;
+    const complete = Boolean(mainDesc) && Number.isFinite(n) && FLASH_COUNT_OPTIONS.includes(cv || "20");
     return { complete };
   }
 
@@ -152,8 +160,8 @@ export function createFlashcardFormCard(deps) {
     const cv = count.value.trim();
     if (cv) {
       const n = Number(cv);
-      if (!Number.isFinite(n) || n < 1 || n > 40) {
-        err.textContent = "Số lượng thẻ phải từ 1 đến 40.";
+      if (!Number.isFinite(n) || !FLASH_COUNT_OPTIONS.includes(cv)) {
+        err.textContent = "Số lượng thẻ chỉ có thể là 10, 20, 30 hoặc 40.";
         err.style.display = "block";
         return;
       }

@@ -5,6 +5,8 @@ import {
   addAutofillBtn,
   getAiAutofillHistory,
   addAiAutofillHistory,
+  appendSelectOptions,
+  coerceAllowedCount,
   el,
   flowTextarea,
   normalizeFullsetLevelAutofill,
@@ -18,6 +20,8 @@ import { mountFlowMobileSelect } from "./flowMobileSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
+
+const QUIZ_COUNT_OPTIONS = ["10", "20", "30", "40"];
 
 export function createQuizFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -38,11 +42,11 @@ export function createQuizFormCard(deps) {
   const kind = flowTextarea("VD: Phát âm, Ngữ pháp, Đọc hiểu, Từ vựng", 2);
   root.appendChild(wrapField("Dạng bài", kind));
 
-  const qn = el("input", "flow-input");
-  qn.type = "number";
-  qn.min = "1";
-  qn.placeholder = "VD: 20";
-  root.appendChild(wrapField("Số lượng câu", qn));
+  const qn = el("select", "flow-select");
+  appendSelectPlaceholder(qn, "Chọn số lượng câu…");
+  appendSelectOptions(qn, QUIZ_COUNT_OPTIONS);
+  const countMobileSelect = mountFlowMobileSelect(qn);
+  root.appendChild(wrapField("Số lượng câu", countMobileSelect.control, "Chọn sẵn 10, 20, 30 hoặc 40 câu."));
 
   const level = el("select", "flow-select");
   appendSelectPlaceholder(level, "Chọn trình độ…");
@@ -62,7 +66,10 @@ export function createQuizFormCard(deps) {
   let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.source === "string") srcText.value = prefill.source;
   if (typeof prefill.kind === "string") kind.value = prefill.kind;
-  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) qn.value = String(prefill.count);
+  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) {
+    qn.value = coerceAllowedCount(prefill.count, QUIZ_COUNT_OPTIONS, "20");
+    countMobileSelect.sync();
+  }
   if (typeof prefill.difficulty === "string") {
     level.value = prefill.difficulty;
     levelMobileSelect.sync();
@@ -87,8 +94,9 @@ export function createQuizFormCard(deps) {
       presetId = String(sample.id ?? "");
       srcText.value = String(sample.s ?? "");
       kind.value = String(sample.k ?? "");
-      qn.value = String(toPositiveInt(sample.q, 20));
+      qn.value = coerceAllowedCount(sample.q, QUIZ_COUNT_OPTIONS, "20");
       level.value = normalizeFullsetLevelAutofill(sample.d);
+      countMobileSelect.sync();
       levelMobileSelect.sync();
       notes.value = String(sample.n ?? "");
       refreshTitle();
@@ -101,11 +109,12 @@ export function createQuizFormCard(deps) {
         srcText.value = String(ai.source ?? "");
         addAiAutofillHistory("quiz", ai.source);
         if (ai.kind) kind.value = String(ai.kind);
-        if (ai.count) qn.value = String(toPositiveInt(ai.count, 20));
+        if (ai.count) qn.value = coerceAllowedCount(ai.count, QUIZ_COUNT_OPTIONS, "20");
         if (ai.difficulty) {
           level.value = normalizeFullsetLevelAutofill(ai.difficulty);
           levelMobileSelect.sync();
         }
+        countMobileSelect.sync();
         notes.value = String(ai.notes ?? "");
         refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
@@ -115,8 +124,9 @@ export function createQuizFormCard(deps) {
         presetId = String(fb.id ?? "");
         srcText.value = String(fb.s ?? "");
         kind.value = String(fb.k ?? "");
-        qn.value = String(toPositiveInt(fb.q, 20));
+        qn.value = coerceAllowedCount(fb.q, QUIZ_COUNT_OPTIONS, "20");
         level.value = normalizeFullsetLevelAutofill(fb.d);
+        countMobileSelect.sync();
         levelMobileSelect.sync();
         notes.value = String(fb.n ?? "");
         refreshTitle();
@@ -146,7 +156,7 @@ export function createQuizFormCard(deps) {
     const countRaw = qn.value.trim();
     const n = Number(countRaw);
     const complete =
-      Boolean(t) && Boolean(countRaw) && Number.isFinite(n) && n >= 1 && Boolean(k) && Boolean(lv);
+      Boolean(t) && QUIZ_COUNT_OPTIONS.includes(countRaw) && Number.isFinite(n) && Boolean(k) && Boolean(lv);
     return { t, k, n, lv, countRaw, complete };
   }
 
@@ -177,8 +187,8 @@ export function createQuizFormCard(deps) {
     const countRaw = qn.value.trim();
     if (countRaw) {
       const n = Number(countRaw);
-      if (!Number.isFinite(n) || n < 1) {
-        err.textContent = "Số lượng câu phải là số dương.";
+      if (!Number.isFinite(n) || !QUIZ_COUNT_OPTIONS.includes(countRaw)) {
+        err.textContent = "Số lượng câu chỉ có thể là 10, 20, 30 hoặc 40.";
         err.style.display = "block";
         return;
       }

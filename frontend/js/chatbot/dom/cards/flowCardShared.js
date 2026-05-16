@@ -77,6 +77,44 @@ export function appendSelectPlaceholder(selectEl, label) {
   selectEl.appendChild(o);
 }
 
+/**
+ * @param {HTMLSelectElement} selectEl
+ * @param {Array<string|number>} values
+ */
+export function appendSelectOptions(selectEl, values) {
+  values.forEach((value) => {
+    const option = document.createElement("option");
+    option.value = String(value);
+    option.textContent = String(value);
+    selectEl.appendChild(option);
+  });
+}
+
+/**
+ * @param {unknown} raw
+ * @param {Array<string|number>} allowed
+ * @param {string|number} fallback
+ */
+export function coerceAllowedCount(raw, allowed, fallback) {
+  const safeAllowed = allowed.map((item) => String(item));
+  const text = String(raw ?? "").trim();
+  if (safeAllowed.includes(text)) return text;
+  const num = Number(text);
+  if (!Number.isFinite(num)) return String(fallback);
+  let nearest = Number(safeAllowed[0] ?? fallback);
+  let bestDistance = Math.abs(num - nearest);
+  safeAllowed.forEach((item) => {
+    const current = Number(item);
+    if (!Number.isFinite(current)) return;
+    const distance = Math.abs(num - current);
+    if (distance < bestDistance || (distance === bestDistance && current < nearest)) {
+      nearest = current;
+      bestDistance = distance;
+    }
+  });
+  return String(nearest);
+}
+
 export function removeSkipConfirm(root) {
   root.querySelector(".flow-skip-confirm")?.remove();
 }

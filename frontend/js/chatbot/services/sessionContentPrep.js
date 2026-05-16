@@ -140,6 +140,51 @@ export function pickUniqueShuffled(pool, keyFn, want) {
   return out;
 }
 
+/**
+ * @param {any} item
+ * @param {"quiz"|"flash"|"slide"} kind
+ * @param {number} index
+ */
+function cloneSessionItem(item, kind, index) {
+  const clone = item && typeof item === "object" ? { ...item } : {};
+  if (kind === "quiz") {
+    clone.options = Array.isArray(item?.options) ? item.options.slice() : [];
+    clone.id = `session_q_${index + 1}`;
+    return clone;
+  }
+  if (kind === "flash") {
+    clone.id = `session_c_${index + 1}`;
+    return clone;
+  }
+  clone.bullets = Array.isArray(item?.bullets) ? item.bullets.slice() : [];
+  clone.id = `session_s_${index + 1}`;
+  return clone;
+}
+
+/**
+ * @param {any[]} selected
+ * @param {any[]} sourcePool
+ * @param {number} want
+ * @param {"quiz"|"flash"|"slide"} kind
+ */
+function ensureSessionItemCount(selected, sourcePool, want, kind) {
+  const safeWant = Math.max(0, Math.floor(Number(want) || 0));
+  if (safeWant === 0) return [];
+  const baseSelected = Array.isArray(selected) ? selected.filter(Boolean) : [];
+  const safeSource = Array.isArray(sourcePool) ? sourcePool.filter(Boolean) : [];
+  const seeds = baseSelected.length ? baseSelected : safeSource;
+  if (!seeds.length) return [];
+
+  const out = baseSelected.slice(0, safeWant).map((item, index) => cloneSessionItem(item, kind, index));
+  let seedIndex = 0;
+  while (out.length < safeWant) {
+    const seed = seeds[seedIndex % seeds.length];
+    out.push(cloneSessionItem(seed, kind, out.length));
+    seedIndex += 1;
+  }
+  return out;
+}
+
 /** @param {any} q */
 export function quizDedupeKey(q) {
   const id = String(q?.id || "").trim();
@@ -254,18 +299,19 @@ function replaceDuplicateOpeningSlide(selected, fullPool) {
 /** @param {any} data
  * @param {Record<string, string>} meta */
 export function prepareQuizSessionData(data, meta) {
-  const want = parseCountInRange(meta?.count, 1, 500, 10);
+  const want = parseCountInRange(meta?.count, 1, 40, 10);
   const directPreset = findDirectQuizPreset(meta);
   if (directPreset) {
     const consumed = parseConsumedKeys(meta?.__consumedKeysJson);
     const presetDefault = Array.isArray(directPreset.defaultQuestions) ? directPreset.defaultQuestions : [];
     const fullPool = Array.isArray(directPreset.questions) ? directPreset.questions : [];
     const remainingPool = filterPoolByConsumed(fullPool, quizDedupeKey, consumed);
-    const questions =
+    const pickedQuestions =
       presetDefault.length && want <= presetDefault.length && consumed.size === 0
         ? presetDefault.slice(0, want)
         : remainingPool.slice(0, want);
-    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, questions, quizDedupeKey, consumed);
+    const questions = ensureSessionItemCount(pickedQuestions, fullPool, want, "quiz");
+    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, pickedQuestions, quizDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => quizDedupeKey(item)).filter(Boolean)).size;
     return {
       title: `Quiz THPTQG 2026 — ${directPreset.source}`,
@@ -281,7 +327,7 @@ export function prepareQuizSessionData(data, meta) {
     };
   }
   const pool = Array.isArray(data?.questions) ? data.questions : [];
-  const questions = pickUniqueShuffled(pool, quizDedupeKey, want);
+  const questions = ensureSessionItemCount(pickUniqueShuffled(pool, quizDedupeKey, want), pool, want, "quiz");
   return {
     ...data,
     questions,
@@ -334,8 +380,9 @@ export function prepareFlashSessionData(data, meta) {
     const want = parseCountInRange(meta?.count, 1, 500, direct.length);
     const consumed = parseConsumedKeys(meta?.__consumedKeysJson);
     const remainingPool = filterPoolByConsumed(direct, flashDedupeKey, consumed);
-    const cards = remainingPool.slice(0, want);
-    const nextConsumedKeysJson = buildNextConsumedKeysJson(direct, cards, flashDedupeKey, consumed);
+    const pickedCards = remainingPool.slice(0, want);
+    const cards = ensureSessionItemCount(pickedCards, direct, want, "flash");
+    const nextConsumedKeysJson = buildNextConsumedKeysJson(direct, pickedCards, flashDedupeKey, consumed);
     const uniquePoolSize = new Set(direct.map((item) => flashDedupeKey(item)).filter(Boolean)).size;
     return {
       ...data,
@@ -359,11 +406,12 @@ export function prepareFlashSessionData(data, meta) {
     const presetDefault = Array.isArray(directPreset.defaultCards) ? directPreset.defaultCards : [];
     const fullPool = Array.isArray(directPreset.cards) ? directPreset.cards : [];
     const remainingPool = filterPoolByConsumed(fullPool, flashDedupeKey, consumed);
-    const cards =
+    const pickedCards =
       presetDefault.length && want <= presetDefault.length && consumed.size === 0
         ? presetDefault.slice(0, want)
         : remainingPool.slice(0, want);
-    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, cards, flashDedupeKey, consumed);
+    const cards = ensureSessionItemCount(pickedCards, fullPool, want, "flash");
+    const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, pickedCards, flashDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => flashDedupeKey(item)).filter(Boolean)).size;
     return {
       ...data,
@@ -382,7 +430,7 @@ export function prepareFlashSessionData(data, meta) {
 
   const want = parseCountInRange(meta?.count, 1, 500, 20);
   const pool = filterFlashCardsWithinLimit(Array.isArray(data?.cards) ? data.cards : []);
-  const cards = pickUniqueShuffled(pool, flashDedupeKey, want);
+  const cards = ensureSessionItemCount(pickUniqueShuffled(pool, flashDedupeKey, want), pool, want, "flash");
   return {
     ...data,
     cards,
@@ -419,7 +467,7 @@ export function prepareSlideSessionData(data, meta) {
 
     const nextConsumedKeysJson = buildNextConsumedKeysJson(fullPool, selected, slideDedupeKey, consumed);
     const uniquePoolSize = new Set(fullPool.map((item) => slideDedupeKey(item)).filter(Boolean)).size;
-    const slides = enrichSlidesWithMockImages(selected, {
+    const slides = enrichSlidesWithMockImages(ensureSessionItemCount(selected, fullPool, want, "slide"), {
       topic: meta?.topic || directPreset.topic,
       deckTitle: directPreset.topic,
       themeLabel: meta?.slideTemplate,
@@ -442,9 +490,11 @@ export function prepareSlideSessionData(data, meta) {
   const preferredEnding = pickPreferredEndingSlide(pool);
   const endingSlide = preferredEnding || pool[pool.length - 1] || null;
   const contentPool = pool.filter((slide) => !isLikelyEndingSlide(slide));
-  const bodySlides = contentPool.slice(0, Math.max(0, want - 1));
+  const bodySlides = ensureSessionItemCount(contentPool.slice(0, Math.max(0, want - 1)), contentPool, Math.max(0, want - 1), "slide");
   const slides = enrichSlidesWithMockImages(
-    want <= 1 ? (endingSlide ? [endingSlide] : []) : endingSlide ? [...bodySlides, endingSlide] : bodySlides,
+    want <= 1
+      ? ensureSessionItemCount(endingSlide ? [endingSlide] : [], endingSlide ? [endingSlide] : pool, 1, "slide")
+      : ensureSessionItemCount(endingSlide ? [...bodySlides, endingSlide] : bodySlides, pool, want, "slide"),
     {
       topic: meta?.topic,
       deckTitle: data?.title,

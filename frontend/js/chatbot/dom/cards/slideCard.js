@@ -5,7 +5,10 @@ import {
   addAutofillBtn,
   getAiAutofillHistory,
   addAiAutofillHistory,
+  appendSelectOptions,
+  appendSelectPlaceholder,
   clamp,
+  coerceAllowedCount,
   el,
   flowTextarea,
   coerceSelectThemeValue,
@@ -19,6 +22,8 @@ import { populateSlideTemplateSelect } from "./slideTemplateSelect.js";
 import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
+
+const SLIDE_COUNT_OPTIONS = ["10", "20", "30"];
 
 export function createSlideFormCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -36,12 +41,11 @@ export function createSlideFormCard(deps) {
   docBlock.appendChild(el("p", "flow-hint", "Bạn đã chọn nhập tên chủ đề trực tiếp — mô tả rõ nội dung mong muốn."));
   root.appendChild(docBlock);
 
-  const count = el("input", "flow-input");
-  count.type = "number";
-  count.min = "5";
-  count.max = "30";
-  count.placeholder = "5–30";
-  root.appendChild(wrapField("Số lượng slide", count, "Chọn từ 5 đến 30 slide để đảm bảo chất lượng nội dung."));
+  const count = el("select", "flow-select");
+  appendSelectPlaceholder(count, "Chọn số lượng slide…");
+  appendSelectOptions(count, SLIDE_COUNT_OPTIONS);
+  const countMobileSelect = mountFlowMobileSelect(count);
+  root.appendChild(wrapField("Số lượng slide", countMobileSelect.control, "Chọn sẵn 10, 20 hoặc 30 slide."));
 
   const structure = flowTextarea("VD: Lý thuyết → Ví dụ → Tổng kết", 2);
   root.appendChild(wrapField("Cấu trúc mong muốn", structure));
@@ -57,7 +61,10 @@ export function createSlideFormCard(deps) {
   const prefill = deps?.prefill && typeof deps.prefill === "object" ? deps.prefill : {};
   let presetId = typeof prefill.presetId === "string" ? prefill.presetId : "";
   if (typeof prefill.topic === "string") docText.value = prefill.topic;
-  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) count.value = String(prefill.count);
+  if (typeof prefill.count === "string" || Number.isFinite(Number(prefill.count))) {
+    count.value = coerceAllowedCount(prefill.count, SLIDE_COUNT_OPTIONS, "10");
+    countMobileSelect.sync();
+  }
   if (typeof prefill.structure === "string") structure.value = prefill.structure;
   if (typeof prefill.style === "string") {
     style.value = prefill.style;
@@ -82,9 +89,10 @@ export function createSlideFormCard(deps) {
     if (sample) {
       presetId = String(sample.id ?? "");
       docText.value = String(sample.t ?? "");
-      count.value = String(clamp(toPositiveInt(sample.c, 10), 5, 30));
+      count.value = coerceAllowedCount(sample.c, SLIDE_COUNT_OPTIONS, "10");
       structure.value = String(sample.s ?? "");
       style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, sample.y, SLIDE_TEMPLATE_DEFAULT);
+      countMobileSelect.sync();
       styleMobileSelect.sync();
       notes.value = String(sample.n ?? "");
       refreshTitle();
@@ -96,9 +104,10 @@ export function createSlideFormCard(deps) {
         presetId = "";
         docText.value = String(ai.topic ?? "");
         addAiAutofillHistory("slide", ai.topic);
-        if (ai.count) count.value = String(clamp(toPositiveInt(ai.count, 10), 5, 30));
+        if (ai.count) count.value = coerceAllowedCount(ai.count, SLIDE_COUNT_OPTIONS, "10");
         if (ai.structure) structure.value = String(ai.structure);
         notes.value = String(ai.notes ?? "");
+        countMobileSelect.sync();
         refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "ai";
@@ -106,9 +115,10 @@ export function createSlideFormCard(deps) {
         const fb = getAnyMock("slide");
         presetId = String(fb.id ?? "");
         docText.value = String(fb.t ?? "");
-        count.value = String(clamp(toPositiveInt(fb.c, 10), 5, 30));
+        count.value = coerceAllowedCount(fb.c, SLIDE_COUNT_OPTIONS, "10");
         structure.value = String(fb.s ?? "");
         style.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, fb.y, SLIDE_TEMPLATE_DEFAULT);
+        countMobileSelect.sync();
         styleMobileSelect.sync();
         notes.value = String(fb.n ?? "");
         refreshTitle();
@@ -136,7 +146,7 @@ export function createSlideFormCard(deps) {
     const countRaw = count.value.trim();
     const n = Number(countRaw);
     const sty = style.value;
-    const complete = Boolean(topic) && Boolean(countRaw) && Number.isFinite(n) && n >= 5 && n <= 30 && Boolean(sty);
+    const complete = Boolean(topic) && SLIDE_COUNT_OPTIONS.includes(countRaw) && Number.isFinite(n) && Boolean(sty);
     return { topic, n, sty, countRaw, complete };
   }
 
@@ -153,7 +163,7 @@ export function createSlideFormCard(deps) {
     deps.onSubmit({
       __auto: "1",
       topic: "(Teachly tự động)",
-      count: "20",
+      count: "10",
       structure: "",
       style: SLIDE_TEMPLATE_DEFAULT,
       notes: "",
@@ -167,8 +177,8 @@ export function createSlideFormCard(deps) {
     const countRaw = count.value.trim();
     if (countRaw) {
       const n = Number(countRaw);
-      if (!Number.isFinite(n) || n < 5 || n > 30) {
-        err.textContent = "Số slide phải từ 5 đến 30.";
+      if (!Number.isFinite(n) || !SLIDE_COUNT_OPTIONS.includes(countRaw)) {
+        err.textContent = "Số slide chỉ có thể là 10, 20 hoặc 30.";
         err.style.display = "block";
         return;
       }
@@ -183,7 +193,7 @@ export function createSlideFormCard(deps) {
       err.style.display = "block";
       return;
     }
-    const useCount = countRaw || "20";
+    const useCount = countRaw || "10";
     if (topic && sty && countRaw) {
       submit.disabled = true;
       skip.disabled = true;

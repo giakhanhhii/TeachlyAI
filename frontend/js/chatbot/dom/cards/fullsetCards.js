@@ -8,10 +8,11 @@ import {
   addAutofillBtn,
   getAiAutofillHistory,
   addAiAutofillHistory,
+  appendSelectOptions,
   coerceSelectThemeValue,
+  coerceAllowedCount,
   el,
   flowTextarea,
-  normalizeFullsetCounts,
   normalizeFullsetLevelAutofill,
   randomFullsetTripleSum40,
   removeSkipConfirm,
@@ -27,6 +28,37 @@ import { fetchAiAutofillTopic } from "../../services/aiContentApi.js";
 import { setPendingPdfFile } from "../../pdfPrefillStore.js";
 import { buildFormTitle } from "../../services/contentTitles.js";
 import { createAutofillIntentTracker } from "./autofillIntent.js";
+
+const FULLSET_SLIDE_COUNT_OPTIONS = ["10", "20"];
+const FULLSET_QUIZ_COUNT_OPTIONS = ["10", "20"];
+const FULLSET_FLASH_COUNT_OPTIONS = ["10", "20"];
+const FULLSET_DEFAULT_COUNTS = { slides: "10", quiz: "20", flash: "10" };
+const FULLSET_VALID_COUNT_COMBOS = [
+  { slides: "10", quiz: "10", flash: "10" },
+  { slides: "10", quiz: "10", flash: "20" },
+  { slides: "10", quiz: "20", flash: "10" },
+  { slides: "20", quiz: "10", flash: "10" },
+];
+
+function coerceFullsetCountCombo(slideRaw, quizRaw, flashRaw) {
+  const safeSlide = Number(coerceAllowedCount(slideRaw, FULLSET_SLIDE_COUNT_OPTIONS, FULLSET_DEFAULT_COUNTS.slides));
+  const safeQuiz = Number(coerceAllowedCount(quizRaw, FULLSET_QUIZ_COUNT_OPTIONS, FULLSET_DEFAULT_COUNTS.quiz));
+  const safeFlash = Number(coerceAllowedCount(flashRaw, FULLSET_FLASH_COUNT_OPTIONS, FULLSET_DEFAULT_COUNTS.flash));
+
+  let best = FULLSET_VALID_COUNT_COMBOS[0];
+  let bestScore = Number.POSITIVE_INFINITY;
+  FULLSET_VALID_COUNT_COMBOS.forEach((combo) => {
+    const score =
+      Math.abs(Number(combo.slides) - safeSlide) +
+      Math.abs(Number(combo.quiz) - safeQuiz) +
+      Math.abs(Number(combo.flash) - safeFlash);
+    if (score < bestScore) {
+      best = combo;
+      bestScore = score;
+    }
+  });
+  return best;
+}
 
 export function createFullsetTopicCard(deps) {
   const root = el("div", "flow-card flow-card-flow-wide");
@@ -62,28 +94,27 @@ export function createFullsetTopicCard(deps) {
     ),
   );
 
-  const slides = el("input", "flow-input");
-  slides.type = "number";
-  slides.min = "1";
-  slides.max = "30";
-  slides.placeholder = "Slide";
-  const quiz = el("input", "flow-input");
-  quiz.type = "number";
-  quiz.min = "1";
-  quiz.placeholder = "Quiz";
-  const flash = el("input", "flow-input");
-  flash.type = "number";
-  flash.min = "1";
-  flash.placeholder = "Flashcard";
+  const slides = el("select", "flow-select");
+  appendSelectPlaceholder(slides, "Slide");
+  appendSelectOptions(slides, FULLSET_SLIDE_COUNT_OPTIONS);
+  const slidesMobileSelect = mountFlowMobileSelect(slides);
+  const quiz = el("select", "flow-select");
+  appendSelectPlaceholder(quiz, "Quiz");
+  appendSelectOptions(quiz, FULLSET_QUIZ_COUNT_OPTIONS);
+  const quizMobileSelect = mountFlowMobileSelect(quiz);
+  const flash = el("select", "flow-select");
+  appendSelectPlaceholder(flash, "Flashcard");
+  appendSelectOptions(flash, FULLSET_FLASH_COUNT_OPTIONS);
+  const flashMobileSelect = mountFlowMobileSelect(flash);
   const qtyWrap = el("div", "flow-field");
   qtyWrap.appendChild(el("span", "flow-label", "Số lượng (tổng max 40)"));
   const row = el("div", "flow-row-3");
-  row.appendChild(wrapMini("Số slide", slides));
-  row.appendChild(wrapMini("Số câu Quiz", quiz));
-  row.appendChild(wrapMini("Số Flashcard", flash));
+  row.appendChild(wrapMini("Số slide", slidesMobileSelect.control));
+  row.appendChild(wrapMini("Số câu Quiz", quizMobileSelect.control));
+  row.appendChild(wrapMini("Số Flashcard", flashMobileSelect.control));
   qtyWrap.appendChild(row);
   qtyWrap.appendChild(
-    el("p", "flow-hint", "Ba ô cộng lại tối đa 40 mục (ví dụ 10 slide + 20 quiz + 10 flashcard). Mỗi ô tối thiểu 1."),
+    el("p", "flow-hint", "Chọn các tổ hợp hợp lệ có sẵn để tổng không vượt 40 mục."),
   );
   root.appendChild(qtyWrap);
 
@@ -100,9 +131,22 @@ export function createFullsetTopicCard(deps) {
     slideTemplate.value = prefill.slideTemplate;
     slideTemplateMobileSelect.sync();
   }
-  if (typeof prefill.slides === "string" || Number.isFinite(Number(prefill.slides))) slides.value = String(prefill.slides);
-  if (typeof prefill.quiz === "string" || Number.isFinite(Number(prefill.quiz))) quiz.value = String(prefill.quiz);
-  if (typeof prefill.flash === "string" || Number.isFinite(Number(prefill.flash))) flash.value = String(prefill.flash);
+  if (
+    typeof prefill.slides === "string" ||
+    Number.isFinite(Number(prefill.slides)) ||
+    typeof prefill.quiz === "string" ||
+    Number.isFinite(Number(prefill.quiz)) ||
+    typeof prefill.flash === "string" ||
+    Number.isFinite(Number(prefill.flash))
+  ) {
+    const combo = coerceFullsetCountCombo(prefill.slides, prefill.quiz, prefill.flash);
+    slides.value = combo.slides;
+    quiz.value = combo.quiz;
+    flash.value = combo.flash;
+    slidesMobileSelect.sync();
+    quizMobileSelect.sync();
+    flashMobileSelect.sync();
+  }
   if (typeof prefill.extra === "string") extra.value = prefill.extra;
   refreshTitle();
   topic.addEventListener("input", refreshTitle);
@@ -122,15 +166,18 @@ export function createFullsetTopicCard(deps) {
   addAutofillBtn(root, async () => {
     const sample = consumeNextMock("fullset");
     if (sample) {
-      const { sn, qn, fn } = normalizeFullsetCounts(sample.s, sample.q, sample.f);
+      const combo = coerceFullsetCountCombo(sample.s, sample.q, sample.f);
       topic.value = String(sample.t ?? "");
       level.value = normalizeFullsetLevelAutofill(sample.l);
       levelMobileSelect.sync();
       slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, sample.m, SLIDE_TEMPLATE_DEFAULT);
       slideTemplateMobileSelect.sync();
-      slides.value = String(sn);
-      quiz.value = String(qn);
-      flash.value = String(fn);
+      slides.value = combo.slides;
+      quiz.value = combo.quiz;
+      flash.value = combo.flash;
+      slidesMobileSelect.sync();
+      quizMobileSelect.sync();
+      flashMobileSelect.sync();
       extra.value = String(sample.e ?? "");
       refreshTitle();
       autofillIntent.remember(currentAutofillComparableState());
@@ -144,29 +191,31 @@ export function createFullsetTopicCard(deps) {
           level.value = normalizeFullsetLevelAutofill(ai.level);
           levelMobileSelect.sync();
         }
-        const { sn, qn, fn } = normalizeFullsetCounts(
-          String(ai.slides ?? 10),
-          String(ai.quiz ?? 20),
-          String(ai.flash ?? 10),
-        );
-        slides.value = String(sn);
-        quiz.value = String(qn);
-        flash.value = String(fn);
+        const combo = coerceFullsetCountCombo(ai.slides, ai.quiz, ai.flash);
+        slides.value = combo.slides;
+        quiz.value = combo.quiz;
+        flash.value = combo.flash;
+        slidesMobileSelect.sync();
+        quizMobileSelect.sync();
+        flashMobileSelect.sync();
         extra.value = String(ai.extra ?? "");
         refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
         return "ai";
       } catch {
         const fb = getAnyMock("fullset");
-        const { sn, qn, fn } = normalizeFullsetCounts(fb.s, fb.q, fb.f);
+        const combo = coerceFullsetCountCombo(fb.s, fb.q, fb.f);
         topic.value = String(fb.t ?? "");
         level.value = normalizeFullsetLevelAutofill(fb.l);
         levelMobileSelect.sync();
         slideTemplate.value = coerceSelectThemeValue(SLIDE_TEMPLATE_OPTIONS, fb.m, SLIDE_TEMPLATE_DEFAULT);
         slideTemplateMobileSelect.sync();
-        slides.value = String(sn);
-        quiz.value = String(qn);
-        flash.value = String(fn);
+        slides.value = combo.slides;
+        quiz.value = combo.quiz;
+        flash.value = combo.flash;
+        slidesMobileSelect.sync();
+        quizMobileSelect.sync();
+        flashMobileSelect.sync();
         extra.value = String(fb.e ?? "");
         refreshTitle();
         autofillIntent.remember(currentAutofillComparableState());
@@ -204,16 +253,15 @@ export function createFullsetTopicCard(deps) {
       Boolean(t) &&
       Boolean(lv) &&
       Boolean(stpl) &&
-      Boolean(s) &&
-      Boolean(q) &&
-      Boolean(f) &&
+      FULLSET_SLIDE_COUNT_OPTIONS.includes(s) &&
+      FULLSET_QUIZ_COUNT_OPTIONS.includes(q) &&
+      FULLSET_FLASH_COUNT_OPTIONS.includes(f) &&
       Number.isFinite(sn) &&
-      sn >= 1 &&
-      sn <= 30 &&
+      sn >= 10 &&
       Number.isFinite(qn) &&
-      qn >= 1 &&
+      qn >= 10 &&
       Number.isFinite(fn) &&
-      fn >= 1 &&
+      fn >= 10 &&
       sumOk;
     return { t, lv, s, q, f, ex, complete };
   }
@@ -226,51 +274,21 @@ export function createFullsetTopicCard(deps) {
     const qn = hasQuiz ? Number(quizRaw) : null;
     const fn = hasFlash ? Number(flashRaw) : null;
 
-    if (hasSlide && (!Number.isFinite(sn) || sn < 1 || sn > 30)) {
-      return { ok: false, message: "Số slide phải từ 1 đến 30." };
+    if (hasSlide && (!Number.isFinite(sn) || !FULLSET_SLIDE_COUNT_OPTIONS.includes(slideRaw))) {
+      return { ok: false, message: "Số slide trong Full Set chỉ có thể là 10 hoặc 20." };
     }
-    if (hasQuiz && (!Number.isFinite(qn) || qn < 1)) {
-      return { ok: false, message: "Số câu Quiz phải là số dương." };
+    if (hasQuiz && (!Number.isFinite(qn) || !FULLSET_QUIZ_COUNT_OPTIONS.includes(quizRaw))) {
+      return { ok: false, message: "Số câu Quiz trong Full Set chỉ có thể là 10 hoặc 20." };
     }
-    if (hasFlash && (!Number.isFinite(fn) || fn < 1)) {
-      return { ok: false, message: "Số Flashcard phải là số dương." };
+    if (hasFlash && (!Number.isFinite(fn) || !FULLSET_FLASH_COUNT_OPTIONS.includes(flashRaw))) {
+      return { ok: false, message: "Số Flashcard trong Full Set chỉ có thể là 10 hoặc 20." };
     }
-
-    const values = {
-      slides: hasSlide ? sn : 10,
-      quiz: hasQuiz ? qn : 20,
-      flash: hasFlash ? fn : 10,
-    };
-    const specifiedTotal = (hasSlide ? sn : 0) + (hasQuiz ? qn : 0) + (hasFlash ? fn : 0);
-    const missingKeys = [];
-    if (!hasSlide) missingKeys.push("slides");
-    if (!hasQuiz) missingKeys.push("quiz");
-    if (!hasFlash) missingKeys.push("flash");
-
-    if (specifiedTotal + missingKeys.length > 40) {
-      return { ok: false, message: "Tổng Slide + Quiz + Flashcard không được vượt quá 40 sau khi Teachly tự điền phần còn thiếu." };
-    }
-
-    let total = values.slides + values.quiz + values.flash;
-    while (total > 40) {
-      let reduced = false;
-      for (const keys of [missingKeys, ["quiz", "flash", "slides"]]) {
-        for (const key of keys) {
-          if (values[key] > 1) {
-            values[key] -= 1;
-            total -= 1;
-            reduced = true;
-            break;
-          }
-        }
-        if (reduced || total <= 40) break;
-      }
-      if (!reduced) {
-        return { ok: false, message: `Tổng Slide + Quiz + Flashcard không được vượt quá 40 (hiện tại: ${total}).` };
-      }
-    }
-
-    return { ok: true, slides: String(values.slides), quiz: String(values.quiz), flash: String(values.flash) };
+    const combo = coerceFullsetCountCombo(
+      hasSlide ? slideRaw : FULLSET_DEFAULT_COUNTS.slides,
+      hasQuiz ? quizRaw : FULLSET_DEFAULT_COUNTS.quiz,
+      hasFlash ? flashRaw : FULLSET_DEFAULT_COUNTS.flash,
+    );
+    return { ok: true, slides: combo.slides, quiz: combo.quiz, flash: combo.flash };
   }
 
   skip.addEventListener("click", () => {
@@ -290,9 +308,9 @@ export function createFullsetTopicCard(deps) {
       topic: "(Teachly tự động)",
       level: DEFAULT_DIFFICULTY,
       slideTemplate: SLIDE_TEMPLATE_DEFAULT,
-      slides: String(sn),
-      quiz: String(qn),
-      flash: String(fn),
+      slides: String(coerceFullsetCountCombo(sn, qn, fn).slides),
+      quiz: String(coerceFullsetCountCombo(sn, qn, fn).quiz),
+      flash: String(coerceFullsetCountCombo(sn, qn, fn).flash),
       extra: "",
     });
   });
