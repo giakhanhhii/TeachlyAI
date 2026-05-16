@@ -678,7 +678,7 @@ def generate_autofill_slide(recent: list[str] | None = None) -> dict[str, Any]:
     raw = _call_openai(_AUTOFILL_SLIDE_SYSTEM, f"Generate a fresh autofill JSON now.{avoid}", max_tokens=150)
     data = _parse_json_response(raw, "autofill_slide")
     data.setdefault("topic", "Common phrasal verbs")
-    data["count"] = max(10, min(15, int(data.get("count") or 10)))
+    data["count"] = coerce_autofill_count(data.get("count"), [10, 20, 30], 10)
     data.setdefault("structure", "Overview -> Examples -> Practice")
     data["notes"] = ""
     return data
@@ -694,7 +694,7 @@ def generate_autofill_quiz(recent: list[str] | None = None) -> dict[str, Any]:
     data.setdefault("source", "Từ vựng tiếng Anh thông dụng")
     if data.get("kind") not in _VALID_KINDS:
         data["kind"] = "Từ vựng"
-    data["count"] = 20 if int(data.get("count") or 20) > 17 else 15
+    data["count"] = coerce_autofill_count(data.get("count"), [10, 20, 30, 40], 20)
     if data.get("difficulty") not in _VALID_LEVELS:
         data["difficulty"] = "Khá"
     data["notes"] = ""
@@ -708,7 +708,7 @@ def generate_autofill_flash(recent: list[str] | None = None) -> dict[str, Any]:
     data = _parse_json_response(raw, "autofill_flash")
     data.setdefault("list", "Từ vựng tiếng Anh học thuật")
     data["back"] = "Nghĩa tiếng Việt, Phiên âm, Ví dụ"
-    data["count"] = 20
+    data["count"] = coerce_autofill_count(data.get("count"), [10, 20, 30, 40], 20)
     data["notes"] = ""
     return data
 
@@ -722,20 +722,10 @@ def generate_autofill_fullset(recent: list[str] | None = None) -> dict[str, Any]
     data.setdefault("topic", "Từ vựng tiếng Anh học thuật")
     if data.get("level") not in _VALID_LEVELS:
         data["level"] = "Khá"
-    slides = max(1, min(30, int(data.get("slides") or 10)))
-    quiz = max(1, int(data.get("quiz") or 20))
-    flash = max(1, int(data.get("flash") or 10))
-    # clamp sum to 40
-    total = slides + quiz + flash
-    if total > 40:
-        excess = total - 40
-        quiz = max(1, quiz - excess)
-        total = slides + quiz + flash
-        if total > 40:
-            flash = max(1, flash - (total - 40))
-    data["slides"] = slides
-    data["quiz"] = quiz
-    data["flash"] = flash
+    combo = _coerce_fullset_autofill_combo(data.get("slides"), data.get("quiz"), data.get("flash"))
+    data["slides"] = combo["slides"]
+    data["quiz"] = combo["quiz"]
+    data["flash"] = combo["flash"]
     data["extra"] = ""
     return data
 
@@ -814,9 +804,8 @@ def generate_slide_from_document(document_text: str, count: int = 10, notes: str
     data = _parse_json_response(raw, "slide_from_doc")
     if not isinstance(data.get("slides"), list):
         raise ValueError("AI slide response missing 'slides' array")
-    for i, s in enumerate(data["slides"]):
-        if not s.get("id"):
-            s["id"] = f"ai_s{i + 1}"
+    data["slides"] = _ensure_ai_slide_count(data["slides"], count, str(data.get("title") or "Document"))
+    for s in data["slides"]:
         if isinstance(s.get("bullets"), list) and len(s["bullets"]) > 5:
             s["bullets"] = s["bullets"][:4]
     topic_hint = str(data.get("title") or "Document")
@@ -833,12 +822,13 @@ def generate_quiz_from_document(document_text: str, count: int = 10, notes: str 
     data = _parse_json_response(raw, "quiz_from_doc")
     if not isinstance(data.get("questions"), list):
         raise ValueError("AI quiz response missing 'questions' array")
-    for i, q in enumerate(data["questions"]):
-        if not q.get("id"):
-            q["id"] = f"ai_q{i + 1}"
+    data["questions"] = _ensure_ai_quiz_count(data["questions"], count, "Document")
+    for q in data["questions"]:
         opts = q.get("options") or []
         if len(opts) > 4:
             q["options"] = opts[:4]
+        while len(q["options"]) < 4:
+            q["options"].append(f"Option {len(q['options']) + 1}")
         q["correctIndex"] = _resolve_quiz_correct_index(q)
     return data
 
@@ -850,9 +840,7 @@ def generate_flash_from_document(document_text: str, count: int = 20, notes: str
     data = _parse_json_response(raw, "flash_from_doc")
     if not isinstance(data.get("cards"), list):
         raise ValueError("AI flashcard response missing 'cards' array")
-    for i, c in enumerate(data["cards"]):
-        if not c.get("id"):
-            c["id"] = f"ai_c{i + 1}"
+    data["cards"] = _ensure_ai_flash_count(data["cards"], count, "Document")
     return data
 
 
