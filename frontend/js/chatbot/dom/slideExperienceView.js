@@ -1,8 +1,15 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import {
+  isAiModeActive,
+  incrementPlayCount,
+  fetchAiContent,
+  fetchAiFileContent,
+  withMockFallbackOnAiError,
+} from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
+import { renderExperienceAiError } from "./experienceAiError.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
@@ -124,10 +131,7 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     } catch (err) {
       loadingState.remove();
       if (root._genStamp !== _genStamp) return;
-      root.innerHTML = "";
-      const box = document.createElement("div"); box.className = "exp-upload-error";
-      box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
-      root.appendChild(box);
+      renderExperienceAiError(root, err, "Không thể xử lý tệp. Vui lòng thử lại.");
       return;
     }
     if (root._genStamp !== _genStamp) return;
@@ -160,7 +164,12 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
         ? "mock"
         : ((!isRestore && (_forceAi || (!effectiveMeta?.presetId && (isAiModeActive("slide") || !_isAutoTopic)))) ? "ai" : "mock"); /* DEV-ONLY */
       const _bgKey = (_devSrc === "ai" && effectiveMeta?.__experienceId) ? `gen_${effectiveMeta.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("slide", _aiTopic, effectiveMeta).catch(() => fetchMockResource("slide")));
+      if (_bgKey && !getFetch(_bgKey)) {
+        startFetch(
+          _bgKey,
+          withMockFallbackOnAiError(fetchAiContent("slide", _aiTopic, effectiveMeta), () => fetchMockResource("slide")),
+        );
+      }
       const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
       const loadingState = (!isRestore && _devSrc === "ai" && _bgEntry?.status !== "done")
         ? (() => {
@@ -173,10 +182,18 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
             });
           })()
         : null;
-      raw = _bgEntry?.status === "done" ? _bgEntry.raw
-          : _bgEntry ? await _bgEntry.promise
-          : _devSrc === "ai" ? await fetchAiContent("slide", _aiTopic, effectiveMeta).catch(() => fetchMockResource("slide"))
-          : await fetchMockResource("slide");
+      try {
+        raw = _bgEntry?.status === "done" ? _bgEntry.raw
+            : _bgEntry ? await _bgEntry.promise
+            : _devSrc === "ai"
+              ? await withMockFallbackOnAiError(fetchAiContent("slide", _aiTopic, effectiveMeta), () => fetchMockResource("slide"))
+              : await fetchMockResource("slide");
+      } catch (err) {
+        loadingState?.remove();
+        if (root._genStamp !== _genStamp) return;
+        renderExperienceAiError(root, err, "Không thể tạo slide lúc này. Vui lòng thử lại.");
+        return;
+      }
       loadingState?.remove();
       if (root._genStamp !== _genStamp) return;
       if (!isRestore) incrementPlayCount("slide");
