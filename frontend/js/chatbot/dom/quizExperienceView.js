@@ -9,7 +9,7 @@ import {
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
-import { renderExperienceAiError } from "./experienceAiError.js";
+import { isUploadLimitError, renderExperienceAiError } from "./experienceAiError.js";
 import { prepareQuizSessionData } from "../services/sessionContentPrep.js";
 import { recomputeScore } from "../services/quizService.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
@@ -85,6 +85,16 @@ export async function mountQuizExperience(layerView, meta, deps, opts = {}) {
       } catch (err) {
         loadingState.remove();
         if (root._genStamp !== _genStamp) return;
+        const rejected = isUploadLimitError(err)
+          ? await Promise.resolve(
+              deps?.onUploadRejected?.({
+                kind: "quiz",
+                experienceId: String(meta?.__experienceId || ""),
+                error: err,
+              }),
+            )
+          : false;
+        if (rejected) return;
         renderExperienceAiError(root, err, "Không thể xử lý tệp. Vui lòng thử lại.");
         return;
       }

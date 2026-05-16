@@ -8,6 +8,28 @@ export function resolveExperienceAiErrorMessage(err, fallbackMessage) {
   return message || fallbackMessage;
 }
 
+function normalizeErrorText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+/**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+export function isUploadLimitError(err) {
+  const normalized = normalizeErrorText(resolveExperienceAiErrorMessage(err, ""));
+  if (!normalized) return false;
+  return (
+    normalized.includes("tai lieu qua dai") ||
+    normalized.includes("vuot qua gioi han 20 trang") ||
+    normalized.includes("gioi han 40000 ky tu") ||
+    normalized.includes("anh qua lon")
+  );
+}
+
 /**
  * @param {HTMLElement} host
  * @param {unknown} err

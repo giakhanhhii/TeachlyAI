@@ -63,4 +63,31 @@ describe("messageController", () => {
       cardProps: undefined,
     });
   });
+
+  it("removes upload-attempt messages for a rejected experience id", () => {
+    const { controller, session, rerenderMessages } = buildController({
+      messages: [{ role: "user", text: "hello" }],
+    });
+
+    controller.pushUser("Đã chọn tệp PDF: very-long.pdf", { experienceId: "exp-too-long" });
+    controller.pushBot("Bạn muốn tiếp tục theo cách nào?", {
+      experienceId: "exp-too-long",
+      resumeDock: {
+        kind: "slide",
+        experienceId: "exp-too-long",
+        title: "Slide bài giảng",
+        meta: { topic: "very-long.pdf", __experienceId: "exp-too-long" },
+      },
+    });
+    controller.pushBot("reply khác");
+
+    const removed = controller.removeMessagesByExperienceId("exp-too-long");
+
+    expect(removed).toBe(true);
+    expect(session.messages).toEqual([
+      { role: "user", text: "hello" },
+      { role: "bot", text: "reply khác" },
+    ]);
+    expect(rerenderMessages).toHaveBeenCalled();
+  });
 });

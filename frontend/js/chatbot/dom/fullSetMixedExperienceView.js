@@ -9,7 +9,7 @@ import {
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
-import { renderExperienceAiError } from "./experienceAiError.js";
+import { isUploadLimitError, renderExperienceAiError } from "./experienceAiError.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -230,6 +230,16 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       } catch (err) {
         loadingState.remove();
         if (root._genStamp !== _genStamp) return;
+        const rejected = isUploadLimitError(err)
+          ? await Promise.resolve(
+              deps?.onUploadRejected?.({
+                kind: "fullset",
+                experienceId: String(spec.__experienceId || ""),
+                error: err,
+              }),
+            )
+          : false;
+        if (rejected) return;
         renderExperienceAiError(root, err, "Không thể xử lý tệp. Vui lòng thử lại.");
         return;
       }

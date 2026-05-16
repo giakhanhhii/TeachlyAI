@@ -31,6 +31,7 @@ import { resumeDockSignature } from "../utils/serialization.js";
  *   mountThptqgFullTestExperience: (layerView: any, meta: Record<string, string>, hooks: any, opts: any) => Promise<void>,
  *   experienceHooks: any,
  *   pushBot: (text: string, opts?: any) => void,
+ *   removeMessagesByExperienceId?: (experienceId: string) => boolean,
  *   onExperienceStateChange?: () => void,
  * }} deps
  */
@@ -50,6 +51,7 @@ export function createExperienceController(deps) {
     mountThptqgFullTestExperience,
     experienceHooks,
     pushBot,
+    removeMessagesByExperienceId,
     onExperienceStateChange,
   } = deps;
 
@@ -329,6 +331,23 @@ export function createExperienceController(deps) {
     return resumeService.hasLastOpenedExperience();
   }
 
+  /**
+   * @param {string} experienceId
+   */
+  function discardExperience(experienceId) {
+    const target = typeof experienceId === "string" ? experienceId.trim() : "";
+    if (!target) return false;
+    const removedResume = resumeService.discardExperience(target);
+    const removedState = historyService.discardExperience(target);
+    const removedMessages =
+      typeof removeMessagesByExperienceId === "function" ? Boolean(removeMessagesByExperienceId(target)) : false;
+    if (removedResume || removedState || removedMessages) {
+      onExperienceStateChange?.();
+      return true;
+    }
+    return false;
+  }
+
   return {
     persistActiveExperience,
     openSingleExperience,
@@ -340,5 +359,6 @@ export function createExperienceController(deps) {
     pushResumeDockFromLastOpened,
     resetResumeState,
     hasLastOpenedExperience,
+    discardExperience,
   };
 }

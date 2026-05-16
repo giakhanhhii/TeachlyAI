@@ -34,6 +34,7 @@ import { mountThptqgFullTestExperience } from "./dom/thptqgFullTestExperienceVie
 import { createMessageView } from "./dom/messageView.js";
 import { createMessageController } from "./controllers/messageController.js";
 import { createExperienceController } from "./controllers/experienceController.js";
+import { isUploadLimitError, resolveExperienceAiErrorMessage } from "./dom/experienceAiError.js";
 import { createGuidedInteractionController } from "./controllers/guidedInteractionController.js";
 import { createChatSessionListRenderer } from "./controllers/chatSessionListController.js";
 import {
@@ -272,6 +273,14 @@ export function init() {
     hasPrevAutoExperience: () => _autoModeHistory.length > 0,
     onGoBackToPrevExperience: _goBackToPrevAutoModeExperience,
     onShareCurrentExperience: shareCurrentExperience,
+    onUploadRejected: ({ error, experienceId }) => {
+      if (!isUploadLimitError(error)) return false;
+      experienceController?.discardExperience(experienceId);
+      layerView.hide();
+      writeAppNavigationState("replace", HISTORY_CHAT_PHASE);
+      pushBot(resolveExperienceAiErrorMessage(error, "Không thể xử lý tệp. Vui lòng thử lại."));
+      return true;
+    },
   };
   experienceController = createExperienceController({
     getCurrentSession,
@@ -288,6 +297,7 @@ export function init() {
     mountThptqgFullTestExperience,
     experienceHooks,
     pushBot,
+    removeMessagesByExperienceId: (experienceId) => messageController.removeMessagesByExperienceId(experienceId),
     onExperienceStateChange: () => writeAppNavigationState("replace", HISTORY_EXPERIENCE_PHASE),
   });
 
@@ -323,9 +333,9 @@ export function init() {
     experienceController.pushResumeDockFromLastOpened();
   }
 
-  function pushUser(text) {
+  function pushUser(text, opts) {
     if (!messageController) return;
-    messageController.pushUser(text);
+    messageController.pushUser(text, opts);
   }
 
   function pushQuickResumeDock(kind, meta, experienceId) {

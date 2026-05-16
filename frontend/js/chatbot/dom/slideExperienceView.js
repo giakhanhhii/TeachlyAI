@@ -9,7 +9,7 @@ import {
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
-import { renderExperienceAiError } from "./experienceAiError.js";
+import { isUploadLimitError, renderExperienceAiError } from "./experienceAiError.js";
 import { IFRAME_LOAD_TIMEOUT_MS } from "../constants.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareSlideSessionData } from "../services/sessionContentPrep.js";
@@ -131,6 +131,16 @@ export async function mountSlideExperience(layerView, meta, deps, opts = {}) {
     } catch (err) {
       loadingState.remove();
       if (root._genStamp !== _genStamp) return;
+      const rejected = isUploadLimitError(err)
+        ? await Promise.resolve(
+            deps?.onUploadRejected?.({
+              kind: "slide",
+              experienceId: String(effectiveMeta?.__experienceId || ""),
+              error: err,
+            }),
+          )
+        : false;
+      if (rejected) return;
       renderExperienceAiError(root, err, "Không thể xử lý tệp. Vui lòng thử lại.");
       return;
     }

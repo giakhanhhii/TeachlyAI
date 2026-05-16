@@ -9,7 +9,7 @@ import {
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
-import { renderExperienceAiError } from "./experienceAiError.js";
+import { isUploadLimitError, renderExperienceAiError } from "./experienceAiError.js";
 import { prepareFlashSessionData, hasDirectFlashCardsFromMeta } from "../services/sessionContentPrep.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
@@ -152,6 +152,16 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       } catch (err) {
         loadingState.remove();
         if (experienceBody._genStamp !== _genStamp) return;
+        const rejected = isUploadLimitError(err)
+          ? await Promise.resolve(
+              deps?.onUploadRejected?.({
+                kind: "flash",
+                experienceId: String(meta?.__experienceId || ""),
+                error: err,
+              }),
+            )
+          : false;
+        if (rejected) return;
         renderExperienceAiError(experienceBody, err, "Không thể xử lý tệp. Vui lòng thử lại.");
         return;
       }
