@@ -7,14 +7,12 @@ import {
   addAiAutofillHistory,
   appendSelectOptions,
   appendSelectPlaceholder,
-  clamp,
   coerceAllowedCount,
   el,
   flowTextarea,
   coerceSelectThemeValue,
   removeSkipConfirm,
   showPartialFillConfirm,
-  toPositiveInt,
   wrapField,
 } from "./flowCardShared.js";
 import { mountFlowMobileSelect } from "./flowMobileSelect.js";

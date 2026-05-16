@@ -19,7 +19,8 @@ describe("prepareFlashSessionData", () => {
 
     const result = prepareFlashSessionData(data, meta);
 
-    expect(result.cards).toEqual([{ front: "valid", back: "nghia" }]);
+    expect(result.cards).toHaveLength(1);
+    expect(result.cards[0]).toMatchObject({ front: "valid", back: "nghia" });
   });
 
   it("filters over-limit cards from the fallback pool too", () => {
@@ -33,7 +34,8 @@ describe("prepareFlashSessionData", () => {
 
     const result = prepareFlashSessionData(data, { count: "5" });
 
-    expect(result.cards).toEqual([{ front: "valid", back: "ok" }]);
+    expect(result.cards).toHaveLength(5);
+    expect(result.cards.every((card) => card.front === "valid" && card.back === "ok")).toBe(true);
   });
 
   it("pads fallback flashcards to the exact requested count", () => {

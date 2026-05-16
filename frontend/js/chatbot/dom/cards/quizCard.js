@@ -12,7 +12,6 @@ import {
   normalizeFullsetLevelAutofill,
   removeSkipConfirm,
   showPartialFillConfirm,
-  toPositiveInt,
   appendSelectPlaceholder,
   wrapField,
 } from "./flowCardShared.js";
