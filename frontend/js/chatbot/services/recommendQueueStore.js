@@ -1,6 +1,7 @@
 import * as backgroundFetchStore from "./backgroundFetchStore.js";
 import * as autoModeStore from "./autoModeStore.js";
-import { fetchAiContent, fetchAiFullsetContent } from "./aiContentApi.js";
+import { fetchAiContent, fetchAiFullsetContent, withMockFallbackOnAiError } from "./aiContentApi.js";
+import { fetchMockResource } from "./mockContentApi.js";
 
 const MOCK_WARMUP = 7;
 const PREFETCH_AT = 5;
@@ -87,8 +88,18 @@ export function startPrefetch(expKind, counts) {
   const rec = recs[0];
   const topic = rec.topic;
   const promise = expKind === "fullset"
-    ? fetchAiFullsetContent(topic)
-    : fetchAiContent(expKind === "flash" ? "flashcard" : expKind, topic);
+    ? withMockFallbackOnAiError(fetchAiFullsetContent(topic), async () => {
+        const [slide, quiz, flashcard] = await Promise.all([
+          fetchMockResource("slide"),
+          fetchMockResource("quiz"),
+          fetchMockResource("flashcard"),
+        ]);
+        return { slide, quiz, flashcard };
+      })
+    : withMockFallbackOnAiError(
+        fetchAiContent(expKind === "flash" ? "flashcard" : expKind, topic),
+        () => fetchMockResource(expKind === "flash" ? "flashcard" : expKind),
+      );
   backgroundFetchStore.startFetch(PREFETCH_KEY, promise);
 }
 

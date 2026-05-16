@@ -1,8 +1,15 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiFullsetContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import {
+  isAiModeActive,
+  incrementPlayCount,
+  fetchAiFullsetContent,
+  fetchAiFileContent,
+  withMockFallbackOnAiError,
+} from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
+import { renderExperienceAiError } from "./experienceAiError.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { prepareQuizSessionData, prepareSlideSessionData, prepareFlashSessionData } from "../services/sessionContentPrep.js";
 import { resolveSlideShellFilename } from "../data/slideThemeShellMap.js";
@@ -217,10 +224,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       } catch (err) {
         loadingState.remove();
         if (root._genStamp !== _genStamp) return;
-        root.innerHTML = "";
-        const box = document.createElement("div"); box.className = "exp-upload-error";
-        box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
-        root.appendChild(box);
+        renderExperienceAiError(root, err, "Không thể xử lý tệp. Vui lòng thử lại.");
         return;
       }
       if (root._genStamp !== _genStamp) return;
@@ -228,10 +232,19 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       _devSrc = "ai";
     } else if (_devSrc === "ai") {
       const _bgKey = spec.__experienceId ? `gen_${spec.__experienceId}` : null;
-      if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiFullsetContent(_aiTopic, spec).catch(async () => {
-        const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
-        return { slide: s, quiz: q, flashcard: f };
-      }));
+      if (_bgKey && !getFetch(_bgKey)) {
+        startFetch(
+          _bgKey,
+          withMockFallbackOnAiError(fetchAiFullsetContent(_aiTopic, spec), async () => {
+            const [s, q, f] = await Promise.all([
+              fetchMockResource("slide"),
+              fetchMockResource("quiz"),
+              fetchMockResource("flashcard"),
+            ]);
+            return { slide: s, quiz: q, flashcard: f };
+          }),
+        );
+      }
       const _bgEntryFs = _bgKey ? getFetch(_bgKey) : null;
       const loadingState = _bgEntryFs?.status !== "done"
         ? createAiLoadingOverlay(root, {
@@ -242,15 +255,26 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
           })
         : null;
       let aiBundle;
-      if (_bgEntryFs?.status === "done") {
-        aiBundle = _bgEntryFs.raw;
-      } else if (_bgEntryFs) {
-        aiBundle = await _bgEntryFs.promise;
-      } else {
-        aiBundle = await fetchAiFullsetContent(_aiTopic, spec).catch(async () => {
-          const [s, q, f] = await Promise.all([fetchMockResource("slide"), fetchMockResource("quiz"), fetchMockResource("flashcard")]);
-          return { slide: s, quiz: q, flashcard: f };
-        });
+      try {
+        if (_bgEntryFs?.status === "done") {
+          aiBundle = _bgEntryFs.raw;
+        } else if (_bgEntryFs) {
+          aiBundle = await _bgEntryFs.promise;
+        } else {
+          aiBundle = await withMockFallbackOnAiError(fetchAiFullsetContent(_aiTopic, spec), async () => {
+            const [s, q, f] = await Promise.all([
+              fetchMockResource("slide"),
+              fetchMockResource("quiz"),
+              fetchMockResource("flashcard"),
+            ]);
+            return { slide: s, quiz: q, flashcard: f };
+          });
+        }
+      } catch (err) {
+        loadingState?.remove();
+        if (root._genStamp !== _genStamp) return;
+        renderExperienceAiError(root, err, "Không thể tạo full set lúc này. Vui lòng thử lại.");
+        return;
       }
       loadingState?.remove();
       if (root._genStamp !== _genStamp) return;

@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { fetchAiContent, fetchAiFullsetContent } from "../../frontend/js/chatbot/services/aiContentApi.js";
+import {
+  fetchAiContent,
+  fetchAiFullsetContent,
+  shouldFallbackToMockAiError,
+  withMockFallbackOnAiError,
+} from "../../frontend/js/chatbot/services/aiContentApi.js";
 
 describe("aiContentApi", () => {
   afterEach(() => {
@@ -63,5 +68,38 @@ describe("aiContentApi", () => {
         extra: "Focus on common exam traps",
       },
     });
+  });
+
+  it("surfaces moderation blocks as 403 errors without mock fallback", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: false,
+      status: 403,
+      json: async () => ({ detail: "Yêu cầu bị từ chối vì chứa nội dung bạo lực nguy hiểm." }),
+    }));
+
+    const err = await fetchAiContent("quiz", "how to kill people").catch((error) => error);
+
+    expect(err).toBeInstanceOf(Error);
+    expect(err.message).toContain("Yêu cầu bị từ chối");
+    expect(err.status).toBe(403);
+    expect(shouldFallbackToMockAiError(err)).toBe(false);
+    await expect(
+      withMockFallbackOnAiError(Promise.reject(err), async () => ({ questions: [{ id: "mock" }] })),
+    ).rejects.toBe(err);
+  });
+
+  it("still allows mock fallback for temporary AI failures", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: async () => ({ detail: "OpenAI rate limit. Vui lòng thử lại sau." }),
+    }));
+
+    const result = await withMockFallbackOnAiError(
+      fetchAiContent("slide", "Passive voice"),
+      async () => ({ slides: [{ id: "mock-slide" }] }),
+    );
+
+    expect(result).toEqual({ slides: [{ id: "mock-slide" }] });
   });
 });

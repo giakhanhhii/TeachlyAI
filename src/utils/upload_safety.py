@@ -352,6 +352,8 @@ def ensure_safe_upload_content(document_text: str, notes: str = "") -> None:
     normalized = _normalize_text(combined[:MAX_SCAN_CHARS])
     normalized_document = _normalize_text(safe_document[:MAX_SCAN_CHARS])
     normalized_notes = _normalize_text(safe_notes[:MAX_SCAN_CHARS])
+    if normalized == " ":
+        return
     doc_teaching_hits = _collect_matches(normalized_document, TEACHING_RELEVANT_TERMS, limit=8)
     note_teaching_hits = _collect_matches(normalized_notes, TEACHING_RELEVANT_TERMS, limit=4)
     dashboard_hits = _collect_matches(normalized_document, DASHBOARD_UI_TERMS, limit=8)
