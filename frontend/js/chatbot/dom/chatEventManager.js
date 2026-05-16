@@ -63,6 +63,8 @@ export function resolveChatDomElements() {
     return null;
   }
 
+  const addFileBtn = document.getElementById("addFileBtn");
+
   const optionalEls = {
     backToChatBtn,
     toggleSidebarBtn,
@@ -77,6 +79,7 @@ export function resolveChatDomElements() {
     recommendPanelToggle,
     clearUnpinnedChatsBtn,
     sidebarLogoutBtn,
+    addFileBtn,
   };
   const missingOptionalIds = Object.entries(optionalEls)
     .filter(([, el]) => !el)
@@ -110,6 +113,7 @@ export function resolveChatDomElements() {
     recommendPanelToggle,
     clearUnpinnedChatsBtn,
     sidebarLogoutBtn,
+    addFileBtn,
   };
 }
 
@@ -145,6 +149,7 @@ export function resolveChatDomElements() {
  *   onInitBaseRendered?: () => void,
  *   onInitCompleted?: () => void,
  *   onBeforeBack?: () => boolean,
+ *   onAddFile?: (btn: HTMLButtonElement) => void,
  * }} deps
  */
 export function setupChatEventManager(deps) {
@@ -179,6 +184,7 @@ export function setupChatEventManager(deps) {
     onInitBaseRendered,
     onInitCompleted,
     onBeforeBack,
+    onAddFile,
   } = deps;
 
   const sidebar = document.getElementById("sidebar");
@@ -253,6 +259,13 @@ export function setupChatEventManager(deps) {
   topHomeBtn?.addEventListener("click", () => {
     location.href = "main_hub.html";
   });
+
+  const addFileBtn = document.getElementById("addFileBtn");
+  if (addFileBtn instanceof HTMLButtonElement && onAddFile) {
+    addFileBtn.addEventListener("click", () => {
+      onAddFile(addFileBtn);
+    });
+  }
 
   window.addEventListener(
     "popstate",

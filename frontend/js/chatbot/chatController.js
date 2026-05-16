@@ -1408,6 +1408,11 @@ export async function init() {
     handleFlowEntry: (flowKind) =>
       handleFlowWithAutoMode(flowKind, () => flowService.handleFlowEntry(flowKind)),
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
+    onAddFile: (btn) => {
+      const g = guided;
+      if (!g || g.step !== "await_source") return;
+      guidedController.onFlowAction(`${g.kind}_pdf`, btn);
+    },
     onBeforeBack: () => {
       if (!autoModeStore.isEnabled() || !_currentAutoExpKind) return false;
       const capturedKind = _currentAutoExpKind;
