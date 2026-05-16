@@ -120,14 +120,14 @@ Rules:
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription wrapped in slashes, for example /əˈproʊtʃ/
-  - "back": short English meaning or definition (max 12 words) — MUST be in English
-  - "hint": short English example sentence (max 10 words) — MUST be in English
+  - "back": Vietnamese meaning/translation of the front word (max 8 words) — MUST be in Vietnamese (tiếng Việt)
+  - "hint": short English example sentence showing the word in context (max 10 words) — MUST be in English
 - NEVER omit "phonetic". Every single card must include it.
-- LANGUAGE RULE (HARD): front, back, hint, and title MUST all be English. No Vietnamese is allowed anywhere.
+- LANGUAGE RULE (HARD): front, phonetic, hint, and title MUST be in English. "back" MUST be in Vietnamese — never use English for the back field.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<English meaning>","hint":"<English example>"},...]}"""
+{"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<nghĩa tiếng Việt>","hint":"<English example>"},...]}"""
 
 _FLASH_PHONETIC_SYSTEM = """You convert English flashcard terms into IPA for Vietnamese learners.
 
@@ -285,7 +285,7 @@ def _clone_flash_item(card: dict[str, Any], index: int, topic: str) -> dict[str,
         "id": f"ai_c{index + 1}",
         "front": str(card.get("front") or f"{topic.split()[0]} term").strip(),
         "phonetic": str(card.get("phonetic") or "").strip(),
-        "back": str(card.get("back") or "Useful English meaning").strip(),
+        "back": str(card.get("back") or "Nghĩa tiếng Việt").strip(),
         "hint": str(card.get("hint") or f"Example: {topic.split()[0]} matters daily.").strip(),
     }
     return cloned
@@ -614,7 +614,7 @@ def _ensure_ai_flash_count(items: list[Any], count: int, topic: str) -> list[dic
         cleaned = [{
             "front": f"{topic_token} term",
             "phonetic": "",
-            "back": "Useful English meaning",
+            "back": "Nghĩa tiếng Việt",
             "hint": f"Example: {topic_token.title()} appears in class.",
         }]
     out: list[dict[str, Any]] = []
@@ -951,15 +951,15 @@ Rules:
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
   - "phonetic": IPA transcription wrapped in slashes, for example /əˈproʊtʃ/
-  - "back": short English meaning or definition (max 10 words) — MUST be in English
+  - "back": Vietnamese meaning/translation of the front word (max 8 words) — MUST be in Vietnamese (tiếng Việt)
   - "hint": short English example sentence or collocate (max 10 words) — MUST be in English
 - NEVER omit "phonetic". Every single card must include it.
-- LANGUAGE RULE (HARD): front, back, hint, and title MUST all be English. No Vietnamese is allowed anywhere.
+- LANGUAGE RULE (HARD): front, phonetic, hint, and title MUST be in English. "back" MUST be in Vietnamese — never use English for the back field.
 - Prioritise topic-specific vocabulary that reflects the subject matter of the document
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
-{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<English meaning>","hint":"<English example>"},...]}"""
+{"title":"<topic-based set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<nghĩa tiếng Việt>","hint":"<English example>"},...]}"""
 
 _DOC_CHAR_LIMIT = 12_000  # chars of document sent to model (well within gpt-4o-mini context)
 
