@@ -48,12 +48,31 @@ template/
 # Large local PDF sources & outputs (do not commit)
 data_input/
 data_output/
-fix_plan.md
-plan
 output/
+tmp/
+tmp_*
+
+# Scratch plans / notes at repo root (keep durable docs like README, AGENTS, RTK, JOURNAL)
+/*.plan.md
+/*_plan.md
+/plan
+/docker_plan.md
+/WORKLOG.md
+/data_fix.md
+/example5.md
+/fix_fullthptqg.md
+/fix_ui.md
+/godcomponent.md
+/mockdata_40.md
+/new_feature.md
+/refactor_code.md
+/thptqgeng.md
+
+# Keep AI logs tracked
+!.ai-log/
+!.ai-log/**
 
 AI-Log-Hook/
-docker_plan.md
 repeat_git_task.ps1
 # Added by code-review-graph
 .code-review-graph/
