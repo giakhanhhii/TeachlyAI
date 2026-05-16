@@ -14,13 +14,17 @@ import json
 import logging
 import os
 import re
+import base64
+import hashlib
+import hmac
+import secrets
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
 from anthropic import Anthropic
 from openai import OpenAI
-from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -169,6 +173,104 @@ class AiGenerateIn(BaseModel):
 class AiAutofillIn(BaseModel):
     type: str = Field(..., pattern=r"^(slide|quiz|flash|fullset)$")
     recent: list[str] = Field(default_factory=list)
+
+
+class AuthRegisterIn(BaseModel):
+    username: str = Field(..., min_length=1, max_length=120)
+    password: str = Field(..., min_length=1, max_length=240)
+
+
+class AuthLoginIn(BaseModel):
+    username: str = Field(..., min_length=1, max_length=120)
+    password: str = Field(..., min_length=1, max_length=240)
+
+
+class AuthUserOut(BaseModel):
+    username: str
+    displayName: str
+    profileLabel: str
+    avatarText: str
+
+
+class AuthLoginOut(BaseModel):
+    token: str
+    user: AuthUserOut
+
+
+class AuthMeOut(BaseModel):
+    user: AuthUserOut
+
+
+class UserStateIn(BaseModel):
+    sessions: list[dict] = Field(default_factory=list)
+    activeSessionIndex: int = Field(default=0, ge=0)
+
+
+class UserStateOut(BaseModel):
+    sessions: list[dict]
+    activeSessionIndex: int
+    updated_at: str | None = None
+
+
+def _normalize_username(value: str) -> str:
+    return str(value or "").strip()
+
+
+def _hash_password(password: str, salt: bytes | None = None) -> str:
+    safe_password = str(password or "")
+    salt_bytes = salt or secrets.token_bytes(16)
+    derived = hashlib.pbkdf2_hmac("sha256", safe_password.encode("utf-8"), salt_bytes, 120_000)
+    return "pbkdf2_sha256$120000$%s$%s" % (
+        base64.b64encode(salt_bytes).decode("ascii"),
+        base64.b64encode(derived).decode("ascii"),
+    )
+
+
+def _verify_password(password: str, encoded: str) -> bool:
+    try:
+        algorithm, iterations_raw, salt_b64, digest_b64 = str(encoded or "").split("$", 3)
+        if algorithm != "pbkdf2_sha256":
+            return False
+        iterations = int(iterations_raw)
+        salt = base64.b64decode(salt_b64.encode("ascii"))
+        expected = base64.b64decode(digest_b64.encode("ascii"))
+    except Exception:
+        return False
+    derived = hashlib.pbkdf2_hmac("sha256", str(password or "").encode("utf-8"), salt, iterations)
+    return hmac.compare_digest(derived, expected)
+
+
+def _hash_token(token: str) -> str:
+    return hashlib.sha256(str(token or "").encode("utf-8")).hexdigest()
+
+
+def _build_auth_user_payload(user: dict) -> dict[str, str]:
+    username = _normalize_username(user.get("username") if isinstance(user, dict) else "")
+    display_name = username or "Người dùng"
+    return {
+        "username": username,
+        "displayName": display_name,
+        "profileLabel": "Hồ sơ Teachly",
+        "avatarText": display_name[:1].upper() or "U",
+    }
+
+
+def _parse_bearer_token(authorization: str | None) -> str:
+    raw = str(authorization or "").strip()
+    if not raw:
+        return ""
+    match = re.match(r"^Bearer\s+(.+)$", raw, flags=re.IGNORECASE)
+    return match.group(1).strip() if match else ""
+
+
+def _require_current_user(authorization: str | None = Header(default=None)) -> dict:
+    token = _parse_bearer_token(authorization)
+    if not token:
+        raise HTTPException(status_code=401, detail="Bạn cần đăng nhập để tiếp tục.")
+    user = db.get_user_by_token_hash(_hash_token(token))
+    if not user:
+        raise HTTPException(status_code=401, detail="Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.")
+    return user
 
 
 def _flash_translate_config_ok() -> bool:
@@ -325,6 +427,77 @@ def health():
         "flash_httpx_trust_env": flash_info.get("flash_httpx_trust_env"),
         "frontend_dir_exists": FRONTEND_DIR.is_dir(),
     }
+
+
+@app.post("/api/auth/register")
+def auth_register(body: AuthRegisterIn):
+    username = _normalize_username(body.username)
+    password = str(body.password or "")
+    if not username:
+        raise HTTPException(status_code=400, detail="Vui lòng nhập tên đăng nhập.")
+    if not password:
+        raise HTTPException(status_code=400, detail="Vui lòng nhập mật khẩu.")
+    existing = db.get_user_by_username(username)
+    if existing:
+        raise HTTPException(status_code=409, detail="Tên đăng nhập đã tồn tại.")
+    try:
+        user = db.create_user(username=username, password_hash=_hash_password(password))
+    except Exception as exc:
+        logger.exception("Auth register failed for username=%s", username)
+        raise HTTPException(status_code=500, detail="Không thể tạo tài khoản lúc này.") from exc
+    return {"ok": True, "user": _build_auth_user_payload(user)}
+
+
+@app.post("/api/auth/login", response_model=AuthLoginOut)
+def auth_login(body: AuthLoginIn):
+    username = _normalize_username(body.username)
+    password = str(body.password or "")
+    user = db.get_user_by_username(username)
+    if not user or not _verify_password(password, str(user.get("password_hash") or "")):
+        raise HTTPException(status_code=401, detail="Tên đăng nhập hoặc mật khẩu chưa đúng.")
+    token = secrets.token_urlsafe(32)
+    try:
+        db.create_auth_token(user_id=str(user["id"]), token_hash=_hash_token(token))
+    except Exception as exc:
+        logger.exception("Auth login token creation failed for username=%s", username)
+        raise HTTPException(status_code=500, detail="Không thể tạo phiên đăng nhập.") from exc
+    return AuthLoginOut(token=token, user=AuthUserOut(**_build_auth_user_payload(user)))
+
+
+@app.post("/api/auth/logout")
+def auth_logout(
+    current_user: dict = Depends(_require_current_user),
+    authorization: str | None = Header(default=None),
+):
+    del current_user
+    token = _parse_bearer_token(authorization)
+    if token:
+        db.delete_auth_token(_hash_token(token))
+    return {"ok": True}
+
+
+@app.get("/api/auth/me", response_model=AuthMeOut)
+def auth_me(current_user: dict = Depends(_require_current_user)):
+    return AuthMeOut(user=AuthUserOut(**_build_auth_user_payload(current_user)))
+
+
+@app.get("/api/auth/state", response_model=UserStateOut)
+def auth_get_state(current_user: dict = Depends(_require_current_user)):
+    payload = db.get_user_client_state(str(current_user["id"])) or {}
+    sessions = payload.get("sessions") if isinstance(payload.get("sessions"), list) else []
+    active_index = int(payload.get("activeSessionIndex") or 0)
+    updated_at = str(payload.get("updated_at")) if payload.get("updated_at") else None
+    return UserStateOut(sessions=sessions, activeSessionIndex=max(0, active_index), updated_at=updated_at)
+
+
+@app.put("/api/auth/state")
+def auth_put_state(body: UserStateIn, current_user: dict = Depends(_require_current_user)):
+    payload = {
+        "sessions": body.sessions if isinstance(body.sessions, list) else [],
+        "activeSessionIndex": max(0, int(body.activeSessionIndex or 0)),
+    }
+    db.save_user_client_state(str(current_user["id"]), payload)
+    return {"ok": True}
 
 
 @app.post("/api/flash/translate-term", response_model=FlashTranslateOut)
@@ -704,21 +877,25 @@ def get_shared_experience(share_id: str):
 
 
 @app.post("/api/chat", response_model=ChatOut)
-def chat(body: ChatIn):
+def chat(body: ChatIn, current_user: dict = Depends(_require_current_user)):
     text = body.message.strip()
     if not text:
         raise HTTPException(status_code=400, detail="Tin nhắn trống.")
 
-    tid, user_message_id = db.append_message(body.thread_id, "user", text)
+    user_id = str(current_user["id"])
+    try:
+        tid, user_message_id = db.append_message(body.thread_id, user_id, "user", text)
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail="Không thể dùng đoạn chat của tài khoản khác.") from exc
     decision = evaluate_chat_scope(text)
     if not decision.allowed:
         reply = decision.reply or "Mình chưa thể trả lời nội dung này."
-        db.append_message(tid, "assistant", reply)
+        db.append_message(tid, user_id, "assistant", reply)
         return ChatOut(thread_id=tid, reply=reply)
 
     try:
         client = _get_client()
-        history = db.get_recent_history(tid, limit=20, through_message_id=user_message_id)
+        history = db.get_recent_history(user_id, tid, limit=20, through_message_id=user_message_id)
         reply = _run_reply(client, history)
     except HTTPException:
         db.delete_message_by_id(user_message_id)
@@ -728,7 +905,7 @@ def chat(body: ChatIn):
         db.delete_message_by_id(user_message_id)
         raise HTTPException(status_code=502, detail=str(e) or "Lỗi gọi mô hình.") from e
 
-    db.append_message(tid, "assistant", reply)
+    db.append_message(tid, user_id, "assistant", reply)
 
     return ChatOut(thread_id=tid, reply=reply)
 
@@ -737,8 +914,12 @@ def chat(body: ChatIn):
 def list_sessions(
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
+    current_user: dict = Depends(_require_current_user),
 ):
-    sessions = [SessionSummary(**s) for s in db.list_sessions(limit=limit, offset=offset)]
+    sessions = [
+        SessionSummary(**s)
+        for s in db.list_sessions(user_id=str(current_user["id"]), limit=limit, offset=offset)
+    ]
     return SessionListOut(sessions=sessions)
 
 
@@ -747,8 +928,9 @@ def get_session_messages(
     thread_id: str,
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
+    current_user: dict = Depends(_require_current_user),
 ):
-    rows, total = db.get_messages_page(thread_id, limit=limit, offset=offset)
+    rows, total = db.get_messages_page(str(current_user["id"]), thread_id, limit=limit, offset=offset)
     messages = [
         SessionMessage(
             id=item["id"],

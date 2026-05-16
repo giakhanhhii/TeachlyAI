@@ -34,6 +34,7 @@ function safeReadSessions() {
 let sessions = safeReadSessions();
 let activeSession = Number(localStorage.getItem(LS_ACTIVE_SESSION) || "0");
 let saveQueued = false;
+const sessionStateListeners = new Set();
 
 function makeSessionId() {
   const fallback = `session_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
@@ -51,6 +52,17 @@ function deepCopy(value) {
   } catch {
     return JSON.parse(JSON.stringify(value));
   }
+}
+
+function emitSessionStateChange() {
+  const snapshot = exportSessionsState();
+  sessionStateListeners.forEach((listener) => {
+    try {
+      listener(snapshot);
+    } catch {
+      // Ignore listener failures to keep the store responsive.
+    }
+  });
 }
 
 function makeDefaultSession(index) {
@@ -136,6 +148,7 @@ export function saveSessions() {
         // Ignore storage write failures and keep in-memory state intact.
       }
     }
+    emitSessionStateChange();
   });
 }
 
@@ -203,6 +216,7 @@ export function restoreSessionsState(nextSessions, nextActiveSession) {
   sessions = safeSessions.length ? safeSessions : [makeDefaultSession(0)];
   activeSession = Number.isFinite(Number(nextActiveSession)) ? Math.floor(Number(nextActiveSession)) : 0;
   if (activeSession < 0 || activeSession >= sessions.length) activeSession = 0;
+  emitSessionStateChange();
 }
 
 /**
@@ -223,6 +237,7 @@ export function restoreSessionStateById(sessionId, nextSession, opts = {}) {
     sessions[index] = normalized;
   }
   if (opts.activate !== false) activeSession = index;
+  emitSessionStateChange();
   return index;
 }
 
@@ -258,6 +273,7 @@ export function setSessionMessages(idx, messages, opts = {}) {
     ? Number(opts.remoteOffset)
     : sessions[n].messages.length;
   sessions[n].remoteOffset = Math.max(0, Math.floor(nextOffset));
+  emitSessionStateChange();
   return true;
 }
 
@@ -277,6 +293,7 @@ export function prependSessionMessages(idx, messages, opts = {}) {
     ? Number(opts.remoteOffset)
     : sessions[n].remoteOffset + incoming.length;
   sessions[n].remoteOffset = Math.max(0, Math.floor(nextOffset));
+  emitSessionStateChange();
   return true;
 }
 
@@ -289,6 +306,7 @@ export function resetSessionRemoteState(idx) {
   sessions[n].messagesLoaded = !sessions[n].thread_id;
   sessions[n].hasMoreRemote = false;
   sessions[n].remoteOffset = sessions[n].messagesLoaded ? sessions[n].messages.length : 0;
+  emitSessionStateChange();
   return true;
 }
 
@@ -302,6 +320,7 @@ export function appendMessageToCurrentSession(message) {
   current.messages.push(message);
   current.messagesLoaded = true;
   current.remoteOffset = Math.max(0, Math.floor(Number(current.remoteOffset || 0))) + 1;
+  emitSessionStateChange();
 }
 
 export function renameSession(idx, nextTitle) {
@@ -371,9 +390,11 @@ export function setCurrentExperienceState(next) {
   if (!s || typeof s !== "object") return;
   if (!next || typeof next !== "object") {
     s.experienceState = null;
+    emitSessionStateChange();
     return;
   }
   s.experienceState = next;
+  emitSessionStateChange();
 }
 
 /**
@@ -416,4 +437,25 @@ export function findLatestSessionIndexByExperienceKind(kind) {
     if (stKind === target) return i;
   }
   return -1;
+}
+
+export function clearAllSessions() {
+  sessions = [makeDefaultSession(0)];
+  activeSession = 0;
+  try {
+    localStorage.removeItem(LS_SESSIONS);
+    localStorage.removeItem(LS_ACTIVE_SESSION);
+  } catch {
+    // Ignore storage cleanup failures.
+  }
+  emitSessionStateChange();
+}
+
+export function subscribeSessionStore(listener) {
+  if (typeof listener !== "function") return () => {};
+  sessionStateListeners.add(listener);
+  listener(exportSessionsState());
+  return () => {
+    sessionStateListeners.delete(listener);
+  };
 }

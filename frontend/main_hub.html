@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teachly</title>
+  <link rel="stylesheet" href="css/auth-ui.css" />
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
@@ -56,6 +57,21 @@
     margin-top: 60px;
     position: relative;
     z-index: 2;
+  }
+
+  .main-hub-topbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 28px 0;
+  }
+
+  .main-hub-auth-anchor {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 44px;
   }
 
   .headline-area {
@@ -211,6 +227,10 @@
       padding: 28px 16px 40px;
     }
 
+    .main-hub-topbar {
+      padding: 16px 16px 0;
+    }
+
     .card {
       width: min(100%, 440px);
       flex: 0 1 100%;
@@ -363,6 +383,9 @@
 
 <div class="forest-page">
   <img class="trees-bg" src="svg/trees-bg.svg" alt="" />
+  <div class="main-hub-topbar">
+    <div class="main-hub-auth-anchor" id="mainHubAuthControls" hidden></div>
+  </div>
 
   <div class="hero-area">
     <!-- Headline -->
@@ -469,6 +492,10 @@
       });
     }
   })();
+</script>
+<script type="module">
+  import { initMainHubPage } from "./js/chatbot/mainHub.js";
+  initMainHubPage();
 </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 import { getApiOrigin } from "./config.js";
+import { getAuthHeaders, handleUnauthorizedResponse } from "./services/authStore.js";
 
 /**
  * @param {string} apiUrl
@@ -8,10 +9,11 @@ import { getApiOrigin } from "./config.js";
 export async function postChat(apiUrl, message, threadId) {
   const res = await fetch(apiUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({ message, thread_id: threadId || null }),
   });
   const data = await res.json();
+  if (res.status === 401) handleUnauthorizedResponse();
   if (!res.ok) throw new Error(data.detail || "Lỗi API");
   return data;
 }
@@ -36,8 +38,11 @@ export async function getSessionMessages(threadId, opts = {}) {
     limit: String(opts.limit ?? 20),
     offset: String(opts.offset ?? 0),
   });
-  const res = await fetch(`${getApiOrigin()}/api/sessions/${encodeURIComponent(safeThreadId)}/messages?${params}`);
+  const res = await fetch(`${getApiOrigin()}/api/sessions/${encodeURIComponent(safeThreadId)}/messages?${params}`, {
+    headers: getAuthHeaders(),
+  });
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401) handleUnauthorizedResponse();
   if (res.status === 404) {
     // Backward-compatible fallback when backend hasn't reloaded new routes yet.
     return {

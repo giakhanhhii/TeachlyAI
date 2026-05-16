@@ -22,6 +22,9 @@ import {
   prependSessionMessages,
   restoreSessionStateById,
   restoreSessionsState,
+  exportSessionsState,
+  clearAllSessions,
+  subscribeSessionStore,
 } from "./sessionStore.js";
 import { computeStartFlow } from "./guidedFlow.js";
 import { createExperienceLayerView } from "./dom/experienceLayerView.js";
@@ -58,6 +61,10 @@ import { buildExperienceTitle } from "./services/contentTitles.js";
 import { createSharedExperienceLink, fetchSharedExperience } from "./services/sharedExperienceApi.js";
 import { bindSidebarSettingsMenu } from "./controllers/sidebarSettingsController.js";
 import { isRecommendPanelVisible, setRecommendPanelVisible } from "./services/recommendPanelPrefs.js";
+import { ensureAuthenticated } from "./dom/authDialog.js";
+import { bindChatAuthChrome } from "./dom/authChrome.js";
+import { getCurrentAuthUser, hydrateAuthState, setBeforeLogoutHandler, subscribeAuth } from "./services/authStore.js";
+import { loadAccountState, saveAccountState } from "./services/accountStateApi.js";
 
 /** @type {any} */
 let guided = null;
@@ -98,8 +105,9 @@ function initializeBrowserBackBridge() {
   // Disabled: this bridge rewrote browser history and could trap Back/Forward.
 }
 
-export function init() {
+export async function init() {
   console.log("[chatController] init started");
+  await hydrateAuthState();
   const domEls = resolveChatDomElements();
   if (!domEls) return;
   const {
@@ -117,11 +125,16 @@ export function init() {
     backToChatBtn,
     toggleSidebarBtn,
     topHomeBtn,
+    topAuthControls,
     sidebarUserShell,
+    sidebarUserAvatar,
+    sidebarUserName,
+    sidebarUserSubtitle,
     sidebarSettingsBtn,
     sidebarSettingsMenu,
     recommendPanelToggle,
     clearUnpinnedChatsBtn,
+    sidebarLogoutBtn,
   } = domEls;
   const topBar = /** @type {HTMLElement | null} */ (document.querySelector(".top"));
   const topTitleEl = /** @type {HTMLElement | null} */ (document.querySelector(".top-title"));
@@ -131,6 +144,72 @@ export function init() {
   console.log("[chatController] DOM references resolved");
   mountAiStatusPanel();
   mountRecommendPanel();
+  bindChatAuthChrome({
+    topAuthContainer: topAuthControls instanceof HTMLElement ? topAuthControls : null,
+    sidebarAvatarEl: sidebarUserAvatar instanceof HTMLElement ? sidebarUserAvatar : null,
+    sidebarNameEl: sidebarUserName instanceof HTMLElement ? sidebarUserName : null,
+    sidebarSubtitleEl: sidebarUserSubtitle instanceof HTMLElement ? sidebarUserSubtitle : null,
+    sidebarLogoutBtn: sidebarLogoutBtn instanceof HTMLButtonElement ? sidebarLogoutBtn : null,
+  });
+  let suspendRemoteStateSync = false;
+  let syncTimer = 0;
+  let syncInFlight = false;
+  let syncQueued = false;
+
+  async function pushRemoteAccountState(snapshot = exportSessionsState()) {
+    const user = getCurrentAuthUser();
+    if (!user || suspendRemoteStateSync) return;
+    if (syncInFlight) {
+      syncQueued = true;
+      return;
+    }
+    syncInFlight = true;
+    try {
+      await saveAccountState(snapshot);
+    } catch (err) {
+      console.warn("[chatController] failed to sync account state:", err);
+    } finally {
+      syncInFlight = false;
+      if (syncQueued) {
+        syncQueued = false;
+        void pushRemoteAccountState(exportSessionsState());
+      }
+    }
+  }
+
+  setBeforeLogoutHandler(() => pushRemoteAccountState(exportSessionsState()));
+
+  function scheduleRemoteAccountStateSync(snapshot = exportSessionsState()) {
+    if (suspendRemoteStateSync || !getCurrentAuthUser()) return;
+    if (syncTimer) {
+      window.clearTimeout(syncTimer);
+    }
+    syncTimer = window.setTimeout(() => {
+      syncTimer = 0;
+      void pushRemoteAccountState(snapshot);
+    }, 350);
+  }
+
+  async function applyAccountStateFromServer() {
+    const user = getCurrentAuthUser();
+    suspendRemoteStateSync = true;
+    try {
+      if (!user) {
+        clearAllSessions();
+        saveSessions();
+        return;
+      }
+      const state = await loadAccountState();
+      restoreSessionsState(state.sessions, state.activeSessionIndex);
+      saveSessions();
+    } catch (err) {
+      console.warn("[chatController] failed to load account state:", err);
+      clearAllSessions();
+      saveSessions();
+    } finally {
+      suspendRemoteStateSync = false;
+    }
+  }
 
   function _buildTopRecs(kind) {
     return getTopTopics(2, kind).map((t, i) => ({
@@ -864,7 +943,13 @@ export function init() {
     if (lbl) lbl.textContent = enabled ? "Tạo Auto" : "Tạo Custom";
   }
 
-  function handleFlowWithAutoMode(flowKind, onCustom) {
+  async function handleFlowWithAutoMode(flowKind, onCustom) {
+    const user = await ensureAuthenticated({
+      initialMode: "login",
+      title: "Đăng nhập hoặc đăng ký để mở bài giảng",
+      subtitle: "Sau khi đăng nhập, hồ sơ và tên người dùng sẽ hiển thị ở thanh bên trái.",
+    });
+    if (!user) return;
     const expKind = toExpKind(flowKind);
 
     function openCountSelector() {
@@ -895,7 +980,7 @@ export function init() {
       return;
     }
     if (savedChoice === "custom") {
-      void onCustom();
+      await Promise.resolve(onCustom());
       return;
     }
     showAutoModeChoicePopup(expKind, {
@@ -903,7 +988,7 @@ export function init() {
         autoModeStore.disable();
         autoModeStore.setNeverAskChoice("custom");
         syncToggleUI(false);
-        void onCustom();
+        void Promise.resolve(onCustom());
       },
       onAuto: () => {
         autoModeStore.enable();
@@ -1230,6 +1315,40 @@ export function init() {
   messageHistoryService.setStartupFlowHandler((flowKind) =>
     handleFlowWithAutoMode(flowKind, () => flowService.startFlowInCurrentSession(flowKind)),
   );
+
+  subscribeSessionStore((snapshot) => {
+    scheduleRemoteAccountStateSync(snapshot);
+  });
+
+  async function handleAuthStateChanged() {
+    setGuidedState(null);
+    experienceController.resetResumeState();
+    _autoModeHistory = [];
+    layerView.hide();
+    await applyAccountStateFromServer();
+    setSession(getCurrentSessionId());
+    recommendQueueStore.setSession(getCurrentSessionId());
+    restoreRecommendPanelForSession();
+    try {
+      await ensureSessionMessagesLoaded();
+    } catch {
+      // Keep local cache if remote loading fails.
+    }
+    renderChatListUI();
+    renderMessages();
+    updateThreadLabel();
+    await restoreCurrentSessionExperience();
+    writeAppNavigationState("replace", resolveCurrentPhase());
+  }
+
+  await applyAccountStateFromServer();
+  let lastAuthUserKey = getCurrentAuthUser()?.username || "";
+  subscribeAuth((user) => {
+    const nextKey = user?.username || "";
+    if (nextKey === lastAuthUserKey) return;
+    lastAuthUserKey = nextKey;
+    void handleAuthStateChanged();
+  });
 
   async function sendPrompt(prompt) {
     await messageController.sendPrompt(prompt, {

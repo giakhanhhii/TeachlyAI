@@ -1,3 +1,5 @@
 import { init } from "./chatController.js";
 
-init();
+void init().catch((err) => {
+  console.error("[chatController] init failed", err);
+});

@@ -163,17 +163,18 @@
 
 ---
 
-### Tuần 6 — Sau 5/05/2026
+### Tuần 6 — 05/05/2026
 
 **Thành viên:** Nguyễn Triệu Gia Khánh - 2A202600225, Nguyễn Xuân Hải - 2A202600245
 
 #### Đã làm
 - Hoàn thiện tiếp phần slide experience: chế độ trình chiếu, xem lướt, chỉnh sửa trong web, tải xuống PDF, và xử lý nhiều lỗi layout / export để kết quả gần với phần trình chiếu nhất có thể.
 - Rà soát lại toàn bộ hành trình người dùng trên web, từ trang chủ, tạo chat mới, chọn card, điền form, xem kết quả cho tới các trải nghiệm riêng của quiz / flashcard / slide / full set.
-- Đánh giá thử hướng RAG/OCR cho bài toán tài liệu. Trong giai đoạn này, bạn Hải đã dành công sức tìm và triển khai thử một số hướng xử lý RAG/OCR để mở rộng khả năng làm việc với tài liệu PDF và markdown.
-- Sau khi so sánh với mục tiêu sản phẩm hiện tại, mình nhận thấy hướng đó phù hợp hơn cho nghiên cứu / grounding theo tài liệu, nhưng chưa tối ưu cho trải nghiệm “ra kết quả nhanh, ít chờ” mà web đang ưu tiên. Vì vậy mình chủ động tổ chức và làm lại phần lõi theo hướng gọn hơn, bám sát nhu cầu người dùng cuối và giữ ổn định các chức năng đang có.
+- Trong giai đoạn mentor duty, bạn Hải phụ trách tester: test lại các flow chính của web, ghi lại các tính năng đã có / đang lỗi / cần chỉnh, và làm thư ký tổng hợp các ý anh mentor góp ý để nhóm bám vào khi sửa.
+- Đánh giá thử hướng RAG/OCR cho bài toán tài liệu. Trong giai đoạn này, nhóm cũng dành thời gian tìm và triển khai thử một số hướng xử lý RAG/OCR để mở rộng khả năng làm việc với tài liệu PDF và markdown.
 
 #### Khó nhất tuần này
+- Khối lượng việc dồn vào cả làm tính năng, test thủ công, ghi nhận feedback mentor và sửa nhanh theo góp ý nên cần giữ nhịp phối hợp rất chặt.
 - Cân bằng giữa hai mục tiêu: một bên là muốn hệ thống thông minh hơn nhờ RAG/OCR, một bên là tốc độ phản hồi và sự mượt mà của trải nghiệm web.
 - Khi hệ thống đã có nhiều tính năng chạy được, mọi thay đổi ở tầng lõi đều phải rất cẩn thận để không ảnh hưởng các chức năng hiện có.
 
@@ -181,18 +182,54 @@
 | Tool | Dùng để làm gì | Kết quả |
 |---|---|---|
 | Cursor | Soát lại logic export slide, state trải nghiệm và các lỗi layout phức tạp | Giúp hoàn thiện vòng cuối của tính năng slide |
-| Claude Code | Hỗ trợ phân tích trade-off giữa hướng RAG/OCR và hướng tối ưu cho UX hiện tại | Có cơ sở rõ hơn để quyết định giữ / bỏ từng phần |
+| Claude Code | Hỗ trợ phân tích trade-off giữa hướng RAG/OCR và hướng tối ưu cho UX hiện tại, đồng thời hỗ trợ rà soát các flow cần test | Có cơ sở rõ hơn để quyết định giữ / bỏ từng phần và ưu tiên sửa lỗi |
 
 #### Học được
+- Việc có người đóng vai tester và ghi biên bản mentor duty giúp nhóm không bỏ sót lỗi nhỏ và không quên các góp ý quan trọng sau mỗi buổi trao đổi.
 - Không phải hướng kỹ thuật nào “mạnh” hơn cũng phù hợp hơn với sản phẩm ở thời điểm hiện tại; nếu mục tiêu là tốc độ và tính ổn định thì đôi khi giải pháp gọn, trực tiếp lại hiệu quả hơn.
 - Với sản phẩm giáo dục theo flow tạo nội dung, trải nghiệm người dùng mượt và dễ hiểu là giá trị nhìn thấy ngay, còn các lớp intelligence nâng cao nên đưa vào từng bước khi thật sự khớp nhu cầu.
 
 #### Nếu làm lại, sẽ làm khác
+- Chuẩn hóa sớm hơn checklist test thủ công và form ghi chú mentor duty để việc tổng hợp ý kiến, phân công sửa và kiểm tra lại được nhanh hơn.
 - Chốt tiêu chí đánh giá sớm hơn cho các hướng như RAG/OCR: mục tiêu là research, độ bám tài liệu hay tốc độ phản hồi cho người dùng cuối.
 - Tách sớm hơn phần thử nghiệm nghiên cứu với phần lõi chạy production để việc đánh giá và thay đổi sau này nhẹ nhàng hơn.
 
-#### Kế hoạch tiếp theo
-- Tiếp tục tinh gọn pipeline tạo nội dung theo hướng nhanh, ổn định và dễ mở rộng cho cả 4 card.
-- Chỉ giữ hoặc tích hợp lại các phần liên quan đến RAG/OCR khi chúng chứng minh được hiệu quả thực tế với trải nghiệm người dùng của Teachly.
+#### Kế hoạch tuần tới
+- Tiếp tục sửa theo danh sách lỗi và góp ý đã ghi trong mentor duty.
+- Tinh gọn phần lõi theo hướng nhanh, ổn định và dễ mở rộng hơn cho cả 4 card.
+
+---
+
+### Tuần 7 — 12/05/2026
+
+**Thành viên:** Nguyễn Triệu Gia Khánh - 2A202600225, Nguyễn Xuân Hải - 2A202600245
+
+#### Đã làm
+- Tiếp tục hoàn thiện sản phẩm theo các góp ý đã tổng hợp: ưu tiên độ mượt của flow người dùng, sự ổn định của các card chính và cảm giác sẵn sàng để demo.
+- Tổ chức và làm lại gọn hơn một số phần lõi để bám sát nhu cầu người dùng cuối, giảm độ nặng của các hướng chưa thật sự phù hợp với mục tiêu “ra kết quả nhanh, ít chờ”.
+- Bạn Hải tiếp tục phụ trách tester: test lại các tính năng sau mỗi vòng sửa, rà lại những flow quan trọng trước khi demo, và cập nhật ghi chú tính năng / lỗi / góp ý mentor để nhóm theo dõi nhất quán.
+- Duy trì vai trò thư ký trong mentor duty: ghi lại các nhận xét, điểm cần sửa, thứ tự ưu tiên và những lưu ý khi trình bày sản phẩm để cả nhóm không bị sót ý.
+
+#### Khó nhất tuần này
+- Sau khi có nhiều vòng sửa liên tiếp, nguy cơ regression tăng rõ rệt nên việc test lại thủ công từng flow tốn khá nhiều thời gian.
+- Vừa phải giữ chất lượng code và trải nghiệm, vừa phải chuẩn bị sản phẩm ở trạng thái dễ trình bày với mentor và cho các buổi review.
+
+#### AI tool đã dùng
+| Tool | Dùng để làm gì | Kết quả |
+|---|---|---|
+| Cursor | Rà lại các lỗi giao diện và hành vi sau mỗi vòng chỉnh sửa | Giúp nhóm sửa nhanh hơn mà vẫn giữ được tính nhất quán |
+| Claude Code | Hỗ trợ kiểm tra logic flow, điểm dễ regression và cách tinh gọn phần lõi | Giúp quyết định phần nào nên giữ, phần nào nên giảm bớt trước demo |
+
+#### Học được
+- Ở giai đoạn gần demo, test thủ công kỹ và ghi chép rõ ràng đôi khi quan trọng không kém việc thêm tính năng mới.
+- Vai trò thư ký mentor duty rất hữu ích vì giúp chuyển góp ý miệng thành đầu việc cụ thể, dễ theo dõi và dễ kiểm tra lại sau khi sửa.
+
+#### Nếu làm lại, sẽ làm khác
+- Lập sớm hơn một log tính năng và bug theo từng buổi mentor để lúc rà lại không phải nhớ thủ công.
+- Tách rõ hơn danh sách “phải sửa trước demo” và “có thể làm sau” để giữ tốc độ ra quyết định.
+
+#### Kế hoạch tuần tới
+- Chốt phiên bản ổn định nhất để sẵn sàng cho review / demo.
+- Tiếp tục bám checklist test, feedback mentor và dọn những lỗi ảnh hưởng trực tiếp đến trải nghiệm người dùng.
 
 ---

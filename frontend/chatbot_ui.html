@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="css/chatbot-flow-cards.css" />
   <link rel="stylesheet" href="css/chatbot-startup-hub.css" />
   <link rel="stylesheet" href="css/recommendation-panel.css" />
+  <link rel="stylesheet" href="css/auth-ui.css" />
 </head>
 
 <body>
@@ -56,10 +57,10 @@
         <div class="sidebar-user-shell" id="sidebarUserShell">
           <div class="sidebar-user-card">
             <div class="sidebar-user-main">
-              <div class="sidebar-user-avatar" aria-hidden="true">U</div>
+              <div class="sidebar-user-avatar" id="sidebarUserAvatar" aria-hidden="true">K</div>
               <div class="sidebar-user-copy">
-                <div class="sidebar-user-name">User</div>
-                <div class="sidebar-user-subtitle">Quản lý đoạn chat</div>
+                <div class="sidebar-user-name" id="sidebarUserName">Khách</div>
+                <div class="sidebar-user-subtitle" id="sidebarUserSubtitle">Đăng nhập để mở bài giảng</div>
               </div>
             </div>
             <button
@@ -91,6 +92,9 @@
             <button type="button" class="sidebar-danger-btn" id="clearUnpinnedChatsBtn">
               Xóa tất cả đoạn chat
             </button>
+            <button type="button" class="sidebar-secondary-btn" id="sidebarLogoutBtn" hidden>
+              Đăng xuất
+            </button>
           </div>
         </div>
       </div>
@@ -99,13 +103,16 @@
       <div class="top">
         <span class="top-brand">Teachly AI</span>
         <span class="top-title">Đoạn hội thoại</span>
-        <button type="button" class="top-home-btn" id="topHomeBtn" title="Về trang chọn Teachly">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3 10.5L10 4l7 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M5 8.5V16h4v-4h2v4h4V8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          Trang chủ
-        </button>
+        <div class="top-actions">
+          <div class="top-auth-controls" id="topAuthControls" hidden></div>
+          <button type="button" class="top-home-btn" id="topHomeBtn" title="Về trang chọn Teachly">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M3 10.5L10 4l7 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M5 8.5V16h4v-4h2v4h4V8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Trang chủ
+          </button>
+        </div>
       </div>
       <div class="chat-phase" id="chatPhase">
         <div id="messages">

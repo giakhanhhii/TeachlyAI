@@ -31,11 +31,16 @@ export function resolveChatDomElements() {
   const backToChatBtn = document.getElementById("backToChatBtn");
   const toggleSidebarBtn = document.getElementById("toggleSidebar");
   const topHomeBtn = document.getElementById("topHomeBtn");
+  const topAuthControls = document.getElementById("topAuthControls");
   const sidebarUserShell = document.getElementById("sidebarUserShell");
+  const sidebarUserAvatar = document.getElementById("sidebarUserAvatar");
+  const sidebarUserName = document.getElementById("sidebarUserName");
+  const sidebarUserSubtitle = document.getElementById("sidebarUserSubtitle");
   const sidebarSettingsBtn = document.getElementById("sidebarSettingsBtn");
   const sidebarSettingsMenu = document.getElementById("sidebarSettingsMenu");
   const recommendPanelToggle = document.getElementById("recommendPanelToggle");
   const clearUnpinnedChatsBtn = document.getElementById("clearUnpinnedChatsBtn");
+  const sidebarLogoutBtn = document.getElementById("sidebarLogoutBtn");
 
   const requiredEls = {
     messages,
@@ -62,11 +67,16 @@ export function resolveChatDomElements() {
     backToChatBtn,
     toggleSidebarBtn,
     topHomeBtn,
+    topAuthControls,
     sidebarUserShell,
+    sidebarUserAvatar,
+    sidebarUserName,
+    sidebarUserSubtitle,
     sidebarSettingsBtn,
     sidebarSettingsMenu,
     recommendPanelToggle,
     clearUnpinnedChatsBtn,
+    sidebarLogoutBtn,
   };
   const missingOptionalIds = Object.entries(optionalEls)
     .filter(([, el]) => !el)
@@ -90,11 +100,16 @@ export function resolveChatDomElements() {
     backToChatBtn,
     toggleSidebarBtn,
     topHomeBtn,
+    topAuthControls,
     sidebarUserShell,
+    sidebarUserAvatar,
+    sidebarUserName,
+    sidebarUserSubtitle,
     sidebarSettingsBtn,
     sidebarSettingsMenu,
     recommendPanelToggle,
     clearUnpinnedChatsBtn,
+    sidebarLogoutBtn,
   };
 }
 

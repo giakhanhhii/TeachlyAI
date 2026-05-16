@@ -53,8 +53,6 @@ body {
 }
 
 .top-home-btn {
-  position: absolute;
-  right: 16px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -68,6 +66,24 @@ body {
   color: var(--green-dark);
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
+}
+
+.top-actions {
+  position: absolute;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-auth-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-auth-controls[hidden] {
+  display: none;
 }
 
 .top-home-btn:hover {
@@ -123,11 +139,6 @@ body {
   }
 
   .top-home-btn {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    margin-top: 0;
-    transform: translateY(-50%);
     width: 36px;
     height: 36px;
     padding: 0;
@@ -135,15 +146,26 @@ body {
     border-radius: 12px;
     font-size: 0;
   }
+
+  .top-actions {
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 8px;
+  }
+
+  .top-auth-controls {
+    gap: 6px;
+  }
 }
 
 @media (max-width: 520px) {
   .top {
-    padding-right: 52px;
+    padding-right: 132px;
   }
 
-  .top-home-btn {
+  .top-actions {
     right: 10px;
-    gap: 0;
+    gap: 6px;
   }
 }
