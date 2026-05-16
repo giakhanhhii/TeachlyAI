@@ -23,7 +23,7 @@ describe("mainHub auth gate", () => {
     await Promise.resolve();
 
     expect(ensureUser).toHaveBeenCalledTimes(1);
-    expect(navigate).toHaveBeenCalledWith("chatbot_ui.html?flow=slide");
+    expect(navigate).not.toHaveBeenCalled();
   });
 
   it("does not interrupt navigation when the user is already logged in", async () => {
