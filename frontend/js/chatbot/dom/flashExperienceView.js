@@ -1,8 +1,15 @@
 import { fetchMockResource } from "../services/mockContentApi.js";
-import { isAiModeActive, incrementPlayCount, fetchAiContent, fetchAiFileContent } from "../services/aiContentApi.js";
+import {
+  isAiModeActive,
+  incrementPlayCount,
+  fetchAiContent,
+  fetchAiFileContent,
+  withMockFallbackOnAiError,
+} from "../services/aiContentApi.js";
 import { beginDwell } from "../services/dwellStore.js";
 import { getFetch, startFetch } from "../services/backgroundFetchStore.js";
 import { createAiLoadingOverlay } from "./experienceLoading.js";
+import { renderExperienceAiError } from "./experienceAiError.js";
 import { prepareFlashSessionData, hasDirectFlashCardsFromMeta } from "../services/sessionContentPrep.js";
 import { buildExperienceTitle } from "../services/contentTitles.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
@@ -144,10 +151,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
       } catch (err) {
         loadingState.remove();
         if (experienceBody._genStamp !== _genStamp) return;
-        experienceBody.innerHTML = "";
-        const box = document.createElement("div"); box.className = "exp-upload-error";
-        box.innerHTML = `<p class="exp-upload-error-msg">${String((err && err.message) || "Không thể xử lý tệp. Vui lòng thử lại.")}</p>`;
-        experienceBody.appendChild(box);
+        renderExperienceAiError(experienceBody, err, "Không thể xử lý tệp. Vui lòng thử lại.");
         return;
       }
       if (experienceBody._genStamp !== _genStamp) return;
@@ -182,7 +186,12 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
           ? "mock"
           : ((_forceAi || (!meta?.presetId && (isAiModeActive("flash") || !_isAutoTopic))) ? "ai" : "mock"); /* DEV-ONLY */
         const _bgKey = (_devSrc === "ai" && meta?.__experienceId) ? `gen_${meta.__experienceId}` : null;
-        if (_bgKey && !getFetch(_bgKey)) startFetch(_bgKey, fetchAiContent("flashcard", _aiTopic, meta).catch(() => fetchMockResource("flashcard")));
+        if (_bgKey && !getFetch(_bgKey)) {
+          startFetch(
+            _bgKey,
+            withMockFallbackOnAiError(fetchAiContent("flashcard", _aiTopic, meta), () => fetchMockResource("flashcard")),
+          );
+        }
         const _bgEntry = _bgKey ? getFetch(_bgKey) : null;
         const loadingState = (_devSrc === "ai" && _bgEntry?.status !== "done")
           ? (() => {
@@ -195,10 +204,18 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
               });
             })()
           : null;
-        flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
-            : _bgEntry ? await _bgEntry.promise
-            : _devSrc === "ai" ? await fetchAiContent("flashcard", _aiTopic, meta).catch(() => fetchMockResource("flashcard"))
-            : await fetchMockResource("flashcard");
+        try {
+          flashRaw = _bgEntry?.status === "done" ? _bgEntry.raw
+              : _bgEntry ? await _bgEntry.promise
+              : _devSrc === "ai"
+                ? await withMockFallbackOnAiError(fetchAiContent("flashcard", _aiTopic, meta), () => fetchMockResource("flashcard"))
+                : await fetchMockResource("flashcard");
+        } catch (err) {
+          loadingState?.remove();
+          if (experienceBody._genStamp !== _genStamp) return;
+          renderExperienceAiError(experienceBody, err, "Không thể tạo flashcard lúc này. Vui lòng thử lại.");
+          return;
+        }
         loadingState?.remove();
         if (experienceBody._genStamp !== _genStamp) return;
         incrementPlayCount("flash");
