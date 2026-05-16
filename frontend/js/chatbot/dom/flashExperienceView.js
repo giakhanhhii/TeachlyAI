@@ -15,6 +15,7 @@ import { buildExperienceTitle } from "../services/contentTitles.js";
 import { createExperienceTopBar, createProgressRow, createPrimaryNavButton } from "./experienceChrome.js";
 import { speakFlashcard, FLASH_SOUND_SVG, hookFlashSpeechVoicesOnce } from "../services/speechService.js";
 import { fitFlashCardText } from "../services/flashCardTextFit.js";
+import { hydrateFlashCardPronunciations } from "../services/flashPronunciationService.js";
 
 const BOOKMARK_SVG = `
   <svg class="flash-bookmark-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
@@ -228,7 +229,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     restoredCards.length > 0
       ? { title: typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : "Flashcard", cards: restoredCards }
       : prepareFlashSessionData(flashRaw, meta);
-  const cards = normalizeFlashCards(data.cards);
+  const cards = await hydrateFlashCardPronunciations(normalizeFlashCards(data.cards));
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
   const metaForTitle =
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;

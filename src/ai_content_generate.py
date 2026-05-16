@@ -101,17 +101,30 @@ Rules:
 - Use exactly the requested number of cards. If no count is requested, use 20 cards.
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
-  - "phonetic": IPA transcription
+  - "phonetic": IPA transcription wrapped in slashes, for example /əˈproʊtʃ/
   - "back": short English meaning or definition (max 12 words) — MUST be in English
-  - "hint": short English example sentence or usage note (max 8 words) — MUST be in English
+  - "hint": short English example sentence (max 10 words) — MUST be in English
+- NEVER omit "phonetic". Every single card must include it.
 - LANGUAGE RULE (HARD): front, back, hint, and title MUST all be English. No Vietnamese is allowed anywhere.
 - Return ONLY valid JSON, no markdown fences, no explanation
 
 Schema:
 {"title":"<set title>","cards":[{"id":"c1","front":"<word>","phonetic":"/<ipa>/","back":"<English meaning>","hint":"<English example>"},...]}"""
 
+_FLASH_PHONETIC_SYSTEM = """You convert English flashcard terms into IPA for Vietnamese learners.
 
-def _call_openai(system: str, user: str, max_tokens: int) -> str:
+Rules:
+- Return ONLY valid JSON, no markdown fences, no explanation.
+- Preserve every input term exactly as a key in the output.
+- Each value must be one IPA transcription wrapped in slashes, for example /əˈproʊtʃ/.
+- Use standard, learner-friendly IPA for the full word or phrase.
+- Never omit a key, even for multi-word phrases or irregular verb lines.
+
+Schema:
+{"pronunciations":{"term":"/<ipa>/","another term":"/<ipa>/"}}"""
+
+
+def _call_openai(system: str, user: str, max_tokens: int, *, temperature: float = 0.8) -> str:
     client = get_openai_flash_client()
     resp = client.chat.completions.create(
         model=AI_CONTENT_MODEL,
@@ -120,7 +133,7 @@ def _call_openai(system: str, user: str, max_tokens: int) -> str:
             {"role": "user", "content": user},
         ],
         max_tokens=max_tokens,
-        temperature=0.8,
+        temperature=temperature,
     )
     return resp.choices[0].message.content or ""
 
@@ -138,6 +151,19 @@ def _sanitize_multiline(value: Any, *, max_len: int = 500) -> str:
     lines = [line.strip() for line in str(value or "").replace("\r", "\n").split("\n")]
     cleaned = [line for line in lines if line]
     return "\n".join(cleaned)[:max_len]
+
+
+def _normalize_phonetic_text(value: Any) -> str:
+    text = " ".join(str(value or "").split())
+    if not text:
+        return ""
+    inner = text.strip().strip("/").strip("[]").strip()
+    return f"/{inner}/" if inner else ""
+
+
+def _is_placeholder_phonetic(value: Any) -> bool:
+    normalized = _normalize_phonetic_text(value).lower()
+    return not normalized or normalized in {"/tɜːm/", "/term/", "/.../"}
 
 
 def _coerce_int(value: Any, default: int, minimum: int, maximum: int) -> int:
@@ -240,9 +266,9 @@ def _clone_flash_item(card: dict[str, Any], index: int, topic: str) -> dict[str,
     cloned = {
         "id": f"ai_c{index + 1}",
         "front": str(card.get("front") or f"{topic.split()[0]} term").strip(),
-        "phonetic": str(card.get("phonetic") or "/tɜːm/").strip(),
+        "phonetic": str(card.get("phonetic") or "").strip(),
         "back": str(card.get("back") or "Useful English meaning").strip(),
-        "hint": str(card.get("hint") or f"Used when discussing {topic}.").strip(),
+        "hint": str(card.get("hint") or f"Example: {topic.split()[0]} matters daily.").strip(),
     }
     return cloned
 
@@ -375,6 +401,85 @@ def _parse_json_response(raw: str, kind: str) -> dict[str, Any]:
         raise ValueError(f"Model returned invalid JSON for {kind}") from exc
 
 
+_FLASH_PHONETIC_CACHE: dict[str, str] = {}
+
+
+def generate_flash_pronunciations(terms: list[str]) -> dict[str, str]:
+    cleaned_unique: list[str] = []
+    seen: set[str] = set()
+    for term in terms:
+        text = " ".join(str(term or "").split())
+        if not text:
+            continue
+        key = text.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        cleaned_unique.append(text[:240])
+
+    if not cleaned_unique:
+        return {}
+
+    result: dict[str, str] = {}
+    missing: list[str] = []
+    for term in cleaned_unique:
+        cached = _FLASH_PHONETIC_CACHE.get(term.casefold(), "")
+        if cached:
+            result[term] = cached
+        else:
+            missing.append(term)
+
+    chunk_size = 40
+    for start in range(0, len(missing), chunk_size):
+        chunk = missing[start:start + chunk_size]
+        user_msg = json.dumps({"terms": chunk}, ensure_ascii=False)
+        raw = _call_openai(
+            _FLASH_PHONETIC_SYSTEM,
+            user_msg,
+            max_tokens=min(3000, 120 + len(chunk) * 35),
+            temperature=0,
+        )
+        data = _parse_json_response(raw, "flash_pronunciations")
+        pronunciations_raw = data.get("pronunciations")
+        pronunciations = pronunciations_raw if isinstance(pronunciations_raw, dict) else data if isinstance(data, dict) else {}
+        for term in chunk:
+            phonetic = _normalize_phonetic_text(pronunciations.get(term))
+            if phonetic:
+                _FLASH_PHONETIC_CACHE[term.casefold()] = phonetic
+                result[term] = phonetic
+
+    return {term: result.get(term, "") for term in cleaned_unique}
+
+
+def _fill_missing_flash_phonetics(cards: list[dict[str, Any]]) -> None:
+    missing_terms: list[str] = []
+    for card in cards:
+        if not isinstance(card, dict):
+            continue
+        term = " ".join(str(card.get("front") or "").split())[:240]
+        if not term:
+            continue
+        phonetic = _normalize_phonetic_text(card.get("phonetic"))
+        if _is_placeholder_phonetic(phonetic):
+            missing_terms.append(term)
+            continue
+        card["phonetic"] = phonetic
+
+    if not missing_terms:
+        return
+
+    pronunciations = generate_flash_pronunciations(missing_terms)
+    for card in cards:
+        if not isinstance(card, dict):
+            continue
+        term = " ".join(str(card.get("front") or "").split())[:240]
+        if not term or not _is_placeholder_phonetic(card.get("phonetic")):
+            continue
+        phonetic = pronunciations.get(term, "")
+        if phonetic:
+            card["phonetic"] = phonetic
+
+
 def coerce_autofill_count(value: Any, allowed: list[int], default: int) -> int:
     if not allowed:
         return default
@@ -456,9 +561,9 @@ def _ensure_ai_flash_count(items: list[Any], count: int, topic: str) -> list[dic
     if not cleaned:
         cleaned = [{
             "front": f"{topic_token} term",
-            "phonetic": "/tɜːm/",
+            "phonetic": "",
             "back": "Useful English meaning",
-            "hint": f"Used when discussing {topic}.",
+            "hint": f"Example: {topic_token.title()} appears in class.",
         }]
     out: list[dict[str, Any]] = []
     while len(out) < safe_count:
@@ -565,6 +670,7 @@ def generate_flash_content(topic: str, form: dict[str, Any] | None = None) -> di
     if not isinstance(data.get("cards"), list):
         raise ValueError("AI flashcard response missing 'cards' array")
     data["cards"] = _ensure_ai_flash_count(data["cards"], count, topic)
+    _fill_missing_flash_phonetics(data["cards"])
     return data
 
 
@@ -775,9 +881,10 @@ Rules:
 - NEVER create cards for grammar terms, tense names (e.g. "Present simple", "Past perfect"), or meta-linguistic labels (e.g. "auxiliary verb", "modal verb", "clause")
 - Each card:
   - "front": English word or short phrase (max 4 words) — MUST be in English
-  - "phonetic": IPA transcription
+  - "phonetic": IPA transcription wrapped in slashes, for example /əˈproʊtʃ/
   - "back": short English meaning or definition (max 10 words) — MUST be in English
   - "hint": short English example sentence or collocate (max 10 words) — MUST be in English
+- NEVER omit "phonetic". Every single card must include it.
 - LANGUAGE RULE (HARD): front, back, hint, and title MUST all be English. No Vietnamese is allowed anywhere.
 - Prioritise topic-specific vocabulary that reflects the subject matter of the document
 - Return ONLY valid JSON, no markdown fences, no explanation
@@ -841,6 +948,7 @@ def generate_flash_from_document(document_text: str, count: int = 20, notes: str
     if not isinstance(data.get("cards"), list):
         raise ValueError("AI flashcard response missing 'cards' array")
     data["cards"] = _ensure_ai_flash_count(data["cards"], count, "Document")
+    _fill_missing_flash_phonetics(data["cards"])
     return data
 
 

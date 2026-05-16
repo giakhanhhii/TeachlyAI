@@ -31,6 +31,7 @@ import { resolveFullsetContentSource } from "../services/fullsetAutoMode.js";
 import { applyQuizRevealStyles, createStepBadge, renderFlashStep, renderQuizStep, renderSlideStep } from "./fullSetMixedStepView.js";
 import { renderFullSetMixedReviewView } from "./fullSetMixedReviewView.js";
 import { openSlideImagePicker } from "./slideExperienceImagePicker.js";
+import { hydrateFlashCardPronunciations } from "../services/flashPronunciationService.js";
 
 function buildPdfDownloadLabel(title) {
   return title && String(title).trim() ? `${String(title).trim()}.pdf` : "teachly-slides.pdf";
@@ -191,6 +192,11 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let slides = [];
   let questions = [];
   let cards = [];
+  if (steps.length) {
+    await hydrateFlashCardPronunciations(
+      steps.filter((step) => step?.kind === "flash").map((step) => step.data),
+    );
+  }
   const _aiTopic = spec.topic && spec.topic !== "—" ? spec.topic : undefined;
   const _uploadFile = !steps.length && spec.__pdfFile instanceof File ? spec.__pdfFile : null;
   const _bgFetch = !steps.length && !_uploadFile && spec.__bgFetchId ? getFetch(String(spec.__bgFetchId)) : null;
@@ -299,6 +305,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     slides = Array.isArray(slideData.slides) ? slideData.slides : [];
     questions = Array.isArray(quizData.questions) ? quizData.questions : [];
     cards = Array.isArray(flashData.cards) ? flashData.cards : [];
+    await hydrateFlashCardPronunciations(cards);
     steps = [
       ...(slides.length ? [{ kind: /** @type {"slide_deck"} */ ("slide_deck"), data: { slides } }] : []),
       ...questions.map((data) => ({ kind: /** @type {"quiz"} */ ("quiz"), data })),

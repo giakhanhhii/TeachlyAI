@@ -44,6 +44,7 @@ from .ai_content_generate import (
     generate_slide_content,
     generate_quiz_content,
     generate_flash_content,
+    generate_flash_pronunciations,
     generate_fullset_content,
     generate_autofill_slide,
     generate_autofill_quiz,
@@ -139,6 +140,14 @@ class FlashTranslateBatchIn(BaseModel):
 
 class FlashTranslateBatchOut(BaseModel):
     translations: dict[str, str]
+
+
+class FlashPronunciationBatchIn(BaseModel):
+    terms: list[str] = Field(..., min_length=1, max_length=200)
+
+
+class FlashPronunciationBatchOut(BaseModel):
+    pronunciations: dict[str, str]
 
 
 class SlideExportIn(BaseModel):
@@ -366,6 +375,38 @@ def flash_translate_terms(body: FlashTranslateBatchIn):
     if not out:
         raise HTTPException(status_code=502, detail="Model trả về bản dịch rỗng.")
     return FlashTranslateBatchOut(translations=out)
+
+
+@app.post("/api/flash/pronunciations", response_model=FlashPronunciationBatchOut)
+def flash_pronunciations(body: FlashPronunciationBatchIn):
+    """Sinh IPA cho nhiều từ/cụm từ flashcard theo lô."""
+    if not _flash_translate_config_ok():
+        raise HTTPException(status_code=503, detail=_flash_translate_missing_env_detail())
+    cleaned: list[str] = []
+    for term in body.terms:
+        if not isinstance(term, str):
+            continue
+        text = term.strip()
+        if not text:
+            continue
+        if len(text) > 240:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Mục quá dài (tối đa 240 ký tự): {text[:48]}…",
+            )
+        cleaned.append(text)
+    if not cleaned:
+        raise HTTPException(status_code=400, detail="Danh sách mục phiên âm rỗng.")
+    try:
+        out = generate_flash_pronunciations(cleaned)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("Flash pronunciation batch failed")
+        raise _http_exc_from_flash_translate(exc) from exc
+    if not out:
+        raise HTTPException(status_code=502, detail="Model trả về phiên âm rỗng.")
+    return FlashPronunciationBatchOut(pronunciations=out)
 
 
 @app.get("/api/mock/{name}")
