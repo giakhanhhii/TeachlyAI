@@ -10705,8 +10705,8 @@
             "They heard that a conference was coming to San Francisco.",
             "They were looking for bed and breakfast accommodations in private homes."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D đúng vì đoạn văn chỉ nói họ cần trả tiền thuê nhà, biết có hội nghị lớn và khách sạn đã kín chỗ; không hề nói họ đang đi tìm chỗ bed-and-breakfast trong nhà dân cho chính mình.",
           "explanationEvidence": "Cau 19: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -10750,8 +10750,8 @@
             "local people",
             "entrepreneurs"
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D diễn đạt đúng ý câu gốc nhất: traffic noise is currently ranked second among environmental threats to public health. Các lựa chọn khác làm lệch mức độ hoặc thứ hạng.",
           "explanationEvidence": "Cau 22: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11547,8 +11547,8 @@
             "Environmental threats to health are dominated by traffic noise, which is listed as number one.",
             "Among all environmental risks, traffic noise is regarded as the second most dangerous for public health."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D diễn đạt đúng ý câu gốc nhất: traffic noise is currently ranked second among environmental threats to public health. Các lựa chọn khác làm lệch mức độ hoặc thứ hạng.",
           "explanationEvidence": "Cau 22: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11622,8 +11622,8 @@
             "The number of premature deaths from noise pollution is likely higher than reported.",
             "People living in rural areas are unaffected by traffic noise."
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 2,
+          "explanation": "Đoạn cuối nêu rõ số ca tử vong sớm do noise exposure bị đánh giá thấp vì dữ liệu chưa đầy đủ, nên có thể suy ra con số thực tế nhiều khả năng còn cao hơn báo cáo hiện nay.",
           "explanationEvidence": "Cau 27: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11637,8 +11637,8 @@
             "Noise pollution is the leading environmental threat to health in Western Europe.",
             "Noise exposure during sleep can lead to increased blood pressure and heart rate."
           ],
-          "correctIndex": 0,
-          "explanation": "Đáp án A khớp chi tiết hoặc suy luận có căn cứ trong bài đọc; các phương án khác không được nhắc tới, mâu thuẫn đoạn văn, hoặc quá tuyệt đối so với nội dung.",
+          "correctIndex": 3,
+          "explanation": "Đáp án D đúng vì đoạn văn nói khi ngủ, tiếng ồn vẫn bị xử lý và có thể làm tăng huyết áp cùng nhịp tim. Các lựa chọn A, B, C đều trái với thông tin passage.",
           "explanationEvidence": "Cau 28: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
@@ -11652,8 +11652,8 @@
             "Noise pollution has serious effects on public health, including stress, cardiovascular diseases, and premature deaths.",
             "Noise pollution is the least recognized environmental threat but has severe impacts on health."
           ],
-          "correctIndex": 3,
-          "explanation": "Đáp án D (Noise pollution is the least recognized environmental threat but has severe impacts on health.) phù hợp yêu cầu đề và ngữ cảnh; các lựa chọn khác không khớp logic hoặc không được văn bản hỗ trợ.",
+          "correctIndex": 2,
+          "explanation": "Ý chính của toàn bài là tiếng ồn gây hại nghiêm trọng cho sức khỏe cộng đồng, từ rối loạn giấc ngủ và stress đến bệnh tim mạch và tử vong sớm, nên đáp án C bao quát nhất.",
           "explanationEvidence": "Cau 29: doi chieu ngu phap, ngu nghia va van canh doan van."
         },
         {
