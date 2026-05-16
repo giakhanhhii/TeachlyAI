@@ -79,3 +79,53 @@ def test_generate_fullset_content_preserves_non_a_quiz_answers(monkeypatch):
     data = ai_content_generate.generate_fullset_content("Education", form={"slides": 1, "quiz": 1, "flash": 1})
 
     assert data["quiz"]["questions"][0]["correctIndex"] == 1
+
+
+def test_generate_slide_content_pads_to_exact_requested_count(monkeypatch):
+    payload = {
+        "title": "Energy deck",
+        "slides": [
+            {"title": "Cover", "bullets": ["One", "Two"]},
+        ],
+    }
+
+    monkeypatch.setattr(ai_content_generate, "_call_openai", lambda *_args, **_kwargs: json.dumps(payload))
+
+    data = ai_content_generate.generate_slide_content("Energy", form={"count": 10})
+
+    assert len(data["slides"]) == 10
+
+
+def test_generate_quiz_content_pads_to_exact_requested_count(monkeypatch):
+    payload = {
+        "title": "Energy quiz",
+        "questions": [
+            {
+                "text": "Which source is renewable?",
+                "options": ["Coal", "Solar", "Diesel", "Plastic"],
+                "correctIndex": 1,
+                "hint": "Solar can be replenished.",
+            }
+        ],
+    }
+
+    monkeypatch.setattr(ai_content_generate, "_call_openai", lambda *_args, **_kwargs: json.dumps(payload))
+
+    data = ai_content_generate.generate_quiz_content("Energy", form={"count": 4})
+
+    assert len(data["questions"]) == 4
+
+
+def test_generate_flash_content_pads_to_exact_requested_count(monkeypatch):
+    payload = {
+        "title": "Energy flashcards",
+        "cards": [
+            {"front": "renewable", "phonetic": "/rɪˈnjuːəbl/", "back": "can be replaced", "hint": "renewable energy"},
+        ],
+    }
+
+    monkeypatch.setattr(ai_content_generate, "_call_openai", lambda *_args, **_kwargs: json.dumps(payload))
+
+    data = ai_content_generate.generate_flash_content("Energy", form={"count": 5})
+
+    assert len(data["cards"]) == 5
