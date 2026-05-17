@@ -104,6 +104,75 @@ _ENGLISH_TERMS = (
     "cau dieu kien",
     "cau bi dong",
     "menh de quan he",
+    # Từ loại / Parts of speech
+    "tinh tu",        # adjective
+    "trang tu",       # adverb
+    "danh tu",        # noun
+    "dong tu",        # verb
+    "gioi tu",        # preposition
+    "lien tu",        # conjunction
+    "dai tu",         # pronoun
+    "tro dong tu",    # auxiliary verb
+    "adjective",
+    "adverb",
+    "noun",
+    "verb",
+    "preposition",
+    "conjunction",
+    "pronoun",
+    # Cấu trúc câu / Sentence structures
+    "menh de",        # clause
+    "cau phuc",       # complex sentence
+    "cau ghep",       # compound sentence
+    "cau don",        # simple sentence
+    "clause",
+    "phrase",
+    "sentence",
+    "subject",
+    "predicate",
+    "gerund",
+    "infinitive",
+    "participle",
+    "article",
+    "tense",
+    # Các thì bổ sung
+    "past perfect",
+    "future simple",
+    "future perfect",
+    "past continuous",
+    "present continuous",
+    "thi tuong lai",
+    "thi hien tai tiep dien",
+    "thi qua khu tiep dien",
+    # Chủ điểm từ vựng
+    "moi truong",     # environment vocabulary
+    "cong nghe",      # technology
+    "du lich",        # travel
+    "suc khoe",       # health
+    "giao duc",       # education vocab
+    "nghe nghiep",    # careers
+    "van hoa",        # culture (English context)
+    "kinh te",        # economics (English context)
+    "xa hoi",         # society (English context)
+    # Kỹ năng & luyện thi
+    "on tap",         # revision
+    "ki nang",        # skills
+    "bai tap",        # exercises
+    "luyen tap",      # practice
+    "kiem tra",       # test/exam
+    "thi thu",        # mock exam
+    "de thi",         # exam paper
+    "bai luan",       # essay
+    "word form",
+    "phrasal verb",
+    "idiom",
+    "synonym",
+    "antonym",
+    "inversion",
+    "reported speech",
+    "indirect speech",
+    "emphasis",
+    "cleft sentence",
 )
 
 _TEACHING_TERMS = (
@@ -170,4 +239,8 @@ def evaluate_chat_scope(message: str) -> ChatScopeDecision:
         return ChatScopeDecision(allowed=False, reason="other_subject", reply=OUT_OF_SCOPE_REPLY)
     if _is_english_teaching_request(normalized):
         return ChatScopeDecision(allowed=True, reason="english_teaching")
+    # Input ngắn (≤ 10 từ) không chứa môn học khác → có thể là tên chủ đề nhập vào form
+    # custom mode — để AI xử lý thay vì chặn ngay tại đây.
+    if len(normalized.split()) <= 10 and not _contains_any(normalized, _OTHER_SUBJECT_TERMS):
+        return ChatScopeDecision(allowed=True, reason="short_topic_input")
     return ChatScopeDecision(allowed=False, reason="unrelated", reply=OUT_OF_SCOPE_REPLY)
