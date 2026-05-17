@@ -265,59 +265,66 @@ Tất cả 17 test này được xác minh **không phản ánh bug** qua manual
 
 Tất cả ảnh đặt trong thư mục [`screenshots/`](./screenshots/). Log gốc của mỗi suite test (input dùng để render ảnh terminal) được lưu trong [`screenshots/_raw/`](./screenshots/_raw/) — `pytest.txt`, `vitest.txt`, `playwright.txt` — để người chấm có thể đối chiếu trực tiếp.
 
-### 6.1 Backend — `pytest tests/backend`
+### 6.1 Architecture diagram
+
+Sơ đồ kiến trúc tổng quát của Teachly — User → Frontend → FastAPI backend (auth / AI / DB / mock / extract / export) → OpenAI / Anthropic. Đối chiếu với [`ARCHITECTURE.md`](./ARCHITECTURE.md) §3.
+
+![Architecture diagram](./screenshots/01-architecture-diagram.png)
+
+### 6.2 Backend — `pytest tests/backend`
 
 Output terminal khi chạy 57 test backend: **57 passed, 0 failed, 0 skipped, 11.0s**.
 
-![pytest pass](./screenshots/01-backend-pytest-pass.png)
+![pytest pass](./screenshots/02-backend-pytest-pass.png)
 
-### 6.2 Frontend unit — `npx vitest run`
+### 6.3 Frontend unit — `npx vitest run`
 
 Output terminal khi chạy 32 test file frontend: **104 passed | 1 skipped (105)**. Test bị skip là `slideShellSrcdoc.test.js` (preset đã gỡ — đã giải thích ở mục 0.2).
 
-![vitest pass](./screenshots/02-frontend-vitest-pass.png)
+![vitest pass](./screenshots/03-frontend-vitest-pass.png)
 
-### 6.3 End-to-end — `npx playwright test`
+### 6.4 End-to-end — `npx playwright test`
 
 Output terminal khi chạy 25 test e2e: **8 passed, 17 skipped, 0 failed**. Mọi dòng `skipped` đều gắn nhãn `[TEST DRIFT]` ngay trong tên test để minh bạch — không có test nào fail.
 
-![playwright pass](./screenshots/03-e2e-playwright-pass.png)
+![playwright pass](./screenshots/04-e2e-playwright-pass.png)
 
-### 6.4 Tổng hợp 3 suite test
+### 6.5 Tổng hợp 3 suite test
 
 Bảng tổng kết: **187 test → 169 PASS / 18 SKIP (có lý do) / 0 FAIL**. Bằng chứng đối chiếu cho mục 1 và 3.
 
-![Test summary](./screenshots/04-test-summary.png)
+![Test summary](./screenshots/05-test-summary.png)
 
-### 6.5 Checklist kiểm thử thủ công
+### 6.6 Checklist kiểm thử thủ công
 
 Bảng tổng hợp 37 câu hỏi kiểm thử trong 6 nhóm chức năng (Auth / AI Gen / Chat / Experience / Share / Mobile UI) — **37/37 PASS**. Bằng chứng đối chiếu cho mục 4.
 
-![Manual checklist](./screenshots/05-manual-checklist.png)
+![Manual checklist](./screenshots/06-manual-checklist.png)
 
-### 6.6 Metrics sản phẩm & test
+### 6.7 Metrics sản phẩm & test
 
 Số liệu codebase và hành vi đo được tại thời điểm submit. Bằng chứng đối chiếu cho mục 5.
 
-![Metrics](./screenshots/06-metrics.png)
+![Metrics](./screenshots/07-metrics.png)
 
-### 6.7 Bảng xử lý feedback từ mentor
+### 6.8 Bảng xử lý feedback từ mentor
 
 8/8 điểm feedback từ mentor duty (Tuần 4–8) đã được xử lý kèm thay đổi cụ thể trong code. Bằng chứng đối chiếu cho mục 7.
 
-![Feedback resolution](./screenshots/07-feedback-resolved.png)
+![Feedback resolution](./screenshots/08-feedback-resolved.png)
 
-### 6.8 Bảng tra cứu file
+### 6.9 Bảng tra cứu file
 
 | # | File | Mô tả | Đối chiếu với mục |
 |---|---|---|---|
-| 1 | [`screenshots/01-backend-pytest-pass.png`](./screenshots/01-backend-pytest-pass.png) | Output pytest — 57/57 pass | §3.1 |
-| 2 | [`screenshots/02-frontend-vitest-pass.png`](./screenshots/02-frontend-vitest-pass.png) | Output vitest — 104 pass / 1 skip | §3.2 |
-| 3 | [`screenshots/03-e2e-playwright-pass.png`](./screenshots/03-e2e-playwright-pass.png) | Output playwright — 8 pass / 17 [TEST DRIFT] skip | §3.3 |
-| 4 | [`screenshots/04-test-summary.png`](./screenshots/04-test-summary.png) | Tổng hợp 3 suite — 169/187 pass, 0 fail | §1, §3 |
-| 5 | [`screenshots/05-manual-checklist.png`](./screenshots/05-manual-checklist.png) | Manual checklist 37/37 pass | §4 |
-| 6 | [`screenshots/06-metrics.png`](./screenshots/06-metrics.png) | Metrics codebase & hành vi sản phẩm | §5 |
-| 7 | [`screenshots/07-feedback-resolved.png`](./screenshots/07-feedback-resolved.png) | Mentor feedback 8/8 đã xử lý | §7.1 |
+| 1 | [`screenshots/01-architecture-diagram.png`](./screenshots/01-architecture-diagram.png) | Architecture diagram — User → Frontend → FastAPI → AI/DB/External | [`ARCHITECTURE.md`](./ARCHITECTURE.md) §3 |
+| 2 | [`screenshots/02-backend-pytest-pass.png`](./screenshots/02-backend-pytest-pass.png) | Output pytest — 57/57 pass | §3.1 |
+| 3 | [`screenshots/03-frontend-vitest-pass.png`](./screenshots/03-frontend-vitest-pass.png) | Output vitest — 104 pass / 1 skip | §3.2 |
+| 4 | [`screenshots/04-e2e-playwright-pass.png`](./screenshots/04-e2e-playwright-pass.png) | Output playwright — 8 pass / 17 [TEST DRIFT] skip | §3.3 |
+| 5 | [`screenshots/05-test-summary.png`](./screenshots/05-test-summary.png) | Tổng hợp 3 suite — 169/187 pass, 0 fail | §1, §3 |
+| 6 | [`screenshots/06-manual-checklist.png`](./screenshots/06-manual-checklist.png) | Manual checklist 37/37 pass | §4 |
+| 7 | [`screenshots/07-metrics.png`](./screenshots/07-metrics.png) | Metrics codebase & hành vi sản phẩm | §5 |
+| 8 | [`screenshots/08-feedback-resolved.png`](./screenshots/08-feedback-resolved.png) | Mentor feedback 8/8 đã xử lý | §7.1 |
 | — | [`screenshots/_raw/pytest.txt`](./screenshots/_raw/pytest.txt) | Log gốc pytest (text) | §3.1 |
 | — | [`screenshots/_raw/vitest.txt`](./screenshots/_raw/vitest.txt) | Log gốc vitest (text) | §3.2 |
 | — | [`screenshots/_raw/playwright.txt`](./screenshots/_raw/playwright.txt) | Log gốc playwright (text) | §3.3 |

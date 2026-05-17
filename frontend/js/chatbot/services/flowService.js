@@ -217,7 +217,10 @@ export function createFlowService(deps) {
       completed: false,
     };
     const cur = getCurrentSession();
-    const canReuseCurrent = canReuseEmptySession(cur);
+    // Vào từ main_hub (?flow=...): luôn tạo session mới, không bao giờ reuse
+    // session hiện tại (kể cả khi nó đang trống). Hành vi này khớp với việc
+    // user tự bấm "+ đoạn chat mới" rồi click thẻ trong startup hub.
+    const canReuseCurrent = false;
     /** @type {number | null} */
     let createdSessionIndex = null;
     let targetSession = cur;

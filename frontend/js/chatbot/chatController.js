@@ -1375,6 +1375,23 @@ export async function init() {
     void handleAuthStateChanged();
   });
 
+  function createNewChatSession({ focusInput = false } = {}) {
+    persistActiveExperience();
+    createSession();
+    setSession(getCurrentSessionId());
+    recommendQueueStore.setSession(getCurrentSessionId());
+    restoreRecommendPanelForSession();
+    setGuidedState(null);
+    experienceController.resetResumeState();
+    _autoModeHistory = [];
+    layerView.hide();
+    renderChatListUI();
+    renderMessages();
+    saveSessions();
+    writeAppNavigationState("push", resolveCurrentPhase());
+    if (focusInput) input.focus();
+  }
+
   async function sendPrompt(prompt) {
     const guidance = resolveGuidanceMessage(prompt, { autoMode: autoModeStore.isEnabled() });
     if (guidance) {
@@ -1405,20 +1422,7 @@ export async function init() {
     onGuidedPrompt: (prompt, guidedState) => guidedController.handleGuidedPrompt(prompt, guidedState, /** @type {HTMLInputElement} */ (input)),
     onSendPrompt: (prompt) => { sendPrompt(prompt); },
     onCreateNewChat: () => {
-      persistActiveExperience();
-      createSession();
-      setSession(getCurrentSessionId());
-      recommendQueueStore.setSession(getCurrentSessionId());
-      restoreRecommendPanelForSession();
-      setGuidedState(null);
-      experienceController.resetResumeState();
-      _autoModeHistory = [];
-      layerView.hide();
-      renderChatListUI();
-      renderMessages();
-      saveSessions();
-      writeAppNavigationState("push", resolveCurrentPhase());
-      input.focus();
+      createNewChatSession({ focusInput: true });
     },
     hasLastOpenedExperience: () => experienceController.hasLastOpenedExperience(),
     isExperienceVisible: () => experienceLayer.classList.contains("visible"),
@@ -1436,8 +1440,18 @@ export async function init() {
     renderChatListUI,
     ensureSessionMessagesLoaded: () => ensureSessionMessagesLoaded(),
     renderMessages,
-    handleFlowEntry: (flowKind, opts) =>
-      handleFlowWithAutoMode(flowKind, () => flowService.handleFlowEntry(flowKind), opts),
+    handleFlowEntry: (flowKind, opts) => {
+      // Khớp y hệt hành vi "bấm + đoạn chat mới rồi click thẻ trong startup hub":
+      // tạo session mới rỗng, rồi dùng cùng callback của startup hub
+      // (startFlowInCurrentSession) thay vì handleFlowEntry — để không reuse/overwrite
+      // session hiện tại và không flash UI trung gian.
+      createNewChatSession();
+      return handleFlowWithAutoMode(
+        flowKind,
+        () => flowService.startFlowInCurrentSession(flowKind),
+        opts,
+      );
+    },
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
     onAddFile: (btn) => {
       const g = guided;

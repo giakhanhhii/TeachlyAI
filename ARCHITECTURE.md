@@ -125,6 +125,10 @@ Ghi chú quan trọng:
 
 ## 3. Sơ đồ kiến trúc tổng quát
 
+![Teachly architecture diagram](./screenshots/01-architecture-diagram.png)
+
+> Ảnh trên được render từ mã Mermaid bên dưới — chạy `venv\Scripts\python.exe screenshots\_raw\render.py` để tái tạo `screenshots/01-architecture-diagram.png`.
+
 ```mermaid
 flowchart LR
     U["User"] --> FE["Frontend UI\nfrontend/main_hub.html\nfrontend/chatbot_ui.html"]
