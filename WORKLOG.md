@@ -234,5 +234,7 @@ Ghi lại các quyết định kỹ thuật, phân công, và brainstorming củ
 | Kiểm tra golden path đầu-cuối: đăng ký → đăng nhập → tạo nội dung → đăng xuất → đăng nhập lại → khôi phục đúng | Nguyễn Triệu Gia Khánh - 2A202600225 | 16/05 | ✅ Xong |
 | Pass test thủ công cuối: xác nhận không còn lỗi ảnh hưởng đến trải nghiệm người dùng | Nguyễn Xuân Hải - 2A202600245 | 16/05 | ✅ Xong |
 | Tổng hợp ghi chú mentor duty lần cuối, xác nhận toàn bộ góp ý anh coach đã được xử lý | Nguyễn Xuân Hải - 2A202600245 | 16/05 | ✅ Xong |
+| Chạy bộ test cuối trước submit: `pytest tests/backend` (57 pass), `vitest run` (104 pass / 1 skip), `playwright test` (8 pass / 17 [TEST DRIFT] skip / 0 fail); lưu log gốc tại `screenshots/_raw/` | Nguyễn Triệu Gia Khánh - 2A202600225 | 17/05 | ✅ Xong |
+| Viết `EVALUATION.md`: tổng hợp 187 test case (169 pass / 18 skip / 0 fail), bộ 37 câu kiểm thử thủ công, metrics, mentor feedback log, render 7 ảnh evidence (terminal output + bảng tổng hợp) | Nguyễn Triệu Gia Khánh - 2A202600225 | 17/05 | ✅ Xong |
 
 ---
