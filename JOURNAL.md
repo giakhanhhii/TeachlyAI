@@ -104,6 +104,7 @@
 #### Đã làm
 - Xây gần như hoàn chỉnh phần trải nghiệm web cho người dùng cuối: giao diện chat thực tế hơn, các thẻ chức năng rõ ràng hơn, bố cục trang chủ và khu vực experience được đồng bộ.
 - Hoàn thiện các màn hình đầu ra cho quiz, flashcard và slide để người dùng không chỉ nhập form mà còn xem, tương tác và đi tiếp trong cùng một đoạn chat.
+- Khánh bổ sung cho trải nghiệm flashcard: tính năng dịch từ vựng tự động và phát giọng đọc phát âm chuẩn cho từng thẻ, để người học vừa nắm nghĩa vừa nghe được cách đọc ngay trong card mà không cần rời màn hình.
 - Chỉnh mạnh giao diện điện thoại: sidebar, header, card, form, action button, layout của chat và các experience để dùng được tốt trên màn hình nhỏ.
 - Tối ưu lại thứ tự card, kích thước card, khoảng trắng, badge, và các chi tiết hiển thị để trang chủ và trong chat nhìn thống nhất hơn trên cả desktop lẫn mobile.
 
@@ -138,6 +139,7 @@
 #### Đã làm
 - Hoàn thiện phần lớn chức năng web theo hướng sản phẩm thật cho ôn thi THPTQG môn Tiếng Anh: từ trang chủ, chatbot, các card tạo nội dung đến các màn trải nghiệm sau khi generate.
 - Xây đầy đủ hơn flow `Full Set` để người dùng có thể đi từ chọn nguồn đầu vào đến xem kết quả hỗn hợp trong cùng một trải nghiệm.
+- Khánh xây dựng hệ thống mock bundle THPTQG dùng làm fallback: khi AI lỗi, mất key hoặc cần demo nhanh, người dùng vẫn có sẵn bộ đề / nội dung THPTQG mẫu để tiếp tục flow học mà không bị gián đoạn.
 - Làm backend và logic hiển thị cho quiz / flashcard / slide ổn định hơn; đồng thời xử lý nhiều lỗi phát sinh ở state, title, session name, action header và navigation trong chat.
 - Chuẩn hóa thêm phần chạy dự án bằng Docker để môi trường dev và demo bớt lệch nhau; xử lý các lỗi liên quan đến route backend, hot reload và dependency khi thêm chức năng mới.
 
@@ -208,6 +210,8 @@
 
 #### Đã làm
 - Tiếp tục hoàn thiện sản phẩm theo các góp ý đã tổng hợp: ưu tiên độ mượt của flow người dùng, sự ổn định của các card chính và cảm giác sẵn sàng để demo.
+- Khánh xây tính năng chia sẻ trải nghiệm: tạo link chia sẻ cho slide / quiz / flashcard / full set đã sinh ra, người nhận chỉ cần mở link là xem được đúng trạng thái experience mà không cần đăng nhập.
+- Khánh xây hệ thống recommendation: gợi ý chủ đề học tiếp theo dựa trên lịch sử của người dùng, và mở thêm tuỳ chọn bật/tắt recommend topic panel ở phần cài đặt sidebar để người dùng tự chọn có hiển thị panel gợi ý hay không, giúp việc theo dõi gợi ý dễ và chủ động hơn.
 - Tổ chức và làm lại gọn hơn một số phần lõi để bám sát nhu cầu người dùng cuối, giảm độ nặng của các hướng chưa thật sự phù hợp với mục tiêu “ra kết quả nhanh, ít chờ”.
 - Bạn Hải tiếp tục phụ trách tester: test lại các tính năng sau mỗi vòng sửa, rà lại những flow quan trọng trước khi demo, và cập nhật ghi chú tính năng / lỗi / góp ý mentor để nhóm theo dõi nhất quán.
 - Duy trì vai trò thư ký trong mentor duty: ghi lại các nhận xét, điểm cần sửa, thứ tự ưu tiên và những lưu ý khi trình bày sản phẩm để cả nhóm không bị sót ý.

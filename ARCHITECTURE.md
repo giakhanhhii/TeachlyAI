@@ -1,85 +1,85 @@
-# Teachly Architecture
+# Kiến trúc Teachly
 
-This document describes the current architecture of Teachly based on the code in this repository.
+Tài liệu này mô tả kiến trúc hiện tại của Teachly dựa trên code trong repository này.
 
-## 1. System Overview
+## 1. Tổng quan hệ thống
 
-Teachly is a web-based English-learning platform for THPT students. The application serves a static frontend and a JSON API from the same FastAPI backend. The backend handles AI-powered content generation, file-based content extraction, session persistence, experience sharing, and slide export.
+Teachly là một nền tảng học tiếng Anh web-based dành cho học sinh THPT. Ứng dụng phục vụ một static frontend và một JSON API từ cùng một FastAPI backend. Backend xử lý sinh nội dung bằng AI, trích xuất nội dung từ file, lưu trạng thái session, chia sẻ trải nghiệm, và xuất slide.
 
-Current architecture style:
+Phong cách kiến trúc hiện tại:
 
-- Single web application
+- Một web application duy nhất
 - Static frontend + API backend
-- PostgreSQL persistence for user accounts, auth tokens, session state, chat messages, and shared experiences
-- Per-account session restoration on login
-- AI/LLM orchestration inside backend services
-- External provider calls to OpenAI and Anthropic
+- Lưu trữ trên PostgreSQL cho tài khoản người dùng, auth token, trạng thái session, tin nhắn chat, và shared experience
+- Khôi phục session theo từng tài khoản khi đăng nhập
+- Điều phối AI/LLM ngay trong các backend service
+- Gọi đến các provider bên ngoài là OpenAI và Anthropic
 
-## 2. Main Components
+## 2. Các thành phần chính
 
-### User
+### Người dùng
 
-- Opens the landing page and chat UI in the browser
-- Chooses learning mode: `slide`, `quiz`, `flashcard`, `full set`
-- Enters topic text or uploads a study document
-- Reviews generated content, continues the learning flow, shares experiences, or exports slides
+- Mở landing page và chat UI trong trình duyệt
+- Chọn chế độ học: `slide`, `quiz`, `flashcard`, `full set`
+- Nhập chủ đề (topic) hoặc upload một tài liệu học
+- Xem nội dung được sinh ra, tiếp tục luồng học, chia sẻ trải nghiệm, hoặc xuất slide
 
 ### Frontend
 
-Main location:
+Vị trí chính:
 
 - `frontend/`
 - `frontend/js/chatbot/`
 
-Responsibilities:
+Trách nhiệm:
 
-- Render landing page and chat/product UI
-- Manage guided flow and form states
-- Call backend APIs for generation, upload, chat, translation, recommendations, and export
-- Display quiz/flashcard/slide/full-set experiences
-- Handle user registration, login, and logout via auth dialog
-- Persist auth token and user profile in localStorage; validate on app load via `/api/auth/me`
-- Restore per-account chat session history from server on login via `/api/auth/state`
-- Maintain lightweight browser-side state such as play counts and UI preferences
+- Render landing page và chat/product UI
+- Quản lý guided flow và trạng thái form
+- Gọi các backend API cho sinh nội dung, upload, chat, dịch, gợi ý và xuất file
+- Hiển thị trải nghiệm quiz/flashcard/slide/full-set
+- Xử lý đăng ký, đăng nhập và đăng xuất qua auth dialog
+- Lưu auth token và user profile trong `localStorage`; kiểm tra hợp lệ khi load app qua `/api/auth/me`
+- Khôi phục lịch sử chat session theo từng tài khoản từ server khi đăng nhập qua `/api/auth/state`
+- Duy trì trạng thái nhẹ phía browser như số lần play và preference UI
 
-Key frontend areas:
+Các vùng frontend chính:
 
-- `controllers/`: app orchestration
-- `services/`: API clients, history, recommendation, experience, auth services
-- `dom/`: view rendering for cards, chat, quiz, flashcards, slides, auth dialog
-- `slide/`: slide shell and visual editor helpers
+- `controllers/`: điều phối app
+- `services/`: API client, history, recommendation, experience, auth service
+- `dom/`: render view cho card, chat, quiz, flashcard, slide, auth dialog
+- `slide/`: slide shell và helper cho visual editor
 
 ### Backend/API
 
-Main location:
+Vị trí chính:
 
 - `src/api_server.py`
 
-Responsibilities:
+Trách nhiệm:
 
-- Serve static frontend files
-- Expose all REST API endpoints
-- Validate requests with Pydantic
-- Handle user registration, login, logout, and token validation (`/api/auth/*`)
-- Persist and restore per-account client session state (`/api/auth/state`)
-- Route generation requests to AI services
-- Enforce upload safety and chat scope policy
-- Read mock content when needed
-- Persist sessions/messages/shared experiences in PostgreSQL
-- Export slide HTML into PDF through a Node-based script
+- Phục vụ static frontend file
+- Expose toàn bộ REST API endpoint
+- Validate request bằng Pydantic
+- Xử lý đăng ký, đăng nhập, đăng xuất và xác thực token (`/api/auth/*`)
+- Lưu và khôi phục trạng thái client session theo từng tài khoản (`/api/auth/state`)
+- Điều phối request sinh nội dung đến AI service
+- Áp dụng upload safety và chat scope policy
+- Đọc mock content khi cần
+- Lưu sessions/messages/shared experiences trong PostgreSQL
+- Xuất slide HTML thành PDF thông qua một script Node
 
 ### Database
 
-Main location:
+Vị trí chính:
 
 - `src/database.py`
 
-Technology:
+Công nghệ:
 
 - PostgreSQL
 - `psycopg2` threaded connection pool
 
-Current tables:
+Các bảng hiện tại:
 
 - `users`
 - `auth_tokens`
@@ -88,42 +88,42 @@ Current tables:
 - `messages`
 - `shared_experiences`
 
-Stored data:
+Dữ liệu được lưu:
 
-- User accounts: username and bcrypt password hash
-- Bearer auth tokens (stored as SHA-256 hash, linked to user)
-- Per-user client session state (active session list and active index) as JSONB
-- Chat thread identifiers
-- Chat messages and timestamps
-- Shared experience payloads as JSONB
+- Tài khoản người dùng: username và password hash dạng PBKDF2-SHA256 (120k iterations, salt ngẫu nhiên cho mỗi user)
+- Bearer auth token (lưu dạng SHA-256 hash, liên kết với user)
+- Trạng thái client session của từng user (danh sách session đang hoạt động và active index) lưu dạng JSONB
+- Định danh chat thread
+- Tin nhắn chat và timestamp
+- Payload của shared experience lưu dạng JSONB
 
-### AI / LLM Layer
+### Lớp AI / LLM
 
-Main location:
+Vị trí chính:
 
 - `src/ai_content_generate.py`
 
-Responsibilities:
+Trách nhiệm:
 
-- Generate `slide`, `quiz`, `flashcard`, and `full set` content
-- Generate autofill suggestions for forms
-- Generate content from uploaded document text
-- Review and normalize AI quiz output
-- Translate flashcard vocabulary and generate pronunciations
-- Recommend next learning topics
+- Sinh nội dung `slide`, `quiz`, `flashcard` và `full set`
+- Sinh gợi ý autofill cho form
+- Sinh nội dung từ text đã trích xuất từ tài liệu upload
+- Review và chuẩn hoá output AI cho quiz
+- Dịch từ vựng flashcard và sinh phát âm (pronunciation)
+- Gợi ý chủ đề học tiếp theo
 
-Providers:
+Provider:
 
 - OpenAI
 - Anthropic
 
-Important note:
+Ghi chú quan trọng:
 
-- The current application does **not** run a separate autonomous long-lived agent service.
-- AI behavior is orchestrated as backend function calls triggered by HTTP requests.
-- Legacy scaffold files such as `src/agent.py` exist, but the live web architecture is centered on `src/api_server.py`.
+- Ứng dụng hiện tại **không** chạy một agent service dài hạn, tự trị riêng biệt.
+- Hành vi AI được điều phối dưới dạng các function call trong backend, được kích hoạt qua HTTP request.
+- Một số file scaffold cũ như `src/agent.py` vẫn còn tồn tại, nhưng kiến trúc web đang chạy thực sự xoay quanh `src/api_server.py`.
 
-## 3. High-Level Architecture Diagram
+## 3. Sơ đồ kiến trúc tổng quát
 
 ```mermaid
 flowchart LR
@@ -146,129 +146,129 @@ flowchart LR
     API -->|JSON / files / share IDs / session state| FE
 ```
 
-## 4. Main Data Flows
+## 4. Các luồng dữ liệu chính
 
-### Flow A: Topic-based AI generation
+### Flow A: Sinh nội dung AI từ chủ đề
 
-1. User selects a content type in the frontend.
-2. Frontend sends `POST /api/ai-generate`.
-3. Backend validates request and safety constraints.
-4. `src/ai_content_generate.py` builds prompts and calls the model.
-5. Backend normalizes output JSON.
-6. Frontend renders slide, quiz, flashcard, or full-set experience.
+1. Người dùng chọn loại nội dung ở frontend.
+2. Frontend gửi `POST /api/ai-generate`.
+3. Backend validate request và các ràng buộc an toàn.
+4. `src/ai_content_generate.py` build prompt và gọi model.
+5. Backend chuẩn hoá output JSON.
+6. Frontend render trải nghiệm slide, quiz, flashcard hoặc full-set.
 
-### Flow B: File upload to generated learning content
+### Flow B: Upload file để sinh nội dung học
 
-1. User uploads `PDF`, `DOCX`, `MD`, or `TXT`.
-2. Frontend sends multipart request to `POST /api/file-upload`.
-3. Backend extracts text from the file.
-4. Upload safety checks run on extracted content.
-5. AI generation service creates content from document context.
-6. Frontend renders the generated learning experience.
+1. Người dùng upload file `PDF`, `DOCX`, `MD` hoặc `TXT`.
+2. Frontend gửi multipart request đến `POST /api/file-upload`.
+3. Backend trích xuất text từ file.
+4. Upload safety check chạy trên nội dung đã trích xuất.
+5. AI generation service tạo nội dung từ ngữ cảnh tài liệu.
+6. Frontend render trải nghiệm học đã sinh ra.
 
-### Flow C: Chat session persistence
+### Flow C: Lưu trữ chat session
 
-1. User sends a message from the chat UI.
-2. Frontend sends `POST /api/chat`.
-3. Backend stores the user message in PostgreSQL.
-4. Chat scope policy is evaluated.
-5. Backend calls the configured LLM provider.
-6. Assistant reply is stored in PostgreSQL.
-7. Frontend receives and displays the response.
-8. Session list and session messages can later be reopened from DB.
+1. Người dùng gửi tin nhắn từ chat UI.
+2. Frontend gửi `POST /api/chat`.
+3. Backend lưu tin nhắn của người dùng vào PostgreSQL.
+4. Chat scope policy được đánh giá.
+5. Backend gọi LLM provider đã cấu hình.
+6. Phản hồi của assistant được lưu vào PostgreSQL.
+7. Frontend nhận và hiển thị phản hồi.
+8. Danh sách session và tin nhắn trong session có thể được mở lại sau từ DB.
 
-### Flow D: Share experience
+### Flow D: Chia sẻ trải nghiệm
 
-1. User chooses to share an existing experience.
-2. Frontend sends `POST /api/shared-experiences`.
-3. Backend stores the experience state as JSONB.
-4. Backend returns a `share_id`.
-5. Shared state can later be loaded through `GET /api/shared-experiences/{share_id}`.
+1. Người dùng chọn chia sẻ một experience hiện có.
+2. Frontend gửi `POST /api/shared-experiences`.
+3. Backend lưu trạng thái experience dưới dạng JSONB.
+4. Backend trả về `share_id`.
+5. Trạng thái đã chia sẻ có thể được load lại qua `GET /api/shared-experiences/{share_id}`.
 
-### Flow E: Slide PDF export
+### Flow E: Xuất slide PDF
 
-1. Frontend sends slide `srcdoc` to `POST /api/slides/export-pdf`.
-2. Backend writes a temporary payload file.
-3. Backend invokes Node.js script `scripts/export_slide_pdf.mjs`.
-4. Script renders/export slides to PDF.
-5. Backend returns the generated PDF file to the frontend.
+1. Frontend gửi `srcdoc` của slide đến `POST /api/slides/export-pdf`.
+2. Backend ghi một file payload tạm.
+3. Backend gọi script Node.js `scripts/export_slide_pdf.mjs`.
+4. Script render/export slide thành PDF.
+5. Backend trả về file PDF cho frontend.
 
-### Flow F: User registration and login
+### Flow F: Đăng ký và đăng nhập người dùng
 
-1. User clicks a content card while unauthenticated.
-2. Frontend shows the auth dialog (login/register popup).
-3. On register: frontend sends `POST /api/auth/register`; backend hashes password and stores user in `users`.
-4. On login: frontend sends `POST /api/auth/login`; backend verifies password hash, generates a random Bearer token, stores its SHA-256 hash in `auth_tokens`, and returns the token.
-5. Frontend saves the token and user profile to `localStorage` via `authStore.js`.
-6. Auth state change fires all `subscribeAuth` listeners in the frontend.
-7. Frontend calls `GET /api/auth/state` to load the user's saved session list from `user_client_states`.
-8. Session history is restored and rendered; user can then interact normally.
-9. On logout: frontend calls `POST /api/auth/logout`; backend deletes the token hash from `auth_tokens`; frontend clears `localStorage` before saving current session state.
+1. Người dùng click vào một content card khi chưa đăng nhập.
+2. Frontend hiển thị auth dialog (popup login/register).
+3. Khi register: frontend gửi `POST /api/auth/register`; backend hash password và lưu user vào bảng `users`.
+4. Khi login: frontend gửi `POST /api/auth/login`; backend xác thực PBKDF2-SHA256 hash, sinh một Bearer token ngẫu nhiên, lưu SHA-256 hash của token vào `auth_tokens`, và trả token về.
+5. Frontend lưu token và user profile vào `localStorage` qua `authStore.js`.
+6. Khi auth state thay đổi, tất cả listener `subscribeAuth` ở frontend được kích hoạt.
+7. Frontend gọi `GET /api/auth/state` để load danh sách session đã lưu của user từ `user_client_states`.
+8. Lịch sử session được khôi phục và render; sau đó người dùng có thể thao tác bình thường.
+9. Khi logout: frontend gọi `POST /api/auth/logout`; backend xoá token hash khỏi `auth_tokens`; frontend xoá `localStorage` sau khi đã lưu trạng thái session hiện tại.
 
-### Flow G: Per-account session persistence
+### Flow G: Lưu trữ session theo từng tài khoản
 
-1. While the user is logged in, any change to the session list or active session triggers a debounced `PUT /api/auth/state`.
-2. Backend upserts the full session state JSON into `user_client_states` for the current user.
-3. On next login (any device/session), `GET /api/auth/state` returns the saved state and the frontend restores the exact session list and active session index.
+1. Khi người dùng đang đăng nhập, mọi thay đổi đối với danh sách session hoặc active session sẽ kích hoạt một `PUT /api/auth/state` có debounce.
+2. Backend upsert toàn bộ JSON trạng thái session vào `user_client_states` cho user hiện tại.
+3. Ở lần đăng nhập tiếp theo (trên thiết bị/session bất kỳ), `GET /api/auth/state` trả về trạng thái đã lưu và frontend khôi phục đúng danh sách session cùng active session index.
 
-## 5. Detailed Backend Modules
+## 5. Chi tiết các module backend
 
 ### `src/api_server.py`
 
-- Main application entrypoint
-- Route registration
-- Static file mounting
-- Health and status endpoints
-- Auth endpoints: `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`, `/api/auth/state` (GET + PUT)
-- Chat, generation, upload, sharing, and export endpoints
+- Entrypoint chính của ứng dụng
+- Đăng ký route
+- Mount static file
+- Các endpoint health và status
+- Các endpoint auth: `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`, `/api/auth/state` (GET + PUT)
+- Các endpoint cho chat, sinh nội dung, upload, chia sẻ và export
 
 ### `src/ai_content_generate.py`
 
-- Prompt templates
-- AI provider calls
-- Content normalization
-- Full-set orchestration
-- File-context generation
-- Recommendation logic
+- Prompt template
+- Gọi AI provider
+- Chuẩn hoá nội dung
+- Điều phối full-set
+- Sinh nội dung từ ngữ cảnh file
+- Logic gợi ý chủ đề
 
 ### `src/database.py`
 
-- Connection pool management
-- Schema initialization
-- Session/message CRUD
-- Shared experience persistence
+- Quản lý connection pool
+- Khởi tạo schema
+- CRUD cho session/message
+- Lưu trữ shared experience
 
 ### `src/utils/`
 
-- `file_extractor.py`: file-to-text extraction
-- `ocr_helper.py`: OCR helper path
-- `upload_safety.py`: prompt/content safety rules
-- `node_runtime.py`: Node runtime resolution for export
+- `file_extractor.py`: trích xuất file thành text
+- `ocr_helper.py`: đường dẫn helper cho OCR
+- `upload_safety.py`: rule an toàn cho prompt/nội dung
+- `node_runtime.py`: phân giải Node runtime cho việc export
 
-## 6. Frontend Structure
+## 6. Cấu trúc frontend
 
-Main frontend runtime:
+Runtime frontend chính:
 
 - `frontend/chatbot_ui.html`
 - `frontend/js/chatbot/main.js`
 
-Frontend architecture style:
+Phong cách kiến trúc frontend:
 
-- Vanilla JS modules
-- Controller-service-view split
-- Experience-specific renderers for each learning mode
+- Vanilla JS module
+- Tách thành controller-service-view
+- Renderer riêng cho từng chế độ học (experience)
 
-Examples:
+Ví dụ:
 
-- `controllers/messageController.js`: message flow coordination
-- `controllers/experienceController.js`: experience orchestration
-- `services/aiContentApi.js`: API client for AI generation and upload
-- `services/experienceStateService.js`: experience state handling
-- `dom/slideExperienceView.js`: slide rendering
-- `dom/quizExperienceView.js`: quiz rendering
-- `dom/flashExperienceView.js`: flashcard rendering
+- `controllers/messageController.js`: điều phối luồng tin nhắn
+- `controllers/experienceController.js`: điều phối experience
+- `services/aiContentApi.js`: API client cho sinh nội dung AI và upload
+- `services/experienceStateService.js`: xử lý trạng thái experience
+- `dom/slideExperienceView.js`: render slide
+- `dom/quizExperienceView.js`: render quiz
+- `dom/flashExperienceView.js`: render flashcard
 
-## 7. Database Model
+## 7. Mô hình database
 
 ```mermaid
 erDiagram
@@ -317,33 +317,33 @@ erDiagram
     sessions ||--o{ messages : contains
 ```
 
-## 8. External Dependencies
+## 8. Các phụ thuộc bên ngoài
 
-- OpenAI API for content generation, flash translation, and pronunciation support
-- Anthropic API for chat mode when configured
+- OpenAI API cho sinh nội dung, dịch flashcard và hỗ trợ phát âm
+- Anthropic API cho chế độ chat khi được cấu hình
 - PostgreSQL database
-- Node.js runtime for slide PDF export
+- Node.js runtime cho việc xuất slide PDF
 
-## 9. Deployment Notes
+## 9. Ghi chú triển khai
 
-- Local runtime can be started with Uvicorn.
-- Docker is provided for app containerization.
-- `docker-compose.yml` does not bundle a database service, so PostgreSQL must be provided separately.
-- Frontend and backend are served from the same application host in the default setup.
+- Runtime local có thể được khởi động bằng Uvicorn.
+- Docker được cung cấp để container hoá ứng dụng.
+- `docker-compose.yml` không kèm sẵn một database service, nên PostgreSQL phải được cung cấp riêng.
+- Frontend và backend được phục vụ từ cùng một application host trong cấu hình mặc định.
 
-## 10. Current Architectural Boundaries
+## 10. Ranh giới kiến trúc hiện tại
 
-What the current system has:
+Những gì hệ thống hiện có:
 
 - Static frontend
 - REST backend
-- Database-backed sessions
-- AI service orchestration
-- Document-to-learning-content flow
+- Session lưu trong database
+- Điều phối AI service
+- Luồng tài liệu-thành-nội-dung-học (document-to-learning-content)
 
-What the current system does not yet have as a first-class architecture component:
+Những gì hệ thống chưa có như một thành phần kiến trúc first-class:
 
-- Dedicated vector database
-- Event bus or async job queue
-- Separate microservices
-- Persistent autonomous multi-agent runtime
+- Vector database chuyên dụng
+- Event bus hoặc async job queue
+- Microservice tách biệt
+- Runtime multi-agent tự trị, dài hạn

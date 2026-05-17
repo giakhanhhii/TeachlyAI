@@ -4,101 +4,101 @@
 
 # Dashboard
 
-Teachly is a web application that helps Vietnamese high-school students study English through AI-assisted learning experiences. The product focuses on THPT/grade-12 learning flows and lets users create `slide`, `quiz`, `flashcard`, and `full set` study content from a topic or from an uploaded document.
+Teachly là một web application giúp học sinh THPT Việt Nam học tiếng Anh thông qua các trải nghiệm học có AI hỗ trợ. Sản phẩm tập trung vào luồng học THPT/lớp 12 và cho phép người dùng tạo nội dung học dạng `slide`, `quiz`, `flashcard` và `full set` từ một chủ đề hoặc từ một tài liệu được upload.
 
-## Project Goal
+## Mục tiêu dự án
 
-- Build a practical English-learning assistant for THPT students.
-- Turn one topic or one source document into multiple study formats quickly.
-- Keep the experience simple enough for demo and classroom use: generate, review, present, and continue learning in one web flow.
+- Xây dựng một trợ lý học tiếng Anh thực dụng cho học sinh THPT.
+- Biến một chủ đề hoặc một tài liệu nguồn thành nhiều định dạng học khác nhau một cách nhanh chóng.
+- Giữ trải nghiệm đủ đơn giản để dùng trong demo và lớp học: sinh nội dung, xem lại, trình bày và tiếp tục học trong cùng một web flow.
 
-## Main Features
+## Tính năng chính
 
-- AI-generated `slide`, `quiz`, `flashcard`, and `full set` content.
-- Guided chat-based workflow for choosing learning actions and filling forms.
-- Upload-based generation from `PDF`, `DOCX`, `MD`, and `TXT` files.
-- Built-in THPTQG/mock learning bundles for fallback and predefined practice flows.
-- Flashcard term translation and pronunciation support.
-- Slide preview, in-browser editing shell, and PDF export.
-- Session history for chat threads.
-- Shared experience links stored in the database.
-- Topic recommendation flow based on user study history.
+- Sinh nội dung `slide`, `quiz`, `flashcard` và `full set` bằng AI.
+- Workflow guided dựa trên chat để chọn hành động học và điền form.
+- Sinh nội dung dựa trên upload file `PDF`, `DOCX`, `MD` và `TXT`.
+- Bundle học THPTQG/mock được tích hợp sẵn để fallback và phục vụ các flow luyện tập có định nghĩa trước.
+- Hỗ trợ dịch từ vựng flashcard và phát âm.
+- Xem trước slide, shell chỉnh sửa trong trình duyệt và xuất PDF.
+- Lịch sử session cho các chat thread.
+- Link chia sẻ experience được lưu trong database.
+- Luồng gợi ý chủ đề dựa trên lịch sử học của người dùng.
 
 ## Tech Stack
 
-- Frontend: HTML, CSS, vanilla JavaScript ES modules
+- Frontend: HTML, CSS, vanilla JavaScript ES module
 - Backend/API: FastAPI, Pydantic, Uvicorn
-- Database: PostgreSQL via `psycopg2`
-- AI/LLM: OpenAI and Anthropic APIs
-- Document extraction: `markitdown`, `pdfplumber`, `python-docx`, `chandra-ocr`
+- Database: PostgreSQL qua `psycopg2`
+- AI/LLM: OpenAI và Anthropic API
+- Trích xuất tài liệu: `markitdown`, `pdfplumber`, `python-docx`, `chandra-ocr`
 - Testing: Vitest, Playwright, Pytest
-- Deployment/runtime helpers: Docker, Fly.io
+- Hỗ trợ deployment/runtime: Docker, Fly.io
 
-## Repository Structure
+## Cấu trúc repository
 
 ```text
 .
-├── frontend/                 # Static web UI, chat flows, experience views, slide templates
-├── backend/mock/             # Mock JSON bundles used as fallback or sample content
-├── src/                      # FastAPI server, AI generation services, DB access, utilities
-├── scripts/                  # Import, export, maintenance, hook, and utility scripts
-├── tests/                    # Backend, frontend, and e2e test suites
-├── .ai-log/                  # AI usage logs
-├── AGENTS.md                 # Local instructions for coding agents
-├── JOURNAL.md                # Weekly project journal
-├── docker-compose.yml        # Containerized app runtime
-├── Dockerfile                # Docker build definition
+├── frontend/                 # Static web UI, chat flow, experience view, slide template
+├── backend/mock/             # Bundle JSON mock dùng để fallback hoặc làm nội dung mẫu
+├── src/                      # FastAPI server, service sinh nội dung AI, truy cập DB, tiện ích
+├── scripts/                  # Script import, export, bảo trì, hook và tiện ích
+├── tests/                    # Bộ test backend, frontend và e2e
+├── .ai-log/                  # Log sử dụng AI
+├── AGENTS.md                 # Hướng dẫn nội bộ cho coding agent
+├── JOURNAL.md                # Journal tiến độ dự án theo tuần
+├── docker-compose.yml        # Runtime app dạng container
+├── Dockerfile                # Định nghĩa build Docker
 └── README.md
 ```
 
-## Core Runtime Files
+## Các file runtime cốt lõi
 
-- `src/api_server.py`: main FastAPI app, API routes, static frontend serving
-- `src/ai_content_generate.py`: AI generation, autofill, recommendations, document-based generation
-- `src/database.py`: PostgreSQL connection pool and persistence for sessions/messages/shared experiences
-- `src/config.py`: environment loading and runtime configuration
+- `src/api_server.py`: app FastAPI chính, các route API, phục vụ static frontend
+- `src/ai_content_generate.py`: sinh nội dung AI, autofill, gợi ý, sinh nội dung dựa trên tài liệu
+- `src/database.py`: connection pool PostgreSQL và lưu trữ session/message/shared experience
+- `src/config.py`: load biến môi trường và cấu hình runtime
 - `frontend/main_hub.html`: landing page
-- `frontend/chatbot_ui.html`: main learning/chat UI
-- `frontend/js/chatbot/`: frontend controllers, services, guided flow, experience rendering
+- `frontend/chatbot_ui.html`: UI học/chat chính
+- `frontend/js/chatbot/`: controller, service, guided flow và render experience của frontend
 
-## Installation
+## Cài đặt
 
-### Prerequisites
+### Yêu cầu
 
-- Python `3.11+` recommended
+- Python `3.11+` được khuyến nghị
 - Node.js `20+`
-- PostgreSQL database connection string
-- At least one AI provider key:
-  - `OPENAI_API_KEY` for content generation and flash translation
-  - `ANTHROPIC_API_KEY` if using Anthropic for chat
+- Connection string đến database PostgreSQL
+- Ít nhất một AI provider key:
+  - `OPENAI_API_KEY` cho sinh nội dung và dịch flashcard
+  - `ANTHROPIC_API_KEY` nếu dùng Anthropic cho chat
 
-### 1. Clone the repository
+### 1. Clone repository
 
 ```bash
 git clone <repo-url>
 cd A20-App-082
 ```
 
-### 2. Create and fill environment variables
+### 2. Tạo và điền biến môi trường
 
 ```bash
 cp .env.example .env
 ```
 
-Update `.env` with real values:
+Cập nhật `.env` với giá trị thật:
 
 - `DATABASE_URL`
 - `OPENAI_API_KEY`
 - `ANTHROPIC_API_KEY`
 - `DEFAULT_MODEL`
-- optional logging and feature flags
+- các flag log và feature tuỳ chọn
 
-Important note:
+Ghi chú quan trọng:
 
-- `docker-compose.yml` runs the app container, but does **not** start a local PostgreSQL service for you.
-- You need a real PostgreSQL database, for example Supabase or another hosted/local PostgreSQL instance.
+- `docker-compose.yml` chỉ chạy container của app, **không** tự khởi động một PostgreSQL service local.
+- Bạn cần một database PostgreSQL thật, ví dụ Supabase hoặc một PostgreSQL được host/cài local khác.
 
-### 3. Install Python dependencies
+### 3. Cài Python dependency
 
 ```bash
 python -m venv venv
@@ -106,105 +106,129 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Install Node dependencies
+### 4. Cài Node dependency
 
 ```bash
 npm install
 ```
 
-Node is needed for frontend tooling and for slide PDF export.
+Node được dùng cho tooling frontend và cho việc xuất slide PDF.
 
-## Run the Project
+## Chạy dự án
 
-### Option 1: Run locally without Docker
+### Cách 1: Chạy local không dùng Docker
 
 ```bash
 uvicorn src.api_server:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open:
+Mở:
 
 - `http://127.0.0.1:8000/main_hub.html`
-- or simply `http://127.0.0.1:8000/`
+- hoặc chỉ cần `http://127.0.0.1:8000/`
 
-### Option 2: Run with Docker
+### Cách 2: Chạy với Docker
 
 ```bash
 docker compose up --build
 ```
 
-Default local URL:
+URL local mặc định:
 
 - `http://127.0.0.1:8000/`
 
-## How to Use
+## Hướng dẫn sử dụng
 
-### Learning flow
+### Luồng học
 
-1. Open the hub page.
-2. Choose one learning mode: `slide`, `quiz`, `flashcard`, or `full set`.
-3. Enter a topic or use the guided form.
-4. Optionally upload a document to generate content from file context.
-5. Review the generated output inside the chat/experience UI.
-6. Continue learning, share the experience, or export slide content to PDF.
+1. Mở trang hub.
+2. Chọn một chế độ học: `slide`, `quiz`, `flashcard` hoặc `full set`.
+3. Nhập một chủ đề hoặc dùng form guided.
+4. Tuỳ chọn upload một tài liệu để sinh nội dung từ ngữ cảnh file.
+5. Xem lại output đã sinh ra trong chat/experience UI.
+6. Tiếp tục học, chia sẻ experience hoặc xuất nội dung slide ra PDF.
 
-### Chat flow
+### Luồng chat
 
-- The chat endpoint stores messages by `thread_id`.
-- Session history can be reopened through the frontend sidebar.
-- Scope policy is applied so the chat stays aligned with the educational use case.
+- Endpoint chat lưu tin nhắn theo `thread_id`.
+- Lịch sử session có thể được mở lại từ sidebar của frontend.
+- Scope policy được áp dụng để chat luôn bám sát mục đích giáo dục.
 
-## API Summary
+## Tóm tắt API
 
-Main endpoints in `src/api_server.py`:
+Các endpoint chính trong `src/api_server.py`:
+
+Health và status:
 
 - `GET /api/health`
+- `GET /api/status`
+
+Authentication và trạng thái theo tài khoản:
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `GET /api/auth/state`
+- `PUT /api/auth/state`
+
+Chat và session:
+
 - `POST /api/chat`
 - `GET /api/sessions`
 - `GET /api/sessions/{thread_id}/messages`
+
+Sinh nội dung và upload:
+
 - `POST /api/ai-generate`
 - `POST /api/ai-autofill`
 - `POST /api/file-upload`
+- `POST /api/recommend-topics`
+
+Tiện ích cho flashcard:
+
 - `POST /api/flash/translate-term`
 - `POST /api/flash/translate-terms`
 - `POST /api/flash/pronunciations`
+
+Slide, chia sẻ và mock content:
+
 - `POST /api/slides/export-pdf`
 - `POST /api/shared-experiences`
 - `GET /api/shared-experiences/{share_id}`
-- `POST /api/recommend-topics`
 - `GET /api/mock/{name}`
 
 ## Testing
 
-### Backend tests
+### Test backend
 
 ```bash
 pip install -r requirements-dev.txt
 python -m pytest tests/backend -q
 ```
 
-### Frontend unit tests
+### Test unit frontend
 
 ```bash
 npm run lint
 npx vitest run
 ```
 
-### End-to-end tests
+### Test end-to-end
 
 ```bash
 npx playwright install chromium
 npm run test:e2e
 ```
 
-## Notes for Reviewers
+## Ghi chú cho người review
 
-- The current production-style web app is centered on `src/api_server.py`.
-- Some starter files from the original scaffold, such as `src/agent.py`, still exist in the repository, but they are not the main runtime path for the web product.
-- The app uses AI as a service layer inside the backend rather than a separate long-running autonomous multi-agent system.
+- Web app dạng production hiện tại xoay quanh `src/api_server.py`.
+- Một số file khởi tạo từ scaffold ban đầu, ví dụ như `src/agent.py`, vẫn còn tồn tại trong repository nhưng không phải là đường runtime chính của sản phẩm web.
+- App sử dụng AI như một lớp service bên trong backend chứ không phải một hệ thống multi-agent tự trị, chạy dài hạn riêng biệt.
 
-## Additional Documents
+## Tài liệu bổ sung
 
-- [JOURNAL.md](./JOURNAL.md): weekly project progress and reflection
-- [ARCHITECTURE.md](./ARCHITECTURE.md): system architecture and data flow
-- [AGENTS.md](./AGENTS.md): project-specific coding agent instructions
+- [JOURNAL.md](./JOURNAL.md): tiến độ và phản hồi dự án theo tuần
+- [ARCHITECTURE.md](./ARCHITECTURE.md): kiến trúc hệ thống và luồng dữ liệu
+- [AGENTS.md](./AGENTS.md): hướng dẫn coding agent riêng cho dự án
