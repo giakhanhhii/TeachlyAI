@@ -33,6 +33,21 @@ function syncAutoModeToggle(enabled) {
   if (label) label.textContent = enabled ? "Tạo Auto" : "Tạo Custom";
 }
 
+function openHubAutoCountSelector(flow, navigate) {
+  if (autoModeStore.getNeverAskCount()) {
+    navigate(buildChatUrl(flow, "auto"));
+    return;
+  }
+  showCountSelectorPanel(toExpKind(flow), autoModeStore.getCounts(), {
+    onConfirm: (counts, neverAsk) => {
+      autoModeStore.saveCounts(counts);
+      if (neverAsk) autoModeStore.setNeverAskCount(true);
+      navigate(buildChatUrl(flow, "auto"));
+    },
+    onCancel: () => {},
+  });
+}
+
 function openHubAutoModeChoice(flow, navigate) {
   const expKind = toExpKind(flow);
   showAutoModeChoicePopup(expKind, {
@@ -46,16 +61,26 @@ function openHubAutoModeChoice(flow, navigate) {
       autoModeStore.enable();
       autoModeStore.setNeverAskChoice("auto");
       syncAutoModeToggle(true);
-      showCountSelectorPanel(expKind, autoModeStore.getCounts(), {
-        onConfirm: (counts, neverAsk) => {
-          autoModeStore.saveCounts(counts);
-          if (neverAsk) autoModeStore.setNeverAskCount(true);
-          navigate(buildChatUrl(flow, "auto"));
-        },
-        onCancel: () => {},
-      });
+      openHubAutoCountSelector(flow, navigate);
     },
   });
+}
+
+function handleHubFlowCard(flow, navigate) {
+  const savedChoice = autoModeStore.getNeverAskChoice();
+  if (savedChoice === "custom") {
+    autoModeStore.disable();
+    syncAutoModeToggle(false);
+    navigate(buildChatUrl(flow, "custom"));
+    return;
+  }
+  if (savedChoice === "auto" || autoModeStore.isEnabled()) {
+    autoModeStore.enable();
+    syncAutoModeToggle(true);
+    openHubAutoCountSelector(flow, navigate);
+    return;
+  }
+  openHubAutoModeChoice(flow, navigate);
 }
 
 /**
@@ -84,7 +109,7 @@ export function bindProtectedHubCards(deps = {}) {
       if (getCurrentAuthUser()) {
         if (!flow) return;
         event.preventDefault();
-        openHubAutoModeChoice(flow, navigate);
+        handleHubFlowCard(flow, navigate);
         return;
       }
       // Chưa đăng nhập: mở dialog auth nhưng KHÔNG nhớ intent của lần click này.
