@@ -378,6 +378,8 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
   let activeSlideDeckShell = null;
   let exportInFlight = false;
   let lastRenderedSlideSrcdoc = "";
+  /** @type {Promise<string> | null} */
+  let exportSrcdocPrefetch = null;
   const shell = document.createElement("div");
   shell.className = "exp-shell exp-shell-quiz exp-shell-mixed";
   if (restoredSteps.length === 0) {
@@ -440,6 +442,37 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     }
   }
 
+  function startExportSrcdocPrefetch() {
+    if (lastRenderedSlideSrcdoc) return Promise.resolve(lastRenderedSlideSrcdoc);
+    if (exportSrcdocPrefetch) return exportSrcdocPrefetch;
+    if (!slides.length) return Promise.resolve("");
+    exportSrcdocPrefetch = (async () => {
+      try {
+        const file = resolveSlideShellFilename(spec.slideTemplate);
+        const html = await fetchSlideShellHtml(file);
+        const sessionShellSubtitle = (() => {
+          const auto = "(Teachly tự động)";
+          const tt = String(topic || "").replace(/\s+/g, " ").trim();
+          if (tt && tt !== auto && tt !== "—") return tt;
+          return String(titleText || "").replace(/\s+/g, " ").trim();
+        })();
+        const srcdoc = buildSlideDeckSrcdoc(html, slides, {
+          ...slideMeta,
+          deckTitle: String(titleText || "").trim(),
+          sessionShellSubtitle,
+          slideTemplate: String(spec.slideTemplate || ""),
+          shellYear: String(new Date().getFullYear()),
+          slideNavMode: "scroll",
+        });
+        lastRenderedSlideSrcdoc = srcdoc;
+        return srcdoc;
+      } finally {
+        exportSrcdocPrefetch = null;
+      }
+    })();
+    return exportSrcdocPrefetch;
+  }
+
   async function buildFullsetExportSrcdoc() {
     const iframeDoc = activeSlideDeckShell?.iframe?.contentDocument;
     if (iframeDoc?.documentElement) {
@@ -447,27 +480,14 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
       if (current) return current;
     }
     if (lastRenderedSlideSrcdoc) return lastRenderedSlideSrcdoc;
-    if (!slides.length) return "";
-
-    const file = resolveSlideShellFilename(spec.slideTemplate);
-    const html = await fetchSlideShellHtml(file);
-    const sessionShellSubtitle = (() => {
-      const auto = "(Teachly tự động)";
-      const tt = String(topic || "").replace(/\s+/g, " ").trim();
-      if (tt && tt !== auto && tt !== "—") return tt;
-      return String(titleText || "").replace(/\s+/g, " ").trim();
-    })();
-    const srcdoc = buildSlideDeckSrcdoc(html, slides, {
-      ...slideMeta,
-      deckTitle: String(titleText || "").trim(),
-      sessionShellSubtitle,
-      slideTemplate: String(spec.slideTemplate || ""),
-      shellYear: String(new Date().getFullYear()),
-      slideNavMode: "scroll",
-    });
-    lastRenderedSlideSrcdoc = srcdoc;
-    return srcdoc;
+    return startExportSrcdocPrefetch();
   }
+
+  // Prefetch export srcdoc ngay khi view mount để Tải PDF instant
+  // dù user đang ở tab quiz/flashcard (chưa mount slide iframe).
+  void startExportSrcdocPrefetch().catch((err) => {
+    console.warn("[fullset-export] prefetch failed", err);
+  });
 
   async function handlePdfDownload() {
     if (exportInFlight) return;
@@ -773,6 +793,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     shell.classList.remove("exp-shell-slide");
     stage.className = "exp-stage";
     footer.hidden = true;
+    if (exportBtn) exportBtn.hidden = true;
     refreshScore();
     renderBookmarkChrome();
     repaintCurrentProgress();
@@ -862,6 +883,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     renderStepGen += 1;
     const myGen = renderStepGen;
     backBtn.textContent = "Quay lại";
+    if (exportBtn) exportBtn.hidden = step?.kind !== "slide_deck";
     quizSelected = quizSelectedByStep[index] ?? null;
     quizRevealed = !!quizRevealedByStep[index];
     if (!bookmarkFilter && stepKeys[index]) lastAllStepKey = stepKeys[index];
