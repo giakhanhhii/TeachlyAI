@@ -63,6 +63,14 @@ output/
 tmp/
 tmp_*
 
+# Offline RAG / PDF preprocessing pipeline (dev-only tool, không nộp; không thuộc web app)
+# `/` neo về repo root để không đụng src/config.py
+/process_pdfs.py
+/ocr_engine.py
+/text_cleaner.py
+/config.py
+/requirements-pdf.txt
+
 # Scratch plans / notes at repo root (keep durable docs like README, AGENTS, RTK, JOURNAL)
 /*.plan.md
 /*_plan.md
