@@ -51,6 +51,7 @@ import { createMessageHistoryService } from "./services/messageHistoryService.js
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
 import * as autoModeStore from "./services/autoModeStore.js";
+import { resolveGuidanceMessage } from "./services/chatGuidanceService.js";
 import * as recommendQueueStore from "./services/recommendQueueStore.js";
 import { buildAutoModeFullsetSpec } from "./services/fullsetAutoMode.js";
 import { showAutoModeChoicePopup, showCountSelectorPanel } from "./dom/autoModePanel.js";
