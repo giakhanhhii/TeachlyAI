@@ -150,6 +150,7 @@ export function resolveChatDomElements() {
  *   onInitCompleted?: () => void,
  *   onBeforeBack?: () => boolean,
  *   onAddFile?: (btn: HTMLButtonElement) => void,
+ *   onAbortGuidedFlow?: () => void,
  * }} deps
  */
 export function setupChatEventManager(deps) {
@@ -185,6 +186,7 @@ export function setupChatEventManager(deps) {
     onInitCompleted,
     onBeforeBack,
     onAddFile,
+    onAbortGuidedFlow,
   } = deps;
 
   const sidebar = document.getElementById("sidebar");
@@ -217,7 +219,8 @@ export function setupChatEventManager(deps) {
     try {
       const guided = getGuided();
       if (guided && (guided.step === "await_source" || guided.step === "await_pdf_file")) {
-        input.focus();
+        onAbortGuidedFlow?.();
+        onSendPrompt(prompt);
         return;
       }
       if (guided) {
