@@ -2,6 +2,7 @@
 
 ## Link quan trọng
 
+- **Video demo:** https://www.youtube.com/watch?v=tf5mvZXa5zc
 - **Website demo:** https://a20-app-082.fly.dev
 - **Kiến trúc hệ thống:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **Journal tiến độ theo tuần:** [JOURNAL.md](./JOURNAL.md)
