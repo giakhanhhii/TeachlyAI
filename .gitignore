@@ -42,6 +42,17 @@ template/
 .cursorrules.md
 .cursor/plans/
 
+# AI / IDE tool configs (dev-only, không cần nộp)
+.cursorignore
+.tools/
+RTK.md
+
+# Runtime database (tự tạo lại khi chạy, không commit)
+data/teachly.sqlite3
+
+# Log files tạm
+screenshots/_raw/uvicorn.log
+
 # Local uvicorn logs (scripts/run_stack.ps1)
 .teachly_logs/
 
