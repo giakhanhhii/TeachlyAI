@@ -99,7 +99,6 @@ function createBuildNextFlowSessionTitle(deps) {
  *   setActiveSessionIndex: (idx: number) => void,
  *   saveSessions: () => void,
  *   renderChatListUI: () => void,
- *   ensureSessionMessagesLoaded: (force?: boolean) => Promise<void>,
  *   renderMessages: () => void,
  *   restoreCurrentSessionExperience: () => Promise<void>,
  *   computeStartFlow: (flowKind: "fullset"|"quiz"|"slide"|"flashcard") => { guided: any, effects: any[] },
@@ -124,7 +123,6 @@ export function createFlowService(deps) {
     setActiveSessionIndex,
     saveSessions,
     renderChatListUI,
-    ensureSessionMessagesLoaded,
     renderMessages,
     restoreCurrentSessionExperience,
     computeStartFlow,
@@ -245,11 +243,6 @@ export function createFlowService(deps) {
       saveSessions();
       renderChatListUI();
       updateThreadLabel();
-      try {
-        await ensureSessionMessagesLoaded();
-      } catch {
-        // Keep local cache if remote loading fails.
-      }
       await startWithGuidedEffects(flowKind);
       commitNavigationSnapshot?.("replace");
     } catch (err) {
