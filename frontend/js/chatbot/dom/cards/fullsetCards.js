@@ -283,6 +283,15 @@ export function createFullsetTopicCard(deps) {
     if (hasFlash && (!Number.isFinite(fn) || !FULLSET_FLASH_COUNT_OPTIONS.includes(flashRaw))) {
       return { ok: false, message: "Số Flashcard trong Full Set chỉ có thể là 10 hoặc 20." };
     }
+    if (hasSlide && hasQuiz && hasFlash) {
+      const total = sn + qn + fn;
+      if (total > 40) {
+        return {
+          ok: false,
+          message: `Tổng số lượng (slide + quiz + flashcard) đang là ${total}, vượt quá 40. Vui lòng giảm bớt và nhập lại.`,
+        };
+      }
+    }
     const combo = coerceFullsetCountCombo(
       hasSlide ? slideRaw : FULLSET_DEFAULT_COUNTS.slides,
       hasQuiz ? quizRaw : FULLSET_DEFAULT_COUNTS.quiz,

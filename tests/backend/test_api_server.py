@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import secrets
 from types import SimpleNamespace
 from pathlib import Path
 
@@ -19,15 +20,25 @@ def client_with_temp_db(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     monkeypatch.setattr(api_server, "_get_client", lambda: object())
     monkeypatch.setattr(api_server, "_run_reply", lambda _client, _history: "Mocked assistant reply")
 
+    # Tạo user thật + auth token để mọi endpoint yêu cầu đăng nhập đều đi qua được.
+    user = temp_db.create_user(username="tester", password_hash="pwhash")
+    user_id = str(user["id"])
+    token = secrets.token_hex(16)
+    temp_db.create_auth_token(user_id=user_id, token_hash=api_server._hash_token(token))
+
     try:
         with TestClient(api_server.app) as client:
-            yield client, temp_db, monkeypatch
+            client.headers.update({"Authorization": f"Bearer {token}"})
+            yield client, temp_db, monkeypatch, user_id
     finally:
-        temp_db._conn.close()
+        try:
+            temp_db._conn().close()
+        except Exception:
+            pass
 
 
 def test_health_reports_expected_shape(client_with_temp_db):
-    client, _, _ = client_with_temp_db
+    client, _, _, _ = client_with_temp_db
 
     response = client.get("/api/health")
 
@@ -40,7 +51,7 @@ def test_health_reports_expected_shape(client_with_temp_db):
 
 
 def test_chat_success_persists_user_and_assistant_messages(client_with_temp_db):
-    client, temp_db, _ = client_with_temp_db
+    client, temp_db, _, user_id = client_with_temp_db
 
     response = client.post("/api/chat", json={"message": "Cách học từ vựng tiếng Anh hiệu quả?"})
 
@@ -49,14 +60,14 @@ def test_chat_success_persists_user_and_assistant_messages(client_with_temp_db):
     assert payload["reply"] == "Mocked assistant reply"
     assert payload["thread_id"]
 
-    rows, total = temp_db.get_messages_page(payload["thread_id"], limit=10, offset=0)
+    rows, total = temp_db.get_messages_page(user_id, payload["thread_id"], limit=10, offset=0)
     assert total == 2
     assert [row["role"] for row in rows] == ["user", "assistant"]
     assert [row["content"] for row in rows] == ["Cách học từ vựng tiếng Anh hiệu quả?", "Mocked assistant reply"]
 
 
 def test_chat_feature_help_question_still_calls_model(client_with_temp_db):
-    client, temp_db, _ = client_with_temp_db
+    client, temp_db, _, user_id = client_with_temp_db
 
     response = client.post("/api/chat", json={"message": "Card slide trên web này dùng như thế nào?"})
 
@@ -64,7 +75,7 @@ def test_chat_feature_help_question_still_calls_model(client_with_temp_db):
     payload = response.json()
     assert payload["reply"] == "Mocked assistant reply"
 
-    rows, total = temp_db.get_messages_page(payload["thread_id"], limit=10, offset=0)
+    rows, total = temp_db.get_messages_page(user_id, payload["thread_id"], limit=10, offset=0)
     assert total == 2
     assert [row["content"] for row in rows] == [
         "Card slide trên web này dùng như thế nào?",
@@ -73,7 +84,7 @@ def test_chat_feature_help_question_still_calls_model(client_with_temp_db):
 
 
 def test_chat_out_of_scope_returns_refusal_without_calling_model(client_with_temp_db):
-    client, temp_db, monkeypatch = client_with_temp_db
+    client, temp_db, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(
         api_server,
@@ -87,14 +98,14 @@ def test_chat_out_of_scope_returns_refusal_without_calling_model(client_with_tem
     payload = response.json()
     assert "Mình chỉ hỗ trợ về dạy và học Tiếng Anh" in payload["reply"]
 
-    rows, total = temp_db.get_messages_page(payload["thread_id"], limit=10, offset=0)
+    rows, total = temp_db.get_messages_page(user_id, payload["thread_id"], limit=10, offset=0)
     assert total == 2
     assert rows[0]["content"] == "Giải giúp mình bài toán đạo hàm này."
     assert "Mình chỉ hỗ trợ về dạy và học Tiếng Anh" in rows[1]["content"]
 
 
 def test_chat_whitespace_input_returns_400(client_with_temp_db):
-    client, _, _ = client_with_temp_db
+    client, _, _, _ = client_with_temp_db
 
     response = client.post("/api/chat", json={"message": "   "})
 
@@ -103,7 +114,7 @@ def test_chat_whitespace_input_returns_400(client_with_temp_db):
 
 
 def test_chat_empty_string_payload_returns_422(client_with_temp_db):
-    client, _, _ = client_with_temp_db
+    client, _, _, _ = client_with_temp_db
 
     response = client.post("/api/chat", json={"message": ""})
 
@@ -111,7 +122,7 @@ def test_chat_empty_string_payload_returns_422(client_with_temp_db):
 
 
 def test_chat_failure_removes_just_added_user_message(client_with_temp_db):
-    client, temp_db, monkeypatch = client_with_temp_db
+    client, temp_db, monkeypatch, user_id = client_with_temp_db
 
     def raise_error(_client, _history):
         raise RuntimeError("mock llm failure")
@@ -122,16 +133,16 @@ def test_chat_failure_removes_just_added_user_message(client_with_temp_db):
 
     assert response.status_code == 502
 
-    sessions = temp_db.list_sessions(limit=10, offset=0)
+    sessions = temp_db.list_sessions(user_id=user_id, limit=10, offset=0)
     assert len(sessions) == 1
     thread_id = sessions[0]["thread_id"]
-    rows, total = temp_db.get_messages_page(thread_id, limit=10, offset=0)
+    rows, total = temp_db.get_messages_page(user_id, thread_id, limit=10, offset=0)
     assert total == 0
     assert rows == []
 
 
 def test_chat_get_client_failure_removes_just_added_user_message(client_with_temp_db):
-    client, temp_db, monkeypatch = client_with_temp_db
+    client, temp_db, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(
         api_server,
@@ -143,20 +154,20 @@ def test_chat_get_client_failure_removes_just_added_user_message(client_with_tem
 
     assert response.status_code == 503
 
-    sessions = temp_db.list_sessions(limit=10, offset=0)
+    sessions = temp_db.list_sessions(user_id=user_id, limit=10, offset=0)
     assert len(sessions) == 1
     thread_id = sessions[0]["thread_id"]
-    rows, total = temp_db.get_messages_page(thread_id, limit=10, offset=0)
+    rows, total = temp_db.get_messages_page(user_id, thread_id, limit=10, offset=0)
     assert total == 0
     assert rows == []
 
 
 def test_list_sessions_honors_limit_and_offset(client_with_temp_db):
-    client, temp_db, _ = client_with_temp_db
+    client, temp_db, _, user_id = client_with_temp_db
 
-    temp_db.append_message("thread-a", "user", "one")
-    temp_db.append_message("thread-b", "user", "two")
-    temp_db.append_message("thread-c", "user", "three")
+    temp_db.append_message("thread-a", user_id, "user", "one")
+    temp_db.append_message("thread-b", user_id, "user", "two")
+    temp_db.append_message("thread-c", user_id, "user", "three")
 
     response = client.get("/api/sessions", params={"limit": 1, "offset": 1})
 
@@ -167,10 +178,10 @@ def test_list_sessions_honors_limit_and_offset(client_with_temp_db):
 
 
 def test_session_messages_returns_role_mapping_and_pagination(client_with_temp_db):
-    client, temp_db, _ = client_with_temp_db
+    client, temp_db, _, user_id = client_with_temp_db
 
-    temp_db.append_message("thread-role-map", "user", "hello")
-    temp_db.append_message("thread-role-map", "assistant", "world")
+    temp_db.append_message("thread-role-map", user_id, "user", "hello")
+    temp_db.append_message("thread-role-map", user_id, "assistant", "world")
 
     response = client.get("/api/sessions/thread-role-map/messages", params={"limit": 1, "offset": 0})
 
@@ -192,7 +203,7 @@ def test_session_messages_returns_role_mapping_and_pagination(client_with_temp_d
 
 
 def test_export_slide_pdf_returns_file_response(client_with_temp_db, tmp_path: Path):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     def fake_run(cmd, cwd, capture_output, text, timeout, check):
         del cmd, cwd, capture_output, text, timeout, check
@@ -225,7 +236,7 @@ def test_export_slide_pdf_returns_file_response(client_with_temp_db, tmp_path: P
 
 
 def test_export_slide_pdf_surfaces_script_failure(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(
         api_server.subprocess,
@@ -252,7 +263,7 @@ def test_export_slide_pdf_surfaces_script_failure(client_with_temp_db):
     ],
 )
 def test_ai_generate_blocks_unsafe_direct_form_content(client_with_temp_db, kind, payload):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
 
@@ -271,7 +282,7 @@ def test_ai_generate_blocks_unsafe_direct_form_content(client_with_temp_db, kind
 
 
 def test_ai_generate_allows_short_safe_manual_topic(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(
@@ -298,7 +309,7 @@ def test_ai_generate_allows_short_safe_manual_topic(client_with_temp_db):
 
 
 def test_file_upload_blocks_explicit_nsfw_content(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(
@@ -318,7 +329,7 @@ def test_file_upload_blocks_explicit_nsfw_content(client_with_temp_db):
 
 
 def test_file_upload_blocks_illegal_instruction_content(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(
@@ -338,7 +349,7 @@ def test_file_upload_blocks_illegal_instruction_content(client_with_temp_db):
 
 
 def test_file_upload_allows_normal_educational_content(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(
@@ -369,7 +380,7 @@ def test_file_upload_allows_normal_educational_content(client_with_temp_db):
 
 
 def test_file_upload_rejects_document_without_readable_text(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(
@@ -389,7 +400,7 @@ def test_file_upload_rejects_document_without_readable_text(client_with_temp_db)
 
 
 def test_file_upload_rejects_dashboard_like_uploads(client_with_temp_db):
-    client, _, monkeypatch = client_with_temp_db
+    client, _, monkeypatch, user_id = client_with_temp_db
 
     monkeypatch.setattr(api_server, "OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(

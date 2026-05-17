@@ -1,0 +1,41 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.4 [39m[90mC:/Users/giakh/Project/Project082/A20-App-082[39m
+
+ [32m✓[39m tests/frontend/config.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/frontend/recommendPanelPrefs.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+ [32m✓[39m tests/frontend/aiContentApi.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/frontend/resumeDockCard.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/frontend/chatApi.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/frontend/authStore.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32m✓[39m tests/frontend/sessionStore.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 148[2mms[22m[39m
+ [32m✓[39m tests/frontend/authChrome.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 70[2mms[22m[39m
+ [32m✓[39m tests/frontend/mainHub.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 74[2mms[22m[39m
+ [32m✓[39m tests/frontend/startupHubCards.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+ [32m✓[39m tests/frontend/authDialog.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 125[2mms[22m[39m
+ [32m✓[39m tests/frontend/fullSetMixedExperienceView.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 86[2mms[22m[39m
+ [32m✓[39m tests/frontend/quizService.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/frontend/quizExperienceRestore.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+ [32m✓[39m tests/frontend/slideShellSrcdoc.test.js [2m([22m[2m18 tests[22m[2m | [22m[33m1 skipped[39m[2m)[22m[33m 1057[2mms[22m[39m
+ [32m✓[39m tests/frontend/flashPronunciationService.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/frontend/experienceChrome.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m tests/frontend/slideMockImageLibrary.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/frontend/messageController.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/frontend/experienceLoading.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m tests/frontend/fullSetMixedReviewView.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+ [32m✓[39m tests/frontend/autoModeStore.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/frontend/slideExportApi.test.js [2m([22m[2m1 test[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m tests/frontend/flashVocabParse.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/frontend/quizSubmitFlow.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/frontend/sessionContentPrep.test.js [2m([22m[2m5 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/frontend/fullsetAutoMode.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/frontend/experienceStateService.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/frontend/fullSetMixedService.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/frontend/experienceAiError.test.js [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/frontend/autofillIntent.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/frontend/contentTitles.test.js [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m32 passed[39m[22m[90m (32)[39m
+[2m      Tests [22m [1m[32m104 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (105)[39m
+[2m   Start at [22m 14:12:57
+[2m   Duration [22m 4.78s[2m (transform 1.90s, setup 0ms, collect 5.14s, tests 2.27s, environment 39.45s, prepare 5.09s)[22m
+

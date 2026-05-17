@@ -1,0 +1,31 @@
+
+Running 25 tests using 4 workers
+
+  -   1 tests\e2e\flow-form-mobile.spec.js:62:6 › [TEST DRIFT] desktop slide form keeps full template labels
+  -   2 tests\e2e\flow-form-mobile.spec.js:79:8 › mobile template selects › [TEST DRIFT] slide form uses compact labels and keeps the select inside the card
+  -   3 tests\e2e\flow-form-mobile.spec.js:97:8 › mobile template selects › [TEST DRIFT] full set form gets the same wide mobile template-select treatment
+  -   4 tests\e2e\flow-form-mobile.spec.js:119:8 › mobile template selects › [TEST DRIFT] quiz form level dropdown also stays inside the mobile form card
+  -   5 tests\e2e\slide-mobile-preview.spec.js:110:10 › mobile slide preview 375x667 › [TEST DRIFT] fits the active slide by height and keeps navigation visible
+  -   6 tests\e2e\slide-mobile-preview.spec.js:110:10 › mobile slide preview 390x844 › [TEST DRIFT] fits the active slide by height and keeps navigation visible
+  -   7 tests\e2e\slide-mobile-preview.spec.js:110:10 › mobile slide preview 360x640 › [TEST DRIFT] fits the active slide by height and keeps navigation visible
+  -   8 tests\e2e\slide-mobile-preview.spec.js:110:10 › mobile slide preview 393x852 › [TEST DRIFT] fits the active slide by height and keeps navigation visible
+  ✓  10 tests\e2e\chat-smoke.spec.js:8:1 › main hub navigates into chatbot ui (786ms)
+  -  11 tests\e2e\chat-smoke.spec.js:17:6 › [TEST DRIFT] chat ui submits a mocked prompt and renders the response
+  -  12 tests\e2e\chat-smoke.spec.js:75:6 › [TEST DRIFT] restored THPTQG result can return to chat without browser history
+  -  13 tests\e2e\chat-smoke.spec.js:152:6 › [TEST DRIFT] selecting a chat with saved THPTQG result reopens the saved experience
+  -  14 tests\e2e\chat-smoke.spec.js:238:6 › [TEST DRIFT] clicking a THPTQG result question chip keeps the overview tab active
+  -  15 tests\e2e\chat-smoke.spec.js:315:6 › [TEST DRIFT] clicking a later THPTQG result question chip brings that part block to the top in overview
+  -  16 tests\e2e\chat-smoke.spec.js:390:6 › [TEST DRIFT] THPTQG result can restart the same test from scratch
+  -  17 tests\e2e\chat-smoke.spec.js:466:6 › [TEST DRIFT] chat only renders the latest THPTQG continue prompt when duplicate resume docks exist
+  -  18 tests\e2e\chat-smoke.spec.js:538:6 › [TEST DRIFT] browser back preserves THPTQG result when reopening resume card
+  -  19 tests\e2e\chat-smoke.spec.js:598:6 › [TEST DRIFT] opening a different THPTQG test from the catalog starts fresh instead of jumping to the previous result
+  ✓   9 tests\e2e\screenshots.spec.js:34:3 › screenshots › 01 main hub (desktop) (1.2s)
+  ✓  20 tests\e2e\screenshots.spec.js:41:3 › screenshots › 02 main hub (mobile) (1.0s)
+  ✓  21 tests\e2e\screenshots.spec.js:48:3 › screenshots › 03 chatbot landing (desktop) (1.4s)
+  ✓  22 tests\e2e\screenshots.spec.js:56:3 › screenshots › 04 chatbot with sample conversation (1.4s)
+  ✓  23 tests\e2e\screenshots.spec.js:87:3 › screenshots › 05 flow form slide (mobile) (2.1s)
+  ✓  24 tests\e2e\screenshots.spec.js:96:3 › screenshots › 06 flow form quiz (mobile) (2.1s)
+  ✓  25 tests\e2e\screenshots.spec.js:105:3 › screenshots › 07 chatbot UI mobile (sidebar collapsed) (1.3s)
+
+  17 skipped
+  8 passed (11.7s)

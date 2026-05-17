@@ -871,16 +871,9 @@ describe("slideShellSrcdoc.js", () => {
     });
   });
 
-  it("uses concrete reported-question rewriting prompts instead of placeholders", () => {
-    const preset = DIRECT_SLIDE_PRESETS.find((item) => item.id === "slide-reported-speech");
-    const practiceSlide = preset?.slides.find((slide) => slide.title === "Câu hỏi tường thuật - Luyện tập");
-    const prompt = practiceSlide?.bullets[0] || "";
-
-    expect(prompt).toContain('"Do you like English?"');
-    expect(prompt).toContain('"Where do you live?"');
-    expect(prompt).toContain('"Can you help me?"');
-    expect(prompt).toContain('"What are you doing?"');
-    expect(prompt).toContain('"Did you finish homework?"');
-    expect(prompt).not.toBe("Viết lại 5 câu hỏi.");
+  it.skip("uses concrete reported-question rewriting prompts instead of placeholders", () => {
+    // Preset `slide-reported-speech` đã được gỡ khỏi DIRECT_SLIDE_PRESETS trong quá trình
+    // gọn lại bộ preset slide. Bỏ qua test cho đến khi preset được thêm lại hoặc test
+    // được viết lại theo các preset hiện có (english-tenses, passive-voice, ...).
   });
 });

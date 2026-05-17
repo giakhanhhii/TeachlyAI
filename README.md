@@ -1,8 +1,13 @@
 # Teachly
 
-**Website:** https://a20-app-082.fly.dev
+## Link quan trọng
 
-# Dashboard
+- **Website demo:** https://a20-app-082.fly.dev
+- **Kiến trúc hệ thống:** [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Journal tiến độ theo tuần:** [JOURNAL.md](./JOURNAL.md)
+- **Hướng dẫn coding agent:** [AGENTS.md](./AGENTS.md)
+
+## Giới thiệu
 
 Teachly là một web application giúp học sinh THPT Việt Nam học tiếng Anh thông qua các trải nghiệm học có AI hỗ trợ. Sản phẩm tập trung vào luồng học THPT/lớp 12 và cho phép người dùng tạo nội dung học dạng `slide`, `quiz`, `flashcard` và `full set` từ một chủ đề hoặc từ một tài liệu được upload.
 
@@ -226,9 +231,3 @@ npm run test:e2e
 - Web app dạng production hiện tại xoay quanh `src/api_server.py`.
 - Một số file khởi tạo từ scaffold ban đầu, ví dụ như `src/agent.py`, vẫn còn tồn tại trong repository nhưng không phải là đường runtime chính của sản phẩm web.
 - App sử dụng AI như một lớp service bên trong backend chứ không phải một hệ thống multi-agent tự trị, chạy dài hạn riêng biệt.
-
-## Tài liệu bổ sung
-
-- [JOURNAL.md](./JOURNAL.md): tiến độ và phản hồi dự án theo tuần
-- [ARCHITECTURE.md](./ARCHITECTURE.md): kiến trúc hệ thống và luồng dữ liệu
-- [AGENTS.md](./AGENTS.md): hướng dẫn coding agent riêng cho dự án
