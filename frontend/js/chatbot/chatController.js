@@ -1352,7 +1352,20 @@ export async function init() {
     void handleAuthStateChanged();
   });
 
+  function isTopicSelectionIntent(prompt) {
+    return /chọn\s*chủ\s*đề|đổi\s*chủ\s*đề|tự\s*chọn\s*chủ\s*đề|muốn\s*chọn\s*chủ\s*đề|chủ\s*đề\s*(?:khác|mới)|chọn\s*topic/i.test(prompt);
+  }
+
   async function sendPrompt(prompt) {
+    if (autoModeStore.isEnabled() && isTopicSelectionIntent(prompt)) {
+      pushUser(prompt);
+      pushBot(
+        "Trong chế độ **Tạo Auto**, Teachly tự động chọn chủ đề phù hợp cho bạn.\n\nNếu bạn muốn tự chọn chủ đề, hãy nhấn nút **Tạo Auto** ở phía trên để chuyển sang chế độ **Tạo Custom** — sau đó chọn loại bài học (Quiz, Slide, Flashcard) và điền chủ đề bạn muốn.",
+      );
+      input.value = "";
+      input.focus();
+      return;
+    }
     await messageController.sendPrompt(prompt, {
       onSendingState: setSendingState,
       onThreadUpdated: (threadId) => { threadLabel.textContent = `Thread: ${threadId}`; },
