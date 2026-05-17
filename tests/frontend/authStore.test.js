@@ -80,4 +80,19 @@ describe("authStore", () => {
 
     expect(getCurrentAuthUser()).toBeNull();
   });
+
+  it("lazily reads a cached identity written after module initialization", () => {
+    localStorage.setItem("teachly_auth_token_v1", "cached-token");
+    localStorage.setItem("teachly_auth_user_cache_v1", JSON.stringify({
+      username: "cached_teacher",
+      displayName: "Cached Teacher",
+      profileLabel: "Pro",
+      avatarText: "C",
+    }));
+
+    expect(getCurrentAuthUser()).toMatchObject({
+      username: "cached_teacher",
+      displayName: "Cached Teacher",
+    });
+  });
 });

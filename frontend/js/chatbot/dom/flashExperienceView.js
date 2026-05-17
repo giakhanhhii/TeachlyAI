@@ -91,7 +91,6 @@ function buildCardFingerprint(card) {
   return [
     String(card.front || "").trim().toLowerCase(),
     String(card.back || "").trim().toLowerCase(),
-    String(card.phonetic || "").trim().toLowerCase(),
     String(card.hint || "").trim().toLowerCase(),
   ].join("::");
 }
@@ -240,7 +239,7 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
     restoredCards.length > 0
       ? { title: typeof initial?.title === "string" && initial.title.trim() ? initial.title.trim() : "Flashcard", cards: restoredCards }
       : prepareFlashSessionData(flashRaw, meta);
-  const cards = await hydrateFlashCardPronunciations(normalizeFlashCards(data.cards));
+  const cards = normalizeFlashCards(data.cards);
   const sessionMeta = data.sessionMeta && typeof data.sessionMeta === "object" ? data.sessionMeta : meta;
   const metaForTitle =
     initial?.meta && typeof initial.meta === "object" ? { ...sessionMeta, ...initial.meta } : sessionMeta;
@@ -649,4 +648,8 @@ export async function mountFlashExperience(layerView, meta, deps, opts = {}) {
 
   experienceBody.appendChild(shell);
   renderCard();
+  void hydrateFlashCardPronunciations(cards).then(() => {
+    if (experienceBody._genStamp !== _genStamp || !shell.isConnected) return;
+    renderCard();
+  });
 }

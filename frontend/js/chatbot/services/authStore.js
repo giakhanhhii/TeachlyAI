@@ -70,10 +70,19 @@ function setAuthState({ token = "", user = null } = {}) {
 }
 
 export function getCurrentAuthUser() {
+  if (!currentUser) {
+    const cachedToken = safeReadToken();
+    const cachedUser = normalizeUser(safeReadJson(LS_AUTH_USER_CACHE, null));
+    if (cachedToken && cachedUser) {
+      authToken = cachedToken;
+      currentUser = cachedUser;
+    }
+  }
   return currentUser;
 }
 
 export function getAuthToken() {
+  if (!authToken) authToken = safeReadToken();
   return authToken;
 }
 

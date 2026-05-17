@@ -46,7 +46,7 @@ import {
   HISTORY_CHAT_PHASE,
   HISTORY_EXPERIENCE_PHASE,
 } from "./services/historyService.js";
-import { createFlowService, flowSessionBaseTitle } from "./services/flowService.js";
+import { createFlowService, flowSessionBaseTitle, normalizeFlowParam } from "./services/flowService.js";
 import { createMessageHistoryService } from "./services/messageHistoryService.js";
 import { createStartupHubElement } from "./dom/startupHubCards.js";
 import { resolveChatDomElements, setupChatEventManager } from "./dom/chatEventManager.js";
@@ -946,14 +946,12 @@ export async function init() {
   }
 
   async function handleFlowWithAutoMode(flowKind, onCustom, opts = {}) {
-    const wasAuthenticated = !!getCurrentAuthUser();
     const user = await ensureAuthenticated({
       initialMode: "login",
       title: "Đăng nhập hoặc đăng ký để mở bài giảng",
       subtitle: "Sau khi đăng nhập, hồ sơ và tên người dùng sẽ hiển thị ở thanh bên trái.",
     });
     if (!user) return;
-    if (!wasAuthenticated) return;
     const expKind = toExpKind(flowKind);
 
     function openCountSelector() {
@@ -1358,11 +1356,21 @@ export async function init() {
     writeAppNavigationState("replace", resolveCurrentPhase());
   }
 
-  await applyAccountStateFromServer();
+  const hasInitialFlowEntry = Boolean(normalizeFlowParam(new URLSearchParams(location.search).get("flow")));
+  if (!hasInitialFlowEntry) {
+    await applyAccountStateFromServer();
+  }
   let lastAuthUserKey = getCurrentAuthUser()?.username || "";
+  let suppressInitialFlowAuthHydration = hasInitialFlowEntry && !lastAuthUserKey;
   subscribeAuth((user) => {
     const nextKey = user?.username || "";
     if (nextKey === lastAuthUserKey) return;
+    if (suppressInitialFlowAuthHydration && nextKey) {
+      suppressInitialFlowAuthHydration = false;
+      lastAuthUserKey = nextKey;
+      return;
+    }
+    suppressInitialFlowAuthHydration = false;
     lastAuthUserKey = nextKey;
     void handleAuthStateChanged();
   });

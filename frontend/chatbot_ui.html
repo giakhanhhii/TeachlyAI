@@ -117,6 +117,48 @@
       <div class="chat-phase" id="chatPhase">
         <div id="messages">
           <div class="messages-inner" id="messagesInner"></div>
+          <script>
+            (() => {
+              const flow = new URLSearchParams(location.search).get("flow");
+              const normalized = flow === "flash" || flow === "image" ? "flashcard" : flow;
+              const actionsByFlow = {
+                fullset: [["Tải lên file", "fullset_pdf"], ["Nhập chủ đề trực tiếp", "fullset_topic"]],
+                slide: [["Tải lên file", "slide_pdf"], ["Nhập chủ đề trực tiếp", "slide_topic"]],
+                quiz: [["Tải lên file", "quiz_pdf"], ["Nhập chủ đề trực tiếp", "quiz_topic"], ["Làm full đề THPTQG", "quiz_fulltest"]],
+                flashcard: [["Tải lên file", "flash_pdf"], ["Nhập từ vựng trực tiếp", "flash_vocab"], ["Nhập chủ đề trực tiếp", "flash_topic"]],
+              };
+              const actions = actionsByFlow[normalized];
+              const root = document.getElementById("messagesInner");
+              if (!root || !actions) return;
+              const row = document.createElement("div");
+              row.className = "msg-row bot";
+              const avatar = document.createElement("div");
+              avatar.className = "bot-avatar";
+              avatar.setAttribute("aria-hidden", "true");
+              avatar.textContent = "T";
+              const bubble = document.createElement("div");
+              bubble.className = "bubble bot";
+              const text = document.createElement("div");
+              text.style.whiteSpace = "pre-wrap";
+              text.textContent = "Chào bạn! Bạn đã có tài liệu sẵn chưa hay muốn tôi tự biên soạn theo chủ đề?";
+              const actionWrap = document.createElement("div");
+              actionWrap.className = "msg-actions";
+              actions.forEach(([label, value]) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "msg-action-btn";
+                btn.dataset.flowValue = value;
+                btn.dataset.keepEnabled = "1";
+                btn.textContent = label;
+                actionWrap.appendChild(btn);
+              });
+              bubble.appendChild(text);
+              bubble.appendChild(actionWrap);
+              row.appendChild(avatar);
+              row.appendChild(bubble);
+              root.appendChild(row);
+            })();
+          </script>
         </div>
         <div class="composer-wrap">
           <form class="composer" id="form">

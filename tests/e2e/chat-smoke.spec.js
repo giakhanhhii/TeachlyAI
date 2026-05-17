@@ -6,6 +6,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("main hub navigates into chatbot ui", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("teachly_auto_mode_v1", JSON.stringify({
+      enabled: false,
+      neverAskChoice: "custom",
+    }));
+  });
   await page.goto("/main_hub.html");
 
   await expect(page.locator('a[href="chatbot_ui.html?flow=slide"]')).toBeVisible();
