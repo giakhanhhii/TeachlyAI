@@ -121,7 +121,9 @@ async function authFetch(path, init = {}) {
     handleUnauthorizedResponse();
   }
   if (!res.ok) {
-    throw new Error(data.detail || "Lỗi xác thực");
+    const err = new Error(data.detail || "Lỗi xác thực");
+    err.status = res.status;
+    throw err;
   }
   return data;
 }
@@ -138,9 +140,11 @@ export async function hydrateAuthState(force = false) {
         headers: getAuthHeaders(),
       });
       return setAuthState({ token: authToken, user: data.user });
-    } catch {
-      clearAuthState();
-      return null;
+    } catch (err) {
+      // 401 đã được handleUnauthorizedResponse() trong authFetch xử lý (clear cache).
+      // Các failure khác (network blip, 5xx, timeout) — giữ nguyên cached user
+      // để không "đá" user về lại màn login chỉ vì sự cố tạm thời.
+      return currentUser;
     } finally {
       hydrationPromise = null;
     }

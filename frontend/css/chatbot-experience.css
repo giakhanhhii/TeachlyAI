@@ -241,6 +241,10 @@
   color: inherit;
 }
 
+.exp-ai-btn[hidden] {
+  display: none !important;
+}
+
 .exp-icon-btn {
   display: flex;
   align-items: center;

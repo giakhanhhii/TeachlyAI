@@ -203,12 +203,23 @@ describe("mountFullSetMixedExperience", () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     const nextArrow = body.querySelector(".exp-slide-arrow--next");
+    const exportBtn = body.querySelector(".exp-topbar-right > button");
     expect(nextArrow).not.toBeNull();
     expect(nextArrow.disabled).toBe(false);
+    expect(exportBtn.hidden).toBe(false);
+    expect(exportBtn.style.display).toBe("");
 
     nextArrow.click();
 
     expect(body.textContent).toContain("Quiz question after slide");
+    expect(exportBtn.hidden).toBe(true);
+    expect(exportBtn.style.display).toBe("none");
+
+    body.querySelector(".exp-back-btn").click();
+
+    expect(body.textContent).toContain("slide_deck");
+    expect(exportBtn.hidden).toBe(false);
+    expect(exportBtn.style.display).toBe("");
     body._kbAbort?.();
     body.remove();
   });

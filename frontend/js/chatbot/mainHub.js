@@ -21,14 +21,17 @@ export function bindProtectedHubCards(deps = {}) {
     node.dataset.authBound = "1";
     node.addEventListener("click", async (event) => {
       if (isModifiedClick(event)) return;
-      const wasAuthenticated = !!getCurrentAuthUser();
-      if (wasAuthenticated) return;
+      if (getCurrentAuthUser()) return;
       event.preventDefault();
-      await ensureUser({
+      const targetHref = node.href;
+      const user = await ensureUser({
         initialMode: "login",
         title: "Đăng nhập hoặc đăng ký để mở bài giảng",
         subtitle: "Sau khi đăng nhập, bạn có thể vào bài giảng và thông tin hồ sơ sẽ hiện ở thanh bên.",
       });
+      if (user && targetHref) {
+        window.location.href = targetHref;
+      }
     });
   });
 }

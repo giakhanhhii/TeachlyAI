@@ -442,6 +442,12 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     }
   }
 
+  function setExportButtonVisible(visible) {
+    if (!exportBtn) return;
+    exportBtn.hidden = !visible;
+    exportBtn.style.display = visible ? "" : "none";
+  }
+
   function startExportSrcdocPrefetch() {
     if (lastRenderedSlideSrcdoc) return Promise.resolve(lastRenderedSlideSrcdoc);
     if (exportSrcdocPrefetch) return exportSrcdocPrefetch;
@@ -793,7 +799,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     shell.classList.remove("exp-shell-slide");
     stage.className = "exp-stage";
     footer.hidden = true;
-    if (exportBtn) exportBtn.hidden = true;
+    setExportButtonVisible(false);
     refreshScore();
     renderBookmarkChrome();
     repaintCurrentProgress();
@@ -883,7 +889,7 @@ export async function mountFullSetMixedExperience(layerView, bundle, deps, opts 
     renderStepGen += 1;
     const myGen = renderStepGen;
     backBtn.textContent = "Quay lại";
-    if (exportBtn) exportBtn.hidden = step?.kind !== "slide_deck";
+    setExportButtonVisible(step?.kind === "slide_deck");
     quizSelected = quizSelectedByStep[index] ?? null;
     quizRevealed = !!quizRevealedByStep[index];
     if (!bookmarkFilter && stepKeys[index]) lastAllStepKey = stepKeys[index];
