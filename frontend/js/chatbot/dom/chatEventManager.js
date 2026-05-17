@@ -282,22 +282,21 @@ export function setupChatEventManager(deps) {
   onInitBaseRendered?.();
 
   void (async () => {
+    const params = new URLSearchParams(location.search);
+    const flowKind = normalizeFlowParam(params.get("flow"));
+    if (flowKind) {
+      const modeParam = params.get("mode") === "auto" ? "auto" : params.get("mode") === "custom" ? "custom" : undefined;
+      // URL flow entry should render immediately, like clicking a startup card in the chat UI.
+      await handleFlowEntry(flowKind, { mode: modeParam });
+      clearFlowParamFromUrl();
+      return;
+    }
     try {
       await ensureSessionMessagesLoaded();
     } catch {
       // Keep local cache if server is unavailable.
     }
     renderMessages();
-    const params = new URLSearchParams(location.search);
-    const flowKind = normalizeFlowParam(params.get("flow"));
-    if (flowKind) {
-      const modeParam = params.get("mode") === "auto" ? "auto" : params.get("mode") === "custom" ? "custom" : undefined;
-      // When auto mode is ON, handleFlowEntry (injected from chatController) intercepts
-      // and shows the count selector instead of the normal guided flow.
-      await handleFlowEntry(flowKind, { mode: modeParam });
-      clearFlowParamFromUrl();
-      return;
-    }
     await restoreCurrentSessionExperience();
     onInitCompleted?.();
   })();
