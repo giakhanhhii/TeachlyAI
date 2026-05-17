@@ -363,15 +363,16 @@ export function createMessageView(opts) {
 
   async function streamBotReply(text) {
     const bubble = addMessage("bot", "");
+    bubble.style.whiteSpace = "pre-wrap";
     let i = 0;
     const speed = 8;
     while (i <= text.length) {
-      bubble.textContent = text.slice(0, i);
+      bubble.innerHTML = renderBotMarkdown(text.slice(0, i));
       i += Math.max(1, Math.floor(text.length / 120));
       messagesEl.scrollTop = messagesEl.scrollHeight;
       await new Promise((r) => setTimeout(r, speed));
     }
-    bubble.textContent = text;
+    bubble.innerHTML = renderBotMarkdown(text);
   }
 
   function clear() {
