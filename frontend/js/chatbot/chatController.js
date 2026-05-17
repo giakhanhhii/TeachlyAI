@@ -1448,6 +1448,7 @@ export async function init() {
       void tryOpenSharedExperienceFromUrl();
       console.log("[chatController] init completed");
     },
+    onAbortGuidedFlow: () => setGuidedState(null),
   });
 
   writeAppNavigationState("replace", resolveCurrentPhase());
