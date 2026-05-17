@@ -1448,7 +1448,16 @@ export async function init() {
       void tryOpenSharedExperienceFromUrl();
       console.log("[chatController] init completed");
     },
-    onAbortGuidedFlow: () => setGuidedState(null),
+    onAbortGuidedFlow: (prompt, guidedState) => {
+      const kind = typeof guidedState?.kind === "string" ? guidedState.kind : "";
+      const btnLabel = kind === "flash"
+        ? "**Nhập chủ đề trực tiếp** hoặc **Nhập từ vựng trực tiếp**"
+        : "**Nhập chủ đề trực tiếp**";
+      pushUser(prompt);
+      pushBot(`Để nhập chủ đề, vui lòng nhấn nút ${btnLabel} ở trên nhé.`);
+      input.value = "";
+      input.focus();
+    },
   });
 
   writeAppNavigationState("replace", resolveCurrentPhase());

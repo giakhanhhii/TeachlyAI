@@ -150,7 +150,7 @@ export function resolveChatDomElements() {
  *   onInitCompleted?: () => void,
  *   onBeforeBack?: () => boolean,
  *   onAddFile?: (btn: HTMLButtonElement) => void,
- *   onAbortGuidedFlow?: () => void,
+ *   onAbortGuidedFlow?: (prompt: string, guided: any) => void,
  * }} deps
  */
 export function setupChatEventManager(deps) {
@@ -219,8 +219,7 @@ export function setupChatEventManager(deps) {
     try {
       const guided = getGuided();
       if (guided && (guided.step === "await_source" || guided.step === "await_pdf_file")) {
-        onAbortGuidedFlow?.();
-        onSendPrompt(prompt);
+        onAbortGuidedFlow?.(prompt, guided);
         return;
       }
       if (guided) {
