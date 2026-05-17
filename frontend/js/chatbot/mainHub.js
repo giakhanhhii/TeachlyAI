@@ -22,16 +22,15 @@ export function bindProtectedHubCards(deps = {}) {
     node.addEventListener("click", async (event) => {
       if (isModifiedClick(event)) return;
       if (getCurrentAuthUser()) return;
+      // Chưa đăng nhập: mở dialog auth nhưng KHÔNG nhớ intent của lần click này.
+      // Sau khi login xong, user phải tự click lại thẻ để vào — tránh việc
+      // ?flow=... bị mang theo vào chatbot_ui và đè lên session gần nhất.
       event.preventDefault();
-      const targetHref = node.href;
-      const user = await ensureUser({
+      await ensureUser({
         initialMode: "login",
         title: "Đăng nhập hoặc đăng ký để mở bài giảng",
         subtitle: "Sau khi đăng nhập, bạn có thể vào bài giảng và thông tin hồ sơ sẽ hiện ở thanh bên.",
       });
-      if (user && targetHref) {
-        window.location.href = targetHref;
-      }
     });
   });
 }
