@@ -935,6 +935,7 @@ export async function init() {
    * Intercepts a card click: shows the auto mode choice popup or count selector.
    * @param {"fullset"|"quiz"|"slide"|"flashcard"|"flash"} flowKind
    * @param {() => void | Promise<void>} onCustom - called to proceed with the normal guided flow
+   * @param {{ mode?: "auto"|"custom" }} [opts]
    */
   function syncToggleUI(enabled) {
     const toggleBtn = document.querySelector(".auto-mode-toggle");
@@ -944,7 +945,7 @@ export async function init() {
     if (lbl) lbl.textContent = enabled ? "Tạo Auto" : "Tạo Custom";
   }
 
-  async function handleFlowWithAutoMode(flowKind, onCustom) {
+  async function handleFlowWithAutoMode(flowKind, onCustom, opts = {}) {
     const wasAuthenticated = !!getCurrentAuthUser();
     const user = await ensureAuthenticated({
       initialMode: "login",
@@ -968,6 +969,19 @@ export async function init() {
         },
         onCancel: () => {},
       });
+    }
+
+    if (opts.mode === "custom") {
+      autoModeStore.disable();
+      syncToggleUI(false);
+      await Promise.resolve(onCustom());
+      return;
+    }
+    if (opts.mode === "auto") {
+      autoModeStore.enable();
+      syncToggleUI(true);
+      void launchAutoMode(expKind, autoModeStore.getCounts(), { resetHistory: true });
+      return;
     }
 
     if (autoModeStore.isEnabled()) {
@@ -1414,8 +1428,8 @@ export async function init() {
     renderChatListUI,
     ensureSessionMessagesLoaded: () => ensureSessionMessagesLoaded(),
     renderMessages,
-    handleFlowEntry: (flowKind) =>
-      handleFlowWithAutoMode(flowKind, () => flowService.handleFlowEntry(flowKind)),
+    handleFlowEntry: (flowKind, opts) =>
+      handleFlowWithAutoMode(flowKind, () => flowService.handleFlowEntry(flowKind), opts),
     restoreCurrentSessionExperience: () => restoreCurrentSessionExperience(),
     onAddFile: (btn) => {
       const g = guided;

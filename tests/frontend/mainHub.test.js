@@ -76,4 +76,61 @@ describe("mainHub auth gate", () => {
     expect(ensureUser).not.toHaveBeenCalled();
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  it("shows the create-mode choice on the hub before navigating a flow card", async () => {
+    vi.stubGlobal("fetch", vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          user: {
+            username: "teacher01",
+            displayName: "teacher01",
+            profileLabel: "Pro",
+            avatarText: "T",
+          },
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          token: "token-1",
+          user: {
+            username: "teacher01",
+            displayName: "teacher01",
+            profileLabel: "Pro",
+            avatarText: "T",
+          },
+        }),
+      }));
+    await registerLocalAccount({
+      username: "teacher01",
+      password: "secret",
+      confirmPassword: "secret",
+    });
+    await loginLocalAccount({
+      username: "teacher01",
+      password: "secret",
+    });
+    document.body.innerHTML = `
+      <button id="autoModeToggle"><span class="toggle-label">Tạo Custom</span></button>
+      <a class="card" href="chatbot_ui.html?flow=fullset">Full set</a>
+    `;
+    const navigate = vi.fn();
+
+    bindProtectedHubCards({ root: document, ensureUser: vi.fn(), navigate });
+    /** @type {HTMLAnchorElement} */ (document.querySelector(".card")).dispatchEvent(
+      new MouseEvent("click", { bubbles: true, cancelable: true }),
+    );
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(document.querySelector(".auto-mode-overlay")).not.toBeNull();
+
+    /** @type {HTMLButtonElement} */ (document.querySelector(".auto-mode-btn-custom")).click();
+
+    expect(navigate).toHaveBeenCalledTimes(1);
+    expect(navigate.mock.calls[0][0]).toContain("chatbot_ui.html?flow=fullset");
+    expect(navigate.mock.calls[0][0]).not.toContain("mode=auto");
+  });
 });

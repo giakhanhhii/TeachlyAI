@@ -10,6 +10,7 @@ function clearFlowParamFromUrl() {
     const url = new URL(location.href);
     if (!url.searchParams.has("flow")) return;
     url.searchParams.delete("flow");
+    url.searchParams.delete("mode");
     history.replaceState(history.state, "", url.toString());
   } catch {
     // Ignore URL cleanup failures and keep the current page usable.
@@ -144,7 +145,7 @@ export function resolveChatDomElements() {
  *   renderChatListUI: () => void,
  *   ensureSessionMessagesLoaded: () => Promise<any>,
  *   renderMessages: () => void,
- *   handleFlowEntry: (flowKind: "quiz" | "slide" | "flash") => Promise<void>,
+ *   handleFlowEntry: (flowKind: "fullset" | "quiz" | "slide" | "flashcard", opts?: { mode?: "auto"|"custom" }) => Promise<void>,
  *   restoreCurrentSessionExperience: () => Promise<void>,
  *   onInitBaseRendered?: () => void,
  *   onInitCompleted?: () => void,
@@ -290,9 +291,10 @@ export function setupChatEventManager(deps) {
     const params = new URLSearchParams(location.search);
     const flowKind = normalizeFlowParam(params.get("flow"));
     if (flowKind) {
+      const modeParam = params.get("mode") === "auto" ? "auto" : params.get("mode") === "custom" ? "custom" : undefined;
       // When auto mode is ON, handleFlowEntry (injected from chatController) intercepts
       // and shows the count selector instead of the normal guided flow.
-      await handleFlowEntry(flowKind);
+      await handleFlowEntry(flowKind, { mode: modeParam });
       clearFlowParamFromUrl();
       return;
     }
