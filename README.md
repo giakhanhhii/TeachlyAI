@@ -3,6 +3,7 @@
 ## Link quan trọng
 
 - **Video demo:** https://www.youtube.com/watch?v=tf5mvZXa5zc
+- **Pitching deck:** https://drive.google.com/file/d/14JP8BEkyMOwSP6SUcYEAoubwqSmj-THd/view?usp=sharing
 - **Website demo:** https://a20-app-082.fly.dev
 - **Kiến trúc hệ thống:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **Journal tiến độ theo tuần:** [JOURNAL.md](./JOURNAL.md)
