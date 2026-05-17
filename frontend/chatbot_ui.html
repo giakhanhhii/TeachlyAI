@@ -117,6 +117,22 @@
       <div class="chat-phase" id="chatPhase">
         <div id="messages">
           <div class="messages-inner" id="messagesInner"></div>
+          <script>
+            // Khi vào từ main_hub với ?flow=..., paint loading overlay NGAY trong
+            // lúc browser đang tải JS bundle, để user không thấy màn trắng 1-2s.
+            // chatController.init() sẽ gọi clearMessages() (messagesInner.innerHTML = "")
+            // trong startFlowInCurrentSession → loading này tự bị thay bằng card thật.
+            (() => {
+              if (!new URLSearchParams(location.search).has("flow")) return;
+              const root = document.getElementById("messagesInner");
+              if (!root) return;
+              root.innerHTML =
+                '<div class="ai-loading-overlay" data-bootstrap-loading="1">' +
+                '<div class="ai-loading-ring"></div>' +
+                '<div class="ai-loading-label">Đang chuẩn bị bài học...</div>' +
+                "</div>";
+            })();
+          </script>
         </div>
         <div class="composer-wrap">
           <form class="composer" id="form">
