@@ -2,6 +2,23 @@ import { BOT_AVATAR_SVG } from "../assets.js";
 import { createFlowCard } from "./flowCards.js";
 import { createResumeDockCard } from "./resumeDockCard.js";
 
+/**
+ * Chuyển đổi markdown đơn giản (**bold**, *italic*, \n) sang HTML an toàn.
+ * @param {string} raw
+ * @returns {string}
+ */
+function renderBotMarkdown(raw) {
+  if (!raw) return "";
+  const safe = String(raw)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+  return safe
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+}
+
 /** Form slide / quiz / flash (+ meta PDF): giãn ngang gần full cột chat, không áp dụng full set. */
 function isWideFlowFormCardType(cardType) {
   return (
@@ -90,7 +107,7 @@ export function createMessageView(opts) {
     if (text.trim()) {
       const t = document.createElement("div");
       t.style.whiteSpace = "pre-wrap";
-      t.textContent = text;
+      t.innerHTML = renderBotMarkdown(text);
       bubble.appendChild(t);
     }
     if (actions.length) {
@@ -186,7 +203,7 @@ export function createMessageView(opts) {
       if (hasText) {
         const t = document.createElement("div");
         t.style.whiteSpace = "pre-wrap";
-        t.textContent = text;
+        t.innerHTML = renderBotMarkdown(text);
         bubble.appendChild(t);
       }
       if (hasActions) {
@@ -265,7 +282,7 @@ export function createMessageView(opts) {
       if (hasText) {
         const t = document.createElement("div");
         t.style.whiteSpace = "pre-wrap";
-        t.textContent = text;
+        t.innerHTML = renderBotMarkdown(text);
         bubble.appendChild(t);
       }
       if (hasActions) {
@@ -297,7 +314,8 @@ export function createMessageView(opts) {
         );
       }
     } else {
-      bubble.textContent = text;
+      bubble.style.whiteSpace = "pre-wrap";
+      bubble.innerHTML = renderBotMarkdown(text);
     }
     if (hasActions && !hasCard) {
       bubble.classList.add("startup");
