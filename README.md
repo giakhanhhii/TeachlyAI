@@ -9,6 +9,9 @@
 - **Journal tiến độ theo tuần:** [JOURNAL.md](./JOURNAL.md)
 - **Hướng dẫn coding agent:** [AGENTS.md](./AGENTS.md)
 
+## Dashboard
+<img width="1911" height="906" alt="Teachly AI" src="https://github.com/user-attachments/assets/5d98ba5c-6c2a-4a1d-84ae-a034ea3915a5" />
+
 ## Giới thiệu
 
 Teachly là một web application giúp học sinh THPT Việt Nam học tiếng Anh thông qua các trải nghiệm học có AI hỗ trợ. Sản phẩm tập trung vào luồng học THPT/lớp 12 và cho phép người dùng tạo nội dung học dạng `slide`, `quiz`, `flashcard` và `full set` từ một chủ đề hoặc từ một tài liệu được upload.
